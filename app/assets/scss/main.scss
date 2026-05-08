@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  background: $bg;
+  color: $text;
+  font-family: 'Inter', sans-serif;
+}
+
+a { text-decoration: none; color: inherit; }
+
+.v-application {
+  background: $bg !important;
+  font-family: 'Inter', sans-serif !important;
+  color: $text !important;
+}
+
+v-main { background: $bg; }
+
+.v-field--variant-outlined {
+  .v-field__outline__start,
+  .v-field__outline__end {
+    border-color: $border !important;
+  }
+  .v-field__outline__notch {
+    &::before, &::after { border-color: $border !important; }
+  }
+
+  &.v-field--focused {
+    .v-field__outline__start,
+    .v-field__outline__end,
+    .v-field__outline__notch::before,
+    .v-field__outline__notch::after {
+      border-color: $red !important;
+    }
+  }
+}
+
+.v-label { color: $text-dim !important; }
+.v-field__input { color: $text !important; }
+
+.v-overlay__content .v-list {
+  background: $card !important;
+  border: 1px solid $border;
+
+  .v-list-item:hover { background: rgba($red, 0.1) !important; }
+  .v-list-item--active { color: $red !important; }
+}
+
+.v-pagination__item--is-active .v-btn {
+  background: $red !important;
+  color: $text !important;
+}
+
+
+.v-checkbox {
+  .v-selection-control--dirty .v-icon { color: $red !important; }
+  .v-selection-control__input:hover .v-icon { color: rgba($red, 0.7); }
+}
+
+.v-progress-circular__overlay { stroke: $red !important; }
+
+
+

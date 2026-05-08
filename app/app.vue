@@ -3,7 +3,11 @@
 </script>
 
 <template>
-  <div>
-    <NuxtPage />
-  </div>
+  <v-app>
+    <NavBar />
+    <v-main>
+      <NuxtPage />
+    </v-main>
+    <AppFooter />
+  </v-app>
 </template>

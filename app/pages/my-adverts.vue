@@ -1,36 +1,94 @@
-<script setup lang="ts">
+<template>
+    <div class="page-bg">
+        <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
+            <div class="page-header">
+                <h1 class="page-title">Moje ogłoszenia</h1>
+                <v-btn color="primary" to="/add-advert">+ Dodaj ogłoszenie</v-btn>
+            </div>
 
-import type { Advert } from '~/components/AdvertCard.vue'
+            <div v-if="loading" class="d-flex justify-center mt-16">
+                <v-progress-circular indeterminate color="primary" size="60" />
+            </div>
+            <div v-else-if="!adverts.length" class="no-data">
+                Nie masz jeszcze żadnych ogłoszeń.
+            </div>
+            <template v-else>
+                <div class="cars-grid">
+                    <AdvertCard v-for="a in adverts" :key="a.id" :advert="a" />
+                </div>
+                <div class="d-flex justify-center mt-8">
+                    <v-pagination v-if="totalPages > 1" v-model="page" :length="totalPages" active-color="primary"
+                        rounded="circle" @update:model-value="load" />
+                </div>
+            </template>
+        </div>
+    </div>
+</template>
+
+<script setup lang="ts">
+import type { CarAdvert, PagedResult } from '~/types'
 
 const config = useRuntimeConfig()
+const base = config.public.apiBase
 const token = useCookie('auth_token')
+const adverts = ref<CarAdvert[]>([])
+const total = ref(0)
+const page = ref(1)
+const loading = ref(true)
+const pageSize = 12
+const totalPages = computed(() => Math.ceil(total.value / pageSize))
 
-const { data: adverts, pending, error } = await useFetch<Advert[]>(
-    `${config.public.apiBase}api/Advert/user`,
-    {
-        headers: { Authorization: `Bearer ${token.value}` }
+async function load(p: number = page.value) {
+    loading.value = true
+    try {
+        const r = await $fetch<PagedResult<CarAdvert>>(
+            `${base}api/Advert/user?page=${p}&pageSize=${pageSize}`,
+            { headers: { Authorization: `Bearer ${token.value}` } }
+        )
+        adverts.value = r.items
+        total.value = r.totalCount
+    } finally {
+        loading.value = false
     }
-)
+}
 
+onMounted(async () => {
+    if (!token.value) { navigateTo('/login'); return }
+    await load(1)
+})
 </script>
 
+<style lang="scss" scoped>
+.page-bg {
+    background: $bg;
+    min-height: 100vh;
+}
 
-<template>
-    <div>
-        <NuxtLink to="/">← Wróć</NuxtLink>
-        <h1>Moje ogłoszenia</h1>
+.container {
+    @include container;
+}
 
-        <div v-if="pending">Ładowanie ogłoszeń...</div>
-        <div v-else-if="error">Coś poszło nie tak...</div>
-        <div v-else-if="!adverts?.length">Nie masz jeszcze żadnych ogłoszeń.</div>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
 
-        <div v-else>
-            <AdvertCard v-for="advert in adverts" :key="advert.id" :advert="advert" />
-        </div>
+.page-title {
+    font-size: 40px;
+    font-weight: 900;
+    color: $text;
+}
 
-        <NuxtLink to="/add-advert">
-            <button>Dodaj ogłoszenie</button>
-        </NuxtLink>
-    </div>
+.no-data {
+    text-align: center;
+    color: $text-faint;
+    font-size: 18px;
+    margin-top: 80px;
+}
 
-</template>
+.cars-grid {
+    @include cars-grid;
+}
+</style>

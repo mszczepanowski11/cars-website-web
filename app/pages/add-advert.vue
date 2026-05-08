@@ -1,252 +1,209 @@
+<template>
+    <div class="page-bg">
+        <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
+            <h1 class="page-title">Dodaj ogłoszenie</h1>
+
+            <div class="form-card">
+                <v-form @submit.prevent="submit" :disabled="loading">
+
+                    <div class="fsec">
+                        <h3>Podstawowe informacje</h3>
+                        <v-text-field v-model="form.title" label="Tytuł ogłoszenia" required />
+                        <v-textarea v-model="form.description" label="Opis" rows="4" />
+                        <v-text-field v-model.number="form.price" label="Cena (zł)" type="number" required />
+                    </div>
+
+                    <div class="fsec">
+                        <h3>Dane pojazdu</h3>
+                        <div class="frow">
+                            <v-select v-model="form.brandId" :items="brands" item-title="name" item-value="id"
+                                label="Marka" required @update:model-value="onBrand" />
+                            <v-select v-model="form.modelId" :items="models" item-title="name" item-value="id"
+                                label="Model" :disabled="!form.brandId" required @update:model-value="onModel" />
+                        </div>
+                        <div class="frow">
+                            <v-select v-model="form.generationId" :items="generations" item-title="name" item-value="id"
+                                label="Generacja" :disabled="!form.modelId" @update:model-value="onGen" />
+                            <v-select v-model="form.engineVersionId" :items="engines" item-title="name" item-value="id"
+                                label="Wersja silnika" :disabled="!form.generationId" />
+                        </div>
+                        <div class="frow">
+                            <v-select v-model="form.fuelTypeId" :items="fuelTypes" item-title="name" item-value="id"
+                                label="Rodzaj paliwa" required />
+                            <v-select v-model="form.gearboxId" :items="gearboxes" item-title="name" item-value="id"
+                                label="Skrzynia biegów" required />
+                        </div>
+                        <div class="frow">
+                            <v-select v-model="form.bodyTypeId" :items="bodyTypes" item-title="name" item-value="id"
+                                label="Typ nadwozia" required />
+                            <v-text-field v-model.number="form.year" label="Rok produkcji" type="number" required />
+                        </div>
+                        <v-text-field v-model.number="form.mileage" label="Przebieg (km)" type="number" required />
+                    </div>
+
+                    <div class="fsec">
+                        <h3>Wyposażenie</h3>
+                        <div v-for="(group, cat) in featureGroups" :key="cat" class="feat-group">
+                            <h4>{{ cat }}</h4>
+                            <div class="feat-checks">
+                                <v-checkbox v-for="feat in group" :key="feat.id" v-model="form.featureIds"
+                                    :value="feat.id" :label="feat.name" color="primary" hide-details />
+                            </div>
+                        </div>
+                    </div>
+
+                    <v-alert v-if="error" type="error" class="mb-4">{{ error }}</v-alert>
+                    <v-btn type="submit" color="primary" size="large" block :loading="loading">
+                        Opublikuj ogłoszenie
+                    </v-btn>
+
+                </v-form>
+            </div>
+        </div>
+    </div>
+</template>
+
 <script setup lang="ts">
+import type { TaxonomyItem, Generation, EngineVersion, Feature } from '~/types'
 
 const config = useRuntimeConfig()
+const base = config.public.apiBase
 const token = useCookie('auth_token')
+const { fetchBrands, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchFeatures } = useTaxonomy()
 
+const brands = ref<TaxonomyItem[]>([])
+const models = ref<TaxonomyItem[]>([])
+const generations = ref<Generation[]>([])
+const engines = ref<EngineVersion[]>([])
+const fuelTypes = ref<TaxonomyItem[]>([])
+const gearboxes = ref<TaxonomyItem[]>([])
+const bodyTypes = ref<TaxonomyItem[]>([])
+const allFeatures = ref<Feature[]>([])
 const loading = ref(false)
 const error = ref('')
 
-const form = ref({
-    advertType: 'Vehicle',
-    title: '',
-    price: 0,
-    description: '',
-    location: '',
-    images: [] as string[],
-    vehicleDetails: {
-        vehicleType: '',
-        brand: '',
-        model: '',
-        year: null,
-        mileage: null,
-        fuelType: '',
-        transmission: '',
-        condition: '',
-        color: '',
-        engineSize: null,
-        horsePower: null
-    },
-
-    partDetails: {
-        category: '',
-        partNumber: '',
-        condition: '',
-        compatibleBrand: '',
-        compatibleModel: '',
-        compatibleYearFrom: null,
-        compatibleYearTo: null
-    }
+const form = reactive({
+    title: '', description: '',
+    price: null as number | null,
+    brandId: null as number | null, modelId: null as number | null,
+    generationId: null as number | null, engineVersionId: null as number | null,
+    fuelTypeId: null as number | null, gearboxId: null as number | null, bodyTypeId: null as number | null,
+    year: null as number | null, mileage: null as number | null,
+    featureIds: [] as number[],
 })
 
-async function handleSubmit() {
-    loading.value = true
+const featureGroups = computed(() => {
+    const g: Record<string, Feature[]> = {}
+    for (const f of allFeatures.value) {
+        const cat = f.category?.name ?? 'Inne'
+            ; (g[cat] ??= []).push(f)
+    }
+    return g
+})
+
+async function onBrand() {
+    form.modelId = null; form.generationId = null; form.engineVersionId = null
+    models.value = []; generations.value = []; engines.value = []
+    if (form.brandId) models.value = await fetchModels(form.brandId)
+}
+async function onModel() {
+    form.generationId = null; form.engineVersionId = null
+    generations.value = []; engines.value = []
+    if (form.modelId) generations.value = await fetchGenerations(form.modelId)
+}
+async function onGen() {
+    form.engineVersionId = null; engines.value = []
+    if (form.generationId) engines.value = await fetchEngines(form.generationId)
+}
+
+async function submit() {
     error.value = ''
-
+    if (!token.value) { navigateTo('/login'); return }
+    loading.value = true
     try {
-        const body = {
-            advertType: form.value.advertType,
-            title: form.value.title,
-            price: form.value.price,
-            description: form.value.description,
-            location: form.value.location,
-            images: form.value.images,
-            vehicleDetails: form.value.advertType === 'Vehicle' ? { ...form.value.vehicleDetails } : null,
-            partDetails: form.value.advertType === 'Part' ? { ...form.value.partDetails } : null
-        }
-
-        await $fetch(`${config.public.apiBase}api/Advert`, {
+        await $fetch(`${base}api/Advert`, {
             method: 'POST',
-            body: JSON.stringify(body),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token.value}`
-            }
+            headers: { Authorization: `Bearer ${token.value}` },
+            body: { ...form },
         })
-
-        await navigateTo('/my-adverts')
-    } catch (err: any) {
-        error.value = err?.data || 'Nie udało się dodać ogłoszenia'
+        navigateTo('/my-adverts')
+    } catch (e: any) {
+        error.value = e?.data?.message ?? 'Błąd podczas zapisywania ogłoszenia.'
     } finally {
         loading.value = false
     }
 }
 
+onMounted(async () => {
+    if (!token.value) { navigateTo('/login'); return }
+    ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, allFeatures.value] = await Promise.all([
+        fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchFeatures()
+    ])
+})
 </script>
 
-<template>
-    <form @submit.prevent="handleSubmit">
+<style lang="scss" scoped>
+.page-bg {
+    background: $bg;
+    min-height: 100vh;
+}
 
-        <div>
-            <label>Typ ogłoszenia</label>
-            <select v-model="form.advertType">
-                <option value="Vehicle">Pojazd</option>
-                <option value="Part">Część</option>
-            </select>
-        </div>
+.container {
+    @include container;
+    max-width: 900px;
+}
 
-        <div>
-            <label>Tytuł</label>
-            <input v-model="form.title" type="text" placeholder="Tytuł ogłoszenia" required />
-        </div>
+.page-title {
+    font-size: 40px;
+    font-weight: 900;
+    color: $text;
+    margin-bottom: 35px;
+}
 
-        <div>
-            <label>Cena (PLN)</label>
-            <input v-model="form.price" type="number" placeholder="Cena" required />
-        </div>
+.form-card {
+    @include card($r-xl);
+    padding: 40px;
+}
 
-        <div>
-            <label>Opis</label>
-            <textarea v-model="form.description" placeholder="Opis ogłoszenia" required />
-        </div>
+.fsec {
+    margin-bottom: 36px;
 
-        <div>
-            <label>Lokalizacja</label>
-            <input v-model="form.location" type="text" placeholder="Miasto, region" required />
-        </div>
+    h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: $text;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid $border;
+    }
+}
 
+.frow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 
+    @include respond-to(xs) {
+        grid-template-columns: 1fr;
+    }
+}
 
-        <div v-if="form.advertType === 'Vehicle'">
-            <h3>Szczegóły pojazdu</h3>
+.feat-group {
+    margin-bottom: 20px;
 
-            <div>
-                <label>Typ pojazdu</label>
-                <select v-model="form.vehicleDetails.vehicleType">
-                    <option value="Car">Samochód</option>
-                    <option value="Motorcycle">Motocykl</option>
-                    <option value="Tractor">Traktor</option>
-                    <option value="Truck">Ciężarówka</option>
-                    <option value="Van">Van</option>
-                </select>
-            </div>
+    h4 {
+        color: $text-dim;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+    }
+}
 
-            <div>
-                <label>Marka</label>
-                <input v-model="form.vehicleDetails.brand" type="text" placeholder="np. BMW" />
-            </div>
-
-            <div>
-                <label>Model</label>
-                <input v-model="form.vehicleDetails.model" type="text" placeholder="np. 3 Series" />
-            </div>
-
-            <div>
-                <label>Rok produkcji</label>
-                <input v-model="form.vehicleDetails.year" type="number" placeholder="np. 2020" />
-            </div>
-
-            <div>
-                <label>Przebieg (km)</label>
-                <input v-model="form.vehicleDetails.mileage" type="number" placeholder="np. 50000" />
-            </div>
-
-            <div>
-                <label>Rodzaj paliwa</label>
-                <select v-model="form.vehicleDetails.fuelType">
-                    <option value="Petrol">Benzyna</option>
-                    <option value="Diesel">Diesel</option>
-                    <option value="Electric">Elektryczny</option>
-                    <option value="Hybrid">Hybryda</option>
-                    <option value="LPG">LPG</option>
-                    <option value="Hydrogen">Wodór</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Skrzynia biegów</label>
-                <select v-model="form.vehicleDetails.transmission">
-                    <option value="Manual">Manualna</option>
-                    <option value="Automatic">Automatyczna</option>
-                    <option value="SemiAutomatic">Półautomatyczna</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Stan</label>
-                <select v-model="form.vehicleDetails.condition">
-                    <option value="New">Nowy</option>
-                    <option value="Used">Używany</option>
-                    <option value="Damaged">Uszkodzony</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Kolor</label>
-                <input v-model="form.vehicleDetails.color" type="text" placeholder="np. Czarny" />
-            </div>
-
-            <div>
-                <label>Pojemność silnika (cc)</label>
-                <input v-model="form.vehicleDetails.engineSize" type="number" placeholder="np. 1998" />
-            </div>
-
-            <div>
-                <label>Moc (KM)</label>
-                <input v-model="form.vehicleDetails.horsePower" type="number" placeholder="np. 150" />
-            </div>
-        </div>
-
-
-        <div v-if="form.advertType === 'Part'">
-            <h3>Szczegóły części</h3>
-
-            <div>
-                <label>Kategoria</label>
-                <select v-model="form.partDetails.category">
-                    <option value="Engine">Silnik</option>
-                    <option value="Brakes">Hamulce</option>
-                    <option value="Suspension">Zawieszenie</option>
-                    <option value="Body">Nadwozie</option>
-                    <option value="Interior">Wnętrze</option>
-                    <option value="Electronics">Elektronika</option>
-                    <option value="Exhaust">Układ wydechowy</option>
-                    <option value="Transmission">Skrzynia biegów</option>
-                    <option value="Cooling">Chłodzenie</option>
-                    <option value="Lighting">Oświetlenie</option>
-                    <option value="Wheels">Koła</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Numer części</label>
-                <input v-model="form.partDetails.partNumber" type="text" placeholder="np. OEM-12345" />
-            </div>
-
-            <div>
-                <label>Stan</label>
-                <select v-model="form.partDetails.condition">
-                    <option value="New">Nowa</option>
-                    <option value="Used">Używana</option>
-                    <option value="Damaged">Uszkodzona</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Pasuje do marki</label>
-                <input v-model="form.partDetails.compatibleBrand" type="text" placeholder="np. BMW" />
-            </div>
-
-            <div>
-                <label>Pasuje do modelu</label>
-                <input v-model="form.partDetails.compatibleModel" type="text" placeholder="np. 3 Series" />
-            </div>
-
-            <div>
-                <label>Rocznik od</label>
-                <input v-model="form.partDetails.compatibleYearFrom" type="number" placeholder="np. 2015" />
-            </div>
-
-            <div>
-                <label>Rocznik do</label>
-                <input v-model="form.partDetails.compatibleYearTo" type="number" placeholder="np. 2020" />
-            </div>
-        </div>
-
-        <p v-if="error">{{ error }}</p>
-
-        <button type="submit" :disabled="loading">
-            {{ loading ? 'Dodawanie...' : 'Dodaj ogłoszenie' }}
-        </button>
-
-    </form>
-</template>
+.feat-checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 4px;
+}
+</style>
