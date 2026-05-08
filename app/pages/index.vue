@@ -40,23 +40,7 @@
             </div>
         </section>
 
-        <section class="section">
-            <div class="container">
-                <div class="sec-top">
-                    <h2>Kategorie pojazdów</h2>
-                    <NuxtLink to="/adverts" class="see-all">Zobacz wszystkie</NuxtLink>
-                </div>
-                <div class="cat-grid">
-                    <NuxtLink v-for="c in categories" :key="c.label" to="/adverts" class="cat-card">
-                        <img :src="c.img" :alt="c.label" />
-                        <div class="cat-body">
-                            <h3>{{ c.label }}</h3>
-                            <span>{{ c.count }} ogłoszeń</span>
-                        </div>
-                    </NuxtLink>
-                </div>
-            </div>
-        </section>
+      
 
         <BudgetSection />
 
