@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import type { CarAdvert, PagedResult } from '~/types'
-definePageMeta({ middleware: 'auth' } as any)
+definePageMeta({ middleware: 'auth' })
 const config = useRuntimeConfig()
 const base = config.public.apiBase
 const token = useCookie('auth_token')

@@ -7,10 +7,11 @@
 
             <v-form @submit.prevent="submit" :disabled="loading">
                 <div class="frow">
-                    <v-text-field v-model="firstName" label="Imię" required />
-                    <v-text-field v-model="lastName" label="Nazwisko" required />
+                    <v-text-field v-model="name" label="Imię" required />
+                    <v-text-field v-model="surname" label="Nazwisko" required />
                 </div>
                 <v-text-field v-model="email" label="Adres email" type="email" required class="mb-3" />
+                <v-text-field v-model="phoneNumber" label="Numer telefonu" type="tel" required class="mb-3" />
                 <v-text-field v-model="password" label="Hasło" type="password" required class="mb-4" />
                 <v-alert v-if="error" type="error" class="mb-4">{{ error }}</v-alert>
                 <v-btn type="submit" color="primary" size="large" block :loading="loading">
@@ -25,35 +26,15 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig()
-const base = config.public.apiBase
-const token = useCookie('auth_token')
-const firstName = ref('')
-const lastName = ref('')
-const email = ref('')
-const password = ref('')
-const error = ref('')
-const loading = ref(false)
+const { register, loading, error } = useAuth()
+const name        = ref('')
+const surname     = ref('')
+const email       = ref('')
+const phoneNumber = ref('')
+const password    = ref('')
 
 async function submit() {
-    error.value = ''
-    loading.value = true
-    try {
-        await $fetch(`${base}api/Auth/register`, {
-            method: 'POST',
-            body: { firstName: firstName.value, lastName: lastName.value, email: email.value, password: password.value },
-        })
-        const data = await $fetch < { token: string } > (`${base}api/Auth/login`, {
-            method: 'POST',
-            body: { email: email.value, password: password.value },
-        })
-        token.value = data.token
-        navigateTo('/')
-    } catch {
-        error.value = 'Błąd rejestracji. Sprawdź dane i spróbuj ponownie.'
-    } finally {
-        loading.value = false
-    }
+    await register({ name: name.value, surname: surname.value, email: email.value, phonenumber: phoneNumber.value, password: password.value })
 }
 </script>
 

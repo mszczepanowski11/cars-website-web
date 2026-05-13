@@ -20,29 +20,12 @@
 </template>
 
 <script setup lang="ts">
-const config   = useRuntimeConfig()
-const base     = config.public.apiBase
-const token    = useCookie('auth_token')
+const { login, loading, error } = useAuth()
 const email    = ref('')
 const password = ref('')
-const error    = ref('')
-const loading  = ref(false)
 
 async function submit() {
-  error.value = ''
-  loading.value = true
-  try {
-    const data = await $fetch<{ token: string }>(`${base}api/Auth/login`, {
-      method: 'POST',
-      body: { email: email.value, password: password.value },
-    })
-    token.value = data.token
-    navigateTo('/')
-  } catch {
-    error.value = 'Nieprawidłowy email lub hasło.'
-  } finally {
-    loading.value = false
-  }
+  await login({ email: email.value, password: password.value })
 }
 </script>
 

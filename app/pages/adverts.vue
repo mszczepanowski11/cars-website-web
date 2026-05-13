@@ -112,8 +112,10 @@ import type { TaxonomyItem, CarAdvert, PagedResult, CategoryWithCount } from '~/
 const config = useRuntimeConfig()
 const base = config.public.apiBase
 const route = useRoute()
+const router = useRouter()
 const { fetchBrands, fetchModels, fetchFuelTypes } = useTaxonomy()
 const { fetchCategories, STATIC_CATEGORIES } = useCategories()
+const { fetchFavoriteIds } = useFavorites()
 
 const brands = ref<TaxonomyItem[]>([])
 const models = ref<TaxonomyItem[]>([])
@@ -145,6 +147,7 @@ const f = reactive({
     brandId: null as number | null,
     modelId: null as number | null,
     fuelTypeId: null as number | null,
+    bodyTypeId: null as number | null,
     priceFrom: null as number | null,
     priceTo: null as number | null,
     yearFrom: null as number | null,
@@ -169,7 +172,7 @@ function selectCategory(cat: CategoryWithCount) {
 
 function clearFilters() {
     f.categoryId = null; f.textSearch = ''; f.brandId = null; f.modelId = null
-    f.fuelTypeId = null; f.priceFrom = null; f.priceTo = null
+    f.fuelTypeId = null; f.bodyTypeId = null; f.priceFrom = null; f.priceTo = null
     f.yearFrom = null; f.yearTo = null; f.sortBy = ''
     load(1)
 }
@@ -183,6 +186,22 @@ async function onBrandChange() {
 async function load(p: number = page.value) {
     page.value = p
     loading.value = true
+
+    const query: Record<string, string> = {}
+    if (f.categoryId) query.categoryId = String(f.categoryId)
+    if (f.textSearch)  query.textSearch  = f.textSearch
+    if (f.brandId)     query.brandId     = String(f.brandId)
+    if (f.modelId)     query.modelId     = String(f.modelId)
+    if (f.fuelTypeId)  query.fuelTypeId  = String(f.fuelTypeId)
+    if (f.bodyTypeId)  query.bodyTypeId  = String(f.bodyTypeId)
+    if (f.priceFrom)   query.priceFrom   = String(f.priceFrom)
+    if (f.priceTo)     query.priceTo     = String(f.priceTo)
+    if (f.yearFrom)    query.yearFrom    = String(f.yearFrom)
+    if (f.yearTo)      query.yearTo      = String(f.yearTo)
+    if (f.sortBy)      query.sortBy      = f.sortBy
+    if (p > 1)         query.page        = String(p)
+    router.replace({ query })
+
     try {
         const body: Record<string, unknown> = { page: p, pageSize, sortBy: f.sortBy || undefined }
         if (f.categoryId) body.categoryId = f.categoryId
@@ -190,6 +209,7 @@ async function load(p: number = page.value) {
         if (f.brandId) body.brandId = f.brandId
         if (f.modelId) body.modelId = f.modelId
         if (f.fuelTypeId) body.fuelTypeId = f.fuelTypeId
+        if (f.bodyTypeId) body.bodyTypeId = f.bodyTypeId
         if (f.priceFrom) body.priceFrom = f.priceFrom
         if (f.priceTo) body.priceTo = f.priceTo
         if (f.yearFrom) body.yearFrom = f.yearFrom
@@ -201,11 +221,24 @@ async function load(p: number = page.value) {
 }
 
 onMounted(async () => {
+    fetchFavoriteIds()
+    if (route.query.page)       page.value   = Number(route.query.page)
     if (route.query.categoryId) f.categoryId = Number(route.query.categoryId)
+    if (route.query.brandId)    f.brandId    = Number(route.query.brandId)
+    if (route.query.modelId)    f.modelId    = Number(route.query.modelId)
+    if (route.query.fuelTypeId) f.fuelTypeId = Number(route.query.fuelTypeId)
+    if (route.query.bodyTypeId) f.bodyTypeId = Number(route.query.bodyTypeId)
+    if (route.query.priceFrom)  f.priceFrom  = Number(route.query.priceFrom)
+    if (route.query.priceTo)    f.priceTo    = Number(route.query.priceTo)
+    if (route.query.yearFrom)   f.yearFrom   = Number(route.query.yearFrom)
+    if (route.query.yearTo)     f.yearTo     = Number(route.query.yearTo)
+    if (route.query.textSearch) f.textSearch = String(route.query.textSearch)
+    if (route.query.sortBy)     f.sortBy     = String(route.query.sortBy)
     ;[brands.value, fuelTypes.value, categories.value] = await Promise.all([
         fetchBrands(), fetchFuelTypes(), fetchCategories()
     ])
-    await load(1)
+    if (f.brandId) models.value = await fetchModels(f.brandId)
+    await load(page.value)
 })
 </script>
 

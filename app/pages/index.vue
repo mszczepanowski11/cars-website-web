@@ -93,6 +93,7 @@ import type { TaxonomyItem, CarAdvert, PagedResult } from '~/types'
 const config = useRuntimeConfig()
 const base = config.public.apiBase
 const { fetchBrands, fetchModels, fetchBodyTypes } = useTaxonomy()
+const { fetchFavoriteIds } = useFavorites()
 
 const brands = ref<TaxonomyItem[]>([])
 const models = ref<TaxonomyItem[]>([])

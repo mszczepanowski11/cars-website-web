@@ -71,6 +71,7 @@
               <v-btn color="error" variant="outlined" block @click="del">
                 Usuń ogłoszenie
               </v-btn>
+              <v-alert v-if="deleteError" type="error" class="mt-3">{{ deleteError }}</v-alert>
             </div>
           </div>
         </div>
@@ -87,14 +88,17 @@ const config = useRuntimeConfig()
 const base   = config.public.apiBase
 const token  = useCookie('auth_token')
 
-const advert  = ref<CarAdvert | null>(null)
-const loading = ref(true)
-const mainImg = ref('')
+const advert      = ref<CarAdvert | null>(null)
+const loading     = ref(true)
+const mainImg     = ref('')
+const deleteError = ref('')
 
 const currentUserId = computed(() => {
   if (!token.value) return null
   try {
-    const payload = JSON.parse(atob(token.value.split('.')[1]))
+    const part = token.value.split('.')[1] ?? ''
+    const base64 = part.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(part.length / 4) * 4, '=')
+    const payload = JSON.parse(atob(base64))
     return Number(
       payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ?? payload.sub
     )
@@ -105,11 +109,16 @@ const isOwner = computed(() => advert.value && currentUserId.value === advert.va
 
 async function del() {
   if (!confirm('Czy na pewno chcesz usunąć to ogłoszenie?')) return
-  await $fetch(`${base}api/Advert/${advert.value!.id}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token.value}` },
-  })
-  navigateTo('/my-adverts')
+  deleteError.value = ''
+  try {
+    await $fetch(`${base}api/Advert/${advert.value!.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token.value}` },
+    })
+    navigateTo('/my-adverts')
+  } catch {
+    deleteError.value = 'Nie udało się usunąć ogłoszenia. Spróbuj ponownie.'
+  }
 }
 
 onMounted(async () => {

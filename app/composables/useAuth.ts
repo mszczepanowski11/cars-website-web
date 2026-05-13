@@ -22,7 +22,7 @@ export const useAuth = () => {
             token.value = data.token
             await navigateTo('/')
         } catch (err: any) {
-            error.value = err?.data || 'Login failed'
+            error.value = err?.data || 'Nieprawidłowy email lub hasło.'
         } finally {
             loading.value = false
         }
@@ -55,7 +55,7 @@ export const useAuth = () => {
             await navigateTo('/')
 
         } catch (err: any) {
-            error.value = err?.data || 'Registration failed'
+            error.value = err?.data || 'Błąd rejestracji. Sprawdź dane i spróbuj ponownie.'
         } finally {
             loading.value = false
 

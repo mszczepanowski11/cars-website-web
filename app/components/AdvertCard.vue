@@ -1,43 +1,14 @@
 <script setup lang="ts">
 import type { CarAdvert } from '~/types'
 const props = defineProps<{ advert: CarAdvert }>()
-const config = useRuntimeConfig()
-const base = config.public.apiBase
-const token = useCookie('auth_token')
-const isLoggedIn = computed(() => !!token.value)
+const { isFavorite, toggleFavorite, isLoggedIn } = useFavorites()
 
 const mainImage = computed(() => props.advert.images?.find(i => i.isMain) ?? props.advert.images?.[0])
-const isFav = ref(false)
 
 async function toggleFav(e: Event) {
     e.preventDefault()
-    if (!isLoggedIn.value) return
-    try {
-        if (isFav.value) {
-            await $fetch(`${base}api/Favorite/${props.advert.id}`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${token.value}` }
-            })
-        } else {
-            await $fetch(`${base}api/Favorite/${props.advert.id}`, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${token.value}` }
-            })
-        }
-        isFav.value = !isFav.value
-    } catch { }
+    await toggleFavorite(props.advert.id)
 }
-
-onMounted(async () => {
-    if (!isLoggedIn.value) return
-    try {
-        const r = await $fetch<{ isFavorite: boolean }>(
-            `${base}api/Favorite/${props.advert.id}/check`,
-            { headers: { Authorization: `Bearer ${token.value}` } }
-        )
-        isFav.value = r.isFavorite
-    } catch { }
-})
 </script>
 
 <template>
@@ -47,8 +18,8 @@ onMounted(async () => {
                 :src="mainImage?.url ?? 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop'"
                 :alt="advert.title"
             />
-            <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFav }" @click="toggleFav">
-                <v-icon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
+            <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" @click="toggleFav">
+                <v-icon :icon="isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
             </button>
         </div>
         <div class="car-body">

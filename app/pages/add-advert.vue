@@ -66,6 +66,8 @@
 <script setup lang="ts">
 import type { TaxonomyItem, Generation, EngineVersion, Feature } from '~/types'
 
+definePageMeta({ middleware: 'auth' })
+
 const config = useRuntimeConfig()
 const base = config.public.apiBase
 const token = useCookie('auth_token')
@@ -118,7 +120,6 @@ async function onGen() {
 
 async function submit() {
     error.value = ''
-    if (!token.value) { navigateTo('/login'); return }
     loading.value = true
     try {
         await $fetch(`${base}api/Advert`, {
@@ -135,7 +136,6 @@ async function submit() {
 }
 
 onMounted(async () => {
-    if (!token.value) { navigateTo('/login'); return }
     ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, allFeatures.value] = await Promise.all([
         fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchFeatures()
     ])

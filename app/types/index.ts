@@ -39,6 +39,7 @@ export interface UserStats {
 
 export interface UserProfile {
     id: number; name: string; surname: string; email: string; phoneNumber: string
+    createdAt: string
 }
 
 

@@ -28,6 +28,8 @@
 <script setup lang="ts">
 import type { CarAdvert, PagedResult } from '~/types'
 
+definePageMeta({ middleware: 'auth' })
+
 const config = useRuntimeConfig()
 const base = config.public.apiBase
 const token = useCookie('auth_token')
@@ -53,7 +55,6 @@ async function load(p: number = page.value) {
 }
 
 onMounted(async () => {
-    if (!token.value) { navigateTo('/login'); return }
     await load(1)
 })
 </script>

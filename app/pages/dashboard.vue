@@ -154,7 +154,7 @@
 import { useUser } from '~/composables/useUser'
 import type { CarAdvert, UserProfile, UserStats } from '~/types'
 
-definePageMeta({ middleware: 'auth' }as any)
+definePageMeta({ middleware: 'auth' })
 
 const { fetchProfile, fetchStats } = useUser()
 const { logout: authLogout } = useAuth()
@@ -174,7 +174,8 @@ const initials = computed(() => {
 })
 
 const memberSince = computed(() => {
-    return new Date().toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' })
+    if (!profile.value?.createdAt) return ''
+    return new Date(profile.value.createdAt).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' })
 })
 
 const savedSearches = [
