@@ -1,15 +1,20 @@
+import { fileURLToPath } from 'node:url'
+
+const scss = (file: string) =>
+  fileURLToPath(new URL(`./app/assets/scss/${file}`, import.meta.url)).replace(/\\/g, '/')
+
 export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module'],
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  css: ['~/assets/scss/main.scss'],
+  css: ['~/assets/scss/main.scss', '@mdi/font/css/materialdesignicons.min.css'],
 
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@import "~/assets/scss/variables"; @import "~/assets/scss/mixins";`
+          additionalData: `@import "${scss('_variables')}"; @import "${scss('_mixins')}";`
         }
       }
     }

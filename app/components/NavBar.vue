@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const token = useCookie('auth_token')
-const isLoggedIn = computed(() => !!token.value)
-function logout() { token.value = null; navigateTo('/') }
+const authStatus = useCookie('auth_status')
+const isLoggedIn = computed(() => !!authStatus.value)
+const { logout } = useAuth()
 </script>
 
 <template>

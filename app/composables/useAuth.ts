@@ -1,7 +1,4 @@
 export const useAuth = () => {
-
-    const config = useRuntimeConfig()
-    const token = useCookie('auth_token')
     const loading = ref(false)
     const error = ref('')
 
@@ -9,64 +6,34 @@ export const useAuth = () => {
         loading.value = true
         error.value = ''
         try {
-            const data = await $fetch<{ token: string }>(
-                `${config.public.apiBase}api/Auth/login`,
-                {
-                    method: 'POST',
-                    body: credentials,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            )
-            token.value = data.token
+            await $fetch('/api/auth/login', { method: 'POST', body: credentials })
             await navigateTo('/')
         } catch (err: any) {
-            error.value = err?.data || 'Nieprawidłowy email lub hasło.'
+            error.value = err?.data?.statusMessage || err?.message || 'Nieprawidłowy email lub hasło.'
         } finally {
             loading.value = false
         }
     }
 
-    async function register(dto: {
-        name: string;
-        surname: string;
-        email: string,
-        phonenumber: string,
-        password: string
-    }) {
-
+    async function register(dto: { name: string; surname: string; email: string; phonenumber: string; password: string }) {
         loading.value = true
         error.value = ''
-
         try {
-            const data = await $fetch<{ token: string }>(
-                `${config.public.apiBase}api/Auth/register`,
-                {
-                    method: 'POST',
-                    body: JSON.stringify({ ...dto }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            )
-
-            token.value = data.token
+            await $fetch('/api/auth/register', { method: 'POST', body: dto })
             await navigateTo('/')
-
         } catch (err: any) {
-            error.value = err?.data || 'Błąd rejestracji. Sprawdź dane i spróbuj ponownie.'
+            error.value = err?.data?.statusMessage || err?.message || 'Błąd rejestracji. Sprawdź dane i spróbuj ponownie.'
         } finally {
             loading.value = false
-
         }
     }
 
-    function logout() {
-        token.value = null
-        navigateTo('/')
+    async function logout() {
+        try {
+            await $fetch('/api/auth/logout', { method: 'POST' })
+        } catch {}
+        await navigateTo('/')
     }
 
-
-    return { login,logout, register, loading, error }
+    return { login, logout, register, loading, error }
 }

@@ -1,24 +1,19 @@
 import type { PagedResult, CarAdvert } from '~/types'
 
-const favoriteIds = ref<number[]>([])
-let initialized = false
+const favoriteIds = useState<number[]>('favorite-ids', () => [])
+const initialized = useState('favorites-initialized', () => false)
 
 export const useFavorites = () => {
-    const config = useRuntimeConfig()
-    const base = config.public.apiBase
-    const token = useCookie('auth_token')
-    const isLoggedIn = computed(() => !!token.value)
+    const authStatus = useCookie('auth_status')
+    const isLoggedIn = computed(() => !!authStatus.value)
 
     async function fetchFavoriteIds() {
-        if (!isLoggedIn.value) { favoriteIds.value = []; initialized = false; return }
-        if (initialized) return
+        if (!isLoggedIn.value) { favoriteIds.value = []; initialized.value = false; return }
+        if (initialized.value) return
         try {
-            const r = await $fetch<PagedResult<CarAdvert>>(
-                `${base}api/Favorite?page=1&pageSize=200`,
-                { headers: { Authorization: `Bearer ${token.value}` } }
-            )
+            const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Favorite?page=1&pageSize=200')
             favoriteIds.value = r.items.map(a => a.id)
-            initialized = true
+            initialized.value = true
         } catch {}
     }
 
@@ -31,16 +26,10 @@ export const useFavorites = () => {
         const idx = favoriteIds.value.indexOf(id)
         try {
             if (idx !== -1) {
-                await $fetch(`${base}api/Favorite/${id}`, {
-                    method: 'DELETE',
-                    headers: { Authorization: `Bearer ${token.value}` }
-                })
+                await $fetch(`/api/proxy/api/Favorite/${id}`, { method: 'DELETE' })
                 favoriteIds.value.splice(idx, 1)
             } else {
-                await $fetch(`${base}api/Favorite/${id}`, {
-                    method: 'POST',
-                    headers: { Authorization: `Bearer ${token.value}` }
-                })
+                await $fetch(`/api/proxy/api/Favorite/${id}`, { method: 'POST' })
                 favoriteIds.value.push(id)
             }
         } catch {}

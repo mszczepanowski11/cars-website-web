@@ -42,6 +42,21 @@
                     </div>
 
                     <div class="fsec">
+                        <h3>Zdjęcia <span class="img-count">{{ selectedFiles.length }}/20</span></h3>
+                        <div class="img-grid">
+                            <div v-for="(preview, i) in previews" :key="i" class="img-thumb">
+                                <img :src="preview" />
+                                <button type="button" class="img-remove" @click="removeImage(i)">×</button>
+                                <span v-if="i === 0" class="img-main-badge">Główne</span>
+                            </div>
+                            <label v-if="selectedFiles.length < 20" class="img-add">
+                                <input type="file" multiple accept="image/jpeg,image/png,image/webp" @change="onFilesSelected" hidden />
+                                <span>+ Dodaj</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="fsec">
                         <h3>Wyposażenie</h3>
                         <div v-for="(group, cat) in featureGroups" :key="cat" class="feat-group">
                             <h4>{{ cat }}</h4>
@@ -68,9 +83,6 @@ import type { TaxonomyItem, Generation, EngineVersion, Feature } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
 
-const config = useRuntimeConfig()
-const base = config.public.apiBase
-const token = useCookie('auth_token')
 const { fetchBrands, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchFeatures } = useTaxonomy()
 
 const brands = ref<TaxonomyItem[]>([])
@@ -83,6 +95,28 @@ const bodyTypes = ref<TaxonomyItem[]>([])
 const allFeatures = ref<Feature[]>([])
 const loading = ref(false)
 const error = ref('')
+const selectedFiles = ref<File[]>([])
+const previews = ref<string[]>([])
+
+function onFilesSelected(e: Event) {
+    const input = e.target as HTMLInputElement
+    const files = Array.from(input.files ?? [])
+    const remaining = 20 - selectedFiles.value.length
+    for (const file of files.slice(0, remaining)) {
+        selectedFiles.value.push(file)
+        previews.value.push(URL.createObjectURL(file))
+    }
+    input.value = ''
+}
+
+function removeImage(index: number) {
+    const previewUrl = previews.value[index]
+    if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+    }
+    selectedFiles.value.splice(index, 1)
+    previews.value.splice(index, 1)
+}
 
 const form = reactive({
     title: '', description: '',
@@ -122,12 +156,16 @@ async function submit() {
     error.value = ''
     loading.value = true
     try {
-        await $fetch(`${base}api/Advert`, {
+        const { id } = await $fetch<{ id: number }>('/api/proxy/api/Advert', {
             method: 'POST',
-            headers: { Authorization: `Bearer ${token.value}` },
             body: { ...form },
         })
-        navigateTo('/my-adverts')
+        for (const file of selectedFiles.value) {
+            const fd = new FormData()
+            fd.append('file', file)
+            await $fetch(`/api/advert/${id}/images`, { method: 'POST', body: fd })
+        }
+        await navigateTo('/my-adverts')
     } catch (e: any) {
         error.value = e?.data?.message ?? 'Błąd podczas zapisywania ogłoszenia.'
     } finally {
@@ -205,5 +243,83 @@ onMounted(async () => {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 4px;
+}
+
+.img-count {
+    font-size: 14px;
+    font-weight: 400;
+    color: $text-dim;
+}
+
+.img-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.img-thumb {
+    position: relative;
+    aspect-ratio: 4/3;
+    border-radius: $r-md;
+    overflow: hidden;
+    border: 1px solid $border;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.img-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.85);
+    }
+}
+
+.img-main-badge {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: $r-sm;
+}
+
+.img-add {
+    aspect-ratio: 4/3;
+    border-radius: $r-md;
+    border: 2px dashed $border;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $text-dim;
+    font-size: 14px;
+    font-weight: 500;
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover {
+        border-color: $red;
+        color: $red;
+    }
 }
 </style>

@@ -23,9 +23,6 @@
 <script setup lang="ts">
 import type { CarAdvert, PagedResult } from '~/types'
 definePageMeta({ middleware: 'auth' })
-const config = useRuntimeConfig()
-const base = config.public.apiBase
-const token = useCookie('auth_token')
 const adverts = ref<CarAdvert[]>([])
 const total = ref(0)
 const page = ref(1)
@@ -37,9 +34,7 @@ async function load(p: number = page.value) {
     page.value = p
     loading.value = true
     try {
-        const r = await $fetch<PagedResult<CarAdvert>>(`${base}api/Favorite?page=${p}&pageSize=${pageSize}`, {
-            headers: { Authorization: `Bearer ${token.value}` }
-        })
+        const r = await $fetch<PagedResult<CarAdvert>>(`/api/proxy/api/Favorite?page=${p}&pageSize=${pageSize}`)
         adverts.value = r.items
         total.value = r.totalCount
     } finally { loading.value = false }

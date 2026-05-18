@@ -2,7 +2,7 @@
     <div class="dash-page">
         <aside class="dash-sidebar">
             <nav class="dash-nav">
-                <NuxtLink to="/dashboard" class="dash-nav-item" :class="{ active: activeTab === 'summary' }" @click="activeTab = 'summary'">
+                <NuxtLink to="/dashboard" class="dash-nav-item" :class="{ active: route.path === '/dashboard' }">
                     <v-icon icon="mdi-view-dashboard-outline" size="20" />
                     <span>Podsumowanie</span>
                 </NuxtLink>
@@ -36,7 +36,7 @@
                     <v-icon icon="mdi-cog-outline" size="20" />
                     <span>Ustawienia</span>
                 </div>
-                <div class="dash-nav-item danger" @click="logout">
+                <div class="dash-nav-item danger" @click="authLogout">
                     <v-icon icon="mdi-logout" size="20" />
                     <span>Wyloguj się</span>
                 </div>
@@ -54,6 +54,8 @@
             <div v-if="loading" class="d-flex justify-center mt-16">
                 <v-progress-circular indeterminate color="primary" size="60" />
             </div>
+
+            <v-alert v-else-if="error" type="error" class="mb-4">{{ error }}</v-alert>
 
             <template v-else>
                 <div class="profile-card">
@@ -151,22 +153,19 @@
 </template>
 
 <script setup lang="ts">
-import { useUser } from '~/composables/useUser'
 import type { CarAdvert, UserProfile, UserStats } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
 
 const { fetchProfile, fetchStats } = useUser()
 const { logout: authLogout } = useAuth()
-const config = useRuntimeConfig()
-const base = config.public.apiBase
-const token = useCookie('auth_token')
+const route = useRoute()
 
 const profile = ref<UserProfile | null>(null)
 const stats = ref<UserStats | null>(null)
 const myAdverts = ref<CarAdvert[]>([])
 const loading = ref(true)
-const activeTab = ref('summary')
+const error = ref('')
 
 const initials = computed(() => {
     if (!profile.value) return '?'
@@ -184,19 +183,14 @@ const savedSearches = [
     { label: 'Mercedes C klasa', meta: 'Warszawa, +30 km • Od 2014 • Diesel' },
 ]
 
-function logout() {
-    authLogout()
-}
-
 onMounted(async () => {
     try {
         ;[profile.value, stats.value] = await Promise.all([fetchProfile(), fetchStats()])
-        const r = await $fetch<{ items: CarAdvert[] }>(`${base}api/Advert/user?page=1&pageSize=4`, {
-            headers: { Authorization: `Bearer ${token.value}` }
-        })
+        const r = await $fetch<{ items: CarAdvert[] }>('/api/proxy/api/Advert/user?page=1&pageSize=4')
         myAdverts.value = r.items
-    } catch { }
-    finally { loading.value = false }
+    } catch (e: any) {
+        error.value = e?.data?.statusMessage ?? 'Błąd ładowania danych.'
+    } finally { loading.value = false }
 })
 </script>
 

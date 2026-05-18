@@ -30,9 +30,6 @@ import type { CarAdvert, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
 
-const config = useRuntimeConfig()
-const base = config.public.apiBase
-const token = useCookie('auth_token')
 const adverts = ref<CarAdvert[]>([])
 const total = ref(0)
 const page = ref(1)
@@ -44,8 +41,7 @@ async function load(p: number = page.value) {
     loading.value = true
     try {
         const r = await $fetch<PagedResult<CarAdvert>>(
-            `${base}api/Advert/user?page=${p}&pageSize=${pageSize}`,
-            { headers: { Authorization: `Bearer ${token.value}` } }
+            `/api/proxy/api/Advert/user?page=${p}&pageSize=${pageSize}`
         )
         adverts.value = r.items
         total.value = r.totalCount
