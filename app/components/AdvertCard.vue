@@ -30,8 +30,13 @@ async function toggleFav(e: Event) {
                 <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage.toLocaleString('pl') }} km</span>
             </div>
             <div class="car-price">{{ advert.price.toLocaleString('pl') }} zł</div>
-            <div v-if="advert.city" class="car-city">
-                <v-icon icon="mdi-map-marker-outline" size="14" class="mr-1" />{{ advert.city }}
+            <div v-if="advert.city" class="car-footer">
+                <span class="car-city">
+                    <v-icon icon="mdi-map-marker-outline" size="14" class="mr-1" />{{ advert.city }}
+                </span>
+                <span class="car-verified">
+                    <v-icon icon="mdi-shield-check" size="16" />
+                </span>
             </div>
         </div>
     </NuxtLink>
@@ -43,21 +48,25 @@ async function toggleFav(e: Event) {
     overflow: hidden;
     color: $text;
     display: block;
-    transition: transform 0.3s ease;
-    &:hover { transform: translateY(-6px); }
+    transition: transform 0.3s ease, border-color 0.3s ease;
+
+    &:hover {
+        transform: translateY(-6px);
+        border-color: rgba($red, 0.3);
+    }
 }
 
 .card-img-wrap {
     position: relative;
-    img { width: 100%; height: 220px; object-fit: cover; display: block; }
+    img { width: 100%; height: 200px; object-fit: cover; display: block; }
 }
 
 .fav-btn {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: rgba(0,0,0,0.6);
     backdrop-filter: blur(6px);
@@ -73,27 +82,38 @@ async function toggleFav(e: Event) {
     &.active { color: $red; }
 }
 
-.car-body { padding: 18px; }
-
-.car-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+.car-body { padding: 16px; }
+.car-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
 
 .car-meta {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
     color: $text-dim;
-    font-size: 13px;
-    margin-bottom: 14px;
+    font-size: 12px;
+    margin-bottom: 12px;
 
     span { display: flex; align-items: center; }
 }
 
-.car-price { color: $red; font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+.car-price { color: $red; font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+
+.car-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
 .car-city {
     display: flex;
     align-items: center;
     color: $text-dim;
-    font-size: 13px;
+    font-size: 12px;
+}
+
+.car-verified {
+    color: $text-dim;
+    display: flex;
+    align-items: center;
 }
 </style>

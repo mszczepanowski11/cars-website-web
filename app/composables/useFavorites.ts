@@ -1,9 +1,8 @@
 import type { PagedResult, CarAdvert } from '~/types'
 
-const favoriteIds = useState<number[]>('favorite-ids', () => [])
-const initialized = useState('favorites-initialized', () => false)
-
 export const useFavorites = () => {
+    const favoriteIds = useState<number[]>('favorite-ids', () => [])
+    const initialized = useState('favorites-initialized', () => false)
     const authStatus = useCookie('auth_status')
     const isLoggedIn = computed(() => !!authStatus.value)
 

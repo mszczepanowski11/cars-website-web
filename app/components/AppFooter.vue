@@ -6,73 +6,44 @@
         <div class="footer-brand">
           <div class="footer-logo">CARI<span>ZO</span></div>
           <p class="footer-desc">Nowoczesna platforma motoryzacyjna dla ludzi, którzy kochają samochody.</p>
-          <div class="social-links">
-            <a href="#" class="social-link" title="TikTok"><v-icon size="18">mdi-music-note</v-icon></a>
-            <a href="#" class="social-link" title="Instagram"><v-icon size="18">mdi-instagram</v-icon></a>
-            <a href="#" class="social-link" title="YouTube"><v-icon size="18">mdi-youtube</v-icon></a>
-            <a href="#" class="social-link" title="Facebook"><v-icon size="18">mdi-facebook</v-icon></a>
+          <div class="footer-social">
+            <a href="#" class="social-link" title="TikTok"><v-icon icon="mdi-music-note" size="18" /></a>
+            <a href="#" class="social-link" title="Instagram"><v-icon icon="mdi-instagram" size="18" /></a>
+            <a href="#" class="social-link" title="Facebook"><v-icon icon="mdi-facebook" size="18" /></a>
+            <a href="#" class="social-link" title="YouTube"><v-icon icon="mdi-youtube" size="18" /></a>
           </div>
         </div>
 
-        <div>
-          <div class="col-title">Nawigacja</div>
-          <div class="footer-col">
-            <NuxtLink to="/">Strona główna</NuxtLink>
-            <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
-            <NuxtLink to="/categories">Kategorie</NuxtLink>
-            <NuxtLink to="/#about">O nas</NuxtLink>
-            <a href="#">Jak to działa</a>
-            <NuxtLink to="/#contact">Kontakt</NuxtLink>
-          </div>
+        <div class="footer-col">
+          <h4>Nawigacja</h4>
+          <NuxtLink to="/">Strona główna</NuxtLink>
+          <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
+          <NuxtLink to="/categories">Kategorie</NuxtLink>
+          <NuxtLink to="/#about">O nas</NuxtLink>
+          <NuxtLink to="/#contact">Kontakt</NuxtLink>
         </div>
 
-        <div>
-          <div class="col-title">Konto</div>
-          <div class="footer-col">
-            <NuxtLink to="/login">Zaloguj się</NuxtLink>
-            <NuxtLink to="/register">Rejestracja</NuxtLink>
-            <NuxtLink to="/dashboard">Moje ogłoszenia</NuxtLink>
-            <NuxtLink to="/favorites">Ulubione</NuxtLink>
-          </div>
+        <div class="footer-col">
+          <h4>Informacje</h4>
+          <a href="#">Jak to działa</a>
+          <a href="#">Regulamin</a>
+          <a href="#">Polityka prywatności</a>
+          <a href="#">Pomoc</a>
+          <a href="#">FAQ</a>
         </div>
 
-        <div>
-          <div class="col-title">Pomoc</div>
-          <div class="footer-col">
-            <a href="#">Regulamin</a>
-            <a href="#">Polityka prywatności</a>
-            <a href="#">Centrum pomocy</a>
-          </div>
+        <div class="footer-col">
+          <h4>Dla użytkowników</h4>
+          <NuxtLink to="/dashboard">Moje konto</NuxtLink>
+          <NuxtLink to="/favorites">Ulubione</NuxtLink>
+          <NuxtLink to="/my-adverts">Moje ogłoszenia</NuxtLink>
+          <a href="#">Powiadomienia</a>
         </div>
 
-        <div>
-          <div class="col-title">Kategorie</div>
-          <div class="footer-col">
-            <a href="#">Auta osobowe</a>
-            <a href="#">Dostawcze</a>
-            <a href="#">Ciężarowe</a>
-            <a href="#">Motocykle</a>
-            <a href="#">Maszyny</a>
-            <a href="#">Części i akcesoria</a>
-          </div>
-        </div>
-
-        <div>
-          <div class="col-title">Kontakt</div>
-          <div class="footer-col contact-col">
-            <a href="tel:+48123456789">
-              <v-icon size="15" class="contact-icon">mdi-phone-outline</v-icon>
-              +48 123 456 789
-            </a>
-            <a href="mailto:kontakt@carizo.eu">
-              <v-icon size="15" class="contact-icon">mdi-email-outline</v-icon>
-              kontakt@carizo.eu
-            </a>
-            <span>
-              <v-icon size="15" class="contact-icon">mdi-map-marker-outline</v-icon>
-              ul. Motoryzacyjna 1<br>00-001 Warszawa
-            </span>
-          </div>
+        <div class="footer-col">
+          <h4>Aplikacja</h4>
+          <a href="#">Pobierz na iOS</a>
+          <a href="#">Pobierz na Android</a>
         </div>
 
       </div>
@@ -81,6 +52,7 @@
     <div class="footer-bottom">
       <div class="footer-bottom-inner">
         <span>© 2024 CARIZO. Wszelkie prawa zastrzeżone.</span>
+        <span class="footer-credit">Stworzone z pasją do motoryzacji. <span class="heart">❤</span></span>
       </div>
     </div>
   </footer>
@@ -88,23 +60,20 @@
 
 <style lang="scss" scoped>
 .carizo-footer {
-  margin-top: 90px;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid $border;
   background: $bg;
 }
 
-.footer-main {
-  padding: 70px 0 50px;
-}
+.footer-main { padding: 70px 0 50px; }
 
 .footer-grid {
   @include container;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.4fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
   gap: 40px;
 
-  @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
-  @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+  @include respond-to(md) { grid-template-columns: 1fr 1fr 1fr; }
+  @include respond-to(sm) { grid-template-columns: 1fr 1fr; }
   @include respond-to(xs) { grid-template-columns: 1fr; }
 }
 
@@ -113,51 +82,38 @@
 }
 
 .footer-logo {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 900;
   letter-spacing: 5px;
   color: $text;
   margin-bottom: 14px;
+
   span { color: $red; }
 }
 
 .footer-desc {
   color: $text-dark;
-  font-size: 14px;
   line-height: 1.7;
-  max-width: 260px;
+  font-size: 14px;
+  max-width: 280px;
+  margin-bottom: 20px;
 }
 
-.social-links {
-  display: flex;
-  gap: 10px;
-  margin-top: 22px;
-}
+.footer-social { display: flex; gap: 8px; }
 
 .social-link {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
+  background: $card;
   border: 1px solid $border;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $text-muted;
+  color: $text-dim;
   transition: border-color 0.2s, color 0.2s;
 
-  &:hover {
-    border-color: rgba($red, 0.5);
-    color: $text;
-  }
-}
-
-.col-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: $text-muted;
-  margin-bottom: 20px;
+  &:hover { border-color: $text-muted; color: $text; }
 }
 
 .footer-col {
@@ -165,49 +121,38 @@
   flex-direction: column;
   gap: 12px;
 
+  h4 {
+    color: $text;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
   a {
-    color: $text-dark;
+    color: $text-muted;
     font-size: 14px;
-    text-decoration: none;
     transition: color 0.2s;
     &:hover { color: $text; }
   }
-}
-
-.contact-col {
-  a, span {
-    display: flex;
-    align-items: flex-start;
-    gap: 9px;
-    color: $text-dark;
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.2s;
-    line-height: 1.5;
-
-    &:hover { color: $text; }
-  }
-}
-
-.contact-icon {
-  flex-shrink: 0;
-  margin-top: 2px;
-  color: $red;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid $border;
   padding: 20px 0;
 }
 
 .footer-bottom-inner {
   @include container;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  color: $text-dark;
+  font-size: 13px;
 
-  span {
-    font-size: 12px;
-    color: $text-faint;
-  }
+  @include respond-to(sm) { flex-direction: column; gap: 8px; text-align: center; }
 }
+
+.heart { color: $red; }
 </style>

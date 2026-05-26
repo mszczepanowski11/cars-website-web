@@ -6,6 +6,7 @@ const scss = (file: string) =>
 export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module'],
   compatibilityDate: '2025-07-15',
+  ssr: false,
   devtools: { enabled: true },
 
   css: ['~/assets/scss/main.scss', '@mdi/font/css/materialdesignicons.min.css'],
