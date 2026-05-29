@@ -1,13 +1,13 @@
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
     const token = getCookie(event, 'auth_token')
+    const method = getMethod(event)
 
-    if (!token) {
+    if (!token && !['GET', 'HEAD'].includes(method)) {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
 
     const path = event.context.params?.path ?? ''
-    const method = getMethod(event)
     const query = getQuery(event)
 
     const hasBody = !['GET', 'HEAD', 'DELETE'].includes(method)
@@ -18,7 +18,8 @@ export default defineEventHandler(async (event) => {
         targetUrl.searchParams.set(k, String(v))
     }
 
-    const headers: Record<string, string> = { Authorization: `Bearer ${token}` }
+    const headers: Record<string, string> = {}
+    if (token) headers['Authorization'] = `Bearer ${token}`
     if (hasBody) headers['Content-Type'] = 'application/json'
 
     return $fetch(targetUrl.toString(), { method: method as any, body, headers })

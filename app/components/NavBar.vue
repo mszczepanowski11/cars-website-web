@@ -2,6 +2,8 @@
 const authStatus = useCookie('auth_status')
 const isLoggedIn = computed(() => !!authStatus.value)
 const { logout } = useAuth()
+const { unreadCount, fetchUnreadCount } = useMessages()
+onMounted(() => fetchUnreadCount())
 </script>
 
 <template>
@@ -20,6 +22,13 @@ const { logout } = useAuth()
                 <NuxtLink v-if="isLoggedIn" to="/favorites" class="nav-icon-btn" title="Ulubione">
                     <v-icon icon="mdi-heart-outline" size="22" />
                     <span class="nav-icon-label">Ulubione</span>
+                </NuxtLink>
+                <NuxtLink v-if="isLoggedIn" to="/messages" class="nav-icon-btn" title="Wiadomości">
+                    <v-badge v-if="unreadCount > 0" :content="String(unreadCount)" color="primary" floating>
+                        <v-icon icon="mdi-message-outline" size="22" />
+                    </v-badge>
+                    <v-icon v-else icon="mdi-message-outline" size="22" />
+                    <span class="nav-icon-label">Wiadomości</span>
                 </NuxtLink>
                 <template v-if="!isLoggedIn">
                     <NuxtLink to="/login" class="btn-login">Zaloguj się</NuxtLink>
@@ -43,9 +52,9 @@ const { logout } = useAuth()
     top: 0;
     width: 100%;
     z-index: 999;
-    background: rgba(0,0,0,0.9);
+    background: rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .nav-inner {
@@ -63,21 +72,32 @@ const { logout } = useAuth()
     letter-spacing: 5px;
     color: $text;
     text-decoration: none;
-    span { color: $red; }
+
+    span {
+        color: $red;
+    }
 }
 
 .nav-links {
     display: flex;
     gap: 30px;
+
     a {
         color: $text-link;
         font-size: 14px;
         font-weight: 500;
         text-decoration: none;
         transition: color 0.2s;
-        &:hover, &.router-link-active { color: $text; }
+
+        &:hover,
+        &.router-link-active {
+            color: $text;
+        }
     }
-    @include respond-to(sm) { display: none; }
+
+    @include respond-to(sm) {
+        display: none;
+    }
 }
 
 .nav-btns {
@@ -96,19 +116,33 @@ const { logout } = useAuth()
     padding: 6px 10px;
     border-radius: $r-sm;
     transition: color 0.2s;
-    &:hover { color: $text; }
+
+    &:hover {
+        color: $text;
+    }
 }
 
-.nav-icon-label { @include respond-to(md) { display: none; } }
+.nav-icon-label {
+    @include respond-to(md) {
+        display: none;
+    }
+}
 
 .btn-login {
     @include btn(transparent, $text-muted);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     font-size: 13px;
-    &:hover { background: rgba(255,255,255,0.05); color: $text; }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: $text;
+    }
 }
 
-.btn-add { @include btn($red); font-size: 13px; }
+.btn-add {
+    @include btn($red);
+    font-size: 13px;
+}
 </style>

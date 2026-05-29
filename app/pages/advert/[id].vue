@@ -10,16 +10,17 @@
                 </NuxtLink>
                 <div class="topbar-actions">
                     <button class="icon-action" @click="toggleFav">
-                        <v-icon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="18" :class="{ 'heart-active': isFav }" />
+                        <v-icon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="18"
+                            :class="{ 'heart-active': isFav }" />
                         Ulubione
                     </button>
                     <button class="icon-action">
                         <v-icon icon="mdi-share-variant-outline" size="18" />
                         Udostępnij
                     </button>
-                    <button class="btn-contact-top">
+                    <button class="btn-contact-top" :disabled="contactLoading" @click="contactSeller">
                         <v-icon icon="mdi-phone-outline" size="16" />
-                        Zadzwoń / Napisz
+                        Napisz wiadomość
                     </button>
                 </div>
             </div>
@@ -75,7 +76,8 @@
                         </div>
                     </div>
                     <div class="title-right">
-                        <div class="price">{{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' zł' : '—' }}</div>
+                        <div class="price">{{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' zł' : '—' }}
+                        </div>
                         <div class="price-sub">Do negocjacji</div>
                         <div class="location" v-if="advert?.city">
                             <v-icon icon="mdi-map-marker-outline" size="14" />
@@ -90,14 +92,17 @@
                         <v-icon icon="mdi-speedometer" size="18" class="sc-icon" />
                         <div>
                             <div class="sc-label">Przebieg</div>
-                            <div class="sc-val">{{ advert?.mileage ? Number(advert.mileage).toLocaleString('pl') + ' km' : '—' }}</div>
+                            <div class="sc-val">{{ advert?.mileage ? Number(advert.mileage).toLocaleString('pl') + ' km'
+                                : '—' }}</div>
                         </div>
                     </div>
                     <div class="stat-cell">
                         <v-icon icon="mdi-lightning-bolt" size="18" class="sc-icon" />
                         <div>
                             <div class="sc-label">Moc</div>
-                            <div class="sc-val">{{ advert?.engineVersion?.horsepower ? advert.engineVersion.horsepower + ' KM' : '—' }}</div>
+                            <div class="sc-val">{{ advert?.engineVersion?.horsepower ? advert.engineVersion.horsepower +
+                                ' KM' : '—' }}
+                            </div>
                         </div>
                     </div>
                     <div class="stat-cell">
@@ -133,11 +138,8 @@
                             <div class="score-circle-wrap">
                                 <svg viewBox="0 0 120 120" width="110" height="110">
                                     <circle cx="60" cy="60" r="50" fill="none" stroke="#1a1a1a" stroke-width="9" />
-                                    <circle cx="60" cy="60" r="50" fill="none"
-                                        stroke="#8B0D1D"
-                                        stroke-width="9"
-                                        stroke-linecap="round"
-                                        :stroke-dasharray="`${(92 / 100) * 314.2} 314.2`"
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#8B0D1D" stroke-width="9"
+                                        stroke-linecap="round" :stroke-dasharray="`${(92 / 100) * 314.2} 314.2`"
                                         transform="rotate(-90 60 60)" />
                                 </svg>
                                 <div class="score-num-wrap">
@@ -165,7 +167,8 @@
                             <v-icon icon="mdi-trending-down" size="18" class="ai-icon-good" />
                             Bardzo dobra cena
                         </div>
-                        <p class="ai-desc">Cena tego auta jest o 6% niższa od średniej rynkowej dla podobnych modeli.</p>
+                        <p class="ai-desc">Cena tego auta jest o 6% niższa od średniej rynkowej dla podobnych modeli.
+                        </p>
                         <div class="price-bars">
                             <div class="price-bar-row">
                                 <span class="pb-label">Średnia rynkowa</span>
@@ -176,7 +179,9 @@
                             </div>
                             <div class="price-bar-row" style="margin-top: 10px">
                                 <span class="pb-label">Cena tego auta</span>
-                                <span class="pb-price pb-this">{{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' zł' : '—' }}</span>
+                                <span class="pb-price pb-this">{{ advert?.price ?
+                                    Number(advert.price).toLocaleString('pl') + ' zł' :
+                                    '—' }}</span>
                             </div>
                             <div class="bar-track">
                                 <div class="bar-fill bar-this" style="width: 94%" />
@@ -200,8 +205,7 @@
                             </button>
                         </div>
                         <div class="gallery-thumbs">
-                            <div v-for="(img, i) in allImages.slice(1, 4)" :key="i"
-                                class="gallery-thumb"
+                            <div v-for="(img, i) in allImages.slice(1, 4)" :key="i" class="gallery-thumb"
                                 @click="activeImg = i + 1">
                                 <img :src="img.url" alt="" />
                                 <div v-if="i === 2 && allImages.length > 4" class="thumb-overlay">
@@ -215,10 +219,8 @@
                 <!-- Tabs -->
                 <div class="tabs-wrap">
                     <div class="tabs-nav">
-                        <button v-for="tab in tabs" :key="tab"
-                            class="tab-btn"
-                            :class="{ 'tab-active': activeTab === tab }"
-                            @click="activeTab = tab">
+                        <button v-for="tab in tabs" :key="tab" class="tab-btn"
+                            :class="{ 'tab-active': activeTab === tab }" @click="activeTab = tab">
                             {{ tab }}
                         </button>
                     </div>
@@ -266,22 +268,37 @@
                         <div class="history-list">
                             <div class="history-item hi-good">
                                 <div class="hi-icon"><v-icon icon="mdi-shield-check" size="18" /></div>
-                                <div><div class="hi-title">VIN zweryfikowany</div><div class="hi-sub">Wszystko się zgadza</div></div>
+                                <div>
+                                    <div class="hi-title">VIN zweryfikowany</div>
+                                    <div class="hi-sub">Wszystko się zgadza</div>
+                                </div>
                             </div>
                             <div class="history-item hi-good">
                                 <div class="hi-icon"><v-icon icon="mdi-car-emergency" size="18" /></div>
-                                <div><div class="hi-title">Bezwypadkowy</div><div class="hi-sub">Brak szkód w bazach</div></div>
+                                <div>
+                                    <div class="hi-title">Bezwypadkowy</div>
+                                    <div class="hi-sub">Brak szkód w bazach</div>
+                                </div>
                             </div>
                             <div class="history-item hi-good">
                                 <div class="hi-icon"><v-icon icon="mdi-wrench-outline" size="18" /></div>
-                                <div><div class="hi-title">Serwisowany w ASO</div><div class="hi-sub">Pełna historia serwisowa</div></div>
+                                <div>
+                                    <div class="hi-title">Serwisowany w ASO</div>
+                                    <div class="hi-sub">Pełna historia serwisowa</div>
+                                </div>
                             </div>
                             <div class="history-item hi-neutral">
                                 <div class="hi-icon"><v-icon icon="mdi-account-outline" size="18" /></div>
-                                <div><div class="hi-title">Liczba właścicieli</div><div class="hi-sub">2 właścicieli</div></div>
+                                <div>
+                                    <div class="hi-title">Liczba właścicieli</div>
+                                    <div class="hi-sub">2 właścicieli</div>
+                                </div>
                             </div>
                         </div>
-                        <button class="outline-btn" style="margin-top: 18px">Zobacz pełną historię</button>
+                        <button class="outline-btn w-full" :disabled="contactLoading" @click="contactSeller">
+                            <v-icon icon="mdi-message-outline" size="17" />
+                            {{ contactLoading ? 'Łączenie...' : 'Napisz wiadomość' }}
+                        </button>
                     </div>
 
                     <!-- Finansowanie -->
@@ -316,7 +333,8 @@
                             </div>
                             <div class="sim-body">
                                 <div class="sim-title">{{ a.brand?.name }} {{ a.model?.name }}</div>
-                                <div class="sim-meta">{{ a.year }} • {{ Number(a.mileage).toLocaleString('pl') }} km</div>
+                                <div class="sim-meta">{{ a.year }} • {{ Number(a.mileage).toLocaleString('pl') }} km
+                                </div>
                                 <div class="sim-price">{{ Number(a.price).toLocaleString('pl') }} zł</div>
                             </div>
                         </NuxtLink>
@@ -386,7 +404,8 @@
                     </button>
                     <div class="secure-note">
                         <v-icon icon="mdi-shield-outline" size="16" class="secure-icon" />
-                        <span>Bezpieczna transakcja z CARI<span class="red-text">ZO</span><br><small>Twoje dane są chronione.</small></span>
+                        <span>Bezpieczna transakcja z CARI<span class="red-text">ZO</span><br><small>Twoje dane są
+                                chronione.</small></span>
                     </div>
                 </div>
 
@@ -396,19 +415,31 @@
                     <div class="history-list">
                         <div class="history-item hi-good">
                             <div class="hi-icon"><v-icon icon="mdi-shield-check" size="16" /></div>
-                            <div><div class="hi-title">VIN zweryfikowany</div><div class="hi-sub">Wszystko się zgadza</div></div>
+                            <div>
+                                <div class="hi-title">VIN zweryfikowany</div>
+                                <div class="hi-sub">Wszystko się zgadza</div>
+                            </div>
                         </div>
                         <div class="history-item hi-good">
                             <div class="hi-icon"><v-icon icon="mdi-car-emergency" size="16" /></div>
-                            <div><div class="hi-title">Bezwypadkowy</div><div class="hi-sub">Brak szkód w bazach</div></div>
+                            <div>
+                                <div class="hi-title">Bezwypadkowy</div>
+                                <div class="hi-sub">Brak szkód w bazach</div>
+                            </div>
                         </div>
                         <div class="history-item hi-good">
                             <div class="hi-icon"><v-icon icon="mdi-wrench-outline" size="16" /></div>
-                            <div><div class="hi-title">Serwisowany w ASO</div><div class="hi-sub">Pełna historia serwisowa</div></div>
+                            <div>
+                                <div class="hi-title">Serwisowany w ASO</div>
+                                <div class="hi-sub">Pełna historia serwisowa</div>
+                            </div>
                         </div>
                         <div class="history-item hi-neutral">
                             <div class="hi-icon"><v-icon icon="mdi-account-outline" size="16" /></div>
-                            <div><div class="hi-title">Liczba właścicieli</div><div class="hi-sub">2 właścicieli</div></div>
+                            <div>
+                                <div class="hi-title">Liczba właścicieli</div>
+                                <div class="hi-sub">2 właścicieli</div>
+                            </div>
                         </div>
                     </div>
                     <button class="outline-btn w-full">Zobacz pełną historię</button>
@@ -449,10 +480,11 @@ import type { CarAdvert, Feature, PagedResult } from '~/types'
 
 const route = useRoute()
 const id = Number(route.params.id)
-const config = useRuntimeConfig()
-const base = config.public.apiBase
 
 const { isFavorite, toggleFavorite, isLoggedIn } = useFavorites()
+
+const { startConversation } = useMessages()
+const contactLoading = ref(false)
 
 const advert = ref<CarAdvert | null>(null)
 const similar = ref<CarAdvert[]>([])
@@ -495,24 +527,39 @@ function toggleFav() {
     toggleFavorite(id)
 }
 
+async function contactSeller() {
+    if (!isLoggedIn.value) { await navigateTo('/login'); return }
+    contactLoading.value = true
+    try {
+        const conversationId = await startConversation(id)
+        await navigateTo(`/messages/${conversationId}`)
+    } catch { } finally {
+        contactLoading.value = false
+    }
+}
+
 onMounted(async () => {
     try {
-        advert.value = await $fetch<CarAdvert>(`${base}api/Advert/${id}`)
+        advert.value = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`)
         isFav.value = isFavorite(id)
-    } catch {}
+    } catch { }
     try {
-        const r = await $fetch<PagedResult<CarAdvert>>(`${base}api/Advert?page=1&pageSize=5`)
+        const r = await $fetch<PagedResult<CarAdvert>>(`/api/proxy/api/Advert?page=1&pageSize=5`)
         similar.value = r.items.filter(a => a.id !== id).slice(0, 4)
-    } catch {}
+    } catch { }
 })
 </script>
 
 <style lang="scss" scoped>
-.advert-page { background: $bg; min-height: 100vh; padding-top: $nav-height; }
+.advert-page {
+    background: $bg;
+    min-height: 100vh;
+    padding-top: $nav-height;
+}
 
 // ── Top bar ───────────────────────────────────────────────────────────────────
 .advert-topbar {
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid $border;
     position: sticky;
@@ -536,7 +583,10 @@ onMounted(async () => {
     font-size: 13px;
     font-weight: 500;
     transition: color 0.2s;
-    &:hover { color: $text; }
+
+    &:hover {
+        color: $text;
+    }
 }
 
 .topbar-actions {
@@ -559,8 +609,14 @@ onMounted(async () => {
     padding: 6px 10px;
     border-radius: $r-sm;
     transition: color 0.2s;
-    &:hover { color: $text; }
-    .heart-active { color: $red; }
+
+    &:hover {
+        color: $text;
+    }
+
+    .heart-active {
+        color: $red;
+    }
 }
 
 .btn-contact-top {
@@ -577,11 +633,16 @@ onMounted(async () => {
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: opacity 0.2s;
-    &:hover { opacity: 0.88; }
+
+    &:hover {
+        opacity: 0.88;
+    }
 }
 
 // ── Layout ────────────────────────────────────────────────────────────────────
-.container { @include container; }
+.container {
+    @include container;
+}
 
 .advert-body {
     display: grid;
@@ -591,10 +652,14 @@ onMounted(async () => {
     padding-bottom: 60px;
     align-items: start;
 
-    @include respond-to(md) { grid-template-columns: 1fr; }
+    @include respond-to(md) {
+        grid-template-columns: 1fr;
+    }
 }
 
-.left-col { min-width: 0; }
+.left-col {
+    min-width: 0;
+}
 
 // ── Hero image ────────────────────────────────────────────────────────────────
 .hero-img-wrap {
@@ -630,7 +695,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 5px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(6px);
     color: $text-muted;
     font-size: 11px;
@@ -646,21 +711,23 @@ onMounted(async () => {
     object-fit: cover;
     display: block;
 
-    @include respond-to(md) { height: 300px; }
+    @include respond-to(md) {
+        height: 300px;
+    }
 }
 
 .img-counter {
     position: absolute;
     bottom: 14px;
     right: 56px;
-    background: rgba(0,0,0,0.75);
+    background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(6px);
     color: $text-muted;
     font-size: 12px;
     font-weight: 600;
     padding: 4px 10px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .fav-hero-btn {
@@ -670,17 +737,23 @@ onMounted(async () => {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: rgba(0,0,0,0.65);
+    background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: $text-muted;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: color 0.2s, background 0.2s;
-    &:hover { background: rgba(0,0,0,0.9); }
-    &.active { color: $red; }
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.9);
+    }
+
+    &.active {
+        color: $red;
+    }
 }
 
 // ── Title block ───────────────────────────────────────────────────────────────
@@ -692,7 +765,9 @@ onMounted(async () => {
     padding: 22px 0 16px;
     border-bottom: 1px solid $border;
 
-    @include respond-to(sm) { flex-direction: column; }
+    @include respond-to(sm) {
+        flex-direction: column;
+    }
 }
 
 .car-brand {
@@ -711,7 +786,9 @@ onMounted(async () => {
     line-height: 1.1;
     margin-bottom: 8px;
 
-    @include respond-to(sm) { font-size: 26px; }
+    @include respond-to(sm) {
+        font-size: 26px;
+    }
 }
 
 .car-sub {
@@ -721,16 +798,23 @@ onMounted(async () => {
     color: $text-dim;
     font-size: 14px;
     margin-bottom: 14px;
-    .dot { color: $border; }
+
+    .dot {
+        color: $border;
+    }
 }
 
-.tag-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
 
 .tag-item {
     display: flex;
     align-items: center;
     gap: 5px;
-    background: rgba(255,255,255,0.04);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text-muted;
@@ -739,7 +823,10 @@ onMounted(async () => {
     padding: 5px 12px;
 }
 
-.title-right { text-align: right; flex-shrink: 0; }
+.title-right {
+    text-align: right;
+    flex-shrink: 0;
+}
 
 .price {
     font-size: 36px;
@@ -783,12 +870,28 @@ onMounted(async () => {
     gap: 10px;
     padding: 16px 18px;
     border-right: 1px solid $border;
-    &:last-child { border-right: none; }
+
+    &:last-child {
+        border-right: none;
+    }
 }
 
-.sc-icon { color: $red; flex-shrink: 0; }
-.sc-label { font-size: 11px; color: $text-dim; margin-bottom: 3px; }
-.sc-val { font-size: 14px; font-weight: 700; color: $text; }
+.sc-icon {
+    color: $red;
+    flex-shrink: 0;
+}
+
+.sc-label {
+    font-size: 11px;
+    color: $text-dim;
+    margin-bottom: 3px;
+}
+
+.sc-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text;
+}
 
 // ── Score + AI ────────────────────────────────────────────────────────────────
 .two-col-cards {
@@ -797,10 +900,13 @@ onMounted(async () => {
     gap: 16px;
     margin-bottom: 22px;
 
-    @include respond-to(sm) { grid-template-columns: 1fr; }
+    @include respond-to(sm) {
+        grid-template-columns: 1fr;
+    }
 }
 
-.score-card, .ai-card {
+.score-card,
+.ai-card {
     background: #080808;
     border: 1px solid $border;
     border-radius: $r-lg;
@@ -816,7 +922,11 @@ onMounted(async () => {
     letter-spacing: 0.5px;
 }
 
-.score-body { display: flex; align-items: center; gap: 18px; }
+.score-body {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
 
 .score-circle-wrap {
     position: relative;
@@ -826,11 +936,28 @@ onMounted(async () => {
     align-items: center;
 }
 
-.score-num-wrap { position: absolute; text-align: center; }
-.score-big { display: block; font-size: 28px; font-weight: 900; color: $text; line-height: 1; }
-.score-denom { display: block; font-size: 11px; color: $text-dim; }
+.score-num-wrap {
+    position: absolute;
+    text-align: center;
+}
 
-.score-checks { flex: 1; }
+.score-big {
+    display: block;
+    font-size: 28px;
+    font-weight: 900;
+    color: $text;
+    line-height: 1;
+}
+
+.score-denom {
+    display: block;
+    font-size: 11px;
+    color: $text-dim;
+}
+
+.score-checks {
+    flex: 1;
+}
 
 .sc-check {
     display: flex;
@@ -841,7 +968,9 @@ onMounted(async () => {
     margin-bottom: 7px;
 }
 
-.check-icon { color: #2d7a3a; }
+.check-icon {
+    color: #2d7a3a;
+}
 
 .score-link-btn {
     background: transparent;
@@ -853,17 +982,28 @@ onMounted(async () => {
     cursor: pointer;
     padding: 0;
     margin-top: 14px;
-    &:hover { opacity: 0.8; }
+
+    &:hover {
+        opacity: 0.8;
+    }
 }
 
-.ai-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.ai-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
 
 .ai-logo {
     font-size: 14px;
     font-weight: 900;
     letter-spacing: 3px;
     color: $text;
-    span { color: $red; }
+
+    span {
+        color: $red;
+    }
 }
 
 .ai-badge {
@@ -888,10 +1028,20 @@ onMounted(async () => {
     margin-bottom: 8px;
 }
 
-.ai-icon-good { color: #4caf50; }
-.ai-desc { font-size: 12px; color: $text-dim; line-height: 1.6; margin-bottom: 14px; }
+.ai-icon-good {
+    color: #4caf50;
+}
 
-.price-bars { margin-bottom: 14px; }
+.ai-desc {
+    font-size: 12px;
+    color: $text-dim;
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+
+.price-bars {
+    margin-bottom: 14px;
+}
 
 .price-bar-row {
     display: flex;
@@ -900,14 +1050,40 @@ onMounted(async () => {
     margin-bottom: 5px;
 }
 
-.pb-label { font-size: 11px; color: $text-dim; }
-.pb-price { font-size: 12px; font-weight: 700; color: $text-muted; }
-.pb-this { color: $red; }
+.pb-label {
+    font-size: 11px;
+    color: $text-dim;
+}
 
-.bar-track { height: 5px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 3px; }
-.bar-avg { background: $text-dark; }
-.bar-this { background: $red; }
+.pb-price {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text-muted;
+}
+
+.pb-this {
+    color: $red;
+}
+
+.bar-track {
+    height: 5px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 3px;
+}
+
+.bar-avg {
+    background: $text-dark;
+}
+
+.bar-this {
+    background: $red;
+}
 
 .ai-btn {
     width: 100%;
@@ -921,11 +1097,16 @@ onMounted(async () => {
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: background 0.2s;
-    &:hover { background: rgba($red, 0.08); }
+
+    &:hover {
+        background: rgba($red, 0.08);
+    }
 }
 
 // ── Gallery ───────────────────────────────────────────────────────────────────
-.gallery-section { margin-bottom: 22px; }
+.gallery-section {
+    margin-bottom: 22px;
+}
 
 .section-head {
     display: flex;
@@ -934,7 +1115,11 @@ onMounted(async () => {
     margin-bottom: 14px;
 }
 
-.section-heading { font-size: 18px; font-weight: 700; color: $text; }
+.section-heading {
+    font-size: 18px;
+    font-weight: 700;
+    color: $text;
+}
 
 .see-all-link {
     background: transparent;
@@ -944,14 +1129,20 @@ onMounted(async () => {
     font-weight: 600;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
-    &:hover { opacity: 0.8; }
+
+    &:hover {
+        opacity: 0.8;
+    }
 }
 
 .see-all-link-nuxt {
     color: $red;
     font-size: 13px;
     font-weight: 600;
-    &:hover { opacity: 0.8; }
+
+    &:hover {
+        opacity: 0.8;
+    }
 }
 
 .gallery-grid {
@@ -965,7 +1156,13 @@ onMounted(async () => {
 .gallery-main {
     position: relative;
     cursor: pointer;
-    img { width: 100%; height: 320px; object-fit: cover; display: block; }
+
+    img {
+        width: 100%;
+        height: 320px;
+        object-fit: cover;
+        display: block;
+    }
 }
 
 .expand-btn {
@@ -975,7 +1172,7 @@ onMounted(async () => {
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     border: none;
     color: $text-muted;
     display: flex;
@@ -993,13 +1190,20 @@ onMounted(async () => {
 .gallery-thumb {
     position: relative;
     cursor: pointer;
-    img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 100px; }
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        min-height: 100px;
+    }
 }
 
 .thumb-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1037,19 +1241,34 @@ onMounted(async () => {
     transition: color 0.2s, border-color 0.2s;
     margin-bottom: -1px;
 
-    &:hover { color: $text-muted; }
-    &.tab-active { color: $text; border-bottom-color: $red; font-weight: 600; }
+    &:hover {
+        color: $text-muted;
+    }
+
+    &.tab-active {
+        color: $text;
+        border-bottom-color: $red;
+        font-weight: 600;
+    }
 }
 
-.tab-content { padding: 24px; }
+.tab-content {
+    padding: 24px;
+}
 
-.desc-title { font-size: 18px; font-weight: 800; color: $text; margin-bottom: 12px; }
+.desc-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: $text;
+    margin-bottom: 12px;
+}
 
 .desc-text {
     font-size: 14px;
     color: $text-muted;
     line-height: 1.8;
     white-space: pre-line;
+
     &.clamped {
         display: -webkit-box;
         -webkit-line-clamp: 5;
@@ -1058,7 +1277,9 @@ onMounted(async () => {
     }
 }
 
-.desc-toggle { margin-top: 12px; }
+.desc-toggle {
+    margin-top: 12px;
+}
 
 .read-more-btn {
     display: flex;
@@ -1074,19 +1295,36 @@ onMounted(async () => {
     padding: 0;
 }
 
-.features-section { margin-top: 22px; }
+.features-section {
+    margin-top: 22px;
+}
 
 .feat-cols {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px 24px;
-    @include respond-to(sm) { grid-template-columns: 1fr; }
+
+    @include respond-to(sm) {
+        grid-template-columns: 1fr;
+    }
 }
 
-.feat-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: $text-muted; }
-.feat-icon { color: $red; flex-shrink: 0; }
+.feat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: $text-muted;
+}
 
-.eq-group { margin-bottom: 22px; }
+.feat-icon {
+    color: $red;
+    flex-shrink: 0;
+}
+
+.eq-group {
+    margin-bottom: 22px;
+}
 
 .eq-group-title {
     font-size: 11px;
@@ -1103,11 +1341,25 @@ onMounted(async () => {
     gap: 7px;
 }
 
-.eq-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: $text-muted; }
+.eq-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: $text-muted;
+}
 
-.history-list { display: flex; flex-direction: column; gap: 12px; }
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
-.history-item { display: flex; align-items: flex-start; gap: 12px; }
+.history-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
 
 .hi-icon {
     width: 34px;
@@ -1119,11 +1371,29 @@ onMounted(async () => {
     justify-content: center;
 }
 
-.hi-good .hi-icon { background: rgba(45,122,58,0.15); border: 1px solid rgba(45,122,58,0.3); color: #4caf50; }
-.hi-neutral .hi-icon { background: rgba(255,255,255,0.04); border: 1px solid $border; color: $text-dim; }
+.hi-good .hi-icon {
+    background: rgba(45, 122, 58, 0.15);
+    border: 1px solid rgba(45, 122, 58, 0.3);
+    color: #4caf50;
+}
 
-.hi-title { font-size: 13px; font-weight: 600; color: $text; margin-bottom: 2px; }
-.hi-sub { font-size: 12px; color: $text-dim; }
+.hi-neutral .hi-icon {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid $border;
+    color: $text-dim;
+}
+
+.hi-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text;
+    margin-bottom: 2px;
+}
+
+.hi-sub {
+    font-size: 12px;
+    color: $text-dim;
+}
 
 .finance-box {
     background: rgba($red, 0.06);
@@ -1133,17 +1403,29 @@ onMounted(async () => {
     text-align: center;
 }
 
-.finance-label { font-size: 13px; color: $text-dim; margin-bottom: 6px; }
+.finance-label {
+    font-size: 13px;
+    color: $text-dim;
+    margin-bottom: 6px;
+}
 
 .finance-price {
     font-size: 36px;
     font-weight: 900;
     color: $red;
     margin-bottom: 18px;
-    .finance-mo { font-size: 16px; font-weight: 500; color: $text-dim; }
+
+    .finance-mo {
+        font-size: 16px;
+        font-weight: 500;
+        color: $text-dim;
+    }
 }
 
-.empty-tab { color: $text-dim; font-size: 14px; }
+.empty-tab {
+    color: $text-dim;
+    font-size: 14px;
+}
 
 // ── Shared buttons ────────────────────────────────────────────────────────────
 .btn-red {
@@ -1161,8 +1443,14 @@ onMounted(async () => {
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: opacity 0.2s;
-    &:hover { opacity: 0.88; }
-    &.w-full { width: 100%; }
+
+    &:hover {
+        opacity: 0.88;
+    }
+
+    &.w-full {
+        width: 100%;
+    }
 }
 
 .outline-btn {
@@ -1180,19 +1468,30 @@ onMounted(async () => {
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: border-color 0.2s, color 0.2s;
-    &:hover { border-color: $text-dim; color: $text; }
-    &.w-full { width: 100%; }
+
+    &:hover {
+        border-color: $text-dim;
+        color: $text;
+    }
+
+    &.w-full {
+        width: 100%;
+    }
 }
 
 // ── Similar ───────────────────────────────────────────────────────────────────
-.similar-section { margin-top: 8px; }
+.similar-section {
+    margin-top: 8px;
+}
 
 .similar-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 14px;
 
-    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(md) {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .sim-card {
@@ -1203,12 +1502,22 @@ onMounted(async () => {
     color: $text;
     display: block;
     transition: transform 0.25s, border-color 0.25s;
-    &:hover { transform: translateY(-4px); border-color: rgba($red, 0.3); }
+
+    &:hover {
+        transform: translateY(-4px);
+        border-color: rgba($red, 0.3);
+    }
 }
 
 .sim-img-wrap {
     position: relative;
-    img { width: 100%; height: 130px; object-fit: cover; display: block; }
+
+    img {
+        width: 100%;
+        height: 130px;
+        object-fit: cover;
+        display: block;
+    }
 }
 
 .sim-verified {
@@ -1231,7 +1540,7 @@ onMounted(async () => {
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: rgba(0,0,0,0.65);
+    background: rgba(0, 0, 0, 0.65);
     border: none;
     color: $text-muted;
     display: flex;
@@ -1239,13 +1548,36 @@ onMounted(async () => {
     justify-content: center;
     cursor: pointer;
     transition: color 0.2s;
-    &:hover { color: $red; }
+
+    &:hover {
+        color: $red;
+    }
 }
 
-.sim-body { padding: 12px; }
-.sim-title { font-size: 14px; font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sim-meta { font-size: 11px; color: $text-dim; margin-bottom: 6px; }
-.sim-price { font-size: 16px; font-weight: 800; color: $red; }
+.sim-body {
+    padding: 12px;
+}
+
+.sim-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sim-meta {
+    font-size: 11px;
+    color: $text-dim;
+    margin-bottom: 6px;
+}
+
+.sim-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: $red;
+}
 
 // ── Right sidebar ─────────────────────────────────────────────────────────────
 .right-sidebar {
@@ -1255,7 +1587,9 @@ onMounted(async () => {
     position: sticky;
     top: calc(#{$nav-height} + 52px + 20px);
 
-    @include respond-to(md) { position: static; }
+    @include respond-to(md) {
+        position: static;
+    }
 }
 
 .sidebar-card {
@@ -1268,8 +1602,16 @@ onMounted(async () => {
     gap: 10px;
 }
 
-.seller-info { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
-.seller-avatar { color: $text-dim; }
+.seller-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
+.seller-avatar {
+    color: $text-dim;
+}
 
 .seller-name {
     display: flex;
@@ -1280,13 +1622,39 @@ onMounted(async () => {
     color: $text;
 }
 
-.dealer-badge { color: #4caf50; }
-.seller-role { font-size: 11px; color: $text-dim; margin-top: 2px; }
+.dealer-badge {
+    color: #4caf50;
+}
 
-.seller-stars { display: flex; align-items: center; gap: 2px; margin-top: 4px; }
-.star { color: #f5a623; }
-.seller-rating { font-size: 12px; font-weight: 700; color: $text; margin-left: 4px; }
-.seller-reviews { font-size: 11px; color: $text-dim; margin-left: 2px; }
+.seller-role {
+    font-size: 11px;
+    color: $text-dim;
+    margin-top: 2px;
+}
+
+.seller-stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 4px;
+}
+
+.star {
+    color: #f5a623;
+}
+
+.seller-rating {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text;
+    margin-left: 4px;
+}
+
+.seller-reviews {
+    font-size: 11px;
+    color: $text-dim;
+    margin-left: 2px;
+}
 
 .seller-stats {
     display: grid;
@@ -1299,17 +1667,32 @@ onMounted(async () => {
     margin: 2px 0;
 }
 
-.ss-item { text-align: center; }
-.ss-val { font-size: 15px; font-weight: 800; color: $text; }
-.ss-label { font-size: 10px; color: $text-dark; line-height: 1.3; margin-top: 2px; }
+.ss-item {
+    text-align: center;
+}
 
-.contact-card { gap: 8px; }
+.ss-val {
+    font-size: 15px;
+    font-weight: 800;
+    color: $text;
+}
+
+.ss-label {
+    font-size: 10px;
+    color: $text-dark;
+    line-height: 1.3;
+    margin-top: 2px;
+}
+
+.contact-card {
+    gap: 8px;
+}
 
 .secure-note {
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    background: rgba(255,255,255,0.03);
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid $border;
     border-radius: $r-sm;
     padding: 10px 12px;
@@ -1319,12 +1702,27 @@ onMounted(async () => {
     line-height: 1.5;
 }
 
-.secure-icon { color: $text-dark; flex-shrink: 0; margin-top: 1px; }
-.red-text { color: $red; }
+.secure-icon {
+    color: $text-dark;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.red-text {
+    color: $red;
+}
 
 .location-addr {
-    .loc-street { font-size: 13px; color: $text-muted; }
-    .loc-city { font-size: 12px; color: $text-dim; margin-top: 2px; }
+    .loc-street {
+        font-size: 13px;
+        color: $text-muted;
+    }
+
+    .loc-city {
+        font-size: 12px;
+        color: $text-dim;
+        margin-top: 2px;
+    }
 }
 
 .map-placeholder {
@@ -1337,9 +1735,11 @@ onMounted(async () => {
     justify-content: center;
 }
 
-.map-pin { color: $red; }
+.map-pin {
+    color: $red;
+}
 
-.finance-sidebar { }
+.finance-sidebar {}
 
 .finance-row {
     display: flex;
@@ -1348,13 +1748,22 @@ onMounted(async () => {
     gap: 10px;
 }
 
-.finance-label-sm { font-size: 11px; color: $text-dim; margin-bottom: 3px; }
+.finance-label-sm {
+    font-size: 11px;
+    color: $text-dim;
+    margin-bottom: 3px;
+}
 
 .finance-price-sm {
     font-size: 22px;
     font-weight: 900;
     color: $red;
-    .mo { font-size: 12px; font-weight: 500; color: $text-dim; }
+
+    .mo {
+        font-size: 12px;
+        font-weight: 500;
+        color: $text-dim;
+    }
 }
 
 .btn-red-sm {
@@ -1369,6 +1778,9 @@ onMounted(async () => {
     font-family: 'Inter', sans-serif;
     white-space: nowrap;
     transition: opacity 0.2s;
-    &:hover { opacity: 0.88; }
+
+    &:hover {
+        opacity: 0.88;
+    }
 }
 </style>

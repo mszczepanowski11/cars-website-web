@@ -42,5 +42,29 @@ export interface UserProfile {
     createdAt: string
 }
 
+export interface Conversation {
+    id: number
+    buyerId: number
+    buyerName: string
+    sellerId: number
+    sellerName: string
+    advertId: number
+    advertTitle: string
+    lastMessageAt: string
+    lastMessageContent: string | null
+    unreadCount: number
+    otherUserId: number
+    otherUserName: string
+}
+
+export interface MessageItem {
+    id: number
+    senderId: number
+    senderName: string
+    content: string
+    sentAt: string
+    isRead: boolean
+    isMine: boolean
+}
 
 
