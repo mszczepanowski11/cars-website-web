@@ -5,36 +5,77 @@
             <h2>Zarejestruj się</h2>
             <p class="auth-sub">Dołącz do społeczności CARIZO</p>
 
+            <!-- Account type toggle -->
+            <div class="type-toggle">
+                <button
+                    class="type-btn"
+                    :class="{ 'type-active': accountType === 'Personal' }"
+                    @click="accountType = 'Personal'"
+                >
+                    <v-icon icon="mdi-account-outline" size="18" />
+                    Konto osobiste
+                </button>
+                <button
+                    class="type-btn"
+                    :class="{ 'type-active': accountType === 'Business' }"
+                    @click="accountType = 'Business'"
+                >
+                    <v-icon icon="mdi-domain" size="18" />
+                    Konto firmowe
+                </button>
+            </div>
+
             <v-form @submit.prevent="submit" :disabled="loading">
+                <!-- Business fields -->
+                <template v-if="accountType === 'Business'">
+                    <v-text-field v-model="companyName" label="Nazwa firmy" required class="mb-3" />
+                    <v-text-field v-model="nip" label="NIP" placeholder="0000000000" maxlength="10" required class="mb-3" />
+                </template>
+
+                <!-- Personal/contact info -->
                 <div class="frow">
-                    <v-text-field v-model="name" label="Imię" required />
-                    <v-text-field v-model="surname" label="Nazwisko" required />
+                    <v-text-field v-model="name" :label="accountType === 'Business' ? 'Imię (kontakt)' : 'Imię'" required />
+                    <v-text-field v-model="surname" :label="accountType === 'Business' ? 'Nazwisko (kontakt)' : 'Nazwisko'" required />
                 </div>
                 <v-text-field v-model="email" label="Adres email" type="email" required class="mb-3" />
                 <v-text-field v-model="phoneNumber" label="Numer telefonu" type="tel" required class="mb-3" />
                 <v-text-field v-model="password" label="Hasło" type="password" required class="mb-4" />
+
                 <v-alert v-if="error" type="error" class="mb-4">{{ error }}</v-alert>
+
                 <v-btn type="submit" color="primary" size="large" block :loading="loading">
                     Zarejestruj się
                 </v-btn>
             </v-form>
 
-            <p class="auth-link">Masz już konto? <NuxtLink to="/login">Zaloguj się</NuxtLink>
-            </p>
+            <p class="auth-link">Masz już konto? <NuxtLink to="/login">Zaloguj się</NuxtLink></p>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 const { register, loading, error } = useAuth()
+
+const accountType = ref<'Personal' | 'Business'>('Personal')
 const name        = ref('')
 const surname     = ref('')
 const email       = ref('')
 const phoneNumber = ref('')
 const password    = ref('')
+const companyName = ref('')
+const nip         = ref('')
 
 async function submit() {
-    await register({ name: name.value, surname: surname.value, email: email.value, phonenumber: phoneNumber.value, password: password.value })
+    await register({
+        name: name.value,
+        surname: surname.value,
+        email: email.value,
+        phonenumber: phoneNumber.value,
+        password: password.value,
+        accountType: accountType.value,
+        companyName: accountType.value === 'Business' ? companyName.value : undefined,
+        nip: accountType.value === 'Business' ? nip.value : undefined,
+    })
 }
 </script>
 
@@ -61,10 +102,7 @@ async function submit() {
     letter-spacing: 6px;
     color: $text;
     margin-bottom: 28px;
-
-    span {
-        color: $red;
-    }
+    span { color: $red; }
 }
 
 h2 {
@@ -76,17 +114,50 @@ h2 {
 
 .auth-sub {
     color: $text-dim;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
+}
+
+.type-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: $r-md;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 28px;
+}
+
+.type-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: $r-sm;
+    border: none;
+    background: transparent;
+    color: $text-dim;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover { color: $text; }
+
+    &.type-active {
+        background: $red;
+        color: white;
+        font-weight: 700;
+    }
 }
 
 .frow {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-
-    @include respond-to(xs) {
-        grid-template-columns: 1fr;
-    }
+    @include respond-to(xs) { grid-template-columns: 1fr; }
 }
 
 .auth-link {
@@ -94,9 +165,6 @@ h2 {
     text-align: center;
     margin-top: 24px;
     font-size: 14px;
-
-    a {
-        color: $red;
-    }
+    a { color: $red; }
 }
 </style>

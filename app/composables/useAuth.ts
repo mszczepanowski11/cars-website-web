@@ -15,7 +15,12 @@ export const useAuth = () => {
         }
     }
 
-    async function register(dto: { name: string; surname: string; email: string; phonenumber: string; password: string }) {
+    async function register(dto: {
+        name: string; surname: string; email: string
+        phonenumber: string; password: string
+        accountType: 'Personal' | 'Business'
+        companyName?: string; nip?: string
+    }) {
         loading.value = true
         error.value = ''
         try {
@@ -31,7 +36,7 @@ export const useAuth = () => {
     async function logout() {
         try {
             await $fetch('/api/auth/logout', { method: 'POST' })
-        } catch {}
+        } catch { }
         await navigateTo('/')
     }
 

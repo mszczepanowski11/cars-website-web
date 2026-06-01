@@ -14,12 +14,9 @@ const STATIC_CATEGORIES: CategoryWithCount[] = [
 ]
 
 export const useCategories = () => {
-    const config = useRuntimeConfig()
-    const base = config.public.apiBase
-
     async function fetchCategories(): Promise<CategoryWithCount[]> {
         try {
-            return await $fetch<CategoryWithCount[]>(`${base}api/Category`)
+            return await $fetch<CategoryWithCount[]>('/api/proxy/api/Category')
         } catch {
             return STATIC_CATEGORIES
         }
