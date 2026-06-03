@@ -1,9 +1,9 @@
 <script setup lang="ts">
-
 </script>
 
 <template>
   <v-app>
+    <AppAnnouncementBar />
     <NavBar />
     <v-main>
       <NuxtPage />

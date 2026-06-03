@@ -3,6 +3,7 @@ export interface Generation extends TaxonomyItem { yearFrom: number; yearTo: num
 export interface EngineVersion extends TaxonomyItem { displacement: number; horsepower: number }
 export interface AdvertImage { id: number; url: string; isMain: boolean }
 export interface Feature { id: number; name: string; category: { id: number; name: string } }
+export type AdvertBadge = 'PREMIUM' | 'VERIFIED' | 'DEALER'
 
 export interface CarAdvert {
     id: number; userId: number; title: string; description: string
@@ -12,6 +13,9 @@ export interface CarAdvert {
     generation: Generation | null; engineVersion: EngineVersion | null
     fuelType: TaxonomyItem | null; gearbox: TaxonomyItem | null; bodyType: TaxonomyItem | null
     features: Feature[]; images: AdvertImage[]; createdAt: string
+    badge?: AdvertBadge | null
+    isVerified?: boolean
+    sellerType?: 'personal' | 'dealer'
 }
 
 export interface PagedResult<T> { items: T[]; totalCount: number }

@@ -9,15 +9,24 @@ async function toggleFav(e: Event) {
     e.preventDefault()
     await toggleFavorite(props.advert.id)
 }
+
+const resolvedBadge = computed(() => {
+    if (props.advert.badge) return props.advert.badge
+    if (props.advert.sellerType === 'dealer') return 'DEALER'
+    if (props.advert.isVerified) return 'VERIFIED'
+    return null
+})
+
 </script>
 
 <template>
     <NuxtLink :to="`/advert/${advert.id}`" class="car-card">
         <div class="card-img-wrap">
-            <img
-                :src="mainImage?.url ?? 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop'"
-                :alt="advert.title"
-            />
+            <img :src="mainImage?.url ?? 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop'"
+                :alt="advert.title" />
+            <span v-if="resolvedBadge" :class="['card-badge', `card-badge--${resolvedBadge.toLowerCase()}`]">
+                {{ resolvedBadge }}
+            </span>
             <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" @click="toggleFav">
                 <v-icon :icon="isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
             </button>
@@ -26,8 +35,10 @@ async function toggleFav(e: Event) {
             <h3 class="car-title">{{ advert.title }}</h3>
             <div class="car-meta">
                 <span><v-icon icon="mdi-calendar-outline" size="14" class="mr-1" />{{ advert.year }}</span>
-                <span><v-icon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–' }}</span>
-                <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage.toLocaleString('pl') }} km</span>
+                <span><v-icon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–'
+                }}</span>
+                <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage.toLocaleString('pl') }}
+                    km</span>
             </div>
             <div class="car-price">{{ advert.price.toLocaleString('pl') }} zł</div>
             <div v-if="advert.city" class="car-footer">
@@ -58,7 +69,13 @@ async function toggleFav(e: Event) {
 
 .card-img-wrap {
     position: relative;
-    img { width: 100%; height: 200px; object-fit: cover; display: block; }
+
+    img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
 }
 
 .fav-btn {
@@ -68,7 +85,7 @@ async function toggleFav(e: Event) {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(6px);
     border: none;
     display: flex;
@@ -78,12 +95,26 @@ async function toggleFav(e: Event) {
     color: $text-muted;
     transition: color 0.2s, background 0.2s;
 
-    &:hover { background: rgba(0,0,0,0.85); color: $text; }
-    &.active { color: $red; }
+    &:hover {
+        background: rgba(0, 0, 0, 0.85);
+        color: $text;
+    }
+
+    &.active {
+        color: $red;
+    }
 }
 
-.car-body { padding: 16px; }
-.car-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+.car-body {
+    padding: 16px;
+}
+
+.car-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
 
 .car-meta {
     display: flex;
@@ -93,10 +124,18 @@ async function toggleFav(e: Event) {
     font-size: 12px;
     margin-bottom: 12px;
 
-    span { display: flex; align-items: center; }
+    span {
+        display: flex;
+        align-items: center;
+    }
 }
 
-.car-price { color: $red; font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+.car-price {
+    color: $red;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
 
 .car-footer {
     display: flex;
@@ -115,5 +154,33 @@ async function toggleFav(e: Event) {
     color: $text-dim;
     display: flex;
     align-items: center;
+}
+
+.card-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 4px 10px;
+    border-radius: 6px;
+
+    &--premium {
+        background: $red;
+        color: white;
+    }
+
+    &--verified {
+        background: #14532d;
+        color: #4ade80;
+        border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+
+    &--dealer {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+        border: 1px solid rgba(96, 165, 250, 0.3);
+    }
 }
 </style>
