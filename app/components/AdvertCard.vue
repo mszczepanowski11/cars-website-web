@@ -17,15 +17,35 @@ const resolvedBadge = computed(() => {
     return null
 })
 
+const badgeText = computed(() => {
+    const map: Record<string, string> = {
+        PREMIUM: 'PREMIUM',
+        VERIFIED: 'VERIFIED',
+        DEALER: 'DEALER',
+        FEATURED: 'WYRÓŻNIONE',
+        TOP: 'TOP',
+    }
+    return resolvedBadge.value ? (map[resolvedBadge.value] ?? resolvedBadge.value) : null
+})
 </script>
 
 <template>
-    <NuxtLink :to="`/advert/${advert.id}`" class="car-card">
+    <NuxtLink
+        :to="`/advert/${advert.id}`"
+        class="car-card"
+        :class="{
+            'car-card--featured': resolvedBadge === 'FEATURED',
+            'car-card--top': resolvedBadge === 'TOP',
+        }"
+    >
         <div class="card-img-wrap">
-            <img :src="mainImage?.url ?? 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop'"
-                :alt="advert.title" />
+            <img
+                :src="mainImage?.url ?? 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop'"
+                :alt="advert.title"
+            />
             <span v-if="resolvedBadge" :class="['card-badge', `card-badge--${resolvedBadge.toLowerCase()}`]">
-                {{ resolvedBadge }}
+                <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" class="badge-icon" />
+                {{ badgeText }}
             </span>
             <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" @click="toggleFav">
                 <v-icon :icon="isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
@@ -35,10 +55,8 @@ const resolvedBadge = computed(() => {
             <h3 class="car-title">{{ advert.title }}</h3>
             <div class="car-meta">
                 <span><v-icon icon="mdi-calendar-outline" size="14" class="mr-1" />{{ advert.year }}</span>
-                <span><v-icon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–'
-                }}</span>
-                <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage.toLocaleString('pl') }}
-                    km</span>
+                <span><v-icon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–' }}</span>
+                <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage.toLocaleString('pl') }} km</span>
             </div>
             <div class="car-price">{{ advert.price.toLocaleString('pl') }} zł</div>
             <div v-if="advert.city" class="car-footer">
@@ -59,11 +77,31 @@ const resolvedBadge = computed(() => {
     overflow: hidden;
     color: $text;
     display: block;
-    transition: transform 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
         transform: translateY(-6px);
         border-color: rgba($red, 0.3);
+    }
+
+    &--featured {
+        border-color: rgba($red, 0.5);
+        box-shadow: 0 0 18px rgba($red, 0.1);
+
+        &:hover {
+            border-color: rgba($red, 0.75);
+            box-shadow: 0 4px 24px rgba($red, 0.18);
+        }
+    }
+
+    &--top {
+        border-color: rgba(#f5a623, 0.4);
+        box-shadow: 0 0 18px rgba(#f5a623, 0.08);
+
+        &:hover {
+            border-color: rgba(#f5a623, 0.65);
+            box-shadow: 0 4px 24px rgba(#f5a623, 0.14);
+        }
     }
 }
 
@@ -95,19 +133,11 @@ const resolvedBadge = computed(() => {
     color: $text-muted;
     transition: color 0.2s, background 0.2s;
 
-    &:hover {
-        background: rgba(0, 0, 0, 0.85);
-        color: $text;
-    }
-
-    &.active {
-        color: $red;
-    }
+    &:hover { background: rgba(0, 0, 0, 0.85); color: $text; }
+    &.active { color: $red; }
 }
 
-.car-body {
-    padding: 16px;
-}
+.car-body { padding: 16px; }
 
 .car-title {
     font-size: 16px;
@@ -124,10 +154,7 @@ const resolvedBadge = computed(() => {
     font-size: 12px;
     margin-bottom: 12px;
 
-    span {
-        display: flex;
-        align-items: center;
-    }
+    span { display: flex; align-items: center; }
 }
 
 .car-price {
@@ -156,6 +183,7 @@ const resolvedBadge = computed(() => {
     align-items: center;
 }
 
+// ── Badges ────────────────────────────────────────────────────────────────────
 .card-badge {
     position: absolute;
     top: 10px;
@@ -165,6 +193,9 @@ const resolvedBadge = computed(() => {
     letter-spacing: 0.8px;
     padding: 4px 10px;
     border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 
     &--premium {
         background: $red;
@@ -182,5 +213,21 @@ const resolvedBadge = computed(() => {
         color: #60a5fa;
         border: 1px solid rgba(96, 165, 250, 0.3);
     }
+
+    &--featured {
+        background: rgba($red, 0.18);
+        color: #ff6b6b;
+        border: 1px solid rgba($red, 0.45);
+        backdrop-filter: blur(4px);
+    }
+
+    &--top {
+        background: rgba(#f5a623, 0.18);
+        color: #f5a623;
+        border: 1px solid rgba(#f5a623, 0.45);
+        backdrop-filter: blur(4px);
+    }
 }
+
+.badge-icon { flex-shrink: 0; }
 </style>

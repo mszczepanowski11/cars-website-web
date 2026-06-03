@@ -136,9 +136,6 @@
 <script setup lang="ts">
 import type { CarAdvert, PagedResult } from '~/types'
 
-const config = useRuntimeConfig()
-const base = config.public.apiBase
-
 const featured = ref<CarAdvert[]>([])
 const email = ref('')
 const searchText = ref('')
@@ -152,7 +149,7 @@ const feats = [
 
 function doSearch() {
     if (searchText.value.trim()) {
-        navigateTo({ path: '/adverts', query: { search: searchText.value } })
+        navigateTo({ path: '/adverts', query: { textSearch: searchText.value } })
     } else {
         navigateTo('/adverts')
     }
@@ -160,7 +157,7 @@ function doSearch() {
 
 onMounted(async () => {
     try {
-        const r = await $fetch<PagedResult<CarAdvert>>(`${base}api/Advert?page=1&pageSize=4`)
+        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert?page=1&pageSize=4')
         featured.value = r.items
     } catch { }
 })

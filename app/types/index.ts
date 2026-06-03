@@ -3,7 +3,7 @@ export interface Generation extends TaxonomyItem { yearFrom: number; yearTo: num
 export interface EngineVersion extends TaxonomyItem { displacement: number; horsepower: number }
 export interface AdvertImage { id: number; url: string; isMain: boolean }
 export interface Feature { id: number; name: string; category: { id: number; name: string } }
-export type AdvertBadge = 'PREMIUM' | 'VERIFIED' | 'DEALER'
+export type AdvertBadge = 'PREMIUM' | 'VERIFIED' | 'DEALER' | 'FEATURED' | 'TOP'
 
 export interface CarAdvert {
     id: number; userId: number; title: string; description: string

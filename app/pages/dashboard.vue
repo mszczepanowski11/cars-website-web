@@ -53,7 +53,7 @@
                 <div class="promo-text">
                     <div class="promo-title">Zwiększ zasięg<br>swoich ogłoszeń</div>
                     <p class="promo-sub">Wyróżnij swoje ogłoszenia i sprzedawaj szybciej.</p>
-                    <button class="promo-btn">Dowiedz się więcej</button>
+                    <NuxtLink to="/promote" class="promo-btn">Dowiedz się więcej</NuxtLink>
                 </div>
                 <img
                     src="https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?q=80&w=400&auto=format&fit=crop"
@@ -91,7 +91,7 @@
                 <div class="banner-tags">
                     <span class="btag btag-dealer">
                         <v-icon icon="mdi-shield-check" size="13" />
-                        DEALER VERYFIKOWANY
+                        DEALER ZWERYFIKOWANY
                     </span>
                     <span v-if="profile?.email" class="btag">
                         <v-icon icon="mdi-email-outline" size="13" />
@@ -447,6 +447,7 @@ onMounted(async () => {
 }
 
 .promo-btn {
+    display: inline-block;
     background: $red;
     border: none;
     border-radius: $r-sm;
@@ -456,6 +457,7 @@ onMounted(async () => {
     font-family: 'Inter', sans-serif;
     padding: 8px 14px;
     cursor: pointer;
+    text-decoration: none;
     transition: opacity 0.2s;
     &:hover { opacity: 0.88; }
 }
