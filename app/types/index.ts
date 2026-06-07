@@ -16,6 +16,8 @@ export interface CarAdvert {
     badge?: AdvertBadge | null
     isVerified?: boolean
     sellerType?: 'personal' | 'dealer'
+    isHidden?: boolean
+    isActive?: boolean
 }
 
 export interface PagedResult<T> { items: T[]; totalCount: number }
@@ -47,6 +49,8 @@ export interface UserProfile {
     accountType: 'Personal' | 'Business'
     companyName?: string
     nip?: string
+    isAdmin?: boolean
+    isBlocked?: boolean
 }
 
 export interface Conversation {
@@ -105,6 +109,8 @@ export interface AdminReport {
     adminNote?: string
 }
 
+// ── Admin Panel ───────────────────────────────────────────────────────────────
+
 export interface AdminStats {
     totalActiveAdverts: number
     totalUsers: number
@@ -153,4 +159,66 @@ export interface AdminActionLog {
     performedAt: string
 }
 
+// ── Events ────────────────────────────────────────────────────────────────────
 
+export type EventStatus = 'Pending' | 'Published' | 'Rejected' | 'Archived'
+export type EventReportReason = 'Spam' | 'FakeEvent' | 'OutdatedInfo' | 'Other'
+
+export interface EventImage {
+    id: number
+    url: string
+    isMain: boolean
+}
+
+export interface CarEvent {
+    id: number
+    name: string
+    description: string
+    startDate: string
+    endDate: string
+    city: string
+    address: string
+    websiteUrl?: string
+    ticketsUrl?: string
+    organizerName?: string
+    organizerEmail?: string
+    organizerPhone?: string
+    status: EventStatus
+    createdAt: string
+    createdByUserId: number
+    createdByName?: string
+    images: EventImage[]
+}
+
+export interface AdminEvent {
+    id: number
+    name: string
+    startDate: string
+    endDate: string
+    city: string
+    status: EventStatus
+    createdAt: string
+    createdByUserId: number
+    createdByName?: string
+    reportCount: number
+    mainImageUrl?: string
+}
+
+export interface CreateEventDto {
+    name: string
+    description: string
+    startDate: string
+    endDate: string
+    city: string
+    address: string
+    websiteUrl?: string
+    ticketsUrl?: string
+    organizerName?: string
+    organizerEmail?: string
+    organizerPhone?: string
+}
+
+export interface CreateEventReportDto {
+    reason: EventReportReason
+    content?: string
+}
