@@ -74,4 +74,83 @@ export interface MessageItem {
     isMine: boolean
 }
 
+// ── Reports ───────────────────────────────────────────────────────────────────
+
+export type ReportReason = 'Fraud' | 'FalseData' | 'InvalidVin' | 'DuplicateAdvert' | 'InappropriateContent' | 'Spam' | 'Other'
+export type ReportTargetType = 'Advert' | 'User'
+export type ReportStatus = 'Pending' | 'Resolved' | 'Rejected'
+
+export interface CreateReportDto {
+    targetType: ReportTargetType
+    targetAdvertId?: number
+    targetUserId?: number
+    reason: ReportReason
+    content?: string
+}
+
+export interface AdminReport {
+    id: number
+    targetType: ReportTargetType
+    targetAdvertId?: number
+    targetAdvertTitle?: string
+    targetUserId?: number
+    targetUserName?: string
+    reason: ReportReason
+    content?: string
+    reportedAt: string
+    reportedByUserId: number
+    reportedByName: string
+    status: ReportStatus
+    resolvedAt?: string
+    adminNote?: string
+}
+
+export interface AdminStats {
+    totalActiveAdverts: number
+    totalUsers: number
+    totalReports: number
+    pendingReports: number
+    newRegistrationsThisMonth: number
+    blockedUsers: number
+}
+
+export interface AdminUser {
+    id: number
+    name: string
+    surname: string
+    email: string
+    phoneNumber: string
+    isAdmin: boolean
+    isBlocked: boolean
+    blockedAt?: string
+    blockedReason?: string
+    advertCount: number
+}
+
+export interface AdminAdvert {
+    id: number
+    title: string
+    price: number
+    currency: string
+    isHidden: boolean
+    isActive: boolean
+    createdAt: string
+    userId: number
+    ownerName: string
+    city?: string
+    region?: string
+}
+
+export interface AdminActionLog {
+    id: number
+    adminUserId: number
+    adminName: string
+    actionType: string
+    targetAdvertId?: number
+    targetUserId?: number
+    reportId?: number
+    note?: string
+    performedAt: string
+}
+
 
