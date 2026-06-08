@@ -391,3 +391,56 @@ export interface CreateEventDto {
 export interface CreateEventReportDto {
     reason: EventReportReason; content?: string
 }
+
+// ── Payments & Invoices ────────────────────────────────────────────────────────
+
+export type PaymentServiceType = 'Top' | 'Premium' | 'Featured' | 'Refresh' | 'Other'
+export type PaymentStatusType = 'Pending' | 'Completed' | 'Failed' | 'Cancelled' | 'Refunded'
+export type InvoiceStatusType = 'Draft' | 'Generated' | 'Sent'
+
+export interface ServicePrice {
+    serviceType: PaymentServiceType
+    durationDays: number
+    price: number
+    description: string
+}
+
+export interface PaymentInitiated {
+    paymentId: number
+    paymentUrl: string
+    amount: number
+    orderId: string
+}
+
+export interface PaymentRecord {
+    id: number
+    serviceType: PaymentServiceType
+    serviceDescription: string
+    amount: number
+    currency: string
+    status: PaymentStatusType
+    imojeTransactionId?: string
+    createdAt: string
+    paidAt?: string
+    advertId?: number
+    durationDays?: number
+}
+
+export interface MonthlyInvoice {
+    id: number
+    invoiceNumber: string
+    month: number
+    year: number
+    totalAmount: number
+    netAmount: number
+    vatAmount: number
+    vatRate: number
+    status: InvoiceStatusType
+    generatedAt: string
+    sentAt?: string
+    items: PaymentRecord[]
+    userName: string
+    userEmail: string
+    companyName?: string
+    nip?: string
+}

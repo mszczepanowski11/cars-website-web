@@ -112,9 +112,11 @@
                             <tr v-for="log in logs" :key="log.id">
                                 <td class="log-date">{{ formatDate(log.performedAt) }}</td>
                                 <td class="log-admin">{{ log.adminName }}</td>
-                                <td><span class="action-chip" :class="actionClass(log.actionType)">{{ actionLabel(log.actionType) }}</span></td>
+                                <td><span class="action-chip" :class="actionClass(log.actionType)">{{
+                                        actionLabel(log.actionType) }}</span></td>
                                 <td class="log-target">
-                                    <NuxtLink v-if="log.targetAdvertId" :to="`/advert/${log.targetAdvertId}`" class="target-link">
+                                    <NuxtLink v-if="log.targetAdvertId" :to="`/advert/${log.targetAdvertId}`"
+                                        class="target-link">
                                         Ogłoszenie #{{ log.targetAdvertId }}
                                     </NuxtLink>
                                     <span v-else-if="log.targetUserId">Użytkownik #{{ log.targetUserId }}</span>
@@ -153,7 +155,7 @@ onMounted(async () => {
             getStats(),
             getLogs({ page: 1, pageSize: 30 })
         ])
-    } catch {}
+    } catch { }
     finally { loading.value = false }
 })
 
@@ -217,9 +219,14 @@ function actionClass(type: string) {
     border-bottom: 1px solid $border;
 }
 
-.brand-icon { color: $red; }
+.brand-icon {
+    color: $red;
+}
 
-.sidebar-nav { flex: 1; padding: 12px 0; }
+.sidebar-nav {
+    flex: 1;
+    padding: 12px 0;
+}
 
 .nav-item {
     display: flex;
@@ -234,7 +241,11 @@ function actionClass(type: string) {
     transition: background 0.15s, color 0.15s;
     position: relative;
 
-    &:hover { background: rgba(255,255,255,0.04); color: $text; }
+    &:hover {
+        background: rgba(255, 255, 255, 0.04);
+        color: $text;
+    }
+
     &.active {
         background: rgba($red, 0.1);
         color: $text;
@@ -253,7 +264,11 @@ function actionClass(type: string) {
     border-radius: 20px;
 }
 
-.nav-divider { height: 1px; background: $border; margin: 8px 0; }
+.nav-divider {
+    height: 1px;
+    background: $border;
+    margin: 8px 0;
+}
 
 .admin-main {
     flex: 1;
@@ -289,7 +304,9 @@ function actionClass(type: string) {
     gap: 14px;
     margin-bottom: 32px;
 
-    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(md) {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .stat-card {
@@ -301,8 +318,14 @@ function actionClass(type: string) {
     flex-direction: column;
     gap: 6px;
     transition: border-color 0.2s;
-    &:hover { border-color: rgba($red, 0.2); }
-    &.alert { border-color: rgba($red, 0.15); }
+
+    &:hover {
+        border-color: rgba($red, 0.2);
+    }
+
+    &.alert {
+        border-color: rgba($red, 0.15);
+    }
 }
 
 .stat-top {
@@ -321,13 +344,32 @@ function actionClass(type: string) {
     justify-content: center;
     flex-shrink: 0;
 
-    &.green { background: rgba(76,175,80,0.12); color: #4caf50; }
-    &.blue { background: rgba(33,150,243,0.12); color: #2196f3; }
-    &.red { background: rgba($red, 0.12); color: $red; }
-    &.orange { background: rgba(255,152,0,0.12); color: #ff9800; }
+    &.green {
+        background: rgba(76, 175, 80, 0.12);
+        color: #4caf50;
+    }
+
+    &.blue {
+        background: rgba(33, 150, 243, 0.12);
+        color: #2196f3;
+    }
+
+    &.red {
+        background: rgba($red, 0.12);
+        color: $red;
+    }
+
+    &.orange {
+        background: rgba(255, 152, 0, 0.12);
+        color: #ff9800;
+    }
 }
 
-.stat-label { font-size: 12px; color: $text-dim; font-weight: 500; }
+.stat-label {
+    font-size: 12px;
+    color: $text-dim;
+    font-weight: 500;
+}
 
 .stat-num {
     font-size: 32px;
@@ -339,10 +381,15 @@ function actionClass(type: string) {
 .stat-sub {
     font-size: 11px;
     color: $text-dark;
-    &.red { color: $red; }
+
+    &.red {
+        color: $red;
+    }
 }
 
-.section-header { margin-bottom: 14px; }
+.section-header {
+    margin-bottom: 14px;
+}
 
 .section-title {
     font-size: 15px;
@@ -369,7 +416,7 @@ function actionClass(type: string) {
         color: $text-dim;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        background: rgba(255,255,255,0.02);
+        background: rgba(255, 255, 255, 0.02);
         border-bottom: 1px solid $border;
     }
 
@@ -381,22 +428,51 @@ function actionClass(type: string) {
         vertical-align: middle;
     }
 
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(255,255,255,0.02); }
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+    }
 }
 
-.log-date { color: $text-dim; font-size: 12px; white-space: nowrap; }
-.log-admin { color: $text; font-weight: 500; }
-.log-target { font-size: 12px; }
-.log-note { color: $text-dim; font-size: 12px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.log-date {
+    color: $text-dim;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.log-admin {
+    color: $text;
+    font-weight: 500;
+}
+
+.log-target {
+    font-size: 12px;
+}
+
+.log-note {
+    color: $text-dim;
+    font-size: 12px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 .target-link {
     color: $red;
     text-decoration: none;
-    &:hover { text-decoration: underline; }
+
+    &:hover {
+        text-decoration: underline;
+    }
 }
 
-.text-dim { color: $text-dark; }
+.text-dim {
+    color: $text-dark;
+}
 
 .action-chip {
     display: inline-flex;
@@ -407,10 +483,25 @@ function actionClass(type: string) {
     font-weight: 600;
     white-space: nowrap;
 
-    &.chip-danger { background: rgba(220,50,50,0.12); color: #e55; }
-    &.chip-warning { background: rgba(255,152,0,0.12); color: #ff9800; }
-    &.chip-success { background: rgba(76,175,80,0.12); color: #4caf50; }
-    &.chip-neutral { background: rgba(255,255,255,0.06); color: $text-muted; }
+    &.chip-danger {
+        background: rgba(220, 50, 50, 0.12);
+        color: #e55;
+    }
+
+    &.chip-warning {
+        background: rgba(255, 152, 0, 0.12);
+        color: #ff9800;
+    }
+
+    &.chip-success {
+        background: rgba(76, 175, 80, 0.12);
+        color: #4caf50;
+    }
+
+    &.chip-neutral {
+        background: rgba(255, 255, 255, 0.06);
+        color: $text-muted;
+    }
 }
 
 .empty-state {
@@ -420,12 +511,23 @@ function actionClass(type: string) {
     font-size: 14px;
 }
 
-.empty-icon { color: $border; display: block; margin: 0 auto 12px; }
+.empty-icon {
+    color: $border;
+    display: block;
+    margin: 0 auto 12px;
+}
 
-.spin { animation: spin 1s linear infinite; }
+.spin {
+    animation: spin 1s linear infinite;
+}
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 </style>
