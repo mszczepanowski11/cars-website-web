@@ -178,13 +178,32 @@ export interface ReviewsResult {
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 
-export type NotificationType = 'NewMessage' | 'PriceChange' | 'NewFollower' | 'ReportResolved' | 'AdvertExpiring' | 'PromoExpiring' | 'NewReview' | 'TransactionUpdate'
+export type NotificationType =
+    | 'AccountCreated' | 'PasswordChanged' | 'PasswordReset'
+    | 'AdvertAdded' | 'AdvertPublished' | 'AdvertRejected' | 'AdvertDeleted' | 'AdvertMarkedSold'
+    | 'AdvertExpiring7Days' | 'AdvertExpiring3Days' | 'AdvertExpiring1Day' | 'AdvertExpired'
+    | 'PromotionPurchased' | 'PromotionActivated' | 'TopStarted' | 'PremiumStarted' | 'FeaturedStarted' | 'RefreshStarted'
+    | 'PromotionExpiring3Days' | 'PromotionExpiring1Day' | 'PromotionExpired'
+    | 'PaymentConfirmed' | 'PaymentFailed' | 'PaymentRefunded'
+    | 'InvoiceGenerated' | 'InvoiceSent'
+    | 'NewMessage'
 
 export interface Notification {
     id: number; type: NotificationType
     title: string; content: string
     isRead: boolean; createdAt: string
-    advertId?: number; userId?: number; transactionId?: number
+    advertId?: number; paymentId?: number; invoiceId?: number
+}
+
+export interface NotificationPreference {
+    category: string
+    label: string
+    emailEnabled: boolean
+}
+
+export interface UpdateNotificationPreferenceDto {
+    category: string
+    emailEnabled: boolean
 }
 
 // ── Saved Searches ────────────────────────────────────────────────────────────
@@ -281,6 +300,59 @@ export interface CouponValidation {
 export interface CreateCouponDto {
     code: string; discountPercent?: number; discountAmount?: number
     maxUses: number; expiresAt?: string; description?: string
+}
+
+// ── Payments & Invoices ────────────────────────────────────────────────────────
+
+export type PaymentServiceType = 'Top' | 'Premium' | 'Featured' | 'Refresh' | 'Other'
+export type PaymentStatusType = 'Pending' | 'Completed' | 'Failed' | 'Cancelled' | 'Refunded'
+export type InvoiceStatusType = 'Draft' | 'Generated' | 'Sent'
+
+export interface ServicePrice {
+    serviceType: PaymentServiceType
+    durationDays: number
+    price: number
+    description: string
+}
+
+export interface PaymentInitiated {
+    paymentId: number
+    paymentUrl: string
+    amount: number
+    orderId: string
+}
+
+export interface PaymentRecord {
+    id: number
+    serviceType: PaymentServiceType
+    serviceDescription: string
+    amount: number
+    currency: string
+    status: PaymentStatusType
+    imojeTransactionId?: string
+    createdAt: string
+    paidAt?: string
+    advertId?: number
+    durationDays?: number
+}
+
+export interface MonthlyInvoice {
+    id: number
+    invoiceNumber: string
+    month: number
+    year: number
+    totalAmount: number
+    netAmount: number
+    vatAmount: number
+    vatRate: number
+    status: InvoiceStatusType
+    generatedAt: string
+    sentAt?: string
+    items: PaymentRecord[]
+    userName: string
+    userEmail: string
+    companyName?: string
+    nip?: string
 }
 
 // ── Events ────────────────────────────────────────────────────────────────────

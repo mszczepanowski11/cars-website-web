@@ -175,6 +175,28 @@
 
                     </div>
 
+                    <!-- Location fields -->
+                    <div class="form-section-subhead">Lokalizacja</div>
+                    <div class="fields-grid">
+                        <div class="field">
+                            <label class="flabel">Województwo <span class="req">*</span></label>
+                            <div class="select-wrap">
+                                <select v-model="form.region" class="fselect">
+                                    <option :value="null" disabled>Wybierz województwo</option>
+                                    <option v-for="v in voivodeships" :key="v" :value="v">{{ v }}</option>
+                                </select>
+                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="flabel">Miasto <span class="req">*</span></label>
+                            <div class="input-icon-wrap">
+                                <v-icon icon="mdi-map-marker-outline" class="input-prefix" size="16" />
+                                <input v-model="form.city" type="text" class="finput has-prefix" placeholder="np. Warszawa" />
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- VIN bar -->
                     <div class="vin-bar">
                         <v-icon icon="mdi-file-document-outline" size="22" class="vin-doc-icon" />
@@ -191,7 +213,11 @@
                 <div v-else-if="currentStep === 1" class="form-content">
                     <div class="form-section-head">
                         <h2>Zdjęcia</h2>
-                        <p>Dodaj zdjęcia pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
+                        <p>Dodaj minimum <strong>3 zdjęcia</strong> pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
+                    </div>
+                    <div v-if="selectedFiles.length > 0" class="photo-count-bar" :class="{ 'pc-ok': selectedFiles.length >= 3, 'pc-warn': selectedFiles.length < 3 }">
+                        <v-icon :icon="selectedFiles.length >= 3 ? 'mdi-check-circle-outline' : 'mdi-alert-circle-outline'" size="16" />
+                        {{ selectedFiles.length }} / min. 3 zdjęcia
                     </div>
                     <div class="img-grid">
                         <div v-for="(preview, i) in previews" :key="i" class="img-thumb">
@@ -264,10 +290,17 @@
 
                 <!-- Form actions -->
                 <div class="form-actions">
-                    <button class="btn-cancel" @click="currentStep > 0 ? currentStep-- : navigateTo('/my-adverts')">
-                        {{ currentStep > 0 ? 'Wstecz' : 'Anuluj' }}
-                    </button>
-                    <button v-if="currentStep < steps.length - 1" class="btn-next" @click="currentStep++">
+                    <div class="form-actions-left">
+                        <button class="btn-cancel" @click="currentStep > 0 ? currentStep-- : navigateTo('/my-adverts')">
+                            {{ currentStep > 0 ? 'Wstecz' : 'Anuluj' }}
+                        </button>
+                        <transition name="fade-err">
+                            <span v-if="stepError" class="step-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="14" />{{ stepError }}
+                            </span>
+                        </transition>
+                    </div>
+                    <button v-if="currentStep < steps.length - 1" class="btn-next" @click="goNext">
                         Dalej: {{ steps[currentStep + 1]?.name }}
                         <v-icon icon="mdi-arrow-right" size="16" />
                     </button>
@@ -370,9 +403,17 @@ const bodyTypes = ref<TaxonomyItem[]>([])
 const allFeatures = ref<Feature[]>([])
 const loading = ref(false)
 const error = ref('')
+const stepError = ref('')
 const selectedFiles = ref<File[]>([])
 const previews = ref<string[]>([])
 const currentStep = ref(0)
+
+const voivodeships = [
+    'dolnośląskie', 'kujawsko-pomorskie', 'lubelskie', 'lubuskie',
+    'łódzkie', 'małopolskie', 'mazowieckie', 'opolskie',
+    'podkarpackie', 'podlaskie', 'pomorskie', 'śląskie',
+    'świętokrzyskie', 'warmińsko-mazurskie', 'wielkopolskie', 'zachodniopomorskie',
+]
 
 const form = reactive({
     title: '',
@@ -391,6 +432,8 @@ const form = reactive({
     engineCapacity: null as number | null,
     power: null as number | null,
     vin: '',
+    city: '',
+    region: null as string | null,
 })
 
 const steps = [
@@ -462,6 +505,37 @@ const featureGroups = computed(() => {
     return g
 })
 
+function validateStep(step: number): string | null {
+    if (step === 0) {
+        if (!form.brandId) return 'Wybierz markę pojazdu.'
+        if (!form.modelId) return 'Wybierz model pojazdu.'
+        if (!form.year) return 'Podaj rok produkcji.'
+        if (!form.fuelTypeId) return 'Wybierz rodzaj paliwa.'
+        if (!form.mileage) return 'Podaj przebieg.'
+        if (!form.price) return 'Podaj cenę.'
+        if (!form.region) return 'Wybierz województwo.'
+        if (!form.city?.trim()) return 'Podaj miasto.'
+    }
+    if (step === 1) {
+        if (selectedFiles.value.length < 3) return 'Dodaj minimum 3 zdjęcia.'
+    }
+    if (step === 2) {
+        if (!form.description?.trim()) return 'Dodaj opis ogłoszenia.'
+    }
+    return null
+}
+
+function goNext() {
+    const err = validateStep(currentStep.value)
+    if (err) {
+        stepError.value = err
+        setTimeout(() => { stepError.value = '' }, 4000)
+        return
+    }
+    stepError.value = ''
+    currentStep.value++
+}
+
 function onFilesSelected(e: Event) {
     const input = e.target as HTMLInputElement
     const files = Array.from(input.files ?? [])
@@ -496,6 +570,11 @@ async function onGen() {
 }
 
 async function submit() {
+    const err = validateStep(2)
+    if (err) {
+        error.value = err
+        return
+    }
     error.value = ''
     loading.value = true
     form.title = previewTitle.value || 'Ogłoszenie'
@@ -509,7 +588,7 @@ async function submit() {
             fd.append('file', file)
             await $fetch(`/api/advert/${id}/images`, { method: 'POST', body: fd })
         }
-        await navigateTo('/my-adverts')
+        await navigateTo(`/promote-advert/${id}?fromCreate=true`)
     } catch (e: any) {
         error.value = e?.data?.message ?? 'Błąd podczas zapisywania ogłoszenia.'
     } finally {
@@ -979,6 +1058,18 @@ onMounted(async () => {
     &:hover { background: rgba($red, 0.08); }
 }
 
+.form-section-subhead {
+    font-size: 13px; font-weight: 700; color: $text-muted; text-transform: uppercase;
+    letter-spacing: 0.5px; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid $border;
+}
+
+.photo-count-bar {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500;
+    padding: 8px 14px; border-radius: $r-sm; margin-bottom: 16px;
+    &.pc-ok { color: #4caf50; background: rgba(76,175,80,0.08); border: 1px solid rgba(76,175,80,0.2); }
+    &.pc-warn { color: #ff9800; background: rgba(255,152,0,0.08); border: 1px solid rgba(255,152,0,0.2); }
+}
+
 // ── Form actions ──────────────────────────────────────────────────────────────
 .form-actions {
     display: flex;
@@ -989,6 +1080,15 @@ onMounted(async () => {
     background: $bg;
     flex-shrink: 0;
 }
+
+.form-actions-left { display: flex; align-items: center; gap: 14px; }
+
+.step-error {
+    display: flex; align-items: center; gap: 6px; font-size: 12px; color: #ff9800;
+}
+
+.fade-err-enter-active, .fade-err-leave-active { transition: opacity 0.3s; }
+.fade-err-enter-from, .fade-err-leave-to { opacity: 0; }
 
 .btn-cancel {
     background: transparent;

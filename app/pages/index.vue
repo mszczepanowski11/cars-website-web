@@ -55,23 +55,28 @@
             <div class="container stats-inner">
                 <div class="stat-item">
                     <v-icon icon="mdi-car-outline" size="28" class="stat-icon" />
-                    <div class="stat-num">12 450</div>
-                    <div class="stat-label">Ogłoszeń</div>
+                    <div class="stat-num">{{ formatStat(homeStats.activeAdverts) }}</div>
+                    <div class="stat-label">Aktywnych ogłoszeń</div>
                 </div>
                 <div class="stat-item">
                     <v-icon icon="mdi-account-group-outline" size="28" class="stat-icon" />
-                    <div class="stat-num">5 230</div>
+                    <div class="stat-num">{{ formatStat(homeStats.totalUsers) }}</div>
                     <div class="stat-label">Użytkowników</div>
                 </div>
                 <div class="stat-item">
                     <v-icon icon="mdi-check-circle-outline" size="28" class="stat-icon" />
-                    <div class="stat-num">8 721</div>
+                    <div class="stat-num">{{ formatStat(homeStats.soldVehicles) }}</div>
                     <div class="stat-label">Sprzedanych aut</div>
                 </div>
                 <div class="stat-item">
-                    <v-icon icon="mdi-eye-outline" size="28" class="stat-icon" />
-                    <div class="stat-num">1.2M</div>
-                    <div class="stat-label">Wyświetleń ogłoszeń</div>
+                    <v-icon icon="mdi-domain" size="28" class="stat-icon" />
+                    <div class="stat-num">{{ formatStat(homeStats.companies) }}</div>
+                    <div class="stat-label">Dealerów</div>
+                </div>
+                <div class="stat-item">
+                    <v-icon icon="mdi-calendar-star-outline" size="28" class="stat-icon" />
+                    <div class="stat-num">{{ formatStat(homeStats.events) }}</div>
+                    <div class="stat-label">Wydarzeń</div>
                 </div>
             </div>
         </div>
@@ -181,9 +186,16 @@ const featured = ref<CarAdvert[]>([])
 const events = ref<CarEvent[]>([])
 const email = ref('')
 const searchText = ref('')
+const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, companies: 0, events: 0 })
 
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
+
+function formatStat(n: number): string {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
+    if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K'
+    return n.toLocaleString('pl')
+}
 
 const eventPlaceholder = '/car-placeholder.svg'
 
@@ -213,13 +225,13 @@ function doSearch() {
 }
 
 onMounted(async () => {
-    try {
-        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert?page=1&pageSize=4')
-        featured.value = r.items
-    } catch { }
-    try {
-        events.value = await getUpcoming(4)
-    } catch { }
+    await Promise.allSettled([
+        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert?page=1&pageSize=4')
+            .then(r => { featured.value = r.items }),
+        getUpcoming(4).then(e => { events.value = e }),
+        $fetch<typeof homeStats.value>('/api/proxy/api/Stats/home')
+            .then(s => { homeStats.value = s }),
+    ])
 })
 </script>
 

@@ -1,4 +1,4 @@
-import type { Notification, PagedResult } from '~/types'
+import type { Notification, NotificationPreference, UpdateNotificationPreferenceDto, PagedResult } from '~/types'
 
 export const useNotifications = () => {
     const notifications = useState<Notification[]>('notifications', () => [])
@@ -43,5 +43,13 @@ export const useNotifications = () => {
         } catch { return 0 }
     }
 
-    return { notifications, unreadCount, loading, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, fetchUnreadCount }
+    async function getPreferences(): Promise<NotificationPreference[]> {
+        return await $fetch<NotificationPreference[]>('/api/proxy/api/Notification/preferences')
+    }
+
+    async function updatePreference(dto: UpdateNotificationPreferenceDto): Promise<void> {
+        await $fetch('/api/proxy/api/Notification/preferences', { method: 'PUT', body: dto })
+    }
+
+    return { notifications, unreadCount, loading, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, fetchUnreadCount, getPreferences, updatePreference }
 }

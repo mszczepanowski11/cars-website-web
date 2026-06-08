@@ -550,6 +550,20 @@
                         Zapisz ustawienia
                     </button>
 
+                    <div v-if="notifPrefs.length" class="settings-group">
+                        <div class="settings-group-title">Kategorie powiadomień e-mail</div>
+                        <div v-for="pref in notifPrefs" :key="pref.category" class="setting-row">
+                            <div class="setting-label">
+                                <div class="setting-name">{{ pref.label }}</div>
+                            </div>
+                            <button class="toggle-btn" :class="{ on: pref.emailEnabled }"
+                                :disabled="prefsSaving === pref.category"
+                                @click="toggleNotifPref(pref)">
+                                <div class="toggle-knob" />
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="danger-zone">
                         <div class="danger-title">Strefa niebezpieczna</div>
                         <div class="danger-desc">Usunięcie konta jest nieodwracalne. Wszystkie Twoje ogłoszenia i dane
@@ -624,13 +638,13 @@
 </template>
 
 <script setup lang="ts">
-import type { CarAdvert, UserProfile, UserStats, Review, Notification, SavedSearch, FollowedAdvert, AccountSettings, UpdateProfileDto, SearchAdvertDto } from '~/types'
+import type { CarAdvert, UserProfile, UserStats, Review, Notification, NotificationPreference, SavedSearch, FollowedAdvert, AccountSettings, UpdateProfileDto, SearchAdvertDto } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
 
 const { fetchProfile, fetchStats, updateProfile, updatePassword, fetchSettings, updateSettings, deleteAccount } = useUser()
 const { getMyReceivedReviews } = useReviews()
-const { notifications: allNotifications, unreadCount: notifUnread, fetchNotifications, markAsRead, markAllAsRead, deleteNotification } = useNotifications()
+const { notifications: allNotifications, unreadCount: notifUnread, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, getPreferences, updatePreference } = useNotifications()
 const { getFollowedAdverts, getFollowers } = useFollow()
 const { getSavedSearches, deleteSearch: deleteSavedSearch } = useSavedSearches()
 const { logout: authLogout } = useAuth()
@@ -704,6 +718,10 @@ const settingsForm = reactive<AccountSettings>({ emailNotifications: true, price
 const settingsSaving = ref(false)
 const settingsSuccess = ref(false)
 const settingsError = ref<string | null>(null)
+
+// Notification preferences
+const notifPrefs = ref<NotificationPreference[]>([])
+const prefsSaving = ref<string | null>(null)
 
 const confirmDeleteAccount = ref(false)
 
@@ -781,9 +799,23 @@ async function goProfile() {
 async function goSettings() {
     section.value = 'settings'
     try {
-        const s = await fetchSettings()
+        const [s, prefs] = await Promise.all([fetchSettings(), getPreferences()])
         if (s) Object.assign(settingsForm, s)
-    } catch { }
+        notifPrefs.value = prefs
+    } catch {}
+}
+
+async function toggleNotifPref(pref: NotificationPreference) {
+    const prev = pref.emailEnabled
+    pref.emailEnabled = !prev
+    prefsSaving.value = pref.category
+    try {
+        await updatePreference({ category: pref.category, emailEnabled: pref.emailEnabled })
+    } catch {
+        pref.emailEnabled = prev
+    } finally {
+        prefsSaving.value = null
+    }
 }
 
 // Actions
@@ -853,22 +885,41 @@ function searchUrl(criteria: SearchAdvertDto): string {
 
 function notifIcon(type: string) {
     const map: Record<string, string> = {
+        AccountCreated: 'mdi-account-check-outline',
+        PasswordChanged: 'mdi-lock-reset',
+        PasswordReset: 'mdi-lock-reset',
+        AdvertAdded: 'mdi-car-outline',
+        AdvertPublished: 'mdi-check-circle-outline',
+        AdvertRejected: 'mdi-close-circle-outline',
+        AdvertDeleted: 'mdi-delete-outline',
+        AdvertMarkedSold: 'mdi-handshake-outline',
+        AdvertExpiring7Days: 'mdi-clock-alert-outline',
+        AdvertExpiring3Days: 'mdi-clock-alert-outline',
+        AdvertExpiring1Day: 'mdi-clock-alert-outline',
+        AdvertExpired: 'mdi-clock-remove-outline',
+        PromotionPurchased: 'mdi-star-outline',
+        PromotionActivated: 'mdi-star-check-outline',
+        TopStarted: 'mdi-crown-outline',
+        PremiumStarted: 'mdi-diamond-outline',
+        FeaturedStarted: 'mdi-star-outline',
+        RefreshStarted: 'mdi-refresh',
+        PromotionExpiring3Days: 'mdi-clock-alert-outline',
+        PromotionExpiring1Day: 'mdi-clock-alert-outline',
+        PromotionExpired: 'mdi-clock-remove-outline',
+        PaymentConfirmed: 'mdi-check-circle-outline',
+        PaymentFailed: 'mdi-alert-circle-outline',
+        PaymentRefunded: 'mdi-cash-refund',
+        InvoiceGenerated: 'mdi-receipt-text-outline',
+        InvoiceSent: 'mdi-email-check-outline',
         NewMessage: 'mdi-message-outline',
-        PriceChange: 'mdi-tag-outline',
-        NewFollower: 'mdi-account-plus-outline',
-        ReportResolved: 'mdi-flag-outline',
-        AdvertExpiring: 'mdi-clock-alert-outline',
-        PromoExpiring: 'mdi-star-outline',
-        NewReview: 'mdi-star-outline',
-        TransactionUpdate: 'mdi-handshake-outline',
     }
     return map[type] ?? 'mdi-bell-outline'
 }
 
 function notifIconClass(type: string) {
-    if (type === 'PriceChange') return 'notif-green'
-    if (type === 'NewMessage') return 'notif-blue'
-    if (['AdvertExpiring', 'PromoExpiring'].includes(type)) return 'notif-orange'
+    if (['PaymentConfirmed', 'AdvertPublished', 'AccountCreated', 'PromotionActivated', 'TopStarted', 'PremiumStarted', 'FeaturedStarted', 'RefreshStarted', 'PromotionPurchased'].includes(type)) return 'notif-green'
+    if (['NewMessage'].includes(type)) return 'notif-blue'
+    if (['AdvertExpiring7Days', 'AdvertExpiring3Days', 'AdvertExpiring1Day', 'PromotionExpiring3Days', 'PromotionExpiring1Day'].includes(type)) return 'notif-orange'
     return 'notif-red'
 }
 
