@@ -2,8 +2,10 @@
 import type { CarAdvert } from '~/types'
 const props = defineProps<{ advert: CarAdvert }>()
 const { isFavorite, toggleFavorite, isLoggedIn } = useFavorites()
+const { getImageUrl, placeholder } = useImageUrl()
 
 const mainImage = computed(() => props.advert.images?.find(i => i.isMain) ?? props.advert.images?.[0])
+const mainImageUrl = computed(() => getImageUrl(mainImage.value?.url, placeholder))
 
 async function toggleFav(e: Event) {
     e.preventDefault()
@@ -40,7 +42,7 @@ const badgeText = computed(() => {
     >
         <div class="card-img-wrap">
             <img
-                :src="mainImage?.url ?? 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop'"
+                :src="mainImageUrl"
                 :alt="advert.title"
             />
             <span v-if="resolvedBadge" :class="['card-badge', `card-badge--${resolvedBadge.toLowerCase()}`]">

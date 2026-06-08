@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { CarAdvert } from '~/types'
 const props = defineProps<{ advert: CarAdvert; status?: string }>()
+const { getImageUrl } = useImageUrl()
 const mainImage = computed(() => props.advert.images?.find(i => i.isMain) ?? props.advert.images?.[0])
+const mainImageUrl = computed(() => getImageUrl(mainImage.value?.url))
 const statusColor = computed(() => {
     if (props.status === 'Aktywne') return '#4caf50'
     if (props.status === 'Wstrzymane') return '#ff9800'
@@ -13,7 +15,7 @@ const statusColor = computed(() => {
     <NuxtLink :to="`/advert/${advert.id}`" class="dash-card">
         <div class="dash-card-img-wrap">
             <img
-                :src="mainImage?.url ?? 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=600&auto=format&fit=crop'"
+                :src="mainImageUrl"
                 :alt="advert.title"
             />
             <span v-if="status" class="status-badge" :style="{ background: statusColor }">{{ status }}</span>

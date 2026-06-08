@@ -18,6 +18,9 @@ export interface CarAdvert {
     sellerType?: 'personal' | 'dealer'
     isHidden?: boolean
     isActive?: boolean
+    viewCount?: number
+    favoriteCount?: number
+    soldAt?: string
 }
 
 export interface PagedResult<T> { items: T[]; totalCount: number }
@@ -41,6 +44,9 @@ export interface CategoryWithCount {
 export interface UserStats {
     totalAdverts: number; activeAdverts: number; totalViews: number
     favoritesCount: number; unreadMessages: number
+    totalSold: number; followersCount: number; followingCount: number
+    averageRating: number; reviewCount: number
+    responseRate: number; avgResponseMinutes: number
 }
 
 export interface UserProfile {
@@ -51,31 +57,49 @@ export interface UserProfile {
     nip?: string
     isAdmin?: boolean
     isBlocked?: boolean
+    city?: string
+    region?: string
+    about?: string
 }
+
+export interface UpdateProfileDto {
+    name: string; surname: string; phoneNumber: string
+    city?: string; region?: string; about?: string
+    companyName?: string; nip?: string
+}
+
+export interface UpdatePasswordDto {
+    currentPassword: string; newPassword: string
+}
+
+export interface UpdateSettingsDto {
+    emailNotifications: boolean
+    priceChangeAlerts: boolean
+    newMessageAlerts: boolean
+    newsletterSubscribed: boolean
+}
+
+export interface AccountSettings {
+    emailNotifications: boolean
+    priceChangeAlerts: boolean
+    newMessageAlerts: boolean
+    newsletterSubscribed: boolean
+}
+
+// ── Conversations & Messages ──────────────────────────────────────────────────
 
 export interface Conversation {
     id: number
-    buyerId: number
-    buyerName: string
-    sellerId: number
-    sellerName: string
-    advertId: number
-    advertTitle: string
-    lastMessageAt: string
-    lastMessageContent: string | null
-    unreadCount: number
-    otherUserId: number
-    otherUserName: string
+    buyerId: number; buyerName: string
+    sellerId: number; sellerName: string
+    advertId: number; advertTitle: string
+    lastMessageAt: string; lastMessageContent: string | null
+    unreadCount: number; otherUserId: number; otherUserName: string
 }
 
 export interface MessageItem {
-    id: number
-    senderId: number
-    senderName: string
-    content: string
-    sentAt: string
-    isRead: boolean
-    isMine: boolean
+    id: number; senderId: number; senderName: string
+    content: string; sentAt: string; isRead: boolean; isMine: boolean
 }
 
 // ── Reports ───────────────────────────────────────────────────────────────────
@@ -85,78 +109,178 @@ export type ReportTargetType = 'Advert' | 'User'
 export type ReportStatus = 'Pending' | 'Resolved' | 'Rejected'
 
 export interface CreateReportDto {
-    targetType: ReportTargetType
-    targetAdvertId?: number
-    targetUserId?: number
-    reason: ReportReason
-    content?: string
+    targetType: ReportTargetType; targetAdvertId?: number; targetUserId?: number
+    reason: ReportReason; content?: string
 }
 
 export interface AdminReport {
-    id: number
-    targetType: ReportTargetType
-    targetAdvertId?: number
-    targetAdvertTitle?: string
-    targetUserId?: number
-    targetUserName?: string
-    reason: ReportReason
-    content?: string
-    reportedAt: string
-    reportedByUserId: number
-    reportedByName: string
-    status: ReportStatus
-    resolvedAt?: string
-    adminNote?: string
+    id: number; targetType: ReportTargetType
+    targetAdvertId?: number; targetAdvertTitle?: string
+    targetUserId?: number; targetUserName?: string
+    reason: ReportReason; content?: string
+    reportedAt: string; reportedByUserId: number; reportedByName: string
+    status: ReportStatus; resolvedAt?: string; adminNote?: string
 }
 
 // ── Admin Panel ───────────────────────────────────────────────────────────────
 
 export interface AdminStats {
-    totalActiveAdverts: number
-    totalUsers: number
-    totalReports: number
-    pendingReports: number
-    newRegistrationsThisMonth: number
-    blockedUsers: number
+    totalActiveAdverts: number; totalUsers: number
+    totalReports: number; pendingReports: number
+    newRegistrationsThisMonth: number; blockedUsers: number
+    totalRevenue: number; activePromotions: number
+    totalSoldVehicles: number; dailyRevenue: number; monthlyRevenue: number
 }
 
 export interface AdminUser {
-    id: number
-    name: string
-    surname: string
-    email: string
-    phoneNumber: string
-    isAdmin: boolean
-    isBlocked: boolean
-    blockedAt?: string
-    blockedReason?: string
-    advertCount: number
+    id: number; name: string; surname: string; email: string
+    phoneNumber: string; isAdmin: boolean; isBlocked: boolean
+    blockedAt?: string; blockedReason?: string; advertCount: number
+    createdAt: string
+    accountType?: 'Personal' | 'Business'
+    companyName?: string
 }
 
 export interface AdminAdvert {
-    id: number
-    title: string
-    price: number
-    currency: string
-    isHidden: boolean
-    isActive: boolean
-    createdAt: string
-    userId: number
-    ownerName: string
-    city?: string
-    region?: string
+    id: number; title: string; price: number; currency: string
+    isHidden: boolean; isActive: boolean; createdAt: string
+    userId: number; ownerName: string; sellerName?: string
+    city?: string; region?: string
+    viewCount?: number; badge?: AdvertBadge | null
+    brand?: string; model?: string; year?: number
+    mainImageUrl?: string
 }
 
+
 export interface AdminActionLog {
-    id: number
-    adminUserId: number
-    adminName: string
-    actionType: string
-    targetAdvertId?: number
-    targetUserId?: number
-    reportId?: number
-    note?: string
-    performedAt: string
+    id: number; adminUserId: number; adminName: string; actionType: string
+    targetAdvertId?: number; targetUserId?: number; reportId?: number
+    note?: string; performedAt: string
+}
+
+// ── Reviews ───────────────────────────────────────────────────────────────────
+
+export interface Review {
+    id: number; advertId?: number; advertTitle?: string
+    sellerId: number; sellerName: string
+    buyerId: number; buyerName: string
+    rating: number; content: string
+    createdAt: string; isVerifiedPurchase: boolean
+}
+
+export interface CreateReviewDto {
+    sellerId: number; advertId?: number; rating: number; content: string
+}
+
+export interface ReviewsResult {
+    items: Review[]; totalCount: number; averageRating: number
+}
+
+// ── Notifications ─────────────────────────────────────────────────────────────
+
+export type NotificationType = 'NewMessage' | 'PriceChange' | 'NewFollower' | 'ReportResolved' | 'AdvertExpiring' | 'PromoExpiring' | 'NewReview' | 'TransactionUpdate'
+
+export interface Notification {
+    id: number; type: NotificationType
+    title: string; content: string
+    isRead: boolean; createdAt: string
+    advertId?: number; userId?: number; transactionId?: number
+}
+
+// ── Saved Searches ────────────────────────────────────────────────────────────
+
+export interface SavedSearch {
+    id: number; name: string
+    criteria: SearchAdvertDto
+    createdAt: string; notifyOnNew: boolean
+    newResultsCount: number
+}
+
+export interface CreateSavedSearchDto {
+    name: string; criteria: SearchAdvertDto; notifyOnNew: boolean
+}
+
+// ── Follow System ─────────────────────────────────────────────────────────────
+
+export interface FollowedAdvert {
+    id: number; advertId: number; advertTitle: string
+    advertPrice: number; priceAtFollow: number; priceChanged: boolean
+    city?: string; brand?: string; model?: string
+    mainImageUrl?: string; createdAt: string
+    advert?: CarAdvert
+}
+
+export interface FollowedSeller {
+    id: number; sellerId: number; sellerName: string
+    advertCount: number; createdAt: string
+    averageRating?: number
+}
+
+// ── Transactions ──────────────────────────────────────────────────────────────
+
+export type TransactionType = 'Reservation' | 'Viewing' | 'Purchase'
+export type TransactionStatus = 'Pending' | 'Confirmed' | 'Cancelled' | 'Completed'
+
+export interface Transaction {
+    id: number; type: TransactionType; status: TransactionStatus
+    advertId: number; advertTitle: string; advertPrice: number
+    buyerId: number; buyerName: string
+    sellerId: number; sellerName: string
+    createdAt: string; scheduledAt?: string; completedAt?: string
+    notes?: string; sellerPhone?: string
+}
+
+export interface CreateTransactionDto {
+    type: TransactionType; advertId: number
+    scheduledAt?: string; notes?: string
+}
+
+// ── Promotions ────────────────────────────────────────────────────────────────
+
+export type PromotionType = 'Top' | 'Premium' | 'Featured' | 'Refresh'
+
+export interface PromotionPlan {
+    type: PromotionType; name: string
+    price7days: number; price30days: number
+    description: string; features: string[]
+}
+
+export interface ActivePromotion {
+    id: number; advertId: number; advertTitle: string
+    type: PromotionType; startsAt: string; expiresAt: string
+    isPaid: boolean; durationDays: number
+}
+
+export interface CreatePromotionDto {
+    advertId: number; type: PromotionType
+    durationDays: number; couponCode?: string
+}
+
+export interface PromotionOrder {
+    originalPrice: number; finalPrice: number
+    discountApplied: number; couponCode?: string
+    promotion: CreatePromotionDto
+}
+
+// ── Coupons ───────────────────────────────────────────────────────────────────
+
+export interface Coupon {
+    id: number; code: string
+    discountPercent?: number; discountAmount?: number
+    maxUses: number; usedCount: number
+    expiresAt?: string; isActive: boolean
+    description?: string; createdAt: string
+}
+
+export interface CouponValidation {
+    isValid: boolean; message?: string
+    discountPercent?: number; discountAmount?: number
+    originalPrice: number; finalPrice: number
+}
+
+export interface CreateCouponDto {
+    code: string; discountPercent?: number; discountAmount?: number
+    maxUses: number; expiresAt?: string; description?: string
 }
 
 // ── Events ────────────────────────────────────────────────────────────────────
@@ -164,61 +288,34 @@ export interface AdminActionLog {
 export type EventStatus = 'Pending' | 'Published' | 'Rejected' | 'Archived'
 export type EventReportReason = 'Spam' | 'FakeEvent' | 'OutdatedInfo' | 'Other'
 
-export interface EventImage {
-    id: number
-    url: string
-    isMain: boolean
-}
+export interface EventImage { id: number; url: string; isMain: boolean }
 
 export interface CarEvent {
-    id: number
-    name: string
-    description: string
-    startDate: string
-    endDate: string
-    city: string
-    address: string
-    websiteUrl?: string
-    ticketsUrl?: string
-    organizerName?: string
-    organizerEmail?: string
-    organizerPhone?: string
-    status: EventStatus
-    createdAt: string
-    createdByUserId: number
-    createdByName?: string
+    id: number; name: string; description: string
+    startDate: string; endDate: string
+    city: string; address: string
+    websiteUrl?: string; ticketsUrl?: string
+    organizerName?: string; organizerEmail?: string; organizerPhone?: string
+    status: EventStatus; createdAt: string
+    createdByUserId: number; createdByName?: string
     images: EventImage[]
 }
 
 export interface AdminEvent {
-    id: number
-    name: string
-    startDate: string
-    endDate: string
-    city: string
-    status: EventStatus
-    createdAt: string
-    createdByUserId: number
-    createdByName?: string
-    reportCount: number
-    mainImageUrl?: string
+    id: number; name: string; startDate: string; endDate: string
+    city: string; status: EventStatus; createdAt: string
+    createdByUserId: number; createdByName?: string
+    reportCount: number; mainImageUrl?: string
 }
 
 export interface CreateEventDto {
-    name: string
-    description: string
-    startDate: string
-    endDate: string
-    city: string
-    address: string
-    websiteUrl?: string
-    ticketsUrl?: string
-    organizerName?: string
-    organizerEmail?: string
-    organizerPhone?: string
+    name: string; description: string
+    startDate: string; endDate: string
+    city: string; address: string
+    websiteUrl?: string; ticketsUrl?: string
+    organizerName?: string; organizerEmail?: string; organizerPhone?: string
 }
 
 export interface CreateEventReportDto {
-    reason: EventReportReason
-    content?: string
+    reason: EventReportReason; content?: string
 }

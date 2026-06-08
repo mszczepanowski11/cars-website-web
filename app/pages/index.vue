@@ -4,10 +4,7 @@
         <!-- Hero -->
         <section class="hero">
             <div class="hero-car-bg">
-                <img
-                    src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop"
-                    alt=""
-                />
+                <img src="/car-placeholder.svg" alt="" />
             </div>
             <div class="container hero-inner">
                 <div class="hero-content">
@@ -95,6 +92,50 @@
             </div>
         </section>
 
+        <!-- Events -->
+        <section v-if="events.length" class="section">
+            <div class="container">
+                <div class="sec-top">
+                    <h2>Nadchodzące wydarzenia</h2>
+                    <NuxtLink to="/wydarzenia" class="see-all">
+                        Zobacz wszystkie
+                        <v-icon icon="mdi-arrow-right" size="16" />
+                    </NuxtLink>
+                </div>
+                <div class="events-grid">
+                    <div v-for="ev in events" :key="ev.id" class="event-card">
+                        <div class="event-img-wrap">
+                            <img
+                                :src="getEventImageUrl(ev)"
+                                :alt="ev.name"
+                            />
+                            <span class="event-badge">WYDARZENIE</span>
+                            <div class="event-date-chip">
+                                <v-icon icon="mdi-calendar" size="13" />
+                                {{ formatEventDate(ev.startDate) }}
+                            </div>
+                        </div>
+                        <div class="event-body">
+                            <div class="event-name">{{ ev.name }}</div>
+                            <div class="event-loc">
+                                <v-icon icon="mdi-map-marker-outline" size="14" class="event-loc-icon" />
+                                {{ ev.city }}
+                            </div>
+                            <div class="event-desc">{{ ev.description?.slice(0, 90) }}{{ ev.description?.length > 90 ? '...' : '' }}</div>
+                            <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener" class="event-link-btn">
+                                Kup bilety
+                                <v-icon icon="mdi-arrow-right" size="14" />
+                            </a>
+                            <a v-else-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener" class="event-link-btn">
+                                Dowiedz się więcej
+                                <v-icon icon="mdi-arrow-right" size="14" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Why CARIZO -->
         <section class="section">
             <div class="container">
@@ -134,11 +175,27 @@
 </template>
 
 <script setup lang="ts">
-import type { CarAdvert, PagedResult } from '~/types'
+import type { CarAdvert, CarEvent, PagedResult } from '~/types'
 
 const featured = ref<CarAdvert[]>([])
+const events = ref<CarEvent[]>([])
 const email = ref('')
 const searchText = ref('')
+
+const { getUpcoming } = useEvents()
+const { getImageUrl } = useImageUrl()
+
+const eventPlaceholder = '/car-placeholder.svg'
+
+function getEventImageUrl(ev: CarEvent): string {
+    const main = ev.images?.find(i => i.isMain) ?? ev.images?.[0]
+    return getImageUrl(main?.url, eventPlaceholder)
+}
+
+function formatEventDate(dateStr: string): string {
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })
+}
 
 const feats = [
     { title: 'Bezpieczeństwo', desc: 'Weryfikujemy ogłoszenia i dbamy o Twoje bezpieczeństwo.', icon: 'mdi-shield-check-outline' },
@@ -159,6 +216,9 @@ onMounted(async () => {
     try {
         const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert?page=1&pageSize=4')
         featured.value = r.items
+    } catch { }
+    try {
+        events.value = await getUpcoming(4)
     } catch { }
 })
 </script>
@@ -438,6 +498,116 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     color: $red;
+}
+
+// Events
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+.event-card {
+    @include card;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+        border-color: rgba($red, 0.35);
+    }
+}
+
+.event-img-wrap {
+    position: relative;
+
+    img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: block;
+    }
+}
+
+.event-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba($red, 0.9);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 9px;
+    border-radius: 5px;
+}
+
+.event-date-chip {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    color: $text-muted;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.event-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.event-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text;
+    line-height: 1.3;
+}
+
+.event-loc {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: $text-dim;
+    font-size: 12px;
+}
+
+.event-loc-icon { color: $red; }
+
+.event-desc {
+    font-size: 12px;
+    color: $text-dim;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.event-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: $red;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
+    transition: opacity 0.2s;
+    text-decoration: none;
+
+    &:hover { opacity: 0.8; }
 }
 
 // Newsletter

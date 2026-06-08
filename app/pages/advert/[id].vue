@@ -14,6 +14,10 @@
                             :class="{ 'heart-active': isFav }" />
                         Ulubione
                     </button>
+                    <button class="icon-action" @click="handleReport">
+                        <v-icon icon="mdi-flag-outline" size="18" />
+                        Zgłoś
+                    </button>
                     <button class="icon-action">
                         <v-icon icon="mdi-share-variant-outline" size="18" />
                         Udostępnij
@@ -36,7 +40,7 @@
                             <v-icon icon="mdi-check-circle" size="13" />
                             VERIFIED
                         </span>
-                        <span v-if="advert?.vin" class="badge-vin">
+                        <span class="badge-vin">
                             <v-icon icon="mdi-shield-check-outline" size="13" />
                             VIN zweryfikowany
                         </span>
@@ -195,26 +199,55 @@
                 <div class="gallery-section">
                     <div class="section-head">
                         <h2 class="section-heading">Zdjęcia ({{ allImages.length }})</h2>
-                        <button class="see-all-link">Zobacz wszystkie</button>
+                        <button class="see-all-link" @click="openLightbox(0)">Zobacz wszystkie</button>
                     </div>
                     <div class="gallery-grid">
-                        <div class="gallery-main" @click="activeImg = 0">
+                        <div class="gallery-main" @click="openLightbox(0)">
                             <img :src="allImages[0]?.url ?? placeholder" alt="" />
-                            <button class="expand-btn">
+                            <button class="expand-btn" @click.stop="openLightbox(0)">
                                 <v-icon icon="mdi-arrow-expand" size="18" />
                             </button>
                         </div>
                         <div class="gallery-thumbs">
                             <div v-for="(img, i) in allImages.slice(1, 4)" :key="i" class="gallery-thumb"
-                                @click="activeImg = i + 1">
+                                @click="openLightbox(i + 1)">
                                 <img :src="img.url" alt="" />
-                                <div v-if="i === 2 && allImages.length > 4" class="thumb-overlay">
+                                <div v-if="i === 2 && allImages.length > 4" class="thumb-overlay" @click.stop="openLightbox(i + 1)">
                                     +{{ allImages.length - 4 }}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Lightbox -->
+                <Teleport to="body">
+                    <transition name="fade">
+                        <div v-if="lightboxOpen" class="lightbox-backdrop" @click.self="lightboxOpen = false">
+                            <button class="lb-close" @click="lightboxOpen = false">
+                                <v-icon icon="mdi-close" size="22" />
+                            </button>
+                            <button class="lb-arrow lb-prev" :disabled="lightboxIdx === 0" @click="lightboxIdx--">
+                                <v-icon icon="mdi-chevron-left" size="30" />
+                            </button>
+                            <div class="lb-img-wrap">
+                                <img :src="allImages[lightboxIdx]?.url ?? placeholder" alt="" class="lb-img" />
+                            </div>
+                            <button class="lb-arrow lb-next" :disabled="lightboxIdx === allImages.length - 1" @click="lightboxIdx++">
+                                <v-icon icon="mdi-chevron-right" size="30" />
+                            </button>
+                            <div class="lb-counter">{{ lightboxIdx + 1 }} / {{ allImages.length }}</div>
+                            <div class="lb-thumbs">
+                                <div v-for="(img, i) in allImages" :key="i"
+                                    class="lb-thumb"
+                                    :class="{ 'lb-thumb-active': i === lightboxIdx }"
+                                    @click="lightboxIdx = i">
+                                    <img :src="img.url" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+                </Teleport>
 
                 <!-- Tabs -->
                 <div class="tabs-wrap">
@@ -301,18 +334,42 @@
                         </button>
                     </div>
 
-                    <!-- Finansowanie -->
-                    <div v-else-if="activeTab === 'Finansowanie'" class="tab-content">
-                        <div class="finance-box">
-                            <div class="finance-label">Rata już od</div>
-                            <div class="finance-price">2 399 zł <span class="finance-mo">/ mies.</span></div>
-                            <button class="btn-red">Sprawdź ofertę finansowania</button>
+                    <!-- Opinie -->
+                    <div v-else-if="activeTab === 'Opinie'" class="tab-content">
+                        <div v-if="reviewsLoading" class="loading-center"><v-icon icon="mdi-loading" size="26" class="spin" /></div>
+                        <div v-else-if="sellerReviews.length" class="reviews-list">
+                            <div v-for="r in sellerReviews" :key="r.id" class="review-card">
+                                <div class="review-header">
+                                    <div class="rev-avatar">{{ r.buyerName?.[0] ?? '?' }}</div>
+                                    <div class="rev-info">
+                                        <div class="rev-name">{{ r.buyerName }}</div>
+                                        <div class="rev-date">{{ new Date(r.createdAt).toLocaleDateString('pl-PL') }}</div>
+                                    </div>
+                                    <div class="rev-stars">
+                                        <v-icon v-for="n in 5" :key="n" :icon="n <= r.rating ? 'mdi-star' : 'mdi-star-outline'" size="15" class="star-icon" />
+                                    </div>
+                                </div>
+                                <p class="rev-text">{{ r.content }}</p>
+                            </div>
                         </div>
+                        <p v-else class="empty-tab">Brak opinii o tym sprzedawcy.</p>
                     </div>
 
                     <!-- Podobne -->
                     <div v-else-if="activeTab === 'Podobne oferty'" class="tab-content">
-                        <p class="empty-tab">Ładowanie podobnych ofert...</p>
+                        <div v-if="similar.length" class="similar-tab-grid">
+                            <NuxtLink v-for="a in similar" :key="a.id" :to="`/advert/${a.id}`" class="sim-card">
+                                <div class="sim-img-wrap">
+                                    <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" />
+                                </div>
+                                <div class="sim-body">
+                                    <div class="sim-title">{{ a.brand?.name }} {{ a.model?.name }}</div>
+                                    <div class="sim-meta">{{ a.year }} • {{ Number(a.mileage).toLocaleString('pl') }} km</div>
+                                    <div class="sim-price">{{ Number(a.price).toLocaleString('pl') }} zł</div>
+                                </div>
+                            </NuxtLink>
+                        </div>
+                        <p v-else class="empty-tab">Brak podobnych ofert.</p>
                     </div>
                 </div>
 
@@ -326,7 +383,7 @@
                         <NuxtLink v-for="a in similar" :key="a.id" :to="`/advert/${a.id}`" class="sim-card">
                             <div class="sim-img-wrap">
                                 <span class="sim-verified">VERIFIED</span>
-                                <img :src="a.images?.find(i => i.isMain)?.url ?? placeholder" :alt="a.title" />
+                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" />
                                 <button class="sim-fav" @click.prevent="toggleFavorite(a.id)">
                                     <v-icon :icon="isFavorite(a.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="17" />
                                 </button>
@@ -351,61 +408,77 @@
                     <div class="card-title">Sprzedający</div>
                     <div class="seller-info">
                         <div class="seller-avatar">
-                            <v-icon icon="mdi-account-circle" size="42" />
+                            <span v-if="seller">{{ seller.name?.[0] ?? '?' }}</span>
+                            <v-icon v-else icon="mdi-account-circle" size="42" />
                         </div>
                         <div class="seller-details">
                             <div class="seller-name">
-                                Premium Motors
-                                <v-icon icon="mdi-check-decagram" size="14" class="dealer-badge" />
+                                {{ seller ? `${seller.name} ${seller.surname}` : '—' }}
+                                <v-icon v-if="seller?.accountType === 'Business'" icon="mdi-check-decagram" size="14" class="dealer-badge" />
                             </div>
-                            <div class="seller-role">Dealer zweryfikowany</div>
-                            <div class="seller-stars">
-                                <v-icon v-for="n in 5" :key="n" icon="mdi-star" size="13" class="star" />
-                                <span class="seller-rating">4.9</span>
-                                <span class="seller-reviews">(128 opinii)</span>
+                            <div class="seller-role">{{ seller?.accountType === 'Business' ? (seller.companyName ?? 'Dealer') : 'Sprzedawca prywatny' }}</div>
+                            <div v-if="sellerStats?.averageRating" class="seller-stars">
+                                <v-icon v-for="n in 5" :key="n" :icon="n <= Math.round(sellerStats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="13" class="star" />
+                                <span class="seller-rating">{{ sellerStats.averageRating.toFixed(1) }}</span>
+                                <span class="seller-reviews">({{ sellerStats.reviewCount }} opinii)</span>
                             </div>
                         </div>
                     </div>
-                    <div class="seller-stats">
+                    <div v-if="sellerStats" class="seller-stats">
                         <div class="ss-item">
-                            <div class="ss-val">128</div>
+                            <div class="ss-val">{{ sellerStats.totalSold ?? 0 }}</div>
                             <div class="ss-label">Sprzedanych aut</div>
                         </div>
                         <div class="ss-item">
-                            <div class="ss-val">98%</div>
+                            <div class="ss-val">{{ sellerStats.responseRate ? Math.round(sellerStats.responseRate) + '%' : '—' }}</div>
                             <div class="ss-label">Szybkość odpowiedzi</div>
                         </div>
                         <div class="ss-item">
-                            <div class="ss-val">15 min</div>
+                            <div class="ss-val">{{ sellerStats.avgResponseMinutes ? sellerStats.avgResponseMinutes + ' min' : '—' }}</div>
                             <div class="ss-label">Średni czas odp.</div>
                         </div>
                     </div>
-                    <button class="outline-btn w-full">Zobacz profil sprzedawcy</button>
+                    <div class="seller-follow-row">
+                        <button class="follow-seller-btn" :class="{ following: isFollowingSeller }" @click="toggleFollowSeller">
+                            <v-icon :icon="isFollowingSeller ? 'mdi-bell' : 'mdi-bell-outline'" size="15" />
+                            {{ isFollowingSeller ? 'Obserwujesz' : 'Obserwuj sprzedawcę' }}
+                        </button>
+                    </div>
+                    <NuxtLink v-if="advert?.userId" :to="`/seller/${advert.userId}`" class="outline-btn w-full">
+                        Zobacz profil sprzedawcy
+                    </NuxtLink>
                 </div>
 
                 <!-- Contact -->
                 <div class="sidebar-card contact-card">
                     <div class="card-title">Skontaktuj się ze sprzedającym</div>
-                    <button class="btn-red w-full">
+                    <button v-if="seller?.phoneNumber" class="btn-red w-full" @click="showPhone = !showPhone">
                         <v-icon icon="mdi-phone-outline" size="17" />
-                        Zadzwoń
+                        {{ showPhone ? seller.phoneNumber : 'Pokaż numer' }}
                     </button>
-                    <button class="outline-btn w-full">
+                    <button class="outline-btn w-full" :disabled="contactLoading" @click="contactSeller">
                         <v-icon icon="mdi-message-outline" size="17" />
-                        Napisz wiadomość
+                        {{ contactLoading ? 'Łączenie...' : 'Napisz wiadomość' }}
                     </button>
-                    <button class="outline-btn w-full">
-                        <v-icon icon="mdi-calendar-outline" size="17" />
+                    <button class="outline-btn w-full" :disabled="txLoading" @click="scheduleViewing">
+                        <v-icon v-if="txLoading === 'viewing'" icon="mdi-loading" size="15" class="spin" />
+                        <v-icon v-else icon="mdi-calendar-outline" size="17" />
                         Umów oględziny
                     </button>
-                    <button class="outline-btn w-full">
-                        <v-icon icon="mdi-bookmark-outline" size="17" />
+                    <button class="outline-btn w-full" :disabled="txLoading" @click="reserveCar">
+                        <v-icon v-if="txLoading === 'reservation'" icon="mdi-loading" size="15" class="spin" />
+                        <v-icon v-else icon="mdi-bookmark-outline" size="17" />
                         Zarezerwuj auto
                     </button>
+                    <div v-if="txSuccess" class="tx-success">
+                        <v-icon icon="mdi-check-circle-outline" size="15" />{{ txSuccess }}
+                    </div>
+                    <div v-if="txError" class="tx-error">
+                        <v-icon icon="mdi-alert-circle-outline" size="15" />{{ txError }}
+                    </div>
                     <div class="secure-note">
                         <v-icon icon="mdi-shield-outline" size="16" class="secure-icon" />
-                        <span>Bezpieczna transakcja z CARI<span class="red-text">ZO</span><br><small>Twoje dane są
-                                chronione.</small></span>
+                        <span>Transakcja zabezpieczona z CARI<span class="red-text">ZO</span><br><small>Twoje dane są chronione.</small></span>
                     </div>
                 </div>
 
@@ -458,44 +531,60 @@
                     <button class="outline-btn w-full">Zobacz na mapie</button>
                 </div>
 
-                <!-- Financing -->
-                <div class="sidebar-card finance-sidebar">
-                    <div class="card-title">Finansowanie</div>
-                    <div class="finance-row">
-                        <div>
-                            <div class="finance-label-sm">Rata już od</div>
-                            <div class="finance-price-sm">2 399 zł <span class="mo">/mies.</span></div>
-                        </div>
-                        <button class="btn-red-sm">Sprawdź ofertę</button>
-                    </div>
-                </div>
-
             </aside>
         </div>
     </div>
+
+    <ReportModal v-model="reportOpen" target-type="Advert" :target-id="id" />
 </template>
 
 <script setup lang="ts">
-import type { CarAdvert, Feature, PagedResult } from '~/types'
+import type { CarAdvert, Feature, PagedResult, UserProfile, UserStats, Review } from '~/types'
 
 const route = useRoute()
 const id = Number(route.params.id)
 
-const { isFavorite, toggleFavorite, isLoggedIn } = useFavorites()
-
+const { isFavorite, toggleFavorite, fetchFavoriteIds, isLoggedIn } = useFavorites()
+const { getImageUrl, placeholder } = useImageUrl()
 const { startConversation } = useMessages()
-const contactLoading = ref(false)
+const { createTransaction } = useTransactions()
+const { followSeller, unfollowSeller, isFollowingSeller: checkFollowingSeller } = useFollow()
+const { getSellerReviews } = useReviews()
 
+const contactLoading = ref(false)
 const advert = ref<CarAdvert | null>(null)
 const similar = ref<CarAdvert[]>([])
+const seller = ref<UserProfile | null>(null)
+const sellerStats = ref<UserStats | null>(null)
+const sellerReviews = ref<Review[]>([])
+const reviewsLoading = ref(false)
+const isFollowingSeller = ref(false)
+const showPhone = ref(false)
+const txLoading = ref<'reservation' | 'viewing' | null>(null)
+const txSuccess = ref<string | null>(null)
+const txError = ref<string | null>(null)
+
 const activeImg = ref(0)
 const activeTab = ref('Opis')
 const showFullDesc = ref(false)
 const isFav = ref(false)
+const reportOpen = ref(false)
+const lightboxOpen = ref(false)
+const lightboxIdx = ref(0)
 
-const placeholder = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop'
+function openLightbox(i: number) {
+    lightboxIdx.value = i
+    lightboxOpen.value = true
+}
 
-const tabs = ['Opis', 'Wyposażenie', 'Historia pojazdu', 'Finansowanie', 'Podobne oferty']
+function onKeydown(e: KeyboardEvent) {
+    if (!lightboxOpen.value) return
+    if (e.key === 'Escape') lightboxOpen.value = false
+    if (e.key === 'ArrowLeft' && lightboxIdx.value > 0) lightboxIdx.value--
+    if (e.key === 'ArrowRight' && lightboxIdx.value < allImages.value.length - 1) lightboxIdx.value++
+}
+
+const tabs = ['Opis', 'Wyposażenie', 'Historia pojazdu', 'Opinie', 'Podobne oferty']
 
 const scoreChecks = [
     'Zweryfikowany VIN',
@@ -506,7 +595,7 @@ const scoreChecks = [
 
 const allImages = computed(() => {
     if (!advert.value?.images?.length) return [{ id: 0, url: placeholder, isMain: true }]
-    return advert.value.images
+    return advert.value.images.map(img => ({ ...img, url: getImageUrl(img.url) }))
 })
 
 const mainImg = computed(() => allImages.value[activeImg.value]?.url ?? placeholder)
@@ -522,9 +611,14 @@ const featureGroups = computed(() => {
 })
 
 function toggleFav() {
-    if (!isLoggedIn.value) return
+    if (!isLoggedIn.value) { navigateTo('/login'); return }
     isFav.value = !isFav.value
     toggleFavorite(id)
+}
+
+function handleReport() {
+    if (!isLoggedIn.value) { navigateTo('/login'); return }
+    reportOpen.value = true
 }
 
 async function contactSeller() {
@@ -538,15 +632,85 @@ async function contactSeller() {
     }
 }
 
+async function reserveCar() {
+    if (!isLoggedIn.value) { await navigateTo('/login'); return }
+    txLoading.value = 'reservation'
+    txSuccess.value = null
+    txError.value = null
+    try {
+        await createTransaction({ type: 'Reservation', advertId: id })
+        txSuccess.value = 'Auto zarezerwowane! Sprzedawca zostanie powiadomiony.'
+        setTimeout(() => txSuccess.value = null, 5000)
+    } catch (e: any) {
+        txError.value = e?.data?.message ?? 'Nie udało się zarezerwować auta.'
+        setTimeout(() => txError.value = null, 4000)
+    } finally { txLoading.value = null }
+}
+
+async function scheduleViewing() {
+    if (!isLoggedIn.value) { await navigateTo('/login'); return }
+    txLoading.value = 'viewing'
+    txSuccess.value = null
+    txError.value = null
+    try {
+        await createTransaction({ type: 'Viewing', advertId: id })
+        txSuccess.value = 'Prośba o oględziny wysłana! Sprzedawca skontaktuje się z Tobą.'
+        setTimeout(() => txSuccess.value = null, 5000)
+    } catch (e: any) {
+        txError.value = e?.data?.message ?? 'Nie udało się wysłać prośby o oględziny.'
+        setTimeout(() => txError.value = null, 4000)
+    } finally { txLoading.value = null }
+}
+
+async function toggleFollowSeller() {
+    if (!isLoggedIn.value) { await navigateTo('/login'); return }
+    if (!advert.value?.userId) return
+    try {
+        if (isFollowingSeller.value) {
+            await unfollowSeller(advert.value.userId)
+            isFollowingSeller.value = false
+        } else {
+            await followSeller(advert.value.userId)
+            isFollowingSeller.value = true
+        }
+    } catch {}
+}
+
+watch(activeTab, async (tab) => {
+    if (tab === 'Opinie' && sellerReviews.value.length === 0 && advert.value?.userId) {
+        reviewsLoading.value = true
+        try {
+            const r = await getSellerReviews(advert.value.userId)
+            sellerReviews.value = r.items
+        } catch {} finally { reviewsLoading.value = false }
+    }
+})
+
 onMounted(async () => {
+    window.addEventListener('keydown', onKeydown)
+    await fetchFavoriteIds()
     try {
         advert.value = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`)
         isFav.value = isFavorite(id)
+        if (advert.value?.userId) {
+            const uid = advert.value.userId
+            ;[seller.value, sellerStats.value] = await Promise.all([
+                $fetch<UserProfile>(`/api/proxy/api/User/${uid}/public`).catch(() => null),
+                $fetch<UserStats>(`/api/proxy/api/User/${uid}/stats`).catch(() => null),
+            ])
+            if (isLoggedIn.value) {
+                isFollowingSeller.value = await checkFollowingSeller(uid).catch(() => false)
+            }
+        }
     } catch { }
     try {
         const r = await $fetch<PagedResult<CarAdvert>>(`/api/proxy/api/Advert?page=1&pageSize=5`)
         similar.value = r.items.filter(a => a.id !== id).slice(0, 4)
     } catch { }
+})
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', onKeydown)
 })
 </script>
 
@@ -1212,6 +1376,109 @@ onMounted(async () => {
     color: $text;
 }
 
+// ── Lightbox ──────────────────────────────────────────────────────────────────
+.lightbox-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.lb-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    &:hover { background: rgba(255,255,255,0.15); color: $text; }
+}
+
+.lb-img-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    width: 100%;
+    max-width: 1100px;
+    padding: 0 60px;
+}
+
+.lb-img {
+    max-width: 100%;
+    max-height: calc(100vh - 200px);
+    object-fit: contain;
+    border-radius: $r-md;
+}
+
+.lb-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    &:hover:not(:disabled) { background: rgba(255,255,255,0.14); color: $text; }
+    &:disabled { opacity: 0.2; cursor: not-allowed; }
+}
+
+.lb-prev { left: 14px; }
+.lb-next { right: 14px; }
+
+.lb-counter {
+    font-size: 13px;
+    color: $text-dim;
+    margin: 12px 0 10px;
+    font-weight: 600;
+}
+
+.lb-thumbs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    max-width: 100%;
+    padding: 4px 4px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: $border transparent;
+}
+
+.lb-thumb {
+    flex-shrink: 0;
+    width: 60px;
+    height: 44px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.45;
+    border: 2px solid transparent;
+    transition: opacity 0.15s, border-color 0.15s;
+    img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    &:hover { opacity: 0.75; }
+    &.lb-thumb-active { opacity: 1; border-color: $red; }
+}
+
 // ── Tabs ──────────────────────────────────────────────────────────────────────
 .tabs-wrap {
     background: #080808;
@@ -1783,4 +2050,62 @@ onMounted(async () => {
         opacity: 0.88;
     }
 }
+
+// ── Reviews tab ───────────────────────────────────────────────────────────────
+.reviews-list { display: flex; flex-direction: column; gap: 14px; }
+
+.review-card {
+    background: #0d0d0d; border: 1px solid $border; border-radius: $r-md;
+    padding: 16px; display: flex; flex-direction: column; gap: 10px;
+}
+
+.review-header { display: flex; align-items: center; gap: 10px; }
+
+.rev-avatar {
+    width: 36px; height: 36px; border-radius: 50%; background: rgba($red, 0.13);
+    border: 1px solid rgba($red, 0.28); color: $red; font-weight: 700; font-size: 15px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.rev-info { flex: 1; }
+.rev-name { font-size: 13px; font-weight: 600; color: $text; }
+.rev-date { font-size: 11px; color: $text-dim; margin-top: 1px; }
+.rev-stars { display: flex; gap: 2px; }
+.star-icon { color: #f5a623; }
+.rev-text { font-size: 13px; color: $text-muted; line-height: 1.7; }
+
+.loading-center { display: flex; justify-content: center; padding: 40px 0; color: $text-dim; }
+
+.similar-tab-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+// ── Transaction feedback ──────────────────────────────────────────────────────
+.tx-success {
+    display: flex; align-items: center; gap: 7px; font-size: 12px; color: #4caf50;
+    background: rgba(76,175,80,0.08); border: 1px solid rgba(76,175,80,0.2);
+    border-radius: $r-sm; padding: 9px 12px;
+}
+
+.tx-error {
+    display: flex; align-items: center; gap: 7px; font-size: 12px; color: #e55;
+    background: rgba(220,50,50,0.08); border: 1px solid rgba(220,50,50,0.2);
+    border-radius: $r-sm; padding: 9px 12px;
+}
+
+// ── Follow seller button ──────────────────────────────────────────────────────
+.seller-follow-row { display: flex; }
+
+.follow-seller-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: transparent; border: 1px solid $border; border-radius: $r-sm;
+    color: $text-muted; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+    padding: 9px 14px; cursor: pointer; transition: all 0.2s;
+    &:hover { border-color: $red; color: $red; }
+    &.following { background: rgba($red, 0.08); border-color: rgba($red, 0.35); color: $red; }
+}
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>

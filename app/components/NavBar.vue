@@ -1,9 +1,21 @@
 <script setup lang="ts">
+import type { UserProfile } from '~/types'
+
 const authStatus = useCookie('auth_status')
 const isLoggedIn = computed(() => !!authStatus.value)
 const { logout } = useAuth()
 const { unreadCount, fetchUnreadCount } = useMessages()
-onMounted(() => fetchUnreadCount())
+
+const isAdmin = ref(false)
+onMounted(async () => {
+    fetchUnreadCount()
+    if (isLoggedIn.value) {
+        try {
+            const me = await $fetch<UserProfile>('/api/proxy/api/User/me')
+            isAdmin.value = !!me.isAdmin
+        } catch {}
+    }
+})
 
 const categoriesOpen = ref(false)
 const mobileOpen = ref(false)
@@ -37,7 +49,6 @@ watch(() => route.path, closeMobile)
         <div class="nav-inner">
             <NuxtLink to="/" class="logo" @click="closeMobile">CARI<span>ZO</span></NuxtLink>
 
-            <!-- Desktop nav -->
             <nav class="nav-links">
                 <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
                 <div class="nav-dropdown" @mouseenter="categoriesOpen = true" @mouseleave="categoriesOpen = false">
@@ -57,11 +68,11 @@ watch(() => route.path, closeMobile)
                         </NuxtLink>
                     </div>
                 </div>
+                <NuxtLink to="/wydarzenia">Wydarzenia</NuxtLink>
                 <NuxtLink to="/#about">O nas</NuxtLink>
                 <NuxtLink to="/#contact">Kontakt</NuxtLink>
             </nav>
 
-            <!-- Desktop + mobile buttons -->
             <div class="nav-btns">
                 <NuxtLink v-if="isLoggedIn" to="/favorites" class="nav-icon-btn" title="Ulubione">
                     <v-icon icon="mdi-heart-outline" size="20" />
@@ -81,6 +92,10 @@ watch(() => route.path, closeMobile)
                     </NuxtLink>
                 </template>
                 <template v-else>
+                    <NuxtLink v-if="isAdmin" to="/admin" class="btn-login desktop-only nav-admin-btn">
+                        <v-icon icon="mdi-shield-crown" size="18" class="mr-1" />
+                        Admin
+                    </NuxtLink>
                     <NuxtLink to="/dashboard" class="btn-login desktop-only">
                         <v-icon icon="mdi-account-circle-outline" size="18" class="mr-1" />
                         Konto
@@ -92,7 +107,6 @@ watch(() => route.path, closeMobile)
                     Dodaj ogłoszenie
                 </NuxtLink>
 
-                <!-- Hamburger -->
                 <button class="hamburger" :class="{ open: mobileOpen }"
                     :aria-label="mobileOpen ? 'Zamknij menu' : 'Otwórz menu'" :aria-expanded="mobileOpen"
                     @click="mobileOpen = !mobileOpen">
@@ -102,7 +116,6 @@ watch(() => route.path, closeMobile)
         </div>
     </header>
 
-    <!-- Mobile drawer -->
     <Teleport to="body">
         <transition name="fade">
             <div v-if="mobileOpen" class="mobile-overlay" @click="closeMobile" />
@@ -125,8 +138,7 @@ watch(() => route.path, closeMobile)
                     <button class="drawer-link drawer-expandable" @click="mobileCatsOpen = !mobileCatsOpen">
                         <v-icon icon="mdi-shape-outline" size="18" />
                         Kategorie
-                        <v-icon :icon="mobileCatsOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16"
-                            class="ml-auto" />
+                        <v-icon :icon="mobileCatsOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="ml-auto" />
                     </button>
                     <transition name="expand">
                         <div v-if="mobileCatsOpen" class="drawer-subcats">
@@ -143,6 +155,10 @@ watch(() => route.path, closeMobile)
                         </div>
                     </transition>
 
+                    <NuxtLink to="/wydarzenia" class="drawer-link" @click="closeMobile">
+                        <v-icon icon="mdi-calendar-star" size="18" />
+                        Wydarzenia
+                    </NuxtLink>
                     <NuxtLink to="/#about" class="drawer-link" @click="closeMobile">
                         <v-icon icon="mdi-information-outline" size="18" />
                         O nas
@@ -154,6 +170,10 @@ watch(() => route.path, closeMobile)
 
                     <template v-if="isLoggedIn">
                         <div class="drawer-divider" />
+                        <NuxtLink v-if="isAdmin" to="/admin" class="drawer-link drawer-link--admin" @click="closeMobile">
+                            <v-icon icon="mdi-shield-crown" size="18" />
+                            Panel Administratora
+                        </NuxtLink>
                         <NuxtLink to="/favorites" class="drawer-link" @click="closeMobile">
                             <v-icon icon="mdi-heart-outline" size="18" />
                             Ulubione
@@ -177,11 +197,9 @@ watch(() => route.path, closeMobile)
                     </NuxtLink>
                     <template v-if="!isLoggedIn">
                         <NuxtLink to="/login" class="drawer-btn-secondary" @click="closeMobile">Zaloguj się</NuxtLink>
-                        <NuxtLink to="/register" class="drawer-btn-secondary" @click="closeMobile">Zarejestruj się
-                        </NuxtLink>
+                        <NuxtLink to="/register" class="drawer-btn-secondary" @click="closeMobile">Zarejestruj się</NuxtLink>
                     </template>
-                    <button v-else class="drawer-btn-secondary drawer-btn-logout" @click="handleLogout">Wyloguj
-                        się</button>
+                    <button v-else class="drawer-btn-secondary drawer-btn-logout" @click="handleLogout">Wyloguj się</button>
                 </div>
             </div>
         </transition>
@@ -215,10 +233,7 @@ watch(() => route.path, closeMobile)
     color: $text;
     text-decoration: none;
     flex-shrink: 0;
-
-    span {
-        color: $red;
-    }
+    span { color: $red; }
 }
 
 .nav-links {
@@ -232,21 +247,13 @@ watch(() => route.path, closeMobile)
         font-weight: 500;
         text-decoration: none;
         transition: color 0.2s;
-
-        &:hover,
-        &.router-link-active {
-            color: $text;
-        }
+        &:hover, &.router-link-active { color: $text; }
     }
 
-    @include respond-to(sm) {
-        display: none;
-    }
+    @include respond-to(sm) { display: none; }
 }
 
-.nav-dropdown {
-    position: relative;
-}
+.nav-dropdown { position: relative; }
 
 .nav-dropdown-trigger {
     display: flex;
@@ -261,18 +268,8 @@ watch(() => route.path, closeMobile)
     font-family: 'Inter', sans-serif;
     padding: 0;
     transition: color 0.2s;
-
-    &:hover {
-        color: $text;
-    }
-
-    .v-icon {
-        transition: transform 0.2s;
-
-        &.rotated {
-            transform: rotate(180deg);
-        }
-    }
+    &:hover { color: $text; }
+    .v-icon { transition: transform 0.2s; &.rotated { transform: rotate(180deg); } }
 }
 
 .nav-dropdown-menu {
@@ -299,20 +296,8 @@ watch(() => route.path, closeMobile)
     font-weight: 500;
     text-decoration: none;
     transition: background 0.15s, color 0.15s;
-
-    .v-icon {
-        color: $text-dim;
-        transition: color 0.15s;
-    }
-
-    &:hover {
-        background: rgba($red, 0.08);
-        color: $text;
-
-        .v-icon {
-            color: $red;
-        }
-    }
+    .v-icon { color: $text-dim; transition: color 0.15s; }
+    &:hover { background: rgba($red, 0.08); color: $text; .v-icon { color: $red; } }
 }
 
 .dropdown-all {
@@ -321,17 +306,10 @@ watch(() => route.path, closeMobile)
     padding-top: 12px;
     color: $red;
     justify-content: space-between;
-
-    &:hover {
-        color: $red;
-    }
+    &:hover { color: $red; }
 }
 
-.nav-btns {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
+.nav-btns { display: flex; gap: 8px; align-items: center; }
 
 .nav-icon-btn {
     display: flex;
@@ -343,28 +321,13 @@ watch(() => route.path, closeMobile)
     padding: 7px 12px;
     border-radius: $r-sm;
     transition: color 0.2s, background 0.2s;
-
-    &:hover {
-        color: $text;
-        background: rgba(255, 255, 255, 0.04);
-    }
-
-    @include respond-to(sm) {
-        display: none;
-    }
+    &:hover { color: $text; background: rgba(255, 255, 255, 0.04); }
+    @include respond-to(sm) { display: none; }
 }
 
-.nav-icon-label {
-    @include respond-to(md) {
-        display: none;
-    }
-}
+.nav-icon-label { @include respond-to(md) { display: none; } }
 
-.desktop-only {
-    @include respond-to(sm) {
-        display: none !important;
-    }
-}
+.desktop-only { @include respond-to(sm) { display: none !important; } }
 
 .btn-login {
     @include btn(transparent, $text-muted);
@@ -374,17 +337,15 @@ watch(() => route.path, closeMobile)
     font-size: 13px;
     padding: 9px 16px;
     background: transparent;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: $text;
-        border-color: rgba(255, 255, 255, 0.18);
-    }
+    &:hover { background: rgba(255, 255, 255, 0.05); color: $text; border-color: rgba(255, 255, 255, 0.18); }
 }
 
-.btn-logout {
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
+.btn-logout { cursor: pointer; font-family: 'Inter', sans-serif; }
+
+.nav-admin-btn {
+    border-color: rgba($red, 0.3);
+    color: $red;
+    &:hover { background: rgba($red, 0.08); border-color: rgba($red, 0.5); color: $red; }
 }
 
 .btn-add {
@@ -396,7 +357,6 @@ watch(() => route.path, closeMobile)
     border-radius: $r-md;
 }
 
-// ── Hamburger ──────────────────────────────────────────────
 .hamburger {
     display: none;
     flex-direction: column;
@@ -422,31 +382,17 @@ watch(() => route.path, closeMobile)
         transform-origin: center;
     }
 
-    &:hover span {
-        background: $text;
-    }
+    &:hover span { background: $text; }
 
     &.open {
-        span:nth-child(1) {
-            transform: translateY(7px) rotate(45deg);
-        }
-
-        span:nth-child(2) {
-            opacity: 0;
-            width: 0;
-        }
-
-        span:nth-child(3) {
-            transform: translateY(-7px) rotate(-45deg);
-        }
+        span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        span:nth-child(2) { opacity: 0; width: 0; }
+        span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     }
 
-    @include respond-to(sm) {
-        display: flex;
-    }
+    @include respond-to(sm) { display: flex; }
 }
 
-// ── Mobile overlay ─────────────────────────────────────────
 .mobile-overlay {
     position: fixed;
     inset: 0;
@@ -455,7 +401,6 @@ watch(() => route.path, closeMobile)
     backdrop-filter: blur(2px);
 }
 
-// ── Mobile drawer ──────────────────────────────────────────
 .mobile-drawer {
     position: fixed;
     top: 0;
@@ -485,10 +430,7 @@ watch(() => route.path, closeMobile)
     font-weight: 900;
     letter-spacing: 5px;
     color: $text;
-
-    span {
-        color: $red;
-    }
+    span { color: $red; }
 }
 
 .drawer-close {
@@ -503,11 +445,7 @@ watch(() => route.path, closeMobile)
     cursor: pointer;
     color: $text-muted;
     transition: color 0.2s, background 0.2s;
-
-    &:hover {
-        color: $text;
-        background: rgba(255, 255, 255, 0.08);
-    }
+    &:hover { color: $text; background: rgba(255, 255, 255, 0.08); }
 }
 
 .drawer-nav {
@@ -535,26 +473,15 @@ watch(() => route.path, closeMobile)
     font-family: 'Inter', sans-serif;
     width: 100%;
     text-align: left;
-
-    .v-icon {
-        color: $text-dim;
-        flex-shrink: 0;
-    }
-
-    &:hover,
-    &.router-link-active {
+    .v-icon { color: $text-dim; flex-shrink: 0; }
+    &:hover, &.router-link-active {
         background: rgba(255, 255, 255, 0.04);
         color: $text;
-
-        .v-icon {
-            color: $red;
-        }
+        .v-icon { color: $red; }
     }
 }
 
-.drawer-expandable {
-    user-select: none;
-}
+.drawer-expandable { user-select: none; }
 
 .drawer-subcats {
     display: flex;
@@ -574,19 +501,8 @@ watch(() => route.path, closeMobile)
     font-weight: 500;
     text-decoration: none;
     transition: background 0.15s, color 0.15s;
-
-    &:hover {
-        background: rgba($red, 0.08);
-        color: $text;
-    }
-
-    &--all {
-        margin-top: 4px;
-        color: $red;
-        border-top: 1px solid $border;
-        padding-top: 12px;
-        justify-content: space-between;
-    }
+    &:hover { background: rgba($red, 0.08); color: $text; }
+    &--all { margin-top: 4px; color: $red; border-top: 1px solid $border; padding-top: 12px; justify-content: space-between; }
 }
 
 .drawer-badge {
@@ -604,11 +520,7 @@ watch(() => route.path, closeMobile)
     padding: 0 4px;
 }
 
-.drawer-divider {
-    height: 1px;
-    background: $border;
-    margin: 8px 0;
-}
+.drawer-divider { height: 1px; background: $border; margin: 8px 0; }
 
 .drawer-footer {
     padding: 16px 12px 28px;
@@ -632,10 +544,7 @@ watch(() => route.path, closeMobile)
     font-weight: 700;
     text-decoration: none;
     transition: opacity 0.2s;
-
-    &:hover {
-        opacity: 0.88;
-    }
+    &:hover { opacity: 0.88; }
 }
 
 .drawer-btn-secondary {
@@ -653,47 +562,23 @@ watch(() => route.path, closeMobile)
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: background 0.2s, color 0.2s, border-color 0.2s;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: $text;
-        border-color: rgba(255, 255, 255, 0.18);
-    }
+    &:hover { background: rgba(255, 255, 255, 0.05); color: $text; border-color: rgba(255, 255, 255, 0.18); }
 }
 
-.drawer-btn-logout {
-    color: rgba($red, 0.9);
-    border-color: rgba($red, 0.25);
+.drawer-btn-logout { color: rgba($red, 0.9); border-color: rgba($red, 0.25); }
+
+.drawer-link--admin {
+    color: $red;
+    .v-icon { color: $red; }
+    &:hover { background: rgba($red, 0.08); }
 }
 
-// ── Transitions ────────────────────────────────────────────
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.25s ease;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.25s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
+.slide-enter-active, .slide-leave-active { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.slide-enter-from, .slide-leave-to { transform: translateX(100%); }
 
-.slide-enter-active,
-.slide-leave-active {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-enter-from,
-.slide-leave-to {
-    transform: translateX(100%);
-}
-
-.expand-enter-active,
-.expand-leave-active {
-    transition: opacity 0.2s ease;
-}
-
-.expand-enter-from,
-.expand-leave-to {
-    opacity: 0;
-}
+.expand-enter-active, .expand-leave-active { transition: opacity 0.2s ease; }
+.expand-enter-from, .expand-leave-to { opacity: 0; }
 </style>
