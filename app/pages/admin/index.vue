@@ -28,6 +28,11 @@
                     Wydarzenia
                 </NuxtLink>
                 <div class="nav-divider" />
+                <NuxtLink to="/admin/invoices" class="nav-item" :class="{ active: route.path === '/admin/invoices' }">
+                    <v-icon icon="mdi-receipt-text-outline" size="17" />
+                    Faktury
+                </NuxtLink>
+                <div class="nav-divider" />
                 <NuxtLink to="/dashboard" class="nav-item">
                     <v-icon icon="mdi-arrow-left" size="17" />
                     Wróć do panelu

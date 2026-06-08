@@ -28,6 +28,9 @@
                 <button class="nav-item" :class="{ active: section === 'reviews' }" @click="goReviews">
                     <v-icon icon="mdi-star-outline" size="19" /><span>Opinie i oceny</span>
                 </button>
+                <NuxtLink to="/faktury" class="nav-item">
+                    <v-icon icon="mdi-receipt-text-outline" size="19" /><span>Faktury</span>
+                </NuxtLink>
                 <div class="nav-divider" />
                 <button class="nav-item" :class="{ active: section === 'profile' }" @click="goProfile">
                     <v-icon icon="mdi-account-outline" size="19" /><span>Dane osobowe</span>
