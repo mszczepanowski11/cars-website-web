@@ -178,13 +178,32 @@ export interface ReviewsResult {
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 
-export type NotificationType = 'NewMessage' | 'PriceChange' | 'NewFollower' | 'ReportResolved' | 'AdvertExpiring' | 'PromoExpiring' | 'NewReview' | 'TransactionUpdate'
+export type NotificationType =
+    | 'AccountCreated' | 'PasswordChanged' | 'PasswordReset'
+    | 'AdvertAdded' | 'AdvertPublished' | 'AdvertRejected' | 'AdvertDeleted' | 'AdvertMarkedSold'
+    | 'AdvertExpiring7Days' | 'AdvertExpiring3Days' | 'AdvertExpiring1Day' | 'AdvertExpired'
+    | 'PromotionPurchased' | 'PromotionActivated' | 'TopStarted' | 'PremiumStarted' | 'FeaturedStarted' | 'RefreshStarted'
+    | 'PromotionExpiring3Days' | 'PromotionExpiring1Day' | 'PromotionExpired'
+    | 'PaymentConfirmed' | 'PaymentFailed' | 'PaymentRefunded'
+    | 'InvoiceGenerated' | 'InvoiceSent'
+    | 'NewMessage'
 
 export interface Notification {
     id: number; type: NotificationType
     title: string; content: string
     isRead: boolean; createdAt: string
-    advertId?: number; userId?: number; transactionId?: number
+    advertId?: number; paymentId?: number; invoiceId?: number
+}
+
+export interface NotificationPreference {
+    category: string
+    label: string
+    emailEnabled: boolean
+}
+
+export interface UpdateNotificationPreferenceDto {
+    category: string
+    emailEnabled: boolean
 }
 
 // ── Saved Searches ────────────────────────────────────────────────────────────

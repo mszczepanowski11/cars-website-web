@@ -305,7 +305,25 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '../admin/shared-admin.scss';
+// Admin layout
+.admin-page { display: flex; min-height: 100vh; background: $bg; padding-top: $nav-height; }
+.admin-sidebar { width: 220px; min-width: 220px; background: #070707; border-right: 1px solid $border; position: sticky; top: $nav-height; height: calc(100vh - #{$nav-height}); overflow-y: auto; display: flex; flex-direction: column; }
+.sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 18px 18px 12px; font-size: 13px; font-weight: 800; color: $text; border-bottom: 1px solid $border; }
+.brand-icon { color: $red; }
+.sidebar-nav { flex: 1; padding: 12px 0; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; color: $text-muted; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: background 0.15s, color 0.15s; &:hover { background: rgba(255,255,255,0.04); color: $text; } &.active { background: rgba($red, 0.1); color: $text; border-left: 2px solid $red; padding-left: 16px; } }
+.nav-badge { margin-left: auto; background: $red; color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 20px; }
+.nav-divider { height: 1px; background: $border; margin: 8px 0; }
+.admin-main { flex: 1; min-width: 0; padding: 28px; }
+.admin-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.page-title { font-size: 22px; font-weight: 900; color: $text; }
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
+.loading-state { display: flex; align-items: center; gap: 12px; color: $text-dim; font-size: 14px; padding: 60px 0; }
+.empty-state { text-align: center; padding: 60px 20px; color: $text-dim; font-size: 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.empty-icon { color: $border; }
+.pagination { display: flex; align-items: center; gap: 12px; justify-content: center; margin-top: 24px; }
+.page-btn { background: transparent; border: 1px solid $border; border-radius: $r-sm; color: $text-muted; padding: 7px 10px; cursor: pointer; display: flex; align-items: center; transition: all 0.2s; &:hover:not(:disabled) { border-color: $red; color: $text; } &:disabled { opacity: 0.3; cursor: not-allowed; } }
+.page-info { font-size: 13px; color: $text-dim; font-weight: 500; }
 
 .tabs {
     display: flex;
