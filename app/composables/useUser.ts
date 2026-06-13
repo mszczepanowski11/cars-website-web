@@ -3,13 +3,16 @@ import type { UserProfile, UserStats, UpdateProfileDto, UpdatePasswordDto, Updat
 const PROFILE_OVERRIDE_KEY = 'carizo_profile_override'
 
 function loadOverride(): Partial<UserProfile> {
+    if (!import.meta.client) return {}   // ← guard
     try {
         const raw = localStorage.getItem(PROFILE_OVERRIDE_KEY)
         return raw ? JSON.parse(raw) : {}
     } catch { return {} }
 }
 
+
 function saveOverride(data: Partial<UserProfile>) {
+    if (!import.meta.client) return      // ← guard
     localStorage.setItem(PROFILE_OVERRIDE_KEY, JSON.stringify(data))
 }
 
