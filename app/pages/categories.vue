@@ -17,7 +17,7 @@
                 </div>
                 <div class="hero-img-wrap">
                     <img
-                        src="https://images.unsplash.com/photo-1617886322168-72b886573c35?q=80&w=1200&auto=format&fit=crop"
+                        src="/hero-car.jpg"
                         alt=""
                         class="hero-car-img"
                     />
@@ -105,6 +105,22 @@
 import { useCategories } from '~/composables/useCategories'
 import type { CategoryWithCount } from '~/types'
 
+const config = useRuntimeConfig()
+useHead({
+    title: 'Kategorie — CARIZO',
+    meta: [
+        { name: 'description', content: 'Przeglądaj ogłoszenia motoryzacyjne na CARIZO według kategorii: auta osobowe, SUV, motocykle, ciężarowe, części i więcej.' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: `${config.public.siteUrl}/categories` },
+        { property: 'og:title', content: 'Kategorie — CARIZO' },
+        { property: 'og:description', content: 'Przeglądaj ogłoszenia motoryzacyjne na CARIZO według kategorii.' },
+        { property: 'og:image', content: `${config.public.siteUrl}/hero-car.jpg` },
+        { property: 'og:site_name', content: 'CARIZO' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+    ],
+    link: [{ rel: 'canonical', href: `${config.public.siteUrl}/categories` }]
+})
+
 const { fetchCategories } = useCategories()
 const categories = ref<CategoryWithCount[]>([])
 const loading = ref(true)
@@ -121,25 +137,25 @@ const sortOptions = [
 
 const sortLabel = computed(() => sortOptions.find(o => o.value === sortBy.value)?.label ?? 'Popularne')
 
-const fallbackImg = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=900&auto=format&fit=crop'
+const fallbackImg = '/categories/auta-osobowe.jpg'
 
 const catImages: Record<string, string> = {
-    'auta-osobowe':         'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=900&auto=format&fit=crop',
-    'suv-crossovery':       'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=900&auto=format&fit=crop',
-    'sportowe':             'https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?q=80&w=900&auto=format&fit=crop',
-    'rodzinne':             'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=900&auto=format&fit=crop',
-    'miejskie':             'https://images.unsplash.com/photo-1590362891991-f776e747a588?q=80&w=900&auto=format&fit=crop',
-    'dostawcze':            'https://images.unsplash.com/photo-1635773054018-c77a8a3cffc3?q=80&w=900&auto=format&fit=crop',
-    'elektryczne':          'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?q=80&w=900&auto=format&fit=crop',
-    'hybrydowe':            'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=900&auto=format&fit=crop',
-    'zabytkowe':            'https://images.unsplash.com/photo-1566473965997-3de9c817e938?q=80&w=900&auto=format&fit=crop',
-    'motocykle':            'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?q=80&w=900&auto=format&fit=crop',
-    'ciezarowe':            'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=900&auto=format&fit=crop',
-    'przyczepy':            'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=900&auto=format&fit=crop',
-    'rolnicze':             'https://images.unsplash.com/photo-1574943320219-553eb213f72d?q=80&w=900&auto=format&fit=crop',
-    'budowlane':            'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=900&auto=format&fit=crop',
-    'czesci':               'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=900&auto=format&fit=crop',
-    'inne':                 'https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=900&auto=format&fit=crop',
+    'auta-osobowe':         '/categories/auta-osobowe.jpg',
+    'suv-crossovery':       '/categories/auta-osobowe.jpg',
+    'sportowe':             '/categories/auta-osobowe.jpg',
+    'rodzinne':             '/categories/auta-osobowe.jpg',
+    'miejskie':             '/categories/auta-osobowe.jpg',
+    'dostawcze':            '/categories/dostawcze.jpg',
+    'elektryczne':          '/categories/auta-osobowe.jpg',
+    'hybrydowe':            '/categories/auta-osobowe.jpg',
+    'zabytkowe':            '/categories/auta-osobowe.jpg',
+    'motocykle':            '/categories/motocykle.jpg',
+    'ciezarowe':            '/categories/ciezarowe.jpg',
+    'przyczepy':            '/categories/przyczepy.jpg',
+    'rolnicze':             '/categories/rolnicze.jpg',
+    'budowlane':            '/categories/rolnicze.jpg',
+    'czesci':               '/categories/czesci.jpg',
+    'inne':                 '/categories/auta-osobowe.jpg',
 }
 
 const filtered = computed(() => {

@@ -1,3 +1,36 @@
+<script setup lang="ts">
+const year = new Date().getFullYear()
+const config = useRuntimeConfig()
+
+const social = {
+    tiktok:    (config.public as any).socialTiktok    || null,
+    instagram: (config.public as any).socialInstagram || null,
+    facebook:  (config.public as any).socialFacebook  || null,
+    youtube:   (config.public as any).socialYoutube   || null,
+}
+
+const newsletterEmail = ref('')
+const newsletterLoading = ref(false)
+const newsletterOk = ref(false)
+const newsletterErr = ref('')
+
+async function subscribeNewsletter() {
+    const e = newsletterEmail.value.trim()
+    if (!e || !e.includes('@')) return
+    newsletterLoading.value = true
+    newsletterErr.value = ''
+    try {
+        await $fetch('/api/proxy/api/Newsletter/subscribe', { method: 'POST', body: { email: e } })
+        newsletterOk.value = true
+        newsletterEmail.value = ''
+    } catch (err: any) {
+        newsletterErr.value = err?.data?.message ?? 'Błąd zapisu. Spróbuj ponownie.'
+    } finally {
+        newsletterLoading.value = false
+    }
+}
+</script>
+
 <template>
   <footer class="carizo-footer">
     <div class="footer-main">
@@ -7,10 +40,13 @@
           <div class="footer-logo">CARI<span>ZO</span></div>
           <p class="footer-desc">Nowoczesna platforma motoryzacyjna dla ludzi, którzy kochają samochody.</p>
           <div class="footer-social">
-            <a href="#" class="social-link" title="TikTok"><v-icon icon="mdi-music-note" size="18" /></a>
-            <a href="#" class="social-link" title="Instagram"><v-icon icon="mdi-instagram" size="18" /></a>
-            <a href="#" class="social-link" title="Facebook"><v-icon icon="mdi-facebook" size="18" /></a>
-            <a href="#" class="social-link" title="YouTube"><v-icon icon="mdi-youtube" size="18" /></a>
+            <a v-if="social.tiktok" :href="social.tiktok" target="_blank" rel="noopener" class="social-link" title="TikTok"><v-icon icon="mdi-music-note" size="18" /></a>
+            <a v-if="social.instagram" :href="social.instagram" target="_blank" rel="noopener" class="social-link" title="Instagram"><v-icon icon="mdi-instagram" size="18" /></a>
+            <a v-if="social.facebook" :href="social.facebook" target="_blank" rel="noopener" class="social-link" title="Facebook"><v-icon icon="mdi-facebook" size="18" /></a>
+            <a v-if="social.youtube" :href="social.youtube" target="_blank" rel="noopener" class="social-link" title="YouTube"><v-icon icon="mdi-youtube" size="18" /></a>
+            <template v-if="!social.tiktok && !social.instagram && !social.facebook && !social.youtube">
+                <span class="social-placeholder">Dołącz wkrótce</span>
+            </template>
           </div>
         </div>
 
@@ -18,18 +54,16 @@
           <h4>Nawigacja</h4>
           <NuxtLink to="/">Strona główna</NuxtLink>
           <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
-          <NuxtLink to="/categories">Kategorie</NuxtLink>
           <NuxtLink to="/#about">O nas</NuxtLink>
           <NuxtLink to="/#contact">Kontakt</NuxtLink>
         </div>
 
         <div class="footer-col">
           <h4>Informacje</h4>
-          <a href="#">Jak to działa</a>
-          <a href="#">Regulamin</a>
-          <a href="#">Polityka prywatności</a>
-          <a href="#">Pomoc</a>
-          <a href="#">FAQ</a>
+          <NuxtLink to="/jak-to-dziala">Jak to działa</NuxtLink>
+          <NuxtLink to="/regulamin">Regulamin</NuxtLink>
+          <NuxtLink to="/polityka-prywatnosci">Polityka prywatności</NuxtLink>
+          <NuxtLink to="/pomoc">Pomoc i FAQ</NuxtLink>
         </div>
 
         <div class="footer-col">
@@ -37,21 +71,54 @@
           <NuxtLink to="/dashboard">Moje konto</NuxtLink>
           <NuxtLink to="/favorites">Ulubione</NuxtLink>
           <NuxtLink to="/my-adverts">Moje ogłoszenia</NuxtLink>
-          <a href="#">Powiadomienia</a>
+          <NuxtLink to="/dashboard">Powiadomienia</NuxtLink>
         </div>
 
         <div class="footer-col">
           <h4>Aplikacja</h4>
-          <a href="#">Pobierz na iOS</a>
-          <a href="#">Pobierz na Android</a>
+          <span class="footer-soon">Pobierz na iOS <span class="soon-tag">Wkrótce</span></span>
+          <span class="footer-soon">Pobierz na Android <span class="soon-tag">Wkrótce</span></span>
         </div>
 
       </div>
     </div>
 
+    <!-- Newsletter strip -->
+    <div class="footer-newsletter">
+      <div class="fn-inner">
+        <div class="fn-text">
+          <v-icon icon="mdi-email-fast-outline" size="20" class="fn-icon" />
+          <div>
+            <div class="fn-title">Bądź na bieżąco</div>
+            <div class="fn-sub">Najlepsze oferty prosto na Twój e-mail</div>
+          </div>
+        </div>
+        <template v-if="!newsletterOk">
+          <div class="fn-form">
+            <input
+              v-model="newsletterEmail"
+              class="fn-input"
+              type="email"
+              placeholder="Twój adres e-mail"
+              @keyup.enter="subscribeNewsletter"
+            />
+            <button class="fn-btn" :disabled="newsletterLoading" @click="subscribeNewsletter">
+              <v-icon v-if="newsletterLoading" icon="mdi-loading" size="15" class="spin" />
+              <span v-else>Zapisz się</span>
+            </button>
+          </div>
+          <p v-if="newsletterErr" class="fn-err">{{ newsletterErr }}</p>
+        </template>
+        <div v-else class="fn-ok">
+          <v-icon icon="mdi-check-circle-outline" size="18" />
+          Zapisano! Dziękujemy.
+        </div>
+      </div>
+    </div>
+
     <div class="footer-bottom">
       <div class="footer-bottom-inner">
-        <span>© 2024 CARIZO. Wszelkie prawa zastrzeżone.</span>
+        <span>© {{ year }} CARIZO. Wszelkie prawa zastrzeżone.</span>
         <span class="footer-credit">Stworzone z pasją do motoryzacji. <span class="heart">❤</span></span>
       </div>
     </div>
@@ -99,7 +166,11 @@
   margin-bottom: 20px;
 }
 
-.footer-social { display: flex; gap: 8px; }
+.footer-social { display: flex; gap: 8px; align-items: center; }
+
+.social-placeholder {
+  font-size: 12px; color: $text-dark;
+}
 
 .social-link {
   width: 34px;
@@ -138,6 +209,102 @@
   }
 }
 
+.footer-newsletter {
+  border-top: 1px solid $border;
+  padding: 22px 0;
+  background: rgba(255,255,255,0.015);
+}
+
+.fn-inner {
+  @include container;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.fn-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fn-icon { color: $red; flex-shrink: 0; }
+
+.fn-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: $text;
+  line-height: 1.3;
+}
+
+.fn-sub {
+  font-size: 12px;
+  color: $text-dark;
+  margin-top: 2px;
+}
+
+.fn-form {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.fn-input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid $border;
+  border-radius: 8px;
+  color: $text;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  padding: 9px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  &::placeholder { color: $text-dark; }
+  &:focus { border-color: rgba(255,255,255,0.2); }
+}
+
+.fn-btn {
+  background: $red;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  &:hover { opacity: 0.88; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.fn-ok {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4caf50;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fn-err {
+  font-size: 12px;
+  color: #e55;
+  margin: 0;
+  width: 100%;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.8s linear infinite; }
+
 .footer-bottom {
   border-top: 1px solid $border;
   padding: 20px 0;
@@ -155,4 +322,23 @@
 }
 
 .heart { color: $red; }
+
+.footer-soon {
+  color: $text-dark;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.soon-tag {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid $border;
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: $text-dim;
+  letter-spacing: 0.3px;
+}
 </style>

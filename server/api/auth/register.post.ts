@@ -1,4 +1,5 @@
 export default defineEventHandler(async (event) => {
+    rateLimit(event, 'register', 5, 60_000) // 5 attempts per minute per IP
     const config = useRuntimeConfig()
     const body = await readBody(event)
     try {

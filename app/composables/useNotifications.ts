@@ -1,5 +1,8 @@
 import type { Notification, NotificationPreference, UpdateNotificationPreferenceDto, PagedResult } from '~/types'
 
+let _pollTimer: ReturnType<typeof setInterval> | null = null
+let _pollInterval = 30_000
+
 export const useNotifications = () => {
     const notifications = useState<Notification[]>('notifications', () => [])
     const unreadCount = useState('notifications-unread', () => 0)
@@ -51,5 +54,20 @@ export const useNotifications = () => {
         await $fetch('/api/proxy/api/Notification/preferences', { method: 'PUT', body: dto })
     }
 
-    return { notifications, unreadCount, loading, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, fetchUnreadCount, getPreferences, updatePreference }
+    function startPolling(intervalMs = 30_000): void {
+        if (_pollTimer) {
+            // Already polling — restart only if interval changed
+            if (intervalMs === _pollInterval) return
+            clearInterval(_pollTimer)
+            _pollTimer = null
+        }
+        _pollInterval = intervalMs
+        _pollTimer = setInterval(() => { fetchUnreadCount() }, intervalMs)
+    }
+
+    function stopPolling(): void {
+        if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null }
+    }
+
+    return { notifications, unreadCount, loading, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, fetchUnreadCount, getPreferences, updatePreference, startPolling, stopPolling }
 }

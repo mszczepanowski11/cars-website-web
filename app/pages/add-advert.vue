@@ -1,4 +1,42 @@
 <template>
+    <!-- ── Success screen ──────────────────────────────────────────────────── -->
+    <Transition name="success-fade">
+        <div v-if="showSuccess" class="success-screen">
+            <div class="success-card">
+                <div class="success-confetti">
+                    <span v-for="i in 12" :key="i" class="confetti-dot" :style="{ '--i': i }" />
+                </div>
+                <div class="success-logo">CARI<span>ZO</span></div>
+                <div class="success-icon-wrap">
+                    <v-icon icon="mdi-check-circle" size="52" class="success-icon" />
+                </div>
+                <h1 class="success-title">Dziękujemy za dodanie ogłoszenia!</h1>
+                <p class="success-desc">
+                    Twoje ogłoszenie zostało pomyślnie zapisane i opublikowane w serwisie CARIZO.<br>
+                    Gratulujemy — życzymy szybkiej sprzedaży!
+                </p>
+                <div class="success-actions">
+                    <NuxtLink v-if="publishedAdvertId" :to="`/advert/${publishedAdvertId}`" class="sact-btn sact-btn--primary">
+                        <v-icon icon="mdi-arrow-right-circle-outline" size="18" />
+                        Zobacz swoje ogłoszenie
+                    </NuxtLink>
+                    <NuxtLink to="/add-advert" class="sact-btn sact-btn--secondary" @click="showSuccess = false">
+                        <v-icon icon="mdi-plus-circle-outline" size="17" />
+                        Dodaj kolejne ogłoszenie
+                    </NuxtLink>
+                    <NuxtLink to="/" class="sact-btn sact-btn--ghost">
+                        <v-icon icon="mdi-home-outline" size="17" />
+                        Strona główna
+                    </NuxtLink>
+                </div>
+                <div class="success-tip">
+                    <v-icon icon="mdi-lightbulb-outline" size="15" class="tip-icon" />
+                    <span>Wyróżnij ogłoszenie — <NuxtLink v-if="publishedAdvertId" :to="`/promote-advert/${publishedAdvertId}`" class="tip-link">kup promocję</NuxtLink> i sprzedaj szybciej!</span>
+                </div>
+            </div>
+        </div>
+    </Transition>
+
     <div class="add-page">
 
         <!-- Top bar -->
@@ -10,11 +48,11 @@
                     Wróć do panelu
                 </button>
             </div>
-            <div class="top-center">Dodaj ogłoszenie</div>
+            <div class="top-center">{{ isEdit ? 'Edytuj ogłoszenie' : 'Dodaj ogłoszenie' }}</div>
             <div class="top-right">
-                <button class="btn-draft">
-                    <v-icon icon="mdi-content-save-outline" size="16" />
-                    Zapisz szkic
+                <button class="btn-draft" :class="{ 'btn-draft--saved': draftSaved }" @click="saveDraft">
+                    <v-icon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="16" />
+                    {{ draftSaved ? 'Zapisano!' : 'Zapisz szkic' }}
                 </button>
                 <button class="btn-close" @click="navigateTo('/my-adverts')">
                     <v-icon icon="mdi-close" size="18" />
@@ -47,7 +85,7 @@
                     <div>
                         <div class="help-title">Potrzebujesz pomocy?</div>
                         <p class="help-sub">Sprawdź poradnik jak dodać najlepsze ogłoszenie</p>
-                        <a href="#" class="help-link">Zobacz poradnik →</a>
+                        <NuxtLink to="/jak-to-dziala" target="_blank" class="help-link">Zobacz poradnik →</NuxtLink>
                     </div>
                 </div>
             </aside>
@@ -79,103 +117,720 @@
                 <!-- Step 0: Basic info -->
                 <div v-if="currentStep === 0" class="form-content">
                     <div class="form-section-head">
-                        <h2>Informacje podstawowe</h2>
-                        <p>Podaj najważniejsze informacje o pojeździe.</p>
+                        <h2>Wybierz kategorię</h2>
+                        <p>Zaznacz typ pojazdu — formularz dostosuje się do wybranej kategorii.</p>
                     </div>
 
+                    <!-- Category -->
+                    <div class="field full-width" style="margin-bottom: 16px;">
+                        <label class="flabel">Kategoria <span class="req">*</span></label>
+                        <div class="category-grid">
+                            <button
+                                v-for="cat in advertCategories"
+                                :key="cat.id"
+                                type="button"
+                                class="cat-choice-btn"
+                                :class="{ active: form.categoryId === cat.id }"
+                                @click="onCategory(cat.id)"
+                            >
+                                <v-icon :icon="cat.iconName" size="20" />
+                                <span>{{ cat.name }}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Category context banner -->
+                    <transition name="fade-err">
+                        <div v-if="selectedCategory" class="cat-context-bar">
+                            <v-icon :icon="selectedCategory.iconName" size="14" class="ccb-icon" />
+                            <span><strong>{{ selectedCategory.name }}</strong> — formularz dostosowany do tej kategorii</span>
+                            <span class="ccb-count">{{ selectedCategory.advertCount?.toLocaleString('pl') ?? '' }} ogłoszeń</span>
+                        </div>
+                    </transition>
+
+                    <!-- Category note (special instructions per category) -->
+                    <transition name="fade-err">
+                        <div v-if="categoryConfig.categoryNote" class="cat-note-bar">
+                            <v-icon icon="mdi-lightbulb-outline" size="14" class="cnb-icon" />
+                            <span>{{ categoryConfig.categoryNote }}</span>
+                        </div>
+                    </transition>
+                </div>
+
+                <!-- ════════════════════════════════════════════════════════════ -->
+                <!-- Step 1: Dane pojazdu                                        -->
+                <!-- ════════════════════════════════════════════════════════════ -->
+                <div v-else-if="currentStep === 1" class="form-content">
+                    <div class="form-section-head">
+                        <h2>Dane pojazdu</h2>
+                        <p>Podaj dane techniczne i identyfikacyjne pojazdu.</p>
+                    </div>
                     <div class="fields-grid">
 
-                        <div class="field">
-                            <label class="flabel">Marka <span class="req">*</span></label>
-                            <div class="select-wrap">
-                                <select v-model="form.brandId" class="fselect" @change="onBrand">
-                                    <option :value="null" disabled>Wybierz markę</option>
-                                    <option v-for="b in brands" :key="b.id" :value="b.id">{{ b.name }}</option>
-                                </select>
-                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                        <!-- Brand: SmartSelect for known categories, text input for specialized machinery -->
+                        <div v-if="isFieldVisible('brand')" class="field">
+                            <label class="flabel">
+                                {{ categoryConfig.brandLabel ?? 'Marka' }}
+                                <span v-if="isFieldRequired('brand')" class="req">*</span>
+                            </label>
+                            <template v-if="categoryConfig.brandFieldType === 'text'">
+                                <input
+                                    v-model="brandTextInput"
+                                    type="text"
+                                    class="finput"
+                                    :placeholder="`Wpisz ${(categoryConfig.brandLabel ?? 'markę').toLowerCase()}`"
+                                />
+                            </template>
+                            <template v-else>
+                                <SmartSelect
+                                    v-model="form.brandId"
+                                    :options="brandOptions"
+                                    :placeholder="`Wybierz ${categoryConfig.brandLabel ?? 'markę'}`"
+                                    search-placeholder="marki"
+                                    prefix-icon="mdi-car-outline"
+                                    @change="onBrand"
+                                />
+                            </template>
+                            <div class="field-hint">
+                                <v-icon icon="mdi-information-outline" size="12" />
+                                {{ categoryConfig.brandHint ?? `${brands.length} dostępnych marek` }}
                             </div>
                         </div>
 
-                        <div class="field">
-                            <label class="flabel">Model <span class="req">*</span></label>
-                            <div class="select-wrap">
-                                <select v-model="form.modelId" class="fselect" :disabled="!form.brandId" @change="onModel">
-                                    <option :value="null" disabled>Wybierz model</option>
-                                    <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
-                                </select>
-                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                        <!-- Model -->
+                        <div v-if="isFieldVisible('model')" class="field">
+                            <label class="flabel">
+                                {{ categoryConfig.modelLabel ?? 'Model' }}
+                                <span v-if="isFieldRequired('model')" class="req">*</span>
+                            </label>
+                            <template v-if="categoryConfig.brandFieldType === 'text'">
+                                <input
+                                    v-model="modelTextInput"
+                                    type="text"
+                                    class="finput"
+                                    :placeholder="`Wpisz ${(categoryConfig.modelLabel ?? 'model').toLowerCase()}`"
+                                />
+                            </template>
+                            <template v-else>
+                                <SmartSelect
+                                    v-model="form.modelId"
+                                    :options="modelOptions"
+                                    :placeholder="`Wybierz ${categoryConfig.modelLabel ?? 'model'}`"
+                                    search-placeholder="modele"
+                                    :disabled="!form.brandId"
+                                    @change="onModel"
+                                />
+                                <div class="field-hint">
+                                    <template v-if="!form.brandId">
+                                        <v-icon icon="mdi-arrow-up-left" size="12" />
+                                        Najpierw wybierz {{ categoryConfig.brandLabel ?? 'markę' }}
+                                    </template>
+                                    <template v-else-if="models.length">
+                                        <v-icon icon="mdi-information-outline" size="12" />
+                                        {{ categoryConfig.modelHint ?? `${models.length} modeli dla ${brandName}` }}
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Generation (cars only) -->
+                        <div v-if="isFieldVisible('generation') && generations.length" class="field">
+                            <label class="flabel">Generacja / wersja</label>
+                            <SmartSelect
+                                v-model="form.generationId"
+                                :options="generationOptions"
+                                placeholder="Wybierz generację (opcjonalnie)"
+                                search-placeholder="generacji"
+                                :disabled="!form.modelId"
+                                @change="onGen"
+                            />
+                            <div class="field-hint">
+                                <v-icon icon="mdi-information-outline" size="12" />{{ generations.length }} generacji dostępnych
                             </div>
                         </div>
 
-                        <div class="field">
-                            <label class="flabel">Wersja / generacja</label>
-                            <div class="select-wrap">
-                                <select v-model="form.generationId" class="fselect" :disabled="!form.modelId" @change="onGen">
-                                    <option :value="null" disabled>Wybierz generację</option>
-                                    <option v-for="g in generations" :key="g.id" :value="g.id">{{ g.name }}</option>
-                                </select>
-                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                        <!-- Engine version (loaded after generation selection) -->
+                        <div v-if="isFieldVisible('generation') && engines.length" class="field">
+                            <label class="flabel">Wersja silnika</label>
+                            <SmartSelect
+                                v-model="form.engineVersionId"
+                                :options="engineOptions"
+                                placeholder="Wybierz wersję silnika (opcjonalnie)"
+                                prefix-icon="mdi-engine-outline"
+                                search-placeholder="wersji silnika"
+                            />
+                            <div class="field-hint">
+                                <v-icon icon="mdi-information-outline" size="12" />{{ engines.length }} wersji silnika dostępnych
                             </div>
                         </div>
 
+                        <!-- Year -->
                         <div class="field">
-                            <label class="flabel">Rok produkcji <span class="req">*</span></label>
+                            <label class="flabel">
+                                {{ categoryConfig.yearLabel ?? 'Rok produkcji' }} <span class="req">*</span>
+                            </label>
                             <div class="input-icon-wrap">
                                 <v-icon icon="mdi-calendar-outline" class="input-prefix" size="16" />
                                 <input v-model.number="form.year" type="number" class="finput has-prefix"
                                     placeholder="np. 2020" min="1900" :max="new Date().getFullYear()" />
                             </div>
-                        </div>
-
-                        <div class="field">
-                            <label class="flabel">Rodzaj paliwa <span class="req">*</span></label>
-                            <div class="select-wrap">
-                                <v-icon icon="mdi-gas-station-outline" class="input-prefix in-select" size="16" />
-                                <select v-model="form.fuelTypeId" class="fselect has-prefix">
-                                    <option :value="null" disabled>Wybierz</option>
-                                    <option v-for="f in fuelTypes" :key="f.id" :value="f.id">{{ f.name }}</option>
-                                </select>
-                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                            <div v-if="categoryConfig.yearHint" class="field-hint">
+                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.yearHint }}
                             </div>
                         </div>
 
-                        <div class="field">
-                            <label class="flabel">Pojemność silnika (cm³)</label>
-                            <input v-model.number="form.engineCapacity" type="number" class="finput" placeholder="np. 1995" />
+                        <!-- Fuel type (not shown for machinery/trailers/parts) -->
+                        <div v-if="isFieldVisible('fuelType')" class="field">
+                            <label class="flabel">
+                                Rodzaj paliwa <span v-if="isFieldRequired('fuelType')" class="req">*</span>
+                            </label>
+                            <SmartSelect
+                                v-model="form.fuelTypeId"
+                                :options="fuelTypeOptions"
+                                placeholder="Wybierz rodzaj paliwa"
+                                prefix-icon="mdi-gas-station-outline"
+                            />
                         </div>
 
-                        <div class="field">
-                            <label class="flabel">Moc (KM)</label>
+                        <!-- Engine capacity -->
+                        <div v-if="isFieldVisible('engine')" class="field">
+                            <label class="flabel">{{ categoryConfig.engineLabel ?? 'Pojemność silnika (cm³)' }}</label>
+                            <input v-model.number="form.engineCapacity" type="number" class="finput"
+                                :placeholder="categoryConfig.engineHint ?? 'np. 1995'" />
+                            <div v-if="categoryConfig.engineHint" class="field-hint">
+                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.engineHint }}
+                            </div>
+                        </div>
+
+                        <!-- Power -->
+                        <div v-if="isFieldVisible('power')" class="field">
+                            <label class="flabel">{{ categoryConfig.powerLabel ?? 'Moc (KM)' }}</label>
                             <input v-model.number="form.power" type="number" class="finput" placeholder="np. 150" />
                         </div>
 
-                        <div class="field">
+                        <!-- Gearbox (not for machinery/trailers/parts/motorcycles) -->
+                        <div v-if="isFieldVisible('gearbox')" class="field">
                             <label class="flabel">Skrzynia biegów</label>
-                            <div class="select-wrap">
-                                <select v-model="form.gearboxId" class="fselect">
-                                    <option :value="null" disabled>Wybierz</option>
-                                    <option v-for="g in gearboxes" :key="g.id" :value="g.id">{{ g.name }}</option>
-                                </select>
-                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
-                            </div>
+                            <SmartSelect
+                                v-model="form.gearboxId"
+                                :options="gearboxOptions"
+                                placeholder="Wybierz skrzynię biegów"
+                                prefix-icon="mdi-car-shift-pattern"
+                            />
                         </div>
 
-                        <div class="field">
-                            <label class="flabel">Przebieg (km) <span class="req">*</span></label>
+                        <!-- Mileage / Motohours (not for parts/trailers) -->
+                        <div v-if="isFieldVisible('mileage')" class="field">
+                            <label class="flabel">
+                                {{ categoryConfig.mileageLabel ?? 'Przebieg (km)' }}
+                                <span v-if="isFieldRequired('mileage')" class="req">*</span>
+                            </label>
                             <div class="input-icon-wrap">
-                                <v-icon icon="mdi-speedometer" class="input-prefix" size="16" />
-                                <input v-model.number="form.mileage" type="number" class="finput has-prefix" placeholder="np. 100 000" />
+                                <v-icon
+                                    :icon="categoryConfig.mileageLabel?.includes('mth') ? 'mdi-timer-outline' : 'mdi-speedometer'"
+                                    class="input-prefix" size="16" />
+                                <input v-model.number="form.mileage" type="number" class="finput has-prefix"
+                                    :placeholder="categoryConfig.mileageLabel?.includes('mth') ? 'np. 5 000' : 'np. 100 000'" />
                             </div>
-                        </div>
-
-                        <div class="field">
-                            <label class="flabel">Cena (zł) <span class="req">*</span></label>
-                            <input v-model.number="form.price" type="number" class="finput finput-price" placeholder="np. 50 000" />
+                            <div v-if="categoryConfig.mileageHint" class="field-hint">
+                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.mileageHint }}
+                            </div>
                         </div>
 
                     </div>
 
-                    <!-- Location fields -->
+                    <!-- ── Category-specific extra fields ─────────────────────────────────── -->
+                    <transition name="fade-err">
+                        <div v-if="categoryConfig.extraFields?.length" class="extra-fields-wrap">
+                            <div class="form-section-subhead">Szczegóły ogłoszenia</div>
+                            <div class="fields-grid">
+                                <template v-for="ef in categoryConfig.extraFields" :key="ef.key">
+
+                                    <!-- Radio (condition, type) -->
+                                    <div v-if="ef.type === 'radio'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="radio-group">
+                                            <label v-for="opt in ef.options" :key="opt.value" class="radio-opt"
+                                                :class="{ active: extras[ef.key] === opt.value }">
+                                                <input type="radio" :name="ef.key" :value="opt.value"
+                                                    v-model="extras[ef.key]" hidden />
+                                                {{ opt.label }}
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Select -->
+                                    <div v-else-if="ef.type === 'select'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <SmartSelect
+                                            :model-value="extras[ef.key]"
+                                            @update:model-value="extras[ef.key] = $event"
+                                            :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
+                                            :placeholder="`Wybierz ${ef.label.toLowerCase()}`"
+                                        />
+                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                    </div>
+
+                                    <!-- Number -->
+                                    <div v-else-if="ef.type === 'number'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="input-unit-wrap">
+                                            <input v-model.number="extras[ef.key]" type="number" class="finput"
+                                                :placeholder="ef.placeholder ?? ''" />
+                                            <span v-if="ef.unit" class="input-unit-badge">{{ ef.unit }}</span>
+                                        </div>
+                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                    </div>
+
+                                    <!-- Text -->
+                                    <div v-else-if="ef.type === 'text'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <input v-model="extras[ef.key]" type="text" class="finput"
+                                            :placeholder="ef.placeholder ?? ''" />
+                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                    </div>
+
+                                    <!-- Color picker -->
+                                    <div v-else-if="ef.type === 'color-picker'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <div class="ef-color-label">
+                                            <span>{{ ef.label }}</span>
+                                            <span v-if="extras[ef.key]" class="ef-color-name">
+                                                {{ colors.find(c => c.id === extras[ef.key])?.name }}
+                                            </span>
+                                        </div>
+                                        <div class="ef-color-swatches">
+                                            <button
+                                                class="ef-color-swatch ef-color-swatch--clear"
+                                                :class="{ active: !extras[ef.key] }"
+                                                title="Nie określono"
+                                                type="button"
+                                                @click="extras[ef.key] = null"
+                                            >
+                                                <v-icon icon="mdi-close" size="10" />
+                                            </button>
+                                            <button
+                                                v-for="col in colors"
+                                                :key="col.id"
+                                                class="ef-color-swatch"
+                                                :class="{ active: extras[ef.key] === col.id }"
+                                                :style="{ background: col.hexCode || '#888' }"
+                                                :title="col.name"
+                                                type="button"
+                                                @click="extras[ef.key] = extras[ef.key] === col.id ? null : col.id"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <!-- Boolean checkbox -->
+                                    <div v-else-if="ef.type === 'boolean'" :class="['field field--bool', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="bool-check" :class="{ active: extras[ef.key] }">
+                                            <input type="checkbox" v-model="extras[ef.key]" hidden />
+                                            <span class="bool-box">
+                                                <v-icon v-if="extras[ef.key]" icon="mdi-check" size="12" />
+                                            </span>
+                                            {{ ef.label }}
+                                        </label>
+                                    </div>
+
+                                </template>
+                            </div>
+                        </div>
+                    </transition>
+
+                    <!-- ── VIN & Identification ── -->
+                    <div class="hist-section">
+                        <div class="hist-section-title"><v-icon icon="mdi-barcode-scan" size="16" />Identyfikacja pojazdu</div>
+                        <div class="fields-grid">
+                            <div class="field full-width">
+                                <label class="flabel">Numer VIN</label>
+                                <div class="vin-row">
+                                    <input v-model="form.vin" class="finput vin-input" placeholder="Wpisz 17-znakowy numer VIN" maxlength="17"
+                                        :class="{ 'input-ok': form.vin.length === 17 }" />
+                                    <button type="button" class="btn-vin-lookup"
+                                        :disabled="form.vin.length !== 17 || vinLoading"
+                                        @click="lookupVin">
+                                        <v-icon v-if="vinLoading" icon="mdi-loading" size="16" class="spin" />
+                                        <v-icon v-else icon="mdi-magnify" size="16" />
+                                        {{ vinLoading ? 'Sprawdzam...' : 'Sprawdź VIN' }}
+                                    </button>
+                                </div>
+                                <transition name="fade-err">
+                                    <span v-if="vinError" class="vin-error">
+                                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ vinError }}
+                                    </span>
+                                </transition>
+                                <p class="field-hint"><v-icon icon="mdi-information-outline" size="12" />VIN pozwala automatycznie uzupełnić dane i buduje zaufanie kupujących</p>
+                            </div>
+                            <div class="field">
+                                <label class="flabel">Pierwsza data rejestracji</label>
+                                <input v-model="history.firstRegDate" type="date" class="finput" />
+                                <div class="field-hint"><v-icon icon="mdi-information-outline" size="12" />Data pierwszej rejestracji pojazdu</div>
+                            </div>
+                            <div class="field">
+                                <label class="flabel">Kraj rejestracji</label>
+                                <div class="select-wrap">
+                                    <select v-model="history.registrationCountry" class="fselect">
+                                        <option value="PL">Polska</option>
+                                        <option value="DE">Niemcy</option>
+                                        <option value="FR">Francja</option>
+                                        <option value="IT">Włochy</option>
+                                        <option value="NL">Holandia</option>
+                                        <option value="BE">Belgia</option>
+                                        <option value="AT">Austria</option>
+                                        <option value="CH">Szwajcaria</option>
+                                        <option value="SE">Szwecja</option>
+                                        <option value="DK">Dania</option>
+                                        <option value="NO">Norwegia</option>
+                                        <option value="FI">Finlandia</option>
+                                        <option value="GB">Wielka Brytania</option>
+                                        <option value="US">USA</option>
+                                        <option value="JP">Japonia</option>
+                                        <option value="other">Inny</option>
+                                    </select>
+                                    <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── Ownership & History ── -->
+                    <div class="hist-section">
+                        <div class="hist-section-title"><v-icon icon="mdi-account-multiple-outline" size="16" />Właściciele i import</div>
+                        <div class="fields-grid">
+                            <div class="field">
+                                <label class="flabel">Liczba właścicieli</label>
+                                <div class="select-wrap">
+                                    <select v-model="history.ownersCount" class="fselect">
+                                        <option :value="null" disabled>Wybierz</option>
+                                        <option :value="1">1 właściciel</option>
+                                        <option :value="2">2 właściciele</option>
+                                        <option :value="3">3 właściciele</option>
+                                        <option :value="4">4 właściciele</option>
+                                        <option :value="5">5+ właścicieli</option>
+                                    </select>
+                                    <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="flabel">Pojazd sprowadzony z zagranicy?</label>
+                                <div class="radio-group">
+                                    <label class="radio-opt" :class="{ active: !history.isImported }">
+                                        <input type="radio" :value="false" v-model="history.isImported" hidden />
+                                        Nie, krajowy
+                                    </label>
+                                    <label class="radio-opt" :class="{ active: history.isImported }">
+                                        <input type="radio" :value="true" v-model="history.isImported" hidden />
+                                        Tak, import
+                                    </label>
+                                </div>
+                            </div>
+                            <transition name="fade-err">
+                                <div v-if="history.isImported" class="field">
+                                    <label class="flabel">Kraj importu</label>
+                                    <input v-model="history.importCountry" type="text" class="finput" placeholder="np. Niemcy, USA" />
+                                </div>
+                            </transition>
+                        </div>
+                    </div>
+
+                    <!-- ── Service ── -->
+                    <div class="hist-section">
+                        <div class="hist-section-title"><v-icon icon="mdi-wrench-outline" size="16" />Serwis i przeglądy</div>
+                        <div class="fields-grid">
+                            <div class="field">
+                                <label class="flabel">Następny przegląd techniczny</label>
+                                <input v-model="history.nextInspection" type="month" class="finput" />
+                                <div class="field-hint"><v-icon icon="mdi-information-outline" size="12" />Miesiąc i rok kolejnego badania</div>
+                            </div>
+                            <div class="field">
+                                <label class="flabel">Dokumentacja serwisowa</label>
+                                <div class="bool-stack">
+                                    <label class="bool-check" :class="{ active: history.hasServiceBook }">
+                                        <input type="checkbox" v-model="history.hasServiceBook" hidden />
+                                        <span class="bool-box"><v-icon v-if="history.hasServiceBook" icon="mdi-check" size="12" /></span>
+                                        Książka serwisowa
+                                    </label>
+                                    <label class="bool-check" :class="{ active: history.hasFullServiceHistory }">
+                                        <input type="checkbox" v-model="history.hasFullServiceHistory" hidden />
+                                        <span class="bool-box"><v-icon v-if="history.hasFullServiceHistory" icon="mdi-check" size="12" /></span>
+                                        Pełna historia ASO
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── Damage & Warranty ── -->
+                    <div class="hist-section">
+                        <div class="hist-section-title"><v-icon icon="mdi-shield-check-outline" size="16" />Szkody i gwarancja</div>
+                        <div class="fields-grid">
+                            <div class="field">
+                                <label class="flabel">Czy pojazd był po wypadku lub szkodzie?</label>
+                                <div class="radio-group">
+                                    <label class="radio-opt" :class="{ active: !history.hasDamage }">
+                                        <input type="radio" :value="false" v-model="history.hasDamage" hidden />
+                                        <v-icon icon="mdi-check-circle-outline" size="13" style="margin-right:4px;color:#4ade80" />Bezwypadkowy
+                                    </label>
+                                    <label class="radio-opt" :class="{ active: history.hasDamage }">
+                                        <input type="radio" :value="true" v-model="history.hasDamage" hidden />
+                                        <v-icon icon="mdi-alert-outline" size="13" style="margin-right:4px;color:#fb923c" />Po szkodzie
+                                    </label>
+                                </div>
+                            </div>
+                            <transition name="fade-err">
+                                <div v-if="history.hasDamage" class="field">
+                                    <label class="flabel">Opis szkody / naprawy</label>
+                                    <textarea v-model="history.damageDesc" class="ftextarea" rows="3"
+                                        placeholder="Opisz charakter szkody i czy została naprawiona..." />
+                                </div>
+                            </transition>
+                            <div class="field">
+                                <label class="flabel">Gwarancja producenta / dealera</label>
+                                <div class="bool-stack">
+                                    <label class="bool-check" :class="{ active: history.hasWarranty }">
+                                        <input type="checkbox" v-model="history.hasWarranty" hidden />
+                                        <span class="bool-box"><v-icon v-if="history.hasWarranty" icon="mdi-check" size="12" /></span>
+                                        Gwarancja aktywna
+                                    </label>
+                                </div>
+                                <transition name="fade-err">
+                                    <div v-if="history.hasWarranty" style="margin-top:8px">
+                                        <label class="flabel" style="font-size:11px;margin-bottom:4px">Ważna do</label>
+                                        <input v-model="history.warrantyUntil" type="month" class="finput" />
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hist-quality-tip">
+                        <v-icon icon="mdi-trophy-outline" size="16" class="hq-icon" />
+                        <div>
+                            <div class="hq-title">Kompletna historia = szybsza sprzedaż</div>
+                            <div class="hq-sub">Ogłoszenia z VIN i historią serwisową sprzedają się nawet 40% szybciej.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Zdjęcia -->
+                <div v-else-if="currentStep === 2" class="form-content">
+                    <div class="form-section-head">
+                        <h2>Zdjęcia</h2>
+                        <p v-if="!isEdit">Dodaj minimum <strong>3 zdjęcia</strong> pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
+                        <p v-else>Możesz usunąć istniejące zdjęcia lub dodać nowe.</p>
+                    </div>
+                    <div class="img-grid">
+                        <!-- Existing images (edit mode) -->
+                        <div v-for="img in existingImages" :key="`ex-${img.id}`" class="img-thumb img-thumb--existing">
+                            <img :src="`/img/${img.url.split('/uploads/').pop()}`" />
+                            <button type="button" class="img-remove"
+                                :disabled="deletingImageId === img.id"
+                                @click="deleteExistingImage(img.id)">
+                                <v-icon v-if="deletingImageId === img.id" icon="mdi-loading" size="14" class="spin" />
+                                <v-icon v-else icon="mdi-close" size="14" />
+                            </button>
+                            <span v-if="img.isMain" class="img-main-badge">Główne</span>
+                        </div>
+                        <!-- New images being added -->
+                        <div v-for="(preview, i) in previews" :key="`new-${i}`" class="img-thumb">
+                            <img :src="preview" />
+                            <button type="button" class="img-remove" @click="removeImage(i)">
+                                <v-icon icon="mdi-close" size="14" />
+                            </button>
+                            <span v-if="!existingImages.length && i === 0" class="img-main-badge">Główne</span>
+                        </div>
+                        <label v-if="(existingImages.length + selectedFiles.length) < 20" class="img-add" :class="{ 'img-add--loading': photoUploading }">
+                            <input type="file" multiple accept="image/jpeg,image/png,image/webp" @change="onFilesSelected" :disabled="photoUploading" hidden />
+                            <v-icon v-if="photoUploading" icon="mdi-loading" size="28" class="spin" />
+                            <v-icon v-else icon="mdi-plus" size="28" />
+                            <span>{{ photoUploading ? 'Przetwarzanie...' : 'Dodaj zdjęcia' }}</span>
+                        </label>
+                    </div>
+                    <!-- Photo quality feedback -->
+                    <div class="photo-hints">
+                        <div class="photo-hint" :class="photoFeedback.mainOk ? 'ph-ok' : 'ph-warn'">
+                            <v-icon :icon="photoFeedback.mainOk ? 'mdi-check-circle' : 'mdi-alert-circle-outline'" size="14" />
+                            {{ photoFeedback.mainOk ? 'Zdjęcie główne ustawione' : 'Brak zdjęcia głównego — pierwsze zdjęcie będzie głównym' }}
+                        </div>
+                        <div class="photo-hint" :class="photoFeedback.countClass">
+                            <v-icon :icon="photoFeedback.countIcon" size="14" />
+                            {{ photoFeedback.countMsg }}
+                        </div>
+                        <div v-if="photoFeedback.lowQuality.length" class="photo-hint ph-warn">
+                            <v-icon icon="mdi-image-size-select-large" size="14" />
+                            {{ photoFeedback.lowQuality.length }} zdjęcie(-a) mają niską rozdzielczość (poniżej 800px)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Wyposażenie -->
+                <div v-else-if="currentStep === 3" class="form-content">
+                    <div class="form-section-head">
+                        <h2>Wyposażenie</h2>
+                        <p>Zaznacz wyposażenie pojazdu. Ogłoszenia z kompletnym wyposażeniem sprzedają się <strong>2× szybciej</strong>.</p>
+                    </div>
+                    <div v-if="isFieldVisible('bodyType')" class="field" style="margin-bottom:16px">
+                        <label class="flabel">Typ nadwozia</label>
+                        <SmartSelect
+                            v-model="form.bodyTypeId"
+                            :options="bodyTypeOptions"
+                            placeholder="Wybierz typ nadwozia"
+                            prefix-icon="mdi-car-outline"
+                        />
+                    </div>
+                    <div v-if="!allFeatures.length" class="feat-empty">
+                        <v-icon icon="mdi-format-list-checkbox" size="40" />
+                        <p>Ładowanie wyposażenia...</p>
+                    </div>
+                    <div v-else-if="allFeatures.length && !Object.keys(featureGroups).length" class="feat-empty">
+                        <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
+                        <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>Dane pojazdu</strong>.</p>
+                        <button type="button" class="btn-next" style="margin-top:16px" @click="currentStep++">
+                            Przejdź dalej <v-icon icon="mdi-arrow-right" size="15" />
+                        </button>
+                    </div>
+                    <template v-else>
+                        <!-- Equipment search bar -->
+                        <div class="feat-search-wrap">
+                            <v-icon icon="mdi-magnify" size="16" class="feat-search-icon" />
+                            <input
+                                v-model="featSearch"
+                                class="feat-search-input"
+                                placeholder="Szukaj wyposażenia..."
+                                autocomplete="off"
+                                @keydown.escape="featSearch = ''"
+                            />
+                            <button v-if="featSearch" type="button" class="feat-search-clear" @click="featSearch = ''">
+                                <v-icon icon="mdi-close" size="14" />
+                            </button>
+                        </div>
+                        <div v-if="featSearch && !Object.keys(filteredFeatureGroups).length" class="feat-empty" style="padding:24px 0">
+                            <v-icon icon="mdi-magnify-close" size="32" />
+                            <p>Brak wyposażenia pasującego do „{{ featSearch }}"</p>
+                        </div>
+                        <div v-for="(group, cat) in filteredFeatureGroups" :key="cat" class="feat-group">
+                            <div class="feat-group-title">
+                                <v-icon :icon="featureGroupIcon(String(cat))" size="15" style="margin-right:6px" />
+                                {{ cat }}
+                                <span class="feat-group-count">{{ group.filter(f => form.featureIds.includes(f.id)).length }}/{{ group.length }}</span>
+                            </div>
+                            <div class="feat-checks">
+                                <label v-for="feat in group" :key="feat.id" class="feat-check" :class="{ checked: form.featureIds.includes(feat.id) }">
+                                    <input type="checkbox" v-model="form.featureIds" :value="feat.id" />
+                                    <span class="feat-check-box"><v-icon v-if="form.featureIds.includes(feat.id)" icon="mdi-check" size="11" /></span>
+                                    <span v-html="highlightSearch(feat.name)" />
+                                </label>
+                            </div>
+                        </div>
+                    </template>
+                    <div v-if="form.featureIds.length" class="feat-summary-bar">
+                        <v-icon icon="mdi-check-circle-outline" size="16" />
+                        Zaznaczono {{ form.featureIds.length }} pozycji wyposażenia
+                        <button type="button" class="feat-clear-btn" @click="form.featureIds = []">
+                            <v-icon icon="mdi-close" size="12" /> Wyczyść
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Cena i opis -->
+                <div v-else-if="currentStep === 4" class="form-content">
+                    <div class="form-section-head">
+                        <h2>Cena i opis</h2>
+                        <p>Ustal cenę, opisz pojazd i podaj lokalizację.</p>
+                    </div>
+
+                    <!-- Seller type -->
+                    <div class="field full-width" style="margin-bottom: 16px;">
+                        <label class="flabel">Typ ogłoszenia</label>
+                        <div class="radio-group">
+                            <label class="radio-opt" :class="{ active: form.sellerType === 'private' }">
+                                <input type="radio" name="sellerType" value="private" v-model="form.sellerType" hidden />
+                                <v-icon icon="mdi-account-outline" size="14" style="margin-right:5px" />
+                                Osoba prywatna
+                            </label>
+                            <label class="radio-opt" :class="{ active: form.sellerType === 'dealer' }">
+                                <input type="radio" name="sellerType" value="dealer" v-model="form.sellerType" hidden />
+                                <v-icon icon="mdi-store-outline" size="14" style="margin-right:5px" />
+                                Dealer / Firma
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Price + negotiable -->
+                    <div class="fields-grid" style="margin-bottom:12px">
+                        <div class="field">
+                            <label class="flabel">{{ categoryConfig.priceLabel ?? 'Cena (zł)' }} <span class="req">*</span></label>
+                            <input v-model.number="form.price" type="number" class="finput finput-price" placeholder="np. 50 000" />
+                            <div v-if="categoryConfig.priceHint" class="field-hint">
+                                <v-icon icon="mdi-trending-up" size="12" />{{ categoryConfig.priceHint }}
+                            </div>
+                            <label class="nego-toggle" :class="{ active: form.isNegotiable }">
+                                <input type="checkbox" v-model="form.isNegotiable" hidden />
+                                <span class="nego-box"><v-icon v-if="form.isNegotiable" icon="mdi-check" size="11" /></span>
+                                Cena do negocjacji
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Title suggestion + custom title -->
+                    <transition name="fade-err">
+                        <div v-if="suggestedTitle" class="title-suggest-card">
+                            <div class="tsc-left">
+                                <v-icon icon="mdi-auto-fix" size="15" class="tsc-icon" />
+                                <div>
+                                    <div class="tsc-label">Sugerowany tytuł ogłoszenia</div>
+                                    <div class="tsc-title">{{ suggestedTitle }}</div>
+                                </div>
+                            </div>
+                            <button v-if="form.title !== suggestedTitle" class="tsc-use-btn" @click="form.title = suggestedTitle">Użyj</button>
+                            <span v-else class="tsc-used"><v-icon icon="mdi-check" size="13" />Aktywny</span>
+                        </div>
+                    </transition>
+                    <div class="field full-width" style="margin-top:12px">
+                        <label class="flabel">
+                            Tytuł ogłoszenia
+                            <span class="flabel-opt">(opcjonalnie — jeśli puste, użyjemy sugerowanego)</span>
+                        </label>
+                        <div class="title-input-wrap">
+                            <input v-model="form.title" type="text" class="finput"
+                                :placeholder="suggestedTitle || 'np. BMW 3 2020 świetny stan'" maxlength="120" />
+                            <span class="title-char-count" :class="{ warn: form.title.length > 100 }">{{ form.title.length }}/120</span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="field full-width" style="margin-top:16px">
+                        <label class="flabel">Opis ogłoszenia <span class="req">*</span></label>
+                        <div class="desc-wrap">
+                            <textarea v-model="form.description" class="ftextarea" rows="8"
+                                placeholder="Opisz dokładnie stan pojazdu, historię serwisową, powód sprzedaży, co zostało wymienione lub odnowione..."
+                                maxlength="5000" />
+                            <div class="desc-bar">
+                                <div class="desc-tips">
+                                    <span class="desc-tip"><v-icon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Historia serwisowa</span>
+                                    <span class="desc-tip"><v-icon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Stan techniczny</span>
+                                    <span class="desc-tip"><v-icon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Powód sprzedaży</span>
+                                </div>
+                                <div class="desc-counter" :class="descQuality">
+                                    {{ descCharCount }}<span class="desc-max">/5000</span>
+                                    <span class="desc-qlabel">
+                                        {{ descQuality === 'great' ? '✓ Świetny' : descQuality === 'good' ? 'Dobry' : descQuality === 'ok' ? 'Rozbuduj' : 'Za krótki' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="writing-tips">
+                        <div class="wt-title"><v-icon icon="mdi-lightbulb-outline" size="14" />Wskazówki dla dobrego opisu</div>
+                        <div class="wt-grid">
+                            <div class="wt-item"><v-icon icon="mdi-history" size="13" />Historia serwisowa i naprawy</div>
+                            <div class="wt-item"><v-icon icon="mdi-wrench-outline" size="13" />Co zostało wymienione</div>
+                            <div class="wt-item"><v-icon icon="mdi-car-multiple" size="13" />Powód sprzedaży</div>
+                            <div class="wt-item"><v-icon icon="mdi-package-variant-closed" size="13" />Dodatkowe akcesoria</div>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
                     <div class="form-section-subhead">Lokalizacja</div>
                     <div class="fields-grid">
                         <div class="field">
@@ -196,96 +851,178 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- VIN bar -->
-                    <div class="vin-bar">
-                        <v-icon icon="mdi-file-document-outline" size="22" class="vin-doc-icon" />
-                        <div class="vin-text">
-                            <div class="vin-title">Posiadasz numer VIN?</div>
-                            <div class="vin-sub">Wpisz VIN, a my uzupełnimy dane automatycznie.</div>
-                        </div>
-                        <input v-model="form.vin" class="vin-input" placeholder="Wpisz numer VIN" maxlength="17" />
-                        <button class="vin-btn">Użyj VIN</button>
-                    </div>
                 </div>
 
-                <!-- Step 1: Photos -->
-                <div v-else-if="currentStep === 1" class="form-content">
+                <!-- Step 5: Podsumowanie -->
+                <div v-else-if="currentStep === 5" class="form-content promo-step">
                     <div class="form-section-head">
-                        <h2>Zdjęcia</h2>
-                        <p>Dodaj minimum <strong>3 zdjęcia</strong> pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
+                        <h2>{{ isEdit ? 'Podsumowanie zmian' : 'Podsumowanie i promocja' }}</h2>
+                        <p v-if="isEdit">Sprawdź wprowadzone zmiany i zapisz ogłoszenie.</p>
+                        <p v-else>Przejrzyj ogłoszenie, wybierz promocję i opublikuj.</p>
                     </div>
-                    <div v-if="selectedFiles.length > 0" class="photo-count-bar" :class="{ 'pc-ok': selectedFiles.length >= 3, 'pc-warn': selectedFiles.length < 3 }">
-                        <v-icon :icon="selectedFiles.length >= 3 ? 'mdi-check-circle-outline' : 'mdi-alert-circle-outline'" size="16" />
-                        {{ selectedFiles.length }} / min. 3 zdjęcia
+                    <div v-if="error" class="submit-error">
+                        <v-icon icon="mdi-alert-circle-outline" size="15" />
+                        {{ error }}
                     </div>
-                    <div class="img-grid">
-                        <div v-for="(preview, i) in previews" :key="i" class="img-thumb">
-                            <img :src="preview" />
-                            <button type="button" class="img-remove" @click="removeImage(i)">
-                                <v-icon icon="mdi-close" size="14" />
-                            </button>
-                            <span v-if="i === 0" class="img-main-badge">Główne</span>
-                        </div>
-                        <label v-if="selectedFiles.length < 20" class="img-add">
-                            <input type="file" multiple accept="image/jpeg,image/png,image/webp" @change="onFilesSelected" hidden />
-                            <v-icon icon="mdi-plus" size="28" />
-                            <span>Dodaj zdjęcia</span>
-                        </label>
-                    </div>
-                </div>
 
-                <!-- Step 2: Details -->
-                <div v-else-if="currentStep === 2" class="form-content">
-                    <div class="form-section-head">
-                        <h2>Opis i szczegóły</h2>
-                        <p>Opisz pojazd i zaznacz wyposażenie.</p>
-                    </div>
-                    <div class="field" style="margin-bottom: 24px;">
-                        <label class="flabel">Opis ogłoszenia</label>
-                        <textarea v-model="form.description" class="ftextarea" rows="6"
-                            placeholder="Opisz stan pojazdu, historię serwisową, dodatkowe wyposażenie..." />
-                    </div>
-                    <div class="field">
-                        <label class="flabel">Typ nadwozia</label>
-                        <div class="select-wrap">
-                            <select v-model="form.bodyTypeId" class="fselect">
-                                <option :value="null" disabled>Wybierz</option>
-                                <option v-for="b in bodyTypes" :key="b.id" :value="b.id">{{ b.name }}</option>
-                            </select>
-                            <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                    <!-- Advert summary before publish -->
+                    <div class="pub-summary-card">
+                        <div class="psc-title">Podsumowanie ogłoszenia</div>
+                        <div class="psc-grid">
+                            <div class="psc-row">
+                                <v-icon icon="mdi-car-outline" size="14" class="psc-icon" />
+                                <span class="psc-label">Pojazd</span>
+                                <span class="psc-val">{{ previewTitle || '—' }}</span>
+                            </div>
+                            <div class="psc-row">
+                                <v-icon icon="mdi-calendar-outline" size="14" class="psc-icon" />
+                                <span class="psc-label">Rok</span>
+                                <span class="psc-val">{{ form.year ?? '—' }}</span>
+                            </div>
+                            <div class="psc-row">
+                                <v-icon icon="mdi-speedometer" size="14" class="psc-icon" />
+                                <span class="psc-label">Przebieg</span>
+                                <span class="psc-val">{{ form.mileage ? Number(form.mileage).toLocaleString('pl') + ' km' : '—' }}</span>
+                            </div>
+                            <div class="psc-row">
+                                <v-icon icon="mdi-tag-outline" size="14" class="psc-icon" />
+                                <span class="psc-label">Cena</span>
+                                <span class="psc-val psc-price">
+                                    {{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '—' }}
+                                    <span v-if="form.isNegotiable" class="psc-nego">do negocjacji</span>
+                                </span>
+                            </div>
+                            <div class="psc-row">
+                                <v-icon icon="mdi-image-outline" size="14" class="psc-icon" />
+                                <span class="psc-label">Zdjęcia</span>
+                                <span class="psc-val">{{ selectedFiles.length + existingImages.length }} szt.</span>
+                            </div>
+                            <div class="psc-row">
+                                <v-icon icon="mdi-map-marker-outline" size="14" class="psc-icon" />
+                                <span class="psc-label">Lokalizacja</span>
+                                <span class="psc-val">{{ [form.city, form.region].filter(Boolean).join(', ') || '—' }}</span>
+                            </div>
+                            <div v-if="form.vin" class="psc-row">
+                                <v-icon icon="mdi-barcode-scan" size="14" class="psc-icon" />
+                                <span class="psc-label">VIN</span>
+                                <span class="psc-val psc-vin">{{ form.vin }}</span>
+                            </div>
+                        </div>
+                        <div class="psc-score">
+                            <div class="psc-score-bar">
+                                <div class="psc-score-fill"
+                                    :style="{ width: adScore + '%' }"
+                                    :class="adScore >= 80 ? 'fill-great' : adScore >= 60 ? 'fill-good' : 'fill-poor'" />
+                            </div>
+                            <span class="psc-score-label">
+                                Ocena: {{ adScore }}/100 —
+                                <span :class="adScore >= 80 ? 'col-great' : adScore >= 60 ? 'col-good' : 'col-poor'">
+                                    {{ adScore >= 80 ? 'Doskonałe ogłoszenie' : adScore >= 60 ? 'Dobre ogłoszenie' : 'Uzupełnij więcej danych' }}
+                                </span>
+                            </span>
                         </div>
                     </div>
-                    <div v-for="(group, cat) in featureGroups" :key="cat" class="feat-group">
-                        <div class="feat-group-title">{{ cat }}</div>
-                        <div class="feat-checks">
-                            <label v-for="feat in group" :key="feat.id" class="feat-check">
-                                <input type="checkbox" v-model="form.featureIds" :value="feat.id" />
-                                <span>{{ feat.name }}</span>
-                            </label>
+
+                    <!-- Edit mode summary -->
+                    <div v-if="isEdit" class="edit-summary">
+                        <div class="edit-summary-row">
+                            <v-icon icon="mdi-car-outline" size="18" class="es-icon" />
+                            <div>
+                                <div class="es-label">Ogłoszenie</div>
+                                <div class="es-val">{{ previewTitle }}</div>
+                            </div>
+                        </div>
+                        <div class="edit-summary-row">
+                            <v-icon icon="mdi-currency-usd" size="18" class="es-icon" />
+                            <div>
+                                <div class="es-label">Cena</div>
+                                <div class="es-val">{{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '—' }}</div>
+                            </div>
+                        </div>
+                        <div class="edit-summary-row">
+                            <v-icon icon="mdi-image-outline" size="18" class="es-icon" />
+                            <div>
+                                <div class="es-label">Zdjęcia</div>
+                                <div class="es-val">{{ existingImages.length }} istniejących<span v-if="selectedFiles.length"> + {{ selectedFiles.length }} nowych</span></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Step 3: History -->
-                <div v-else-if="currentStep === 3" class="form-content">
-                    <div class="form-section-head">
-                        <h2>Historia i stan</h2>
-                        <p>Podaj historię pojazdu i informacje o stanie technicznym.</p>
-                    </div>
-                    <div class="field">
-                        <label class="flabel">Numer VIN</label>
-                        <input v-model="form.vin" class="finput" placeholder="Wpisz 17-znakowy numer VIN" maxlength="17" />
-                    </div>
-                </div>
+                    <!-- Plans grid (create mode only) -->
+                    <div v-if="!isEdit" class="promo-plans-grid">
+                        <!-- Free -->
+                        <div class="pp-card pp-free" :class="{ 'pp-selected': promoSelected === 'free' }" @click="promoSelected = 'free'">
+                            <div class="pp-header">
+                                <div class="pp-icon"><v-icon icon="mdi-car-outline" size="24" /></div>
+                                <div class="pp-name">Podstawowe</div>
+                                <span class="pp-badge-free">DARMOWE</span>
+                            </div>
+                            <div class="pp-price">0 zł</div>
+                            <div class="pp-desc">Standardowe ogłoszenie w wynikach wyszukiwania.</div>
+                            <ul class="pp-feats">
+                                <li><v-icon icon="mdi-check" size="13" />Widoczne w wynikach</li>
+                                <li><v-icon icon="mdi-check" size="13" />30 dni aktywności</li>
+                                <li class="pp-feat-no"><v-icon icon="mdi-close" size="13" />Brak wyróżnienia</li>
+                            </ul>
+                            <div class="pp-sel-bar" />
+                        </div>
 
-                <!-- Step 4: Preview -->
-                <div v-else-if="currentStep === 4" class="form-content">
-                    <div class="form-section-head">
-                        <h2>Podgląd ogłoszenia</h2>
-                        <p>Sprawdź jak będzie wyglądać Twoje ogłoszenie.</p>
+                        <!-- Paid plans -->
+                        <div v-for="plan in promoPlans" :key="plan.key"
+                            class="pp-card"
+                            :class="[`pp-${plan.key.toLowerCase()}`, { 'pp-selected': promoSelected === plan.key, 'pp-popular': plan.popular }]"
+                            @click="promoSelected = plan.key; promoDays = plan.defaultDays">
+                            <div v-if="plan.popular" class="pp-popular-badge">NAJPOPULARNIEJSZY</div>
+                            <div class="pp-header">
+                                <div class="pp-icon"><v-icon :icon="plan.icon" size="24" /></div>
+                                <div class="pp-name">{{ plan.name }}</div>
+                            </div>
+                            <div class="pp-price">od <strong>{{ getPromoPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</strong></div>
+                            <div class="pp-desc">{{ plan.desc }}</div>
+                            <ul class="pp-feats">
+                                <li v-for="f in plan.feats" :key="f"><v-icon icon="mdi-check" size="13" />{{ f }}</li>
+                            </ul>
+                            <div v-if="promoSelected === plan.key" class="pp-days">
+                                <button v-for="d in plan.days" :key="d"
+                                    class="pp-day-btn" :class="{ active: promoDays === d }"
+                                    @click.stop="promoDays = d">
+                                    {{ d }} dni · {{ getPromoDisplayPrice(plan.key, d).toFixed(2) }} zł
+                                </button>
+                            </div>
+                            <div class="pp-sel-bar" />
+                        </div>
                     </div>
-                    <v-alert v-if="error" type="error" class="mb-4">{{ error }}</v-alert>
+
+                    <!-- Summary + coupon (create mode only) -->
+                    <div v-if="!isEdit" class="promo-summary">
+                        <div v-if="promoSelected === 'free'" class="ps-free-info">
+                            <v-icon icon="mdi-check-circle-outline" size="18" />
+                            Opublikujesz ogłoszenie bez promocji (darmowe)
+                        </div>
+                        <div v-else class="ps-paid-info">
+                            <div class="ps-plan-name">{{ selectedPromoPlan?.name }} – {{ promoDays }} dni</div>
+                            <div class="ps-plan-price">
+                                <span v-if="couponResult?.isValid" class="ps-original">{{ selectedPromoPrice?.toFixed(2) }} zł</span>
+                                {{ finalPromoPrice.toFixed(2) }} zł
+                            </div>
+                            <div v-if="couponResult?.isValid" class="ps-coupon-ok">
+                                <v-icon icon="mdi-tag-outline" size="13" />Rabat zastosowany
+                            </div>
+                        </div>
+                        <div v-if="promoSelected !== 'free'" class="ps-coupon-row">
+                            <div class="ps-coupon-wrap">
+                                <input v-model="couponCode" class="ps-coupon-input"
+                                    placeholder="Kod rabatowy (opcjonalnie)"
+                                    :disabled="couponLoading"
+                                    @keyup.enter="applyCoupon" />
+                                <button class="ps-coupon-btn" :disabled="!couponCode || couponLoading" @click="applyCoupon">
+                                    <v-icon v-if="couponLoading" icon="mdi-loading" size="13" class="spin" />
+                                    <span v-else>Zastosuj</span>
+                                </button>
+                            </div>
+                            <div v-if="couponError" class="ps-coupon-error">{{ couponError }}</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Form actions -->
@@ -304,10 +1041,27 @@
                         Dalej: {{ steps[currentStep + 1]?.name }}
                         <v-icon icon="mdi-arrow-right" size="16" />
                     </button>
-                    <button v-else class="btn-next" :disabled="loading" @click="submit">
-                        {{ loading ? 'Publikowanie...' : 'Opublikuj ogłoszenie' }}
-                        <v-icon v-if="!loading" icon="mdi-check" size="16" />
-                    </button>
+                    <template v-else>
+                        <template v-if="isEdit">
+                            <button class="btn-publish-free" :disabled="loading" @click="submit">
+                                <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+                                <v-icon v-else icon="mdi-content-save-outline" size="16" />
+                                {{ loading ? 'Zapisywanie...' : 'Zapisz zmiany' }}
+                            </button>
+                        </template>
+                        <template v-else>
+                            <button v-if="promoSelected === 'free'" class="btn-publish-free" :disabled="loading" @click="submit">
+                                <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+                                <v-icon v-else icon="mdi-check" size="16" />
+                                {{ loading ? 'Publikowanie...' : 'Opublikuj za darmo' }}
+                            </button>
+                            <button v-else class="btn-pay" :disabled="loading || paying" @click="submit">
+                                <v-icon v-if="loading || paying" icon="mdi-loading" size="16" class="spin" />
+                                <v-icon v-else icon="mdi-credit-card-outline" size="16" />
+                                {{ loading ? 'Tworzę ogłoszenie...' : paying ? 'Przekierowuję...' : `Zapłać ${finalPromoPrice.toFixed(2)} zł` }}
+                            </button>
+                        </template>
+                    </template>
                 </div>
 
                 <!-- Bottom strip -->
@@ -332,22 +1086,24 @@
                         <svg viewBox="0 0 120 120" width="130" height="130">
                             <circle cx="60" cy="60" r="52" fill="none" stroke="#1a1a1a" stroke-width="8" />
                             <circle cx="60" cy="60" r="52" fill="none"
-                                :stroke="adScore >= 60 ? '#2d7a3a' : '#8B0D1D'"
+                                :stroke="adScore >= 80 ? '#2d7a3a' : adScore >= 60 ? '#e67e22' : '#8B0D1D'"
                                 stroke-width="8"
                                 stroke-linecap="round"
                                 :stroke-dasharray="`${scoreArc} 326.7`"
-                                transform="rotate(-90 60 60)" />
+                                transform="rotate(-90 60 60)"
+                                style="transition: stroke-dasharray 0.5s ease" />
                         </svg>
                         <div class="score-num">
                             <span class="score-val">{{ adScore }}</span>
                             <span class="score-denom">/100</span>
                         </div>
                     </div>
-                    <p class="score-desc">Twoje ogłoszenie jest w dobrym kierunku. Uzupełnij kolejne kroki, aby zwiększyć widoczność.</p>
-                    <a href="#" class="score-link">Jak poprawić ocenę? →</a>
+                    <div class="score-label" :class="adScore >= 80 ? 'sl-great' : adScore >= 60 ? 'sl-good' : 'sl-poor'">
+                        {{ adScore >= 80 ? 'Doskonałe ogłoszenie' : adScore >= 60 ? 'Dobre ogłoszenie' : 'Uzupełnij więcej danych' }}
+                    </div>
 
                     <div class="score-factors">
-                        <div class="sf-heading">Co wpływa na ocenę?</div>
+                        <div class="sf-heading">Postęp wypełnienia</div>
                         <div v-for="sf in scoreFactors" :key="sf.label" class="sf-row" :class="{ 'sf-done': sf.done }">
                             <div class="sf-check-box">
                                 <v-icon v-if="sf.done" icon="mdi-check" size="11" />
@@ -355,13 +1111,18 @@
                             <span>{{ sf.label }}</span>
                         </div>
                     </div>
+
+                    <div v-if="scoreTips.length" class="score-tips">
+                        <div class="st-heading"><v-icon icon="mdi-lightbulb-outline" size="13" class="st-icon" />Wskazówki</div>
+                        <div v-for="tip in scoreTips" :key="tip" class="st-tip">{{ tip }}</div>
+                    </div>
                 </div>
 
                 <div class="preview-card">
                     <div class="preview-card-title">Podgląd ogłoszenia</div>
                     <div class="preview-img-wrap">
                         <img
-                            :src="previews[0] ?? 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=400&auto=format&fit=crop'"
+                            :src="previews[0] ?? '/car-placeholder.svg'"
                             alt=""
                         />
                     </div>
@@ -372,9 +1133,12 @@
                             <template v-if="fuelTypeName"><span class="dot">•</span><span>{{ fuelTypeName }}</span></template>
                             <template v-if="form.mileage"><span class="dot">•</span><span>{{ Number(form.mileage).toLocaleString('pl') }} km</span></template>
                         </div>
-                        <div class="preview-price">{{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '— zł' }}</div>
+                        <div class="preview-price">
+                            {{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '— zł' }}
+                            <span v-if="form.isNegotiable" class="preview-nego">do negocjacji</span>
+                        </div>
                     </div>
-                    <button class="preview-full-btn">
+                    <button class="preview-full-btn" @click="previewOpen = true">
                         <v-icon icon="mdi-eye-outline" size="15" />
                         Zobacz pełny podgląd
                     </button>
@@ -384,14 +1148,344 @@
 
         </div>
     </div>
+
+    <!-- Preview modal -->
+    <Teleport to="body">
+        <transition name="fade">
+            <div v-if="previewOpen" class="preview-modal-overlay" @click.self="previewOpen = false">
+                <div class="preview-modal">
+                    <div class="pm-header">
+                        <span class="pm-title">Podgląd ogłoszenia</span>
+                        <button class="pm-close" @click="previewOpen = false">
+                            <v-icon icon="mdi-close" size="20" />
+                        </button>
+                    </div>
+                    <div class="pm-body">
+                        <div class="pm-img-wrap">
+                            <img :src="previews[0] ?? '/car-placeholder.svg'" class="pm-img" alt="" />
+                            <div class="pm-img-count" v-if="previews.length > 1">+{{ previews.length - 1 }} zdjęć</div>
+                        </div>
+                        <div class="pm-content">
+                            <div class="pm-brand">{{ brandName }}</div>
+                            <h2 class="pm-name">{{ previewTitle }}</h2>
+                            <div class="pm-meta">
+                                <span v-if="form.year">{{ form.year }}</span>
+                                <span v-if="fuelTypeName">{{ fuelTypeName }}</span>
+                                <span v-if="form.mileage">{{ Number(form.mileage).toLocaleString('pl') }} km</span>
+                                <span v-if="form.city">{{ form.city }}</span>
+                            </div>
+                            <div class="pm-price">{{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '— zł' }}</div>
+                            <p v-if="form.description" class="pm-desc">{{ form.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </Teleport>
 </template>
 
 <script setup lang="ts">
-import type { TaxonomyItem, Generation, EngineVersion, Feature } from '~/types'
+import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
 
-const { fetchBrands, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchFeatures } = useTaxonomy()
+// ── Category field configuration ──────────────────────────────────────────────
+interface ExtraField {
+    key: string
+    label: string
+    type: 'number' | 'select' | 'text' | 'boolean' | 'radio' | 'color-picker'
+    options?: { value: string; label: string }[]
+    unit?: string
+    placeholder?: string
+    required?: boolean
+    hint?: string
+    fullWidth?: boolean
+}
+
+interface CatFieldConfig {
+    // Standard backend fields to show
+    fields: string[]
+    required: string[]
+    // Whether brand uses API dropdown or free-text input
+    brandFieldType?: 'select' | 'text'
+    // Extra category-specific fields (stored in description on submit)
+    extraFields?: ExtraField[]
+    // Dynamic labels
+    brandLabel?: string
+    modelLabel?: string
+    yearLabel?: string
+    mileageLabel?: string
+    engineLabel?: string
+    powerLabel?: string
+    priceLabel?: string
+    // Hints
+    brandHint?: string
+    modelHint?: string
+    mileageHint?: string
+    priceHint?: string
+    yearHint?: string
+    engineHint?: string
+    categoryNote?: string
+}
+
+const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
+    'auta-osobowe': {
+        fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price', 'bodyType'],
+        required: ['brand', 'model', 'year', 'fuelType', 'mileage', 'price'],
+        mileageLabel: 'Przebieg (km)',
+        priceHint: 'Rynek: 10 000 – 500 000 zł',
+        engineHint: 'np. 1995 cm³ (2.0)',
+        extraFields: [
+            { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
+            { key: 'driveType', label: 'Napęd', type: 'select',
+              options: [
+                { value: 'fwd', label: 'Przedni (FWD)' }, { value: 'rwd', label: 'Tylny (RWD)' },
+                { value: 'awd', label: '4x4 / AWD' }, { value: '4wd', label: '4WD stały' },
+              ] },
+            { key: 'doors', label: 'Liczba drzwi', type: 'select',
+              options: [{ value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }, { value: '5', label: '5' }] },
+            { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
+            { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
+            { key: 'serviceHistory', label: 'Pełna historia serwisowa', type: 'boolean' },
+            { key: 'hasASO', label: 'Serwis ASO', type: 'boolean' },
+            { key: 'damaged', label: 'Po wypadku / uszkodzony', type: 'boolean' },
+            { key: 'rightHandDrive', label: 'Kierownica po prawej stronie', type: 'boolean' },
+        ],
+    },
+
+    'dostawcze': {
+        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
+        required: ['brand', 'model', 'year', 'mileage', 'price'],
+        mileageLabel: 'Przebieg (km)',
+        priceHint: 'Rynek: 5 000 – 200 000 zł',
+        categoryNote: 'Dostawcze i busy do 3,5t. Parametry ładunkowe wpisz poniżej.',
+        extraFields: [
+            { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
+            { key: 'bodyVariant', label: 'Zabudowa / typ', type: 'select', required: true,
+              options: [
+                { value: 'furgon', label: 'Furgon' }, { value: 'skrzyniowy', label: 'Skrzyniowy' },
+                { value: 'wywrotka', label: 'Wywrotka' }, { value: 'izoterma', label: 'Izoterma' },
+                { value: 'chlodnia', label: 'Chłodnia' }, { value: 'busa', label: 'Bus osobowo-towarowy' },
+                { value: 'kontener', label: 'Kontener' },
+              ] },
+            { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 1000' },
+            { key: 'gvw', label: 'DMC (dopuszczalna masa całkowita)', type: 'number', unit: 'kg', placeholder: 'np. 3500' },
+            { key: 'loadingLength', label: 'Długość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 3.5' },
+            { key: 'euroNorm', label: 'Norma EURO', type: 'select',
+              options: [{ value: 'euro3', label: 'Euro 3' }, { value: 'euro4', label: 'Euro 4' },
+                        { value: 'euro5', label: 'Euro 5' }, { value: 'euro6', label: 'Euro 6' }] },
+        ],
+    },
+
+    'ciezarowe': {
+        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
+        required: ['brand', 'model', 'year', 'mileage', 'price'],
+        mileageLabel: 'Przebieg (km)',
+        engineHint: 'np. 12 900 cm³',
+        priceHint: 'Rynek: 10 000 – 1 000 000 zł',
+        categoryNote: 'Pojazdy ciężarowe powyżej 3,5t. Uzupełnij dane techniczne poniżej.',
+        extraFields: [
+            { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
+            { key: 'axles', label: 'Liczba osi', type: 'select', required: true,
+              options: [{ value: '2', label: '2 osie' }, { value: '3', label: '3 osie' },
+                        { value: '4', label: '4 osie' }, { value: '5+', label: '5+ osi' }] },
+            { key: 'cabType', label: 'Typ kabiny', type: 'select',
+              options: [{ value: 'normal', label: 'Normalna' }, { value: 'low', label: 'Niska' },
+                        { value: 'high', label: 'Wysoka' }, { value: 'sleep', label: 'Sypialnia' },
+                        { value: 'mega', label: 'Mega / Super Space' }] },
+            { key: 'gvw', label: 'DMC (tony)', type: 'number', unit: 't', placeholder: 'np. 26' },
+            { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 18000' },
+            { key: 'euroNorm', label: 'Norma EURO', type: 'select',
+              options: [{ value: 'euro3', label: 'Euro 3' }, { value: 'euro4', label: 'Euro 4' },
+                        { value: 'euro5', label: 'Euro 5' }, { value: 'euro6', label: 'Euro 6' }] },
+            { key: 'hasTachograph', label: 'Tachograf cyfrowy', type: 'boolean' },
+            { key: 'hasRetarder', label: 'Retarder', type: 'boolean' },
+            { key: 'hasADR', label: 'Dopuszczenie ADR', type: 'boolean' },
+        ],
+    },
+
+    'maszyny': {
+        fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
+        required: ['year', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Producent / marka maszyny',
+        modelLabel: 'Model maszyny',
+        yearLabel: 'Rok produkcji maszyny',
+        mileageLabel: 'Motogodziny (mth)',
+        mileageHint: 'Liczba przepracowanych motogodzin',
+        engineLabel: 'Pojemność silnika (cm³)',
+        priceHint: 'Rynek: 5 000 – 5 000 000 zł',
+        categoryNote: 'Wózki widłowe, dźwigi, żurawie, maszyny przemysłowe. Typ i parametry uzupełnij poniżej.',
+        extraFields: [
+            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
+              options: [
+                { value: 'koparka', label: 'Koparka' }, { value: 'koparka-ladowarka', label: 'Koparko-ładowarka' },
+                { value: 'ladowarka', label: 'Ładowarka' }, { value: 'wozek', label: 'Wózek widłowy' },
+                { value: 'dzwig', label: 'Dźwig / Żuraw' }, { value: 'walec', label: 'Walec drogowy' },
+                { value: 'betonomieszarka', label: 'Betoniarka / Betonomieszarka' },
+                { value: 'miniescavator', label: 'Minieksawator' }, { value: 'inne', label: 'Inne' },
+              ] },
+            { key: 'liftCapacity', label: 'Udźwig / nośność', type: 'number', unit: 'kg', placeholder: 'np. 5000' },
+            { key: 'workingHeight', label: 'Wysokość robocza / zasięg', type: 'number', unit: 'm', placeholder: 'np. 12' },
+            { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }] },
+        ],
+    },
+
+    'czesci': {
+        fields: ['brand', 'model', 'year', 'price'],
+        required: ['price'],
+        brandLabel: 'Pasuje do marki pojazdu',
+        modelLabel: 'Pasuje do modelu pojazdu',
+        yearLabel: 'Rocznik pojazdu (do którego pasuje)',
+        priceLabel: 'Cena części (zł)',
+        brandHint: 'Wybierz markę pojazdu, do którego pasuje część',
+        modelHint: 'Wybierz model pojazdu, do którego pasuje część',
+        priceHint: 'Podaj cenę jednej sztuki',
+        categoryNote: 'Części, akcesoria i wyposażenie. Podaj szczegóły części poniżej.',
+        extraFields: [
+            { key: 'condition', label: 'Stan części', type: 'radio', required: true,
+              options: [{ value: 'new', label: 'Nowa' }, { value: 'regen', label: 'Regenerowana' }, { value: 'used', label: 'Używana' }] },
+            { key: 'partNumber', label: 'Numer OEM / katalogowy', type: 'text', placeholder: 'np. 3C0853630A', hint: 'Numer oryginalny części od producenta pojazdu' },
+            { key: 'manufacturer', label: 'Producent części', type: 'text', placeholder: 'np. Bosch, Febi, OEM' },
+            { key: 'compatibility', label: 'Pasuje również do', type: 'text', placeholder: 'np. VW Golf VI, Seat Leon II', fullWidth: true, hint: 'Inne modele, do których pasuje ta część' },
+        ],
+    },
+
+    'motocykle': {
+        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
+        required: ['brand', 'model', 'year', 'mileage', 'price'],
+        mileageLabel: 'Przebieg (km)',
+        engineHint: 'np. 649 cm³, 1000 cm³',
+        priceHint: 'Rynek: 1 000 – 150 000 zł',
+        extraFields: [
+            { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
+            { key: 'motorcycleType', label: 'Typ motocykla', type: 'select', required: true,
+              options: [
+                { value: 'sport', label: 'Sportowy' }, { value: 'touring', label: 'Turystyczny' },
+                { value: 'enduro', label: 'Enduro / Off-road' }, { value: 'cruiser', label: 'Cruiser / Chopper' },
+                { value: 'naked', label: 'Naked / Streetfighter' }, { value: 'scooter', label: 'Skuter' },
+                { value: 'trial', label: 'Trial' }, { value: 'electric', label: 'Elektryczny' },
+              ] },
+            { key: 'hasABS', label: 'ABS', type: 'boolean' },
+            { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
+            { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
+        ],
+    },
+
+    'przyczepy': {
+        fields: ['brand', 'model', 'year', 'price'],
+        required: ['year', 'price'],
+        yearLabel: 'Rok produkcji przyczepy',
+        priceHint: 'Rynek: 500 – 200 000 zł',
+        categoryNote: 'Przyczepy, naczepy i lawety. Uzupełnij dane ładunkowe poniżej.',
+        extraFields: [
+            { key: 'condition', label: 'Stan', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }] },
+            { key: 'trailerType', label: 'Typ przyczepy', type: 'select', required: true,
+              options: [
+                { value: 'naczepa', label: 'Naczepa' }, { value: 'polnaczepa', label: 'Półnaczepa' },
+                { value: 'lekka', label: 'Przyczepa lekka' }, { value: 'laweta', label: 'Laweta' },
+                { value: 'wywrotka', label: 'Wywrotka' }, { value: 'chlodnia', label: 'Chłodnia' },
+                { value: 'platforma', label: 'Platforma' }, { value: 'tandem', label: 'Tandem' },
+              ] },
+            { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
+            { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
+            { key: 'length', label: 'Długość całkowita', type: 'number', unit: 'm', placeholder: 'np. 13.6' },
+            { key: 'hasHydraulics', label: 'Hydraulika', type: 'boolean' },
+            { key: 'hasLift', label: 'Winda załadunkowa', type: 'boolean' },
+        ],
+    },
+
+    'rolnicze': {
+        fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
+        required: ['year', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Producent / marka',
+        modelLabel: 'Model',
+        yearLabel: 'Rok produkcji',
+        mileageLabel: 'Motogodziny (mth)',
+        mileageHint: 'Liczba przepracowanych motogodzin',
+        engineLabel: 'Pojemność silnika (cm³)',
+        priceHint: 'Rynek: 5 000 – 2 000 000 zł',
+        categoryNote: 'Ciągniki, kombajny i maszyny rolnicze. Uzupełnij parametry robocze poniżej.',
+        extraFields: [
+            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
+              options: [
+                { value: 'ciagnik', label: 'Ciągnik rolniczy' }, { value: 'kombajn', label: 'Kombajn zbożowy' },
+                { value: 'siewnik', label: 'Siewnik' }, { value: 'plug', label: 'Pług' },
+                { value: 'glebogryzarka', label: 'Glebogryzarka' }, { value: 'opryskiwacz', label: 'Opryskiwacz' },
+                { value: 'prasa', label: 'Prasa rolnicza' }, { value: 'ladowacz', label: 'Ładowacz' },
+                { value: 'rozsiewacz', label: 'Rozsiewacz' }, { value: 'inne', label: 'Inne' },
+              ] },
+            { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }] },
+            { key: 'workingWidth', label: 'Szerokość robocza', type: 'number', unit: 'm', placeholder: 'np. 6.0' },
+            { key: 'frontLoader', label: 'Ładowacz czołowy', type: 'boolean' },
+            { key: 'dualWheels', label: 'Bliźniaki (koła bliźniacze)', type: 'boolean' },
+        ],
+    },
+
+    'budowlane': {
+        fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
+        required: ['year', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Producent / marka',
+        modelLabel: 'Model maszyny',
+        yearLabel: 'Rok produkcji maszyny',
+        mileageLabel: 'Motogodziny (mth)',
+        mileageHint: 'Liczba przepracowanych motogodzin',
+        engineLabel: 'Pojemność silnika (cm³)',
+        priceHint: 'Rynek: 10 000 – 5 000 000 zł',
+        categoryNote: 'Maszyny budowlane i drogowe. Uzupełnij parametry poniżej.',
+        extraFields: [
+            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
+              options: [
+                { value: 'koparka-gasienicowa', label: 'Koparka gąsienicowa' },
+                { value: 'koparka-kolowa', label: 'Koparka kołowa' },
+                { value: 'koparka-ladowarka', label: 'Koparko-ładowarka' },
+                { value: 'ladowarka', label: 'Ładowarka kołowa' },
+                { value: 'dzwig', label: 'Dźwig / Żuraw' }, { value: 'walec', label: 'Walec drogowy' },
+                { value: 'betonomieszarka', label: 'Betonomieszarka' }, { value: 'spycharka', label: 'Spycharka' },
+                { value: 'miniescavator', label: 'Minieksawator' }, { value: 'inne', label: 'Inne' },
+              ] },
+            { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }] },
+            { key: 'liftCapacity', label: 'Udźwig / nośność', type: 'number', unit: 'kg', placeholder: 'np. 10000' },
+            { key: 'hasHydraulics', label: 'Rozdzielacz hydrauliczny', type: 'boolean' },
+        ],
+    },
+
+    'inne': {
+        fields: ['brand', 'model', 'year', 'mileage', 'price'],
+        required: ['price'],
+        mileageLabel: 'Przebieg (km)',
+        priceHint: 'Podaj cenę pojazdu',
+        extraFields: [
+            { key: 'condition', label: 'Stan', type: 'radio',
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
+        ],
+    },
+}
+
+const DEFAULT_CAT_CONFIG: CatFieldConfig = {
+    fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price', 'bodyType'],
+    required: ['brand', 'model', 'year', 'mileage', 'price'],
+    mileageLabel: 'Przebieg (km)',
+}
+
+const route = useRoute()
+const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
+const isEdit = computed(() => !!editId.value)
+
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures } = useTaxonomy()
+const { validateCoupon } = useCoupons()
+const { getPrice } = usePayment()
+const { fetchCategories } = useCategories()
 
 const brands = ref<TaxonomyItem[]>([])
 const models = ref<TaxonomyItem[]>([])
@@ -400,6 +1494,8 @@ const engines = ref<EngineVersion[]>([])
 const fuelTypes = ref<TaxonomyItem[]>([])
 const gearboxes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
+const driveTypes = ref<DriveType[]>([])
+const colors = ref<CarColor[]>([])
 const allFeatures = ref<Feature[]>([])
 const loading = ref(false)
 const error = ref('')
@@ -408,6 +1504,12 @@ const selectedFiles = ref<File[]>([])
 const previews = ref<string[]>([])
 const currentStep = ref(0)
 
+const advertCategories = ref<CategoryWithCount[]>([])
+
+// Success screen state
+const publishedAdvertId = ref<number | null>(null)
+const showSuccess = ref(false)
+
 const voivodeships = [
     'dolnośląskie', 'kujawsko-pomorskie', 'lubelskie', 'lubuskie',
     'łódzkie', 'małopolskie', 'mazowieckie', 'opolskie',
@@ -415,10 +1517,148 @@ const voivodeships = [
     'świętokrzyskie', 'warmińsko-mazurskie', 'wielkopolskie', 'zachodniopomorskie',
 ]
 
+const draftSaved = ref(false)
+const existingImages = ref<AdvertImage[]>([])
+const deletingImageId = ref<number | null>(null)
+const vinLoading = ref(false)
+const vinError = ref('')
+const previewOpen = ref(false)
+const photoUploading = ref(false)
+const paying = ref(false)
+
+// Promotion plan state
+const promoSelected = ref<string>('free')
+const promoDays = ref(7)
+const promoApiPrices = ref<Record<string, number>>({})
+const couponCode = ref('')
+const couponLoading = ref(false)
+const couponError = ref('')
+const couponResult = ref<CouponValidation | null>(null)
+
+const promoPlans = [
+    {
+        key: 'Featured', name: 'Wyróżnienie', icon: 'mdi-star-outline',
+        priceFrom: 14.99, popular: false, defaultDays: 7, days: [7, 14, 30],
+        desc: 'Ogłoszenie wyróżnione w wynikach wyszukiwania.',
+        feats: ['Wyróżniony kolor ramki', 'Oznaczenie WYRÓŻNIONE', '2× więcej wyświetleń'],
+        prices: { 7: 14.99, 14: 24.99, 30: 39.99 } as Record<number, number>,
+    },
+    {
+        key: 'Top', name: 'TOP', icon: 'mdi-crown-outline',
+        priceFrom: 19.99, popular: true, defaultDays: 7, days: [7, 14, 30],
+        desc: 'Ogłoszenie na szczycie wyników wyszukiwania.',
+        feats: ['Pozycja TOP w wynikach', 'Baner reklamowy', '5× więcej wyświetleń'],
+        prices: { 7: 19.99, 14: 29.99, 30: 49.99 } as Record<number, number>,
+    },
+    {
+        key: 'Premium', name: 'Premium', icon: 'mdi-diamond-outline',
+        priceFrom: 29.99, popular: false, defaultDays: 7, days: [7, 14, 30],
+        desc: 'Maksymalna widoczność i priorytetowe pozycjonowanie.',
+        feats: ['Wszystko z TOP', 'Sekcja polecane ogłoszenia', 'Priorytetowe wsparcie'],
+        prices: { 7: 29.99, 14: 44.99, 30: 79.99 } as Record<number, number>,
+    },
+    {
+        key: 'Refresh', name: 'Odświeżenie', icon: 'mdi-refresh',
+        priceFrom: 4.99, popular: false, defaultDays: 1, days: [1],
+        desc: 'Przesuń ogłoszenie na górę listy – jednorazowo.',
+        feats: ['Awans na szczyt listy', 'Nowa data publikacji'],
+        prices: { 1: 4.99 } as Record<number, number>,
+    },
+]
+
+function getPromoDisplayPrice(planKey: string, days: number): number {
+    const apiKey = `${planKey}-${days}`
+    return promoApiPrices.value[apiKey] ?? promoPlans.find(p => p.key === planKey)?.prices[days] ?? 0
+}
+
+function getPromoPriceFrom(planKey: string, fallback: number): number {
+    const plan = promoPlans.find(p => p.key === planKey)
+    if (!plan) return fallback
+    return getPromoDisplayPrice(planKey, Math.min(...plan.days))
+}
+
+const selectedPromoPlan = computed(() => promoPlans.find(p => p.key === promoSelected.value))
+const selectedPromoPrice = computed(() => {
+    if (!selectedPromoPlan.value) return null
+    return getPromoDisplayPrice(selectedPromoPlan.value.key, promoDays.value)
+})
+const finalPromoPrice = computed(() =>
+    couponResult.value?.isValid ? couponResult.value.finalPrice : (selectedPromoPrice.value ?? 0)
+)
+
+watch(promoSelected, () => { couponResult.value = null; couponError.value = '' })
+watch(promoDays, () => { couponResult.value = null; couponError.value = '' })
+
+async function applyCoupon() {
+    if (!couponCode.value.trim() || !selectedPromoPrice.value) return
+    couponLoading.value = true
+    couponError.value = ''
+    couponResult.value = null
+    try {
+        const r = await validateCoupon(couponCode.value.trim(), selectedPromoPrice.value)
+        couponResult.value = r
+        if (!r.isValid) couponError.value = r.message ?? 'Nieprawidłowy kod rabatowy.'
+    } catch (e: any) {
+        couponError.value = e?.data?.message ?? 'Nie udało się zastosować kuponu.'
+    } finally {
+        couponLoading.value = false
+    }
+}
+
+function saveDraft() {
+    const draft = {
+        form: { ...form },
+        extras: { ...extras },
+        history: { ...history },
+        brandTextInput: brandTextInput.value,
+        modelTextInput: modelTextInput.value,
+        step: currentStep.value,
+    }
+    localStorage.setItem('carizo_advert_draft', JSON.stringify(draft))
+    draftSaved.value = true
+    setTimeout(() => { draftSaved.value = false }, 2500)
+}
+
+function loadDraft() {
+    try {
+        const raw = localStorage.getItem('carizo_advert_draft')
+        if (!raw) return
+        const saved = JSON.parse(raw)
+        if (saved.form) Object.assign(form, saved.form)
+        if (saved.extras) Object.assign(extras, saved.extras)
+        if (saved.history) Object.assign(history, saved.history)
+        if (saved.brandTextInput) brandTextInput.value = saved.brandTextInput
+        if (saved.modelTextInput) modelTextInput.value = saved.modelTextInput
+        if (typeof saved.step === 'number' && saved.step >= 0 && saved.step < steps.length) currentStep.value = saved.step
+    } catch {}
+}
+
+async function lookupVin() {
+    if (form.vin.length !== 17) return
+    vinLoading.value = true
+    vinError.value = ''
+    try {
+        const data = await $fetch<Partial<typeof form>>(`/api/proxy/api/Advert/vin/${form.vin}`)
+        if (data.brandId) form.brandId = data.brandId
+        if (data.modelId) form.modelId = data.modelId
+        if (data.year) form.year = data.year
+        if (data.fuelTypeId) form.fuelTypeId = data.fuelTypeId
+        if (data.gearboxId) form.gearboxId = data.gearboxId
+        if (data.engineCapacity) form.engineCapacity = data.engineCapacity
+        if (data.power) form.power = data.power
+    } catch {
+        vinError.value = 'Nie udało się pobrać danych VIN. Uzupełnij formularz ręcznie.'
+        setTimeout(() => { vinError.value = '' }, 4000)
+    } finally {
+        vinLoading.value = false
+    }
+}
+
 const form = reactive({
     title: '',
     description: '',
     price: null as number | null,
+    categoryId: null as number | null,
     brandId: null as number | null,
     modelId: null as number | null,
     generationId: null as number | null,
@@ -434,20 +1674,44 @@ const form = reactive({
     vin: '',
     city: '',
     region: null as string | null,
+    isNegotiable: false,
+    sellerType: 'private' as 'private' | 'dealer',
+})
+
+const extras = reactive<Record<string, any>>({})
+const brandTextInput = ref('')
+const modelTextInput = ref('')
+
+const history = reactive({
+    ownersCount: null as number | null,
+    isImported: false,
+    importCountry: '',
+    firstRegDate: '',
+    hasServiceBook: false,
+    hasFullServiceHistory: false,
+    nextInspection: '',
+    hasDamage: false,
+    damageDesc: '',
+    hasWarranty: false,
+    warrantyUntil: '',
+    registrationCountry: 'PL',
 })
 
 const steps = [
-    { name: 'Informacje podstawowe', desc: 'Marka, model, cena', icon: 'mdi-car-outline' },
-    { name: 'Zdjęcia', desc: 'Dodaj zdjęcia auta', icon: 'mdi-image-outline' },
-    { name: 'Opis i szczegóły', desc: 'Opis, wyposażenie', icon: 'mdi-text-box-outline' },
-    { name: 'Historia i stan', desc: 'VIN, historia pojazdu', icon: 'mdi-shield-check-outline' },
-    { name: 'Podgląd ogłoszenia', desc: 'Sprawdź jak wygląda', icon: 'mdi-eye-outline' },
+    { name: 'Kategoria',   desc: 'Typ pojazdu',                    icon: 'mdi-apps' },
+    { name: 'Dane pojazdu',desc: 'Marka, model, dane techniczne',  icon: 'mdi-car-outline' },
+    { name: 'Zdjęcia',     desc: 'Dodaj zdjęcia pojazdu',          icon: 'mdi-image-outline' },
+    { name: 'Wyposażenie', desc: 'Opcje i wyposażenie',            icon: 'mdi-format-list-checkbox' },
+    { name: 'Cena i opis', desc: 'Cena, opis, lokalizacja',        icon: 'mdi-text-box-outline' },
+    { name: 'Podsumowanie',desc: 'Przejrzyj i opublikuj',          icon: 'mdi-check-circle-outline' },
 ]
 
 const progressSteps = [
-    { label: 'Informacje', icon: 'mdi-car-outline' },
-    { label: 'Zdjęcia', icon: 'mdi-image-outline' },
-    { label: 'Szczegóły', icon: 'mdi-text-box-outline' },
+    { label: 'Kategoria',  icon: 'mdi-apps' },
+    { label: 'Pojazd',     icon: 'mdi-car-outline' },
+    { label: 'Zdjęcia',    icon: 'mdi-image-outline' },
+    { label: 'Wyposażenie',icon: 'mdi-format-list-checkbox' },
+    { label: 'Oferta',     icon: 'mdi-text-box-outline' },
     { label: 'Publikacja', icon: 'mdi-check-circle-outline' },
 ]
 
@@ -467,59 +1731,270 @@ const previewTitle = computed(() => {
     return parts.length ? parts.join(' ') : 'Twoje ogłoszenie'
 })
 
+const descCharCount = computed(() => form.description?.length ?? 0)
+const descQuality = computed(() => {
+    const l = descCharCount.value
+    if (l >= 500) return 'great'
+    if (l >= 200) return 'good'
+    if (l >= 50) return 'ok'
+    return 'poor'
+})
+
 const adScore = computed(() => {
     let s = 0
-    if (form.brandId) s += 8
-    if (form.modelId) s += 8
-    if (form.year) s += 7
-    if (form.fuelTypeId) s += 7
-    if (form.mileage) s += 7
-    if (form.price) s += 8
-    if (form.gearboxId) s += 5
-    if (form.generationId) s += 5
-    if (selectedFiles.value.length >= 5) s += 15
-    else if (selectedFiles.value.length > 0) s += selectedFiles.value.length * 2
-    if (form.description) s += 15
-    if (form.featureIds.length >= 3) s += 10
-    else s += form.featureIds.length * 3
-    if (form.vin) s += 5
+    // Basic info 40 pts
+    if (form.brandId || brandTextInput.value) s += 6
+    if (form.modelId) s += 6
+    if (form.year) s += 5
+    if (form.fuelTypeId) s += 4
+    if (form.mileage) s += 5
+    if (form.price) s += 6
+    if (form.gearboxId) s += 3
+    if (form.generationId) s += 3
+    if (form.engineCapacity) s += 2
+    // Photos 20 pts
+    const photos = selectedFiles.value.length + existingImages.value.length
+    if (photos >= 10) s += 20
+    else if (photos >= 5) s += 14
+    else if (photos > 0) s += photos * 2
+    // Description 20 pts
+    const dl = form.description?.length ?? 0
+    if (dl >= 500) s += 20
+    else if (dl >= 200) s += 14
+    else if (dl >= 50) s += 7
+    else if (dl > 0) s += 3
+    // Equipment 10 pts
+    if (form.featureIds.length >= 5) s += 10
+    else s += form.featureIds.length * 2
+    // History 10 pts
+    if (form.vin) s += 4
+    if (history.hasServiceBook) s += 2
+    if (history.ownersCount !== null) s += 2
+    if (history.nextInspection) s += 2
     return Math.min(s, 100)
 })
 
 const scoreArc = computed(() => (adScore.value / 100) * 326.7)
 
-const scoreFactors = computed(() => [
-    { label: 'Podstawowe informacje', done: !!(form.brandId && form.modelId && form.year && form.fuelTypeId && form.mileage && form.price) },
-    { label: `Zdjęcia (${selectedFiles.value.length}/10)`, done: selectedFiles.value.length >= 10 },
-    { label: `Opis (${form.description ? 1 : 0}/1)`, done: !!form.description },
-    { label: `Wyposażenie (${form.featureIds.length}/3)`, done: form.featureIds.length >= 3 },
-    { label: `Historia pojazdu (${form.vin ? 1 : 0}/2)`, done: !!form.vin },
-])
+const scoreFactors = computed(() => {
+    const photos = selectedFiles.value.length + existingImages.value.length
+    return [
+        { label: 'Podstawowe informacje', done: !!(form.brandId && form.modelId && form.year && form.price) },
+        { label: `Zdjęcia (${photos}/10)`, done: photos >= 10 },
+        { label: `Opis (${descCharCount.value} znaków)`, done: descCharCount.value >= 200 },
+        { label: `Wyposażenie (${form.featureIds.length}/5)`, done: form.featureIds.length >= 5 },
+        { label: 'Historia pojazdu', done: !!(form.vin || history.hasServiceBook || history.ownersCount !== null) },
+    ]
+})
+
+const scoreTips = computed(() => {
+    const tips: string[] = []
+    const photos = selectedFiles.value.length + existingImages.value.length
+    if (!form.brandId && !brandTextInput.value) tips.push('Wybierz markę pojazdu — zwiększa wiarygodność.')
+    if (photos < 5) tips.push(`Dodaj więcej zdjęć (masz ${photos}) — ogłoszenia z 10+ zdjęciami sprzedają się 3× szybciej.`)
+    if ((form.description?.length ?? 0) < 100) tips.push('Napisz szczegółowy opis — kupujący czytają go uważnie.')
+    if (form.featureIds.length < 3) tips.push('Zaznacz wyposażenie — filtry po wyposażeniu zwiększają wyświetlenia.')
+    if (!form.vin) tips.push('Podaj numer VIN — buduje zaufanie i filtruje poważnych kupujących.')
+    if (!history.hasServiceBook && !history.hasFullServiceHistory) tips.push('Zaznacz historię serwisową jeśli ją posiadasz.')
+    return tips.slice(0, 3)
+})
+
+// Special feature categories available per vehicle slug
+const SPECIAL_FEAT_CATS: Record<string, string[]> = {
+    'ciezarowe':  ['Specjalne – Ciężarówki'],
+    'dostawcze':  ['Specjalne – Dostawcze'],
+    'motocykle':  ['Specjalne – Motocykle'],
+    'przyczepy':  ['Specjalne – Przyczepy i naczepy'],
+    'budowlane':  ['Specjalne – Maszyny budowlane'],
+    'rolnicze':   ['Specjalne – Maszyny rolnicze'],
+    'maszyny':    ['Specjalne – Maszyny budowlane'],
+}
+
+const ALL_SPECIAL_CATS = [
+    'Specjalne – Ciężarówki',
+    'Specjalne – Motocykle',
+    'Specjalne – Dostawcze',
+    'Specjalne – Przyczepy i naczepy',
+    'Specjalne – Maszyny budowlane',
+    'Specjalne – Maszyny rolnicze',
+]
+
+// Categories where standard car features (Multimedia, Komfort, etc.) are irrelevant
+const CATS_HIDE_STANDARD = new Set(['maszyny', 'czesci', 'przyczepy', 'rolnicze', 'budowlane'])
 
 const featureGroups = computed(() => {
+    const slug = selectedCategory.value?.slug ?? ''
+    const allowedSpecial = SPECIAL_FEAT_CATS[slug] ?? []
+    const hideStandard = CATS_HIDE_STANDARD.has(slug)
+
     const g: Record<string, Feature[]> = {}
     for (const f of allFeatures.value) {
-        const cat = f.category?.name ?? 'Inne';
-        (g[cat] ??= []).push(f)
+        const cat = f.category?.name ?? 'Inne'
+        // Always exclude special categories that don't belong to this vehicle type
+        if (ALL_SPECIAL_CATS.includes(cat) && !allowedSpecial.includes(cat)) continue
+        // For machinery/trailers/parts, hide all standard car features
+        if (hideStandard && !allowedSpecial.includes(cat)) continue
+        ;(g[cat] ??= []).push(f)
     }
     return g
 })
 
+// Equipment search
+const featSearch = ref('')
+
+const filteredFeatureGroups = computed(() => {
+    const q = featSearch.value.trim().toLowerCase()
+    if (!q) return featureGroups.value
+    const result: Record<string, Feature[]> = {}
+    for (const [cat, items] of Object.entries(featureGroups.value)) {
+        const filtered = items.filter(f => f.name.toLowerCase().includes(q))
+        if (filtered.length) result[cat] = filtered
+    }
+    return result
+})
+
+function highlightSearch(name: string): string {
+    const q = featSearch.value.trim()
+    if (!q) return name
+    const idx = name.toLowerCase().indexOf(q.toLowerCase())
+    if (idx === -1) return name
+    return name.slice(0, idx) + `<mark class="feat-hl">${name.slice(idx, idx + q.length)}</mark>` + name.slice(idx + q.length)
+}
+
+// Photo quality feedback
+const photoFeedback = computed(() => {
+    const all = selectedFiles.value.length + existingImages.value.length
+    const mainOk = existingImages.value.some(i => i.isMain) || selectedFiles.value.length > 0
+
+    let countMsg = ''
+    let countClass = ''
+    let countIcon = ''
+    if (all === 0) { countMsg = 'Brak zdjęć — dodaj minimum 3'; countClass = 'ph-error'; countIcon = 'mdi-image-off-outline' }
+    else if (all < 3) { countMsg = `Za mało zdjęć (${all}/3 minimum) — dodaj więcej`; countClass = 'ph-warn'; countIcon = 'mdi-alert-circle-outline' }
+    else if (all < 8) { countMsg = `${all} zdjęcia — dobrze! Zalecamy 8-15 zdjęć`; countClass = 'ph-ok'; countIcon = 'mdi-check-circle-outline' }
+    else { countMsg = `${all} zdjęcia — doskonale!`; countClass = 'ph-ok'; countIcon = 'mdi-check-circle' }
+
+    return { mainOk, countMsg, countClass, countIcon, lowQuality: [] as File[] }
+})
+
+function featureGroupIcon(cat: string): string {
+    const lower = cat.toLowerCase()
+    if (lower.includes('bezpiecze')) return 'mdi-shield-check-outline'
+    if (lower.includes('komfort')) return 'mdi-seat-recline-extra'
+    if (lower.includes('multim') || lower.includes('czno')) return 'mdi-monitor-speaker'
+    if (lower.includes('wietle') || lower.includes('wiatl')) return 'mdi-car-light-high'
+    if (lower.includes('wspomagania') || lower.includes('asyst')) return 'mdi-car-cruise-control'
+    if (lower.includes('tapicerka') || lower.includes('wn')) return 'mdi-car-seat'
+    if (lower.includes('zewn')) return 'mdi-car-side'
+    if (lower.includes('dodatki') || lower.includes('akcesoria')) return 'mdi-package-variant-closed'
+    if (lower.includes('naped') || lower.includes('napęd') || lower.includes('układ')) return 'mdi-car-traction-control'
+    if (lower.includes('ciężar') || lower.includes('ciezar')) return 'mdi-truck-outline'
+    if (lower.includes('motocykl')) return 'mdi-motorbike'
+    if (lower.includes('dostawcze') || lower.includes('dostawc')) return 'mdi-van-utility'
+    if (lower.includes('przyczepa') || lower.includes('naczepa')) return 'mdi-truck-trailer'
+    if (lower.includes('budowlan')) return 'mdi-crane'
+    if (lower.includes('rolnicze') || lower.includes('rolnicza')) return 'mdi-tractor'
+    if (lower.includes('maszyn')) return 'mdi-cog-transfer-outline'
+    return 'mdi-star-outline'
+}
+
+// ── Smart form: category-aware logic ─────────────────────────────────────────
+const selectedCategory = computed(() =>
+    advertCategories.value.find(c => c.id === form.categoryId) ?? null
+)
+
+const categoryConfig = computed<CatFieldConfig>(() => {
+    if (!selectedCategory.value) return DEFAULT_CAT_CONFIG
+    const slug = selectedCategory.value.slug ?? ''
+    return CATEGORY_CONFIGS[slug] ?? DEFAULT_CAT_CONFIG
+})
+
+function isFieldVisible(field: string): boolean {
+    if (!form.categoryId) return true
+    return categoryConfig.value.fields.includes(field)
+}
+
+function isFieldRequired(field: string): boolean {
+    if (!form.categoryId) return false
+    return categoryConfig.value.required.includes(field)
+}
+
+// SmartSelect option arrays
+const brandOptions = computed<SelectOption[]>(() => brands.value.map(b => ({ value: b.id, label: b.name })))
+const modelOptions = computed<SelectOption[]>(() => models.value.map(m => ({ value: m.id, label: m.name })))
+const generationOptions = computed<SelectOption[]>(() => generations.value.map(g => ({ value: g.id, label: g.name })))
+const engineOptions = computed<SelectOption[]>(() => engines.value.map(e => ({ value: e.id, label: `${e.name} (${e.powerHP ?? e.horsepower ?? '?'}KM)` })))
+
+const fuelTypeOptions = computed<SelectOption[]>(() => fuelTypes.value.map(f => ({ value: f.id, label: f.name })))
+const gearboxOptions = computed<SelectOption[]>(() => gearboxes.value.map(g => ({ value: g.id, label: g.name })))
+const bodyTypeOptions = computed<SelectOption[]>(() => bodyTypes.value.map(b => ({ value: b.id, label: b.name })))
+
+// Smart title suggestion: brand + model + year + fuel (when enough filled)
+const suggestedTitle = computed(() => {
+    const isTextMode = categoryConfig.value.brandFieldType === 'text'
+    const brand = isTextMode ? brandTextInput.value : brandName.value
+    const model = isTextMode ? modelTextInput.value : modelName.value
+    const parts = [brand, model, form.year ? String(form.year) : ''].filter(Boolean)
+    return parts.length >= 2 ? parts.join(' ') : ''
+})
+
+async function onCategory(catId: number) {
+    const changed = form.categoryId !== catId
+    form.categoryId = catId
+    if (changed) {
+        form.brandId = null; form.modelId = null; form.generationId = null; form.engineVersionId = null
+        models.value = []; generations.value = []; engines.value = []
+        for (const key of Object.keys(extras)) delete extras[key]
+        brandTextInput.value = ''
+        modelTextInput.value = ''
+    }
+    // Reload brands filtered by category (fall back to all brands if none returned)
+    const cfg = categoryConfig.value
+    if (cfg.brandFieldType !== 'text') {
+        try {
+            const filtered = await fetchBrandsByCategory(catId)
+            brands.value = filtered.length ? filtered : await fetchBrands()
+        } catch {
+            brands.value = await fetchBrands()
+        }
+    }
+    // Auto-advance to vehicle data step on first category selection
+    if (changed && currentStep.value === 0) {
+        setTimeout(() => { currentStep.value = 1 }, 250)
+    }
+}
+
 function validateStep(step: number): string | null {
+    // Step 0: Category
     if (step === 0) {
-        if (!form.brandId) return 'Wybierz markę pojazdu.'
-        if (!form.modelId) return 'Wybierz model pojazdu.'
+        if (!form.categoryId) return 'Wybierz kategorię pojazdu.'
+    }
+    // Step 1: Vehicle data
+    if (step === 1) {
+        const cfg = categoryConfig.value
+        if (cfg.required.includes('brand') && !form.brandId && cfg.brandFieldType !== 'text') return 'Wybierz markę pojazdu.'
+        if (cfg.required.includes('brand') && cfg.brandFieldType === 'text' && !brandTextInput.value.trim()) return `Podaj ${cfg.brandLabel ?? 'markę'}.`
+        if (cfg.required.includes('model') && !form.modelId) return 'Wybierz model pojazdu.'
         if (!form.year) return 'Podaj rok produkcji.'
-        if (!form.fuelTypeId) return 'Wybierz rodzaj paliwa.'
-        if (!form.mileage) return 'Podaj przebieg.'
-        if (!form.price) return 'Podaj cenę.'
+        if (cfg.required.includes('fuelType') && !form.fuelTypeId) return 'Wybierz rodzaj paliwa.'
+        if (cfg.required.includes('mileage') && !form.mileage && form.mileage !== 0) return `Podaj ${cfg.mileageLabel ?? 'przebieg'}.`
+        // Validate extra required fields
+        for (const ef of (cfg.extraFields ?? [])) {
+            if (ef.required && !extras[ef.key] && extras[ef.key] !== false) {
+                return `Pole "${ef.label}" jest wymagane.`
+            }
+        }
+    }
+    // Step 2: Photos
+    if (step === 2) {
+        if (!isEdit.value && existingImages.value.length === 0 && selectedFiles.value.length < 3) return 'Dodaj minimum 3 zdjęcia.'
+    }
+    // Step 3: Equipment — no required fields
+    // Step 4: Price & description
+    if (step === 4) {
+        if (!form.price) return 'Podaj cenę pojazdu.'
         if (!form.region) return 'Wybierz województwo.'
         if (!form.city?.trim()) return 'Podaj miasto.'
-    }
-    if (step === 1) {
-        if (selectedFiles.value.length < 3) return 'Dodaj minimum 3 zdjęcia.'
-    }
-    if (step === 2) {
         if (!form.description?.trim()) return 'Dodaj opis ogłoszenia.'
     }
     return null
@@ -536,15 +2011,58 @@ function goNext() {
     currentStep.value++
 }
 
-function onFilesSelected(e: Event) {
+async function compressImage(file: File, maxPx = 1920, quality = 0.85): Promise<File> {
+    return new Promise((resolve) => {
+        const img = new Image()
+        const url = URL.createObjectURL(file)
+        img.onload = () => {
+            URL.revokeObjectURL(url)
+            let { width, height } = img
+            if (width > maxPx || height > maxPx) {
+                const ratio = Math.min(maxPx / width, maxPx / height)
+                width = Math.round(width * ratio)
+                height = Math.round(height * ratio)
+            }
+            const canvas = document.createElement('canvas')
+            canvas.width = width; canvas.height = height
+            const ctx = canvas.getContext('2d')!
+            ctx.drawImage(img, 0, 0, width, height)
+            // CARIZO watermark — bottom-right, semi-transparent
+            const fontSize = Math.max(14, Math.round(width * 0.032))
+            const pad = Math.round(width * 0.018)
+            ctx.save()
+            ctx.globalAlpha = 0.6
+            ctx.font = `bold ${fontSize}px Inter, Arial, sans-serif`
+            ctx.textAlign = 'right'
+            ctx.textBaseline = 'bottom'
+            ctx.shadowColor = 'rgba(0,0,0,0.75)'
+            ctx.shadowBlur = 5
+            ctx.fillStyle = '#ffffff'
+            ctx.fillText('CARIZO', width - pad, height - pad)
+            ctx.restore()
+            canvas.toBlob(
+                (blob) => resolve(blob ? new File([blob], file.name, { type: 'image/jpeg' }) : file),
+                'image/jpeg', quality
+            )
+        }
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
+        img.src = url
+    })
+}
+
+async function onFilesSelected(e: Event) {
     const input = e.target as HTMLInputElement
     const files = Array.from(input.files ?? [])
     const remaining = 20 - selectedFiles.value.length
+    if (!files.length) return
+    photoUploading.value = true
     for (const file of files.slice(0, remaining)) {
-        selectedFiles.value.push(file)
-        previews.value.push(URL.createObjectURL(file))
+        const compressed = await compressImage(file)
+        selectedFiles.value.push(compressed)
+        previews.value.push(URL.createObjectURL(compressed))
     }
     input.value = ''
+    photoUploading.value = false
 }
 
 function removeImage(index: number) {
@@ -569,37 +2087,331 @@ async function onGen() {
     if (form.generationId) engines.value = await fetchEngines(form.generationId)
 }
 
+// Serialize category extras + history + seller info into description
+function buildDescription(): string {
+    const sections: string[] = []
+    // Technical data from extra fields
+    const ef = categoryConfig.value.extraFields ?? []
+    const techLines: string[] = []
+    for (const field of ef) {
+        const val = extras[field.key]
+        if (val === null || val === undefined || val === '' || val === false) continue
+        if (field.type === 'boolean') techLines.push(`✓ ${field.label}`)
+        else if (field.type === 'radio' || field.type === 'select') {
+            const optLabel = field.options?.find(o => o.value === val)?.label ?? val
+            techLines.push(`${field.label}: ${optLabel}`)
+        } else techLines.push(`${field.label}: ${val}${field.unit ? ' ' + field.unit : ''}`)
+    }
+    if (techLines.length) sections.push(`📋 Dane techniczne:\n${techLines.join('\n')}`)
+    // History
+    const histLines: string[] = []
+    if (history.ownersCount !== null) histLines.push(`Liczba właścicieli: ${history.ownersCount}`)
+    if (history.isImported) histLines.push(`Import: ${history.importCountry || 'Tak'}`)
+    if (history.firstRegDate) histLines.push(`Pierwsza rejestracja: ${history.firstRegDate}`)
+    if (history.registrationCountry && history.registrationCountry !== 'PL') histLines.push(`Kraj rejestracji: ${history.registrationCountry}`)
+    if (history.hasServiceBook) histLines.push('✓ Książka serwisowa')
+    if (history.hasFullServiceHistory) histLines.push('✓ Pełna historia serwisowa ASO')
+    if (history.nextInspection) histLines.push(`Następny przegląd: ${history.nextInspection}`)
+    if (history.hasDamage) {
+        histLines.push('⚠ Pojazd po szkodzie')
+        if (history.damageDesc) histLines.push(`Opis szkody: ${history.damageDesc}`)
+    }
+    if (history.hasWarranty) histLines.push(`✓ Gwarancja do: ${history.warrantyUntil || 'aktywna'}`)
+    if (histLines.length) sections.push(`🔍 Historia pojazdu:\n${histLines.join('\n')}`)
+    // For text-mode brand/model categories, include brand/model as text
+    if (categoryConfig.value.brandFieldType === 'text') {
+        const bmLines: string[] = []
+        if (brandTextInput.value) bmLines.push(`Producent: ${brandTextInput.value}`)
+        if (modelTextInput.value) bmLines.push(`Model: ${modelTextInput.value}`)
+        if (bmLines.length) sections.unshift(bmLines.join('\n'))
+    }
+    // Seller & price info
+    const infoLines: string[] = []
+    if (form.sellerType === 'dealer') infoLines.push('Sprzedawca: Dealer / Firma')
+    if (form.isNegotiable) infoLines.push('💬 Cena do negocjacji')
+    if (infoLines.length) sections.push(infoLines.join('\n'))
+    // User description
+    const userDesc = form.description?.trim() ?? ''
+    if (userDesc) sections.push(userDesc)
+    return sections.filter(Boolean).join('\n\n')
+}
+
 async function submit() {
-    const err = validateStep(2)
+    const err = validateStep(4)
     if (err) {
         error.value = err
         return
     }
     error.value = ''
     loading.value = true
-    form.title = previewTitle.value || 'Ogłoszenie'
+    if (!isEdit.value) form.title = form.title || suggestedTitle.value || previewTitle.value || 'Ogłoszenie'
+
     try {
-        const { id } = await $fetch<{ id: number }>('/api/proxy/api/Advert', {
-            method: 'POST',
-            body: { ...form },
-        })
-        for (const file of selectedFiles.value) {
-            const fd = new FormData()
-            fd.append('file', file)
-            await $fetch(`/api/advert/${id}/images`, { method: 'POST', body: fd })
+        if (isEdit.value && editId.value) {
+            // ── Edit mode: update existing advert ──
+            const rawEdit = { ...form }
+            const cleanEdit: Record<string, unknown> = {}
+            for (const [k, v] of Object.entries(rawEdit)) {
+                if (v === null || v === '' || k === 'categoryId') continue
+                cleanEdit[k] = v
+            }
+            cleanEdit.featureIds = (form.featureIds?.length ? form.featureIds : [])
+            cleanEdit.description = buildDescription() || form.description || ''
+            // Map renamed fields
+            if (form.power) cleanEdit.powerHP = form.power
+            if (form.engineCapacity) cleanEdit.engineSize = form.engineCapacity
+            delete cleanEdit.power
+            delete cleanEdit.engineCapacity
+            // Map extras → structured API fields
+            if (extras.condition) cleanEdit.condition = extras.condition
+            if (extras.doors) cleanEdit.doorCount = Number(extras.doors)
+            if (extras.driveType) {
+                const dt = driveTypes.value.find(d => d.slug === extras.driveType)
+                if (dt) cleanEdit.driveTypeId = dt.id
+            }
+            if (extras.color) {
+                if (typeof extras.color === 'number') {
+                    cleanEdit.colorId = extras.color
+                } else {
+                    const col = colors.value.find(c => c.name.toLowerCase() === String(extras.color).toLowerCase())
+                    if (col) cleanEdit.colorId = col.id
+                }
+            }
+            // New specialized DB fields from extras
+            if (extras.gvw != null) cleanEdit.grossWeight = Number(extras.gvw)
+            if (extras.payload != null) cleanEdit.payload = Number(extras.payload)
+            if (extras.axles != null) cleanEdit.axleCount = Number(extras.axles)
+            if (extras.loadingLength != null) cleanEdit.cargoLength = Number(extras.loadingLength)
+            if (extras.length != null) cleanEdit.cargoLength = Number(extras.length)
+            if (extras.hasTachograph != null) cleanEdit.hasTachograph = Boolean(extras.hasTachograph)
+            if (extras.hasRetarder != null) cleanEdit.hasRetarder = Boolean(extras.hasRetarder)
+            if (extras.bodyVariant) cleanEdit.bodySubtype = extras.bodyVariant
+            if (extras.trailerType) cleanEdit.bodySubtype = extras.trailerType
+            if (extras.machineType) cleanEdit.bodySubtype = extras.machineType
+            if (extras.partNumber) cleanEdit.catalogNumber = extras.partNumber
+            if (extras.compatibility) cleanEdit.compatibility = extras.compatibility
+            // Vehicle history fields
+            if (history.ownersCount !== null) cleanEdit.ownersCount = history.ownersCount
+            cleanEdit.isImported = history.isImported
+            if (history.importCountry) cleanEdit.importCountry = history.importCountry
+            if (history.firstRegDate) cleanEdit.firstRegistrationDate = history.firstRegDate
+            if (history.registrationCountry) cleanEdit.registrationCountry = history.registrationCountry
+            cleanEdit.hasServiceBook = history.hasServiceBook
+            cleanEdit.hasFullServiceHistory = history.hasFullServiceHistory
+            if (history.nextInspection) cleanEdit.nextInspection = history.nextInspection
+            cleanEdit.hasDamage = history.hasDamage
+            if (history.damageDesc) cleanEdit.damageDescription = history.damageDesc
+            cleanEdit.hasWarranty = history.hasWarranty
+            if (history.warrantyUntil) cleanEdit.warrantyUntil = history.warrantyUntil
+            await $fetch(`/api/proxy/api/Advert/${editId.value}`, {
+                method: 'PUT',
+                body: cleanEdit,
+            })
+            for (const file of selectedFiles.value) {
+                const fd = new FormData()
+                fd.append('file', file)
+                await $fetch(`/api/advert/${editId.value}/images`, { method: 'POST', body: fd })
+            }
+            await navigateTo('/my-adverts')
+        } else {
+            // ── Create mode: new advert ──
+            // Only include fields known by CreateCarAdvertDto
+            const ADVERT_FIELDS = [
+                'brandId', 'modelId', 'generationId', 'engineVersionId',
+                'fuelTypeId', 'gearboxId', 'bodyTypeId',
+                'year', 'mileage', 'price', 'title', 'vin',
+                'city', 'region', 'isNegotiable', 'sellerType',
+                'doorCount', 'seatsCount',
+            ]
+            const cleanBody: Record<string, unknown> = {}
+            if (form.categoryId) cleanBody.vehicleCategoryId = form.categoryId
+            for (const key of ADVERT_FIELDS) {
+                const v = (form as any)[key]
+                if (v === null || v === undefined || v === '') continue
+                cleanBody[key] = v
+            }
+            cleanBody.featureIds = form.featureIds?.length ? form.featureIds : []
+            cleanBody.description = buildDescription() || form.description || ''
+            // Map renamed fields
+            if (form.power) cleanBody.powerHP = form.power
+            if (form.engineCapacity) cleanBody.engineSize = form.engineCapacity
+            // Map extras → structured API fields
+            if (extras.condition) cleanBody.condition = extras.condition
+            if (extras.doors) cleanBody.doorCount = Number(extras.doors)
+            if (extras.driveType) {
+                const dt = driveTypes.value.find(d => d.slug === extras.driveType)
+                if (dt) cleanBody.driveTypeId = dt.id
+            }
+            if (extras.color) {
+                if (typeof extras.color === 'number') {
+                    cleanBody.colorId = extras.color
+                } else {
+                    const col = colors.value.find(c => c.name.toLowerCase() === String(extras.color).toLowerCase())
+                    if (col) cleanBody.colorId = col.id
+                }
+            }
+            // New specialized DB fields from extras
+            if (extras.gvw != null) cleanBody.grossWeight = Number(extras.gvw)
+            if (extras.payload != null) cleanBody.payload = Number(extras.payload)
+            if (extras.axles != null) cleanBody.axleCount = Number(extras.axles)
+            if (extras.loadingLength != null) cleanBody.cargoLength = Number(extras.loadingLength)
+            if (extras.length != null) cleanBody.cargoLength = Number(extras.length)
+            if (extras.hasTachograph != null) cleanBody.hasTachograph = Boolean(extras.hasTachograph)
+            if (extras.hasRetarder != null) cleanBody.hasRetarder = Boolean(extras.hasRetarder)
+            if (extras.bodyVariant) cleanBody.bodySubtype = extras.bodyVariant
+            if (extras.trailerType) cleanBody.bodySubtype = extras.trailerType
+            if (extras.machineType) cleanBody.bodySubtype = extras.machineType
+            if (extras.partNumber) cleanBody.catalogNumber = extras.partNumber
+            if (extras.compatibility) cleanBody.compatibility = extras.compatibility
+            // Vehicle history fields
+            if (history.ownersCount !== null) cleanBody.ownersCount = history.ownersCount
+            cleanBody.isImported = history.isImported
+            if (history.importCountry) cleanBody.importCountry = history.importCountry
+            if (history.firstRegDate) cleanBody.firstRegistrationDate = history.firstRegDate
+            if (history.registrationCountry) cleanBody.registrationCountry = history.registrationCountry
+            cleanBody.hasServiceBook = history.hasServiceBook
+            cleanBody.hasFullServiceHistory = history.hasFullServiceHistory
+            if (history.nextInspection) cleanBody.nextInspection = history.nextInspection
+            cleanBody.hasDamage = history.hasDamage
+            if (history.damageDesc) cleanBody.damageDescription = history.damageDesc
+            cleanBody.hasWarranty = history.hasWarranty
+            if (history.warrantyUntil) cleanBody.warrantyUntil = history.warrantyUntil
+            console.log('[submit] body →', JSON.stringify(cleanBody))
+            const created = await $fetch<any>('/api/proxy/api/Advert', {
+                method: 'POST',
+                body: cleanBody,
+            })
+            console.log('[create advert response]', JSON.stringify(created))
+            const id: number = created?.id ?? created?.advertId ?? created
+            if (!id) throw new Error('Brak ID ogłoszenia w odpowiedzi: ' + JSON.stringify(created))
+
+            for (const file of selectedFiles.value) {
+                const fd = new FormData()
+                fd.append('file', file)
+                await $fetch(`/api/advert/${id}/images`, { method: 'POST', body: fd }).catch(() => {})
+            }
+            localStorage.removeItem('carizo_advert_draft')
+
+            // Publish advert (endpoint may not exist yet — ignore 404/405)
+            await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
+
+            if (promoSelected.value === 'free') {
+                publishedAdvertId.value = id
+                showSuccess.value = true
+            } else {
+                loading.value = false
+                paying.value = true
+                const body: Record<string, unknown> = {
+                    advertId: id,
+                    serviceType: promoSelected.value,
+                    durationDays: promoDays.value,
+                }
+                if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
+                const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+                if (result.paymentUrl) window.location.href = result.paymentUrl
+            }
         }
-        await navigateTo(`/promote-advert/${id}?fromCreate=true`)
     } catch (e: any) {
-        error.value = e?.data?.message ?? 'Błąd podczas zapisywania ogłoszenia.'
+        const bd = e?.data
+        let msg = ''
+        if (bd?.errors && typeof bd.errors === 'object') {
+            msg = Object.entries(bd.errors as Record<string, string[]>)
+                .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+                .join('; ')
+        } else {
+            msg = bd?.message ?? bd?.title ?? bd?.detail ?? ''
+        }
+        error.value = msg || e?.message || 'Błąd podczas zapisywania ogłoszenia.'
+        console.error('[submit] error response:', JSON.stringify(bd ?? e?.message))
     } finally {
         loading.value = false
+        paying.value = false
     }
 }
 
+async function deleteExistingImage(imageId: number) {
+    deletingImageId.value = imageId
+    try {
+        await $fetch(`/api/proxy/api/Advert/${editId.value}/images/${imageId}`, { method: 'DELETE' })
+        existingImages.value = existingImages.value.filter(img => img.id !== imageId)
+    } catch {}
+    finally { deletingImageId.value = null }
+}
+
 onMounted(async () => {
-    ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, allFeatures.value] = await Promise.all([
-        fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchFeatures()
+    ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value] = await Promise.all([
+        fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories()
     ])
+
+    if (isEdit.value && editId.value) {
+        try {
+            const advert = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${editId.value}`)
+            form.title = advert.title ?? ''
+            form.description = advert.description ?? ''
+            form.price = advert.price ?? null
+            form.brandId = advert.brand?.id ?? null
+            form.modelId = advert.model?.id ?? null
+            form.generationId = advert.generation?.id ?? null
+            form.engineVersionId = advert.engineVersion?.id ?? null
+            form.fuelTypeId = advert.fuelType?.id ?? null
+            form.gearboxId = advert.gearbox?.id ?? null
+            form.bodyTypeId = advert.bodyType?.id ?? null
+            form.year = advert.year ?? null
+            form.mileage = advert.mileage ?? null
+            form.featureIds = advert.features?.map(f => f.id) ?? []
+            form.engineCapacity = (advert as any).engineCapacity ?? advert.engineVersion?.displacement ?? null
+            form.power = (advert as any).power ?? advert.engineVersion?.horsepower ?? null
+            form.vin = advert.vin ?? ''
+            form.city = advert.city ?? ''
+            form.region = advert.region ?? null
+            form.isNegotiable = advert.isNegotiable ?? false
+            form.sellerType = advert.sellerType ?? 'private'
+            form.power = advert.powerHP ?? null
+            form.engineCapacity = advert.engineSize ?? null
+            // Restore extras from structured fields
+            if (advert.condition) extras.condition = advert.condition
+            if (advert.doorCount) extras.doors = String(advert.doorCount)
+            if (advert.driveType) extras.driveType = advert.driveType.slug
+            if (advert.color) extras.color = advert.color.id ?? advert.color.name
+            // Restore history
+            if (advert.ownersCount !== undefined) history.ownersCount = advert.ownersCount ?? null
+            history.isImported = advert.isImported ?? false
+            history.importCountry = advert.importCountry ?? ''
+            history.firstRegDate = advert.firstRegistrationDate ?? ''
+            history.registrationCountry = advert.registrationCountry ?? 'PL'
+            history.hasServiceBook = advert.hasServiceBook ?? false
+            history.hasFullServiceHistory = advert.hasFullServiceHistory ?? false
+            history.nextInspection = advert.nextInspection ?? ''
+            history.hasDamage = advert.hasDamage ?? false
+            history.damageDesc = advert.damageDescription ?? ''
+            history.hasWarranty = advert.hasWarranty ?? false
+            history.warrantyUntil = advert.warrantyUntil ?? ''
+            existingImages.value = advert.images ?? []
+            if (form.brandId) models.value = await fetchModels(form.brandId)
+            if (form.modelId) generations.value = await fetchGenerations(form.modelId)
+            if (form.generationId) engines.value = await fetchEngines(form.generationId)
+        } catch {
+            error.value = 'Nie udało się załadować danych ogłoszenia.'
+        }
+    } else {
+        loadDraft()
+        // Auto-fill location from saved profile
+        if (!form.city || !form.region) {
+            try {
+                const rawProfile = localStorage.getItem('carizo_profile_override')
+                const p = rawProfile ? JSON.parse(rawProfile) : null
+                if (p?.city && !form.city) form.city = p.city
+                if (p?.region && !form.region) form.region = p.region
+            } catch {}
+        }
+        const queries = promoPlans.flatMap(p => p.days.map(d => ({ key: p.key, days: d })))
+        await Promise.allSettled(queries.map(async ({ key, days }) => {
+            try {
+                const r = await getPrice(key, days)
+                promoApiPrices.value[`${key}-${days}`] = r.price
+            } catch {}
+        }))
+    }
 })
 </script>
 
@@ -821,7 +2633,7 @@ onMounted(async () => {
     min-height: 160px;
     background:
         linear-gradient(to right, rgba(5,5,5,0.92) 40%, rgba(5,5,5,0.5)),
-        url('https://images.unsplash.com/photo-1544636331-e26879cd4d9b?q=80&w=1200&auto=format&fit=crop') center / cover;
+        url('/hero-car.jpg') center / cover;
     display: flex;
     align-items: center;
     padding: 32px 40px;
@@ -961,6 +2773,50 @@ onMounted(async () => {
 
 .fselect { cursor: pointer; padding-right: 36px; }
 
+.input-ok { border-color: rgba(45, 122, 58, 0.6) !important; }
+
+.vin-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.vin-input { flex: 1; width: auto !important; min-width: 0; }
+
+.btn-vin-lookup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 18px;
+    background: rgba($red, 0.15);
+    border: 1px solid rgba($red, 0.4);
+    border-radius: $r-sm;
+    color: $red;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s, border-color 0.2s;
+
+    &:hover:not(:disabled) { background: rgba($red, 0.25); border-color: rgba($red, 0.7); }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.vin-error {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: $red;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.vin-hint {
+    color: $text-dark;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
 .finput-price {
     border-color: rgba($red, 0.4);
     &:focus { border-color: $red; }
@@ -1055,8 +2911,65 @@ onMounted(async () => {
     font-family: 'Inter', sans-serif;
     white-space: nowrap;
     transition: background 0.2s;
-    &:hover { background: rgba($red, 0.08); }
+    &:hover:not(:disabled) { background: rgba($red, 0.08); }
+    &:disabled { opacity: 0.4; cursor: default; }
 }
+
+.vin-error {
+    font-size: 12px; color: #f87171; margin-top: 8px; padding: 0 20px;
+}
+
+.btn-draft--saved { color: #4ade80; border-color: rgba(74, 222, 128, 0.4); }
+
+.preview-modal-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+
+.preview-modal {
+    background: #0d0d0d; border: 1px solid $border;
+    border-radius: $r-lg; width: 100%; max-width: 680px; max-height: 90vh;
+    overflow-y: auto; box-shadow: 0 24px 80px rgba(0,0,0,0.8);
+}
+
+.pm-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; border-bottom: 1px solid $border;
+}
+
+.pm-title { font-size: 15px; font-weight: 700; color: $text; }
+
+.pm-close {
+    background: transparent; border: none; color: $text-dim; cursor: pointer;
+    transition: color 0.2s; &:hover { color: $text; }
+}
+
+.pm-body { padding: 24px; }
+
+.pm-img-wrap {
+    position: relative; aspect-ratio: 16/9; border-radius: $r-md; overflow: hidden;
+    background: #111; margin-bottom: 20px;
+}
+
+.pm-img { width: 100%; height: 100%; object-fit: cover; }
+
+.pm-img-count {
+    position: absolute; bottom: 10px; right: 10px;
+    background: rgba(0,0,0,0.7); color: white;
+    font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+}
+
+.pm-brand { font-size: 12px; color: $red; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.pm-name { font-size: 24px; font-weight: 900; color: $text; margin-bottom: 10px; }
+.pm-meta {
+    display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; color: $text-dim; margin-bottom: 12px;
+}
+.pm-price { font-size: 28px; font-weight: 900; color: $red; margin-bottom: 16px; }
+.pm-desc { font-size: 14px; color: $text-muted; line-height: 1.7; white-space: pre-wrap; }
+
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 
 .form-section-subhead {
     font-size: 13px; font-weight: 700; color: $text-muted; text-transform: uppercase;
@@ -1210,23 +3123,48 @@ onMounted(async () => {
     margin-top: 2px;
 }
 
-.score-desc {
+.score-label {
     font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 16px;
+    &.sl-great { color: #4caf50; }
+    &.sl-good  { color: #e67e22; }
+    &.sl-poor  { color: lighten($red, 15%); }
+}
+
+.score-factors { margin-bottom: 12px; }
+
+.score-tips {
+    border-top: 1px solid $border;
+    padding-top: 12px;
+    margin-top: 4px;
+}
+
+.st-heading {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
     color: $text-dim;
-    line-height: 1.6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     margin-bottom: 10px;
 }
 
-.score-link {
-    font-size: 12px;
-    font-weight: 600;
-    color: $red;
-    display: block;
-    margin-bottom: 16px;
-    &:hover { opacity: 0.8; }
-}
+.st-icon { color: #f39c12; }
 
-.score-factors { }
+.st-tip {
+    font-size: 11px;
+    color: $text-dim;
+    line-height: 1.55;
+    padding: 6px 8px;
+    background: rgba(255,255,255,0.025);
+    border-left: 2px solid rgba($red, 0.4);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 6px;
+}
 
 .sf-heading {
     font-size: 11px;
@@ -1312,6 +3250,19 @@ onMounted(async () => {
     font-size: 18px;
     font-weight: 800;
     color: $red;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.preview-nego {
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba($red, 0.12);
+    color: rgba($red, 0.75);
+    padding: 2px 8px;
+    border-radius: 20px;
 }
 
 .preview-full-btn {
@@ -1393,6 +3344,7 @@ onMounted(async () => {
     font-weight: 500;
     transition: border-color 0.2s, color 0.2s;
     &:hover { border-color: $red; color: $red; }
+    &--loading { border-color: rgba($red, 0.4); color: $text-muted; cursor: wait; }
 }
 
 // ── Details step ──────────────────────────────────────────────────────────────
@@ -1412,6 +3364,47 @@ onMounted(async () => {
     &::placeholder { color: $text-dark; }
 }
 
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+
+    @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.cat-choice-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid $border;
+    border-radius: $r-md;
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.18s;
+
+    .v-icon { color: $text-dark; }
+
+    &:hover {
+        border-color: rgba($red, 0.3);
+        color: $text;
+        .v-icon { color: $red; }
+    }
+
+    &.active {
+        background: rgba($red, 0.1);
+        border-color: rgba($red, 0.5);
+        color: $red;
+        font-weight: 700;
+        .v-icon { color: $red; }
+    }
+}
+
 .feat-group { margin-bottom: 20px; }
 
 .feat-group-title {
@@ -1429,6 +3422,13 @@ onMounted(async () => {
     gap: 6px;
 }
 
+.feat-group-count {
+    margin-left: auto;
+    font-size: 10px;
+    color: $red;
+    font-weight: 600;
+}
+
 .feat-check {
     display: flex;
     align-items: center;
@@ -1436,11 +3436,1038 @@ onMounted(async () => {
     cursor: pointer;
     font-size: 13px;
     color: $text-muted;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
 
-    input[type='checkbox'] {
-        accent-color: $red;
-        width: 14px;
-        height: 14px;
+    &:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+    &.checked { background: rgba($red, 0.08); border-color: rgba($red, 0.25); color: $text; }
+
+    input[type='checkbox'] { display: none; }
+
+    .feat-check-box {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1.5px solid rgba(255,255,255,0.2);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        transition: all 0.15s;
+    }
+    &.checked .feat-check-box { background: $red; border-color: $red; }
+}
+
+.feat-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    color: $text-dim;
+    gap: 12px;
+}
+
+.feat-summary-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: rgba($red, 0.08);
+    border: 1px solid rgba($red, 0.2);
+    color: $red;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 16px;
+}
+
+.feat-clear-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: 1px solid rgba($red, 0.35);
+    border-radius: 12px;
+    color: rgba($red, 0.7);
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    padding: 2px 10px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: all 0.15s;
+    &:hover { background: rgba($red, 0.1); color: $red; }
+}
+
+.feat-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 0 12px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+    &:focus-within { border-color: rgba($red, 0.4); }
+}
+
+.feat-search-icon { color: $text-dark; flex-shrink: 0; }
+
+.feat-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $text;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    padding: 10px 8px;
+    &::placeholder { color: $text-dim; }
+}
+
+.feat-search-clear {
+    background: transparent;
+    border: none;
+    color: $text-dark;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    &:hover { color: $red; }
+}
+
+:deep(.feat-hl) {
+    background: rgba($red, 0.25);
+    color: $text;
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.photo-hints {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.photo-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+
+    &.ph-ok    { background: rgba(#4ade80, 0.08); border: 1px solid rgba(#4ade80, 0.2); color: #4ade80; }
+    &.ph-warn  { background: rgba(#facc15, 0.08); border: 1px solid rgba(#facc15, 0.2); color: #facc15; }
+    &.ph-error { background: rgba($red, 0.08);    border: 1px solid rgba($red, 0.2);    color: $red;     }
+}
+
+.submit-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(220,50,50,0.08);
+    border: 1px solid rgba(220,50,50,0.22);
+    border-radius: $r-sm;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #e55;
+    margin-bottom: 16px;
+    .v-icon { flex-shrink: 0; }
+}
+
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Promo step ────────────────────────────────────────────────────────────────
+.promo-step { padding-bottom: 0; }
+
+.promo-plans-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+    @media (max-width: 1100px) { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 700px) { grid-template-columns: 1fr 1fr; }
+}
+
+.pp-card {
+    background: #0a0a0a;
+    border: 1.5px solid $border;
+    border-radius: 12px;
+    padding: 18px 16px;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    &:hover { border-color: rgba($red, 0.35); transform: translateY(-2px); }
+    &.pp-selected { border-color: $red; background: rgba($red, 0.04); }
+    &.pp-popular { border-color: rgba($red, 0.4); }
+}
+
+.pp-popular-badge {
+    position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+    background: $red; color: white; font-size: 9px; font-weight: 800;
+    padding: 2px 8px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.5px;
+}
+
+.pp-header { display: flex; align-items: center; gap: 8px; }
+.pp-icon { color: $red; flex-shrink: 0; }
+.pp-name { font-size: 14px; font-weight: 800; color: $text; }
+.pp-badge-free {
+    font-size: 9px; font-weight: 800; color: #4caf50;
+    background: rgba(76,175,80,0.12); border: 1px solid rgba(76,175,80,0.3);
+    padding: 2px 7px; border-radius: 20px; margin-left: auto;
+}
+.pp-price { font-size: 18px; font-weight: 900; color: $red; strong { font-size: 22px; } }
+.pp-desc { font-size: 11px; color: $text-dim; line-height: 1.5; }
+.pp-feats {
+    list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; flex: 1;
+    li { display: flex; align-items: center; gap: 6px; font-size: 11px; color: $text-muted;
+        .v-icon { color: #4caf50; flex-shrink: 0; }
+    }
+    .pp-feat-no { color: $text-dark; .v-icon { color: $text-dark; } }
+}
+.pp-days { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
+.pp-day-btn {
+    background: transparent; border: 1px solid $border; border-radius: 6px;
+    color: $text-dim; font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif;
+    padding: 4px 10px; cursor: pointer; transition: all 0.15s;
+    &.active { border-color: $red; background: rgba($red, 0.12); color: $text; }
+    &:hover:not(.active) { border-color: $text-dim; color: $text; }
+}
+.pp-sel-bar {
+    height: 3px; border-radius: 3px; background: transparent; margin-top: auto;
+    .pp-selected & { background: $red; }
+}
+
+.promo-summary {
+    background: #0a0a0a;
+    border: 1px solid $border;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ps-free-info {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: #4caf50; font-weight: 500;
+}
+
+.ps-paid-info { display: flex; flex-direction: column; gap: 2px; }
+.ps-plan-name { font-size: 13px; font-weight: 700; color: $text; }
+.ps-plan-price { font-size: 20px; font-weight: 900; color: $red; }
+.ps-original { text-decoration: line-through; color: $text-dim; font-size: 14px; font-weight: 400; margin-right: 6px; }
+.ps-coupon-ok { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #4caf50; }
+
+.ps-coupon-row { display: flex; flex-direction: column; gap: 5px; }
+.ps-coupon-wrap { display: flex; gap: 6px; }
+.ps-coupon-input {
+    flex: 1; min-width: 0;
+    background: #0d0d0d; border: 1px solid $border; border-radius: 8px;
+    color: $text; font-size: 13px; font-family: 'Inter', sans-serif;
+    padding: 8px 13px; outline: none;
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba($red, 0.4); }
+    &:disabled { opacity: 0.5; }
+}
+.ps-coupon-btn {
+    background: transparent; border: 1px solid $border; border-radius: 8px;
+    color: $text-muted; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+    padding: 8px 14px; cursor: pointer; white-space: nowrap; transition: all 0.15s;
+    &:hover:not(:disabled) { border-color: $red; color: $text; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+.ps-coupon-error { font-size: 12px; color: #e55; }
+
+// ── Smart form additions ──────────────────────────────────────────────────────
+.cat-context-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba($red, 0.07);
+    border: 1px solid rgba($red, 0.2);
+    border-radius: $r-sm;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: $text-muted;
+    margin-bottom: 20px;
+
+    strong { color: $text; }
+}
+
+.ccb-icon { color: $red; flex-shrink: 0; }
+
+.ccb-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: $text-dark;
+}
+
+.cat-note-bar {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: rgba(#f5a623, 0.06);
+    border: 1px solid rgba(#f5a623, 0.2);
+    border-radius: $r-sm;
+    padding: 9px 14px;
+    font-size: 12px;
+    color: rgba(#f5a623, 0.9);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.cnb-icon { color: #f5a623; flex-shrink: 0; margin-top: 1px; }
+
+.field-hint {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: $text-dark;
+    margin-top: 5px;
+    .v-icon { color: $text-dark; flex-shrink: 0; }
+}
+
+.title-suggest-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #0a0a0a;
+    border: 1px solid rgba($red, 0.2);
+    border-radius: $r-md;
+    padding: 14px 18px;
+    margin-top: 16px;
+    margin-bottom: 4px;
+}
+
+.tsc-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.tsc-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
+
+.tsc-label {
+    font-size: 11px;
+    color: $text-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 3px;
+}
+
+.tsc-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text;
+}
+
+.tsc-use-btn {
+    background: rgba($red, 0.12);
+    border: 1px solid rgba($red, 0.35);
+    border-radius: $r-sm;
+    color: $red;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 16px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    transition: all 0.15s;
+    &:hover { background: rgba($red, 0.22); border-color: rgba($red, 0.6); }
+}
+
+.tsc-used {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #4caf50;
+    white-space: nowrap;
+    .v-icon { color: #4caf50; }
+}
+
+// ── Edit mode ─────────────────────────────────────────────────────────────────
+.img-thumb--existing { opacity: 1; }
+
+.edit-summary {
+    background: #0a0a0a;
+    border: 1px solid $border;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.edit-summary-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.es-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
+.es-label { font-size: 11px; color: $text-dim; text-transform: uppercase; letter-spacing: 0.4px; }
+.es-val { font-size: 15px; font-weight: 700; color: $text; margin-top: 2px; }
+
+.btn-publish-free {
+    display: flex; align-items: center; gap: 8px;
+    background: #2d7a3a; border: none; border-radius: $r-sm;
+    color: white; font-size: 14px; font-weight: 700;
+    padding: 11px 28px; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s;
+    &:hover:not(:disabled) { opacity: 0.9; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.btn-pay {
+    display: flex; align-items: center; gap: 8px;
+    background: $red; border: none; border-radius: $r-sm;
+    color: white; font-size: 14px; font-weight: 700;
+    padding: 11px 28px; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s;
+    &:hover:not(:disabled) { opacity: 0.88; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ── Extra fields ──────────────────────────────────────────────────────────────
+.extra-fields-wrap { margin-top: 8px; }
+
+.full-width { grid-column: 1 / -1; }
+
+// Color picker (extraField type: color-picker)
+.ef-color-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-dim;
+    letter-spacing: 0.2px;
+}
+
+.ef-color-name {
+    font-size: 10px;
+    font-weight: 500;
+    color: $red;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.ef-color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    padding: 4px 0;
+}
+
+.ef-color-swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+    outline: none;
+
+    &:hover { transform: scale(1.18); }
+
+    &.active {
+        border-color: $red;
+        box-shadow: 0 0 0 2px rgba($red, 0.35);
+        transform: scale(1.12);
+    }
+
+    &--clear {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $text-dim;
+
+        &.active {
+            border-color: $red;
+            color: $red;
+            box-shadow: 0 0 0 2px rgba($red, 0.35);
+        }
+
+        &:hover { transform: scale(1.1); color: $text; }
     }
 }
+
+.radio-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.radio-opt {
+    display: flex;
+    align-items: center;
+    padding: 9px 18px;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid $border;
+    border-radius: $r-sm;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+
+    &:hover { border-color: rgba($red, 0.3); color: $text; }
+    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.5); color: $red; font-weight: 700; }
+}
+
+.input-unit-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-unit-badge {
+    position: absolute;
+    right: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-dark;
+    pointer-events: none;
+    background: #0c0c0c;
+    padding-left: 4px;
+}
+
+.field--bool { display: flex; align-items: center; }
+
+.bool-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color: $text-muted;
+    padding: 8px 0;
+    user-select: none;
+
+    &.active { color: $text; }
+}
+
+.bool-box {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border-radius: 4px;
+    border: 1.5px solid $border;
+    background: #0c0c0c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    .v-icon { color: $red; }
+
+    .bool-check.active & { border-color: $red; background: rgba($red, 0.1); }
+}
+
+.bool-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+// ── Title input ───────────────────────────────────────────────────────────────
+.title-input-wrap {
+    position: relative;
+}
+
+.title-char-count {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: $text-dark;
+    pointer-events: none;
+    background: #0c0c0c;
+    padding-left: 4px;
+
+    &.warn { color: #f5a623; }
+}
+
+.flabel-opt {
+    font-size: 10px;
+    font-weight: 400;
+    color: $text-dark;
+    margin-left: 6px;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+// ── Negotiable price toggle ───────────────────────────────────────────────────
+.nego-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: $text-dark;
+    user-select: none;
+    transition: color 0.15s;
+
+    &.active { color: $text-muted; }
+}
+
+.nego-box {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border-radius: 3px;
+    border: 1.5px solid $border;
+    background: #0c0c0c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    .v-icon { color: $red; }
+
+    .nego-toggle.active & { border-color: $red; background: rgba($red, 0.1); }
+}
+
+// ── Description area ─────────────────────────────────────────────────────────
+.desc-wrap {
+    position: relative;
+}
+
+.desc-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #0a0a0a;
+    border: 1px solid $border;
+    border-top: none;
+    border-radius: 0 0 $r-sm $r-sm;
+    margin-top: -1px;
+}
+
+.desc-tips {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.desc-tip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: $text-dark;
+}
+
+.tip-icon { color: rgba($red, 0.5); }
+
+.desc-counter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-dark;
+    white-space: nowrap;
+
+    &.poor { color: #e55; }
+    &.ok { color: #f5a623; }
+    &.good { color: #60a5fa; }
+    &.great { color: #4ade80; }
+}
+
+.desc-max { font-weight: 400; color: $text-dark; font-size: 11px; }
+
+.desc-qlabel {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.04);
+
+    .desc-counter.poor & { background: rgba(#e55, 0.12); color: #e55; }
+    .desc-counter.ok & { background: rgba(#f5a623, 0.12); color: #f5a623; }
+    .desc-counter.good & { background: rgba(#60a5fa, 0.12); color: #60a5fa; }
+    .desc-counter.great & { background: rgba(#4ade80, 0.12); color: #4ade80; }
+}
+
+.desc-wrap .ftextarea {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+// ── Writing tips panel ────────────────────────────────────────────────────────
+.writing-tips {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+}
+
+.wt-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: $text-muted;
+    margin-bottom: 10px;
+    .v-icon { color: #f5a623; }
+}
+
+.wt-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.wt-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: $text-dark;
+    .v-icon { color: rgba($red, 0.5); flex-shrink: 0; }
+}
+
+// ── History step ──────────────────────────────────────────────────────────────
+.hist-section {
+    background: #080808;
+    border: 1px solid $border;
+    border-radius: $r-md;
+    padding: 20px 20px 16px;
+    margin-bottom: 16px;
+}
+
+.hist-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-muted;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    .v-icon { color: $red; }
+}
+
+.hist-quality-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(45, 122, 58, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.15);
+    border-radius: $r-md;
+    padding: 16px 20px;
+    margin-top: 4px;
+}
+
+.hq-icon { color: #4ade80; flex-shrink: 0; margin-top: 2px; }
+.hq-title { font-size: 13px; font-weight: 700; color: $text; margin-bottom: 4px; }
+.hq-sub { font-size: 12px; color: $text-dark; line-height: 1.5; }
+
+// ── Publish summary card ──────────────────────────────────────────────────────
+.pub-summary-card {
+    background: #080808;
+    border: 1px solid $border;
+    border-radius: $r-md;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.psc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.psc-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.psc-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.psc-icon { color: $red; flex-shrink: 0; }
+
+.psc-label {
+    color: $text-dark;
+    min-width: 90px;
+    flex-shrink: 0;
+}
+
+.psc-val {
+    color: $text;
+    font-weight: 600;
+    flex: 1;
+}
+
+.psc-price { color: $red; }
+
+.psc-nego {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba($red, 0.12);
+    color: rgba($red, 0.8);
+    padding: 1px 8px;
+    border-radius: 20px;
+}
+
+.psc-vin {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: $text-muted;
+}
+
+.psc-score {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.psc-score-bar {
+    height: 5px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.psc-score-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+
+    &.fill-great { background: #4ade80; }
+    &.fill-good { background: #60a5fa; }
+    &.fill-poor { background: $red; }
+}
+
+.psc-score-label {
+    font-size: 12px;
+    color: $text-dark;
+}
+
+.col-great { color: #4ade80; font-weight: 700; }
+.col-good { color: #60a5fa; font-weight: 700; }
+.col-poor { color: $red; font-weight: 700; }
+
+// ── Success screen ────────────────────────────────────────────────────────────
+.success-screen {
+    position: fixed;
+    inset: 0;
+    background: $bg;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    overflow-y: auto;
+}
+
+.success-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    max-width: 520px;
+    width: 100%;
+    position: relative;
+    animation: success-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes success-pop {
+    from { opacity: 0; transform: scale(0.88) translateY(20px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0);     }
+}
+
+.success-confetti {
+    position: absolute;
+    inset: -40px;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    opacity: 0;
+    animation: confetti-fall 1.8s ease-out calc(var(--i) * 0.08s) both;
+
+    &:nth-child(1)  { left:  8%; background: $red;      top: -10px; transform: rotate(20deg); }
+    &:nth-child(2)  { left: 20%; background: #ffd700;   top: -10px; transform: rotate(-30deg); border-radius: 50%; }
+    &:nth-child(3)  { left: 35%; background: #4caf50;   top: -10px; transform: rotate(45deg); }
+    &:nth-child(4)  { left: 50%; background: $red;      top: -10px; border-radius: 50%; }
+    &:nth-child(5)  { left: 65%; background: #2196f3;   top: -10px; transform: rotate(-20deg); }
+    &:nth-child(6)  { left: 80%; background: #ffd700;   top: -10px; transform: rotate(60deg); }
+    &:nth-child(7)  { left: 92%; background: $red;      top: -10px; border-radius: 50%; }
+    &:nth-child(8)  { left: 14%; background: #e040fb;   top: -10px; transform: rotate(-45deg); }
+    &:nth-child(9)  { left: 28%; background: #ff5722;   top: -10px; }
+    &:nth-child(10) { left: 58%; background: #26c6da;   top: -10px; border-radius: 50%; }
+    &:nth-child(11) { left: 72%; background: #ec407a;   top: -10px; transform: rotate(30deg); }
+    &:nth-child(12) { left: 44%; background: #66bb6a;   top: -10px; transform: rotate(-15deg); border-radius: 50%; }
+}
+
+@keyframes confetti-fall {
+    0%   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translateY(200px) rotate(720deg) scale(0.5); }
+}
+
+.success-logo {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: $text;
+    span { color: $red; }
+}
+
+.success-icon-wrap {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: rgba(76,175,80,0.1);
+    border: 2px solid rgba(76,175,80,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: icon-pulse 2s ease-in-out infinite;
+}
+
+.success-icon { color: #4caf50; }
+
+@keyframes icon-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.25); }
+    50%       { box-shadow: 0 0 0 16px rgba(76,175,80,0); }
+}
+
+.success-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: $text;
+    line-height: 1.2;
+    margin: 0;
+
+    @include respond-to(sm) { font-size: 22px; }
+}
+
+.success-desc {
+    font-size: 15px;
+    color: $text-muted;
+    line-height: 1.8;
+    margin: 0;
+    max-width: 420px;
+}
+
+.success-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 380px;
+}
+
+.sact-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 15px 24px;
+    border-radius: $r-md;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s, border-color 0.2s, color 0.2s;
+
+    &--primary {
+        background: $red;
+        color: white;
+        border: none;
+        &:hover { opacity: 0.88; }
+    }
+    &--secondary {
+        background: transparent;
+        color: $text;
+        border: 1px solid rgba(255,255,255,0.15);
+        &:hover { border-color: rgba(255,255,255,0.3); }
+    }
+    &--ghost {
+        background: transparent;
+        color: $text-dim;
+        border: 1px solid rgba(255,255,255,0.06);
+        font-size: 14px;
+        font-weight: 500;
+        padding: 12px 20px;
+        &:hover { color: $text-muted; }
+    }
+}
+
+.success-tip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: $text-dim;
+    background: rgba($red, 0.06);
+    border: 1px solid rgba($red, 0.15);
+    border-radius: $r-md;
+    padding: 10px 16px;
+    max-width: 380px;
+    width: 100%;
+    text-align: left;
+}
+
+.tip-icon { color: rgba($red, 0.7); flex-shrink: 0; }
+
+.tip-link {
+    color: $red;
+    font-weight: 600;
+    &:hover { text-decoration: underline; }
+}
+
+// Transition for success screen
+.success-fade-enter-active { transition: opacity 0.3s ease; }
+.success-fade-leave-active { transition: opacity 0.2s ease; }
+.success-fade-enter-from,
+.success-fade-leave-to { opacity: 0; }
 </style>

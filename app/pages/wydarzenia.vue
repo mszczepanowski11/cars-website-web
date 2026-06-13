@@ -10,12 +10,27 @@
 
         <div class="container page-body">
 
-            <!-- Search bar -->
+            <!-- Filter tabs -->
+            <div class="filter-tabs">
+                <button v-for="tab in filterTabs" :key="tab.key"
+                    class="ftab"
+                    :class="{ active: activeFilter === tab.key }"
+                    @click="setFilter(tab.key)">
+                    <v-icon v-if="tab.icon" :icon="tab.icon" size="14" />
+                    {{ tab.label }}
+                </button>
+            </div>
+
+            <!-- Toolbar -->
             <div class="search-row">
                 <div class="search-box">
                     <v-icon icon="mdi-magnify" size="20" class="s-icon" />
                     <input v-model="search" class="s-input" placeholder="Szukaj wydarzeń..." @input="onSearch" />
                 </div>
+                <NuxtLink to="/dodaj-wydarzenie" class="btn-add-event">
+                    <v-icon icon="mdi-plus" size="18" />
+                    Dodaj wydarzenie
+                </NuxtLink>
             </div>
 
             <!-- Loading -->
@@ -32,10 +47,13 @@
 
             <!-- Grid -->
             <div v-else class="events-grid">
-                <div v-for="ev in events" :key="ev.id" class="event-card">
+                <div v-for="ev in events" :key="ev.id" class="event-card" @click="navigateTo(`/wydarzenie/${ev.id}`)">
                     <div class="card-img-wrap">
                         <img :src="getEventImageUrl(ev)" :alt="ev.name" />
-                        <span class="event-badge">WYDARZENIE</span>
+                        <span v-if="ev.isFeatured" class="event-badge event-badge--featured">
+                            <v-icon icon="mdi-crown" size="10" /> WYRÓŻNIONE
+                        </span>
+                        <span v-else class="event-badge">WYDARZENIE</span>
                         <div class="date-chip">
                             <v-icon icon="mdi-calendar" size="12" />
                             {{ formatDate(ev.startDate) }}
@@ -59,12 +77,51 @@
                                 <v-icon icon="mdi-account-outline" size="13" />
                                 {{ ev.organizerName }}
                             </div>
-                            <div class="card-actions">
-                                <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener" class="btn-ticket">
+                            <div class="footer-actions">
+                                <!-- Interested count -->
+                                <div v-if="interestCounts.get(ev.id)" class="interest-count">
+                                    <v-icon icon="mdi-account-check-outline" size="14" />
+                                    {{ interestCounts.get(ev.id) }}
+                                </div>
+                                <!-- Attend -->
+                                <button
+                                    class="btn-attend"
+                                    :class="{ active: attendedIds.has(ev.id) }"
+                                    @click.stop="toggleAttend(ev)"
+                                    :title="attendedIds.has(ev.id) ? 'Rezygnuję' : 'Wezmę udział'"
+                                >
+                                    <v-icon :icon="attendedIds.has(ev.id) ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="15" />
+                                </button>
+                                <!-- Share -->
+                                <div class="share-wrap">
+                                    <button class="btn-share" @click.stop="toggleShare(ev.id)" title="Udostępnij">
+                                        <v-icon icon="mdi-share-variant-outline" size="15" />
+                                    </button>
+                                    <div v-if="sharePopupId === ev.id" class="share-popup" @click.stop>
+                                        <a :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl(ev.id))}`" target="_blank" rel="noopener" class="share-item">
+                                            <v-icon icon="mdi-facebook" size="16" />Facebook
+                                        </a>
+                                        <a :href="`https://wa.me/?text=${encodeURIComponent(ev.name + ' ' + getShareUrl(ev.id))}`" target="_blank" rel="noopener" class="share-item">
+                                            <v-icon icon="mdi-whatsapp" size="16" />WhatsApp
+                                        </a>
+                                        <a :href="`fb-messenger://share/?link=${encodeURIComponent(getShareUrl(ev.id))}`" class="share-item">
+                                            <v-icon icon="mdi-facebook-messenger" size="16" />Messenger
+                                        </a>
+                                        <a href="https://www.instagram.com" target="_blank" rel="noopener" class="share-item">
+                                            <v-icon icon="mdi-instagram" size="16" />Instagram
+                                        </a>
+                                        <button class="share-item" @click="copyLink(ev.id)">
+                                            <v-icon :icon="copiedId === ev.id ? 'mdi-check' : 'mdi-link-variant'" size="16" />
+                                            {{ copiedId === ev.id ? 'Skopiowano!' : 'Kopiuj link' }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- External links -->
+                                <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener" class="btn-ticket" @click.stop>
                                     <v-icon icon="mdi-ticket-outline" size="14" />
                                     Bilety
                                 </a>
-                                <a v-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener" class="btn-web">
+                                <a v-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener" class="btn-web" @click.stop>
                                     <v-icon icon="mdi-web" size="14" />
                                     Strona
                                 </a>
@@ -86,14 +143,19 @@
             </div>
 
         </div>
+
+        <!-- Share popup close overlay -->
+        <div v-if="sharePopupId !== null" class="share-overlay" @click="sharePopupId = null" />
     </div>
 </template>
 
 <script setup lang="ts">
 import type { CarEvent, PagedResult } from '~/types'
 
-const { getEvents } = useEvents()
+const { getEvents, attendEvent, unattendEvent } = useEvents()
 const { getImageUrl } = useImageUrl()
+const { isLoggedIn } = useAuth()
+
 
 const events = ref<CarEvent[]>([])
 const loading = ref(true)
@@ -101,6 +163,19 @@ const search = ref('')
 const page = ref(1)
 const pageSize = 12
 const totalCount = ref(0)
+const activeFilter = ref<'all' | 'week' | 'month' | 'featured'>('all')
+
+const filterTabs = [
+    { key: 'all',      label: 'Wszystkie',     icon: null },
+    { key: 'week',     label: 'Ten tydzień',   icon: 'mdi-calendar-week' },
+    { key: 'month',    label: 'Ten miesiąc',   icon: 'mdi-calendar-month' },
+    { key: 'featured', label: 'Wyróżnione',    icon: 'mdi-crown' },
+] as const
+
+const attendedIds = ref(new Set<number>())
+const interestCounts = ref(new Map<number, number>())
+const sharePopupId = ref<number | null>(null)
+const copiedId = ref<number | null>(null)
 
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize))
 
@@ -115,6 +190,48 @@ function formatDate(dateStr: string): string {
     return new Date(dateStr).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
+function getShareUrl(id: number): string {
+    if (import.meta.client) return `${window.location.origin}/wydarzenie/${id}`
+    return `/wydarzenie/${id}`
+}
+
+function toggleShare(id: number) {
+    sharePopupId.value = sharePopupId.value === id ? null : id
+}
+
+async function copyLink(id: number) {
+    await navigator.clipboard.writeText(getShareUrl(id))
+    copiedId.value = id
+    setTimeout(() => { if (copiedId.value === id) copiedId.value = null }, 2000)
+}
+
+async function toggleAttend(ev: CarEvent) {
+    if (!isLoggedIn.value) { await navigateTo('/login'); return }
+    const id = ev.id
+    const was = attendedIds.value.has(id)
+    const current = interestCounts.value.get(id) ?? 0
+    if (was) {
+        attendedIds.value.delete(id)
+        interestCounts.value.set(id, Math.max(0, current - 1))
+    } else {
+        attendedIds.value.add(id)
+        interestCounts.value.set(id, current + 1)
+    }
+    try {
+        if (was) await unattendEvent(id)
+        else await attendEvent(id)
+    } catch {
+        if (was) { attendedIds.value.add(id); interestCounts.value.set(id, current) }
+        else { attendedIds.value.delete(id); interestCounts.value.set(id, current) }
+    }
+}
+
+function setFilter(key: string) {
+    activeFilter.value = key as typeof activeFilter.value
+    page.value = 1
+    fetchEvents()
+}
+
 let searchTimeout: ReturnType<typeof setTimeout>
 function onSearch() {
     clearTimeout(searchTimeout)
@@ -123,10 +240,20 @@ function onSearch() {
 
 async function fetchEvents() {
     loading.value = true
+    const filterQuery: Record<string, string | number | undefined> = {
+        search: search.value || undefined,
+        page: page.value,
+        pageSize,
+    }
+    if (activeFilter.value === 'featured') filterQuery.isFeatured = 'true'
+    if (activeFilter.value === 'week') filterQuery.dateRange = 'week'
+    if (activeFilter.value === 'month') filterQuery.dateRange = 'month'
     try {
-        const r = await getEvents({ search: search.value || undefined, page: page.value, pageSize })
+        const r = await getEvents(filterQuery)
         events.value = r.items
         totalCount.value = r.totalCount
+        attendedIds.value = new Set(r.items.filter(e => e.isUserInterested).map(e => e.id))
+        interestCounts.value = new Map(r.items.map(e => [e.id, e.interestedCount ?? 0]))
     } catch {
         events.value = []
         totalCount.value = 0
@@ -193,8 +320,40 @@ onMounted(fetchEvents)
     padding-bottom: 80px;
 }
 
+// Filter tabs
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 24px 0 0;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.ftab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: $r-sm;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    color: $text-dim;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+
+    &:hover { border-color: rgba($red, 0.3); color: $text; }
+    &.active { background: rgba($red, 0.12); border-color: rgba($red, 0.4); color: $red; font-weight: 700; }
+}
+
 .search-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
     margin-bottom: 32px;
+    flex-wrap: wrap;
 }
 
 .search-box {
@@ -205,6 +364,7 @@ onMounted(fetchEvents)
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 12px 18px;
+    flex: 1;
     max-width: 480px;
 }
 
@@ -220,6 +380,23 @@ onMounted(fetchEvents)
     font-family: 'Inter', sans-serif;
 
     &::placeholder { color: $text-dim; }
+}
+
+.btn-add-event {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: $red;
+    color: white;
+    border-radius: $r-sm;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+
+    &:hover { opacity: 0.88; }
 }
 
 // Loading
@@ -263,6 +440,7 @@ onMounted(fetchEvents)
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    cursor: pointer;
     transition: transform 0.3s ease, border-color 0.3s ease;
 
     &:hover {
@@ -286,6 +464,9 @@ onMounted(fetchEvents)
     position: absolute;
     top: 10px;
     left: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     background: rgba($red, 0.9);
     color: white;
     font-size: 9px;
@@ -293,6 +474,8 @@ onMounted(fetchEvents)
     letter-spacing: 1px;
     padding: 3px 9px;
     border-radius: 5px;
+
+    &--featured { background: rgba(#ffd700, 0.9); color: #1a1200; }
 }
 
 .date-chip {
@@ -358,6 +541,7 @@ onMounted(fetchEvents)
     margin-top: 4px;
     padding-top: 10px;
     border-top: 1px solid $border;
+    flex-wrap: wrap;
 }
 
 .organizer {
@@ -368,9 +552,102 @@ onMounted(fetchEvents)
     color: $text-dim;
 }
 
-.card-actions {
+.footer-actions {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.interest-count {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: $text-dim;
+
+    .v-icon { color: $red; }
+}
+
+.btn-attend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: $r-sm;
+    background: transparent;
+    border: 1px solid $border;
+    color: $text-dim;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+
+    &:hover { border-color: $red; color: $red; }
+    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.5); color: $red; }
+}
+
+.share-wrap { position: relative; }
+
+.btn-share {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: $r-sm;
+    background: transparent;
+    border: 1px solid $border;
+    color: $text-dim;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+
+    &:hover { border-color: rgba($red, 0.4); color: $text-muted; }
+}
+
+.share-popup {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    background: #111;
+    border: 1px solid $border;
+    border-radius: $r-md;
+    padding: 6px;
+    z-index: 100;
+    min-width: 160px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.share-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 12px;
+    border-radius: $r-sm;
+    font-size: 13px;
+    color: $text-muted;
+    text-decoration: none;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+    text-align: left;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover { background: rgba(255,255,255,0.05); color: $text; }
+
+    .v-icon { flex-shrink: 0; }
+}
+
+.share-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
 }
 
 .btn-ticket,
@@ -378,9 +655,9 @@ onMounted(fetchEvents)
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 6px 12px;
+    padding: 6px 10px;
     border-radius: $r-sm;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     text-decoration: none;
     transition: opacity 0.2s;

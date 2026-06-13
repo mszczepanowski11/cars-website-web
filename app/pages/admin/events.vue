@@ -83,6 +83,12 @@
                                         <button v-if="e.status === 'Published'" class="btn-action btn-archive" :disabled="actionLoading === e.id" @click="changeStatus(e, 'Archived')">
                                             <v-icon icon="mdi-archive-outline" size="13" />Archiwizuj
                                         </button>
+                                        <button v-if="e.status === 'Published' && !e.isFeatured" class="btn-action btn-feature" :disabled="actionLoading === e.id" @click="toggleFeature(e, true)">
+                                            <v-icon icon="mdi-crown-outline" size="13" />Wyróżnij
+                                        </button>
+                                        <button v-if="e.status === 'Published' && e.isFeatured" class="btn-action btn-unfeature" :disabled="actionLoading === e.id" @click="toggleFeature(e, false)">
+                                            <v-icon icon="mdi-crown-off-outline" size="13" />Usuń wyróżn.
+                                        </button>
                                         <button class="btn-action btn-delete" :disabled="actionLoading === e.id" @click="confirmDelete(e.id)">
                                             <v-icon icon="mdi-delete-outline" size="13" />
                                         </button>
@@ -128,10 +134,10 @@
 <script setup lang="ts">
 import type { AdminEvent } from '~/types'
 
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'admin' })
 
 const { getImageUrl, placeholder } = useImageUrl()
-const { adminGetEvents, publishEvent, rejectEvent, archiveEvent, deleteEvent } = useEvents()
+const { adminGetEvents, publishEvent, rejectEvent, archiveEvent, featureEvent, unfeatureEvent, deleteEvent } = useEvents()
 
 const events = ref<AdminEvent[]>([])
 const loading = ref(true)
@@ -201,6 +207,15 @@ async function changeStatus(e: AdminEvent, status: string) {
     } catch {} finally { actionLoading.value = null }
 }
 
+async function toggleFeature(e: AdminEvent, feature: boolean) {
+    actionLoading.value = e.id
+    try {
+        if (feature) await featureEvent(e.id)
+        else await unfeatureEvent(e.id)
+        e.isFeatured = feature
+    } catch {} finally { actionLoading.value = null }
+}
+
 function confirmDelete(id: number) { deleteId.value = id }
 
 async function doDelete() {
@@ -257,10 +272,12 @@ onMounted(fetchEvents)
     &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-.btn-approve { background: rgba(76,175,80,0.1); color: #4caf50; border-color: rgba(76,175,80,0.2); &:hover:not(:disabled) { background: rgba(76,175,80,0.18); } }
-.btn-reject  { background: rgba(220,50,50,0.09); color: #e55; border-color: rgba(220,50,50,0.2); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); } }
-.btn-archive { background: rgba(255,255,255,0.05); color: $text-muted; border-color: $border; &:hover:not(:disabled) { background: rgba(255,255,255,0.09); } }
-.btn-delete  { background: rgba(220,50,50,0.09); color: #e55; border-color: rgba(220,50,50,0.2); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); } }
+.btn-approve   { background: rgba(76,175,80,0.1); color: #4caf50; border-color: rgba(76,175,80,0.2); &:hover:not(:disabled) { background: rgba(76,175,80,0.18); } }
+.btn-reject    { background: rgba(220,50,50,0.09); color: #e55; border-color: rgba(220,50,50,0.2); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); } }
+.btn-archive   { background: rgba(255,255,255,0.05); color: $text-muted; border-color: $border; &:hover:not(:disabled) { background: rgba(255,255,255,0.09); } }
+.btn-delete    { background: rgba(220,50,50,0.09); color: #e55; border-color: rgba(220,50,50,0.2); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); } }
+.btn-feature   { background: rgba(255,215,0,0.08); color: #ffd700; border-color: rgba(255,215,0,0.25); &:hover:not(:disabled) { background: rgba(255,215,0,0.15); } }
+.btn-unfeature { background: rgba(255,255,255,0.04); color: $text-dim; border-color: $border; &:hover:not(:disabled) { background: rgba(255,255,255,0.08); } }
 
 .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .confirm-modal { background: #0e0e0e; border: 1px solid $border; border-radius: $r-lg; padding: 32px 28px; width: 100%; max-width: 360px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }

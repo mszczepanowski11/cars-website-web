@@ -4,10 +4,21 @@ const { isPremiereActive, isPremiereUpcoming, remainingToEnd, remainingToStart, 
 const countdown = computed(() =>
     isPremiereActive.value ? remainingToEnd.value : remainingToStart.value
 )
+
+const dismissed = ref(false)
+
+onMounted(() => {
+    dismissed.value = localStorage.getItem('annBarDismissed') === '1'
+})
+
+function dismiss() {
+    dismissed.value = true
+    localStorage.setItem('annBarDismissed', '1')
+}
 </script>
 
 <template>
-    <div v-if="isPremiereActive || isPremiereUpcoming" class="ann-bar" :class="{ 'ann-bar--upcoming': isPremiereUpcoming }">
+    <div v-if="!dismissed && (isPremiereActive || isPremiereUpcoming)" class="ann-bar" :class="{ 'ann-bar--upcoming': isPremiereUpcoming }">
         <div class="ann-inner">
             <span class="ann-badge">
                 <v-icon icon="mdi-rocket-launch-outline" size="14" />
@@ -29,6 +40,9 @@ const countdown = computed(() =>
                 Dowiedz się więcej
                 <v-icon icon="mdi-chevron-right" size="14" />
             </NuxtLink>
+            <button class="ann-dismiss" @click="dismiss" title="Zamknij">
+                <v-icon icon="mdi-close" size="16" />
+            </button>
         </div>
     </div>
 </template>
@@ -116,5 +130,22 @@ const countdown = computed(() =>
     .ann-bar--upcoming & { color: $red; }
 
     @include respond-to(sm) { display: none; }
+}
+
+.ann-dismiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: $text-dark;
+    cursor: pointer;
+    padding: 2px;
+    margin-left: 4px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+
+    &:hover { color: $text-muted; background: rgba(255,255,255,0.07); }
 }
 </style>

@@ -113,7 +113,7 @@
 <script setup lang="ts">
 import type { AdminUser } from '~/types'
 
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'admin' })
 
 const users = ref<AdminUser[]>([])
 const loading = ref(true)

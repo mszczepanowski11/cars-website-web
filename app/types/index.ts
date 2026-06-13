@@ -1,8 +1,11 @@
 export interface TaxonomyItem { id: number; name: string }
+export interface SelectOption { value: number | string; label: string; icon?: string; meta?: string }
 export interface Generation extends TaxonomyItem { yearFrom: number; yearTo: number }
-export interface EngineVersion extends TaxonomyItem { displacement: number; horsepower: number }
+export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number }
 export interface AdvertImage { id: number; url: string; isMain: boolean }
 export interface Feature { id: number; name: string; category: { id: number; name: string } }
+export interface DriveType { id: number; name: string; slug: string }
+export interface CarColor { id: number; name: string; hexCode: string }
 export type AdvertBadge = 'PREMIUM' | 'VERIFIED' | 'DEALER' | 'FEATURED' | 'TOP'
 
 export interface CarAdvert {
@@ -12,15 +15,39 @@ export interface CarAdvert {
     brand: TaxonomyItem | null; model: TaxonomyItem | null
     generation: Generation | null; engineVersion: EngineVersion | null
     fuelType: TaxonomyItem | null; gearbox: TaxonomyItem | null; bodyType: TaxonomyItem | null
+    driveType?: DriveType | null; color?: CarColor | null
+    category?: { id: number; name: string; slug?: string } | null
+    categoryId?: number | null
     features: Feature[]; images: AdvertImage[]; createdAt: string
     badge?: AdvertBadge | null
+
+    // Core specs
+    powerHP?: number; powerKW?: number; engineSize?: number
+    doorCount?: number; seatsCount?: number; vin?: string
+
+    // Sale info
+    condition?: 'new' | 'used'
+    isNegotiable?: boolean
+    sellerType?: 'private' | 'dealer'
+
+    // Technical
+    torque?: number; acceleration?: number
+    fuelConsumptionCity?: number; fuelConsumptionHighway?: number; fuelConsumptionCombined?: number
+    co2Emission?: number; euroNorm?: string
+    curbWeight?: number; grossWeight?: number
+
+    // Vehicle history
+    firstRegistrationDate?: string; registrationCountry?: string
+    ownersCount?: number; isImported?: boolean; importCountry?: string
+    nextInspection?: string
+    hasServiceBook?: boolean; hasFullServiceHistory?: boolean
+    hasDamage?: boolean; damageDescription?: string
+    hasWarranty?: boolean; warrantyUntil?: string
+
     isVerified?: boolean
-    sellerType?: 'personal' | 'dealer'
-    isHidden?: boolean
-    isActive?: boolean
-    viewCount?: number
-    favoriteCount?: number
-    soldAt?: string
+    isHidden?: boolean; isActive?: boolean
+    viewCount?: number; favoriteCount?: number; soldAt?: string; expiresAt?: string
+    slug?: string; updatedAt?: string
 }
 
 export interface PagedResult<T> { items: T[]; totalCount: number }
@@ -30,9 +57,17 @@ export interface SearchAdvertDto {
     brandId?: number | null; modelId?: number | null
     generationId?: number | null; engineVersionId?: number | null
     fuelTypeId?: number | null; gearboxId?: number | null; bodyTypeId?: number | null
+    driveTypeId?: number | null; colorId?: number | null
     yearFrom?: number | null; yearTo?: number | null
     mileageFrom?: number | null; mileageTo?: number | null
     priceFrom?: number | null; priceTo?: number | null
+    powerFrom?: number | null; powerTo?: number | null
+    engineSizeFrom?: number | null; engineSizeTo?: number | null
+    doorCount?: number | null; seatsCount?: number | null
+    condition?: string | null; sellerType?: string | null
+    isNegotiable?: boolean | null; hasDamage?: boolean | null
+    hasWarranty?: boolean | null; hasServiceBook?: boolean | null
+    isImported?: boolean | null; euroNorm?: string | null
     featureIds?: number[]; sortBy?: string; page?: number; pageSize?: number
 }
 
@@ -60,12 +95,16 @@ export interface UserProfile {
     city?: string
     region?: string
     about?: string
+    street?: string
+    postalCode?: string
+    country?: string
 }
 
 export interface UpdateProfileDto {
     name: string; surname: string; phoneNumber: string
     city?: string; region?: string; about?: string
     companyName?: string; nip?: string
+    street?: string; postalCode?: string; country?: string
 }
 
 export interface UpdatePasswordDto {
@@ -302,59 +341,6 @@ export interface CreateCouponDto {
     maxUses: number; expiresAt?: string; description?: string
 }
 
-// ── Payments & Invoices ────────────────────────────────────────────────────────
-
-export type PaymentServiceType = 'Top' | 'Premium' | 'Featured' | 'Refresh' | 'Other'
-export type PaymentStatusType = 'Pending' | 'Completed' | 'Failed' | 'Cancelled' | 'Refunded'
-export type InvoiceStatusType = 'Draft' | 'Generated' | 'Sent'
-
-export interface ServicePrice {
-    serviceType: PaymentServiceType
-    durationDays: number
-    price: number
-    description: string
-}
-
-export interface PaymentInitiated {
-    paymentId: number
-    paymentUrl: string
-    amount: number
-    orderId: string
-}
-
-export interface PaymentRecord {
-    id: number
-    serviceType: PaymentServiceType
-    serviceDescription: string
-    amount: number
-    currency: string
-    status: PaymentStatusType
-    imojeTransactionId?: string
-    createdAt: string
-    paidAt?: string
-    advertId?: number
-    durationDays?: number
-}
-
-export interface MonthlyInvoice {
-    id: number
-    invoiceNumber: string
-    month: number
-    year: number
-    totalAmount: number
-    netAmount: number
-    vatAmount: number
-    vatRate: number
-    status: InvoiceStatusType
-    generatedAt: string
-    sentAt?: string
-    items: PaymentRecord[]
-    userName: string
-    userEmail: string
-    companyName?: string
-    nip?: string
-}
-
 // ── Events ────────────────────────────────────────────────────────────────────
 
 export type EventStatus = 'Pending' | 'Published' | 'Rejected' | 'Archived'
@@ -371,6 +357,13 @@ export interface CarEvent {
     status: EventStatus; createdAt: string
     createdByUserId: number; createdByName?: string
     images: EventImage[]
+    isFeatured?: boolean
+    interestedCount?: number
+    attendingCount?: number
+    viewCount?: number
+    shareCount?: number
+    isUserInterested?: boolean
+    isUserFavorite?: boolean
 }
 
 export interface AdminEvent {
@@ -378,6 +371,8 @@ export interface AdminEvent {
     city: string; status: EventStatus; createdAt: string
     createdByUserId: number; createdByName?: string
     reportCount: number; mainImageUrl?: string
+    isFeatured?: boolean
+    interestedCount?: number
 }
 
 export interface CreateEventDto {
@@ -390,6 +385,48 @@ export interface CreateEventDto {
 
 export interface CreateEventReportDto {
     reason: EventReportReason; content?: string
+}
+
+// ── Billing data ──────────────────────────────────────────────────────────────
+
+export type BillingType = 'personal' | 'business'
+
+export interface BillingData {
+    type: BillingType
+    // Personal
+    firstName?: string
+    lastName?: string
+    // Business
+    companyName?: string
+    nip?: string
+    street?: string
+    postalCode?: string
+    city?: string
+    country?: string
+    // Shared
+    email: string
+}
+
+export interface InitiatePaymentDto {
+    advertId?: number
+    serviceType: string
+    durationDays: number
+    couponCode?: string
+    billing: BillingData
+    returnUrl?: string
+    cancelUrl?: string
+}
+
+// KSeF-ready invoice line item
+export interface KSeFLineItem {
+    name: string
+    quantity: number
+    unitPrice: number
+    netAmount: number
+    vatRate: number
+    vatAmount: number
+    grossAmount: number
+    gtu?: string
 }
 
 // ── Payments & Invoices ────────────────────────────────────────────────────────
@@ -443,4 +480,14 @@ export interface MonthlyInvoice {
     userEmail: string
     companyName?: string
     nip?: string
+    // Billing address
+    street?: string
+    postalCode?: string
+    city?: string
+    country?: string
+    // KSeF readiness
+    kSeFReferenceNumber?: string
+    isKSeFSent?: boolean
+    billingType?: BillingType
+    lineItems?: KSeFLineItem[]
 }

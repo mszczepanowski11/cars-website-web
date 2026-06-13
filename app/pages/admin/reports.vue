@@ -23,7 +23,7 @@
                     <div class="filter-tabs">
                         <button v-for="f in filters" :key="f.key" class="filter-tab" :class="{ active: activeFilter === f.key }" @click="setFilter(f.key)">
                             {{ f.label }}
-                            <span v-if="f.count" class="filter-count">{{ f.count }}</span>
+                            <span v-if="activeFilter === f.key && totalCount" class="filter-count">{{ totalCount }}</span>
                         </button>
                     </div>
                 </div>
@@ -32,6 +32,11 @@
             <div v-if="loading" class="loading-state">
                 <v-icon icon="mdi-loading" size="32" class="spin" />
                 Ładowanie zgłoszeń...
+            </div>
+
+            <div v-else-if="error" class="error-state">
+                <v-icon icon="mdi-alert-circle-outline" size="32" class="error-icon" />
+                <p>{{ error }}</p>
             </div>
 
             <template v-else>
@@ -79,10 +84,10 @@
                                 </td>
                                 <td>
                                     <div v-if="r.status === 'Pending'" class="action-row">
-                                        <button class="btn-action btn-resolve" :disabled="actionLoading === r.id" @click="resolveReport(r.id, 'Resolved')">
+                                        <button class="btn-action btn-resolve" :disabled="actionLoading === r.id" @click="resolveReport(r.id)">
                                             <v-icon icon="mdi-check" size="14" />Rozwiąż
                                         </button>
-                                        <button class="btn-action btn-dismiss" :disabled="actionLoading === r.id" @click="resolveReport(r.id, 'Dismissed')">
+                                        <button class="btn-action btn-dismiss" :disabled="actionLoading === r.id" @click="rejectReport(r.id)">
                                             <v-icon icon="mdi-close" size="14" />Odrzuć
                                         </button>
                                     </div>
@@ -112,13 +117,15 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'admin' })
 
 import type { AdminReport } from '~/types'
-type Report = AdminReport & { targetId?: number | null }
+
+const { getReports, resolveReport: resolveReportApi, rejectReport: rejectReportApi } = useAdmin()
 
 const reports = ref<AdminReport[]>([])
 const loading = ref(true)
+const error = ref('')
 const search = ref('')
 const activeFilter = ref('Pending')
 const page = ref(1)
@@ -128,50 +135,92 @@ const actionLoading = ref<number | null>(null)
 
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize) || 1)
 
-const filters = computed(() => [
-    { key: 'Pending', label: 'Oczekujące', count: reports.value.filter(r => r.status === 'Pending').length },
-    { key: 'Resolved', label: 'Rozwiązane', count: 0 },
-    { key: 'Dismissed', label: 'Odrzucone', count: 0 },
-    { key: 'all', label: 'Wszystkie', count: 0 },
-])
+const filters = [
+    { key: 'Pending', label: 'Oczekujące' },
+    { key: 'Resolved', label: 'Rozwiązane' },
+    { key: 'Rejected', label: 'Odrzucone' },
+    { key: 'all', label: 'Wszystkie' },
+]
 
 const filteredReports = computed(() => {
-    let list = reports.value
-    if (activeFilter.value !== 'all') list = list.filter(r => r.status === activeFilter.value)
-    if (search.value) {
-        const q = search.value.toLowerCase()
-        list = list.filter(r => r.reason?.toLowerCase().includes(q) || r.reportedByName?.toLowerCase().includes(q) || String(r.id).includes(q))
-    }
-    return list
+    if (!search.value) return reports.value
+    const q = search.value.toLowerCase()
+    return reports.value.filter(r =>
+        r.reason?.toLowerCase().includes(q) ||
+        r.reportedByName?.toLowerCase().includes(q) ||
+        String(r.id).includes(q)
+    )
 })
 
 function statusLabel(s: string) {
-    const map: Record<string, string> = { Pending: 'Oczekujące', Resolved: 'Rozwiązane', Dismissed: 'Odrzucone' }
+    const map: Record<string, string> = { Pending: 'Oczekujące', Resolved: 'Rozwiązane', Rejected: 'Odrzucone' }
     return map[s] ?? s
 }
 
 function formatDate(d: string) {
+    if (!d) return '—'
     return new Date(d).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 async function fetchReports() {
     loading.value = true
+    error.value = ''
     try {
-        const r = await $fetch<{ items: AdminReport[]; totalCount: number }>('/api/proxy/api/Admin/Report', {
-            query: { page: page.value, pageSize, status: activeFilter.value === 'all' ? undefined : activeFilter.value }
+        const raw = await $fetch<any>('/api/proxy/api/Admin/reports', {
+            query: {
+                page: page.value,
+                pageSize,
+                status: activeFilter.value === 'all' ? undefined : activeFilter.value
+            }
         })
-        reports.value = r.items
-        totalCount.value = r.totalCount
-    } catch { reports.value = [] } finally { loading.value = false }
+        console.log('[Admin/Reports] raw response:', JSON.stringify(raw).slice(0, 600))
+        let items: AdminReport[] = []
+        let count = 0
+        if (Array.isArray(raw)) {
+            items = raw; count = raw.length
+        } else if (Array.isArray(raw?.items)) {
+            items = raw.items; count = raw.totalCount ?? raw.total ?? raw.items.length
+        } else if (Array.isArray(raw?.data)) {
+            items = raw.data; count = raw.totalCount ?? raw.total ?? raw.data.length
+        } else if (Array.isArray(raw?.reports)) {
+            items = raw.reports; count = raw.totalCount ?? raw.total ?? raw.reports.length
+        } else if (raw && typeof raw === 'object') {
+            const arrKey = Object.keys(raw).find(k => Array.isArray((raw as any)[k]))
+            if (arrKey) {
+                items = (raw as any)[arrKey]
+                count = raw.totalCount ?? raw.total ?? raw.totalRecords ?? items.length
+            }
+        }
+        reports.value = items
+        totalCount.value = count
+    } catch (e: any) {
+        console.error('[Admin/Reports] fetch failed:', e)
+        error.value = e?.data?.message ?? e?.data?.title ?? e?.message ?? 'Błąd podczas ładowania zgłoszeń.'
+        reports.value = []
+        totalCount.value = 0
+    } finally { loading.value = false }
 }
 
-async function resolveReport(id: number, status: 'Resolved' | 'Dismissed') {
+async function resolveReport(id: number) {
     actionLoading.value = id
     try {
-        await $fetch(`/api/proxy/api/Admin/Report/${id}`, { method: 'PUT', body: { status } })
+        await resolveReportApi(id)
         const r = reports.value.find(x => x.id === id)
-        if (r) r.status = status as any
-    } catch {} finally { actionLoading.value = null }
+        if (r) r.status = 'Resolved'
+    } catch (e: any) {
+        console.error('[Admin/Reports] resolve failed:', e)
+    } finally { actionLoading.value = null }
+}
+
+async function rejectReport(id: number) {
+    actionLoading.value = id
+    try {
+        await rejectReportApi(id)
+        const r = reports.value.find(x => x.id === id)
+        if (r) r.status = 'Rejected'
+    } catch (e: any) {
+        console.error('[Admin/Reports] reject failed:', e)
+    } finally { actionLoading.value = null }
 }
 
 async function setFilter(f: string) {
@@ -218,6 +267,7 @@ onMounted(fetchReports)
     font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
     &.status-pending { background: rgba(255,152,0,0.1); color: #ff9800; border: 1px solid rgba(255,152,0,0.25); }
     &.status-resolved { background: rgba(76,175,80,0.1); color: #4caf50; border: 1px solid rgba(76,175,80,0.2); }
+    &.status-rejected { background: rgba(255,255,255,0.06); color: $text-dim; border: 1px solid $border; }
     &.status-dismissed { background: rgba(255,255,255,0.06); color: $text-dim; border: 1px solid $border; }
 }
 
@@ -236,4 +286,12 @@ onMounted(fetchReports)
 .btn-dismiss { background: rgba(255,255,255,0.05); color: $text-dim; border-color: $border; &:hover:not(:disabled) { background: rgba(255,255,255,0.08); color: $text-muted; } }
 
 .resolved-text { color: $text-dark; font-size: 12px; }
+
+.error-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: $red;
+    font-size: 14px;
+}
+.error-icon { color: $red; display: block; margin: 0 auto 12px; }
 </style>

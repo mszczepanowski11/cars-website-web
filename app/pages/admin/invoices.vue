@@ -37,27 +37,26 @@
             </div>
 
             <div v-if="genSuccess" class="alert-ok">
-                <v-icon icon="mdi-check-circle-outline" size="16" />
-                {{ genSuccess }}
+                <v-icon icon="mdi-check-circle-outline" size="16" />{{ genSuccess }}
             </div>
             <div v-if="genError" class="alert-err">
-                <v-icon icon="mdi-alert-circle-outline" size="16" />
-                {{ genError }}
+                <v-icon icon="mdi-alert-circle-outline" size="16" />{{ genError }}
+            </div>
+            <div v-if="actionMsg" class="alert-ok">
+                <v-icon icon="mdi-check-circle-outline" size="16" />{{ actionMsg }}
             </div>
 
-            <!-- Stats row -->
-            <div class="stats-row" v-if="!invoicesLoading">
+            <div v-if="!invoicesLoading" class="stats-row">
                 <div class="mini-stat">
-                    <div class="ms-label">Wszystkich faktur</div>
+                    <div class="ms-label">Faktury</div>
                     <div class="ms-val">{{ invoicesTotalCount.toLocaleString('pl') }}</div>
                 </div>
                 <div class="mini-stat">
-                    <div class="ms-label">Wszystkich płatności</div>
+                    <div class="ms-label">Płatności</div>
                     <div class="ms-val">{{ paymentsTotalCount.toLocaleString('pl') }}</div>
                 </div>
             </div>
 
-            <!-- Tabs -->
             <div class="tabs">
                 <button class="tab" :class="{ active: tab === 'invoices' }" @click="tab = 'invoices'">
                     <v-icon icon="mdi-file-document-outline" size="15" />
@@ -87,6 +86,7 @@
                                     <th>VAT</th>
                                     <th>Brutto</th>
                                     <th>Status</th>
+                                    <th>KSeF</th>
                                     <th>Akcje</th>
                                 </tr>
                             </thead>
@@ -97,18 +97,28 @@
                                         <div class="user-cell">
                                             <div class="user-name">{{ inv.userName }}</div>
                                             <div class="user-email">{{ inv.userEmail }}</div>
-                                            <div v-if="inv.companyName" class="user-company">{{ inv.companyName }}</div>
+                                            <div v-if="inv.companyName" class="user-company">
+                                                <v-icon icon="mdi-domain" size="11" />{{ inv.companyName }}
+                                                <span v-if="inv.nip"> · NIP {{ inv.nip }}</span>
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="td-date">{{ monthName(inv.month) }} {{ inv.year }}</td>
-                                    <td class="td-num">{{ inv.netAmount.toFixed(2) }} PLN</td>
-                                    <td class="td-num">{{ inv.vatAmount.toFixed(2) }} PLN</td>
+                                    <td class="td-num">{{ inv.netAmount.toFixed(2) }}</td>
+                                    <td class="td-num">{{ inv.vatAmount.toFixed(2) }}</td>
                                     <td class="td-amount">{{ inv.totalAmount.toFixed(2) }} PLN</td>
                                     <td><span class="status-badge" :class="invoiceStatusClass(inv.status)">{{ invoiceStatusLabel(inv.status) }}</span></td>
                                     <td>
+                                        <span v-if="inv.kSeFReferenceNumber" class="ksef-badge">
+                                            <v-icon icon="mdi-check" size="11" />KSeF
+                                        </span>
+                                        <span v-else class="ksef-badge ksef-no">—</span>
+                                    </td>
+                                    <td>
                                         <div class="actions">
-                                            <button class="act-btn" title="Pobierz (HTML)" @click="downloadHtml(inv.id)">
-                                                <v-icon icon="mdi-download" size="14" />
+                                            <button class="act-btn" title="Pobierz PDF" :disabled="pdfLoadingId === inv.id" @click="downloadPdfAdmin(inv)">
+                                                <v-icon v-if="pdfLoadingId === inv.id" icon="mdi-loading" size="14" class="spin" />
+                                                <v-icon v-else icon="mdi-file-pdf-box" size="14" style="color:#e53935" />
                                             </button>
                                             <button class="act-btn" title="Wyślij ponownie e-mailem" :disabled="sending === inv.id" @click="resend(inv.id)">
                                                 <v-icon v-if="sending === inv.id" icon="mdi-loading" size="14" class="spin" />
@@ -155,17 +165,40 @@
                                     <th>Kwota</th>
                                     <th>Status</th>
                                     <th>Nr transakcji</th>
+                                    <th>Akcje</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="p in payments" :key="p.id">
                                     <td class="td-id">#{{ p.id }}</td>
                                     <td class="td-date">{{ fmtDate(p.createdAt) }}</td>
-                                    <td>{{ p.serviceDescription }}</td>
+                                    <td>{{ p.serviceDescription || p.serviceType }}</td>
                                     <td class="td-dim">{{ p.durationDays ? p.durationDays + ' dni' : '—' }}</td>
                                     <td class="td-amount">{{ p.amount.toFixed(2) }} {{ p.currency }}</td>
-                                    <td><span class="status-badge" :class="paymentStatusClass(p.status)">{{ paymentStatusLabel(p.status) }}</span></td>
+                                    <td>
+                                        <span class="status-badge" :class="paymentStatusClass(p.status)">
+                                            {{ paymentStatusLabel(p.status) }}
+                                        </span>
+                                    </td>
                                     <td class="td-mono">{{ p.imojeTransactionId || '—' }}</td>
+                                    <td>
+                                        <!-- Status correction dropdown -->
+                                        <div class="status-correct-wrap">
+                                            <select
+                                                class="status-select"
+                                                :value="p.status"
+                                                :disabled="statusUpdating === p.id"
+                                                @change="(e) => correctStatus(p.id, (e.target as HTMLSelectElement).value as PaymentStatusType)"
+                                            >
+                                                <option value="Pending">Oczekująca</option>
+                                                <option value="Completed">Opłacona</option>
+                                                <option value="Failed">Nieudana</option>
+                                                <option value="Cancelled">Anulowana</option>
+                                                <option value="Refunded">Zwrócona</option>
+                                            </select>
+                                            <v-icon v-if="statusUpdating === p.id" icon="mdi-loading" size="13" class="spin status-updating-icon" />
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -196,8 +229,7 @@ import type { PaymentRecord, MonthlyInvoice, PaymentStatusType, InvoiceStatusTyp
 definePageMeta({ middleware: 'admin' })
 
 const tab = ref<'invoices' | 'payments'>('invoices')
-const { getAdminInvoices, downloadHtml, adminGenerate, adminSend } = useInvoices()
-const { getAdminPayments } = usePayment()
+const { getAdminInvoices, generatePdf, adminGenerate, adminResendInvoice, adminUpdatePaymentStatus } = useInvoices()
 
 const invoices = ref<MonthlyInvoice[]>([])
 const invoicesLoading = ref(true)
@@ -213,8 +245,11 @@ const paymentsTotalCount = ref(0)
 
 const generating = ref(false)
 const sending = ref<number | null>(null)
+const pdfLoadingId = ref<number | null>(null)
+const statusUpdating = ref<number | null>(null)
 const genSuccess = ref('')
 const genError = ref('')
+const actionMsg = ref('')
 
 const now = new Date()
 const currentYear = now.getFullYear()
@@ -222,7 +257,7 @@ const genMonth = ref(now.getMonth() === 0 ? 12 : now.getMonth())
 const genYear = ref(now.getMonth() === 0 ? currentYear - 1 : currentYear)
 
 const MONTHS_PL = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień']
-function monthName(m: number) { return MONTHS_PL[m - 1] ?? m }
+function monthName(m: number) { return MONTHS_PL[m - 1] ?? String(m) }
 
 async function loadInvoices(page = 1) {
     invoicesLoading.value = true
@@ -231,7 +266,7 @@ async function loadInvoices(page = 1) {
         const res = await getAdminInvoices(page, invoicesPageSize)
         invoices.value = res.items
         invoicesTotalCount.value = res.totalCount
-    } catch {}
+    } catch { invoices.value = [] }
     finally { invoicesLoading.value = false }
 }
 
@@ -239,16 +274,17 @@ async function loadPayments(page = 1) {
     paymentsLoading.value = true
     paymentsPage.value = page
     try {
-        const res = await getAdminPayments(page, paymentsPageSize)
+        const res = await $fetch<{ items: PaymentRecord[]; totalCount: number }>('/api/proxy/api/Payment/admin/all', {
+            query: { page, pageSize: paymentsPageSize }
+        })
         payments.value = res.items
         paymentsTotalCount.value = res.totalCount
-    } catch {}
+    } catch { payments.value = [] }
     finally { paymentsLoading.value = false }
 }
 
 async function generate() {
-    genSuccess.value = ''
-    genError.value = ''
+    genSuccess.value = ''; genError.value = ''
     generating.value = true
     try {
         await adminGenerate(genMonth.value, genYear.value)
@@ -256,34 +292,55 @@ async function generate() {
         await loadInvoices(1)
     } catch (e: any) {
         genError.value = e?.data?.message ?? 'Błąd generowania faktur.'
-    } finally {
-        generating.value = false
-    }
+    } finally { generating.value = false }
 }
 
 async function resend(id: number) {
     sending.value = id
+    actionMsg.value = ''
     try {
-        await adminSend(id)
-    } catch {}
-    finally { sending.value = null }
+        await adminResendInvoice(id)
+        actionMsg.value = 'Faktura wysłana ponownie.'
+        setTimeout(() => { actionMsg.value = '' }, 4000)
+    } catch (e: any) {
+        genError.value = e?.data?.message ?? 'Błąd wysyłki faktury.'
+        setTimeout(() => { genError.value = '' }, 4000)
+    } finally { sending.value = null }
 }
 
-function fmtDate(d: string) {
-    return new Date(d).toLocaleDateString('pl-PL', { dateStyle: 'short' })
+async function downloadPdfAdmin(inv: MonthlyInvoice) {
+    pdfLoadingId.value = inv.id
+    try { await generatePdf(inv) }
+    catch (e) { console.error('PDF error:', e) }
+    finally { pdfLoadingId.value = null }
 }
 
-function paymentStatusLabel(s: PaymentStatusType) {
-    const map: Record<PaymentStatusType, string> = {
-        Pending: 'Oczekuje', Completed: 'Zaksięgowana', Failed: 'Nieudana',
-        Cancelled: 'Anulowana', Refunded: 'Zwrócona'
-    }
+async function correctStatus(paymentId: number, newStatus: PaymentStatusType) {
+    statusUpdating.value = paymentId
+    actionMsg.value = ''
+    try {
+        await adminUpdatePaymentStatus(paymentId, newStatus, 'Korekta ręczna — admin')
+        const p = payments.value.find(x => x.id === paymentId)
+        if (p) p.status = newStatus
+        actionMsg.value = `Status płatności #${paymentId} zmieniony na: ${paymentStatusLabel(newStatus)}`
+        setTimeout(() => { actionMsg.value = '' }, 4000)
+    } catch (e: any) {
+        genError.value = e?.data?.message ?? 'Błąd zmiany statusu.'
+        setTimeout(() => { genError.value = '' }, 4000)
+    } finally { statusUpdating.value = null }
+}
+
+function fmtDate(d: string) { return new Date(d).toLocaleDateString('pl-PL', { dateStyle: 'short' }) }
+
+function paymentStatusLabel(s: PaymentStatusType | string) {
+    const map: Record<string, string> = { Pending: 'Oczekująca', Completed: 'Opłacona', Failed: 'Nieudana', Cancelled: 'Anulowana', Refunded: 'Zwrócona' }
     return map[s] ?? s
 }
 
 function paymentStatusClass(s: PaymentStatusType) {
     if (s === 'Completed') return 'status-ok'
     if (s === 'Pending') return 'status-pending'
+    if (s === 'Refunded') return 'status-refunded'
     return 'status-fail'
 }
 
@@ -298,21 +355,16 @@ function invoiceStatusClass(s: InvoiceStatusType) {
     return 'status-pending'
 }
 
-onMounted(() => {
-    loadInvoices()
-    loadPayments()
-})
+onMounted(() => { loadInvoices(); loadPayments() })
 </script>
 
 <style lang="scss" scoped>
-// Admin layout
 .admin-page { display: flex; min-height: 100vh; background: $bg; padding-top: $nav-height; }
 .admin-sidebar { width: 220px; min-width: 220px; background: #070707; border-right: 1px solid $border; position: sticky; top: $nav-height; height: calc(100vh - #{$nav-height}); overflow-y: auto; display: flex; flex-direction: column; }
 .sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 18px 18px 12px; font-size: 13px; font-weight: 800; color: $text; border-bottom: 1px solid $border; }
 .brand-icon { color: $red; }
 .sidebar-nav { flex: 1; padding: 12px 0; }
 .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; color: $text-muted; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: background 0.15s, color 0.15s; &:hover { background: rgba(255,255,255,0.04); color: $text; } &.active { background: rgba($red, 0.1); color: $text; border-left: 2px solid $red; padding-left: 16px; } }
-.nav-badge { margin-left: auto; background: $red; color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 20px; }
 .nav-divider { height: 1px; background: $border; margin: 8px 0; }
 .admin-main { flex: 1; min-width: 0; padding: 28px; }
 .admin-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
@@ -325,136 +377,28 @@ onMounted(() => {
 .page-btn { background: transparent; border: 1px solid $border; border-radius: $r-sm; color: $text-muted; padding: 7px 10px; cursor: pointer; display: flex; align-items: center; transition: all 0.2s; &:hover:not(:disabled) { border-color: $red; color: $text; } &:disabled { opacity: 0.3; cursor: not-allowed; } }
 .page-info { font-size: 13px; color: $text-dim; font-weight: 500; }
 
-.tabs {
-    display: flex;
-    gap: 4px;
-    border-bottom: 1px solid $border;
-    margin-bottom: 20px;
-}
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid $border; margin-bottom: 20px; }
+.tab { display: flex; align-items: center; gap: 7px; padding: 9px 16px; background: transparent; border: none; border-bottom: 2px solid transparent; color: $text-muted; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; &:hover { color: $text; } &.active { color: $text; border-bottom-color: $red; } }
 
-.tab {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 9px 16px;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: $text-muted;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    margin-bottom: -1px;
-    transition: color 0.15s, border-color 0.15s;
-
-    &:hover { color: $text; }
-    &.active { color: $text; border-bottom-color: $red; }
-}
-
-.generate-form {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.gen-select, .gen-input {
-    background: #0d0d0d;
-    border: 1px solid $border;
-    border-radius: $r-sm;
-    color: $text;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    padding: 7px 10px;
-    outline: none;
-
-    &:focus { border-color: rgba($red, 0.4); }
-}
-
+.generate-form { display: flex; align-items: center; gap: 8px; }
+.gen-select, .gen-input { background: #0d0d0d; border: 1px solid $border; border-radius: $r-sm; color: $text; font-size: 13px; font-family: 'Inter', sans-serif; padding: 7px 10px; outline: none; &:focus { border-color: rgba($red, 0.4); } }
 .gen-input { width: 76px; }
+.gen-btn { display: flex; align-items: center; gap: 6px; padding: 7px 16px; background: $red; border: none; border-radius: $r-sm; color: white; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; &:hover:not(:disabled) { opacity: 0.85; } &:disabled { opacity: 0.5; cursor: not-allowed; } }
 
-.gen-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 16px;
-    background: $red;
-    border: none;
-    border-radius: $r-sm;
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    transition: opacity 0.15s;
-
-    &:hover:not(:disabled) { opacity: 0.85; }
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
-}
-
-.alert-ok, .alert-err {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    border-radius: $r-sm;
-    font-size: 13px;
-    margin-bottom: 16px;
-}
-
+.alert-ok, .alert-err { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: $r-sm; font-size: 13px; margin-bottom: 16px; }
 .alert-ok { background: rgba(76,175,80,0.1); color: #4caf50; border: 1px solid rgba(76,175,80,0.2); }
 .alert-err { background: rgba($red, 0.1); color: $red; border: 1px solid rgba($red, 0.2); }
 
-.stats-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.mini-stat {
-    background: #0a0a0a;
-    border: 1px solid $border;
-    border-radius: $r-md;
-    padding: 14px 20px;
-    min-width: 160px;
-}
-
+.stats-row { display: flex; gap: 12px; margin-bottom: 20px; }
+.mini-stat { background: #0a0a0a; border: 1px solid $border; border-radius: $r-md; padding: 14px 20px; min-width: 160px; }
 .ms-label { font-size: 11px; color: $text-dim; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
 .ms-val { font-size: 24px; font-weight: 900; color: $text; }
 
-.table-wrap {
-    background: #0a0a0a;
-    border: 1px solid $border;
-    border-radius: $r-md;
-    overflow: auto;
-}
-
+.table-wrap { background: #0a0a0a; border: 1px solid $border; border-radius: $r-md; overflow: auto; }
 .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 700px;
-
-    th {
-        padding: 10px 14px;
-        text-align: left;
-        font-size: 11px;
-        font-weight: 700;
-        color: $text-dim;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        background: rgba(255,255,255,0.02);
-        border-bottom: 1px solid $border;
-        white-space: nowrap;
-    }
-
-    td {
-        padding: 11px 14px;
-        font-size: 13px;
-        color: $text-muted;
-        border-bottom: 1px solid rgba($border, 0.5);
-        vertical-align: middle;
-    }
-
+    width: 100%; border-collapse: collapse; min-width: 800px;
+    th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: $text-dim; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255,255,255,0.02); border-bottom: 1px solid $border; white-space: nowrap; }
+    td { padding: 11px 14px; font-size: 13px; color: $text-muted; border-bottom: 1px solid rgba($border, 0.5); vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: rgba(255,255,255,0.02); }
 }
@@ -462,49 +406,47 @@ onMounted(() => {
 .td-id { color: $text-dark; font-size: 12px; }
 .td-date { color: $text-dim; font-size: 12px; white-space: nowrap; }
 .td-dim { color: $text-dim; font-size: 12px; }
-.td-num { color: $text-muted; white-space: nowrap; }
+.td-num { color: $text-muted; white-space: nowrap; font-size: 12px; }
 .td-amount { font-weight: 600; color: $text; white-space: nowrap; }
 .td-invoice-num { font-weight: 600; color: $text; font-size: 12px; white-space: nowrap; }
-.td-mono { font-family: monospace; font-size: 11px; color: $text-dark; }
+.td-mono { font-family: monospace; font-size: 11px; color: $text-dark; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.user-cell { display: flex; flex-direction: column; gap: 1px; }
+.user-cell { display: flex; flex-direction: column; gap: 2px; }
 .user-name { color: $text; font-size: 13px; font-weight: 500; }
 .user-email { color: $text-dim; font-size: 11px; }
-.user-company { color: $text-dark; font-size: 11px; }
+.user-company { color: $text-dark; font-size: 11px; display: flex; align-items: center; gap: 3px; }
 
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 9px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    white-space: nowrap;
+.ksef-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; background: rgba(76,175,80,0.1); color: #4caf50; &.ksef-no { background: transparent; color: $text-dark; } }
 
-    &.status-ok { background: rgba(76,175,80,0.12); color: #4caf50; }
-    &.status-pending { background: rgba(255,152,0,0.12); color: #ff9800; }
-    &.status-generated { background: rgba(33,150,243,0.12); color: #2196f3; }
-    &.status-fail { background: rgba($red, 0.12); color: $red; }
-}
+.status-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.status-ok { background: rgba(76,175,80,0.12); color: #4caf50; } &.status-pending { background: rgba(255,152,0,0.12); color: #ff9800; } &.status-generated { background: rgba(33,150,243,0.12); color: #2196f3; } &.status-refunded { background: rgba(41,128,185,0.12); color: #5dade2; } &.status-fail { background: rgba($red, 0.12); color: $red; } }
 
 .actions { display: flex; gap: 4px; }
+.act-btn { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: transparent; border: 1px solid $border; border-radius: $r-sm; color: $text-muted; cursor: pointer; transition: all 0.15s; &:hover:not(:disabled) { border-color: $red; color: $text; } &:disabled { opacity: 0.4; cursor: not-allowed; } }
 
-.act-btn {
+// Status correction dropdown
+.status-correct-wrap {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    background: transparent;
+    gap: 6px;
+    position: relative;
+}
+
+.status-select {
+    background: #0d0d0d;
     border: 1px solid $border;
     border-radius: $r-sm;
-    color: $text-muted;
+    color: $text;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    padding: 5px 8px;
+    outline: none;
     cursor: pointer;
-    transition: all 0.15s;
-
-    &:hover:not(:disabled) { border-color: $red; color: $text; }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    transition: border-color 0.2s;
+    &:focus { border-color: rgba($red, 0.5); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
+
+.status-updating-icon { color: $text-dim; }
 
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

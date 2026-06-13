@@ -7,6 +7,17 @@ export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module'],
   compatibilityDate: '2025-07-15',
   ssr: false,
+
+  app: {
+    pageTransition: { name: 'page-fade', mode: 'out-in' },
+  },
+
+  nitro: {
+    externals: {
+      inline: [],
+      external: ['sharp'],
+    },
+  },
   devtools: { enabled: true },
 
   css: ['~/assets/scss/main.scss', '@mdi/font/css/materialdesignicons.min.css'],
@@ -15,7 +26,8 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@import "${scss('_variables')}"; @import "${scss('_mixins')}";`
+          additionalData: `@import "${scss('_variables')}"; @import "${scss('_mixins')}";`,
+          silenceDeprecations: ['import', 'color-functions', 'global-builtin'],
         }
       }
     }
@@ -48,8 +60,24 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Server-only secrets (never exposed to client)
+    imojeWebhookSecret: process.env.NUXT_IMOJE_WEBHOOK_SECRET ?? '',
+    internalServiceSecret: process.env.NUXT_INTERNAL_SERVICE_SECRET ?? '',
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE ?? 'http://localhost:5105/'
+      apiBase: process.env.NUXT_PUBLIC_API_BASE ?? 'http://localhost:5105/',
+      premiereStart: process.env.NUXT_PUBLIC_PREMIERE_START ?? '2026-06-12T00:00:00+02:00',
+      premiereEnd: process.env.NUXT_PUBLIC_PREMIERE_END ?? '2026-06-15T00:00:00+02:00',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? 'https://carizo.pl',
+      // Analytics — set in .env to activate
+      gtmId:       process.env.NUXT_PUBLIC_GTM_ID       ?? '',
+      ga4Id:       process.env.NUXT_PUBLIC_GA4_ID       ?? '',
+      metaPixelId: process.env.NUXT_PUBLIC_META_PIXEL_ID ?? '',
+      clarityId:   process.env.NUXT_PUBLIC_CLARITY_ID   ?? '',
+      // Social media links — set in .env
+      socialFacebook:  process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK  ?? '',
+      socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM ?? '',
+      socialTiktok:    process.env.NUXT_PUBLIC_SOCIAL_TIKTOK    ?? '',
+      socialYoutube:   process.env.NUXT_PUBLIC_SOCIAL_YOUTUBE   ?? '',
     }
   }
 })

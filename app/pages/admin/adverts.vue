@@ -132,7 +132,7 @@
 <script setup lang="ts">
 import type { AdminAdvert } from '~/types'
 
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'admin' })
 
 const { getImageUrl, placeholder } = useImageUrl()
 

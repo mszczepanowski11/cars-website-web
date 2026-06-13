@@ -1,72 +1,239 @@
 <template>
     <div class="auth-bg">
-        <div class="auth-card">
-            <div class="auth-logo">CARI<span>ZO</span></div>
+
+        <!-- Success screen after registration -->
+        <Transition name="success-fade">
+            <div v-if="registrationSuccess" class="reg-success">
+                <div class="reg-success-logo">CARI<span>ZO</span></div>
+                <div class="reg-success-icon">
+                    <v-icon icon="mdi-account-check-outline" size="44" />
+                </div>
+                <h2 class="reg-success-title">Konto zostało utworzone!</h2>
+                <p class="reg-success-desc">
+                    Witaj w CARIZO! Twoje konto jest aktywne i gotowe do użycia.<br>
+                    Zaloguj się i zacznij korzystać z platformy.
+                </p>
+                <div class="reg-success-actions">
+                    <NuxtLink to="/" class="rsact-btn rsact-btn--primary">
+                        <v-icon icon="mdi-home-outline" size="17" />
+                        Strona główna
+                    </NuxtLink>
+                    <NuxtLink to="/add-advert" class="rsact-btn rsact-btn--secondary">
+                        <v-icon icon="mdi-plus" size="17" />
+                        Dodaj pierwsze ogłoszenie
+                    </NuxtLink>
+                </div>
+            </div>
+        </Transition>
+
+        <div v-if="!registrationSuccess" class="auth-card">
+            <NuxtLink to="/" class="auth-logo">CARI<span>ZO</span></NuxtLink>
             <h2>Zarejestruj się</h2>
             <p class="auth-sub">Dołącz do społeczności CARIZO</p>
 
             <!-- Account type toggle -->
             <div class="type-toggle">
                 <button
+                    type="button"
                     class="type-btn"
                     :class="{ 'type-active': accountType === 'Personal' }"
                     @click="accountType = 'Personal'"
                 >
                     <v-icon icon="mdi-account-outline" size="18" />
-                    Konto osobiste
+                    Sprzedawca prywatny
                 </button>
                 <button
+                    type="button"
                     class="type-btn"
                     :class="{ 'type-active': accountType === 'Business' }"
                     @click="accountType = 'Business'"
                 >
                     <v-icon icon="mdi-domain" size="18" />
-                    Konto firmowe
+                    Dealer / Firma
                 </button>
             </div>
 
-            <v-form @submit.prevent="submit" :disabled="loading">
+            <form class="auth-form" @submit.prevent="submit">
                 <!-- Business fields -->
                 <template v-if="accountType === 'Business'">
-                    <v-text-field v-model="companyName" label="Nazwa firmy" required class="mb-3" />
-                    <v-text-field v-model="nip" label="NIP" placeholder="0000000000" maxlength="10" required class="mb-3" />
+                    <div class="auth-field">
+                        <label class="auth-label">Nazwa firmy <span class="req">*</span></label>
+                        <div class="auth-input-wrap">
+                            <v-icon icon="mdi-domain" size="17" class="auth-field-icon" />
+                            <input v-model="companyName" class="auth-input" placeholder="np. Auto Salon Kowalski" required />
+                        </div>
+                    </div>
+                    <div class="auth-field">
+                        <label class="auth-label">NIP <span class="req">*</span></label>
+                        <div class="auth-input-wrap">
+                            <v-icon icon="mdi-card-account-details-outline" size="17" class="auth-field-icon" />
+                            <input v-model="nip" class="auth-input" placeholder="0000000000" maxlength="13" required />
+                        </div>
+                        <div v-if="nip && nip.replace(/\D/g,'').length !== 10" class="auth-hint">
+                            Wymagane 10 cyfr
+                        </div>
+                    </div>
                 </template>
 
-                <!-- Personal/contact info -->
-                <div class="frow">
-                    <v-text-field v-model="name" :label="accountType === 'Business' ? 'Imię (kontakt)' : 'Imię'" required />
-                    <v-text-field v-model="surname" :label="accountType === 'Business' ? 'Nazwisko (kontakt)' : 'Nazwisko'" required />
+                <!-- Name row -->
+                <div class="auth-row">
+                    <div class="auth-field">
+                        <label class="auth-label">{{ accountType === 'Business' ? 'Imię (kontakt)' : 'Imię' }} <span class="req">*</span></label>
+                        <div class="auth-input-wrap">
+                            <input v-model="name" class="auth-input auth-input--solo" :placeholder="accountType === 'Business' ? 'Jan' : 'Jan'" required />
+                        </div>
+                    </div>
+                    <div class="auth-field">
+                        <label class="auth-label">{{ accountType === 'Business' ? 'Nazwisko (kontakt)' : 'Nazwisko' }} <span class="req">*</span></label>
+                        <div class="auth-input-wrap">
+                            <input v-model="surname" class="auth-input auth-input--solo" placeholder="Kowalski" required />
+                        </div>
+                    </div>
                 </div>
-                <v-text-field v-model="email" label="Adres email" type="email" required class="mb-3" />
-                <v-text-field v-model="phoneNumber" label="Numer telefonu" type="tel" required class="mb-3" />
-                <v-text-field v-model="password" label="Hasło" type="password" required class="mb-4" />
 
-                <v-alert v-if="error" type="error" class="mb-4">{{ error }}</v-alert>
+                <div class="auth-field">
+                    <label class="auth-label">Adres email <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <v-icon icon="mdi-email-outline" size="17" class="auth-field-icon" />
+                        <input v-model="email" type="email" class="auth-input" placeholder="np. jan@kowalski.pl" required autocomplete="email" />
+                    </div>
+                </div>
 
-                <v-btn type="submit" color="primary" size="large" block :loading="loading">
-                    Zarejestruj się
-                </v-btn>
-            </v-form>
+                <div class="auth-field">
+                    <label class="auth-label">Numer telefonu <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <v-icon icon="mdi-phone-outline" size="17" class="auth-field-icon" />
+                        <input v-model="phoneNumber" type="tel" class="auth-input" placeholder="+48 600 123 456" required />
+                    </div>
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label">Hasło <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <v-icon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
+                        <input
+                            v-model="password"
+                            :type="showPassword ? 'text' : 'password'"
+                            class="auth-input"
+                            placeholder="Min. 8 znaków"
+                            required
+                            autocomplete="new-password"
+                        />
+                        <button type="button" class="auth-eye" @click="showPassword = !showPassword">
+                            <v-icon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
+                        </button>
+                    </div>
+                    <!-- Password strength -->
+                    <div v-if="password" class="strength-wrap">
+                        <div class="strength-track">
+                            <div class="strength-fill" :class="`strength-${strengthLevel}`" :style="{ width: strengthWidth }" />
+                        </div>
+                        <span class="strength-label" :class="`strength-label-${strengthLevel}`">{{ strengthLabel }}</span>
+                    </div>
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label">Powtórz hasło <span class="req">*</span></label>
+                    <div class="auth-input-wrap" :class="{ 'auth-input-wrap--error': passwordConfirm && password !== passwordConfirm }">
+                        <v-icon icon="mdi-lock-check-outline" size="17" class="auth-field-icon" />
+                        <input
+                            v-model="passwordConfirm"
+                            type="password"
+                            class="auth-input"
+                            placeholder="••••••••"
+                            required
+                            autocomplete="new-password"
+                        />
+                    </div>
+                    <div v-if="passwordConfirm && password !== passwordConfirm" class="auth-hint auth-hint--error">
+                        Hasła nie są identyczne.
+                    </div>
+                </div>
+
+                <div v-if="validationError || error" class="auth-error">
+                    <v-icon icon="mdi-alert-circle-outline" size="15" />
+                    {{ validationError || error }}
+                </div>
+
+                <button type="submit" class="auth-btn" :disabled="loading">
+                    <v-icon v-if="loading" icon="mdi-loading" size="18" class="spin" />
+                    <span>{{ loading ? 'Rejestrowanie...' : 'Zarejestruj się' }}</span>
+                </button>
+            </form>
 
             <p class="auth-link">Masz już konto? <NuxtLink to="/login">Zaloguj się</NuxtLink></p>
         </div>
+
     </div>
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
 const { register, loading, error } = useAuth()
 
-const accountType = ref<'Personal' | 'Business'>('Personal')
-const name        = ref('')
-const surname     = ref('')
-const email       = ref('')
-const phoneNumber = ref('')
-const password    = ref('')
-const companyName = ref('')
-const nip         = ref('')
+const accountType      = ref<'Personal' | 'Business'>('Personal')
+const name             = ref('')
+const surname          = ref('')
+const email            = ref('')
+const phoneNumber      = ref('')
+const password         = ref('')
+const passwordConfirm  = ref('')
+const companyName      = ref('')
+const nip              = ref('')
+const validationError  = ref('')
+const showPassword     = ref(false)
+const registrationSuccess = ref(false)
+
+const redirectTo = computed(() => {
+    const r = route.query.redirect
+    return typeof r === 'string' && r.startsWith('/') ? r : '/'
+})
+
+const strengthLevel = computed(() => {
+    const p = password.value
+    if (!p) return 0
+    let score = 0
+    if (p.length >= 8) score++
+    if (/[A-Z]/.test(p)) score++
+    if (/[0-9]/.test(p)) score++
+    if (/[^A-Za-z0-9]/.test(p)) score++
+    return score
+})
+
+const strengthWidth = computed(() => `${strengthLevel.value * 25}%`)
+
+const strengthLabel = computed(() => {
+    const labels = ['', 'Bardzo słabe', 'Słabe', 'Dobre', 'Silne']
+    return labels[strengthLevel.value] ?? ''
+})
 
 async function submit() {
-    await register({
+    validationError.value = ''
+    if (password.value !== passwordConfirm.value) {
+        validationError.value = 'Hasła nie są identyczne.'
+        return
+    }
+    if (password.value.length < 8) {
+        validationError.value = 'Hasło musi mieć co najmniej 8 znaków.'
+        return
+    }
+    const phoneDigits = phoneNumber.value.replace(/\D/g, '')
+    if (phoneDigits.length < 9) {
+        validationError.value = 'Podaj prawidłowy numer telefonu (min. 9 cyfr).'
+        return
+    }
+    if (accountType.value === 'Business') {
+        const nipDigits = nip.value.replace(/\D/g, '')
+        if (nipDigits.length !== 10) {
+            validationError.value = 'NIP musi składać się z dokładnie 10 cyfr.'
+            return
+        }
+        if (!companyName.value.trim()) {
+            validationError.value = 'Podaj nazwę firmy.'
+            return
+        }
+    }
+    const ok = await register({
         name: name.value,
         surname: surname.value,
         email: email.value,
@@ -75,7 +242,10 @@ async function submit() {
         accountType: accountType.value,
         companyName: accountType.value === 'Business' ? companyName.value : undefined,
         nip: accountType.value === 'Business' ? nip.value : undefined,
-    })
+    }, redirectTo.value)
+    if (ok !== false) {
+        registrationSuccess.value = true
+    }
 }
 </script>
 
@@ -87,34 +257,52 @@ async function submit() {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    padding-top: calc(#{$nav-height} + 32px);
+    padding-bottom: 60px;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba($red, 0.06) 0%, transparent 70%);
+        pointer-events: none;
+    }
 }
 
 .auth-card {
     @include card($r-xl);
-    padding: 50px 40px;
+    padding: 48px 40px 40px;
     width: 100%;
     max-width: 500px;
+    position: relative;
+    z-index: 1;
+
+    @include respond-to(sm) { padding: 32px 20px 24px; }
 }
 
 .auth-logo {
-    font-size: 36px;
+    display: inline-block;
+    font-size: 28px;
     font-weight: 900;
-    letter-spacing: 6px;
+    letter-spacing: 5px;
     color: $text;
+    text-decoration: none;
     margin-bottom: 28px;
     span { color: $red; }
 }
 
 h2 {
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 800;
     color: $text;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .auth-sub {
     color: $text-dim;
     margin-bottom: 24px;
+    font-size: 14px;
 }
 
 .type-toggle {
@@ -125,7 +313,7 @@ h2 {
     border-radius: $r-md;
     padding: 4px;
     gap: 4px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 }
 
 .type-btn {
@@ -145,26 +333,270 @@ h2 {
     transition: all 0.2s;
 
     &:hover { color: $text; }
-
-    &.type-active {
-        background: $red;
-        color: white;
-        font-weight: 700;
-    }
+    &.type-active { background: $red; color: white; font-weight: 700; }
 }
 
-.frow {
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.auth-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 12px;
+
     @include respond-to(xs) { grid-template-columns: 1fr; }
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.auth-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-muted;
+}
+
+.req { color: $red; }
+
+.auth-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: $r-md;
+    padding: 0 14px;
+    transition: border-color 0.2s;
+
+    &:focus-within { border-color: rgba($red, 0.5); }
+    &--error { border-color: rgba(220,50,50,0.5); }
+}
+
+.auth-field-icon { color: $text-dark; flex-shrink: 0; }
+
+.auth-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 0;
+    min-width: 0;
+    &::placeholder { color: $text-dark; }
+
+    &--solo { padding: 12px 0; }
+}
+
+.auth-eye {
+    background: transparent;
+    border: none;
+    color: $text-dark;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+    &:hover { color: $text-muted; }
+}
+
+.auth-hint {
+    font-size: 11px;
+    color: $text-dark;
+    &--error { color: #e55; }
+}
+
+.strength-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.strength-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.strength-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease, background 0.3s ease;
+
+    &.strength-1 { background: #e53935; }
+    &.strength-2 { background: #ff9800; }
+    &.strength-3 { background: #fdd835; }
+    &.strength-4 { background: #4caf50; }
+}
+
+.strength-label {
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &.strength-label-1 { color: #e53935; }
+    &.strength-label-2 { color: #ff9800; }
+    &.strength-label-3 { color: #fdd835; }
+    &.strength-label-4 { color: #4caf50; }
+}
+
+.auth-error {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(220,50,50,0.08);
+    border: 1px solid rgba(220,50,50,0.25);
+    border-radius: $r-sm;
+    color: #e55;
+    font-size: 13px;
+    padding: 10px 14px;
+}
+
+.auth-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: $red;
+    color: white;
+    border: none;
+    border-radius: $r-md;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 14px 24px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 4px;
+    width: 100%;
+
+    &:hover:not(:disabled) { opacity: 0.88; }
+    &:disabled { opacity: 0.55; cursor: not-allowed; }
 }
 
 .auth-link {
     color: $text-dim;
     text-align: center;
-    margin-top: 24px;
+    margin-top: 18px;
     font-size: 14px;
-    a { color: $red; }
+
+    a {
+        color: $red;
+        font-weight: 600;
+        &:hover { text-decoration: underline; }
+    }
 }
+
+// ── Registration success ──────────────────────────────────────────────────────
+.reg-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    max-width: 460px;
+    width: 100%;
+    animation: success-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes success-pop {
+    from { opacity: 0; transform: scale(0.9) translateY(16px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0);    }
+}
+
+.reg-success-logo {
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: $text;
+    span { color: $red; }
+}
+
+.reg-success-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(76,175,80,0.1);
+    border: 2px solid rgba(76,175,80,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4caf50;
+    animation: icon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes icon-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.2); }
+    50%       { box-shadow: 0 0 0 14px rgba(76,175,80,0); }
+}
+
+.reg-success-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: $text;
+    margin: 0;
+}
+
+.reg-success-desc {
+    font-size: 14px;
+    color: $text-muted;
+    line-height: 1.8;
+    margin: 0;
+    max-width: 380px;
+}
+
+.reg-success-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 340px;
+}
+
+.rsact-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 14px 24px;
+    border-radius: $r-md;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s, border-color 0.2s, color 0.2s;
+
+    &--primary {
+        background: $red;
+        color: white;
+        border: none;
+        &:hover { opacity: 0.88; }
+    }
+    &--secondary {
+        background: transparent;
+        color: $text;
+        border: 1px solid rgba(255,255,255,0.15);
+        &:hover { border-color: rgba(255,255,255,0.3); }
+    }
+}
+
+// Transition
+.success-fade-enter-active { transition: opacity 0.35s ease; }
+.success-fade-leave-active { transition: opacity 0.2s ease; }
+.success-fade-enter-from,
+.success-fade-leave-to { opacity: 0; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.8s linear infinite; }
 </style>

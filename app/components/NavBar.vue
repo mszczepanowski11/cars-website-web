@@ -5,11 +5,14 @@ const authStatus = useCookie('auth_status')
 const isLoggedIn = computed(() => !!authStatus.value)
 const { logout } = useAuth()
 const { unreadCount, fetchUnreadCount } = useMessages()
+const { fetchUnreadCount: fetchNotifCount, startPolling, stopPolling } = useNotifications()
 
 const isAdmin = ref(false)
 onMounted(async () => {
     fetchUnreadCount()
     if (isLoggedIn.value) {
+        fetchNotifCount()
+        startPolling(30_000)
         try {
             const me = await $fetch<UserProfile>('/api/proxy/api/User/me')
             isAdmin.value = !!me.isAdmin
@@ -17,17 +20,27 @@ onMounted(async () => {
     }
 })
 
+onUnmounted(() => stopPolling())
+
 const categoriesOpen = ref(false)
 const mobileOpen = ref(false)
 const mobileCatsOpen = ref(false)
 
+function toggleCategories() {
+    categoriesOpen.value = !categoriesOpen.value
+}
+
+function closeCategories() {
+    categoriesOpen.value = false
+}
+
 const categories = [
-    { label: 'Osobowe', icon: 'mdi-car-outline' },
-    { label: 'SUV / Crossover', icon: 'mdi-car-estate' },
-    { label: 'Elektryczne', icon: 'mdi-ev-station' },
-    { label: 'Motocykle', icon: 'mdi-motorbike' },
-    { label: 'Dostawcze', icon: 'mdi-truck-outline' },
-    { label: 'Części', icon: 'mdi-car-cog' },
+    { id: 1, label: 'Auta osobowe', icon: 'mdi-car-outline' },
+    { id: 6, label: 'Motocykle', icon: 'mdi-motorbike' },
+    { id: 2, label: 'Dostawcze', icon: 'mdi-truck-outline' },
+    { id: 3, label: 'Ciężarowe', icon: 'mdi-truck' },
+    { id: 5, label: 'Części', icon: 'mdi-car-cog' },
+    { id: 4, label: 'Maszyny', icon: 'mdi-excavator' },
 ]
 
 function closeMobile() {
@@ -41,7 +54,24 @@ function handleLogout() {
 }
 
 const route = useRoute()
-watch(() => route.path, closeMobile)
+watch(() => route.path, () => { closeMobile(); closeCategories() })
+
+let _clickOutsideHandler: ((e: MouseEvent) => void) | null = null
+onMounted(() => {
+    _clickOutsideHandler = (e: MouseEvent) => {
+        const dropdown = document.querySelector('.nav-dropdown')
+        if (dropdown && !dropdown.contains(e.target as Node)) {
+            closeCategories()
+        }
+    }
+    document.addEventListener('click', _clickOutsideHandler)
+})
+onUnmounted(() => {
+    if (_clickOutsideHandler) {
+        document.removeEventListener('click', _clickOutsideHandler)
+        _clickOutsideHandler = null
+    }
+})
 </script>
 
 <template>
@@ -51,18 +81,19 @@ watch(() => route.path, closeMobile)
 
             <nav class="nav-links">
                 <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
-                <div class="nav-dropdown" @mouseenter="categoriesOpen = true" @mouseleave="categoriesOpen = false">
-                    <button class="nav-dropdown-trigger">
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-trigger" @click="toggleCategories">
                         Kategorie
                         <v-icon icon="mdi-chevron-down" size="16" :class="{ rotated: categoriesOpen }" />
                     </button>
                     <div v-show="categoriesOpen" class="nav-dropdown-menu">
-                        <NuxtLink v-for="c in categories" :key="c.label"
-                            :to="`/categories?type=${encodeURIComponent(c.label)}`" class="dropdown-item">
+                        <NuxtLink v-for="c in categories" :key="c.id"
+                            :to="`/adverts?categoryId=${c.id}`" class="dropdown-item"
+                            @click="closeCategories">
                             <v-icon :icon="c.icon" size="16" />
                             {{ c.label }}
                         </NuxtLink>
-                        <NuxtLink to="/categories" class="dropdown-item dropdown-all">
+                        <NuxtLink to="/adverts" class="dropdown-item dropdown-all" @click="closeCategories">
                             Wszystkie kategorie
                             <v-icon icon="mdi-arrow-right" size="14" />
                         </NuxtLink>
@@ -142,13 +173,13 @@ watch(() => route.path, closeMobile)
                     </button>
                     <transition name="expand">
                         <div v-if="mobileCatsOpen" class="drawer-subcats">
-                            <NuxtLink v-for="c in categories" :key="c.label"
-                                :to="`/categories?type=${encodeURIComponent(c.label)}`" class="drawer-sublink"
+                            <NuxtLink v-for="c in categories" :key="c.id"
+                                :to="`/adverts?categoryId=${c.id}`" class="drawer-sublink"
                                 @click="closeMobile">
                                 <v-icon :icon="c.icon" size="15" />
                                 {{ c.label }}
                             </NuxtLink>
-                            <NuxtLink to="/categories" class="drawer-sublink drawer-sublink--all" @click="closeMobile">
+                            <NuxtLink to="/adverts" class="drawer-sublink drawer-sublink--all" @click="closeMobile">
                                 Wszystkie kategorie
                                 <v-icon icon="mdi-arrow-right" size="14" class="ml-auto" />
                             </NuxtLink>
@@ -186,6 +217,10 @@ watch(() => route.path, closeMobile)
                         <NuxtLink to="/dashboard" class="drawer-link" @click="closeMobile">
                             <v-icon icon="mdi-account-circle-outline" size="18" />
                             Konto
+                        </NuxtLink>
+                        <NuxtLink to="/faktury" class="drawer-link" @click="closeMobile">
+                            <v-icon icon="mdi-receipt-outline" size="18" />
+                            Faktury i płatności
                         </NuxtLink>
                     </template>
                 </nav>

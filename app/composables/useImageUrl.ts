@@ -5,11 +5,13 @@ export const useImageUrl = () => {
     function getImageUrl(url: string | undefined | null, fallback = placeholder): string {
         if (!url) return fallback
         const base = config.public.apiBase.replace(/\/$/, '')
+        const lower = url.toLowerCase()
+        const baseLower = base.toLowerCase()
         // Convert backend /uploads/ URL to Nuxt proxy /img/ (avoids adblocker rules on /uploads/)
-        if (url.startsWith(base + '/uploads/')) {
+        if (lower.startsWith(baseLower + '/uploads/')) {
             return '/img/' + url.slice(base.length + '/uploads/'.length)
         }
-        if (url.startsWith('/uploads/')) {
+        if (lower.startsWith('/uploads/')) {
             return '/img/' + url.slice('/uploads/'.length)
         }
         return url

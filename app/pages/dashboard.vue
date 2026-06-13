@@ -28,6 +28,9 @@
                 <button class="nav-item" :class="{ active: section === 'reviews' }" @click="goReviews">
                     <v-icon icon="mdi-star-outline" size="19" /><span>Opinie i oceny</span>
                 </button>
+                <NuxtLink to="/transactions" class="nav-item">
+                    <v-icon icon="mdi-handshake-outline" size="19" /><span>Transakcje</span>
+                </NuxtLink>
                 <NuxtLink to="/faktury" class="nav-item">
                     <v-icon icon="mdi-receipt-text-outline" size="19" /><span>Faktury</span>
                 </NuxtLink>
@@ -52,6 +55,36 @@
             </div>
         </aside>
 
+        <!-- Mobile nav strip (visible only when sidebar is hidden) -->
+        <nav class="dash-mobile-nav">
+            <button :class="['dmn-item', { active: section === 'overview' }]" @click="section = 'overview'">
+                <v-icon icon="mdi-view-dashboard-outline" size="20" /><span>Panel</span>
+            </button>
+            <NuxtLink to="/my-adverts" class="dmn-item">
+                <v-icon icon="mdi-card-text-outline" size="20" /><span>Ogłoszenia</span>
+            </NuxtLink>
+            <NuxtLink to="/messages" class="dmn-item">
+                <v-icon icon="mdi-email-outline" size="20" /><span>Wiadomości</span>
+                <span v-if="stats?.unreadMessages" class="dmn-badge">{{ stats.unreadMessages }}</span>
+            </NuxtLink>
+            <button :class="['dmn-item', { active: section === 'notifications' }]" @click="goNotifications">
+                <v-icon icon="mdi-bell-outline" size="20" /><span>Notif.</span>
+                <span v-if="notifUnread > 0" class="dmn-badge">{{ notifUnread }}</span>
+            </button>
+            <button :class="['dmn-item', { active: section === 'profile' }]" @click="goProfile">
+                <v-icon icon="mdi-account-outline" size="20" /><span>Profil</span>
+            </button>
+            <button :class="['dmn-item', { active: section === 'settings' }]" @click="goSettings">
+                <v-icon icon="mdi-cog-outline" size="20" /><span>Ustawienia</span>
+            </button>
+            <NuxtLink to="/transactions" class="dmn-item">
+                <v-icon icon="mdi-handshake-outline" size="20" /><span>Transakcje</span>
+            </NuxtLink>
+            <button class="dmn-item dmn-item--danger" @click="authLogout">
+                <v-icon icon="mdi-logout" size="20" /><span>Wyloguj</span>
+            </button>
+        </nav>
+
         <!-- Center -->
         <main class="dash-main">
 
@@ -63,12 +96,11 @@
                     <div class="banner-content">
                         <div class="avatar-wrap">
                             <div class="avatar">{{ initials }}</div>
-                            <div class="avatar-online" />
                         </div>
                         <div class="profile-info">
                             <div class="profile-name-row">
                                 <h1 class="profile-name">{{ profile?.name }} {{ profile?.surname }}</h1>
-                                <v-icon icon="mdi-check-decagram" size="18" class="verified-badge" />
+                                <v-icon v-if="profile?.accountType === 'Business'" icon="mdi-check-decagram" size="18" class="verified-badge" />
                             </div>
                             <div class="profile-role">{{ profile?.accountType === 'Business' ? (profile.companyName ??
                                 'Dealer') : 'Użytkownik indywidualny' }}</div>
@@ -99,7 +131,7 @@
                 <div class="stats-row">
                     <div class="stat-card">
                         <v-icon icon="mdi-car-outline" size="22" class="stat-icon" />
-                        <div class="stat-num">{{ stats?.totalAdverts ?? 0 }}</div>
+                        <div class="stat-num" v-count-up="stats?.totalAdverts ?? 0" />
                         <div class="stat-label">Moje ogłoszenia</div>
                         <div class="stat-sub green">{{ stats?.activeAdverts ?? 0 }} aktywnych</div>
                     </div>
@@ -111,12 +143,12 @@
                     </div>
                     <div class="stat-card">
                         <v-icon icon="mdi-check-circle-outline" size="22" class="stat-icon" />
-                        <div class="stat-num">{{ stats?.totalSold ?? 0 }}</div>
+                        <div class="stat-num" v-count-up="stats?.totalSold ?? 0" />
                         <div class="stat-label">Sprzedanych aut</div>
                     </div>
                     <div class="stat-card">
                         <v-icon icon="mdi-heart-outline" size="22" class="stat-icon" />
-                        <div class="stat-num">{{ stats?.favoritesCount ?? 0 }}</div>
+                        <div class="stat-num" v-count-up="stats?.favoritesCount ?? 0" />
                         <div class="stat-label">W ulubionych</div>
                     </div>
                     <div class="stat-card">
@@ -132,8 +164,35 @@
                     </div>
                     <div class="stat-card">
                         <v-icon icon="mdi-account-multiple-outline" size="22" class="stat-icon" />
-                        <div class="stat-num">{{ stats?.followersCount ?? 0 }}</div>
+                        <div class="stat-num" v-count-up="stats?.followersCount ?? 0" />
                         <div class="stat-label">Obserwujący</div>
+                    </div>
+                </div>
+
+                <!-- Recently viewed strip -->
+                <div v-if="recentAdverts.length" class="recent-section">
+                    <div class="recent-hd">
+                        <v-icon icon="mdi-history" size="14" class="recent-hd-icon" />
+                        Ostatnio oglądane
+                    </div>
+                    <div class="recent-strip">
+                        <NuxtLink
+                            v-for="a in recentAdverts"
+                            :key="a.id"
+                            :to="`/advert/${a.id}`"
+                            class="recent-mini-card"
+                        >
+                            <img
+                                :src="getImageUrl(a.images?.find(i => i.isMain)?.url)"
+                                class="recent-mini-img"
+                                :alt="a.title"
+                            />
+                            <div class="recent-mini-body">
+                                <div class="recent-mini-name">{{ a.brand?.name }} {{ a.model?.name }}</div>
+                                <div class="recent-mini-price">{{ Number(a.price).toLocaleString('pl') }} zł</div>
+                                <div class="recent-mini-meta">{{ a.year }} · {{ Number(a.mileage).toLocaleString('pl') }} km</div>
+                            </div>
+                        </NuxtLink>
                     </div>
                 </div>
 
@@ -168,17 +227,26 @@
                                     <v-icon v-else icon="mdi-delete-outline" size="14" />
                                 </button>
                             </div>
-                            <NuxtLink :to="`/advert/${a.id}`" class="adcard-body">
-                                <div class="adcard-title">{{ a.brand?.name }} {{ a.model?.name }}</div>
-                                <div class="adcard-meta">{{ a.year }} • {{ a.fuelType?.name ?? '—' }} • {{
-                                    Number(a.mileage).toLocaleString('pl') }} km</div>
-                                <div class="adcard-price">{{ Number(a.price).toLocaleString('pl') }} zł</div>
-                                <div class="adcard-stats">
-                                    <span><v-icon icon="mdi-eye-outline" size="13" /> {{ a.viewCount ?? 0 }}</span>
-                                    <span><v-icon icon="mdi-heart-outline" size="13" /> {{ a.favoriteCount ?? 0
-                                        }}</span>
+                            <div class="adcard-body">
+                                <NuxtLink :to="`/advert/${a.id}`" class="adcard-link-area">
+                                    <div class="adcard-title">{{ a.brand?.name }} {{ a.model?.name }}</div>
+                                    <div class="adcard-meta">{{ a.year }} • {{ a.fuelType?.name ?? '—' }} • {{
+                                        Number(a.mileage).toLocaleString('pl') }} km</div>
+                                    <div class="adcard-price">{{ Number(a.price).toLocaleString('pl') }} zł</div>
+                                    <div class="adcard-stats">
+                                        <span><v-icon icon="mdi-eye-outline" size="13" /> {{ a.viewCount ?? 0 }}</span>
+                                        <span><v-icon icon="mdi-heart-outline" size="13" /> {{ a.favoriteCount ?? 0 }}</span>
+                                    </div>
+                                </NuxtLink>
+                                <div class="adcard-actions">
+                                    <NuxtLink :to="`/add-advert?edit=${a.id}`" class="adcard-act">
+                                        <v-icon icon="mdi-pencil-outline" size="12" />Edytuj
+                                    </NuxtLink>
+                                    <NuxtLink :to="`/promote-advert/${a.id}`" class="adcard-act adcard-act--promo">
+                                        <v-icon icon="mdi-star-outline" size="12" />Wyróżnij
+                                    </NuxtLink>
                                 </div>
-                            </NuxtLink>
+                            </div>
                         </div>
                     </div>
                     <div v-else class="empty-state">
@@ -338,9 +406,56 @@
             <template v-else-if="section === 'searches'">
                 <div class="section-topbar">
                     <h2 class="section-title">Zapisane wyszukiwania</h2>
+                    <button class="btn-red-sm" @click="showNewSearchForm = !showNewSearchForm">
+                        <v-icon icon="mdi-plus" size="14" />Nowe wyszukiwanie
+                    </button>
                 </div>
-                <div v-if="searchesLoading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" />
-                </div>
+
+                <!-- Create form -->
+                <transition name="slide-down">
+                    <div v-if="showNewSearchForm" class="new-search-form">
+                        <div class="nsf-row">
+                            <div class="nsf-field nsf-full">
+                                <label class="nsf-label">Nazwa *</label>
+                                <input v-model="newSearch.name" class="nsf-input" placeholder="np. BMW Kraków do 50 tys." />
+                            </div>
+                            <div class="nsf-field nsf-full">
+                                <label class="nsf-label">Szukaj frazy</label>
+                                <input v-model="newSearch.textSearch" class="nsf-input" placeholder="Marka, model..." />
+                            </div>
+                            <div class="nsf-field">
+                                <label class="nsf-label">Cena od (zł)</label>
+                                <input v-model="newSearch.priceFrom" type="number" class="nsf-input" placeholder="0" min="0" />
+                            </div>
+                            <div class="nsf-field">
+                                <label class="nsf-label">Cena do (zł)</label>
+                                <input v-model="newSearch.priceTo" type="number" class="nsf-input" placeholder="∞" min="0" />
+                            </div>
+                            <div class="nsf-field">
+                                <label class="nsf-label">Rok od</label>
+                                <input v-model="newSearch.yearFrom" type="number" class="nsf-input" placeholder="2000" />
+                            </div>
+                            <div class="nsf-field">
+                                <label class="nsf-label">Rok do</label>
+                                <input v-model="newSearch.yearTo" type="number" class="nsf-input" placeholder="2025" />
+                            </div>
+                        </div>
+                        <label class="nsf-toggle">
+                            <input v-model="newSearch.notifyOnNew" type="checkbox" class="nsf-checkbox" />
+                            <span>Powiadamiaj o nowych wynikach</span>
+                        </label>
+                        <div v-if="searchSaveError" class="nsf-error">{{ searchSaveError }}</div>
+                        <div class="nsf-actions">
+                            <button class="btn-ghost-sm" @click="showNewSearchForm = false">Anuluj</button>
+                            <button class="btn-red-sm" :disabled="!newSearch.name.trim() || searchSaving" @click="createSearch">
+                                <v-icon v-if="searchSaving" icon="mdi-loading" size="13" class="spin" />
+                                Zapisz wyszukiwanie
+                            </button>
+                        </div>
+                    </div>
+                </transition>
+
+                <div v-if="searchesLoading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" /></div>
                 <div v-else-if="savedSearches.length" class="searches-list">
                     <div v-for="s in savedSearches" :key="s.id" class="search-card">
                         <div class="search-card-left">
@@ -349,13 +464,11 @@
                             <div class="search-created">Zapisano: {{ formatDate(s.createdAt) }}</div>
                         </div>
                         <div class="search-card-right">
-                            <span v-if="s.newResultsCount > 0" class="new-results-badge">{{ s.newResultsCount }}
-                                nowych</span>
+                            <span v-if="s.newResultsCount > 0" class="new-results-badge">{{ s.newResultsCount }} nowych</span>
                             <NuxtLink :to="searchUrl(s.criteria)" class="btn-search-run">
                                 <v-icon icon="mdi-magnify" size="14" />Szukaj
                             </NuxtLink>
-                            <button class="btn-icon-danger" @click="deleteSearch(s.id)"><v-icon
-                                    icon="mdi-delete-outline" size="16" /></button>
+                            <button class="btn-icon-danger" @click="deleteSearch(s.id)"><v-icon icon="mdi-delete-outline" size="16" /></button>
                         </div>
                     </div>
                 </div>
@@ -451,7 +564,22 @@
                         </div>
                         <div class="form-group">
                             <label>NIP</label>
-                            <input v-model="profileForm.nip" class="form-input" />
+                            <input v-model="profileForm.nip" class="form-input" placeholder="np. 1234567890" />
+                        </div>
+                        <div class="form-section-title">Dane do faktury</div>
+                        <div class="form-group">
+                            <label>Ulica i numer</label>
+                            <input v-model="profileForm.street" class="form-input" placeholder="np. ul. Przykładowa 12/3" />
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Kod pocztowy</label>
+                                <input v-model="profileForm.postalCode" class="form-input" placeholder="00-000" />
+                            </div>
+                            <div class="form-group">
+                                <label>Kraj</label>
+                                <input v-model="profileForm.country" class="form-input" placeholder="Polska" />
+                            </div>
                         </div>
                     </template>
                     <div v-if="profileSuccess" class="alert-success">
@@ -646,9 +774,22 @@ const { fetchProfile, fetchStats, updateProfile, updatePassword, fetchSettings, 
 const { getMyReceivedReviews } = useReviews()
 const { notifications: allNotifications, unreadCount: notifUnread, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, getPreferences, updatePreference } = useNotifications()
 const { getFollowedAdverts, getFollowers } = useFollow()
-const { getSavedSearches, deleteSearch: deleteSavedSearch } = useSavedSearches()
+const { getSavedSearches, deleteSearch: deleteSavedSearch, saveSearch } = useSavedSearches()
 const { logout: authLogout } = useAuth()
 const { getImageUrl } = useImageUrl()
+const { observe: observeCount } = useCountUp()
+const { getIds: getRecentIds } = useRecentlyViewed()
+
+// Count-up directive for stat numbers
+const vCountUp = {
+    mounted(el: HTMLElement, { value }: { value: number }) {
+        el.textContent = '0'
+        if (value > 0) observeCount(el, value)
+    },
+    updated(el: HTMLElement, { value, oldValue }: { value: number; oldValue: number }) {
+        if (value !== oldValue) observeCount(el, value)
+    },
+}
 
 // Section routing
 type Section = 'overview' | 'notifications' | 'searches' | 'reviews' | 'profile' | 'settings'
@@ -662,6 +803,7 @@ const advertTotal = ref(0)
 const advertPage = ref(1)
 const loading = ref(true)
 const loadingMore = ref(false)
+const recentAdverts = ref<CarAdvert[]>([])
 
 // Tabs within overview
 const activeTab = ref('adverts')
@@ -701,8 +843,14 @@ const savedSearches = ref<SavedSearch[]>([])
 const searchesLoading = ref(false)
 const savedSearchNewCount = computed(() => savedSearches.value.reduce((s, ss) => s + (ss.newResultsCount ?? 0), 0))
 
+// New saved search form
+const newSearch = reactive({ name: '', textSearch: '', priceFrom: '', priceTo: '', yearFrom: '', yearTo: '', notifyOnNew: true })
+const searchSaving = ref(false)
+const searchSaveError = ref('')
+const showNewSearchForm = ref(false)
+
 // Profile form
-const profileForm = reactive<UpdateProfileDto>({ name: '', surname: '', phoneNumber: '', city: '', region: '', about: '', companyName: '', nip: '' })
+const profileForm = reactive<UpdateProfileDto>({ name: '', surname: '', phoneNumber: '', city: '', region: '', about: '', companyName: '', nip: '', street: '', postalCode: '', country: '' })
 const profileSaving = ref(false)
 const profileSuccess = ref(false)
 const profileError = ref<string | null>(null)
@@ -792,6 +940,9 @@ async function goProfile() {
             about: profile.value.about ?? '',
             companyName: profile.value.companyName ?? '',
             nip: profile.value.nip ?? '',
+            street: profile.value.street ?? '',
+            postalCode: profile.value.postalCode ?? '',
+            country: profile.value.country ?? '',
         })
     }
 }
@@ -861,6 +1012,28 @@ async function deleteSearch(id: number) {
         await deleteSavedSearch(id)
         savedSearches.value = savedSearches.value.filter(s => s.id !== id)
     } catch { }
+}
+
+async function createSearch() {
+    if (!newSearch.name.trim()) return
+    searchSaving.value = true
+    searchSaveError.value = ''
+    try {
+        const criteria: SearchAdvertDto = {}
+        if (newSearch.textSearch.trim()) criteria.textSearch = newSearch.textSearch.trim()
+        if (newSearch.priceFrom) criteria.priceFrom = Number(newSearch.priceFrom)
+        if (newSearch.priceTo) criteria.priceTo = Number(newSearch.priceTo)
+        if (newSearch.yearFrom) criteria.yearFrom = Number(newSearch.yearFrom)
+        if (newSearch.yearTo) criteria.yearTo = Number(newSearch.yearTo)
+        const s = await saveSearch({ name: newSearch.name.trim(), criteria, notifyOnNew: newSearch.notifyOnNew })
+        savedSearches.value.unshift(s)
+        Object.assign(newSearch, { name: '', textSearch: '', priceFrom: '', priceTo: '', yearFrom: '', yearTo: '', notifyOnNew: true })
+        showNewSearchForm.value = false
+    } catch (e: any) {
+        searchSaveError.value = e?.data?.message ?? 'Nie udało się zapisać wyszukiwania.'
+    } finally {
+        searchSaving.value = false
+    }
 }
 
 function criteriaLabel(criteria: SearchAdvertDto): string {
@@ -1015,6 +1188,16 @@ onMounted(async () => {
         // Lazy load notifications count
         fetchNotifications().catch(() => { })
     } catch { } finally { loading.value = false }
+
+    // Recently viewed (from localStorage — fire after loading so it doesn't block)
+    const ids = getRecentIds().slice(0, 5)
+    if (ids.length) {
+        const fetched = await Promise.all(
+            ids.map(id => $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`).catch(() => null))
+        )
+        const ordered = ids.map(id => fetched.find(a => a?.id === id)).filter(Boolean) as CarAdvert[]
+        recentAdverts.value = ordered
+    }
 })
 </script>
 
@@ -1024,6 +1207,10 @@ onMounted(async () => {
     min-height: 100vh;
     background: $bg;
     padding-top: $nav-height;
+
+    @include respond-to(md) {
+        flex-direction: column;
+    }
 }
 
 // ── Left sidebar ──────────────────────────────────────────────────────────────
@@ -1047,6 +1234,67 @@ onMounted(async () => {
 .dash-nav {
     flex: 1;
     padding: 16px 0;
+}
+
+// ── Mobile nav strip ───────────────────────────────────────────────────────────
+.dash-mobile-nav {
+    display: none;
+    position: sticky;
+    top: $nav-height;
+    z-index: 90;
+    background: #070707;
+    border-bottom: 1px solid $border;
+    overflow-x: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+
+    @include respond-to(md) {
+        display: flex;
+        flex-direction: row;
+        gap: 0;
+    }
+}
+
+.dmn-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 10px 14px;
+    min-width: 64px;
+    border: none;
+    background: transparent;
+    color: $text-dark;
+    font-size: 10px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    position: relative;
+    transition: color 0.2s;
+    .v-icon { color: $text-dark; transition: color 0.2s; }
+
+    &.active, &:hover {
+        color: $red;
+        .v-icon { color: $red; }
+    }
+
+    &--danger { color: #e55; .v-icon { color: #e55; } }
+}
+
+.dmn-badge {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: $red;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 99px;
+    padding: 1px 5px;
+    min-width: 16px;
+    text-align: center;
 }
 
 .nav-item {
@@ -1363,6 +1611,88 @@ onMounted(async () => {
     color: #f5a623;
 }
 
+// Recently viewed strip
+.recent-section {
+    padding: 0 24px 24px;
+}
+
+.recent-hd {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-dim;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.recent-hd-icon { color: $red; }
+
+.recent-strip {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: $border transparent;
+}
+
+.recent-mini-card {
+    @include card($r-sm);
+    display: flex;
+    gap: 10px;
+    padding: 0;
+    overflow: hidden;
+    min-width: 200px;
+    max-width: 220px;
+    flex-shrink: 0;
+    text-decoration: none;
+    color: $text;
+    transition: border-color 0.15s, transform 0.2s;
+
+    &:hover {
+        border-color: rgba($red, 0.3);
+        transform: translateY(-2px);
+    }
+}
+
+.recent-mini-img {
+    width: 72px;
+    height: 60px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.recent-mini-body {
+    padding: 8px 10px 8px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+}
+
+.recent-mini-name {
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recent-mini-price {
+    font-size: 13px;
+    font-weight: 900;
+    color: $red;
+}
+
+.recent-mini-meta {
+    font-size: 10px;
+    color: $text-dim;
+}
+
 // Tabs
 .tabs-bar {
     display: flex;
@@ -1566,13 +1896,43 @@ onMounted(async () => {
 }
 
 .adcard-body {
-    display: block;
-    padding: 12px;
-    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+}
 
-    &:hover .adcard-title {
-        color: $red;
-    }
+.adcard-link-area {
+    display: block;
+    padding: 12px 12px 8px;
+    text-decoration: none;
+    flex: 1;
+
+    &:hover .adcard-title { color: $red; }
+}
+
+.adcard-actions {
+    display: flex;
+    border-top: 1px solid $border;
+}
+
+.adcard-act {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 7px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-dim;
+    text-decoration: none;
+    border-right: 1px solid $border;
+    transition: color 0.15s, background 0.15s;
+    font-family: 'Inter', sans-serif;
+
+    &:last-child { border-right: none; }
+    &:hover { background: rgba(255,255,255,0.03); color: $text; }
+
+    &--promo { color: rgba($red, 0.7); &:hover { color: $red; background: rgba($red, 0.06); } }
 }
 
 .adcard-title {
@@ -1976,6 +2336,92 @@ onMounted(async () => {
 }
 
 // Saved searches
+.new-search-form {
+    margin: 0 24px 20px;
+    background: #0a0a0a;
+    border: 1px solid rgba($red, 0.2);
+    border-radius: $r-md;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.nsf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+.nsf-full { grid-column: 1 / -1; }
+
+.nsf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nsf-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-dim;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.nsf-input {
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    color: $text;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba($red, 0.4); }
+}
+
+.nsf-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: $text-muted;
+    cursor: pointer;
+    user-select: none;
+}
+
+.nsf-checkbox { accent-color: $red; width: 15px; height: 15px; cursor: pointer; }
+
+.nsf-error { font-size: 12px; color: #e55; }
+
+.nsf-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn-ghost-sm {
+    background: transparent;
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 7px 14px;
+    cursor: pointer;
+    &:hover { border-color: $text-dim; color: $text; }
+}
+
+.slide-down-enter-active { transition: max-height 0.25s ease, opacity 0.2s ease; max-height: 500px; }
+.slide-down-leave-active { transition: max-height 0.2s ease, opacity 0.15s ease; }
+.slide-down-enter-from, .slide-down-leave-to { max-height: 0; opacity: 0; overflow: hidden; }
+
 .searches-list {
     display: flex;
     flex-direction: column;

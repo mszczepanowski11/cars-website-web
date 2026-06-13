@@ -13,11 +13,11 @@ export const useMessages = () => {
     async function startConversation(advertId: number, initialMessage = '') {
         const body: Record<string, unknown> = { advertId }
         if (initialMessage) body.initialMessage = initialMessage
-        const res = await $fetch<{ conversationId: number }>('/api/proxy/api/Message/start', {
+        const res = await $fetch<any>('/api/proxy/api/Message/start', {
             method: 'POST',
             body
         })
-        return res.conversationId
+        return res?.conversationId ?? res?.id ?? (typeof res === 'number' ? res : null)
     }
 
     return { unreadCount, fetchUnreadCount, startConversation, isLoggedIn }

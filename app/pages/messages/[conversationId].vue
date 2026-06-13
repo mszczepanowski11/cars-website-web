@@ -22,8 +22,8 @@
         </div>
 
         <div ref="scrollEl" class="messages-area">
-            <div v-if="loading" class="d-flex justify-center mt-8">
-                <v-progress-circular indeterminate color="primary" />
+            <div v-if="loading" class="msgs-loading">
+                <v-icon icon="mdi-loading" size="28" class="spin" />
             </div>
             <template v-else>
                 <div v-if="!messages.length" class="no-messages">
@@ -44,27 +44,19 @@
         </div>
 
         <div class="input-bar">
-            <v-textarea
+            <textarea
                 v-model="draft"
+                class="msg-textarea"
                 placeholder="Napisz wiadomość..."
                 rows="1"
-                auto-grow
-                :max-rows="4"
-                hide-details
-                variant="outlined"
-                bg-color="#090909"
                 @keydown.enter.exact.prevent="send"
+                @input="autoResize"
+                ref="textareaRef"
             />
-            <v-btn
-                color="primary"
-                :icon="true"
-                size="large"
-                :loading="sending"
-                :disabled="!draft.trim()"
-                @click="send"
-            >
-                <v-icon icon="mdi-send" />
-            </v-btn>
+            <button class="send-btn" :disabled="sending || !draft.trim()" @click="send">
+                <v-icon v-if="sending" icon="mdi-loading" size="20" class="spin" />
+                <v-icon v-else icon="mdi-send" size="20" />
+            </button>
         </div>
     </div>
 </template>
@@ -82,6 +74,14 @@ const loading = ref(false)
 const sending = ref(false)
 const draft = ref('')
 const scrollEl = ref<HTMLElement | null>(null)
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
+
+function autoResize() {
+    const el = textareaRef.value
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px'
+}
 
 async function loadAll() {
     loading.value = true
@@ -125,7 +125,32 @@ function formatTime(d: string) {
     return new Date(d).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })
 }
 
-onMounted(() => loadAll())
+async function pollMessages() {
+    if (loading.value) return
+    try {
+        const msgs = await $fetch<MessageItem[]>(`/api/proxy/api/Message/conversation/${conversationId}/messages`)
+        if (msgs.length > messages.value.length) {
+            const lastId = messages.value[messages.value.length - 1]?.id ?? 0
+            const newMsgs = msgs.filter(m => m.id > lastId)
+            if (newMsgs.length) {
+                messages.value.push(...newMsgs)
+                await nextTick()
+                scrollToBottom()
+            }
+        }
+    } catch {}
+}
+
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+    loadAll()
+    pollTimer = setInterval(pollMessages, 15_000)
+})
+
+onUnmounted(() => {
+    if (pollTimer) clearInterval(pollTimer)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -223,6 +248,16 @@ onMounted(() => loadAll())
     text-align: right;
 }
 
+.msgs-loading {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+    color: $red;
+}
+
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
 .input-bar {
     flex-shrink: 0;
     display: flex;
@@ -231,5 +266,44 @@ onMounted(() => loadAll())
     padding: 12px 24px;
     background: #080808;
     border-top: 1px solid $border;
+}
+
+.msg-textarea {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: $r-lg;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    outline: none;
+    padding: 10px 14px;
+    resize: none;
+    min-height: 42px;
+    max-height: 120px;
+    overflow-y: auto;
+    transition: border-color 0.2s;
+
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba($red, 0.4); }
+}
+
+.send-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: $red;
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity 0.2s;
+
+    &:hover:not(:disabled) { opacity: 0.88; }
+    &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 </style>

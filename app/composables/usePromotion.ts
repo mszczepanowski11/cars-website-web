@@ -1,7 +1,3 @@
-// Premiere: June 12 (00:00) – June 14 (23:59:59) 2026, Warsaw time (UTC+2)
-const PREMIERE_START = new Date('2026-06-12T00:00:00+02:00').getTime()
-const PREMIERE_END   = new Date('2026-06-15T00:00:00+02:00').getTime()
-
 function toUnits(ms: number) {
     const diff = Math.max(0, ms)
     return {
@@ -13,6 +9,10 @@ function toUnits(ms: number) {
 }
 
 export const usePromotion = () => {
+    const config = useRuntimeConfig()
+    const PREMIERE_START = new Date(config.public.premiereStart as string).getTime()
+    const PREMIERE_END   = new Date(config.public.premiereEnd as string).getTime()
+
     const now = ref(Date.now())
 
     const isPremiereActive   = computed(() => now.value >= PREMIERE_START && now.value < PREMIERE_END)

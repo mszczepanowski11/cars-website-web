@@ -60,6 +60,7 @@
                             <span class="stat-label">Aktywne ogłoszenia</span>
                         </div>
                         <div class="stat-num">{{ stats?.totalActiveAdverts ?? 0 }}</div>
+                        <div class="stat-sub">{{ stats?.totalSoldVehicles ?? 0 }} sprzedanych aut</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top">
@@ -302,11 +303,13 @@ function actionClass(type: string) {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 14px;
-    margin-bottom: 32px;
+    margin-bottom: 16px;
 
     @include respond-to(md) {
         grid-template-columns: repeat(2, 1fr);
     }
+
+
 }
 
 .stat-card {

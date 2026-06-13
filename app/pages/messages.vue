@@ -2,8 +2,8 @@
     <div class="page-bg">
         <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
             <h1 class="page-title">Wiadomości</h1>
-            <div v-if="loading" class="d-flex justify-center mt-16">
-                <v-progress-circular indeterminate color="primary" size="60" />
+            <div v-if="loading" class="loading-row">
+                <v-icon icon="mdi-loading" size="36" class="spin" />
             </div>
             <template v-else>
                 <div v-if="!conversations.length" class="no-results">
@@ -69,6 +69,10 @@ onMounted(() => load())
 .page-bg { background: $bg; min-height: 100vh; }
 .container { @include container; }
 .page-title { font-size: 40px; font-weight: 900; color: $text; margin-bottom: 32px; }
+
+.loading-row { display: flex; justify-content: center; padding: 80px 0; color: $red; }
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .no-results {
     text-align: center;

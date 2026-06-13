@@ -1,16 +1,43 @@
 <script setup lang="ts">
 import type { CarAdvert } from '~/types'
-const props = defineProps<{ advert: CarAdvert }>()
+const props = defineProps<{ advert: CarAdvert; hideCompare?: boolean }>()
+const emit = defineEmits<{ quickView: [id: number] }>()
 const { isFavorite, toggleFavorite, isLoggedIn } = useFavorites()
 const { getImageUrl, placeholder } = useImageUrl()
+const { toggle: compareToggle, isCompared } = useCompare()
 
 const mainImage = computed(() => props.advert.images?.find(i => i.isMain) ?? props.advert.images?.[0])
 const mainImageUrl = computed(() => getImageUrl(mainImage.value?.url, placeholder))
+
+const isNew = computed(() => {
+    if (!props.advert.createdAt) return false
+    return Date.now() - new Date(props.advert.createdAt).getTime() < 24 * 60 * 60 * 1000
+})
 
 async function toggleFav(e: Event) {
     e.preventDefault()
     await toggleFavorite(props.advert.id)
 }
+
+function onCompare(e: Event) {
+    e.preventDefault()
+    compareToggle(props.advert.id)
+}
+
+function onQuickView(e: Event) {
+    e.preventDefault()
+    emit('quickView', props.advert.id)
+}
+
+const gearboxShort = computed(() => {
+    const n = props.advert.gearbox?.name ?? ''
+    if (!n) return null
+    if (/automat/i.test(n)) return 'Automat'
+    if (/manual|meczn|ręczn/i.test(n)) return 'Manual'
+    if (/półautomat|semi/i.test(n)) return 'Półautomat'
+    if (/cvt|variat/i.test(n)) return 'CVT'
+    return n.length > 10 ? n.slice(0, 9) + '…' : n
+})
 
 const resolvedBadge = computed(() => {
     if (props.advert.badge) return props.advert.badge
@@ -38,17 +65,28 @@ const badgeText = computed(() => {
         :class="{
             'car-card--featured': resolvedBadge === 'FEATURED',
             'car-card--top': resolvedBadge === 'TOP',
+            'car-card--premium': resolvedBadge === 'PREMIUM',
         }"
     >
         <div class="card-img-wrap">
             <img
                 :src="mainImageUrl"
                 :alt="advert.title"
+                loading="lazy"
             />
             <span v-if="resolvedBadge" :class="['card-badge', `card-badge--${resolvedBadge.toLowerCase()}`]">
                 <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" class="badge-icon" />
                 {{ badgeText }}
             </span>
+            <span v-if="isNew && !resolvedBadge" class="card-badge card-badge--new">NOWE</span>
+            <div class="card-hover-actions">
+                <button class="card-action-btn" title="Szybki podgląd" @click="onQuickView">
+                    <v-icon icon="mdi-eye-outline" size="16" />
+                </button>
+                <button v-if="!hideCompare" class="card-action-btn" :class="{ active: isCompared(advert.id) }" title="Porównaj" @click="onCompare">
+                    <v-icon icon="mdi-compare" size="16" />
+                </button>
+            </div>
             <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" @click="toggleFav">
                 <v-icon :icon="isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
             </button>
@@ -59,14 +97,22 @@ const badgeText = computed(() => {
                 <span><v-icon icon="mdi-calendar-outline" size="14" class="mr-1" />{{ advert.year }}</span>
                 <span><v-icon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–' }}</span>
                 <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage.toLocaleString('pl') }} km</span>
+                <span v-if="gearboxShort"><v-icon icon="mdi-car-shift-pattern" size="14" class="mr-1" />{{ gearboxShort }}</span>
+                <span v-if="advert.powerHP"><v-icon icon="mdi-engine-outline" size="14" class="mr-1" />{{ advert.powerHP }} KM</span>
             </div>
             <div class="car-price">{{ advert.price.toLocaleString('pl') }} zł</div>
-            <div v-if="advert.city" class="car-footer">
-                <span class="car-city">
+            <div class="car-footer">
+                <span v-if="advert.city" class="car-city">
                     <v-icon icon="mdi-map-marker-outline" size="14" class="mr-1" />{{ advert.city }}
                 </span>
-                <span class="car-verified">
+                <span v-if="advert.isVerified" class="car-verified">
                     <v-icon icon="mdi-shield-check" size="16" />
+                </span>
+                <span v-if="advert.color?.hexCode" class="car-color-dot"
+                    :style="{ background: advert.color.hexCode }"
+                    :title="advert.color.name" />
+                <span v-if="advert.viewCount" class="car-views">
+                    <v-icon icon="mdi-eye-outline" size="13" />{{ advert.viewCount.toLocaleString('pl') }}
                 </span>
             </div>
         </div>
@@ -99,23 +145,71 @@ const badgeText = computed(() => {
     &--top {
         border-color: rgba(#f5a623, 0.4);
         box-shadow: 0 0 18px rgba(#f5a623, 0.08);
+        &::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(#f5a623, 0.06) 50%, transparent 60%); animation: card-shimmer 3.5s ease-in-out infinite; pointer-events: none; }
 
         &:hover {
             border-color: rgba(#f5a623, 0.65);
             box-shadow: 0 4px 24px rgba(#f5a623, 0.14);
         }
     }
+
+    &--premium {
+        border-color: rgba(#b388ff, 0.45);
+        box-shadow: 0 0 18px rgba(#b388ff, 0.1);
+        &::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(#b388ff, 0.06) 50%, transparent 60%); animation: card-shimmer 3.5s ease-in-out infinite; pointer-events: none; }
+
+        &:hover {
+            border-color: rgba(#b388ff, 0.7);
+            box-shadow: 0 4px 24px rgba(#b388ff, 0.18);
+        }
+    }
 }
 
 .card-img-wrap {
     position: relative;
+    overflow: hidden;
 
     img {
         width: 100%;
         height: 200px;
         object-fit: cover;
         display: block;
+        transition: transform 0.4s ease;
     }
+
+    &:hover img { transform: scale(1.03); }
+}
+
+.card-hover-actions {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    .car-card:hover & {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-action-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.72);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: $text-muted;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    .v-icon { color: $text-muted; transition: color 0.2s; }
+
+    &:hover { background: rgba($red,0.2); border-color: rgba($red,0.5); .v-icon { color: $red; } }
+    &.active { background: rgba($red,0.25); border-color: $red; .v-icon { color: $red; } }
 }
 
 .fav-btn {
@@ -185,6 +279,25 @@ const badgeText = computed(() => {
     align-items: center;
 }
 
+.car-color-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+.car-views {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    color: $text-faint;
+    font-size: 11px;
+    margin-left: auto;
+    .v-icon { color: $text-faint; }
+}
+
 // ── Badges ────────────────────────────────────────────────────────────────────
 .card-badge {
     position: absolute;
@@ -232,4 +345,16 @@ const badgeText = computed(() => {
 }
 
 .badge-icon { flex-shrink: 0; }
+
+.card-badge--new {
+    background: #14532d;
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+@keyframes card-shimmer {
+    0%   { transform: translateX(-100%); }
+    60%  { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+}
 </style>

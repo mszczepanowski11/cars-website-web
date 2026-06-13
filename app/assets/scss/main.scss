@@ -1,5 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
+// ── Page transitions ──────────────────────────────────────────────────────────
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.page-fade-enter-from,
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
@@ -61,5 +72,131 @@ v-main { background: $bg; }
 
 .v-progress-circular__overlay { stroke: $red !important; }
 
+
+// ── Global empty state utility ────────────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.empty-icon {
+  color: rgba(255, 255, 255, 0.12);
+  margin-bottom: 4px;
+}
+
+.empty-state p {
+  color: $text-dim;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+// ── Global spinner ────────────────────────────────────────────────────────────
+.loading-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+  color: $text-dark;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.8s linear infinite; display: inline-block; }
+
+// ── Alert boxes ───────────────────────────────────────────────────────────────
+.alert-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(76, 175, 80, 0.08);
+  border: 1px solid rgba(76, 175, 80, 0.25);
+  border-radius: 8px;
+  color: #4caf50;
+  font-size: 13px;
+  padding: 10px 14px;
+}
+
+.alert-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(220, 50, 50, 0.08);
+  border: 1px solid rgba(220, 50, 50, 0.25);
+  border-radius: 8px;
+  color: #e55;
+  font-size: 13px;
+  padding: 10px 14px;
+}
+
+// ── Global modal backdrop ─────────────────────────────────────────────────────
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  backdrop-filter: blur(2px);
+}
+
+// ── Button utilities ──────────────────────────────────────────────────────────
+.btn-red-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: $red;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  padding: 9px 18px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  &:hover { opacity: 0.88; }
+}
+
+.btn-ghost-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: $text-muted;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  padding: 9px 16px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+  &:hover { border-color: rgba(255, 255, 255, 0.2); color: $text; }
+}
+
+.btn-outline-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: $text-muted;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+  &:hover { border-color: rgba(255, 255, 255, 0.22); color: $text; }
+}
 
 

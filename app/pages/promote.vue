@@ -125,7 +125,7 @@
                                 @click.stop="selectedDays[plan.key as MultiPlanKey] = d.days"
                             >
                                 {{ d.days }} dni
-                                <span v-if="!isPremiereActive" class="dur-price">{{ d.price }}</span>
+                                <span v-if="!isPremiereActive" class="dur-price">{{ getDurPrice(plan, d.days) }}</span>
                             </button>
                         </div>
 
@@ -247,8 +247,9 @@ const { isPremiereActive, isPremiereUpcoming, remainingToEnd, remainingToStart, 
 const { purchasePromotion } = usePromotions()
 const { validateCoupon } = useCoupons()
 const { getImageUrl, placeholder } = useImageUrl()
+const { getPrice: getPriceApi } = usePayment()
 
-type MultiPlanKey = 'highlight' | 'top'
+type MultiPlanKey = 'highlight' | 'top' | 'premium'
 
 interface PlanDuration { days: number; price: string; priceNum: number }
 interface Plan {
@@ -260,24 +261,43 @@ interface Plan {
 
 const plans: Plan[] = [
     {
-        key: 'refresh', icon: 'mdi-refresh', name: 'Odśwież ofertę',
+        key: 'refresh', icon: 'mdi-refresh', name: 'Odświeżenie',
         desc: 'Twoje ogłoszenie wróci na początek wyników wyszukiwania i listy w kategorii.',
-        singlePrice: '3,99 zł', singlePriceNum: 3.99, durations: null,
+        singlePrice: '4,99 zł', singlePriceNum: 4.99, durations: null,
         cta: 'Odśwież teraz', badgeLabel: null, promotionType: 'Refresh',
     },
     {
         key: 'highlight', icon: 'mdi-star', name: 'Wyróżnij ofertę',
         desc: 'Ogłoszenie otrzymuje oznaczenie „WYRÓŻNIONE", czerwone obramowanie i jest wyświetlane wyżej od zwykłych ofert.',
         singlePrice: null, singlePriceNum: 0,
-        durations: [{ days: 7, price: '7,99 zł', priceNum: 7.99 }, { days: 30, price: '19,99 zł', priceNum: 19.99 }],
+        durations: [
+            { days: 7, price: '14,99 zł', priceNum: 14.99 },
+            { days: 14, price: '24,99 zł', priceNum: 24.99 },
+            { days: 30, price: '39,99 zł', priceNum: 39.99 },
+        ],
         cta: 'Wyróżnij teraz', badgeLabel: 'WYRÓŻNIONE', promotionType: 'Featured',
     },
     {
         key: 'top', icon: 'mdi-crown', name: 'Oferta TOP',
         desc: 'Ogłoszenie pojawia się na stronie głównej, na początku kategorii i wyników wyszukiwania.',
         singlePrice: null, singlePriceNum: 0,
-        durations: [{ days: 7, price: '14,99 zł', priceNum: 14.99 }, { days: 30, price: '39,99 zł', priceNum: 39.99 }],
+        durations: [
+            { days: 7, price: '19,99 zł', priceNum: 19.99 },
+            { days: 14, price: '29,99 zł', priceNum: 29.99 },
+            { days: 30, price: '49,99 zł', priceNum: 49.99 },
+        ],
         cta: 'Dodaj do TOP', badgeLabel: 'TOP', promotionType: 'Top',
+    },
+    {
+        key: 'premium', icon: 'mdi-diamond-outline', name: 'Premium',
+        desc: 'Maksymalna widoczność i priorytetowe pozycjonowanie. Twoje ogłoszenie zawsze na szczycie wyników.',
+        singlePrice: null, singlePriceNum: 0,
+        durations: [
+            { days: 7, price: '29,99 zł', priceNum: 29.99 },
+            { days: 14, price: '44,99 zł', priceNum: 44.99 },
+            { days: 30, price: '79,99 zł', priceNum: 79.99 },
+        ],
+        cta: 'Aktywuj Premium', badgeLabel: null, promotionType: 'Premium',
     },
 ]
 
@@ -288,7 +308,8 @@ const benefits = [
     { icon: 'mdi-shield-check-outline', title: 'Bezpiecznie i skutecznie', sub: 'Sprawdzona platforma wymagających' },
 ]
 
-const selectedDays = reactive<Record<MultiPlanKey, number>>({ highlight: 7, top: 7 })
+const selectedDays = reactive<Record<MultiPlanKey, number>>({ highlight: 7, top: 7, premium: 7 })
+const apiPrices = ref<Record<string, number>>({})
 const selectedPlan = ref<string | null>(null)
 const selectedAdvertId = ref<number | null>(null)
 const myAdverts = ref<CarAdvert[]>([])
@@ -307,17 +328,37 @@ const purchasing = ref(false)
 const purchaseSuccess = ref<string | null>(null)
 const purchaseError = ref<string | null>(null)
 
+function resolvePrice(promotionType: string, days: number, fallback: number): number {
+    return apiPrices.value[`${promotionType}-${days}`] ?? fallback
+}
+
+function formatPln(n: number): string {
+    return n.toFixed(2).replace('.', ',') + ' zł'
+}
+
 function getPrice(plan: Plan): string {
-    if (plan.singlePrice) return plan.singlePrice
+    if (isPremiereActive.value) return '0 zł'
+    if (plan.durations === null) {
+        return formatPln(resolvePrice(plan.promotionType, 1, plan.singlePriceNum))
+    }
     const days = selectedDays[plan.key as MultiPlanKey]
-    return plan.durations!.find(d => d.days === days)!.price
+    const fallback = plan.durations.find(d => d.days === days)!.priceNum
+    return formatPln(resolvePrice(plan.promotionType, days, fallback))
+}
+
+function getDurPrice(plan: Plan, days: number): string {
+    const fallback = plan.durations!.find(d => d.days === days)!.priceNum
+    return formatPln(resolvePrice(plan.promotionType, days, fallback))
 }
 
 function getPriceNum(plan: Plan): number {
     if (isPremiereActive.value) return 0
-    if (plan.singlePriceNum) return plan.singlePriceNum
+    if (plan.durations === null) {
+        return resolvePrice(plan.promotionType, 1, plan.singlePriceNum)
+    }
     const days = selectedDays[plan.key as MultiPlanKey]
-    return plan.durations!.find(d => d.days === days)!.priceNum
+    const fallback = plan.durations.find(d => d.days === days)!.priceNum
+    return resolvePrice(plan.promotionType, days, fallback)
 }
 
 function getPickerImage(a: CarAdvert): string {
@@ -359,15 +400,30 @@ async function doPurchase() {
     purchaseSuccess.value = null
     purchaseError.value = null
     try {
-        await purchasePromotion({
-            advertId: selectedAdvertId.value,
-            type: plan.promotionType as any,
-            durationDays: days,
-            couponCode: couponValid.value ? couponCode.value : undefined,
-        })
-        purchaseSuccess.value = `${plan.name} została aktywowana! Twoje ogłoszenie jest teraz lepiej widoczne.`
-        clearCoupon()
-        selectedPlan.value = null
+        if (isPremiereActive.value) {
+            await purchasePromotion({
+                advertId: selectedAdvertId.value,
+                type: plan.promotionType as any,
+                durationDays: days,
+            })
+            purchaseSuccess.value = `${plan.name} zostało aktywowane bezpłatnie! Ogłoszenie jest teraz lepiej widoczne.`
+            clearCoupon()
+            selectedPlan.value = null
+        } else {
+            // Ensure advert is published before payment redirect
+            await $fetch(`/api/proxy/api/Advert/${selectedAdvertId.value}/publish`, { method: 'POST', body: {} }).catch(() => {})
+
+            const body: Record<string, unknown> = {
+                advertId: selectedAdvertId.value,
+                serviceType: plan.promotionType,
+                durationDays: days,
+            }
+            if (couponValid.value && couponCode.value) body.couponCode = couponCode.value
+            const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+            if (result.paymentUrl) {
+                window.location.href = result.paymentUrl
+            }
+        }
     } catch (e: any) {
         purchaseError.value = e?.data?.message ?? 'Nie udało się aktywować promocji.'
     } finally { purchasing.value = false }
@@ -385,10 +441,24 @@ const countdownUnits = computed(() => {
 
 onMounted(async () => {
     advertsLoading.value = true
-    try {
-        const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/Advert/user?page=1&pageSize=20')
-        myAdverts.value = r.items.filter(a => a.isActive !== false)
-    } catch {} finally { advertsLoading.value = false }
+    const priceQueries = [
+        { type: 'Refresh', days: 1 },
+        { type: 'Featured', days: 7 }, { type: 'Featured', days: 14 }, { type: 'Featured', days: 30 },
+        { type: 'Top', days: 7 }, { type: 'Top', days: 14 }, { type: 'Top', days: 30 },
+        { type: 'Premium', days: 7 }, { type: 'Premium', days: 14 }, { type: 'Premium', days: 30 },
+    ]
+    await Promise.allSettled([
+        $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/Advert/user?page=1&pageSize=20')
+            .then(r => { myAdverts.value = r.items.filter(a => a.isActive !== false) })
+            .catch(() => {})
+            .finally(() => { advertsLoading.value = false }),
+        ...priceQueries.map(async ({ type, days }) => {
+            try {
+                const r = await getPriceApi(type, days)
+                apiPrices.value[`${type}-${days}`] = r.price
+            } catch {}
+        }),
+    ])
 })
 </script>
 
@@ -571,10 +641,11 @@ onMounted(async () => {
 
 .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 
-    @include respond-to(md) { grid-template-columns: 1fr; }
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(sm) { grid-template-columns: 1fr; }
 }
 
 .plan-card {
@@ -591,6 +662,7 @@ onMounted(async () => {
     &--refresh:hover  { border-color: rgba($red, 0.3); }
     &--highlight:hover { border-color: rgba($red, 0.45); }
     &--top:hover       { border-color: rgba(#f5a623, 0.4); }
+    &--premium:hover   { border-color: rgba(#b388ff, 0.45); }
 }
 
 .plan-top-row {
@@ -616,6 +688,12 @@ onMounted(async () => {
         background: rgba(#f5a623, 0.1);
         border-color: rgba(#f5a623, 0.25);
         color: #f5a623;
+    }
+
+    .plan-card--premium & {
+        background: rgba(#b388ff, 0.1);
+        border-color: rgba(#b388ff, 0.25);
+        color: #b388ff;
     }
 }
 
@@ -703,6 +781,7 @@ onMounted(async () => {
 
     .dur-tab.active & { color: $red; }
     .plan-card--top .dur-tab.active & { color: #f5a623; }
+    .plan-card--premium .dur-tab.active & { color: #b388ff; }
 }
 
 // Price
@@ -725,6 +804,7 @@ onMounted(async () => {
     color: $red;
 
     .plan-card--top & { color: #f5a623; }
+    .plan-card--premium & { color: #b388ff; }
 }
 
 .plan-period {
@@ -776,6 +856,7 @@ onMounted(async () => {
     .plan-card--refresh &:hover,
     .plan-card--highlight &:hover { background: rgba($red, 0.08); border-color: rgba($red, 0.4); }
     .plan-card--top &:hover       { background: rgba(#f5a623, 0.07); border-color: rgba(#f5a623, 0.4); }
+    .plan-card--premium &:hover   { background: rgba(#b388ff, 0.07); border-color: rgba(#b388ff, 0.4); }
 }
 
 // ── Advert picker ─────────────────────────────────────────────────────────────
@@ -817,7 +898,8 @@ onMounted(async () => {
 // ── Plan selection ────────────────────────────────────────────────────────────
 .plan-selected { border-color: rgba($red, 0.5) !important; background: rgba($red, 0.04); }
 
-.plan-card--top.plan-selected { border-color: rgba(#f5a623, 0.5) !important; }
+.plan-card--top.plan-selected { border-color: rgba(#f5a623, 0.5) !important; background: rgba(#f5a623, 0.04); }
+.plan-card--premium.plan-selected { border-color: rgba(#b388ff, 0.5) !important; background: rgba(#b388ff, 0.04); }
 
 // ── Order panel ───────────────────────────────────────────────────────────────
 .order-panel {

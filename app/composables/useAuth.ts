@@ -2,14 +2,18 @@ export const useAuth = () => {
     const loading = ref(false)
     const error = ref('')
 
-    async function login(credentials: { email: string; password: string }) {
+    async function login(credentials: { email: string; password: string }, redirectTo?: string) {
         loading.value = true
         error.value = ''
         try {
             await $fetch('/api/auth/login', { method: 'POST', body: credentials })
-            await navigateTo('/')
+            await navigateTo(redirectTo || '/')
         } catch (err: any) {
-            error.value = err?.data?.statusMessage || err?.message || 'Nieprawidłowy email lub hasło.'
+            if (err?.status === 429 || err?.statusCode === 429) {
+                error.value = err?.data?.statusMessage || 'Zbyt wiele prób logowania. Poczekaj chwilę i spróbuj ponownie.'
+            } else {
+                error.value = err?.data?.statusMessage || err?.message || 'Nieprawidłowy email lub hasło.'
+            }
         } finally {
             loading.value = false
         }
@@ -20,14 +24,19 @@ export const useAuth = () => {
         phonenumber: string; password: string
         accountType: 'Personal' | 'Business'
         companyName?: string; nip?: string
-    }) {
+    }, redirectTo?: string) {
         loading.value = true
         error.value = ''
         try {
             await $fetch('/api/auth/register', { method: 'POST', body: dto })
-            await navigateTo('/')
+            return true
         } catch (err: any) {
-            error.value = err?.data?.statusMessage || err?.message || 'Błąd rejestracji. Sprawdź dane i spróbuj ponownie.'
+            if (err?.status === 429 || err?.statusCode === 429) {
+                error.value = err?.data?.statusMessage || 'Zbyt wiele prób rejestracji. Poczekaj chwilę i spróbuj ponownie.'
+            } else {
+                error.value = err?.data?.statusMessage || err?.message || 'Błąd rejestracji. Sprawdź dane i spróbuj ponownie.'
+            }
+            return false
         } finally {
             loading.value = false
         }

@@ -6,13 +6,22 @@
             <div class="promo-steps">
                 <span class="ps done"><v-icon icon="mdi-check" size="14" />Ogłoszenie</span>
                 <span class="ps-sep" />
-                <span class="ps active"><v-icon icon="mdi-star-outline" size="14" />Promocja</span>
+                <span class="ps" :class="{ done: step > 1, active: step === 1 }">
+                    <v-icon :icon="step > 1 ? 'mdi-check' : 'mdi-star-outline'" size="14" />Promocja
+                </span>
                 <span class="ps-sep" />
-                <span class="ps"><v-icon icon="mdi-check-circle-outline" size="14" />Potwierdzenie</span>
+                <span class="ps" :class="{ done: step > 2, active: step === 2 }">
+                    <v-icon :icon="step > 2 ? 'mdi-check' : 'mdi-receipt-outline'" size="14" />Faktura
+                </span>
+                <span class="ps-sep" />
+                <span class="ps" :class="{ active: step === 3 }">
+                    <v-icon icon="mdi-check-circle-outline" size="14" />Płatność
+                </span>
             </div>
-            <button class="skip-link" @click="skipPromotion">
+            <button class="skip-link" :disabled="publishing" @click="publishFree">
+                <v-icon v-if="publishing" icon="mdi-loading" size="14" class="spin" />
                 Pomiń i opublikuj bez promocji
-                <v-icon icon="mdi-arrow-right" size="15" />
+                <v-icon v-if="!publishing" icon="mdi-arrow-right" size="15" />
             </button>
         </div>
 
@@ -51,7 +60,7 @@
                         <div class="plan-name">{{ plan.name }}</div>
                     </div>
                     <div class="plan-price">
-                        od <strong>{{ plan.priceFrom }} zł</strong>
+                        od <strong>{{ getPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</strong>
                     </div>
                     <div class="plan-desc">{{ plan.desc }}</div>
                     <ul class="plan-features">
@@ -61,57 +70,138 @@
                         <button v-for="d in plan.days" :key="d"
                             class="day-btn" :class="{ active: selectedDays === d }"
                             @click.stop="selectedDays = d">
-                            {{ d }} dni
+                            {{ d }} dni · {{ getDisplayPrice(plan.key, d).toFixed(2) }} zł
                         </button>
                     </div>
                     <div class="plan-sel-indicator" />
                 </div>
             </div>
 
-            <!-- Selected summary + CTA -->
-            <div class="promo-footer">
+            <!-- STEP 1: Selected summary + CTA -->
+            <div v-if="step === 1" class="promo-footer">
                 <div v-if="selected === 'free'" class="summary-free">
                     <v-icon icon="mdi-check-circle-outline" size="20" class="sf-icon" />
                     Opublikujesz ogłoszenie bez promocji (darmowe)
                 </div>
                 <div v-else class="summary-paid">
                     <div class="summary-name">{{ selectedPlan?.name }} – {{ selectedDays }} dni</div>
-                    <div class="summary-price">{{ selectedPrice?.toFixed(2) }} zł</div>
+                    <div class="summary-price">
+                        <span v-if="couponResult?.isValid" class="price-original">{{ selectedPrice?.toFixed(2) }} zł</span>
+                        <span>{{ finalPrice.toFixed(2) }} zł</span>
+                    </div>
+                    <div v-if="couponResult?.isValid" class="coupon-applied">
+                        <v-icon icon="mdi-tag-outline" size="14" />
+                        Rabat zastosowany
+                    </div>
+                </div>
+                <div v-if="selected !== 'free'" class="coupon-row">
+                    <div class="coupon-input-wrap">
+                        <input v-model="couponCode" class="coupon-input" placeholder="Kod rabatowy (opcjonalnie)" :disabled="couponLoading" @keyup.enter="applyCoupon" />
+                        <button class="coupon-btn" :disabled="!couponCode || couponLoading" @click="applyCoupon">
+                            <v-icon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
+                            <span v-else>Zastosuj</span>
+                        </button>
+                    </div>
+                    <div v-if="couponError" class="coupon-error">{{ couponError }}</div>
                 </div>
                 <div class="footer-actions">
-                    <button class="btn-skip" @click="skipPromotion">
-                        <v-icon icon="mdi-arrow-left" size="15" />Wróć
-                    </button>
+                    <button class="btn-skip" @click="skipPromotion"><v-icon icon="mdi-arrow-left" size="15" />Wróć</button>
                     <button v-if="selected === 'free'" class="btn-publish" :disabled="publishing" @click="publishFree">
                         <v-icon v-if="publishing" icon="mdi-loading" size="16" class="spin" />
                         <v-icon v-else icon="mdi-check" size="16" />
                         Opublikuj ogłoszenie
                     </button>
-                    <button v-else class="btn-pay" :disabled="paying" @click="initiatePayment">
-                        <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
-                        <v-icon v-else icon="mdi-credit-card-outline" size="16" />
-                        Zapłać {{ selectedPrice?.toFixed(2) }} zł
+                    <button v-else class="btn-pay" @click="goToBilling">
+                        <v-icon icon="mdi-receipt-outline" size="16" />
+                        Dane do faktury
+                        <v-icon icon="mdi-arrow-right" size="15" />
                     </button>
                 </div>
-                <div v-if="actionError" class="action-error">
-                    <v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}
+                <div v-if="actionError" class="action-error"><v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
+            </div>
+
+            <!-- STEP 2: Billing data -->
+            <div v-else-if="step === 2" class="billing-step">
+                <h2 class="billing-step-title">
+                    <v-icon icon="mdi-receipt-outline" size="20" />
+                    Dane do faktury
+                </h2>
+                <p class="billing-step-sub">Faktura zostanie automatycznie wygenerowana i wysłana na podany e-mail po potwierdzeniu płatności.</p>
+
+                <BillingDataForm
+                    v-model="billingData"
+                    :user-profile="userProfile"
+                    ref="billingFormRef"
+                    @valid="billingValid = $event"
+                />
+
+                <div class="billing-order-summary">
+                    <div class="bos-row">
+                        <span>Promocja</span>
+                        <span>{{ selectedPlan?.name }} – {{ selectedDays }} dni</span>
+                    </div>
+                    <div v-if="couponResult?.isValid" class="bos-row bos-discount">
+                        <span>Rabat</span>
+                        <span>-{{ (selectedPrice! - finalPrice).toFixed(2) }} zł</span>
+                    </div>
+                    <div class="bos-row bos-net">
+                        <span>Kwota netto</span>
+                        <span>{{ (finalPrice / 1.23).toFixed(2) }} zł</span>
+                    </div>
+                    <div class="bos-row bos-vat">
+                        <span>VAT (23%)</span>
+                        <span>{{ (finalPrice - finalPrice / 1.23).toFixed(2) }} zł</span>
+                    </div>
+                    <div class="bos-row bos-total">
+                        <span>Do zapłaty</span>
+                        <strong>{{ finalPrice.toFixed(2) }} zł</strong>
+                    </div>
                 </div>
+
+                <div class="footer-actions">
+                    <button class="btn-skip" @click="step = 1"><v-icon icon="mdi-arrow-left" size="15" />Wróć</button>
+                    <button class="btn-pay" :disabled="paying" @click="initiatePayment">
+                        <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
+                        <v-icon v-else icon="mdi-credit-card-outline" size="16" />
+                        Zapłać {{ finalPrice.toFixed(2) }} zł przez ING
+                    </button>
+                </div>
+                <div v-if="actionError" class="action-error"><v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import type { CouponValidation, BillingData, UserProfile } from '~/types'
+
 definePageMeta({ middleware: 'auth' })
 
 const route = useRoute()
 const advertId = computed(() => Number(route.params.id))
 
+const step = ref(1)
 const selected = ref<string>('free')
 const selectedDays = ref(7)
 const publishing = ref(false)
 const paying = ref(false)
 const actionError = ref('')
+
+const couponCode = ref('')
+const couponLoading = ref(false)
+const couponError = ref('')
+const couponResult = ref<CouponValidation | null>(null)
+
+const billingFormRef = ref<{ validateAll: () => boolean } | null>(null)
+const billingValid = ref(false)
+const billingData = ref<BillingData>({
+    type: 'personal',
+    email: '',
+})
+const userProfile = ref<UserProfile | null>(null)
+
+const { validateCoupon } = useCoupons()
+const { getPrice } = usePayment()
 
 const plans = [
     {
@@ -119,64 +209,146 @@ const plans = [
         priceFrom: 14.99, popular: false, defaultDays: 7, days: [7, 14, 30],
         desc: 'Ogłoszenie wyróżnione w wynikach wyszukiwania.',
         feats: ['Wyróżniony kolor ramki', 'Oznaczenie WYRÓŻNIONE', '2× więcej wyświetleń'],
-        prices: { 7: 14.99, 14: 24.99, 30: 39.99 },
+        prices: { 7: 14.99, 14: 24.99, 30: 39.99 } as Record<number, number>,
     },
     {
         key: 'Top', name: 'TOP', icon: 'mdi-crown-outline',
         priceFrom: 19.99, popular: true, defaultDays: 7, days: [7, 14, 30],
         desc: 'Ogłoszenie na szczycie wyników wyszukiwania.',
         feats: ['Pozycja TOP w wynikach', 'Baner reklamowy', '5× więcej wyświetleń'],
-        prices: { 7: 19.99, 14: 29.99, 30: 49.99 },
+        prices: { 7: 19.99, 14: 29.99, 30: 49.99 } as Record<number, number>,
     },
     {
         key: 'Premium', name: 'Premium', icon: 'mdi-diamond-outline',
         priceFrom: 29.99, popular: false, defaultDays: 7, days: [7, 14, 30],
         desc: 'Maksymalna widoczność i priorytetowe pozycjonowanie.',
         feats: ['Wszystko z TOP', 'Sekcja polecane ogłoszenia', 'Priorytetowe wsparcie'],
-        prices: { 7: 29.99, 14: 44.99, 30: 79.99 },
+        prices: { 7: 29.99, 14: 44.99, 30: 79.99 } as Record<number, number>,
     },
     {
         key: 'Refresh', name: 'Odświeżenie', icon: 'mdi-refresh',
         priceFrom: 4.99, popular: false, defaultDays: 1, days: [1],
         desc: 'Przesuń ogłoszenie na górę listy – jednorazowo.',
         feats: ['Awans na szczyt listy', 'Nowa data publikacji'],
-        prices: { 1: 4.99 },
+        prices: { 1: 4.99 } as Record<number, number>,
     },
 ]
+
+// API prices: keyed as "ServiceType-days" → price
+const apiPrices = ref<Record<string, number>>({})
+
+function getDisplayPrice(planKey: string, days: number): number {
+    const apiKey = `${planKey}-${days}`
+    return apiPrices.value[apiKey] ?? plans.find(p => p.key === planKey)?.prices[days] ?? 0
+}
+
+function getPriceFrom(planKey: string, fallback: number): number {
+    const plan = plans.find(p => p.key === planKey)
+    if (!plan) return fallback
+    const minDay = Math.min(...plan.days)
+    return getDisplayPrice(planKey, minDay)
+}
 
 const selectedPlan = computed(() => plans.find(p => p.key === selected.value))
 const selectedPrice = computed(() => {
     if (!selectedPlan.value) return null
-    return (selectedPlan.value.prices as Record<number, number>)[selectedDays.value] ?? selectedPlan.value.priceFrom
+    return getDisplayPrice(selectedPlan.value.key, selectedDays.value)
+})
+const finalPrice = computed(() => couponResult.value?.isValid ? couponResult.value.finalPrice : (selectedPrice.value ?? 0))
+
+onMounted(async () => {
+    const queries = plans.flatMap(p => p.days.map(d => ({ key: p.key, days: d })))
+    await Promise.allSettled(queries.map(async ({ key, days }) => {
+        try {
+            const r = await getPrice(key, days)
+            apiPrices.value[`${key}-${days}`] = r.price
+        } catch {}
+    }))
+    // Pre-load user profile for billing form pre-fill
+    try {
+        userProfile.value = await $fetch<UserProfile>('/api/proxy/api/User/me')
+        if (userProfile.value?.email) billingData.value.email = userProfile.value.email
+        if (userProfile.value?.accountType === 'Business') {
+            billingData.value.type = 'business'
+            if (userProfile.value.companyName) billingData.value.companyName = userProfile.value.companyName
+            if (userProfile.value.nip) billingData.value.nip = userProfile.value.nip
+            if (userProfile.value.street) billingData.value.street = userProfile.value.street
+            if (userProfile.value.postalCode) billingData.value.postalCode = userProfile.value.postalCode
+            if (userProfile.value.city) billingData.value.city = userProfile.value.city
+            if (userProfile.value.country) billingData.value.country = userProfile.value.country
+        } else {
+            billingData.value.type = 'personal'
+            if (userProfile.value.name) billingData.value.firstName = userProfile.value.name
+            if (userProfile.value.surname) billingData.value.lastName = userProfile.value.surname
+        }
+    } catch {}
 })
 
+watch(selected, () => { couponResult.value = null; couponError.value = '' })
+watch(selectedDays, () => { couponResult.value = null; couponError.value = '' })
+
+async function applyCoupon() {
+    if (!couponCode.value.trim() || !selectedPrice.value) return
+    couponLoading.value = true
+    couponError.value = ''
+    couponResult.value = null
+    try {
+        const r = await validateCoupon(couponCode.value.trim(), selectedPrice.value)
+        couponResult.value = r
+        if (!r.isValid) couponError.value = r.message ?? 'Nieprawidłowy kod rabatowy.'
+    } catch (e: any) {
+        couponError.value = e?.data?.message ?? 'Nie udało się zastosować kuponu.'
+    } finally {
+        couponLoading.value = false
+    }
+}
+
 async function skipPromotion() {
-    await navigateTo('/my-adverts')
+    await navigateTo(`/add-advert?edit=${advertId.value}`)
 }
 
 async function publishFree() {
     publishing.value = true
     actionError.value = ''
     try {
+        await $fetch(`/api/proxy/api/Advert/${advertId.value}/publish`, { method: 'POST', body: {} })
         await navigateTo('/my-adverts')
+    } catch (e: any) {
+        actionError.value = e?.data?.message ?? 'Nie udało się opublikować ogłoszenia.'
     } finally {
         publishing.value = false
     }
 }
 
+function goToBilling() {
+    if (!selectedPlan.value) return
+    step.value = 2
+}
+
 async function initiatePayment() {
     if (!selectedPlan.value || !selectedPrice.value) return
+    // Validate billing form
+    if (!billingFormRef.value?.validateAll()) {
+        actionError.value = 'Uzupełnij dane do faktury.'
+        return
+    }
     paying.value = true
     actionError.value = ''
     try {
-        const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', {
-            method: 'POST',
-            body: {
-                advertId: advertId.value,
-                serviceType: selectedPlan.value.key,
-                durationDays: selectedDays.value,
-            }
-        })
+        // Publish the advert first
+        await $fetch(`/api/proxy/api/Advert/${advertId.value}/publish`, { method: 'POST', body: {} })
+
+        const body: Record<string, unknown> = {
+            advertId: advertId.value,
+            serviceType: selectedPlan.value.key,
+            durationDays: selectedDays.value,
+            billing: billingData.value,
+            returnUrl: `${window.location.origin}/payment/return?status=success&advertId=${advertId.value}`,
+            cancelUrl: `${window.location.origin}/payment/return?status=cancel&advertId=${advertId.value}`,
+        }
+        if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
+
+        const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
         if (result.paymentUrl) {
             window.location.href = result.paymentUrl
         }
@@ -301,6 +473,115 @@ async function initiatePayment() {
 
 .action-error { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #e55; margin-top: 8px; width: 100%; }
 
+.price-original { text-decoration: line-through; color: $text-dim; font-size: 16px; font-weight: 400; margin-right: 6px; }
+.coupon-applied { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #4caf50; margin-top: 2px; }
+
+.coupon-row {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.coupon-input-wrap {
+    display: flex;
+    gap: 6px;
+}
+
+.coupon-input {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: 8px;
+    color: $text;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    padding: 9px 14px;
+    outline: none;
+    min-width: 0;
+    transition: border-color 0.2s;
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba($red, 0.4); }
+    &:disabled { opacity: 0.5; }
+}
+
+.coupon-btn {
+    background: transparent;
+    border: 1px solid $border;
+    border-radius: 8px;
+    color: $text-muted;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 9px 16px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s, color 0.2s;
+    &:hover:not(:disabled) { border-color: $red; color: $text; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.coupon-error { font-size: 12px; color: #e55; }
+
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+// Billing step
+.billing-step {
+    max-width: 680px;
+    margin: 0 auto;
+    background: #0a0a0a;
+    border: 1px solid $border;
+    border-radius: 12px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.billing-step-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 800;
+    color: $text;
+    margin: 0;
+    .v-icon { color: $red; }
+}
+
+.billing-step-sub {
+    font-size: 13px;
+    color: $text-dim;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.billing-order-summary {
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.bos-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: $text-muted;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    &:last-child { border-bottom: none; }
+}
+
+.bos-discount { color: #4caf50; }
+.bos-net, .bos-vat { color: $text-dim; font-size: 12px; }
+
+.bos-total {
+    background: rgba($red, 0.06);
+    color: $text;
+    font-weight: 700;
+    strong { font-size: 18px; color: $red; }
+}
 </style>
