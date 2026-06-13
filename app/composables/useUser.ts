@@ -33,8 +33,7 @@ export const useUser = () => {
     async function updateProfile(dto: UpdateProfileDto): Promise<UserProfile> {
         try {
             const result = await $fetch<UserProfile>('/api/proxy/api/User/me', { method: 'PATCH', body: dto })
-            // If backend succeeds, clear local override
-            localStorage.removeItem(PROFILE_OVERRIDE_KEY)
+            if (import.meta.client) localStorage.removeItem(PROFILE_OVERRIDE_KEY)
             return result
         } catch (e: any) {
             const status = e?.status ?? e?.statusCode
