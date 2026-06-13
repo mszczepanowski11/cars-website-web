@@ -3,6 +3,7 @@ import type { UserProfile, UserStats, UpdateProfileDto, UpdatePasswordDto, Updat
 const PROFILE_OVERRIDE_KEY = 'carizo_profile_override'
 
 function loadOverride(): Partial<UserProfile> {
+    if (!import.meta.client) return {}
     try {
         const raw = localStorage.getItem(PROFILE_OVERRIDE_KEY)
         return raw ? JSON.parse(raw) : {}
@@ -10,6 +11,7 @@ function loadOverride(): Partial<UserProfile> {
 }
 
 function saveOverride(data: Partial<UserProfile>) {
+    if (!import.meta.client) return
     localStorage.setItem(PROFILE_OVERRIDE_KEY, JSON.stringify(data))
 }
 
@@ -30,8 +32,7 @@ export const useUser = () => {
     async function updateProfile(dto: UpdateProfileDto): Promise<UserProfile> {
         try {
             const result = await $fetch<UserProfile>('/api/proxy/api/User/me', { method: 'PATCH', body: dto })
-            // If backend succeeds, clear local override
-            localStorage.removeItem(PROFILE_OVERRIDE_KEY)
+            if (import.meta.client) localStorage.removeItem(PROFILE_OVERRIDE_KEY)
             return result
         } catch (e: any) {
             const status = e?.status ?? e?.statusCode

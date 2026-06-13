@@ -6,7 +6,6 @@ const scss = (file: string) =>
 export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module'],
   compatibilityDate: '2025-07-15',
-  ssr: false,
 
   app: {
     pageTransition: { name: 'page-fade', mode: 'out-in' },
