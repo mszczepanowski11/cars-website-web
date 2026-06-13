@@ -4,6 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  NUXT_PUBLIC_API_BASE = "https://cars-website-api-production.up.railway.app/"
 
 [functions]
   directory = ".netlify/functions"
