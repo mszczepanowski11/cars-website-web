@@ -3,7 +3,7 @@ import type { UserProfile, UserStats, UpdateProfileDto, UpdatePasswordDto, Updat
 const PROFILE_OVERRIDE_KEY = 'carizo_profile_override'
 
 function loadOverride(): Partial<UserProfile> {
-    if (!import.meta.client) return {}   // ← guard
+    if (!import.meta.client) return {}
     try {
         const raw = localStorage.getItem(PROFILE_OVERRIDE_KEY)
         return raw ? JSON.parse(raw) : {}
@@ -12,7 +12,7 @@ function loadOverride(): Partial<UserProfile> {
 
 
 function saveOverride(data: Partial<UserProfile>) {
-    if (!import.meta.client) return      // ← guard
+    if (!import.meta.client) return
     localStorage.setItem(PROFILE_OVERRIDE_KEY, JSON.stringify(data))
 }
 

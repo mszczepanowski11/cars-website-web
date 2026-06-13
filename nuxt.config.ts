@@ -6,13 +6,13 @@ const scss = (file: string) =>
 export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module'],
   compatibilityDate: '2025-07-15',
-  ssr: false,
 
   app: {
     pageTransition: { name: 'page-fade', mode: 'out-in' },
   },
 
   nitro: {
+    preset: process.env.NITRO_PRESET ?? 'netlify',
     externals: {
       inline: [],
       external: ['sharp'],
