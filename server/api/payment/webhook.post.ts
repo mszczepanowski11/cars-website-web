@@ -59,17 +59,6 @@ export default defineEventHandler(async (event) => {
         }
     }
 
-    // Map IMOJE status → our PaymentStatusType
-    const statusMap: Record<string, string> = {
-        completed: 'Completed',
-        rejected: 'Failed',
-        cancelled: 'Cancelled',
-        refunded: 'Refunded',
-        pending: 'Pending',
-        new: 'Pending'
-    }
-    const internalStatus = statusMap[notification.status] ?? 'Pending'
-
     // Forward to ASP.NET backend — the backend handles:
     // 1. Updating payment status in DB
     // 2. Activating the purchased service (promotion)
@@ -79,11 +68,11 @@ export default defineEventHandler(async (event) => {
         await $fetch(`${config.public.apiBase}api/Payment/webhook`, {
             method: 'POST',
             body: {
-                imojeTransactionId: notification.transactionId,
+                transactionId: notification.transactionId,
                 orderId: notification.orderId,
                 amount: notification.amount,
                 currency: notification.currency,
-                status: internalStatus,
+                status: notification.status,
                 statusDate: notification.statusDate,
                 paymentType: notification.paymentType,
                 customerEmail: notification.customerEmail
