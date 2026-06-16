@@ -1799,41 +1799,14 @@ const scoreTips = computed(() => {
     return tips.slice(0, 3)
 })
 
-// Special feature categories available per vehicle slug
-const SPECIAL_FEAT_CATS: Record<string, string[]> = {
-    'ciezarowe':  ['Specjalne – Ciężarówki'],
-    'dostawcze':  ['Specjalne – Dostawcze'],
-    'motocykle':  ['Specjalne – Motocykle'],
-    'przyczepy':  ['Specjalne – Przyczepy i naczepy'],
-    'budowlane':  ['Specjalne – Maszyny budowlane'],
-    'rolnicze':   ['Specjalne – Maszyny rolnicze'],
-    'maszyny':    ['Specjalne – Maszyny budowlane'],
-}
-
-const ALL_SPECIAL_CATS = [
-    'Specjalne – Ciężarówki',
-    'Specjalne – Motocykle',
-    'Specjalne – Dostawcze',
-    'Specjalne – Przyczepy i naczepy',
-    'Specjalne – Maszyny budowlane',
-    'Specjalne – Maszyny rolnicze',
-]
-
-// Categories where standard car features (Multimedia, Komfort, etc.) are irrelevant
-const CATS_HIDE_STANDARD = new Set(['maszyny', 'czesci', 'przyczepy', 'rolnicze', 'budowlane'])
-
 const featureGroups = computed(() => {
-    const slug = selectedCategory.value?.slug ?? ''
-    const allowedSpecial = SPECIAL_FEAT_CATS[slug] ?? []
-    const hideStandard = CATS_HIDE_STANDARD.has(slug)
-
+    const vehicleCatId = selectedCategory.value?.id ?? null
     const g: Record<string, Feature[]> = {}
     for (const f of allFeatures.value) {
+        const fvc = f.category?.vehicleCategoryId
+        // Exclude features that belong to a different vehicle category
+        if (fvc != null && vehicleCatId != null && fvc !== vehicleCatId) continue
         const cat = f.category?.name ?? 'Inne'
-        // Always exclude special categories that don't belong to this vehicle type
-        if (ALL_SPECIAL_CATS.includes(cat) && !allowedSpecial.includes(cat)) continue
-        // For machinery/trailers/parts, hide all standard car features
-        if (hideStandard && !allowedSpecial.includes(cat)) continue
         ;(g[cat] ??= []).push(f)
     }
     return g

@@ -3,7 +3,7 @@ export interface SelectOption { value: number | string; label: string; icon?: st
 export interface Generation extends TaxonomyItem { yearFrom: number; yearTo: number }
 export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number }
 export interface AdvertImage { id: number; url: string; isMain: boolean }
-export interface Feature { id: number; name: string; category: { id: number; name: string } }
+export interface Feature { id: number; name: string; category: { id: number; name: string; vehicleCategoryId?: number | null } }
 export interface DriveType { id: number; name: string; slug: string }
 export interface CarColor { id: number; name: string; hexCode: string }
 export type AdvertBadge = 'PREMIUM' | 'VERIFIED' | 'DEALER' | 'FEATURED' | 'TOP'

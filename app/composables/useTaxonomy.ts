@@ -14,6 +14,7 @@ export const useTaxonomy = () => {
     fetchColors: () => $fetch<CarColor[]>('/api/proxy/api/Taxonomy/colors'),
     fetchFeatures: () => $fetch<Feature[]>('/api/proxy/api/Taxonomy/features'),
     fetchFeatureCategories: () => $fetch('/api/proxy/api/Taxonomy/feature-categories'),
+    fetchFeatureCategoriesByVehicle: (vehicleCategoryId: number) => $fetch(`/api/proxy/api/Taxonomy/feature-categories/by-vehicle/${vehicleCategoryId}`),
     fetchCategories: () => $fetch('/api/proxy/api/Taxonomy/categories'),
   }
 }
