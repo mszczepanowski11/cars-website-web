@@ -89,6 +89,12 @@
                                             <v-icon v-else :icon="u.isBlocked ? 'mdi-lock-open-outline' : 'mdi-lock-outline'" size="13" />
                                             {{ u.isBlocked ? 'Odblokuj' : 'Zablokuj' }}
                                         </button>
+                                        <button v-if="!u.isAdmin" class="btn-action btn-delete"
+                                            :disabled="actionLoading === u.id"
+                                            @click="deleteUser(u)">
+                                            <v-icon icon="mdi-delete-outline" size="13" />
+                                            Usuń
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -180,6 +186,16 @@ async function toggleBlock(u: AdminUser) {
     } catch {} finally { actionLoading.value = null }
 }
 
+async function deleteUser(u: AdminUser) {
+    if (!confirm(`Czy na pewno chcesz usunąć konto ${u.name} ${u.surname} (${u.email})? Tej operacji nie można cofnąć.`)) return
+    actionLoading.value = u.id
+    try {
+        await $fetch(`/api/proxy/api/Admin/User/${u.id}`, { method: 'DELETE', body: { note: 'Usunięte przez administratora' } })
+        users.value = users.value.filter(x => x.id !== u.id)
+        totalCount.value--
+    } catch {} finally { actionLoading.value = null }
+}
+
 onMounted(fetchUsers)
 </script>
 
@@ -235,4 +251,5 @@ onMounted(fetchUsers)
 
 .btn-block { background: rgba(220,50,50,0.1); color: #e55; border-color: rgba(220,50,50,0.25); &:hover:not(:disabled) { background: rgba(220,50,50,0.2); } }
 .btn-unblock { background: rgba(76,175,80,0.1); color: #4caf50; border-color: rgba(76,175,80,0.2); &:hover:not(:disabled) { background: rgba(76,175,80,0.18); } }
+.btn-delete { background: rgba(220,50,50,0.06); color: rgba(229,85,85,0.7); border-color: rgba(220,50,50,0.15); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); color: #e55; border-color: rgba(220,50,50,0.35); } }
 </style>
