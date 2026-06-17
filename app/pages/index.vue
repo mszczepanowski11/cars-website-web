@@ -1,359 +1,139 @@
 <template>
     <div class="home">
 
-        <!-- Hero -->
-        <section class="hero">
-            <div class="hero-car-bg">
-                <img src="/hero-car.jpg" alt="" />
+        <!-- Hero fullscreen -->
+        <section class="hero-fs">
+            <div class="hfs-bg">
+                <img src="/hero-car.jpg" alt="" class="hfs-img" />
+                <div class="hfs-overlay" />
             </div>
-            <div class="container hero-inner">
-                <div class="hero-content">
-                    <div class="hero-eyebrow">Nowa era motoryzacji</div>
-                    <h1 class="hero-title">
-                        Motoryzacja.<br>
-                        <span>W lepszym</span> wydaniu.
-                    </h1>
-                    <p class="hero-sub">
-                        CARIZO to więcej niż portal ogłoszeniowy.<br>
-                        To miejsce, gdzie technologia spotyka pasję do motoryzacji.
-                    </p>
-                    <div class="hero-cta-row">
-                        <NuxtLink to="/adverts" class="hero-btn-primary">
-                            <v-icon icon="mdi-magnify" size="18" />
-                            Przeglądaj oferty
-                        </NuxtLink>
-                        <NuxtLink to="/add-advert" class="hero-btn-ghost">
-                            Dodaj ogłoszenie
-                            <v-icon icon="mdi-arrow-right" size="16" />
-                        </NuxtLink>
-                    </div>
-                    <div class="hero-badges">
-                        <div class="hero-badge">
-                            <v-icon icon="mdi-shield-check-outline" size="18" />
-                            <span>Zweryfikowane ogłoszenia</span>
-                        </div>
-                        <div class="hero-badge">
-                            <v-icon icon="mdi-account-group-outline" size="18" />
-                            <span>Zaufani sprzedawcy</span>
-                        </div>
-                        <div class="hero-badge">
-                            <v-icon icon="mdi-chart-line" size="18" />
-                            <span>Inteligentne narzędzia</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Search & Filters -->
-        <div class="search-section">
-            <div class="container">
-
-                <!-- Category tabs -->
-                <div class="cat-tabs-wrap">
-                    <div class="cat-tabs">
-                        <button
-                            class="cat-tab"
-                            :class="{ 'cat-tab--active': selectedCategoryId === null }"
-                            @click="selectCategory(null)"
-                        >
-                            <v-icon icon="mdi-view-grid-outline" size="15" />
-                            Wszystkie
-                        </button>
-                        <button
-                            v-for="cat in searchCategories"
-                            :key="cat.id"
-                            class="cat-tab"
-                            :class="{ 'cat-tab--active': selectedCategoryId === cat.id }"
-                            @click="selectCategory(cat)"
-                        >
-                            <v-icon :icon="cat.iconName ?? 'mdi-car'" size="15" />
-                            {{ cat.name }}
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Search bar -->
-                <div class="search-bar" :class="{ 'search-bar--focus': searchFocused }">
-                    <v-icon icon="mdi-magnify" size="20" class="sbar-icon" />
-                    <input
-                        v-model="searchText"
-                        class="sbar-input"
-                        :placeholder="searchPlaceholder"
-                        @keyup.enter="doSearch"
-                        @focus="searchFocused = true"
-                        @blur="searchFocused = false"
-                    />
-                    <button v-if="hasActiveFilters" class="sbar-clear" @click="clearFilters" title="Wyczyść filtry">
-                        <v-icon icon="mdi-close-circle" size="16" />
-                        Wyczyść
-                    </button>
-                    <button class="sbar-btn" @click="doSearch">
-                        <v-icon icon="mdi-magnify" size="16" />
-                        Szukaj
-                    </button>
-                </div>
-
-                <!-- Filter grid -->
-                <div class="filter-grid">
-                    <!-- Marka -->
-                    <div v-if="show('brand')" class="fg-field">
-                        <div class="fg-label">
-                            <v-icon icon="mdi-car-outline" size="13" />
-                            Marka
-                        </div>
-                        <select v-model="fBrand" class="fg-select" :disabled="brandsLoading" @change="fModel = null">
-                            <option :value="null">{{ brandsLoading ? 'Ładowanie...' : 'Wszystkie marki' }}</option>
+            <div class="container hfs-content">
+                <h1 class="hfs-title">
+                    Motoryzacja.<br>
+                    <span>W&nbsp;lepszym</span> wydaniu.
+                </h1>
+                <p class="hfs-sub">
+                    Tysiące zweryfikowanych ogłoszeń. Znajdź swoje wymarzone auto.
+                </p>
+                <div class="hfs-searchbar">
+                    <div class="hfs-field">
+                        <label class="hfs-field-label">Marka</label>
+                        <select v-model="heroMarka" class="hfs-select" @change="heroModel = null; loadHeroModels()">
+                            <option :value="null">Wszystkie</option>
                             <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
                         </select>
                     </div>
-
-                    <!-- Paliwo -->
-                    <div v-if="show('fuel')" class="fg-field">
-                        <div class="fg-label">
-                            <v-icon icon="mdi-gas-station-outline" size="13" />
-                            Paliwo
-                        </div>
-                        <select v-model="fFuelType" class="fg-select">
-                            <option :value="null">Każde paliwo</option>
-                            <option v-for="ft in filterFuelTypes" :key="ft.id" :value="ft.id">{{ ft.name }}</option>
+                    <div class="hfs-vsep" />
+                    <div class="hfs-field">
+                        <label class="hfs-field-label">Model</label>
+                        <select v-model="heroModel" class="hfs-select" :disabled="!heroMarka">
+                            <option :value="null">Wszystkie</option>
+                            <option v-for="m in heroModels" :key="m.id" :value="m.id">{{ m.name }}</option>
                         </select>
                     </div>
-
-                    <!-- Nadwozie -->
-                    <div v-if="show('body')" class="fg-field">
-                        <div class="fg-label">
-                            <v-icon icon="mdi-car-estate" size="13" />
-                            Nadwozie
-                        </div>
-                        <select v-model="fBodyType" class="fg-select">
-                            <option :value="null">Każde nadwozie</option>
-                            <option v-for="bt in filterBodyTypes" :key="bt.id" :value="bt.id">{{ bt.name }}</option>
-                        </select>
+                    <div class="hfs-vsep" />
+                    <div class="hfs-field">
+                        <label class="hfs-field-label">Cena max</label>
+                        <input v-model="heroPrice" type="number" class="hfs-price-input" placeholder="np. 50 000" min="0" @keyup.enter="doHeroSearch" />
                     </div>
-
-                    <!-- Pojemność silnika (motocykle) -->
-                    <div v-if="show('engineCC')" class="fg-field fg-field--range">
-                        <div class="fg-label">
-                            <v-icon icon="mdi-engine-outline" size="13" />
-                            Pojemność (cm³)
-                        </div>
-                        <div class="fg-range">
-                            <input v-model="fEngineCCFrom" type="number" class="fg-input" placeholder="od" min="0" @keyup.enter="doSearch" />
-                            <span class="fg-dash">—</span>
-                            <input v-model="fEngineCCTo" type="number" class="fg-input" placeholder="do" min="0" @keyup.enter="doSearch" />
-                        </div>
-                    </div>
-
-                    <!-- Moc (maszyny/rolnicze/budowlane) -->
-                    <div v-if="show('power')" class="fg-field fg-field--range">
-                        <div class="fg-label">
-                            <v-icon icon="mdi-lightning-bolt" size="13" />
-                            Moc (KM)
-                        </div>
-                        <div class="fg-range">
-                            <input v-model="fPowerFrom" type="number" class="fg-input" placeholder="od" min="0" @keyup.enter="doSearch" />
-                            <span class="fg-dash">—</span>
-                            <input v-model="fPowerTo" type="number" class="fg-input" placeholder="do" min="0" @keyup.enter="doSearch" />
-                        </div>
-                    </div>
-
-                    <!-- Ładowność (przyczepy) -->
-                    <div v-if="show('payload')" class="fg-field fg-field--range">
-                        <div class="fg-label">
-                            <v-icon icon="mdi-weight" size="13" />
-                            Ładowność (kg)
-                        </div>
-                        <div class="fg-range">
-                            <input v-model="fPayloadFrom" type="number" class="fg-input" placeholder="od" min="0" @keyup.enter="doSearch" />
-                            <span class="fg-dash">—</span>
-                            <input v-model="fPayloadTo" type="number" class="fg-input" placeholder="do" min="0" @keyup.enter="doSearch" />
-                        </div>
-                    </div>
-
-                    <!-- Cena -->
-                    <div class="fg-field fg-field--range">
-                        <div class="fg-label">
-                            <v-icon icon="mdi-currency-usd" size="13" />
-                            Cena (zł)
-                        </div>
-                        <div class="fg-range">
-                            <input v-model="fPriceFrom" type="number" class="fg-input" placeholder="od" min="0" @keyup.enter="doSearch" />
-                            <span class="fg-dash">—</span>
-                            <input v-model="fPriceTo" type="number" class="fg-input" placeholder="do" min="0" @keyup.enter="doSearch" />
-                        </div>
-                    </div>
-
-                    <!-- Rok -->
-                    <div class="fg-field fg-field--range">
-                        <div class="fg-label">
-                            <v-icon icon="mdi-calendar-outline" size="13" />
-                            Rok produkcji
-                        </div>
-                        <div class="fg-range">
-                            <input v-model="fYearFrom" type="number" class="fg-input" placeholder="od" min="1900" @keyup.enter="doSearch" />
-                            <span class="fg-dash">—</span>
-                            <input v-model="fYearTo" type="number" class="fg-input" placeholder="do" min="1900" @keyup.enter="doSearch" />
-                        </div>
-                    </div>
-
-                    <!-- Przebieg -->
-                    <div v-if="show('mileage')" class="fg-field fg-field--range">
-                        <div class="fg-label">
-                            <v-icon icon="mdi-speedometer" size="13" />
-                            Przebieg (km)
-                        </div>
-                        <div class="fg-range">
-                            <input v-model="fMileageFrom" type="number" class="fg-input" placeholder="od" min="0" @keyup.enter="doSearch" />
-                            <span class="fg-dash">—</span>
-                            <input v-model="fMileageTo" type="number" class="fg-input" placeholder="do" min="0" @keyup.enter="doSearch" />
-                        </div>
-                    </div>
+                    <button class="hfs-search-btn" @click="doHeroSearch">
+                        <v-icon icon="mdi-magnify" size="20" />
+                        <span>Szukaj</span>
+                    </button>
                 </div>
-
-                <!-- Active filter chips -->
-                <div v-if="hasActiveFilters" class="filter-chips">
-                    <div v-if="selectedCategoryId" class="filter-chip filter-chip--cat" @click="selectCategory(null)">
-                        <v-icon :icon="searchCategories.find(c => c.id === selectedCategoryId)?.iconName ?? 'mdi-car'" size="11" />
-                        {{ searchCategories.find(c => c.id === selectedCategoryId)?.name }}
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
-                    <div v-if="fBrand" class="filter-chip" @click="fBrand = null">
-                        {{ filterBrands.find(b => b.id === fBrand)?.name }}
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
-                    <div v-if="fFuelType" class="filter-chip" @click="fFuelType = null">
-                        {{ filterFuelTypes.find(f => f.id === fFuelType)?.name }}
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
-                    <div v-if="fBodyType" class="filter-chip" @click="fBodyType = null">
-                        {{ filterBodyTypes.find(b => b.id === fBodyType)?.name }}
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
-                    <div v-if="fEngineCCFrom || fEngineCCTo" class="filter-chip" @click="fEngineCCFrom = ''; fEngineCCTo = ''">
-                        Poj.: {{ fEngineCCFrom || '0' }} – {{ fEngineCCTo || '∞' }} cm³
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
-                    <div v-if="fPowerFrom || fPowerTo" class="filter-chip" @click="fPowerFrom = ''; fPowerTo = ''">
-                        Moc: {{ fPowerFrom || '0' }} – {{ fPowerTo || '∞' }} KM
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
-                    <div v-if="fPayloadFrom || fPayloadTo" class="filter-chip" @click="fPayloadFrom = ''; fPayloadTo = ''">
-                        Ład.: {{ fPayloadFrom || '0' }} – {{ fPayloadTo || '∞' }} kg
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
-                    <div v-if="fPriceFrom || fPriceTo" class="filter-chip" @click="fPriceFrom = ''; fPriceTo = ''">
-                        Cena: {{ fPriceFrom || '0' }} – {{ fPriceTo || '∞' }} zł
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
-                    <div v-if="fYearFrom || fYearTo" class="filter-chip" @click="fYearFrom = ''; fYearTo = ''">
-                        Rok: {{ fYearFrom || '?' }} – {{ fYearTo || '?' }}
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
-                    <div v-if="fMileageFrom || fMileageTo" class="filter-chip" @click="fMileageFrom = ''; fMileageTo = ''">
-                        Przebieg: {{ fMileageFrom || '0' }} – {{ fMileageTo || '∞' }} km
-                        <v-icon icon="mdi-close" size="11" />
-                    </div>
+                <div class="hfs-links">
+                    <NuxtLink to="/add-advert" class="hfs-link">
+                        Dodaj ogłoszenie <v-icon icon="mdi-arrow-right" size="13" />
+                    </NuxtLink>
+                    <NuxtLink to="/categories" class="hfs-link">
+                        Wszystkie kategorie <v-icon icon="mdi-arrow-right" size="13" />
+                    </NuxtLink>
                 </div>
-
             </div>
-        </div>
+            <div class="hfs-scroll">
+                <v-icon icon="mdi-chevron-down" size="24" />
+            </div>
+        </section>
 
-        <!-- Stats -->
-        <div class="stats-bar">
+        <!-- Stats strip -->
+        <div class="stats-strip">
             <div class="container">
-                <div class="stats-inner">
+                <div class="sstrip-inner">
                     <template v-for="(stat, i) in visibleStats" :key="stat.key">
-                        <div class="stat-sep" v-if="i > 0" />
-                        <div class="stat-item">
-                            <div class="stat-icon-wrap">
-                                <v-icon :icon="stat.icon" size="20" />
-                            </div>
-                            <div class="stat-body">
-                                <div v-if="statsLoading" class="stat-skeleton" />
-                                <div v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="stat-num">{{ formatStat(stat.value) }}</div>
-                                <div class="stat-label">{{ stat.label }}</div>
-                            </div>
+                        <div v-if="i > 0" class="sstrip-sep" />
+                        <div class="sstrip-item">
+                            <div v-if="statsLoading" class="sstrip-skeleton" />
+                            <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
+                            <span class="sstrip-label">{{ stat.label }}</span>
                         </div>
                     </template>
                 </div>
             </div>
         </div>
 
-        <!-- Categories strip -->
-        <section v-if="homeCategories.length" class="section cats-strip-section">
+        <!-- Ostatnio dodane -->
+        <section v-if="recentlyAdded.length || featured.length" class="section">
             <div class="container">
                 <div class="sec-top">
-                    <h2>Przeglądaj <span>kategorie</span></h2>
-                    <NuxtLink to="/categories" class="see-all">
-                        Wszystkie kategorie
-                        <v-icon icon="mdi-arrow-right" size="16" />
-                    </NuxtLink>
-                </div>
-                <div class="cats-grid-premium">
-                    <NuxtLink
-                        v-for="cat in homeCategories"
-                        :key="cat.id"
-                        :to="`/adverts?categoryId=${cat.id}`"
-                        class="cat-card-premium"
-                    >
-                        <div class="ccp-icon-wrap">
-                            <v-icon :icon="cat.iconName ?? 'mdi-car-outline'" size="32" />
-                        </div>
-                        <div class="ccp-body">
-                            <div class="ccp-name">{{ cat.name }}</div>
-                            <div v-if="cat.advertCount" class="ccp-count">
-                                {{ cat.advertCount.toLocaleString('pl') }} ofert
-                            </div>
-                        </div>
-                        <v-icon icon="mdi-arrow-right" size="16" class="ccp-arrow" />
-                    </NuxtLink>
-                </div>
-            </div>
-        </section>
-
-        <!-- Featured listings -->
-        <section v-if="featured.length" class="section">
-            <div class="container">
-                <div class="sec-top">
-                    <h2>Polecane ogłoszenia</h2>
+                    <h2>Ostatnio dodane</h2>
                     <NuxtLink to="/adverts" class="see-all">
-                        Zobacz wszystkie
+                        Wszystkie ogłoszenia
                         <v-icon icon="mdi-arrow-right" size="16" />
                     </NuxtLink>
                 </div>
                 <div class="cars-grid">
-                    <AdvertCard v-for="a in featured" :key="a.id" :advert="a" />
+                    <AdvertCard v-for="a in (recentlyAdded.length ? recentlyAdded : featured)" :key="a.id" :advert="a" />
                 </div>
             </div>
         </section>
 
-        <!-- Recently viewed -->
-        <section v-if="recentAdverts.length" class="section">
+        <!-- Samochody premium (showcase) -->
+        <section class="section premium-showcase-section">
             <div class="container">
-                <div class="sec-top">
-                    <h2>Ostatnio oglądane</h2>
-                    <button class="see-all see-all--btn" @click="clearRecent">
-                        <v-icon icon="mdi-trash-can-outline" size="14" />
-                        Wyczyść
-                    </button>
+                <div class="psc-header">
+                    <div class="psc-header-text">
+                        <div class="psc-eyebrow">PREMIUM</div>
+                        <h2 class="psc-title">Samochody premium</h2>
+                        <p class="psc-sub">Odkryj wyjątkowe oferty z najwyższej półki motoryzacji</p>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">
+                        Przeglądaj wszystkie
+                        <v-icon icon="mdi-arrow-right" size="16" />
+                    </NuxtLink>
                 </div>
-                <div class="cars-grid">
-                    <AdvertCard v-for="a in recentAdverts" :key="a.id" :advert="a" hide-compare />
+                <div class="psc-grid">
+                    <NuxtLink
+                        v-for="car in premiumShowcase"
+                        :key="car.model"
+                        :to="`/adverts?textSearch=${encodeURIComponent(car.brand)}`"
+                        class="psc-card"
+                    >
+                        <div class="psc-top-row">
+                            <span class="psc-badge">Premium</span>
+                        </div>
+                        <div class="psc-car-name">
+                            <div class="psc-brand">{{ car.brand }}</div>
+                            <div class="psc-model">{{ car.model }}</div>
+                        </div>
+                        <div class="psc-spec">{{ car.spec }}</div>
+                        <div class="psc-cta">
+                            Szukaj ofert <v-icon icon="mdi-arrow-right" size="14" />
+                        </div>
+                    </NuxtLink>
                 </div>
             </div>
         </section>
 
-        <!-- TOP / PREMIUM listings -->
-        <section v-if="topAdverts.length" class="section premium-section">
+        <!-- Polecane / TOP listings -->
+        <section v-if="topAdverts.length" class="section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
                         <span class="premium-label">
                             <v-icon icon="mdi-crown" size="14" />
-                            PREMIUM
+                            WYRÓŻNIONE
                         </span>
-                        <h2>Polecane oferty <span class="premium-gold">Premium</span></h2>
+                        <h2>Polecane oferty</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Zobacz wszystkie
@@ -592,122 +372,47 @@ useHead({
 
 const featured = ref<CarAdvert[]>([])
 const topAdverts = ref<CarAdvert[]>([])
-const recentAdverts = ref<CarAdvert[]>([])
+const recentlyAdded = ref<CarAdvert[]>([])
 const events = ref<CarEvent[]>([])
 const homeCategories = ref<import('~/types').CategoryWithCount[]>([])
-const { fetchCategories, STATIC_CATEGORIES } = useCategories()
+const searchCategories = computed(() => homeCategories.value)
 
-// Category-aware search
-const selectedCategoryId = ref<number | null>(null)
-const selectedCategorySlug = ref<string | null>(null)
-const searchCategories = computed(() => homeCategories.value.length ? homeCategories.value : STATIC_CATEGORIES)
+// Hero search
+const heroMarka = ref<number | null>(null)
+const heroModel = ref<number | null>(null)
+const heroPrice = ref('')
+const heroModels = ref<TaxonomyItem[]>([])
 
-const CATEGORY_FILTER_FIELDS: Record<string, string[]> = {
-    'auta-osobowe': ['brand', 'fuel', 'body', 'mileage'],
-    'dostawcze':    ['brand', 'fuel', 'body', 'mileage'],
-    'ciezarowe':    ['brand', 'fuel', 'mileage'],
-    'motocykle':    ['brand', 'engineCC', 'mileage'],
-    'przyczepy':    ['brand', 'payload'],
-    'maszyny':      ['brand', 'power'],
-    'budowlane':    ['brand', 'power'],
-    'rolnicze':     ['brand', 'power'],
-    'czesci':       ['brand'],
-    'inne':         ['brand'],
-}
-const DEFAULT_FIELDS = ['brand', 'fuel', 'body', 'mileage']
+// Premium showcase (static)
+const premiumShowcase = [
+    { brand: 'BMW',      model: 'M5',       spec: 'V8 4.4 BiTurbo · 625 KM' },
+    { brand: 'Porsche',  model: '911 GT3',  spec: 'Flat-6 4.0 · 510 KM' },
+    { brand: 'Audi',     model: 'RS6 Avant',spec: 'V8 4.0 BiTurbo · 600 KM' },
+    { brand: 'Mercedes', model: 'AMG GT63', spec: 'V8 4.0 BiTurbo · 630 KM' },
+]
 
-const activeFields = computed(() => {
-    if (!selectedCategorySlug.value) return DEFAULT_FIELDS
-    return CATEGORY_FILTER_FIELDS[selectedCategorySlug.value] ?? DEFAULT_FIELDS
-})
-
-function show(field: string): boolean {
-    return activeFields.value.includes(field)
+async function loadHeroModels() {
+    if (!heroMarka.value) { heroModels.value = []; return }
+    try { heroModels.value = await fetchModels(heroMarka.value) } catch { heroModels.value = [] }
 }
 
-const searchPlaceholder = computed(() => {
-    const slug = selectedCategorySlug.value
-    if (slug === 'motocykle') return 'Szukaj: marka, model, pojemność...'
-    if (slug === 'czesci') return 'Szukaj: nazwa części, numer katalogowy...'
-    if (slug === 'maszyny' || slug === 'budowlane' || slug === 'rolnicze') return 'Szukaj: marka, model, typ maszyny...'
-    if (slug === 'przyczepy') return 'Szukaj: marka, typ przyczepy...'
-    if (slug === 'ciezarowe') return 'Szukaj: marka, model, typ nadwozia...'
-    return 'Szukaj: marka, model, rocznik, słowo kluczowe...'
-})
-
-async function selectCategory(cat: import('~/types').CategoryWithCount | null) {
-    selectedCategoryId.value = cat?.id ?? null
-    selectedCategorySlug.value = cat?.slug ?? null
-    fBrand.value = null; fModel.value = null
-    fFuelType.value = null; fBodyType.value = null
-    fEngineCCFrom.value = ''; fEngineCCTo.value = ''
-    fPowerFrom.value = ''; fPowerTo.value = ''
-    fPayloadFrom.value = ''; fPayloadTo.value = ''
-    brandsLoading.value = true
-    try {
-        filterBrands.value = cat
-            ? await fetchBrandsByCategory(cat.id)
-            : await fetchBrands()
-    } catch { /* keep current list */ }
-    finally { brandsLoading.value = false }
+function doHeroSearch() {
+    const query: Record<string, string> = {}
+    if (heroMarka.value) query.brandId = String(heroMarka.value)
+    if (heroModel.value) query.modelId = String(heroModel.value)
+    if (heroPrice.value) query.priceTo = heroPrice.value
+    navigateTo({ path: '/adverts', query })
 }
 
 // Count-up
 const countUpRefs = ref<Record<string, Element>>({})
 const { observe: countUpObserve } = useCountUp()
 
-// Recently viewed
-const { getIds: getRecentIds, clear: clearRecentStorage } = useRecentlyViewed()
-function clearRecent() { clearRecentStorage(); recentAdverts.value = [] }
 const email = ref('')
-const searchText = ref('')
 const subscribeLoading = ref(false)
 const subscribeSuccess = ref(false)
 const subscribeError = ref('')
-
-const searchFocused = ref(false)
 const filterBrands = ref<TaxonomyItem[]>([])
-const filterFuelTypes = ref<TaxonomyItem[]>([])
-const filterBodyTypes = ref<TaxonomyItem[]>([])
-const fBrand = ref<number | null>(null)
-const fModel = ref<number | null>(null)
-const fFuelType = ref<number | null>(null)
-const fBodyType = ref<number | null>(null)
-const fPriceFrom = ref('')
-const fPriceTo = ref('')
-const fYearFrom = ref('')
-const fYearTo = ref('')
-const fMileageFrom = ref('')
-const fMileageTo = ref('')
-const fEngineCCFrom = ref('')
-const fEngineCCTo = ref('')
-const fPowerFrom = ref('')
-const fPowerTo = ref('')
-const fPayloadFrom = ref('')
-const fPayloadTo = ref('')
-
-const hasActiveFilters = computed(() =>
-    !!(selectedCategoryId.value ||
-       fBrand.value || fFuelType.value || fBodyType.value ||
-       fPriceFrom.value || fPriceTo.value ||
-       fYearFrom.value || fYearTo.value ||
-       fMileageFrom.value || fMileageTo.value ||
-       fEngineCCFrom.value || fEngineCCTo.value ||
-       fPowerFrom.value || fPowerTo.value ||
-       fPayloadFrom.value || fPayloadTo.value)
-)
-
-function clearFilters() {
-    selectedCategoryId.value = null; selectedCategorySlug.value = null
-    fBrand.value = null; fModel.value = null; fFuelType.value = null; fBodyType.value = null
-    fPriceFrom.value = ''; fPriceTo.value = ''
-    fYearFrom.value = ''; fYearTo.value = ''
-    fMileageFrom.value = ''; fMileageTo.value = ''
-    fEngineCCFrom.value = ''; fEngineCCTo.value = ''
-    fPowerFrom.value = ''; fPowerTo.value = ''
-    fPayloadFrom.value = ''; fPayloadTo.value = ''
-    searchText.value = ''
-}
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
 const statsLoading = ref(true)
 
@@ -720,8 +425,7 @@ const visibleStats = computed(() => [
 
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
-const { fetchBrands, fetchBrandsByCategory, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
-const brandsLoading = ref(false)
+const { fetchBrands, fetchModels } = useTaxonomy()
 
 // ING calculator
 const ingCalcAmount = ref(80000)
@@ -760,27 +464,6 @@ const feats = [
     { title: 'Najlepsze oferty', desc: 'Codziennie tysiące nowych, atrakcyjnych ofert w jednym miejscu.', icon: 'mdi-tag-outline' },
 ]
 
-function doSearch() {
-    const query: Record<string, string> = {}
-    if (selectedCategoryId.value) query.categoryId = String(selectedCategoryId.value)
-    if (searchText.value.trim()) query.textSearch = searchText.value
-    if (fBrand.value) query.brandId = String(fBrand.value)
-    if (fFuelType.value) query.fuelTypeId = String(fFuelType.value)
-    if (fBodyType.value) query.bodyTypeId = String(fBodyType.value)
-    if (fPriceFrom.value) query.priceFrom = fPriceFrom.value
-    if (fPriceTo.value) query.priceTo = fPriceTo.value
-    if (fYearFrom.value) query.yearFrom = fYearFrom.value
-    if (fYearTo.value) query.yearTo = fYearTo.value
-    if (fMileageFrom.value) query.mileageFrom = fMileageFrom.value
-    if (fMileageTo.value) query.mileageTo = fMileageTo.value
-    if (fEngineCCFrom.value) query.engineCCFrom = fEngineCCFrom.value
-    if (fEngineCCTo.value) query.engineCCTo = fEngineCCTo.value
-    if (fPowerFrom.value) query.powerFrom = fPowerFrom.value
-    if (fPowerTo.value) query.powerTo = fPowerTo.value
-    if (fPayloadFrom.value) query.payloadFrom = fPayloadFrom.value
-    if (fPayloadTo.value) query.payloadTo = fPayloadTo.value
-    navigateTo({ path: '/adverts', query })
-}
 
 async function subscribeNewsletter() {
     if (!email.value.trim()) return
@@ -800,7 +483,6 @@ async function subscribeNewsletter() {
 
 onMounted(async () => {
     await Promise.allSettled([
-        // Fetch a generous pool so promoted ads (badge != null) are captured even when rare
         $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
             method: 'POST',
             body: { page: 1, pageSize: 50, sortBy: 'featured' }
@@ -809,28 +491,17 @@ onMounted(async () => {
             featured.value = promoted.filter(a => a.badge === 'FEATURED').slice(0, 4)
             topAdverts.value = promoted.filter(a => a.badge === 'TOP' || a.badge === 'PREMIUM').slice(0, 6)
         }).catch(() => {}),
-        // Fetch upcoming published events
+        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+            method: 'POST',
+            body: { page: 1, pageSize: 8, sortBy: '' }
+        }).then(r => { recentlyAdded.value = r.items }).catch(() => {}),
         getUpcoming(6).then(e => { events.value = e }),
         $fetch<typeof homeStats.value>('/api/stats/home')
             .then(s => { Object.assign(homeStats.value, s) })
             .catch(() => {}),
-        // Recently viewed
-        Promise.resolve(getRecentIds()).then(async ids => {
-            if (!ids.length) return
-            const results = await Promise.all(
-                ids.slice(0, 4).map(id => $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`).catch(() => null))
-            )
-            recentAdverts.value = results.filter(Boolean) as CarAdvert[]
-        }),
-        Promise.all([fetchBrands(), fetchFuelTypes(), fetchBodyTypes()])
-            .then(([b, f, bt]) => { filterBrands.value = b; filterFuelTypes.value = f; filterBodyTypes.value = bt })
-            .catch(() => {}),
-        fetchCategories()
-            .then(cats => { homeCategories.value = cats.slice(0, 8) })
-            .catch(() => { homeCategories.value = STATIC_CATEGORIES.slice(0, 8) }),
+        fetchBrands().then(b => { filterBrands.value = b }).catch(() => {}),
     ])
     statsLoading.value = false
-    // Trigger count-up after DOM update
     await nextTick()
     visibleStats.value.forEach(stat => {
         const el = countUpRefs.value[stat.key]
@@ -843,459 +514,243 @@ onMounted(async () => {
 .home { background: $bg; }
 .container { @include container; }
 
-// Hero
-.hero {
-    padding-top: $nav-height;
+// ── Fullscreen Hero ──────────────────────────────────────────────────────────
+.hero-fs {
     position: relative;
+    height: 100vh;
+    min-height: 680px;
+    max-height: 1000px;
+    display: flex;
+    align-items: center;
     overflow: hidden;
-    min-height: 560px;
-    background: $bg;
 }
 
-.hero-car-bg {
+.hfs-bg {
     position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 62%;
+    inset: 0;
     z-index: 0;
-
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        opacity: 0.55;
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background:
-            linear-gradient(to right, $bg 0%, transparent 35%),
-            linear-gradient(to bottom, transparent 55%, $bg 100%);
-    }
-
-    @include respond-to(md) { display: none; }
 }
 
-.hero-inner {
+.hfs-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+}
+
+.hfs-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.2) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%);
+}
+
+.hfs-content {
     position: relative;
     z-index: 2;
-    display: flex;
-    align-items: center;
-    min-height: 480px;
-    padding: 60px 0 80px;
+    padding-top: calc(#{$nav-height} + 40px);
+    padding-bottom: 80px;
+    max-width: 640px;
 }
 
-.hero-content { max-width: 580px; }
-
-.hero-eyebrow {
-    color: $red;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-}
-
-.hero-title {
-    font-size: 68px;
-    line-height: 1.05;
+.hfs-title {
+    font-size: 80px;
+    line-height: 1.04;
     font-weight: 900;
     color: $text;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
 
-    span { color: $red; }
+    span { color: rgba(255,255,255,0.75); font-weight: 300; }
 
-    @include respond-to(md) { font-size: 52px; }
-    @include respond-to(sm) { font-size: 38px; }
+    @include respond-to(md) { font-size: 58px; }
+    @include respond-to(sm) { font-size: 40px; letter-spacing: -0.5px; }
 }
 
-.hero-sub {
-    margin-top: 22px;
-    color: $text-muted;
-    font-size: 15px;
-    line-height: 1.8;
+.hfs-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    margin-bottom: 36px;
+    max-width: 480px;
+    font-weight: 400;
 }
 
-.hero-badges {
-    display: flex;
-    gap: 28px;
-    margin-top: 36px;
-    flex-wrap: wrap;
-}
-
-.hero-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: $text-muted;
-    font-size: 13px;
-
-    .v-icon { color: $text-dim; }
-}
-
-// Search
-// ── Search & Filters ──────────────────────────────────────────────────────────
-.search-section {
-    background: #060606;
-    border-top: 1px solid $border;
-    border-bottom: 1px solid $border;
-    padding: 20px 0 20px;
-}
-
-// Category tabs
-.cat-tabs-wrap {
-    overflow-x: auto;
-    scrollbar-width: none;
-    margin-bottom: 14px;
-    &::-webkit-scrollbar { display: none; }
-}
-
-.cat-tabs {
-    display: flex;
-    gap: 6px;
-    min-width: max-content;
-}
-
-.cat-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: 24px;
-    color: $text-dim;
-    font-size: 12.5px;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    padding: 7px 14px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
-
-    .v-icon { color: $text-dark; transition: color 0.15s; }
-
-    &:hover {
-        background: rgba(255,255,255,0.07);
-        border-color: rgba($red, 0.3);
-        color: $text;
-        .v-icon { color: $red; }
-    }
-
-    &--active {
-        background: rgba($red, 0.12);
-        border-color: rgba($red, 0.5);
-        color: $text;
-        .v-icon { color: $red; }
-    }
-}
-
-// Search bar
-.search-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #0d0d0d;
-    border: 1px solid $border;
-    border-radius: $r-lg;
-    padding: 8px 8px 8px 16px;
-    margin-bottom: 16px;
-    transition: border-color 0.2s;
-
-    &--focus { border-color: rgba($red, 0.45); }
-
-    @include respond-to(sm) { flex-wrap: wrap; padding: 10px 12px; }
-}
-
-.sbar-icon { color: $text-dark; flex-shrink: 0; }
-
-.sbar-input {
-    flex: 1;
-    min-width: 0;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: $text;
-    font-size: 15px;
-    font-family: 'Inter', sans-serif;
-    &::placeholder { color: $text-dim; }
-}
-
-.sbar-clear {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: transparent;
-    border: 1px solid rgba($red, 0.3);
-    border-radius: $r-sm;
-    color: rgba($red, 0.7);
-    font-size: 12px;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    padding: 7px 12px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
-    &:hover { background: rgba($red, 0.07); color: $red; border-color: $red; }
-}
-
-.sbar-btn {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    background: $red;
-    border: none;
-    border-radius: $r-md;
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    padding: 12px 28px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: opacity 0.2s;
-    &:hover { opacity: 0.88; }
-
-    @include respond-to(sm) { width: 100%; justify-content: center; }
-}
-
-// Filter grid
-.filter-grid {
-    display: flex;
-    flex-wrap: nowrap;
-    background: #0d0d0d;
-    border: 1px solid $border;
-    border-radius: $r-lg;
-    overflow: hidden;
-
-    @include respond-to(lg) { flex-wrap: wrap; }
-}
-
-.fg-field {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    padding: 14px 16px;
-    border-right: 1px solid $border;
-    flex: 1;
-    min-width: 120px;
-    transition: background 0.15s;
-
-    &:last-child { border-right: none; }
-    &:hover { background: rgba(255,255,255,0.015); }
-
-    @include respond-to(lg) {
-        flex: 0 0 33.333%;
-        border-bottom: 1px solid $border;
-        &:nth-child(3n) { border-right: none; }
-        &:last-child { border-right: none; }
-    }
-
-    @include respond-to(sm) {
-        flex: 0 0 50%;
-        &:nth-child(odd) { border-right: 1px solid $border; }
-        &:nth-child(even) { border-right: none; }
-    }
-
-    @include respond-to(xs) {
-        flex: 0 0 100%;
-        border-right: none;
-    }
-}
-
-.fg-label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 10px;
-    font-weight: 700;
-    color: $text-dark;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    .v-icon { color: $red; opacity: 0.7; }
-}
-
-.fg-select {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: $text;
-    font-size: 13px;
-    font-weight: 500;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    padding: 0;
-    width: 100%;
-
-    option { background: #111; color: $text; }
-    &:focus { color: $text; }
-}
-
-.fg-range {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.fg-input {
-    flex: 1;
-    min-width: 0;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: $text;
-    font-size: 13px;
-    font-weight: 500;
-    font-family: 'Inter', sans-serif;
-    padding: 0;
-    width: 100%;
-    &::placeholder { color: $text-dim; }
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button { -webkit-appearance: none; }
-}
-
-.fg-dash {
-    color: $text-dark;
-    font-size: 12px;
-    flex-shrink: 0;
-}
-
-// Active filter chips
-.filter-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
-}
-
-.filter-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba($red, 0.1);
-    border: 1px solid rgba($red, 0.25);
-    border-radius: 20px;
-    color: $red;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 12px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    &:hover { background: rgba($red, 0.18); border-color: rgba($red, 0.4); }
-    .v-icon { opacity: 0.7; }
-
-    &--cat {
-        background: rgba($red, 0.18);
-        border-color: rgba($red, 0.5);
-        .v-icon { opacity: 1; }
-    }
-}
-
-// legacy btn-search kept for any residual reference
-.btn-search {
-    background: $red;
-    color: white;
-    border: none;
-    border-radius: $r-sm;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 12px 32px;
-    cursor: pointer;
-    white-space: nowrap;
-    font-family: 'Inter', sans-serif;
-    transition: opacity 0.2s;
-
-    &:hover { opacity: 0.88; }
-}
-
-// Stats
-// ── Stats bar ─────────────────────────────────────────────────────────────────
-.stats-bar {
-    background: linear-gradient(180deg, #0a0a0a 0%, #070707 100%);
-    border-top: 1px solid $border;
-    border-bottom: 1px solid $border;
-    padding: 0;
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba($red, 0.04) 0%, transparent 70%);
-        pointer-events: none;
-    }
-}
-
-.stats-inner {
+// Hero search bar
+.hfs-searchbar {
     display: flex;
     align-items: stretch;
-    justify-content: center;
-
-    @include respond-to(md) {
-        flex-wrap: wrap;
-    }
-}
-
-.stat-sep {
-    width: 1px;
-    background: $border;
-    flex-shrink: 0;
-    align-self: stretch;
-    margin: 20px 0;
-
-    @include respond-to(md) { display: none; }
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 28px 36px;
-    flex: 1;
-    min-width: 160px;
-    position: relative;
-    transition: background 0.2s;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.02);
-    }
-
-    @include respond-to(md) {
-        flex: 0 0 50%;
-        border-bottom: 1px solid $border;
-        padding: 22px 24px;
-        min-width: 0;
-    }
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 580px;
+    height: 64px;
+    margin-bottom: 24px;
 
     @include respond-to(sm) {
-        flex: 0 0 100%;
+        flex-direction: column;
+        height: auto;
+        border-radius: 14px;
     }
 }
 
-.stat-icon-wrap {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: rgba($red, 0.1);
-    border: 1px solid rgba($red, 0.2);
+.hfs-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 18px;
+    flex: 1;
+    min-width: 0;
+    border-right: 1px solid rgba(255,255,255,0.12);
+
+    @include respond-to(sm) {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.12);
+        padding: 10px 16px;
+    }
+}
+
+.hfs-field-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 3px;
+    display: block;
+}
+
+.hfs-select,
+.hfs-price-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+    cursor: pointer;
+
+    option { background: #111; color: #fff; }
+    &::placeholder { color: rgba(255,255,255,0.4); }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button { -webkit-appearance: none; }
+}
+
+.hfs-vsep {
+    width: 1px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
+    align-self: stretch;
+    display: none;
+}
+
+.hfs-search-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $red;
+    gap: 8px;
+    background: $red;
+    color: white;
+    border: none;
+    padding: 0 26px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
     flex-shrink: 0;
+
+    &:hover { background: lighten(#8B0D1D, 6%); }
+
+    @include respond-to(sm) {
+        width: 100%;
+        padding: 14px;
+        border-radius: 0 0 12px 12px;
+    }
 }
 
-.stat-body {
+.hfs-links {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.hfs-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover { color: rgba(255,255,255,0.9); }
+}
+
+.hfs-scroll {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: rgba(255,255,255,0.35);
+    animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+}
+
+// ── Stats strip ───────────────────────────────────────────────────────────────
+.stats-strip {
+    border-top: 1px solid $border;
+    border-bottom: 1px solid $border;
+    padding: 0;
+    background: rgba(255,255,255,0.01);
+}
+
+.sstrip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 72px;
+
+    @include respond-to(sm) { flex-wrap: wrap; height: auto; padding: 8px 0; }
+}
+
+.sstrip-sep {
+    width: 1px;
+    height: 30px;
+    background: $border;
+    flex-shrink: 0;
+
+    @include respond-to(sm) { display: none; }
+}
+
+.sstrip-item {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 2px;
+    padding: 0 44px;
+    flex: 1;
+
+    @include respond-to(md) { padding: 0 24px; }
+    @include respond-to(sm) { flex: 0 0 50%; padding: 10px 16px; }
 }
 
-.stat-num {
-    font-size: 30px;
+.sstrip-num {
+    font-size: 24px;
     font-weight: 900;
     color: $text;
     line-height: 1;
@@ -1303,21 +758,22 @@ onMounted(async () => {
     font-variant-numeric: tabular-nums;
 }
 
-.stat-label {
+.sstrip-label {
+    font-size: 11px;
     color: $text-dim;
-    font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.stat-skeleton {
-    width: 72px;
-    height: 30px;
+.sstrip-skeleton {
+    width: 64px;
+    height: 24px;
     border-radius: 6px;
     background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.05) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
-    margin-bottom: 4px;
 }
 
 @keyframes shimmer {
@@ -1348,66 +804,6 @@ onMounted(async () => {
         font-size: 14px;
         font-weight: 500;
     }
-}
-
-// Categories strip
-.cats-strip-section { margin-top: 60px; }
-
-.cats-strip {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 12px;
-
-    @include respond-to(md) { grid-template-columns: repeat(4, 1fr); }
-    @include respond-to(sm) { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-}
-
-.cstrip-item {
-    @include card($r-lg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 18px 8px 16px;
-    text-decoration: none;
-    color: $text;
-    text-align: center;
-    transition: border-color 0.18s, transform 0.18s;
-
-    &:hover {
-        border-color: rgba($red, 0.4);
-        transform: translateY(-4px);
-    }
-}
-
-.cstrip-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: rgba($red, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $red;
-    transition: background 0.18s;
-    flex-shrink: 0;
-
-    .cstrip-item:hover & { background: rgba($red, 0.16); }
-}
-
-.cstrip-name {
-    font-size: 12px;
-    font-weight: 700;
-    color: $text;
-    line-height: 1.2;
-}
-
-.cstrip-count {
-    font-size: 10px;
-    color: $text-dim;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-    padding: 1px 6px;
 }
 
 .cars-grid {
@@ -1799,27 +1195,6 @@ onMounted(async () => {
 .subscribe-ok { color: #4caf50; }
 .subscribe-err { color: #e55; }
 
-.see-all--btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: $text-dark;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    padding: 0;
-    transition: color 0.2s;
-    &:hover { color: $red; }
-}
-
-.premium-section {
-    background: linear-gradient(180deg, rgba($red, 0.04) 0%, transparent 100%);
-    border-top: 1px solid rgba($red, 0.15);
-    border-bottom: 1px solid rgba($red, 0.15);
-}
-
 .sec-top-left {
     display: flex;
     flex-direction: column;
@@ -1839,158 +1214,142 @@ onMounted(async () => {
     .v-icon { color: $red; }
 }
 
-// Hero premium upgrades
-.hero {
-    min-height: 720px;
+// ── Premium Showcase ──────────────────────────────────────────────────────────
+.premium-showcase-section {
+    background: linear-gradient(180deg, rgba($red, 0.03) 0%, transparent 100%);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding-bottom: 20px;
 }
 
-.hero-inner {
-    min-height: 600px;
-    padding: 80px 0 100px;
-}
-
-.hero-title {
-    font-size: 82px;
-    @include respond-to(md) { font-size: 58px; }
-    @include respond-to(sm) { font-size: 42px; }
-}
-
-.hero-car-bg {
-    width: 70%;
-    img { opacity: 0.68; }
-}
-
-.hero-sub {
-    font-size: 16px;
-    margin-top: 28px;
-    max-width: 480px;
-}
-
-.hero-cta-row {
+.psc-header {
     display: flex;
-    gap: 14px;
-    margin-top: 38px;
-    margin-bottom: 42px;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 32px;
     flex-wrap: wrap;
 }
 
-.hero-btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: $red;
-    color: white;
-    border: none;
-    border-radius: $r-md;
-    font-size: 15px;
+.psc-eyebrow {
+    font-size: 11px;
     font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    padding: 14px 32px;
-    text-decoration: none;
-    transition: opacity 0.2s, transform 0.2s;
-    &:hover { opacity: 0.88; transform: translateY(-1px); }
+    letter-spacing: 3px;
+    color: $red;
+    text-transform: uppercase;
+    margin-bottom: 8px;
 }
 
-.hero-btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255,255,255,0.06);
+.psc-title {
+    font-size: 32px;
+    font-weight: 800;
     color: $text;
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: $r-md;
-    font-size: 15px;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    padding: 14px 28px;
-    text-decoration: none;
-    transition: background 0.2s, border-color 0.2s, transform 0.2s;
-    &:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); transform: translateY(-1px); }
+    line-height: 1.1;
+    margin: 0 0 8px;
 }
 
-.hero-badges {
-    margin-top: 0;
-    gap: 32px;
+.psc-sub {
+    font-size: 14px;
+    color: $text-dim;
+    margin: 0;
 }
 
-.hero-badge {
-    font-size: 13px;
-    .v-icon { color: rgba(255,255,255,0.3); }
-}
-
-// Categories premium grid
-.cats-grid-premium {
+.psc-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+    gap: 16px;
 
     @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
-    @include respond-to(sm) { grid-template-columns: 1fr; gap: 10px; }
+    @include respond-to(sm) { grid-template-columns: 1fr; gap: 12px; }
 }
 
-.cat-card-premium {
+.psc-card {
     display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 20px 20px 20px 20px;
-    background: rgba(255,255,255,0.03);
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px 22px;
+    background: rgba(255,255,255,0.02);
     border: 1px solid rgba(255,255,255,0.07);
-    border-radius: $r-lg;
+    border-radius: $r-xl;
     text-decoration: none;
     color: $text;
-    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    min-height: 200px;
+    transition: border-color 0.25s, background 0.25s, transform 0.25s;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(to right, $red, rgba($red, 0));
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
 
     &:hover {
-        background: rgba(255,255,255,0.06);
-        border-color: rgba($red, 0.35);
-        transform: translateY(-3px);
+        border-color: rgba($red, 0.3);
+        background: rgba(255,255,255,0.04);
+        transform: translateY(-4px);
 
-        .ccp-icon-wrap { background: rgba($red, 0.18); color: $red; }
-        .ccp-arrow { color: $red; opacity: 1; transform: translateX(3px); }
+        &::before { opacity: 1; }
+        .psc-cta { color: $red; }
     }
 }
 
-.ccp-icon-wrap {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.06);
+.psc-top-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: $text-muted;
-    flex-shrink: 0;
-    transition: background 0.2s, color 0.2s;
+    justify-content: flex-end;
 }
 
-.ccp-body {
-    flex: 1;
-    min-width: 0;
+.psc-badge {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba($red, 0.8);
+    border: 1px solid rgba($red, 0.3);
+    border-radius: 4px;
+    padding: 3px 7px;
 }
 
-.ccp-name {
-    font-size: 14px;
-    font-weight: 700;
-    color: $text;
-    line-height: 1.2;
-}
+.psc-car-name { margin-top: auto; }
 
-.ccp-count {
+.psc-brand {
     font-size: 12px;
+    font-weight: 600;
     color: $text-dim;
-    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.ccp-arrow {
+.psc-model {
+    font-size: 26px;
+    font-weight: 900;
+    color: $text;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+
+.psc-spec {
+    font-size: 12px;
     color: $text-dark;
-    opacity: 0.5;
-    flex-shrink: 0;
-    transition: color 0.2s, opacity 0.2s, transform 0.2s;
+    font-weight: 500;
 }
 
-// Premium gold accent
-.premium-gold {
-    color: #d4a017;
+.psc-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-dim;
+    margin-top: 8px;
+    transition: color 0.2s;
 }
 
 // ING section
