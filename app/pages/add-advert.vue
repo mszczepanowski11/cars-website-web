@@ -1605,6 +1605,9 @@ async function applyCoupon() {
     }
 }
 
+// Draft key is user-specific to prevent data leakage between accounts on the same browser
+const draftKey = ref('carizo_advert_draft')
+
 function saveDraft() {
     const draft = {
         form: { ...form },
@@ -1614,14 +1617,14 @@ function saveDraft() {
         modelTextInput: modelTextInput.value,
         step: currentStep.value,
     }
-    localStorage.setItem('carizo_advert_draft', JSON.stringify(draft))
+    localStorage.setItem(draftKey.value, JSON.stringify(draft))
     draftSaved.value = true
     setTimeout(() => { draftSaved.value = false }, 2500)
 }
 
 function loadDraft() {
     try {
-        const raw = localStorage.getItem('carizo_advert_draft')
+        const raw = localStorage.getItem(draftKey.value)
         if (!raw) return
         const saved = JSON.parse(raw)
         if (saved.form) Object.assign(form, saved.form)
@@ -2367,15 +2370,15 @@ onMounted(async () => {
             error.value = 'Nie udało się załadować danych ogłoszenia.'
         }
     } else {
-        loadDraft()
-        // Auto-fill location from saved profile
-        if (!form.city || !form.region) {
-            try {
-                const rawProfile = localStorage.getItem('carizo_profile_override')
-                const p = rawProfile ? JSON.parse(rawProfile) : null
-                if (p?.city && !form.city) form.city = p.city
-                if (p?.region && !form.region) form.region = p.region
-            } catch {}
+        // Load user profile to get user-specific draft key and pre-fill location
+        try {
+            const profile = await $fetch<{ id: number; city?: string; region?: string }>('/api/proxy/api/User/me')
+            draftKey.value = `carizo_advert_draft_${profile.id}`
+            loadDraft()
+            if (!form.city && profile.city) form.city = profile.city
+            if (!form.region && profile.region) form.region = profile.region
+        } catch {
+            loadDraft()
         }
         const queries = promoPlans.flatMap(p => p.days.map(d => ({ key: p.key, days: d })))
         await Promise.allSettled(queries.map(async ({ key, days }) => {

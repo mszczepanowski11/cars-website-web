@@ -49,7 +49,7 @@ export const useAuth = () => {
         // Clear all user-specific localStorage keys on logout
         if (import.meta.client) {
             Object.keys(localStorage)
-                .filter(k => k.startsWith('carizo_profile_override_'))
+                .filter(k => k.startsWith('carizo_profile_override_') || k.startsWith('carizo_advert_draft_'))
                 .forEach(k => localStorage.removeItem(k))
         }
         await navigateTo('/')
