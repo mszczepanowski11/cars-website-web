@@ -123,6 +123,25 @@
 
                     <div class="price-area">
                         <div class="price-big">{{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' zł' : '—' }}</div>
+                        <div v-if="advert?.price && Number(advert.price) > 5000" class="price-monthly-estimate">
+                            <div class="pme-row">
+                                <div class="pme-item">
+                                    <div class="pme-label">
+                                        <div class="pme-ing-dot ing-leasing" />
+                                        Leasing ING
+                                    </div>
+                                    <div class="pme-val">od {{ Math.round(Number(advert.price) * 0.9 * 0.0075 * Math.pow(1.0075, 48) / (Math.pow(1.0075, 48) - 1)).toLocaleString('pl') }} zł/mies.</div>
+                                </div>
+                                <div class="pme-item">
+                                    <div class="pme-label">
+                                        <div class="pme-ing-dot ing-credit" />
+                                        Kredyt ING
+                                    </div>
+                                    <div class="pme-val">od {{ Math.round(Number(advert.price) * 0.9 * 0.00749 * Math.pow(1.00749, 60) / (Math.pow(1.00749, 60) - 1)).toLocaleString('pl') }} zł/mies.</div>
+                                </div>
+                            </div>
+                            <div class="pme-note">* przy 10% wpłaty własnej, szacunkowo</div>
+                        </div>
                         <div class="price-badges-row">
                             <span v-if="isNegotiable" class="nego-badge"><v-icon icon="mdi-handshake-outline" size="12" />Do negocjacji</span>
                             <span class="seller-type-chip" :class="sellerTypeLabel.includes('Dealer') ? 'chip-dealer' : 'chip-private'">
@@ -148,6 +167,36 @@
                             <v-icon icon="mdi-eye-outline" size="12" />{{ Number(advert.viewCount).toLocaleString('pl') }}
                         </span>
                         <span class="time-pill">{{ advertAge }}</span>
+                    </div>
+
+                    <!-- CARIZO VERIFIED trust badges -->
+                    <div class="verified-trust-box">
+                        <div class="vtb-header">
+                            <v-icon icon="mdi-shield-check" size="16" class="vtb-icon" />
+                            <span class="vtb-title">CARIZO VERIFIED</span>
+                        </div>
+                        <div class="vtb-items">
+                            <div class="vtb-item" :class="advert?.vin ? 'vtb-ok' : 'vtb-pending'">
+                                <v-icon :icon="advert?.vin ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
+                                <span>VIN {{ advert?.vin ? 'zweryfikowany' : 'niezweryfikowany' }}</span>
+                            </div>
+                            <div class="vtb-item" :class="advert?.hasFullServiceHistory ? 'vtb-ok' : 'vtb-pending'">
+                                <v-icon :icon="advert?.hasFullServiceHistory ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
+                                <span>Historia serwisowa</span>
+                            </div>
+                            <div class="vtb-item" :class="!advert?.hasDamage ? 'vtb-ok' : 'vtb-warn'">
+                                <v-icon :icon="!advert?.hasDamage ? 'mdi-check-circle' : 'mdi-alert-circle'" size="14" />
+                                <span>Bezwypadkowy</span>
+                            </div>
+                            <div class="vtb-item vtb-ok">
+                                <v-icon icon="mdi-check-circle" size="14" />
+                                <span>Telefon zweryfikowany</span>
+                            </div>
+                            <div class="vtb-item" :class="seller?.accountType === 'Business' ? 'vtb-ok' : 'vtb-pending'">
+                                <v-icon :icon="seller?.accountType === 'Business' ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
+                                <span>Zweryfikowany sprzedawca</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="info-divider" />
@@ -716,6 +765,16 @@
                                 <v-icon v-for="n in 5" :key="n" :icon="n <= Math.round(sellerStats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="13" class="star" />
                                 <span class="seller-rating">{{ sellerStats.averageRating.toFixed(1) }}</span>
                                 <span class="seller-reviews">({{ sellerStats.reviewCount }})</span>
+                            </div>
+                            <div class="seller-meta-row">
+                                <span v-if="seller?.createdAt" class="seller-meta-item">
+                                    <v-icon icon="mdi-calendar-outline" size="12" />
+                                    na CARIZO od {{ new Date(seller.createdAt).getFullYear() }} r.
+                                </span>
+                                <span class="seller-meta-item seller-response">
+                                    <v-icon icon="mdi-clock-fast" size="12" />
+                                    Odpowiada szybko
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -1914,10 +1973,12 @@ onUnmounted(() => {
 .price-area { display: flex; flex-direction: column; gap: 6px; }
 
 .price-big {
-    font-size: 36px;
+    font-size: 42px;
     font-weight: 900;
     color: $red;
     line-height: 1;
+    letter-spacing: -1px;
+    margin-bottom: 0;
 
     @include respond-to(sm) { font-size: 28px; }
 }
@@ -3926,5 +3987,158 @@ onUnmounted(() => {
         color: $text-dim;
         .v-icon { color: #4caf50; }
     }
+}
+
+// ── Powiększona galeria ────────────────────────────────────────────────────────
+.main-photo-wrap {
+    min-height: 520px;
+
+    @include respond-to(md) { min-height: 380px; }
+    @include respond-to(sm) { min-height: 280px; }
+}
+
+.main-photo-img {
+    min-height: 520px;
+
+    @include respond-to(md) { min-height: 380px; }
+    @include respond-to(sm) { min-height: 280px; }
+}
+
+// ── CARIZO VERIFIED ────────────────────────────────────────────────────────────
+.verified-trust-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-lg;
+    padding: 14px 16px;
+    margin: 16px 0;
+}
+
+.vtb-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.vtb-icon { color: #22c55e; }
+
+.vtb-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: $text-muted;
+}
+
+.vtb-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+.vtb-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: $r-sm;
+
+    &.vtb-ok {
+        color: #22c55e;
+        background: rgba(#22c55e, 0.08);
+        .v-icon { color: #22c55e; }
+    }
+
+    &.vtb-pending {
+        color: $text-dim;
+        background: rgba(255,255,255,0.03);
+        .v-icon { color: $text-dark; }
+    }
+
+    &.vtb-warn {
+        color: #f59e0b;
+        background: rgba(#f59e0b, 0.08);
+        .v-icon { color: #f59e0b; }
+    }
+}
+
+// ── Price monthly estimate ─────────────────────────────────────────────────────
+.price-monthly-estimate {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-md;
+    padding: 12px 16px;
+    margin: 10px 0 6px;
+}
+
+.pme-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.pme-item {
+    flex: 1;
+    min-width: 120px;
+}
+
+.pme-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: $text-dim;
+    margin-bottom: 4px;
+}
+
+.pme-ing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &.ing-leasing { background: #FF6200; }
+    &.ing-credit { background: #0066cc; }
+}
+
+.pme-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text;
+}
+
+.pme-note {
+    font-size: 10px;
+    color: $text-dark;
+    margin-top: 8px;
+}
+
+// ── Seller meta row ────────────────────────────────────────────────────────────
+.seller-meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.seller-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: $text-dim;
+    .v-icon { color: $text-dark; }
+}
+
+.seller-response { color: #22c55e; .v-icon { color: #22c55e; } }
+
+// ── Info column extra space ────────────────────────────────────────────────────
+.info-col {
+    padding: 36px 0 36px 40px;
+
+    @include respond-to(md) { padding: 24px 0; }
 }
 </style>
