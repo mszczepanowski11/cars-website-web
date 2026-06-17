@@ -438,7 +438,7 @@
                     </transition>
 
                     <!-- ── VIN & Identification ── -->
-                    <div class="hist-section">
+                    <div v-if="categoryConfig.showVinSection !== false" class="hist-section">
                         <div class="hist-section-title"><v-icon icon="mdi-barcode-scan" size="16" />Identyfikacja pojazdu</div>
                         <div class="fields-grid">
                             <div class="field full-width">
@@ -494,6 +494,7 @@
                     </div>
 
                     <!-- ── Ownership & History ── -->
+                    <template v-if="categoryConfig.showHistorySection !== false">
                     <div class="hist-section">
                         <div class="hist-section-title"><v-icon icon="mdi-account-multiple-outline" size="16" />Właściciele i import</div>
                         <div class="fields-grid">
@@ -610,6 +611,7 @@
                             <div class="hq-sub">Ogłoszenia z VIN i historią serwisową sprzedają się nawet 40% szybciej.</div>
                         </div>
                     </div>
+                    </template>
                 </div>
 
                 <!-- Step 2: Zdjęcia -->
@@ -704,23 +706,43 @@
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
                         </div>
+                        <!-- expand/collapse controls -->
+                        <div class="equip-controls">
+                            <button type="button" class="equip-ctrl-btn" @click="expandAllEquip">
+                                <v-icon icon="mdi-unfold-more-horizontal" size="13" />Rozwiń wszystkie
+                            </button>
+                            <button type="button" class="equip-ctrl-btn" @click="collapseAllEquip">
+                                <v-icon icon="mdi-unfold-less-horizontal" size="13" />Zwiń wszystkie
+                            </button>
+                        </div>
+
                         <div v-if="featSearch && !Object.keys(filteredFeatureGroups).length" class="feat-empty" style="padding:24px 0">
                             <v-icon icon="mdi-magnify-close" size="32" />
                             <p>Brak wyposażenia pasującego do „{{ featSearch }}"</p>
                         </div>
                         <div v-for="(group, cat) in filteredFeatureGroups" :key="cat" class="feat-group">
-                            <div class="feat-group-title">
-                                <v-icon :icon="featureGroupIcon(String(cat))" size="15" style="margin-right:6px" />
-                                {{ cat }}
-                                <span class="feat-group-count">{{ group.filter(f => form.featureIds.includes(f.id)).length }}/{{ group.length }}</span>
-                            </div>
-                            <div class="feat-checks">
-                                <label v-for="feat in group" :key="feat.id" class="feat-check" :class="{ checked: form.featureIds.includes(feat.id) }">
-                                    <input type="checkbox" v-model="form.featureIds" :value="feat.id" />
-                                    <span class="feat-check-box"><v-icon v-if="form.featureIds.includes(feat.id)" icon="mdi-check" size="11" /></span>
-                                    <span v-html="highlightSearch(feat.name)" />
-                                </label>
-                            </div>
+                            <button type="button" class="feat-group-header"
+                                :class="{ 'fgh-open': openFeatGroups.has(String(cat)) || !!featSearch }"
+                                @click="toggleFeatGroup(String(cat))">
+                                <div class="fgh-left">
+                                    <v-icon :icon="featureGroupIcon(String(cat))" size="15" />
+                                    <span class="fgh-name">{{ cat }}</span>
+                                    <span class="feat-group-count"
+                                        :class="{ 'fgc-has': group.filter(f => form.featureIds.includes(f.id)).length > 0 }">
+                                        {{ group.filter(f => form.featureIds.includes(f.id)).length }}/{{ group.length }}
+                                    </span>
+                                </div>
+                                <v-icon class="fgh-arrow" icon="mdi-chevron-down" size="16" />
+                            </button>
+                            <Transition name="equip-collapse">
+                                <div v-if="openFeatGroups.has(String(cat)) || !!featSearch" class="feat-checks">
+                                    <label v-for="feat in group" :key="feat.id" class="feat-check" :class="{ checked: form.featureIds.includes(feat.id) }">
+                                        <input type="checkbox" v-model="form.featureIds" :value="feat.id" />
+                                        <span class="feat-check-box"><v-icon v-if="form.featureIds.includes(feat.id)" icon="mdi-check" size="11" /></span>
+                                        <span v-html="highlightSearch(feat.name)" />
+                                    </label>
+                                </div>
+                            </Transition>
                         </div>
                     </template>
                     <div v-if="form.featureIds.length" class="feat-summary-bar">
@@ -1226,6 +1248,9 @@ interface CatFieldConfig {
     yearHint?: string
     engineHint?: string
     categoryNote?: string
+    // Step 1 section visibility
+    showVinSection?: boolean
+    showHistorySection?: boolean
 }
 
 const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
@@ -1235,22 +1260,48 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         mileageLabel: 'Przebieg (km)',
         priceHint: 'Rynek: 10 000 – 500 000 zł',
         engineHint: 'np. 1995 cm³ (2.0)',
+        showVinSection: true,
+        showHistorySection: true,
         extraFields: [
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
-              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'new-demo', label: 'Nowy (demo)' }, { value: 'damaged', label: 'Uszkodzony' }] },
             { key: 'driveType', label: 'Napęd', type: 'select',
               options: [
                 { value: 'fwd', label: 'Przedni (FWD)' }, { value: 'rwd', label: 'Tylny (RWD)' },
-                { value: 'awd', label: '4x4 / AWD' }, { value: '4wd', label: '4WD stały' },
+                { value: 'awd', label: '4×4 stały (AWD)' }, { value: '4wd', label: '4×4 dołączany (4WD)' },
               ] },
             { key: 'doors', label: 'Liczba drzwi', type: 'select',
-              options: [{ value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }, { value: '5', label: '5' }] },
-            { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
+              options: [{ value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }, { value: '5', label: '5' }, { value: '6', label: '6+' }] },
+            { key: 'seatsCount', label: 'Liczba miejsc', type: 'select',
+              options: [{ value: '2', label: '2' }, { value: '4', label: '4' }, { value: '5', label: '5' }, { value: '7', label: '7' }, { value: '8', label: '8' }, { value: '9', label: '9+' }] },
+            { key: 'color', label: 'Kolor nadwozia', type: 'color-picker', fullWidth: true },
+            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
+              options: [
+                { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
+                { value: 'pearl', label: 'Perłowy / efekt perły' }, { value: 'matte', label: 'Matowy' },
+                { value: 'bicolor', label: 'Dwukolorowy' }, { value: 'chrome', label: 'Chromowany' },
+              ] },
+            { key: 'euroNorm', label: 'Norma emisji spalin', type: 'select',
+              options: [
+                { value: 'euro3', label: 'Euro 3' }, { value: 'euro4', label: 'Euro 4' },
+                { value: 'euro5', label: 'Euro 5' }, { value: 'euro6', label: 'Euro 6' },
+                { value: 'euro6d', label: 'Euro 6d / 6d-TEMP' },
+              ] },
+            { key: 'co2', label: 'Emisja CO₂', type: 'number', unit: 'g/km', placeholder: 'np. 120', hint: 'Emisja CO₂ w cyklu mieszanym' },
+            { key: 'fuelConsumptionCity', label: 'Spalanie miasto', type: 'number', unit: 'l/100km', placeholder: 'np. 8.5' },
+            { key: 'fuelConsumptionHwy', label: 'Spalanie trasa', type: 'number', unit: 'l/100km', placeholder: 'np. 5.5' },
+            { key: 'fuelConsumptionMix', label: 'Spalanie mieszane', type: 'number', unit: 'l/100km', placeholder: 'np. 6.5' },
+            { key: 'torque', label: 'Moment obrotowy', type: 'number', unit: 'Nm', placeholder: 'np. 400' },
             { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
-            { key: 'serviceHistory', label: 'Pełna historia serwisowa', type: 'boolean' },
-            { key: 'hasASO', label: 'Serwis ASO', type: 'boolean' },
-            { key: 'damaged', label: 'Po wypadku / uszkodzony', type: 'boolean' },
-            { key: 'rightHandDrive', label: 'Kierownica po prawej stronie', type: 'boolean' },
+            { key: 'noDamage', label: 'Bezwypadkowy (potwierdzony)', type: 'boolean' },
+            { key: 'hasASO', label: 'Serwisowany w ASO', type: 'boolean' },
+            { key: 'testDrive', label: 'Możliwość jazdy próbnej', type: 'boolean' },
+            { key: 'vatInvoice', label: 'Faktura VAT (23%)', type: 'boolean' },
+            { key: 'vatMargin', label: 'Faktura VAT-marża', type: 'boolean' },
+            { key: 'registeredInPoland', label: 'Zarejestrowany w Polsce', type: 'boolean' },
+            { key: 'rightHandDrive', label: 'Kierownica po prawej stronie (RHD)', type: 'boolean' },
+            { key: 'tuning', label: 'Tuning / modyfikacje', type: 'boolean' },
+            { key: 'leasingPossible', label: 'Możliwość leasingu / finansowania', type: 'boolean' },
         ],
     },
 
@@ -1260,22 +1311,38 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         mileageLabel: 'Przebieg (km)',
         priceHint: 'Rynek: 5 000 – 200 000 zł',
         categoryNote: 'Dostawcze i busy do 3,5t. Parametry ładunkowe wpisz poniżej.',
+        showVinSection: true,
+        showHistorySection: true,
         extraFields: [
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
-              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
             { key: 'bodyVariant', label: 'Zabudowa / typ', type: 'select', required: true,
               options: [
                 { value: 'furgon', label: 'Furgon' }, { value: 'skrzyniowy', label: 'Skrzyniowy' },
                 { value: 'wywrotka', label: 'Wywrotka' }, { value: 'izoterma', label: 'Izoterma' },
                 { value: 'chlodnia', label: 'Chłodnia' }, { value: 'busa', label: 'Bus osobowo-towarowy' },
-                { value: 'kontener', label: 'Kontener' },
+                { value: 'kontener', label: 'Kontener' }, { value: 'minibus', label: 'Minibus / Mikrobus' },
+                { value: 'specjalny', label: 'Specjalny / zabudowa niestandardowa' },
               ] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 1000' },
             { key: 'gvw', label: 'DMC (dopuszczalna masa całkowita)', type: 'number', unit: 'kg', placeholder: 'np. 3500' },
             { key: 'loadingLength', label: 'Długość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 3.5' },
+            { key: 'loadingHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 1.8' },
+            { key: 'loadingWidth', label: 'Szerokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 1.9' },
+            { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
+            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
+              options: [
+                { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
+                { value: 'pearl', label: 'Perłowy' }, { value: 'matte', label: 'Matowy' },
+              ] },
             { key: 'euroNorm', label: 'Norma EURO', type: 'select',
               options: [{ value: 'euro3', label: 'Euro 3' }, { value: 'euro4', label: 'Euro 4' },
-                        { value: 'euro5', label: 'Euro 5' }, { value: 'euro6', label: 'Euro 6' }] },
+                        { value: 'euro5', label: 'Euro 5' }, { value: 'euro6', label: 'Euro 6' }, { value: 'euro6d', label: 'Euro 6d' }] },
+            { key: 'hasAC', label: 'Klimatyzacja', type: 'boolean' },
+            { key: 'hasReverseCam', label: 'Kamera cofania', type: 'boolean' },
+            { key: 'hasLiftgate', label: 'Winda załadowcza', type: 'boolean' },
+            { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
+            { key: 'vatInvoice', label: 'Faktura VAT (23%)', type: 'boolean' },
         ],
     },
 
@@ -1286,52 +1353,41 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         engineHint: 'np. 12 900 cm³',
         priceHint: 'Rynek: 10 000 – 1 000 000 zł',
         categoryNote: 'Pojazdy ciężarowe powyżej 3,5t. Uzupełnij dane techniczne poniżej.',
+        showVinSection: true,
+        showHistorySection: false,
         extraFields: [
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
-              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
+            { key: 'truckType', label: 'Typ pojazdu', type: 'select', required: true,
+              options: [
+                { value: 'ciagnik', label: 'Ciągnik siodłowy' }, { value: 'skrzyniowy', label: 'Skrzyniowy' },
+                { value: 'wywrotka', label: 'Wywrotka' }, { value: 'chlodnia', label: 'Chłodnia' },
+                { value: 'izoterma', label: 'Izoterma' }, { value: 'cysterna', label: 'Cysterna' },
+                { value: 'hakowiec', label: 'Hakowiec / Kontenerowiec' }, { value: 'betonomieszarka', label: 'Betonomieszarka' },
+                { value: 'dzwig', label: 'Dźwig / HDS' }, { value: 'specjalny', label: 'Specjalny' },
+              ] },
             { key: 'axles', label: 'Liczba osi', type: 'select', required: true,
               options: [{ value: '2', label: '2 osie' }, { value: '3', label: '3 osie' },
                         { value: '4', label: '4 osie' }, { value: '5+', label: '5+ osi' }] },
             { key: 'cabType', label: 'Typ kabiny', type: 'select',
               options: [{ value: 'normal', label: 'Normalna' }, { value: 'low', label: 'Niska' },
-                        { value: 'high', label: 'Wysoka' }, { value: 'sleep', label: 'Sypialnia' },
-                        { value: 'mega', label: 'Mega / Super Space' }] },
+                        { value: 'high', label: 'Wysoka (sleeper)' }, { value: 'mega', label: 'Mega / Super Space' },
+                        { value: 'crew', label: 'Crew cab (załogowa)' }] },
             { key: 'gvw', label: 'DMC (tony)', type: 'number', unit: 't', placeholder: 'np. 26' },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 18000' },
+            { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
             { key: 'euroNorm', label: 'Norma EURO', type: 'select',
               options: [{ value: 'euro3', label: 'Euro 3' }, { value: 'euro4', label: 'Euro 4' },
-                        { value: 'euro5', label: 'Euro 5' }, { value: 'euro6', label: 'Euro 6' }] },
+                        { value: 'euro5', label: 'Euro 5' }, { value: 'euro6', label: 'Euro 6' }, { value: 'euro6d', label: 'Euro 6d' }] },
             { key: 'hasTachograph', label: 'Tachograf cyfrowy', type: 'boolean' },
-            { key: 'hasRetarder', label: 'Retarder', type: 'boolean' },
+            { key: 'hasRetarder', label: 'Retarder (hamulec hydrodynamiczny)', type: 'boolean' },
+            { key: 'hasAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
+            { key: 'hasAPU', label: 'Agregat postojowy (APU)', type: 'boolean' },
+            { key: 'hasHydraulics', label: 'Hydraulika (PTO)', type: 'boolean' },
+            { key: 'hasLiftAxle', label: 'Oś podnoszona (Lift Axle)', type: 'boolean' },
             { key: 'hasADR', label: 'Dopuszczenie ADR', type: 'boolean' },
-        ],
-    },
-
-    'maszyny': {
-        fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
-        required: ['year', 'price'],
-        brandFieldType: 'text',
-        brandLabel: 'Producent / marka maszyny',
-        modelLabel: 'Model maszyny',
-        yearLabel: 'Rok produkcji maszyny',
-        mileageLabel: 'Motogodziny (mth)',
-        mileageHint: 'Liczba przepracowanych motogodzin',
-        engineLabel: 'Pojemność silnika (cm³)',
-        priceHint: 'Rynek: 5 000 – 5 000 000 zł',
-        categoryNote: 'Wózki widłowe, dźwigi, żurawie, maszyny przemysłowe. Typ i parametry uzupełnij poniżej.',
-        extraFields: [
-            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
-              options: [
-                { value: 'koparka', label: 'Koparka' }, { value: 'koparka-ladowarka', label: 'Koparko-ładowarka' },
-                { value: 'ladowarka', label: 'Ładowarka' }, { value: 'wozek', label: 'Wózek widłowy' },
-                { value: 'dzwig', label: 'Dźwig / Żuraw' }, { value: 'walec', label: 'Walec drogowy' },
-                { value: 'betonomieszarka', label: 'Betoniarka / Betonomieszarka' },
-                { value: 'miniescavator', label: 'Minieksawator' }, { value: 'inne', label: 'Inne' },
-              ] },
-            { key: 'liftCapacity', label: 'Udźwig / nośność', type: 'number', unit: 'kg', placeholder: 'np. 5000' },
-            { key: 'workingHeight', label: 'Wysokość robocza / zasięg', type: 'number', unit: 'm', placeholder: 'np. 12' },
-            { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
-              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }] },
+            { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
+            { key: 'vatInvoice', label: 'Faktura VAT (23%)', type: 'boolean' },
         ],
     },
 
@@ -1346,12 +1402,40 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         modelHint: 'Wybierz model pojazdu, do którego pasuje część',
         priceHint: 'Podaj cenę jednej sztuki',
         categoryNote: 'Części, akcesoria i wyposażenie. Podaj szczegóły części poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
         extraFields: [
             { key: 'condition', label: 'Stan części', type: 'radio', required: true,
-              options: [{ value: 'new', label: 'Nowa' }, { value: 'regen', label: 'Regenerowana' }, { value: 'used', label: 'Używana' }] },
+              options: [
+                { value: 'new', label: 'Nowa' }, { value: 'regen', label: 'Regenerowana' },
+                { value: 'used-good', label: 'Używana – dobry stan' }, { value: 'used', label: 'Używana' },
+                { value: 'damaged', label: 'Uszkodzona / na części' },
+              ] },
+            { key: 'partCategory', label: 'Kategoria części', type: 'select', required: true,
+              options: [
+                { value: 'silnik', label: 'Silnik i osprzęt' }, { value: 'skrzynia', label: 'Skrzynia biegów / napęd' },
+                { value: 'zawieszenie', label: 'Zawieszenie i układ kierowniczy' }, { value: 'hamulce', label: 'Hamulce' },
+                { value: 'elektryka', label: 'Elektryka i elektronika' }, { value: 'nadwozie-zewn', label: 'Nadwozie zewnętrzne' },
+                { value: 'nadwozie-wewn', label: 'Wnętrze / tapicerka' }, { value: 'oswietlenie', label: 'Oświetlenie' },
+                { value: 'chlodnica', label: 'Układ chłodzenia' }, { value: 'wydech', label: 'Układ wydechowy' },
+                { value: 'paliwo', label: 'Układ paliwowy' }, { value: 'klimatyzacja', label: 'Klimatyzacja / ogrzewanie' },
+                { value: 'kola', label: 'Koła, felgi i opony' }, { value: 'akcesoria', label: 'Akcesoria i tuning' },
+                { value: 'narzedzia', label: 'Narzędzia i wyposażenie warsztatu' },
+                { value: 'inne', label: 'Inne' },
+              ] },
+            { key: 'side', label: 'Strona montażu', type: 'select',
+              options: [
+                { value: 'left', label: 'Lewa' }, { value: 'right', label: 'Prawa' },
+                { value: 'front', label: 'Przód' }, { value: 'rear', label: 'Tył' },
+                { value: 'universal', label: 'Uniwersalna / obustronnie' },
+              ] },
             { key: 'partNumber', label: 'Numer OEM / katalogowy', type: 'text', placeholder: 'np. 3C0853630A', hint: 'Numer oryginalny części od producenta pojazdu' },
-            { key: 'manufacturer', label: 'Producent części', type: 'text', placeholder: 'np. Bosch, Febi, OEM' },
+            { key: 'manufacturer', label: 'Producent części', type: 'text', placeholder: 'np. Bosch, Febi, SKF, OEM' },
             { key: 'compatibility', label: 'Pasuje również do', type: 'text', placeholder: 'np. VW Golf VI, Seat Leon II', fullWidth: true, hint: 'Inne modele, do których pasuje ta część' },
+            { key: 'quantity', label: 'Dostępna ilość (szt.)', type: 'number', placeholder: 'np. 1' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
+            { key: 'shipping', label: 'Możliwa wysyłka', type: 'boolean' },
+            { key: 'warranty', label: 'Gwarancja na część', type: 'boolean' },
         ],
     },
 
@@ -1361,19 +1445,39 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         mileageLabel: 'Przebieg (km)',
         engineHint: 'np. 649 cm³, 1000 cm³',
         priceHint: 'Rynek: 1 000 – 150 000 zł',
+        showVinSection: false,
+        showHistorySection: false,
         extraFields: [
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
-              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
             { key: 'motorcycleType', label: 'Typ motocykla', type: 'select', required: true,
               options: [
-                { value: 'sport', label: 'Sportowy' }, { value: 'touring', label: 'Turystyczny' },
-                { value: 'enduro', label: 'Enduro / Off-road' }, { value: 'cruiser', label: 'Cruiser / Chopper' },
-                { value: 'naked', label: 'Naked / Streetfighter' }, { value: 'scooter', label: 'Skuter' },
-                { value: 'trial', label: 'Trial' }, { value: 'electric', label: 'Elektryczny' },
+                { value: 'sport', label: 'Sportowy / Supersport' }, { value: 'touring', label: 'Turystyczny (Tourer)' },
+                { value: 'adventure', label: 'Adventure / Enduro drogowe' }, { value: 'enduro', label: 'Enduro / Cross / Off-road' },
+                { value: 'cruiser', label: 'Cruiser / Chopper' }, { value: 'naked', label: 'Naked / Streetfighter' },
+                { value: 'cafe-racer', label: 'Café Racer / Scrambler' }, { value: 'scooter', label: 'Skuter' },
+                { value: 'scooter125', label: 'Skuter 125 cm³ (AM)' }, { value: 'trial', label: 'Trial' },
+                { value: 'quad', label: 'Quad / ATV' }, { value: 'sidecar', label: 'Z wózkiem bocznym' },
+                { value: 'electric', label: 'Elektryczny' }, { value: 'other', label: 'Inny' },
+              ] },
+            { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
+            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
+              options: [
+                { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
+                { value: 'matte', label: 'Matowy' }, { value: 'multicolor', label: 'Wielobarwny / racing livery' },
               ] },
             { key: 'hasABS', label: 'ABS', type: 'boolean' },
+            { key: 'hasTCS', label: 'Kontrola trakcji (TCS)', type: 'boolean' },
+            { key: 'hasQuickshifter', label: 'Quickshifter (bi-directional)', type: 'boolean' },
+            { key: 'hasHeatedGrips', label: 'Podgrzewane manetki', type: 'boolean' },
+            { key: 'hasCruiseControl', label: 'Tempomat', type: 'boolean' },
+            { key: 'hasRideByWire', label: 'Ride-by-Wire / tryby jazdy', type: 'boolean' },
+            { key: 'hasLedLights', label: 'Oświetlenie LED', type: 'boolean' },
+            { key: 'hasSaddlebags', label: 'Kufry / sakwy', type: 'boolean' },
             { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
-            { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
+            { key: 'noDamage', label: 'Bezwypadkowy', type: 'boolean' },
+            { key: 'testDrive', label: 'Możliwość jazdy próbnej', type: 'boolean' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -1383,21 +1487,31 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         yearLabel: 'Rok produkcji przyczepy',
         priceHint: 'Rynek: 500 – 200 000 zł',
         categoryNote: 'Przyczepy, naczepy i lawety. Uzupełnij dane ładunkowe poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
         extraFields: [
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
-              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }] },
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
             { key: 'trailerType', label: 'Typ przyczepy', type: 'select', required: true,
               options: [
-                { value: 'naczepa', label: 'Naczepa' }, { value: 'polnaczepa', label: 'Półnaczepa' },
-                { value: 'lekka', label: 'Przyczepa lekka' }, { value: 'laweta', label: 'Laweta' },
-                { value: 'wywrotka', label: 'Wywrotka' }, { value: 'chlodnia', label: 'Chłodnia' },
-                { value: 'platforma', label: 'Platforma' }, { value: 'tandem', label: 'Tandem' },
+                { value: 'naczepa-plandeka', label: 'Naczepa plandeka' }, { value: 'naczepa-chlodnia', label: 'Naczepa chłodnia' },
+                { value: 'polnaczepa', label: 'Półnaczepa skrzyniowa' }, { value: 'laweta', label: 'Laweta / autotransporter' },
+                { value: 'wywrotka', label: 'Przyczepa wywrotka' }, { value: 'chlodnia', label: 'Przyczepa chłodnia' },
+                { value: 'platforma', label: 'Naczepa platforma / niskopodwozie' }, { value: 'tandem', label: 'Tandem / dwuosiowa' },
+                { value: 'cysterna', label: 'Cysterna' }, { value: 'lekka', label: 'Przyczepa lekka (osobowa)' },
+                { value: 'kempingowa', label: 'Kempingowa / karavan' }, { value: 'inne', label: 'Inne' },
               ] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
             { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
             { key: 'length', label: 'Długość całkowita', type: 'number', unit: 'm', placeholder: 'np. 13.6' },
+            { key: 'width', label: 'Szerokość całkowita', type: 'number', unit: 'm', placeholder: 'np. 2.6' },
+            { key: 'height', label: 'Wysokość całkowita', type: 'number', unit: 'm', placeholder: 'np. 4.0' },
+            { key: 'axles', label: 'Liczba osi', type: 'select',
+              options: [{ value: '1', label: '1 oś' }, { value: '2', label: '2 osie' }, { value: '3', label: '3 osie' }, { value: '4+', label: '4+ osi' }] },
             { key: 'hasHydraulics', label: 'Hydraulika', type: 'boolean' },
             { key: 'hasLift', label: 'Winda załadunkowa', type: 'boolean' },
+            { key: 'hasBrakes', label: 'Hamulec najazdowy', type: 'boolean' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -1413,20 +1527,34 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         engineLabel: 'Pojemność silnika (cm³)',
         priceHint: 'Rynek: 5 000 – 2 000 000 zł',
         categoryNote: 'Ciągniki, kombajny i maszyny rolnicze. Uzupełnij parametry robocze poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
         extraFields: [
-            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
+            { key: 'machineType', label: 'Typ maszyny / urządzenia', type: 'select', required: true,
               options: [
-                { value: 'ciagnik', label: 'Ciągnik rolniczy' }, { value: 'kombajn', label: 'Kombajn zbożowy' },
-                { value: 'siewnik', label: 'Siewnik' }, { value: 'plug', label: 'Pług' },
+                { value: 'ciagnik', label: 'Ciągnik rolniczy' }, { value: 'kombajn-zbozowy', label: 'Kombajn zbożowy' },
+                { value: 'kombajn-ziemniaczany', label: 'Kombajn ziemniaczany' }, { value: 'kombajn-buraczkowy', label: 'Kombajn buraczkowy' },
+                { value: 'siewnik', label: 'Siewnik zbożowy / punktowy' }, { value: 'plug', label: 'Pług' },
                 { value: 'glebogryzarka', label: 'Glebogryzarka' }, { value: 'opryskiwacz', label: 'Opryskiwacz' },
-                { value: 'prasa', label: 'Prasa rolnicza' }, { value: 'ladowacz', label: 'Ładowacz' },
-                { value: 'rozsiewacz', label: 'Rozsiewacz' }, { value: 'inne', label: 'Inne' },
+                { value: 'prasa', label: 'Prasa rolnicza (baler)' }, { value: 'ladowacz', label: 'Ładowacz czołowy (TUR)' },
+                { value: 'rozsiewacz', label: 'Rozsiewacz nawozów' }, { value: 'rozrzutnik', label: 'Rozrzutnik obornika' },
+                { value: 'agregat', label: 'Agregat uprawowy' }, { value: 'sadzarka', label: 'Sadzarka do ziemniaków' },
+                { value: 'kopaczka', label: 'Kopaczka do ziemniaków' }, { value: 'beczkowoz', label: 'Beczkowóz / wóz asenizacyjny' },
+                { value: 'sieczkarnia', label: 'Sieczkarnia polowa' }, { value: 'inne', label: 'Inne' },
               ] },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
-              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }] },
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona / na części' }] },
             { key: 'workingWidth', label: 'Szerokość robocza', type: 'number', unit: 'm', placeholder: 'np. 6.0' },
-            { key: 'frontLoader', label: 'Ładowacz czołowy', type: 'boolean' },
+            { key: 'engineHp', label: 'Moc silnika (HP)', type: 'number', unit: 'HP', placeholder: 'np. 200' },
+            { key: 'frontLoader', label: 'Ładowacz czołowy (TUR)', type: 'boolean' },
             { key: 'dualWheels', label: 'Bliźniaki (koła bliźniacze)', type: 'boolean' },
+            { key: 'frontPTO', label: 'Przedni WOM', type: 'boolean' },
+            { key: 'rearPTO', label: 'Tylny WOM', type: 'boolean' },
+            { key: 'gps', label: 'GPS / Auto-steer', type: 'boolean' },
+            { key: 'fourWD', label: 'Napęd 4WD', type: 'boolean' },
+            { key: 'cabinAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
+            { key: 'isobus', label: 'ISOBUS (ISO 11783)', type: 'boolean' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -1442,21 +1570,74 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         engineLabel: 'Pojemność silnika (cm³)',
         priceHint: 'Rynek: 10 000 – 5 000 000 zł',
         categoryNote: 'Maszyny budowlane i drogowe. Uzupełnij parametry poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
         extraFields: [
             { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
               options: [
                 { value: 'koparka-gasienicowa', label: 'Koparka gąsienicowa' },
                 { value: 'koparka-kolowa', label: 'Koparka kołowa' },
                 { value: 'koparka-ladowarka', label: 'Koparko-ładowarka' },
+                { value: 'minieksawator', label: 'Minieksawator / minikoparko-ładowarka' },
                 { value: 'ladowarka', label: 'Ładowarka kołowa' },
-                { value: 'dzwig', label: 'Dźwig / Żuraw' }, { value: 'walec', label: 'Walec drogowy' },
-                { value: 'betonomieszarka', label: 'Betonomieszarka' }, { value: 'spycharka', label: 'Spycharka' },
-                { value: 'miniescavator', label: 'Minieksawator' }, { value: 'inne', label: 'Inne' },
+                { value: 'ladowarka-teleskopowa', label: 'Ładowarka teleskopowa' },
+                { value: 'wozek-widlowy', label: 'Wózek widłowy' },
+                { value: 'dzwig-mobilny', label: 'Dźwig mobilny (samojezdny)' },
+                { value: 'dzwig-wieze', label: 'Dźwig wieżowy' },
+                { value: 'platforma-nosna', label: 'Platforma nożycowa / wznośna' },
+                { value: 'walec', label: 'Walec drogowy' },
+                { value: 'finisher', label: 'Finisher / rozkładarka asfaltu' },
+                { value: 'betonomieszarka', label: 'Betonomieszarka' },
+                { value: 'pompa-betonu', label: 'Pompa do betonu' },
+                { value: 'spycharka', label: 'Spycharka / buldożer' },
+                { value: 'wiertnica', label: 'Wiertnica / palownica' },
+                { value: 'inne', label: 'Inne' },
               ] },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
-              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }] },
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona / na części' }] },
             { key: 'liftCapacity', label: 'Udźwig / nośność', type: 'number', unit: 'kg', placeholder: 'np. 10000' },
+            { key: 'workingHeight', label: 'Wysokość robocza / zasięg', type: 'number', unit: 'm', placeholder: 'np. 12' },
+            { key: 'operatingWeight', label: 'Masa robocza maszyny', type: 'number', unit: 'kg', placeholder: 'np. 20000' },
             { key: 'hasHydraulics', label: 'Rozdzielacz hydrauliczny', type: 'boolean' },
+            { key: 'hasCabin', label: 'Zamknięta kabina', type: 'boolean' },
+            { key: 'hasAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
+            { key: 'hasGPS', label: 'GPS / system sterowania', type: 'boolean' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
+        ],
+    },
+
+    'maszyny': {
+        fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
+        required: ['year', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Producent / marka maszyny',
+        modelLabel: 'Model maszyny',
+        yearLabel: 'Rok produkcji maszyny',
+        mileageLabel: 'Motogodziny (mth)',
+        mileageHint: 'Liczba przepracowanych motogodzin',
+        engineLabel: 'Pojemność silnika (cm³)',
+        priceHint: 'Rynek: 5 000 – 5 000 000 zł',
+        categoryNote: 'Wózki widłowe, dźwigi, żurawie, maszyny przemysłowe. Typ i parametry uzupełnij poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+        extraFields: [
+            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
+              options: [
+                { value: 'wozek-widlowy', label: 'Wózek widłowy' }, { value: 'wozek-teleskopowy', label: 'Wózek teleskopowy' },
+                { value: 'koparka', label: 'Koparka' }, { value: 'koparka-ladowarka', label: 'Koparko-ładowarka' },
+                { value: 'ladowarka', label: 'Ładowarka' }, { value: 'dzwig', label: 'Dźwig / Żuraw' },
+                { value: 'platforma', label: 'Platforma nożycowa / wznośna' }, { value: 'walec', label: 'Walec drogowy' },
+                { value: 'betonomieszarka', label: 'Betoniarka / Betonomieszarka' }, { value: 'miniescavator', label: 'Minieksawator' },
+                { value: 'agregat-prad', label: 'Agregat prądotwórczy' }, { value: 'sprężarka', label: 'Sprężarka powietrza' },
+                { value: 'inne', label: 'Inne maszyny przemysłowe' },
+              ] },
+            { key: 'liftCapacity', label: 'Udźwig / nośność', type: 'number', unit: 'kg', placeholder: 'np. 5000' },
+            { key: 'workingHeight', label: 'Wysokość robocza / zasięg', type: 'number', unit: 'm', placeholder: 'np. 12' },
+            { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
+            { key: 'hasAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
+            { key: 'hasCabin', label: 'Zamknięta kabina', type: 'boolean' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -1465,6 +1646,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         required: ['price'],
         mileageLabel: 'Przebieg (km)',
         priceHint: 'Podaj cenę pojazdu',
+        showVinSection: false,
+        showHistorySection: false,
         extraFields: [
             { key: 'condition', label: 'Stan', type: 'radio',
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
@@ -1815,8 +1998,22 @@ const featureGroups = computed(() => {
     return g
 })
 
-// Equipment search
+// Equipment search + collapsible sections
 const featSearch = ref('')
+const openFeatGroups = ref(new Set<string>())
+
+watch(featureGroups, (groups) => {
+    // Auto-open first 3 groups when groups load
+    const keys = Object.keys(groups)
+    openFeatGroups.value = new Set(keys.slice(0, 3))
+}, { immediate: true })
+
+function toggleFeatGroup(cat: string) {
+    if (openFeatGroups.value.has(cat)) openFeatGroups.value.delete(cat)
+    else openFeatGroups.value.add(cat)
+}
+function expandAllEquip() { openFeatGroups.value = new Set(Object.keys(featureGroups.value)) }
+function collapseAllEquip() { openFeatGroups.value = new Set() }
 
 const filteredFeatureGroups = computed(() => {
     const q = featSearch.value.trim().toLowerCase()
@@ -2164,8 +2361,17 @@ async function submit() {
             if (extras.bodyVariant) cleanEdit.bodySubtype = extras.bodyVariant
             if (extras.trailerType) cleanEdit.bodySubtype = extras.trailerType
             if (extras.machineType) cleanEdit.bodySubtype = extras.machineType
+            if (extras.truckType) cleanEdit.bodySubtype = extras.truckType
             if (extras.partNumber) cleanEdit.catalogNumber = extras.partNumber
             if (extras.compatibility) cleanEdit.compatibility = extras.compatibility
+            if (extras.seatsCount != null) cleanEdit.seatsCount = Number(extras.seatsCount)
+            if (extras.torque != null) cleanEdit.torque = Number(extras.torque)
+            if (extras.co2 != null) cleanEdit.co2Emission = Number(extras.co2)
+            if (extras.fuelConsumptionCity != null) cleanEdit.fuelConsumptionCity = Number(extras.fuelConsumptionCity)
+            if (extras.fuelConsumptionHwy != null) cleanEdit.fuelConsumptionHighway = Number(extras.fuelConsumptionHwy)
+            if (extras.fuelConsumptionMix != null) cleanEdit.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
+            if (extras.euroNorm) cleanEdit.euroNorm = extras.euroNorm
+            if (extras.colorFinish) cleanEdit.colorFinish = extras.colorFinish
             // Vehicle history fields
             if (history.ownersCount !== null) cleanEdit.ownersCount = history.ownersCount
             cleanEdit.isImported = history.isImported
@@ -2237,8 +2443,17 @@ async function submit() {
             if (extras.bodyVariant) cleanBody.bodySubtype = extras.bodyVariant
             if (extras.trailerType) cleanBody.bodySubtype = extras.trailerType
             if (extras.machineType) cleanBody.bodySubtype = extras.machineType
+            if (extras.truckType) cleanBody.bodySubtype = extras.truckType
             if (extras.partNumber) cleanBody.catalogNumber = extras.partNumber
             if (extras.compatibility) cleanBody.compatibility = extras.compatibility
+            if (extras.seatsCount != null) cleanBody.seatsCount = Number(extras.seatsCount)
+            if (extras.torque != null) cleanBody.torque = Number(extras.torque)
+            if (extras.co2 != null) cleanBody.co2Emission = Number(extras.co2)
+            if (extras.fuelConsumptionCity != null) cleanBody.fuelConsumptionCity = Number(extras.fuelConsumptionCity)
+            if (extras.fuelConsumptionHwy != null) cleanBody.fuelConsumptionHighway = Number(extras.fuelConsumptionHwy)
+            if (extras.fuelConsumptionMix != null) cleanBody.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
+            if (extras.euroNorm) cleanBody.euroNorm = extras.euroNorm
+            if (extras.colorFinish) cleanBody.colorFinish = extras.colorFinish
             // Vehicle history fields
             if (history.ownersCount !== null) cleanBody.ownersCount = history.ownersCount
             cleanBody.isImported = history.isImported
@@ -3381,28 +3596,112 @@ onMounted(async () => {
     }
 }
 
-.feat-group { margin-bottom: 20px; }
+.equip-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
 
-.feat-group-title {
-    font-size: 11px;
-    font-weight: 700;
+.equip-ctrl-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid $border;
+    border-radius: 6px;
     color: $text-dim;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    &:hover { border-color: rgba($red, 0.3); color: $text; }
+}
+
+.feat-group { margin-bottom: 4px; }
+
+.feat-group-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s, border-color 0.15s;
+    margin-bottom: 0;
+
+    &:hover { background: rgba(255,255,255,0.04); border-color: rgba($red, 0.2); }
+
+    &.fgh-open {
+        border-color: rgba($red, 0.25);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom-color: transparent;
+    }
+
+    .fgh-arrow {
+        color: $text-dark;
+        transition: transform 0.2s;
+        flex-shrink: 0;
+    }
+    &.fgh-open .fgh-arrow { transform: rotate(180deg); }
+}
+
+.fgh-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .v-icon { color: $text-dim; }
+}
+
+.fgh-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text-muted;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
+    letter-spacing: 0.8px;
+}
+
+.feat-group-count {
+    font-size: 10px;
+    font-weight: 600;
+    color: $text-dark;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 1px 7px;
+
+    &.fgc-has { color: $red; background: rgba($red, 0.1); }
 }
 
 .feat-checks {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 5px;
+    border: 1px solid rgba($red, 0.25);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 10px 12px 12px;
+    margin-bottom: 4px;
 }
 
-.feat-group-count {
-    margin-left: auto;
-    font-size: 10px;
-    color: $red;
-    font-weight: 600;
+// Accordion collapse transition
+.equip-collapse-enter-active,
+.equip-collapse-leave-active {
+    transition: max-height 0.22s ease, opacity 0.18s ease;
+    max-height: 800px;
+    overflow: hidden;
+    opacity: 1;
+}
+.equip-collapse-enter-from,
+.equip-collapse-leave-to {
+    max-height: 0;
+    opacity: 0;
 }
 
 .feat-check {
