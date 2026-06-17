@@ -431,7 +431,7 @@ export interface KSeFLineItem {
 
 // ── Payments & Invoices ────────────────────────────────────────────────────────
 
-export type PaymentServiceType = 'Top' | 'Premium' | 'Featured' | 'Refresh' | 'Other'
+export type PaymentServiceType = 'Top' | 'Premium' | 'Featured' | 'Refresh' | 'EventFeatured' | 'Other'
 export type PaymentStatusType = 'Pending' | 'Completed' | 'Failed' | 'Cancelled' | 'Refunded'
 export type InvoiceStatusType = 'Draft' | 'Generated' | 'Sent'
 
@@ -460,6 +460,7 @@ export interface PaymentRecord {
     createdAt: string
     paidAt?: string
     advertId?: number
+    eventId?: number
     durationDays?: number
 }
 
