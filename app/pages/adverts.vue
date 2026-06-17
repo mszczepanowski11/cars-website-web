@@ -116,10 +116,18 @@
             </div>
         </div>
 
+        <div v-if="mobileFiltersOpen" class="sidebar-backdrop" @click="mobileFiltersOpen = false" />
+
         <div class="container main-layout">
 
             <!-- ── Sidebar ── -->
-            <aside class="sidebar">
+            <aside class="sidebar" :class="{ 'sidebar--open': mobileFiltersOpen }">
+                <div class="sidebar-mobile-hd">
+                    <span class="sidebar-mobile-title">Filtry i kategorie</span>
+                    <button class="sidebar-mobile-close" @click="mobileFiltersOpen = false">
+                        <v-icon icon="mdi-close" size="18" />
+                    </button>
+                </div>
 
                 <!-- Categories -->
                 <div class="sidebar-block">
@@ -348,7 +356,7 @@
                         </div>
                     </div>
 
-                    <button class="apply-btn" @click="load(1)">
+                    <button class="apply-btn" @click="load(1); mobileFiltersOpen = false">
                         <v-icon icon="mdi-magnify" size="16" />
                         Zastosuj filtry
                     </button>
@@ -361,11 +369,18 @@
                     <p class="result-count">
                         Znaleziono <strong>{{ total.toLocaleString('pl') }}</strong> ogłoszeń
                     </p>
-                    <div class="sort-wrap">
+                    <div class="results-hd-right">
+                        <button class="mobile-filter-toggle" @click="mobileFiltersOpen = true">
+                            <v-icon icon="mdi-tune-variant" size="15" />
+                            Filtry
+                            <span v-if="activeFiltersCount" class="mft-count">{{ activeFiltersCount }}</span>
+                        </button>
+                        <div class="sort-wrap">
                         <v-icon icon="mdi-sort" size="16" class="sort-icon" />
                         <select v-model="f.sortBy" class="sort-select" @change="load(1)">
                             <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
+                    </div>
                     </div>
                 </div>
 
@@ -450,6 +465,28 @@ const loading      = ref(false)
 const loadingMore  = ref(false)
 const pageSize     = 12
 const searchFocused = ref(false)
+const mobileFiltersOpen = ref(false)
+
+const activeFiltersCount = computed(() => {
+    let n = 0
+    if (f.categoryId) n++
+    if (f.brandId) n++
+    if (f.fuelTypeId) n++
+    if (f.bodyTypeId) n++
+    if (f.gearboxId) n++
+    if (f.priceFrom || f.priceTo) n++
+    if (f.yearFrom || f.yearTo) n++
+    if (f.mileageFrom || f.mileageTo) n++
+    if (f.driveTypeId) n++
+    if (f.colorId) n++
+    if (f.sellerType) n++
+    if (f.condition) n++
+    if (f.hasDamage !== null) n++
+    if (f.hasWarranty !== null) n++
+    if (f.hasServiceBook !== null) n++
+    if (f.isImported !== null) n++
+    return n
+})
 
 // Quick view
 const quickViewOpen = ref(false)
@@ -565,6 +602,7 @@ const paginationPages = computed(() => {
 
 function selectCategory(cat: CategoryWithCount) {
     f.categoryId = f.categoryId === cat.id ? null : cat.id
+    mobileFiltersOpen.value = false
     load(1)
 }
 
@@ -987,6 +1025,71 @@ onMounted(async () => {
     align-self: start;
     position: sticky;
     top: calc($nav-height + 16px);
+
+    @include respond-to(md) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: min(360px, 92vw);
+        z-index: 300;
+        overflow-y: auto;
+        padding: 0 16px 60px;
+        background: $bg;
+        box-shadow: 4px 0 32px rgba(0,0,0,0.6);
+        transform: translateX(-105%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 12px;
+        align-self: auto;
+
+        &--open { transform: translateX(0); }
+    }
+}
+
+.sidebar-backdrop {
+    display: none;
+    @include respond-to(md) {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.65);
+        z-index: 299;
+        backdrop-filter: blur(2px);
+    }
+}
+
+.sidebar-mobile-hd {
+    display: none;
+    @include respond-to(md) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 4px 14px;
+        border-bottom: 1px solid $border;
+        margin-bottom: 4px;
+        flex-shrink: 0;
+    }
+}
+
+.sidebar-mobile-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text;
+}
+
+.sidebar-mobile-close {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid $border;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-muted;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    &:hover { background: rgba(255,255,255,0.1); color: $text; }
 }
 
 .sidebar-block {
@@ -1275,6 +1378,47 @@ onMounted(async () => {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+}
+
+.results-hd-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mobile-filter-toggle {
+    display: none;
+
+    @include respond-to(md) {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid $border;
+        border-radius: $r-sm;
+        color: $text-muted;
+        font-size: 13px;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        padding: 7px 12px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: border-color 0.2s, color 0.2s;
+
+        &:hover { border-color: $text-dim; color: $text; }
+    }
+}
+
+.mft-count {
+    background: $red;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 1px 6px;
+    min-width: 16px;
+    text-align: center;
+    line-height: 1.4;
 }
 
 .result-count {

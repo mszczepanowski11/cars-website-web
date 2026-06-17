@@ -1985,6 +1985,17 @@ const scoreTips = computed(() => {
     return tips.slice(0, 3)
 })
 
+// ── Smart form: category-aware logic ─────────────────────────────────────────
+const selectedCategory = computed(() =>
+    advertCategories.value.find(c => c.id === form.categoryId) ?? null
+)
+
+const categoryConfig = computed<CatFieldConfig>(() => {
+    if (!selectedCategory.value) return DEFAULT_CAT_CONFIG
+    const slug = selectedCategory.value.slug ?? ''
+    return CATEGORY_CONFIGS[slug] ?? DEFAULT_CAT_CONFIG
+})
+
 const featureGroups = computed(() => {
     const vehicleCatId = selectedCategory.value?.id ?? null
     const g: Record<string, Feature[]> = {}
@@ -2070,17 +2081,6 @@ function featureGroupIcon(cat: string): string {
     if (lower.includes('maszyn')) return 'mdi-cog-transfer-outline'
     return 'mdi-star-outline'
 }
-
-// ── Smart form: category-aware logic ─────────────────────────────────────────
-const selectedCategory = computed(() =>
-    advertCategories.value.find(c => c.id === form.categoryId) ?? null
-)
-
-const categoryConfig = computed<CatFieldConfig>(() => {
-    if (!selectedCategory.value) return DEFAULT_CAT_CONFIG
-    const slug = selectedCategory.value.slug ?? ''
-    return CATEGORY_CONFIGS[slug] ?? DEFAULT_CAT_CONFIG
-})
 
 function isFieldVisible(field: string): boolean {
     if (!form.categoryId) return true
