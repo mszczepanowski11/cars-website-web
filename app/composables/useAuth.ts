@@ -46,6 +46,12 @@ export const useAuth = () => {
         try {
             await $fetch('/api/auth/logout', { method: 'POST' })
         } catch { }
+        // Clear all user-specific localStorage keys on logout
+        if (import.meta.client) {
+            Object.keys(localStorage)
+                .filter(k => k.startsWith('carizo_profile_override_'))
+                .forEach(k => localStorage.removeItem(k))
+        }
         await navigateTo('/')
     }
 
