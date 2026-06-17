@@ -45,6 +45,7 @@
                                 <v-icon icon="mdi-close" size="16" />
                             </button>
                         </div>
+                        <template v-if="filterConfig.showBrandModel">
                         <div class="sc-divider" />
                         <div class="sc-select-wrap">
                             <v-icon icon="mdi-car-outline" size="16" class="sc-sel-icon" />
@@ -61,6 +62,7 @@
                                 <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
                             </select>
                         </div>
+                        </template>
                         <button class="sc-btn" @click="load(1)">
                             <v-icon icon="mdi-magnify" size="18" />
                             Szukaj
@@ -150,6 +152,12 @@
                         <button v-if="hasActiveFilters" class="clear-btn" @click="clearFilters">Wyczyść</button>
                     </div>
 
+                    <div v-if="activeCategory" class="filter-cat-badge">
+                        <v-icon :icon="activeCategory.iconName || 'mdi-tag-outline'" size="14"/>
+                        {{ activeCategory.name }}
+                        <button class="fcb-clear" @click="f.categoryId = null; load(1)"><v-icon icon="mdi-close" size="12"/></button>
+                    </div>
+
                     <!-- Price -->
                     <div class="filter-section">
                         <div class="filter-section-label">
@@ -177,10 +185,10 @@
                     </div>
 
                     <!-- Mileage -->
-                    <div class="filter-section">
+                    <div v-if="filterConfig.showMileage" class="filter-section">
                         <div class="filter-section-label">
                             <v-icon icon="mdi-speedometer" size="14" />
-                            Przebieg (km)
+                            {{ filterConfig.mileageLabel }}
                         </div>
                         <div class="range-row">
                             <input v-model.number="f.mileageFrom" type="number" class="range-input" placeholder="Od" min="0" />
@@ -190,7 +198,7 @@
                     </div>
 
                     <!-- Power -->
-                    <div class="filter-section">
+                    <div v-if="filterConfig.showPower" class="filter-section">
                         <div class="filter-section-label">
                             <v-icon icon="mdi-engine-outline" size="14" />
                             Moc (KM)
@@ -203,7 +211,7 @@
                     </div>
 
                     <!-- Fuel type -->
-                    <div class="filter-section">
+                    <div v-if="filterConfig.showFuelType" class="filter-section">
                         <div class="filter-section-label">
                             <v-icon icon="mdi-gas-station-outline" size="14" />
                             Rodzaj paliwa
@@ -219,7 +227,7 @@
                     </div>
 
                     <!-- Body type -->
-                    <div class="filter-section">
+                    <div v-if="filterConfig.showBodyType" class="filter-section">
                         <div class="filter-section-label">
                             <v-icon icon="mdi-car-estate" size="14" />
                             Typ nadwozia
@@ -233,7 +241,7 @@
                     </div>
 
                     <!-- Gearbox -->
-                    <div class="filter-section">
+                    <div v-if="filterConfig.showGearbox" class="filter-section">
                         <div class="filter-section-label">
                             <v-icon icon="mdi-car-shift-pattern" size="14" />
                             Skrzynia biegów
@@ -273,7 +281,7 @@
                     </div>
 
                     <!-- Drive type -->
-                    <div v-if="driveTypes.length" class="filter-section">
+                    <div v-if="filterConfig.showDriveType && driveTypes.length" class="filter-section">
                         <div class="filter-section-label">
                             <v-icon icon="mdi-car-traction-control" size="14" />
                             Napęd
@@ -287,7 +295,7 @@
                     </div>
 
                     <!-- Color -->
-                    <div v-if="colors.length" class="filter-section">
+                    <div v-if="filterConfig.showColor && colors.length" class="filter-section">
                         <div class="filter-section-label">
                             <v-icon icon="mdi-palette-outline" size="14" />
                             Kolor
@@ -499,6 +507,34 @@ const f = reactive({
 const activeCategory = computed(() =>
     f.categoryId ? (categories.value.find(c => c.id === f.categoryId) ?? null) : null
 )
+const categorySlug = computed(() => activeCategory.value?.slug ?? null)
+
+const filterConfig = computed(() => {
+    const slug = categorySlug.value
+    const isMoto = slug === 'motocykle' || slug?.includes('moto')
+    const isParts = slug === 'czesci' || slug?.includes('czesc') || slug?.includes('part')
+    const isTrailer = slug === 'przyczepy' || slug?.includes('przyczepa') || slug?.includes('naczepa')
+    const isMachinery = slug === 'maszyny' || slug?.includes('maszyn') || slug?.includes('rolnicze')
+    const isTruck = slug === 'dostawcze' || slug?.includes('dostawcze') || slug?.includes('ciezarowe') || slug?.includes('ciężar')
+
+    return {
+        showBrandModel: !isParts,
+        showFuelType: !isParts && !isTrailer,
+        showGearbox: !isParts && !isTrailer && !isMoto,
+        showBodyType: !isParts && !isMoto && !isTrailer && !isMachinery,
+        showPower: !isParts,
+        showMileage: !isParts,
+        showDriveType: !isParts && !isMoto && !isTrailer,
+        showColor: !isParts && !isTrailer && !isMachinery,
+        showYear: true,
+        showPrice: true,
+        mileageLabel: isMachinery ? 'Motogodziny (mth)' : 'Przebieg (km)',
+        mileageFromKey: isMachinery ? 'mileageFrom' : 'mileageFrom',
+        brandLabel: isMoto ? 'Marka motocykla' : isParts ? 'Producent' : isTruck ? 'Marka pojazdu' : 'Marka',
+        modelLabel: isMoto ? 'Model' : isParts ? 'Nr katalogowy' : 'Model',
+    }
+})
+
 const activeBrand = computed(() =>
     f.brandId ? (brands.value.find(b => b.id === f.brandId) ?? null) : null
 )
@@ -1375,5 +1411,20 @@ onMounted(async () => {
     }
 
     &--dot { cursor: default; border-color: transparent; background: transparent; }
+}
+
+.filter-cat-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba($red, 0.1);
+    border: 1px solid rgba($red, 0.25);
+    border-radius: $r-sm;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $red;
+    margin-bottom: 14px;
+    .fcb-clear { margin-left: auto; background: transparent; border: none; color: $red; cursor: pointer; display: flex; align-items: center; padding: 0; }
 }
 </style>
