@@ -67,6 +67,7 @@ export default defineNuxtConfig({
     // Server-only secrets (never exposed to client)
     imojeWebhookSecret: process.env.NUXT_IMOJE_WEBHOOK_SECRET ?? '',
     internalServiceSecret: process.env.NUXT_INTERNAL_SERVICE_SECRET ?? '',
+    turnstileSecretKey: process.env.NUXT_TURNSTILE_SECRET_KEY ?? '',
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE ?? 'http://localhost:5105/',
       premiereStart: process.env.NUXT_PUBLIC_PREMIERE_START ?? '2026-06-12T00:00:00+02:00',
@@ -77,6 +78,8 @@ export default defineNuxtConfig({
       ga4Id:       process.env.NUXT_PUBLIC_GA4_ID       ?? '',
       metaPixelId: process.env.NUXT_PUBLIC_META_PIXEL_ID ?? '',
       clarityId:   process.env.NUXT_PUBLIC_CLARITY_ID   ?? '',
+      turnstileSiteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY ?? '',
+      googleClientId:   process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID   ?? '',
       // Social media links — set in .env
       socialFacebook:  process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK  ?? '',
       socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM ?? '',

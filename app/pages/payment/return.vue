@@ -1,7 +1,7 @@
 <template>
     <div class="return-page">
         <div class="return-card">
-            <NuxtLink to="/" class="return-logo">CARI<span>ZO</span></NuxtLink>
+            <NuxtLink to="/" class="return-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
 
             <!-- ── SUCCESS ── -->
             <template v-if="status === 'success'">
@@ -13,7 +13,12 @@
                 </div>
                 <h1 class="return-title">Płatność zakończona<br>pomyślnie!</h1>
                 <p class="return-desc">
-                    Twoje ogłoszenie zostało objęte promocją.<br>
+                    <template v-if="eventId">
+                        Twoje wydarzenie zostało wyróżnione.<br>
+                    </template>
+                    <template v-else>
+                        Twoje ogłoszenie zostało objęte promocją.<br>
+                    </template>
                     Faktura zostanie wysłana na Twój adres e-mail.
                 </p>
 
@@ -33,11 +38,19 @@
                 </div>
 
                 <div class="return-actions">
-                    <NuxtLink v-if="advertId" :to="`/advert/${advertId}`" class="btn-red">
+                    <NuxtLink v-if="eventId" :to="`/events/${eventId}`" class="btn-red">
+                        <v-icon icon="mdi-calendar-star" size="17" />
+                        Zobacz wydarzenie
+                    </NuxtLink>
+                    <NuxtLink v-else-if="advertId" :to="`/advert/${advertId}`" class="btn-red">
                         <v-icon icon="mdi-eye-outline" size="17" />
                         Zobacz ogłoszenie
                     </NuxtLink>
-                    <NuxtLink to="/my-adverts" class="btn-outline">
+                    <NuxtLink v-if="eventId" to="/events" class="btn-outline">
+                        <v-icon icon="mdi-calendar-outline" size="15" />
+                        Wszystkie wydarzenia
+                    </NuxtLink>
+                    <NuxtLink v-else to="/my-adverts" class="btn-outline">
                         <v-icon icon="mdi-car-outline" size="15" />
                         Moje ogłoszenia
                     </NuxtLink>
@@ -55,15 +68,27 @@
                 </div>
                 <h1 class="return-title">Płatność anulowana</h1>
                 <p class="return-desc">
-                    Płatność została anulowana. Twoje ogłoszenie nie zostało objęte promocją.<br>
+                    <template v-if="eventId">
+                        Płatność została anulowana. Twoje wydarzenie nie zostało wyróżnione.<br>
+                    </template>
+                    <template v-else>
+                        Płatność została anulowana. Twoje ogłoszenie nie zostało objęte promocją.<br>
+                    </template>
                     Możesz spróbować ponownie w dowolnym momencie.
                 </p>
                 <div class="return-actions">
-                    <NuxtLink v-if="advertId" :to="`/promote-advert/${advertId}`" class="btn-red">
+                    <NuxtLink v-if="eventId" :to="`/promote-event/${eventId}`" class="btn-red">
                         <v-icon icon="mdi-refresh" size="17" />
                         Spróbuj ponownie
                     </NuxtLink>
-                    <NuxtLink to="/my-adverts" class="btn-outline">
+                    <NuxtLink v-else-if="advertId" :to="`/promote-advert/${advertId}`" class="btn-red">
+                        <v-icon icon="mdi-refresh" size="17" />
+                        Spróbuj ponownie
+                    </NuxtLink>
+                    <NuxtLink v-if="eventId" to="/events" class="btn-outline">
+                        Wszystkie wydarzenia
+                    </NuxtLink>
+                    <NuxtLink v-else to="/my-adverts" class="btn-outline">
                         Moje ogłoszenia
                     </NuxtLink>
                     <NuxtLink to="/" class="btn-ghost">
@@ -111,6 +136,7 @@ const status = computed(() => {
 })
 
 const advertId = computed(() => route.query.advertId ? Number(route.query.advertId) : null)
+const eventId = computed(() => route.query.eventId ? Number(route.query.eventId) : null)
 
 const invoicePolling = ref(false)
 const latestInvoice = ref<MonthlyInvoice | null>(null)

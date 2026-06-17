@@ -1,7 +1,7 @@
 <template>
     <div class="auth-bg">
         <div class="auth-card">
-            <NuxtLink to="/" class="auth-logo">CARI<span>ZO</span></NuxtLink>
+            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
             <h2>Resetowanie hasła</h2>
             <p class="auth-sub">Podaj adres email, a wyślemy Ci link do ustawienia nowego hasła.</p>
 
@@ -26,6 +26,13 @@
                         <v-icon icon="mdi-alert-circle-outline" size="14" />
                         {{ error }}
                     </div>
+
+                    <TurnstileWidget
+                        v-if="turnstileSiteKey"
+                        ref="turnstileRef"
+                        v-model="turnstileToken"
+                        :site-key="turnstileSiteKey"
+                    />
 
                     <button type="submit" class="btn-submit" :disabled="loading">
                         <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
@@ -59,24 +66,33 @@
 
 <script setup lang="ts">
 useHead({ title: 'Resetowanie hasła — CARIZO' })
+const runtimeConfig = useRuntimeConfig()
 
 const email = ref('')
 const loading = ref(false)
 const error = ref('')
 const sent = ref(false)
+const turnstileToken  = ref('')
+const turnstileRef    = ref<{ reset: () => void } | null>(null)
+const turnstileSiteKey = runtimeConfig.public.turnstileSiteKey as string
 
 async function submit() {
     loading.value = true
     error.value = ''
     try {
-        await $fetch('/api/proxy/api/Auth/forgot-password', {
+        await $fetch('/api/auth/forgot-password', {
             method: 'POST',
-            body: { email: email.value },
+            body: { email: email.value, turnstileToken: turnstileToken.value },
         })
         sent.value = true
-    } catch {
-        // Always show success to prevent email enumeration
-        sent.value = true
+    } catch (err: any) {
+        if (err?.data?.statusMessage?.includes('CAPTCHA')) {
+            error.value = err.data.statusMessage
+            turnstileRef.value?.reset()
+        } else {
+            // Always show success to prevent email enumeration
+            sent.value = true
+        }
     } finally {
         loading.value = false
     }
@@ -106,14 +122,13 @@ async function submit() {
     @include respond-to(sm) { padding: 36px 24px; }
 }
 
-.auth-logo {
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 6px;
-    color: $text;
-    text-decoration: none;
+.auth-logo { height: 32px; width: auto; // overrides below
+    display: block;
+    
+    
+    
+    
     margin-bottom: 32px;
-    span { color: $red; }
 }
 
 h2 {

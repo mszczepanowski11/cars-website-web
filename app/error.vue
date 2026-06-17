@@ -1,7 +1,7 @@
 <template>
     <div class="error-page">
         <div class="error-card">
-            <div class="error-logo">CARI<span>ZO</span></div>
+            <img src="/carizo-logo.svg" alt="CARIZO" class="error-logo" />
 
             <div class="error-icon-wrap" :class="isNotFound ? 'wrap-404' : 'wrap-500'">
                 <v-icon :icon="isNotFound ? 'mdi-map-search-outline' : 'mdi-alert-circle-outline'" size="52" />
@@ -76,12 +76,7 @@ function goBack() {
 }
 
 .error-logo {
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 5px;
-    color: $text;
     margin-bottom: 8px;
-    span { color: $red; }
 }
 
 .error-icon-wrap {

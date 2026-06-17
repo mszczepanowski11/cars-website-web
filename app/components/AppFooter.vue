@@ -37,7 +37,7 @@ async function subscribeNewsletter() {
       <div class="footer-grid">
 
         <div class="footer-brand">
-          <div class="footer-logo">CARI<span>ZO</span></div>
+          <img src="/carizo-logo.svg" alt="CARIZO" class="footer-logo" />
           <p class="footer-desc">Nowoczesna platforma motoryzacyjna dla ludzi, którzy kochają samochody.</p>
           <div class="footer-social">
             <a v-if="social.tiktok" :href="social.tiktok" target="_blank" rel="noopener" class="social-link" title="TikTok"><v-icon icon="mdi-music-note" size="18" /></a>
@@ -149,13 +149,10 @@ async function subscribeNewsletter() {
 }
 
 .footer-logo {
-  font-size: 30px;
-  font-weight: 900;
-  letter-spacing: 5px;
-  color: $text;
+  height: 30px;
+  width: auto;
+  display: block;
   margin-bottom: 14px;
-
-  span { color: $red; }
 }
 
 .footer-desc {

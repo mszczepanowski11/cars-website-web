@@ -11,6 +11,7 @@
                 <NuxtLink to="/admin/users" class="nav-item active"><v-icon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
                 <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
                 <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
                 <div class="nav-divider" />
                 <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
@@ -88,6 +89,12 @@
                                             <v-icon v-if="actionLoading === u.id" icon="mdi-loading" size="13" class="spin" />
                                             <v-icon v-else :icon="u.isBlocked ? 'mdi-lock-open-outline' : 'mdi-lock-outline'" size="13" />
                                             {{ u.isBlocked ? 'Odblokuj' : 'Zablokuj' }}
+                                        </button>
+                                        <button v-if="!u.isAdmin" class="btn-action btn-delete"
+                                            :disabled="actionLoading === u.id"
+                                            @click="deleteUser(u)">
+                                            <v-icon icon="mdi-delete-outline" size="13" />
+                                            Usuń
                                         </button>
                                     </div>
                                 </td>
@@ -180,6 +187,16 @@ async function toggleBlock(u: AdminUser) {
     } catch {} finally { actionLoading.value = null }
 }
 
+async function deleteUser(u: AdminUser) {
+    if (!confirm(`Czy na pewno chcesz usunąć konto ${u.name} ${u.surname} (${u.email})? Tej operacji nie można cofnąć.`)) return
+    actionLoading.value = u.id
+    try {
+        await $fetch(`/api/proxy/api/Admin/User/${u.id}`, { method: 'DELETE', body: { note: 'Usunięte przez administratora' } })
+        users.value = users.value.filter(x => x.id !== u.id)
+        totalCount.value--
+    } catch {} finally { actionLoading.value = null }
+}
+
 onMounted(fetchUsers)
 </script>
 
@@ -235,4 +252,5 @@ onMounted(fetchUsers)
 
 .btn-block { background: rgba(220,50,50,0.1); color: #e55; border-color: rgba(220,50,50,0.25); &:hover:not(:disabled) { background: rgba(220,50,50,0.2); } }
 .btn-unblock { background: rgba(76,175,80,0.1); color: #4caf50; border-color: rgba(76,175,80,0.2); &:hover:not(:disabled) { background: rgba(76,175,80,0.18); } }
+.btn-delete { background: rgba(220,50,50,0.06); color: rgba(229,85,85,0.7); border-color: rgba(220,50,50,0.15); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); color: #e55; border-color: rgba(220,50,50,0.35); } }
 </style>

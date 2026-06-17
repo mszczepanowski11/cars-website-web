@@ -125,6 +125,7 @@ const badgeText = computed(() => {
     overflow: hidden;
     color: $text;
     display: block;
+    position: relative;
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {

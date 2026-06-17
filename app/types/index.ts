@@ -3,7 +3,7 @@ export interface SelectOption { value: number | string; label: string; icon?: st
 export interface Generation extends TaxonomyItem { yearFrom: number; yearTo: number }
 export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number }
 export interface AdvertImage { id: number; url: string; isMain: boolean }
-export interface Feature { id: number; name: string; category: { id: number; name: string } }
+export interface Feature { id: number; name: string; category: { id: number; name: string; vehicleCategoryId?: number | null } }
 export interface DriveType { id: number; name: string; slug: string }
 export interface CarColor { id: number; name: string; hexCode: string }
 export type AdvertBadge = 'PREMIUM' | 'VERIFIED' | 'DEALER' | 'FEATURED' | 'TOP'
@@ -431,7 +431,7 @@ export interface KSeFLineItem {
 
 // ── Payments & Invoices ────────────────────────────────────────────────────────
 
-export type PaymentServiceType = 'Top' | 'Premium' | 'Featured' | 'Refresh' | 'Other'
+export type PaymentServiceType = 'Top' | 'Premium' | 'Featured' | 'Refresh' | 'EventFeatured' | 'Other'
 export type PaymentStatusType = 'Pending' | 'Completed' | 'Failed' | 'Cancelled' | 'Refunded'
 export type InvoiceStatusType = 'Draft' | 'Generated' | 'Sent'
 
@@ -460,6 +460,7 @@ export interface PaymentRecord {
     createdAt: string
     paidAt?: string
     advertId?: number
+    eventId?: number
     durationDays?: number
 }
 
@@ -490,4 +491,9 @@ export interface MonthlyInvoice {
     isKSeFSent?: boolean
     billingType?: BillingType
     lineItems?: KSeFLineItem[]
+    // Seller info (for PDF generation)
+    sellerName?: string
+    sellerEmail?: string
+    sellerAddress?: string
+    sellerNip?: string
 }

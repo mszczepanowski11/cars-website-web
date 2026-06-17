@@ -59,13 +59,19 @@ export const useInvoices = () => {
         doc.roundedRect(12, y - 2, (W - 30) / 2, boxH, 2, 2, 'F')
         doc.roundedRect(W / 2 + 3, y - 2, (W - 30) / 2, boxH, 2, 2, 'F')
 
+        const sellerName = inv.sellerName ?? 'CARIZO'
+        const sellerEmail = inv.sellerEmail ?? 'biuro@carizo.pl'
+        const sellerAddress = inv.sellerAddress ?? 'ul. Przykładowa 1, 00-000 Warszawa'
+        const sellerNip = inv.sellerNip ?? ''
+
         doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(139, 13, 29)
         doc.text('SPRZEDAWCA', 16, y + 4)
         doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40)
-        doc.text('CARIZO Sp. z o.o.', 16, y + 10)
+        doc.text(sellerName, 16, y + 10)
         doc.setTextColor(80, 80, 80)
-        doc.text('ul. Przykładowa 1, 00-000 Warszawa', 16, y + 16)
-        doc.text('NIP: 0000000000', 16, y + 22)
+        doc.text(`carizo.pl | ${sellerEmail}`, 16, y + 16)
+        if (sellerNip) doc.text(`NIP: ${sellerNip}`, 16, y + 22)
+        else doc.text(sellerAddress, 16, y + 22)
 
         const bx = W / 2 + 7
         doc.setFont('helvetica', 'bold'); doc.setTextColor(139, 13, 29)

@@ -17,17 +17,27 @@
                         CARIZO to więcej niż portal ogłoszeniowy.<br>
                         To miejsce, gdzie technologia spotyka pasję do motoryzacji.
                     </p>
+                    <div class="hero-cta-row">
+                        <NuxtLink to="/adverts" class="hero-btn-primary">
+                            <v-icon icon="mdi-magnify" size="18" />
+                            Przeglądaj oferty
+                        </NuxtLink>
+                        <NuxtLink to="/add-advert" class="hero-btn-ghost">
+                            Dodaj ogłoszenie
+                            <v-icon icon="mdi-arrow-right" size="16" />
+                        </NuxtLink>
+                    </div>
                     <div class="hero-badges">
                         <div class="hero-badge">
-                            <v-icon icon="mdi-shield-check-outline" size="20" />
+                            <v-icon icon="mdi-shield-check-outline" size="18" />
                             <span>Zweryfikowane ogłoszenia</span>
                         </div>
                         <div class="hero-badge">
-                            <v-icon icon="mdi-account-group-outline" size="20" />
+                            <v-icon icon="mdi-account-group-outline" size="18" />
                             <span>Zaufani sprzedawcy</span>
                         </div>
                         <div class="hero-badge">
-                            <v-icon icon="mdi-chart-line" size="20" />
+                            <v-icon icon="mdi-chart-line" size="18" />
                             <span>Inteligentne narzędzia</span>
                         </div>
                     </div>
@@ -280,18 +290,23 @@
                         <v-icon icon="mdi-arrow-right" size="16" />
                     </NuxtLink>
                 </div>
-                <div class="cats-strip">
+                <div class="cats-grid-premium">
                     <NuxtLink
                         v-for="cat in homeCategories"
                         :key="cat.id"
                         :to="`/adverts?categoryId=${cat.id}`"
-                        class="cstrip-item"
+                        class="cat-card-premium"
                     >
-                        <div class="cstrip-icon">
-                            <v-icon :icon="cat.iconName ?? 'mdi-car-outline'" size="22" />
+                        <div class="ccp-icon-wrap">
+                            <v-icon :icon="cat.iconName ?? 'mdi-car-outline'" size="32" />
                         </div>
-                        <div class="cstrip-name">{{ cat.name }}</div>
-                        <div v-if="cat.advertCount" class="cstrip-count">{{ cat.advertCount.toLocaleString('pl') }}</div>
+                        <div class="ccp-body">
+                            <div class="ccp-name">{{ cat.name }}</div>
+                            <div v-if="cat.advertCount" class="ccp-count">
+                                {{ cat.advertCount.toLocaleString('pl') }} ofert
+                            </div>
+                        </div>
+                        <v-icon icon="mdi-arrow-right" size="16" class="ccp-arrow" />
                     </NuxtLink>
                 </div>
             </div>
@@ -336,9 +351,9 @@
                     <div class="sec-top-left">
                         <span class="premium-label">
                             <v-icon icon="mdi-crown" size="14" />
-                            TOP OGŁOSZENIA
+                            PREMIUM
                         </span>
-                        <h2>Wyróżnione oferty</h2>
+                        <h2>Polecane oferty <span class="premium-gold">Premium</span></h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Zobacz wszystkie
@@ -347,6 +362,85 @@
                 </div>
                 <div class="cars-grid">
                     <AdvertCard v-for="a in topAdverts" :key="a.id" :advert="a" />
+                </div>
+            </div>
+        </section>
+
+        <!-- ING Finansowanie -->
+        <section class="section ing-section">
+            <div class="container">
+                <div class="ing-wrapper">
+                    <div class="ing-header">
+                        <div class="ing-logo-area">
+                            <div class="ing-logo-badge">
+                                <span class="ing-logo-text">ING</span>
+                            </div>
+                            <div>
+                                <div class="ing-pretitle">Partner finansowy CARIZO</div>
+                                <h2 class="ing-title">Finansowanie pojazdu<br><span>szybko i bezpiecznie</span></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ing-cards">
+                        <div class="ing-card">
+                            <div class="ing-card-icon">
+                                <v-icon icon="mdi-car-key" size="26" />
+                            </div>
+                            <div class="ing-card-title">Leasing ING</div>
+                            <div class="ing-card-desc">Leasing operacyjny lub finansowy dla firm. Korzyści podatkowe i elastyczne warunki.</div>
+                            <div class="ing-card-feat">
+                                <span><v-icon icon="mdi-check" size="13" />od 10% wpłaty własnej</span>
+                                <span><v-icon icon="mdi-check" size="13" />do 84 miesięcy</span>
+                                <span><v-icon icon="mdi-check" size="13" />bez ukrytych kosztów</span>
+                            </div>
+                        </div>
+                        <div class="ing-card">
+                            <div class="ing-card-icon">
+                                <v-icon icon="mdi-bank-outline" size="26" />
+                            </div>
+                            <div class="ing-card-title">Kredyt ING</div>
+                            <div class="ing-card-desc">Kredyt samochodowy dla osób prywatnych. Szybka decyzja kredytowa online.</div>
+                            <div class="ing-card-feat">
+                                <span><v-icon icon="mdi-check" size="13" />decyzja w 15 minut</span>
+                                <span><v-icon icon="mdi-check" size="13" />brak prowizji</span>
+                                <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%</span>
+                            </div>
+                        </div>
+                        <div class="ing-card">
+                            <div class="ing-card-icon">
+                                <v-icon icon="mdi-domain" size="26" />
+                            </div>
+                            <div class="ing-card-title">Finansowanie firmowe</div>
+                            <div class="ing-card-desc">Kompleksowe rozwiązania flotowe i finansowanie pojazdów użytkowych dla firm.</div>
+                            <div class="ing-card-feat">
+                                <span><v-icon icon="mdi-check" size="13" />flota od 2 aut</span>
+                                <span><v-icon icon="mdi-check" size="13" />zarządzanie online</span>
+                                <span><v-icon icon="mdi-check" size="13" />dedykowany opiekun</span>
+                            </div>
+                        </div>
+                        <div class="ing-card ing-card--calc">
+                            <div class="ing-card-icon">
+                                <v-icon icon="mdi-calculator-variant-outline" size="26" />
+                            </div>
+                            <div class="ing-card-title">Kalkulator rat</div>
+                            <div class="ing-calc-mini">
+                                <div class="icm-row">
+                                    <label>Kwota</label>
+                                    <div class="icm-val">{{ ingCalcAmount.toLocaleString('pl') }} zł</div>
+                                </div>
+                                <input v-model.number="ingCalcAmount" type="range" min="10000" max="500000" step="5000" class="icm-range" />
+                                <div class="icm-row">
+                                    <label>Okres</label>
+                                    <div class="icm-val">{{ ingCalcMonths }} mies.</div>
+                                </div>
+                                <input v-model.number="ingCalcMonths" type="range" min="12" max="84" step="12" class="icm-range" />
+                                <div class="icm-result">
+                                    od <strong>{{ ingMonthlyRate.toLocaleString('pl', { maximumFractionDigits: 0 }) }} zł</strong> / miesiąc
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej.</div>
                 </div>
             </div>
         </section>
@@ -628,6 +722,16 @@ const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
 const { fetchBrands, fetchBrandsByCategory, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
 const brandsLoading = ref(false)
+
+// ING calculator
+const ingCalcAmount = ref(80000)
+const ingCalcMonths = ref(48)
+const ingMonthlyRate = computed(() => {
+    const rate = 0.0899 / 12
+    const n = ingCalcMonths.value
+    const pv = ingCalcAmount.value * 0.9
+    return Math.round(pv * rate * Math.pow(1 + rate, n) / (Math.pow(1 + rate, n) - 1))
+})
 
 const featuredEvent = computed(() => events.value.find(e => e.isFeatured) ?? null)
 
@@ -1733,5 +1837,348 @@ onMounted(async () => {
     color: $red;
     text-transform: uppercase;
     .v-icon { color: $red; }
+}
+
+// Hero premium upgrades
+.hero {
+    min-height: 720px;
+}
+
+.hero-inner {
+    min-height: 600px;
+    padding: 80px 0 100px;
+}
+
+.hero-title {
+    font-size: 82px;
+    @include respond-to(md) { font-size: 58px; }
+    @include respond-to(sm) { font-size: 42px; }
+}
+
+.hero-car-bg {
+    width: 70%;
+    img { opacity: 0.68; }
+}
+
+.hero-sub {
+    font-size: 16px;
+    margin-top: 28px;
+    max-width: 480px;
+}
+
+.hero-cta-row {
+    display: flex;
+    gap: 14px;
+    margin-top: 38px;
+    margin-bottom: 42px;
+    flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: $red;
+    color: white;
+    border: none;
+    border-radius: $r-md;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 14px 32px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+    &:hover { opacity: 0.88; transform: translateY(-1px); }
+}
+
+.hero-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    color: $text;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: $r-md;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 14px 28px;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    &:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); transform: translateY(-1px); }
+}
+
+.hero-badges {
+    margin-top: 0;
+    gap: 32px;
+}
+
+.hero-badge {
+    font-size: 13px;
+    .v-icon { color: rgba(255,255,255,0.3); }
+}
+
+// Categories premium grid
+.cats-grid-premium {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(sm) { grid-template-columns: 1fr; gap: 10px; }
+}
+
+.cat-card-premium {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 20px 20px 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-lg;
+    text-decoration: none;
+    color: $text;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+
+    &:hover {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba($red, 0.35);
+        transform: translateY(-3px);
+
+        .ccp-icon-wrap { background: rgba($red, 0.18); color: $red; }
+        .ccp-arrow { color: $red; opacity: 1; transform: translateX(3px); }
+    }
+}
+
+.ccp-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-muted;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+}
+
+.ccp-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.ccp-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text;
+    line-height: 1.2;
+}
+
+.ccp-count {
+    font-size: 12px;
+    color: $text-dim;
+    margin-top: 3px;
+}
+
+.ccp-arrow {
+    color: $text-dark;
+    opacity: 0.5;
+    flex-shrink: 0;
+    transition: color 0.2s, opacity 0.2s, transform 0.2s;
+}
+
+// Premium gold accent
+.premium-gold {
+    color: #d4a017;
+}
+
+// ING section
+.ing-section {
+    margin-top: 90px;
+}
+
+.ing-wrapper {
+    background: linear-gradient(135deg, #0c0c10 0%, #08080c 100%);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-xl;
+    padding: 48px;
+    overflow: hidden;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255,100,0,0.06) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    @include respond-to(sm) { padding: 28px 20px; }
+}
+
+.ing-header {
+    margin-bottom: 36px;
+}
+
+.ing-logo-area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.ing-logo-badge {
+    width: 60px;
+    height: 60px;
+    background: #FF6200;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ing-logo-text {
+    color: white;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.ing-pretitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: #FF6200;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.ing-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: $text;
+    line-height: 1.2;
+    span { color: #FF6200; }
+    @include respond-to(sm) { font-size: 22px; }
+}
+
+.ing-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+.ing-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-lg;
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.2s, background 0.2s;
+
+    &:hover {
+        border-color: rgba(#FF6200, 0.3);
+        background: rgba(255,255,255,0.05);
+    }
+
+    &--calc { border-color: rgba(#FF6200, 0.2); }
+}
+
+.ing-card-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: rgba(#FF6200, 0.12);
+    border: 1px solid rgba(#FF6200, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FF6200;
+}
+
+.ing-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text;
+}
+
+.ing-card-desc {
+    font-size: 12.5px;
+    color: $text-dim;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.ing-card-feat {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: $text-muted;
+        .v-icon { color: #FF6200; }
+    }
+}
+
+.ing-calc-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.icm-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: $text-dim;
+}
+
+.icm-val {
+    font-weight: 700;
+    color: $text;
+    font-size: 13px;
+}
+
+.icm-range {
+    width: 100%;
+    accent-color: #FF6200;
+    cursor: pointer;
+    margin: 0;
+}
+
+.icm-result {
+    background: rgba(#FF6200, 0.1);
+    border: 1px solid rgba(#FF6200, 0.25);
+    border-radius: $r-sm;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: $text-muted;
+    text-align: center;
+    margin-top: 4px;
+
+    strong {
+        color: #FF6200;
+        font-size: 18px;
+    }
+}
+
+.ing-disclaimer {
+    margin-top: 20px;
+    font-size: 11px;
+    color: $text-dark;
 }
 </style>

@@ -123,6 +123,25 @@
 
                     <div class="price-area">
                         <div class="price-big">{{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' zł' : '—' }}</div>
+                        <div v-if="advert?.price && Number(advert.price) > 5000" class="price-monthly-estimate">
+                            <div class="pme-row">
+                                <div class="pme-item">
+                                    <div class="pme-label">
+                                        <div class="pme-ing-dot ing-leasing" />
+                                        Leasing ING
+                                    </div>
+                                    <div class="pme-val">od {{ Math.round(Number(advert.price) * 0.9 * 0.0075 * Math.pow(1.0075, 48) / (Math.pow(1.0075, 48) - 1)).toLocaleString('pl') }} zł/mies.</div>
+                                </div>
+                                <div class="pme-item">
+                                    <div class="pme-label">
+                                        <div class="pme-ing-dot ing-credit" />
+                                        Kredyt ING
+                                    </div>
+                                    <div class="pme-val">od {{ Math.round(Number(advert.price) * 0.9 * 0.00749 * Math.pow(1.00749, 60) / (Math.pow(1.00749, 60) - 1)).toLocaleString('pl') }} zł/mies.</div>
+                                </div>
+                            </div>
+                            <div class="pme-note">* przy 10% wpłaty własnej, szacunkowo</div>
+                        </div>
                         <div class="price-badges-row">
                             <span v-if="isNegotiable" class="nego-badge"><v-icon icon="mdi-handshake-outline" size="12" />Do negocjacji</span>
                             <span class="seller-type-chip" :class="sellerTypeLabel.includes('Dealer') ? 'chip-dealer' : 'chip-private'">
@@ -148,6 +167,36 @@
                             <v-icon icon="mdi-eye-outline" size="12" />{{ Number(advert.viewCount).toLocaleString('pl') }}
                         </span>
                         <span class="time-pill">{{ advertAge }}</span>
+                    </div>
+
+                    <!-- CARIZO VERIFIED trust badges -->
+                    <div class="verified-trust-box">
+                        <div class="vtb-header">
+                            <v-icon icon="mdi-shield-check" size="16" class="vtb-icon" />
+                            <span class="vtb-title">CARIZO VERIFIED</span>
+                        </div>
+                        <div class="vtb-items">
+                            <div class="vtb-item" :class="advert?.vin ? 'vtb-ok' : 'vtb-pending'">
+                                <v-icon :icon="advert?.vin ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
+                                <span>VIN {{ advert?.vin ? 'zweryfikowany' : 'niezweryfikowany' }}</span>
+                            </div>
+                            <div class="vtb-item" :class="advert?.hasFullServiceHistory ? 'vtb-ok' : 'vtb-pending'">
+                                <v-icon :icon="advert?.hasFullServiceHistory ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
+                                <span>Historia serwisowa</span>
+                            </div>
+                            <div class="vtb-item" :class="!advert?.hasDamage ? 'vtb-ok' : 'vtb-warn'">
+                                <v-icon :icon="!advert?.hasDamage ? 'mdi-check-circle' : 'mdi-alert-circle'" size="14" />
+                                <span>Bezwypadkowy</span>
+                            </div>
+                            <div class="vtb-item vtb-ok">
+                                <v-icon icon="mdi-check-circle" size="14" />
+                                <span>Telefon zweryfikowany</span>
+                            </div>
+                            <div class="vtb-item" :class="seller?.accountType === 'Business' ? 'vtb-ok' : 'vtb-pending'">
+                                <v-icon :icon="seller?.accountType === 'Business' ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
+                                <span>Zweryfikowany sprzedawca</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="info-divider" />
@@ -303,15 +352,11 @@
                     </div>
                 </transition>
 
-                <!-- Tabs -->
-                <div class="tabs-wrap" id="tabs-section">
-                    <div class="tabs-nav">
-                        <button v-for="tab in tabs" :key="tab" class="tab-btn" :class="{ 'tab-active': activeTab === tab }" @click="activeTab = tab">{{ tab }}</button>
-                    </div>
-
-                    <!-- Opis -->
-                    <div v-if="activeTab === 'Opis'" class="tab-content">
-                        <div v-if="parsedUserDesc" class="desc-body">
+                <!-- SECTION 1: Opis -->
+                <section v-if="parsedUserDesc" class="pg-section">
+                    <h2 class="pg-section-title"><v-icon icon="mdi-text-box-outline" size="17" />Opis</h2>
+                    <div class="tab-content">
+                        <div class="desc-body">
                             <p class="desc-text" :class="{ clamped: !showFullDesc }">{{ parsedUserDesc }}</p>
                             <div v-if="parsedUserDesc.length > 400" class="desc-toggle">
                                 <button @click="showFullDesc = !showFullDesc" class="read-more-btn">
@@ -320,165 +365,156 @@
                                 </button>
                             </div>
                         </div>
-                        <div v-else class="empty-tab"><v-icon icon="mdi-text-box-remove-outline" size="28" />Sprzedający nie dodał opisu słownego.</div>
-                        <div v-if="parsedTechData.length" class="desc-tech-inline">
-                            <div class="dti-title">Najważniejsze dane</div>
-                            <div class="dti-grid">
-                                <div v-for="item in parsedTechData.slice(0, 6)" :key="item.label" class="dti-item">
-                                    <span class="dti-label">{{ item.label }}</span>
-                                    <span class="dti-value"><v-icon v-if="item.isCheck && item.value === 'Tak'" icon="mdi-check-circle-outline" size="13" class="dti-check" />{{ item.value === 'Tak' && item.isCheck ? 'Tak' : item.value }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-if="advert?.features?.length" class="features-section">
-                            <div class="feat-section-title">Wyposażenie dodatkowe</div>
-                            <div class="feat-cols">
-                                <div v-for="f in advert.features" :key="f.id" class="feat-row"><v-icon icon="mdi-check-circle-outline" size="15" class="feat-icon" />{{ f.name }}</div>
-                            </div>
-                        </div>
                     </div>
+                </section>
 
-                    <!-- Dane techniczne -->
-                    <div v-else-if="activeTab === 'Dane techniczne'" class="tab-content">
-                        <div class="spec-table">
-                            <div class="spec-section">
-                                <div class="spec-section-title">Dane podstawowe</div>
-                                <div class="spec-rows">
-                                    <div v-if="advert?.brand" class="spec-row"><span class="sr-label">Marka</span><span class="sr-val">{{ advert.brand.name }}</span></div>
-                                    <div v-if="advert?.model" class="spec-row"><span class="sr-label">Model</span><span class="sr-val">{{ advert.model.name }}</span></div>
-                                    <div v-if="advert?.generation" class="spec-row"><span class="sr-label">Generacja</span><span class="sr-val">{{ advert.generation.name }}</span></div>
-                                    <div v-if="advert?.year" class="spec-row"><span class="sr-label">Rok produkcji</span><span class="sr-val">{{ advert.year }}</span></div>
-                                    <div v-if="advert?.mileage" class="spec-row"><span class="sr-label">Przebieg</span><span class="sr-val">{{ Number(advert.mileage).toLocaleString('pl') }} km</span></div>
-                                    <div v-if="advert?.condition" class="spec-row"><span class="sr-label">Stan pojazdu</span><span class="sr-val">{{ advert.condition === 'new' ? 'Nowy' : 'Używany' }}</span></div>
-                                    <div v-if="advert?.bodyType" class="spec-row"><span class="sr-label">Typ nadwozia</span><span class="sr-val">{{ advert.bodyType.name }}</span></div>
-                                    <div v-if="advert?.color" class="spec-row">
-                                        <span class="sr-label">Kolor</span>
-                                        <span class="sr-val sr-val--color">
-                                            <span class="color-dot" :style="{ background: advert.color.hexCode }" />
-                                            {{ advert.color.name }}
-                                        </span>
-                                    </div>
-                                    <div v-if="advert?.doorCount" class="spec-row"><span class="sr-label">Liczba drzwi</span><span class="sr-val">{{ advert.doorCount }}</span></div>
-                                    <div v-if="advert?.seatsCount" class="spec-row"><span class="sr-label">Liczba miejsc</span><span class="sr-val">{{ advert.seatsCount }}</span></div>
-                                    <div v-if="advert?.vin" class="spec-row"><span class="sr-label">VIN</span><span class="sr-val sr-val--mono">{{ advert.vin }}</span></div>
+                <!-- SECTION 2: Parametry techniczne -->
+                <section class="pg-section">
+                    <h2 class="pg-section-title"><v-icon icon="mdi-cog-outline" size="17" />Parametry techniczne</h2>
+                    <div class="spec-table">
+                        <div class="spec-section">
+                            <div class="spec-section-title">Dane podstawowe</div>
+                            <div class="spec-rows">
+                                <div v-if="advert?.brand" class="spec-row"><span class="sr-label">Marka</span><span class="sr-val">{{ advert.brand.name }}</span></div>
+                                <div v-if="advert?.model" class="spec-row"><span class="sr-label">Model</span><span class="sr-val">{{ advert.model.name }}</span></div>
+                                <div v-if="advert?.generation" class="spec-row"><span class="sr-label">Generacja</span><span class="sr-val">{{ advert.generation.name }}</span></div>
+                                <div v-if="advert?.year" class="spec-row"><span class="sr-label">Rok produkcji</span><span class="sr-val">{{ advert.year }}</span></div>
+                                <div v-if="advert?.mileage" class="spec-row"><span class="sr-label">Przebieg</span><span class="sr-val">{{ Number(advert.mileage).toLocaleString('pl') }} km</span></div>
+                                <div v-if="advert?.condition" class="spec-row"><span class="sr-label">Stan pojazdu</span><span class="sr-val">{{ advert.condition === 'new' ? 'Nowy' : 'Używany' }}</span></div>
+                                <div v-if="advert?.bodyType" class="spec-row"><span class="sr-label">Typ nadwozia</span><span class="sr-val">{{ advert.bodyType.name }}</span></div>
+                                <div v-if="advert?.color" class="spec-row">
+                                    <span class="sr-label">Kolor</span>
+                                    <span class="sr-val sr-val--color">
+                                        <span class="color-dot" :style="{ background: advert.color.hexCode }" />
+                                        {{ advert.color.name }}
+                                    </span>
                                 </div>
+                                <div v-if="advert?.doorCount" class="spec-row"><span class="sr-label">Liczba drzwi</span><span class="sr-val">{{ advert.doorCount }}</span></div>
+                                <div v-if="advert?.seatsCount" class="spec-row"><span class="sr-label">Liczba miejsc</span><span class="sr-val">{{ advert.seatsCount }}</span></div>
+                                <div v-if="advert?.vin" class="spec-row"><span class="sr-label">VIN</span><span class="sr-val sr-val--mono">{{ advert.vin }}</span></div>
                             </div>
-                            <div class="spec-section">
-                                <div class="spec-section-title">Silnik i napęd</div>
-                                <div class="spec-rows">
-                                    <div v-if="advert?.fuelType" class="spec-row"><span class="sr-label">Rodzaj paliwa</span><span class="sr-val">{{ advert.fuelType.name }}</span></div>
-                                    <div v-if="advert?.gearbox" class="spec-row"><span class="sr-label">Skrzynia biegów</span><span class="sr-val">{{ advert.gearbox.name }}</span></div>
-                                    <div v-if="advert?.driveType" class="spec-row"><span class="sr-label">Napęd</span><span class="sr-val">{{ advert.driveType.name }}</span></div>
-                                    <div v-if="advert?.powerHP || advert?.engineVersion?.horsepower" class="spec-row"><span class="sr-label">Moc</span><span class="sr-val">{{ advert.powerHP ?? advert.engineVersion?.horsepower }} KM{{ advert.powerKW ? ` / ${advert.powerKW} kW` : '' }}</span></div>
-                                    <div v-if="advert?.engineSize || advert?.engineVersion?.displacement" class="spec-row"><span class="sr-label">Pojemność silnika</span><span class="sr-val">{{ (advert.engineSize ?? advert.engineVersion?.displacement)?.toLocaleString('pl') }} cm³</span></div>
-                                    <div v-if="advert?.torque" class="spec-row"><span class="sr-label">Moment obrotowy</span><span class="sr-val">{{ advert.torque }} Nm</span></div>
-                                    <div v-if="advert?.acceleration" class="spec-row"><span class="sr-label">Przyspieszenie 0–100 km/h</span><span class="sr-val">{{ advert.acceleration }} s</span></div>
-                                </div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-section-title">Silnik i napęd</div>
+                            <div class="spec-rows">
+                                <div v-if="advert?.fuelType" class="spec-row"><span class="sr-label">Rodzaj paliwa</span><span class="sr-val">{{ advert.fuelType.name }}</span></div>
+                                <div v-if="advert?.gearbox" class="spec-row"><span class="sr-label">Skrzynia biegów</span><span class="sr-val">{{ advert.gearbox.name }}</span></div>
+                                <div v-if="advert?.driveType" class="spec-row"><span class="sr-label">Napęd</span><span class="sr-val">{{ advert.driveType.name }}</span></div>
+                                <div v-if="advert?.powerHP || advert?.engineVersion?.horsepower" class="spec-row"><span class="sr-label">Moc</span><span class="sr-val">{{ advert.powerHP ?? advert.engineVersion?.horsepower }} KM{{ advert.powerKW ? ` / ${advert.powerKW} kW` : '' }}</span></div>
+                                <div v-if="advert?.engineSize || advert?.engineVersion?.displacement" class="spec-row"><span class="sr-label">Pojemność silnika</span><span class="sr-val">{{ (advert.engineSize ?? advert.engineVersion?.displacement)?.toLocaleString('pl') }} cm³</span></div>
+                                <div v-if="advert?.torque" class="spec-row"><span class="sr-label">Moment obrotowy</span><span class="sr-val">{{ advert.torque }} Nm</span></div>
+                                <div v-if="advert?.acceleration" class="spec-row"><span class="sr-label">Przyspieszenie 0–100 km/h</span><span class="sr-val">{{ advert.acceleration }} s</span></div>
                             </div>
-                            <div v-if="advert?.fuelConsumptionCombined || advert?.co2Emission || advert?.euroNorm || advert?.curbWeight" class="spec-section">
-                                <div class="spec-section-title">Zużycie paliwa i emisja</div>
-                                <div class="spec-rows">
-                                    <div v-if="advert?.fuelConsumptionCity" class="spec-row"><span class="sr-label">Spalanie w mieście</span><span class="sr-val">{{ advert.fuelConsumptionCity }} l/100km</span></div>
-                                    <div v-if="advert?.fuelConsumptionHighway" class="spec-row"><span class="sr-label">Spalanie poza miastem</span><span class="sr-val">{{ advert.fuelConsumptionHighway }} l/100km</span></div>
-                                    <div v-if="advert?.fuelConsumptionCombined" class="spec-row"><span class="sr-label">Spalanie mieszane</span><span class="sr-val">{{ advert.fuelConsumptionCombined }} l/100km</span></div>
-                                    <div v-if="advert?.co2Emission" class="spec-row"><span class="sr-label">Emisja CO₂</span><span class="sr-val">{{ advert.co2Emission }} g/km</span></div>
-                                    <div v-if="advert?.euroNorm" class="spec-row"><span class="sr-label">Norma emisji spalin</span><span class="sr-val">{{ advert.euroNorm }}</span></div>
-                                    <div v-if="advert?.curbWeight" class="spec-row"><span class="sr-label">Masa własna</span><span class="sr-val">{{ advert.curbWeight?.toLocaleString('pl') }} kg</span></div>
-                                    <div v-if="advert?.grossWeight" class="spec-row"><span class="sr-label">Dopuszczalna masa całkowita</span><span class="sr-val">{{ advert.grossWeight?.toLocaleString('pl') }} kg</span></div>
-                                </div>
+                        </div>
+                        <div v-if="advert?.fuelConsumptionCombined || advert?.co2Emission || advert?.euroNorm || advert?.curbWeight" class="spec-section">
+                            <div class="spec-section-title">Zużycie paliwa i emisja</div>
+                            <div class="spec-rows">
+                                <div v-if="advert?.fuelConsumptionCity" class="spec-row"><span class="sr-label">Spalanie w mieście</span><span class="sr-val">{{ advert.fuelConsumptionCity }} l/100km</span></div>
+                                <div v-if="advert?.fuelConsumptionHighway" class="spec-row"><span class="sr-label">Spalanie poza miastem</span><span class="sr-val">{{ advert.fuelConsumptionHighway }} l/100km</span></div>
+                                <div v-if="advert?.fuelConsumptionCombined" class="spec-row"><span class="sr-label">Spalanie mieszane</span><span class="sr-val">{{ advert.fuelConsumptionCombined }} l/100km</span></div>
+                                <div v-if="advert?.co2Emission" class="spec-row"><span class="sr-label">Emisja CO₂</span><span class="sr-val">{{ advert.co2Emission }} g/km</span></div>
+                                <div v-if="advert?.euroNorm" class="spec-row"><span class="sr-label">Norma emisji spalin</span><span class="sr-val">{{ advert.euroNorm }}</span></div>
+                                <div v-if="advert?.curbWeight" class="spec-row"><span class="sr-label">Masa własna</span><span class="sr-val">{{ advert.curbWeight?.toLocaleString('pl') }} kg</span></div>
+                                <div v-if="advert?.grossWeight" class="spec-row"><span class="sr-label">Dopuszczalna masa całkowita</span><span class="sr-val">{{ advert.grossWeight?.toLocaleString('pl') }} kg</span></div>
                             </div>
-                            <div v-if="parsedTechData.length" class="spec-section">
-                                <div class="spec-section-title">Dane szczegółowe</div>
-                                <div class="spec-rows">
-                                    <div v-for="item in parsedTechData" :key="item.label" class="spec-row">
-                                        <span class="sr-label">{{ item.label }}</span>
-                                        <span class="sr-val" :class="{ 'sr-val--check': item.isCheck && item.value === 'Tak', 'sr-val--warn': item.isWarning }">
-                                            <v-icon v-if="item.isCheck && item.value === 'Tak'" icon="mdi-check-circle" size="14" class="sr-check-icon" />
-                                            {{ item.value === 'Tak' && item.isCheck ? 'Tak' : item.value }}
-                                        </span>
-                                    </div>
+                        </div>
+                        <div v-if="parsedTechData.length" class="spec-section">
+                            <div class="spec-section-title">Dane szczegółowe</div>
+                            <div class="spec-rows">
+                                <div v-for="item in parsedTechData" :key="item.label" class="spec-row">
+                                    <span class="sr-label">{{ item.label }}</span>
+                                    <span class="sr-val" :class="{ 'sr-val--check': item.isCheck && item.value === 'Tak', 'sr-val--warn': item.isWarning }">
+                                        <v-icon v-if="item.isCheck && item.value === 'Tak'" icon="mdi-check-circle" size="14" class="sr-check-icon" />
+                                        {{ item.value === 'Tak' && item.isCheck ? 'Tak' : item.value }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- Wyposażenie -->
-                    <div v-else-if="activeTab === 'Wyposażenie'" class="tab-content">
-                        <div v-if="Object.keys(featureGroups).length">
-                            <div class="eq-summary">
-                                <v-icon icon="mdi-check-all" size="16" class="eq-sum-icon" />
-                                Łącznie <strong>{{ advert?.features?.length ?? 0 }}</strong> elementów wyposażenia
-                                w <strong>{{ Object.keys(featureGroups).length }}</strong> kategoriach
-                            </div>
-                            <div v-for="(group, cat) in featureGroups" :key="cat" class="eq-group">
-                                <div class="eq-group-title">
-                                    <v-icon :icon="featureGroupIcon(String(cat))" size="15" class="eq-cat-icon" />
-                                    {{ cat }}
-                                    <span class="eq-count">{{ group.length }}</span>
-                                </div>
-                                <div class="eq-grid">
-                                    <div v-for="f in group" :key="f.id" class="eq-item"><v-icon icon="mdi-check-circle-outline" size="15" class="feat-icon" />{{ f.name }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <p v-else class="empty-tab"><v-icon icon="mdi-car-off" size="28" />Brak danych o wyposażeniu.</p>
+                <!-- SECTION 3: Wyposażenie -->
+                <section v-if="Object.keys(featureGroups).length" class="pg-section">
+                    <h2 class="pg-section-title"><v-icon icon="mdi-check-all" size="17" />Wyposażenie</h2>
+                    <div class="eq-summary" style="padding: 10px 20px 0;">
+                        <v-icon icon="mdi-check-all" size="16" class="eq-sum-icon" />
+                        Łącznie <strong>{{ advert?.features?.length ?? 0 }}</strong> elementów wyposażenia
+                        w <strong>{{ Object.keys(featureGroups).length }}</strong> kategoriach
                     </div>
-
-                    <!-- Historia pojazdu -->
-                    <div v-else-if="activeTab === 'Historia pojazdu'" class="tab-content">
-                        <div v-if="hasHistoryData">
-                            <div v-if="advert?.vin" class="hist-vin-block">
-                                <v-icon icon="mdi-barcode-scan" size="16" class="hv-icon" />
-                                <div><div class="hv-label">Numer VIN</div><div class="hv-val">{{ advert.vin }}</div></div>
-                                <span class="hv-verified"><v-icon icon="mdi-check-circle" size="13" />Zidentyfikowany</span>
+                    <div v-for="(group, cat) in featureGroups" :key="cat" class="eq-group">
+                        <button class="eq-group-header" @click="toggleEquipGroup(String(cat))">
+                            <div class="eq-group-header-left">
+                                <v-icon :icon="featureGroupIcon(String(cat))" size="15" class="eq-cat-icon" />
+                                {{ cat }}
+                                <span class="eq-count">{{ group.length }}</span>
                             </div>
-                            <!-- Structured history data -->
-                            <div class="hist-items-grid">
-                                <div v-if="advert?.firstRegistrationDate" class="hist-item hi-info">
-                                    <v-icon icon="mdi-calendar-check-outline" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Pierwsza rejestracja</div><div class="hi-value">{{ advert.firstRegistrationDate }}</div></div>
+                            <v-icon :icon="openEquipGroups.has(String(cat)) ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" />
+                        </button>
+                        <transition name="eq-collapse">
+                            <div v-if="openEquipGroups.has(String(cat))" class="eq-grid">
+                                <div v-for="f in group" :key="f.id" class="eq-item">
+                                    <v-icon icon="mdi-check-circle-outline" size="15" class="feat-icon" />{{ f.name }}
                                 </div>
-                                <div v-if="advert?.ownersCount !== undefined && advert?.ownersCount !== null" class="hist-item hi-info">
-                                    <v-icon icon="mdi-account-multiple-outline" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Liczba właścicieli</div><div class="hi-value">{{ advert.ownersCount }}</div></div>
-                                </div>
-                                <div v-if="advert?.registrationCountry && advert.registrationCountry !== 'PL'" class="hist-item hi-info">
-                                    <v-icon icon="mdi-flag-outline" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Kraj rejestracji</div><div class="hi-value">{{ advert.registrationCountry }}</div></div>
-                                </div>
-                                <div v-if="advert?.isImported" class="hist-item hi-info">
-                                    <v-icon icon="mdi-earth" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Pojazd z importu</div><div v-if="advert.importCountry" class="hi-value">{{ advert.importCountry }}</div></div>
-                                </div>
-                                <div v-if="advert?.hasServiceBook" class="hist-item hi-ok">
-                                    <v-icon icon="mdi-book-check-outline" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Książka serwisowa</div></div>
-                                </div>
-                                <div v-if="advert?.hasFullServiceHistory" class="hist-item hi-ok">
-                                    <v-icon icon="mdi-check-decagram-outline" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Pełna historia serwisowa ASO</div></div>
-                                </div>
-                                <div v-if="advert?.nextInspection" class="hist-item hi-info">
-                                    <v-icon icon="mdi-wrench-clock" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Następny przegląd</div><div class="hi-value">{{ advert.nextInspection }}</div></div>
-                                </div>
-                                <div v-if="advert?.hasDamage" class="hist-item hi-warn">
-                                    <v-icon icon="mdi-alert-outline" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Pojazd po szkodzie</div><div v-if="advert.damageDescription" class="hi-value">{{ advert.damageDescription }}</div></div>
-                                </div>
-                                <div v-if="advert?.hasDamage === false" class="hist-item hi-ok">
-                                    <v-icon icon="mdi-shield-check-outline" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Bezwypadkowy</div></div>
-                                </div>
-                                <div v-if="advert?.hasWarranty" class="hist-item hi-ok">
-                                    <v-icon icon="mdi-certificate-outline" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">Gwarancja aktywna</div><div v-if="advert.warrantyUntil" class="hi-value">do {{ advert.warrantyUntil }}</div></div>
-                                </div>
-                                <!-- Legacy parsed history from description text -->
-                                <div v-for="item in parsedHistory" :key="item.label" class="hist-item" :class="{ 'hi-ok': item.isCheck, 'hi-warn': item.isWarning, 'hi-info': !item.isCheck && !item.isWarning }">
-                                    <v-icon :icon="item.isWarning ? 'mdi-alert-outline' : item.isCheck ? 'mdi-check-circle-outline' : 'mdi-information-outline'" size="18" class="hi-icon" />
-                                    <div class="hi-body"><div class="hi-label">{{ item.label }}</div><div v-if="item.value" class="hi-value">{{ item.value }}</div></div>
-                                </div>
+                            </div>
+                        </transition>
+                    </div>
+                </section>
+
+                <!-- SECTION 4: Historia pojazdu -->
+                <section v-if="hasHistoryData" class="pg-section">
+                    <h2 class="pg-section-title"><v-icon icon="mdi-history" size="17" />Historia pojazdu</h2>
+                    <div class="tab-content">
+                        <div v-if="advert?.vin" class="hist-vin-block">
+                            <v-icon icon="mdi-barcode-scan" size="16" class="hv-icon" />
+                            <div><div class="hv-label">Numer VIN</div><div class="hv-val">{{ advert.vin }}</div></div>
+                            <span class="hv-verified"><v-icon icon="mdi-check-circle" size="13" />Zidentyfikowany</span>
+                        </div>
+                        <!-- Structured history data -->
+                        <div class="hist-items-grid">
+                            <div v-if="advert?.firstRegistrationDate" class="hist-item hi-info">
+                                <v-icon icon="mdi-calendar-check-outline" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Pierwsza rejestracja</div><div class="hi-value">{{ advert.firstRegistrationDate }}</div></div>
+                            </div>
+                            <div v-if="advert?.ownersCount !== undefined && advert?.ownersCount !== null" class="hist-item hi-info">
+                                <v-icon icon="mdi-account-multiple-outline" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Liczba właścicieli</div><div class="hi-value">{{ advert.ownersCount }}</div></div>
+                            </div>
+                            <div v-if="advert?.registrationCountry && advert.registrationCountry !== 'PL'" class="hist-item hi-info">
+                                <v-icon icon="mdi-flag-outline" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Kraj rejestracji</div><div class="hi-value">{{ advert.registrationCountry }}</div></div>
+                            </div>
+                            <div v-if="advert?.isImported" class="hist-item hi-info">
+                                <v-icon icon="mdi-earth" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Pojazd z importu</div><div v-if="advert.importCountry" class="hi-value">{{ advert.importCountry }}</div></div>
+                            </div>
+                            <div v-if="advert?.hasServiceBook" class="hist-item hi-ok">
+                                <v-icon icon="mdi-book-check-outline" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Książka serwisowa</div></div>
+                            </div>
+                            <div v-if="advert?.hasFullServiceHistory" class="hist-item hi-ok">
+                                <v-icon icon="mdi-check-decagram-outline" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Pełna historia serwisowa ASO</div></div>
+                            </div>
+                            <div v-if="advert?.nextInspection" class="hist-item hi-info">
+                                <v-icon icon="mdi-wrench-clock" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Następny przegląd</div><div class="hi-value">{{ advert.nextInspection }}</div></div>
+                            </div>
+                            <div v-if="advert?.hasDamage" class="hist-item hi-warn">
+                                <v-icon icon="mdi-alert-outline" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Pojazd po szkodzie</div><div v-if="advert.damageDescription" class="hi-value">{{ advert.damageDescription }}</div></div>
+                            </div>
+                            <div v-if="advert?.hasDamage === false" class="hist-item hi-ok">
+                                <v-icon icon="mdi-shield-check-outline" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Bezwypadkowy</div></div>
+                            </div>
+                            <div v-if="advert?.hasWarranty" class="hist-item hi-ok">
+                                <v-icon icon="mdi-certificate-outline" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">Gwarancja aktywna</div><div v-if="advert.warrantyUntil" class="hi-value">do {{ advert.warrantyUntil }}</div></div>
+                            </div>
+                            <!-- Legacy parsed history from description text -->
+                            <div v-for="item in parsedHistory" :key="item.label" class="hist-item" :class="{ 'hi-ok': item.isCheck, 'hi-warn': item.isWarning, 'hi-info': !item.isCheck && !item.isWarning }">
+                                <v-icon :icon="item.isWarning ? 'mdi-alert-outline' : item.isCheck ? 'mdi-check-circle-outline' : 'mdi-information-outline'" size="18" class="hi-icon" />
+                                <div class="hi-body"><div class="hi-label">{{ item.label }}</div><div v-if="item.value" class="hi-value">{{ item.value }}</div></div>
                             </div>
                         </div>
                         <!-- VIN Report external links -->
@@ -494,16 +530,17 @@
                                 </a>
                             </div>
                         </div>
-                        <div v-if="!hasHistoryData" class="empty-hist">
-                            <v-icon icon="mdi-shield-off-outline" size="36" class="empty-hist-icon" />
-                            <div class="empty-hist-title">Brak danych historycznych</div>
-                            <div class="empty-hist-sub">Sprzedający nie podał informacji o historii pojazdu.</div>
-                            <button class="empty-hist-btn" @click="contactSeller"><v-icon icon="mdi-message-outline" size="15" />Zapytaj sprzedającego</button>
-                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 6: Secondary tabs (Historia ceny, Finansowanie, Opinie) -->
+                <div class="tabs-wrap" id="tabs-section">
+                    <div class="tabs-nav">
+                        <button v-for="tab in tabs" :key="tab" class="tab-btn" :class="{ 'tab-active': activeTab === tab }" @click="activeTab = tab">{{ tab }}</button>
                     </div>
 
                     <!-- Historia ceny -->
-                    <div v-else-if="activeTab === 'Historia ceny'" class="tab-content">
+                    <div v-if="activeTab === 'Historia ceny'" class="tab-content">
                         <div class="price-history-section">
                             <div class="ph-header">
                                 <v-icon icon="mdi-chart-line" size="18" class="ph-icon" />
@@ -662,17 +699,6 @@
                             <div v-else-if="reviewSuccess" class="review-success"><v-icon icon="mdi-check-circle-outline" size="18" />Dziękujemy za opinię!</div>
                         </template>
                     </div>
-
-                    <!-- Podobne oferty -->
-                    <div v-else-if="activeTab === 'Podobne oferty'" class="tab-content">
-                        <div v-if="similar.length" class="similar-tab-grid">
-                            <NuxtLink v-for="a in similar" :key="a.id" :to="`/advert/${a.id}`" class="sim-card">
-                                <div class="sim-img-wrap"><img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" /></div>
-                                <div class="sim-body"><div class="sim-title">{{ a.brand?.name }} {{ a.model?.name }}</div><div class="sim-meta">{{ a.year }} • {{ Number(a.mileage).toLocaleString('pl') }} km</div><div class="sim-price">{{ Number(a.price).toLocaleString('pl') }} zł</div></div>
-                            </NuxtLink>
-                        </div>
-                        <p v-else class="empty-tab">Brak podobnych ofert.</p>
-                    </div>
                 </div>
 
                 <!-- Full gallery grid -->
@@ -739,6 +765,16 @@
                                 <v-icon v-for="n in 5" :key="n" :icon="n <= Math.round(sellerStats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="13" class="star" />
                                 <span class="seller-rating">{{ sellerStats.averageRating.toFixed(1) }}</span>
                                 <span class="seller-reviews">({{ sellerStats.reviewCount }})</span>
+                            </div>
+                            <div class="seller-meta-row">
+                                <span v-if="seller?.createdAt" class="seller-meta-item">
+                                    <v-icon icon="mdi-calendar-outline" size="12" />
+                                    na CARIZO od {{ new Date(seller.createdAt).getFullYear() }} r.
+                                </span>
+                                <span class="seller-meta-item seller-response">
+                                    <v-icon icon="mdi-clock-fast" size="12" />
+                                    Odpowiada szybko
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -944,8 +980,9 @@ const finInquirySuccess = ref(false)
 const mainLayoutRef = ref<HTMLElement | null>(null)
 
 const activeImg = ref(0)
-const activeTab = ref('Opis')
+const activeTab = ref('Historia ceny')
 const showFullDesc = ref(false)
+const openEquipGroups = ref(new Set<string>())
 const isFav = ref(false)
 const reportOpen = ref(false)
 
@@ -1004,7 +1041,7 @@ function scrollToTabs() {
     })
 }
 
-const tabs = ['Opis', 'Dane techniczne', 'Wyposażenie', 'Historia pojazdu', 'Historia ceny', 'Finansowanie', 'Opinie', 'Podobne oferty']
+const tabs = ['Historia ceny', 'Finansowanie', 'Opinie']
 
 // ── Parse structured description sections ─────────────────────────────────────
 const parsedTechData = computed(() => {
@@ -1148,6 +1185,13 @@ function featureGroupIcon(cat: string): string {
     if (l.includes('rolnicze') || l.includes('rolnicza')) return 'mdi-tractor'
     if (l.includes('maszyn')) return 'mdi-cog-transfer-outline'
     return 'mdi-star-outline'
+}
+
+function toggleEquipGroup(cat: string) {
+    if (openEquipGroups.value.has(cat)) openEquipGroups.value.delete(cat)
+    else openEquipGroups.value.add(cat)
+    // trigger reactivity
+    openEquipGroups.value = new Set(openEquipGroups.value)
 }
 
 const advertPublishedDate = computed(() => {
@@ -1929,10 +1973,12 @@ onUnmounted(() => {
 .price-area { display: flex; flex-direction: column; gap: 6px; }
 
 .price-big {
-    font-size: 36px;
+    font-size: 42px;
     font-weight: 900;
     color: $red;
     line-height: 1;
+    letter-spacing: -1px;
+    margin-bottom: 0;
 
     @include respond-to(sm) { font-size: 28px; }
 }
@@ -2407,6 +2453,89 @@ onUnmounted(() => {
 .tc-value { color: $text; font-weight: 600; }
 .tc-check { color: #4caf50; display: flex; align-items: center; gap: 4px; }
 .tc-check-icon { color: #4caf50; }
+
+// ── Premium vertical scroll sections ─────────────────────────────────────────
+.pg-section {
+    margin-bottom: 28px;
+    background: #0a0a0a;
+    border: 1px solid $border;
+    border-radius: $r-lg;
+    overflow: hidden;
+}
+
+.pg-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid $border;
+    margin: 0;
+    .v-icon { color: $red; }
+}
+
+.pg-section .spec-table {
+    padding: 16px 20px;
+}
+
+.pg-section .spec-section-title {
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+.pg-section .tab-content {
+    padding: 16px 20px;
+}
+
+// ── Equipment collapsible groups ──────────────────────────────────────────────
+.eq-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: $text;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover { background: rgba(255,255,255,0.03); }
+
+    .eq-group-header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}
+
+.pg-section .eq-grid {
+    padding: 12px 20px 16px;
+}
+
+.pg-section .eq-item {
+    color: $text-dim;
+
+    .feat-icon { color: #4caf50; flex-shrink: 0; }
+}
+
+.eq-collapse-enter-active,
+.eq-collapse-leave-active {
+    transition: max-height 0.25s ease, opacity 0.25s;
+    max-height: 600px;
+    overflow: hidden;
+}
+.eq-collapse-enter-from,
+.eq-collapse-leave-to {
+    max-height: 0;
+    opacity: 0;
+}
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
 .tabs-wrap {
@@ -3858,5 +3987,158 @@ onUnmounted(() => {
         color: $text-dim;
         .v-icon { color: #4caf50; }
     }
+}
+
+// ── Powiększona galeria ────────────────────────────────────────────────────────
+.main-photo-wrap {
+    min-height: 520px;
+
+    @include respond-to(md) { min-height: 380px; }
+    @include respond-to(sm) { min-height: 280px; }
+}
+
+.main-photo-img {
+    min-height: 520px;
+
+    @include respond-to(md) { min-height: 380px; }
+    @include respond-to(sm) { min-height: 280px; }
+}
+
+// ── CARIZO VERIFIED ────────────────────────────────────────────────────────────
+.verified-trust-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-lg;
+    padding: 14px 16px;
+    margin: 16px 0;
+}
+
+.vtb-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.vtb-icon { color: #22c55e; }
+
+.vtb-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: $text-muted;
+}
+
+.vtb-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+.vtb-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: $r-sm;
+
+    &.vtb-ok {
+        color: #22c55e;
+        background: rgba(#22c55e, 0.08);
+        .v-icon { color: #22c55e; }
+    }
+
+    &.vtb-pending {
+        color: $text-dim;
+        background: rgba(255,255,255,0.03);
+        .v-icon { color: $text-dark; }
+    }
+
+    &.vtb-warn {
+        color: #f59e0b;
+        background: rgba(#f59e0b, 0.08);
+        .v-icon { color: #f59e0b; }
+    }
+}
+
+// ── Price monthly estimate ─────────────────────────────────────────────────────
+.price-monthly-estimate {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-md;
+    padding: 12px 16px;
+    margin: 10px 0 6px;
+}
+
+.pme-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.pme-item {
+    flex: 1;
+    min-width: 120px;
+}
+
+.pme-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: $text-dim;
+    margin-bottom: 4px;
+}
+
+.pme-ing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &.ing-leasing { background: #FF6200; }
+    &.ing-credit { background: #0066cc; }
+}
+
+.pme-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text;
+}
+
+.pme-note {
+    font-size: 10px;
+    color: $text-dark;
+    margin-top: 8px;
+}
+
+// ── Seller meta row ────────────────────────────────────────────────────────────
+.seller-meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.seller-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: $text-dim;
+    .v-icon { color: $text-dark; }
+}
+
+.seller-response { color: #22c55e; .v-icon { color: #22c55e; } }
+
+// ── Info column extra space ────────────────────────────────────────────────────
+.info-col {
+    padding: 36px 0 36px 40px;
+
+    @include respond-to(md) { padding: 24px 0; }
 }
 </style>
