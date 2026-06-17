@@ -15,32 +15,72 @@
                 <p class="hfs-sub">
                     Tysiące zweryfikowanych ogłoszeń. Znajdź swoje wymarzone auto.
                 </p>
-                <div class="hfs-searchbar">
-                    <div class="hfs-field">
-                        <label class="hfs-field-label">Marka</label>
-                        <select v-model="heroMarka" class="hfs-select" @change="heroModel = null; loadHeroModels()">
-                            <option :value="null">Wszystkie</option>
-                            <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
-                        </select>
+
+                <!-- Category tabs + dynamic search bar -->
+                <div class="hfs-form-wrap">
+                    <div class="hfs-cat-tabs">
+                        <button
+                            v-for="cat in heroCats"
+                            :key="cat.key"
+                            class="hfs-cat-tab"
+                            :class="{ active: heroCategory === cat.key }"
+                            @click="selectHeroCategory(cat.key)"
+                        >
+                            <v-icon :icon="cat.icon" size="14" />
+                            {{ cat.label }}
+                        </button>
                     </div>
-                    <div class="hfs-vsep" />
-                    <div class="hfs-field">
-                        <label class="hfs-field-label">Model</label>
-                        <select v-model="heroModel" class="hfs-select" :disabled="!heroMarka">
-                            <option :value="null">Wszystkie</option>
-                            <option v-for="m in heroModels" :key="m.id" :value="m.id">{{ m.name }}</option>
-                        </select>
+
+                    <div class="hfs-searchbar">
+                        <!-- Type selector (Budowlane, Rolnicze, Części) -->
+                        <template v-if="heroCatConfig.typeOptions">
+                            <div class="hfs-field">
+                                <label class="hfs-field-label">{{ heroCatConfig.typeLabel }}</label>
+                                <select v-model="heroCatType" class="hfs-select">
+                                    <option :value="null">Wszystkie</option>
+                                    <option v-for="t in heroCatConfig.typeOptions" :key="t" :value="t">{{ t }}</option>
+                                </select>
+                            </div>
+                            <div class="hfs-vsep" />
+                        </template>
+
+                        <!-- Brand (for vehicle categories) -->
+                        <template v-if="heroCatConfig.showBrand">
+                            <div class="hfs-field">
+                                <label class="hfs-field-label">Marka</label>
+                                <select v-model="heroMarka" class="hfs-select" @change="heroModel = null; loadHeroModels()">
+                                    <option :value="null">Wszystkie</option>
+                                    <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                                </select>
+                            </div>
+                            <div class="hfs-vsep" />
+                        </template>
+
+                        <!-- Model (only for cars/motorcycles) -->
+                        <template v-if="heroCatConfig.showModel">
+                            <div class="hfs-field">
+                                <label class="hfs-field-label">Model</label>
+                                <select v-model="heroModel" class="hfs-select" :disabled="!heroMarka">
+                                    <option :value="null">Wszystkie</option>
+                                    <option v-for="m in heroModels" :key="m.id" :value="m.id">{{ m.name }}</option>
+                                </select>
+                            </div>
+                            <div class="hfs-vsep" />
+                        </template>
+
+                        <!-- Price -->
+                        <div class="hfs-field">
+                            <label class="hfs-field-label">Cena max</label>
+                            <input v-model="heroPrice" type="number" class="hfs-price-input" placeholder="np. 50 000" min="0" @keyup.enter="doHeroSearch" />
+                        </div>
+
+                        <button class="hfs-search-btn" @click="doHeroSearch">
+                            <v-icon icon="mdi-magnify" size="20" />
+                            <span>Szukaj</span>
+                        </button>
                     </div>
-                    <div class="hfs-vsep" />
-                    <div class="hfs-field">
-                        <label class="hfs-field-label">Cena max</label>
-                        <input v-model="heroPrice" type="number" class="hfs-price-input" placeholder="np. 50 000" min="0" @keyup.enter="doHeroSearch" />
-                    </div>
-                    <button class="hfs-search-btn" @click="doHeroSearch">
-                        <v-icon icon="mdi-magnify" size="20" />
-                        <span>Szukaj</span>
-                    </button>
                 </div>
+
                 <div class="hfs-links">
                     <NuxtLink to="/add-advert" class="hfs-link">
                         Dodaj ogłoszenie <v-icon icon="mdi-arrow-right" size="13" />
@@ -62,9 +102,14 @@
                     <template v-for="(stat, i) in visibleStats" :key="stat.key">
                         <div v-if="i > 0" class="sstrip-sep" />
                         <div class="sstrip-item">
-                            <div v-if="statsLoading" class="sstrip-skeleton" />
-                            <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
-                            <span class="sstrip-label">{{ stat.label }}</span>
+                            <div class="sstrip-icon-wrap">
+                                <v-icon :icon="stat.icon" size="20" />
+                            </div>
+                            <div class="sstrip-text">
+                                <div v-if="statsLoading" class="sstrip-skeleton" />
+                                <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
+                                <span class="sstrip-label">{{ stat.label }}</span>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -382,6 +427,76 @@ const heroMarka = ref<number | null>(null)
 const heroModel = ref<number | null>(null)
 const heroPrice = ref('')
 const heroModels = ref<TaxonomyItem[]>([])
+const heroCategory = ref('samochody')
+const heroCatType = ref<string | null>(null)
+
+// Category tabs config
+const heroCats = [
+    { key: 'samochody',  label: 'Samochody',  icon: 'mdi-car',              categoryId: null },
+    { key: 'czesci',     label: 'Części',      icon: 'mdi-cog-outline',      categoryId: 5    },
+    { key: 'motocykle',  label: 'Motocykle',   icon: 'mdi-motorbike',        categoryId: 6    },
+    { key: 'ciezarowe',  label: 'Ciężarowe',   icon: 'mdi-truck',            categoryId: 3    },
+    { key: 'budowlane',  label: 'Budowlane',   icon: 'mdi-excavator',        categoryId: 9    },
+    { key: 'rolnicze',   label: 'Rolnicze',    icon: 'mdi-tractor',          categoryId: 8    },
+    { key: 'inne',       label: 'Inne',        icon: 'mdi-dots-horizontal',  categoryId: 10   },
+] as const
+
+const CATEGORY_CONFIGS: Record<string, {
+    showBrand: boolean
+    showModel: boolean
+    typeLabel: string
+    typeOptions: string[] | null
+    categoryId: number | null
+}> = {
+    samochody: {
+        showBrand: true, showModel: true,
+        typeLabel: '', typeOptions: null,
+        categoryId: null,
+    },
+    czesci: {
+        showBrand: true, showModel: false,
+        typeLabel: 'Typ części',
+        typeOptions: ['Silnik', 'Skrzynia biegów', 'Zawieszenie', 'Układ hamulcowy', 'Elektryka', 'Karoseria', 'Wnętrze', 'Opony / Felgi', 'Szyby', 'Chłodnica', 'Wydech'],
+        categoryId: 5,
+    },
+    motocykle: {
+        showBrand: true, showModel: true,
+        typeLabel: '', typeOptions: null,
+        categoryId: 6,
+    },
+    ciezarowe: {
+        showBrand: true, showModel: true,
+        typeLabel: '', typeOptions: null,
+        categoryId: 3,
+    },
+    budowlane: {
+        showBrand: true, showModel: false,
+        typeLabel: 'Typ maszyny',
+        typeOptions: ['Koparka', 'Koparko-ładowarka', 'Spycharka', 'Buldożer', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka', 'Rusztowanie', 'Wywrotka', 'Żuraw'],
+        categoryId: 9,
+    },
+    rolnicze: {
+        showBrand: true, showModel: false,
+        typeLabel: 'Typ maszyny',
+        typeOptions: ['Traktor', 'Kombajn', 'Siewnik', 'Pług', 'Opryskiwacz', 'Prasa', 'Rozsiewacz', 'Rozdrabniacz', 'Przyczepa rolnicza', 'Glebogryzarka'],
+        categoryId: 8,
+    },
+    inne: {
+        showBrand: false, showModel: false,
+        typeLabel: '', typeOptions: null,
+        categoryId: 10,
+    },
+}
+
+const heroCatConfig = computed(() => CATEGORY_CONFIGS[heroCategory.value] ?? CATEGORY_CONFIGS.samochody)
+
+function selectHeroCategory(key: string) {
+    heroCategory.value = key
+    heroMarka.value = null
+    heroModel.value = null
+    heroCatType.value = null
+    heroModels.value = []
+}
 
 // Premium showcase (static)
 const premiumShowcase = [
@@ -398,9 +513,12 @@ async function loadHeroModels() {
 
 function doHeroSearch() {
     const query: Record<string, string> = {}
+    const cfg = heroCatConfig.value
+    if (cfg.categoryId) query.categoryId = String(cfg.categoryId)
     if (heroMarka.value) query.brandId = String(heroMarka.value)
     if (heroModel.value) query.modelId = String(heroModel.value)
     if (heroPrice.value) query.priceTo = heroPrice.value
+    if (heroCatType.value) query.textSearch = heroCatType.value
     navigateTo({ path: '/adverts', query })
 }
 
@@ -551,7 +669,7 @@ onMounted(async () => {
     z-index: 2;
     padding-top: calc(#{$nav-height} + 40px);
     padding-bottom: 80px;
-    max-width: 640px;
+    max-width: 700px;
 }
 
 .hfs-title {
@@ -572,9 +690,51 @@ onMounted(async () => {
     font-size: 16px;
     color: rgba(255,255,255,0.65);
     line-height: 1.7;
-    margin-bottom: 36px;
+    margin-bottom: 28px;
     max-width: 480px;
     font-weight: 400;
+}
+
+// ── Hero form wrap (tabs + searchbar) ────────────────────────────────────────
+.hfs-form-wrap {
+    margin-bottom: 24px;
+    max-width: 680px;
+}
+
+// Category tabs
+.hfs-cat-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.hfs-cat-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 20px;
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 6px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.18s, border-color 0.18s, color 0.18s;
+
+    &:hover {
+        background: rgba(255,255,255,0.12);
+        color: rgba(255,255,255,0.85);
+    }
+
+    &.active {
+        background: $red;
+        border-color: $red;
+        color: #fff;
+    }
 }
 
 // Hero search bar
@@ -587,9 +747,7 @@ onMounted(async () => {
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 16px;
     overflow: hidden;
-    max-width: 580px;
     height: 64px;
-    margin-bottom: 24px;
 
     @include respond-to(sm) {
         flex-direction: column;
@@ -723,14 +881,14 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 72px;
+    height: 80px;
 
     @include respond-to(sm) { flex-wrap: wrap; height: auto; padding: 8px 0; }
 }
 
 .sstrip-sep {
     width: 1px;
-    height: 30px;
+    height: 36px;
     background: $border;
     flex-shrink: 0;
 
@@ -739,23 +897,46 @@ onMounted(async () => {
 
 .sstrip-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 2px;
-    padding: 0 44px;
+    gap: 14px;
+    padding: 0 36px;
     flex: 1;
 
-    @include respond-to(md) { padding: 0 24px; }
-    @include respond-to(sm) { flex: 0 0 50%; padding: 10px 16px; }
+    @include respond-to(md) { padding: 0 20px; gap: 10px; }
+    @include respond-to(sm) { flex: 0 0 50%; padding: 12px 16px; }
+}
+
+.sstrip-icon-wrap {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba($red, 0.12);
+    border: 1px solid rgba($red, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $red;
+
+    @include respond-to(sm) { width: 38px; height: 38px; border-radius: 10px; }
+}
+
+.sstrip-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
 }
 
 .sstrip-num {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 900;
     color: $text;
     line-height: 1;
     letter-spacing: -0.5px;
     font-variant-numeric: tabular-nums;
+
+    @include respond-to(md) { font-size: 20px; }
 }
 
 .sstrip-label {
@@ -769,7 +950,7 @@ onMounted(async () => {
 
 .sstrip-skeleton {
     width: 64px;
-    height: 24px;
+    height: 22px;
     border-radius: 6px;
     background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.05) 75%);
     background-size: 200% 100%;
