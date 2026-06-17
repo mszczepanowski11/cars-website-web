@@ -2,7 +2,7 @@ export const useAuth = () => {
     const loading = ref(false)
     const error = ref('')
 
-    async function login(credentials: { email: string; password: string }, redirectTo?: string) {
+    async function login(credentials: { email: string; password: string; turnstileToken?: string }, redirectTo?: string) {
         loading.value = true
         error.value = ''
         try {
@@ -19,11 +19,28 @@ export const useAuth = () => {
         }
     }
 
+    async function loginWithGoogle(credential: string, redirectTo?: string) {
+        loading.value = true
+        error.value = ''
+        try {
+            await $fetch('/api/auth/google', { method: 'POST', body: { credential } })
+            await navigateTo(redirectTo || '/')
+        } catch (err: any) {
+            if (err?.status === 429 || err?.statusCode === 429) {
+                error.value = err?.data?.statusMessage || 'Zbyt wiele prób. Poczekaj chwilę i spróbuj ponownie.'
+            } else {
+                error.value = err?.data?.statusMessage || err?.message || 'Logowanie przez Google nie powiodło się.'
+            }
+        } finally {
+            loading.value = false
+        }
+    }
+
     async function register(dto: {
         name: string; surname: string; email: string
         phonenumber: string; password: string
         accountType: 'Personal' | 'Business'
-        companyName?: string; nip?: string
+        companyName?: string; nip?: string; turnstileToken?: string
     }, redirectTo?: string) {
         loading.value = true
         error.value = ''
@@ -55,5 +72,5 @@ export const useAuth = () => {
         await navigateTo('/')
     }
 
-    return { login, logout, register, loading, error }
+    return { login, loginWithGoogle, logout, register, loading, error }
 }

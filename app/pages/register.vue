@@ -159,6 +159,13 @@
                     {{ validationError || error }}
                 </div>
 
+                <TurnstileWidget
+                    v-if="turnstileSiteKey"
+                    ref="turnstileRef"
+                    v-model="turnstileToken"
+                    :site-key="turnstileSiteKey"
+                />
+
                 <button type="submit" class="auth-btn" :disabled="loading">
                     <v-icon v-if="loading" icon="mdi-loading" size="18" class="spin" />
                     <span>{{ loading ? 'Rejestrowanie...' : 'Zarejestruj się' }}</span>
@@ -174,6 +181,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const { register, loading, error } = useAuth()
+const runtimeConfig = useRuntimeConfig()
 
 const accountType      = ref<'Personal' | 'Business'>('Personal')
 const name             = ref('')
@@ -189,6 +197,9 @@ const showPassword     = ref(false)
 const registrationSuccess = ref(false)
 const registeredEmail = ref('')
 const resending = ref(false)
+const turnstileToken  = ref('')
+const turnstileRef    = ref<{ reset: () => void } | null>(null)
+const turnstileSiteKey = runtimeConfig.public.turnstileSiteKey as string
 
 const redirectTo = computed(() => {
     const r = route.query.redirect
@@ -248,7 +259,9 @@ async function submit() {
         accountType: accountType.value,
         companyName: accountType.value === 'Business' ? companyName.value : undefined,
         nip: accountType.value === 'Business' ? nip.value : undefined,
+        turnstileToken: turnstileToken.value,
     }, redirectTo.value)
+    if (ok === false) turnstileRef.value?.reset()
     if (ok !== false) {
         registeredEmail.value = email.value
         registrationSuccess.value = true

@@ -54,6 +54,13 @@
                     </NuxtLink>
                 </div>
 
+                <TurnstileWidget
+                    v-if="turnstileSiteKey"
+                    ref="turnstileRef"
+                    v-model="turnstileToken"
+                    :site-key="turnstileSiteKey"
+                />
+
                 <button type="submit" class="auth-btn" :disabled="loading">
                     <v-icon v-if="loading" icon="mdi-loading" size="18" class="spin" />
                     <span>{{ loading ? 'Logowanie...' : 'Zaloguj się' }}</span>
@@ -62,6 +69,8 @@
 
             <div class="auth-divider"><span>lub</span></div>
 
+            <div v-if="googleClientId" ref="googleBtnRef" class="google-btn-wrap"></div>
+
             <p class="auth-link">Nie masz konta? <NuxtLink to="/register">Zarejestruj się bezpłatnie</NuxtLink></p>
         </div>
     </div>
@@ -69,24 +78,80 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { login, loading, error } = useAuth()
+const { login, loginWithGoogle, loading, error } = useAuth()
+const runtimeConfig = useRuntimeConfig()
 const email    = ref('')
 const password = ref('')
 const emailFocused    = ref(false)
 const passwordFocused = ref(false)
 const showPassword    = ref(false)
 const unverifiedEmail = ref(false)
+const turnstileToken  = ref('')
+const turnstileRef    = ref<{ reset: () => void } | null>(null)
+const googleBtnRef    = ref<HTMLElement | null>(null)
+const turnstileSiteKey = runtimeConfig.public.turnstileSiteKey as string
+const googleClientId   = runtimeConfig.public.googleClientId as string
 
 const redirectTo = computed(() => {
     const r = route.query.redirect
     return typeof r === 'string' && r.startsWith('/') ? r : '/'
 })
 
+onMounted(() => {
+    if (googleClientId) loadGoogleGSI()
+})
+
+function loadGoogleGSI() {
+    if ((window as any).google?.accounts?.id) { initGoogle(); return }
+    if (document.querySelector('script[src*="accounts.google.com/gsi"]')) {
+        const timer = setInterval(() => {
+            if ((window as any).google?.accounts?.id) { clearInterval(timer); initGoogle() }
+        }, 50)
+        return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.defer = true
+    script.onload = initGoogle
+    document.head.appendChild(script)
+}
+
+function initGoogle() {
+    ;(window as any).google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: handleGoogleCredential,
+    })
+    nextTick(() => {
+        if (googleBtnRef.value) {
+            ;(window as any).google.accounts.id.renderButton(googleBtnRef.value, {
+                theme: 'filled_black',
+                size: 'large',
+                width: String(googleBtnRef.value.offsetWidth || 380),
+                text: 'signin_with',
+                shape: 'rectangular',
+                logo_alignment: 'left',
+            })
+        }
+    })
+}
+
+async function handleGoogleCredential(response: { credential: string }) {
+    await loginWithGoogle(response.credential, redirectTo.value)
+    if (error.value) unverifiedEmail.value = false
+}
+
 async function submit() {
     unverifiedEmail.value = false
-    await login({ email: email.value, password: password.value }, redirectTo.value)
-    if (error.value?.toLowerCase().includes('zweryfikuj') || error.value?.toLowerCase().includes('email')) {
-        unverifiedEmail.value = true
+    await login(
+        { email: email.value, password: password.value, turnstileToken: turnstileToken.value },
+        redirectTo.value
+    )
+    if (error.value) {
+        turnstileRef.value?.reset()
+        if (error.value.toLowerCase().includes('zweryfikuj') || error.value.toLowerCase().includes('email')) {
+            unverifiedEmail.value = true
+        }
     }
 }
 </script>
@@ -267,7 +332,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 20px 0 4px;
+    margin: 20px 0 16px;
     color: $text-dark;
     font-size: 12px;
 
@@ -279,10 +344,20 @@ h2 {
     }
 }
 
+.google-btn-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+
+    // Make Google button fill the card width
+    :deep(div) { width: 100% !important; }
+    :deep(iframe) { width: 100% !important; }
+}
+
 .auth-link {
     color: $text-dim;
     text-align: center;
-    margin-top: 12px;
+    margin-top: 4px;
     font-size: 14px;
 
     a {

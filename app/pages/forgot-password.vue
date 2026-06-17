@@ -27,6 +27,13 @@
                         {{ error }}
                     </div>
 
+                    <TurnstileWidget
+                        v-if="turnstileSiteKey"
+                        ref="turnstileRef"
+                        v-model="turnstileToken"
+                        :site-key="turnstileSiteKey"
+                    />
+
                     <button type="submit" class="btn-submit" :disabled="loading">
                         <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
                         <v-icon v-else icon="mdi-email-arrow-right-outline" size="16" />
@@ -59,24 +66,33 @@
 
 <script setup lang="ts">
 useHead({ title: 'Resetowanie hasła — CARIZO' })
+const runtimeConfig = useRuntimeConfig()
 
 const email = ref('')
 const loading = ref(false)
 const error = ref('')
 const sent = ref(false)
+const turnstileToken  = ref('')
+const turnstileRef    = ref<{ reset: () => void } | null>(null)
+const turnstileSiteKey = runtimeConfig.public.turnstileSiteKey as string
 
 async function submit() {
     loading.value = true
     error.value = ''
     try {
-        await $fetch('/api/proxy/api/Auth/forgot-password', {
+        await $fetch('/api/auth/forgot-password', {
             method: 'POST',
-            body: { email: email.value },
+            body: { email: email.value, turnstileToken: turnstileToken.value },
         })
         sent.value = true
-    } catch {
-        // Always show success to prevent email enumeration
-        sent.value = true
+    } catch (err: any) {
+        if (err?.data?.statusMessage?.includes('CAPTCHA')) {
+            error.value = err.data.statusMessage
+            turnstileRef.value?.reset()
+        } else {
+            // Always show success to prevent email enumeration
+            sent.value = true
+        }
     } finally {
         loading.value = false
     }

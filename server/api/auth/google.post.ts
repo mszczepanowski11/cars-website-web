@@ -1,20 +1,12 @@
 export default defineEventHandler(async (event) => {
-    rateLimit(event, 'login', 10, 60_000) // 10 attempts per minute per IP
+    rateLimit(event, 'google-login', 10, 60_000) // 10 per minute per IP
     const config = useRuntimeConfig()
     const body = await readBody(event)
 
-    if (config.turnstileSecretKey) {
-        const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestHeader(event, 'x-forwarded-for') ?? ''
-        const valid = await verifyTurnstile(body.turnstileToken ?? '', config.turnstileSecretKey, ip)
-        if (!valid) throw createError({ statusCode: 400, statusMessage: 'Weryfikacja CAPTCHA nie powiodła się.' })
-    }
-
-    const { turnstileToken: _t, ...loginBody } = body
-
     try {
         const data = await $fetch<{ token: string }>(
-            `${config.public.apiBase}api/Auth/login`,
-            { method: 'POST', body: loginBody }
+            `${config.public.apiBase}api/Auth/google`,
+            { method: 'POST', body }
         )
         setCookie(event, 'auth_token', data.token, {
             httpOnly: true,
@@ -34,7 +26,7 @@ export default defineEventHandler(async (event) => {
     } catch (err: any) {
         throw createError({
             statusCode: err.response?.status ?? 401,
-            statusMessage: err.data ?? 'Nieprawidłowy email lub hasło.'
+            statusMessage: err.data ?? 'Logowanie przez Google nie powiodło się.'
         })
     }
 })
