@@ -1,7 +1,7 @@
 <template>
     <div class="auth-bg">
         <div class="auth-card">
-            <NuxtLink to="/" class="auth-logo">CARI<span>ZO</span></NuxtLink>
+            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
             <h2>Zaloguj się</h2>
             <p class="auth-sub">Witaj ponownie w CARIZO</p>
 
@@ -188,15 +188,14 @@ async function submit() {
     @include respond-to(sm) { padding: 36px 24px 28px; }
 }
 
-.auth-logo {
+.auth-logo { height: 32px; width: auto; // overrides below
     display: inline-block;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 5px;
-    color: $text;
-    text-decoration: none;
+    display: block;
+    
+    
+    
+    
     margin-bottom: 28px;
-    span { color: $red; }
 }
 
 h2 {

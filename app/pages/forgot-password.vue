@@ -1,7 +1,7 @@
 <template>
     <div class="auth-bg">
         <div class="auth-card">
-            <NuxtLink to="/" class="auth-logo">CARI<span>ZO</span></NuxtLink>
+            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
             <h2>Resetowanie hasła</h2>
             <p class="auth-sub">Podaj adres email, a wyślemy Ci link do ustawienia nowego hasła.</p>
 
@@ -122,14 +122,13 @@ async function submit() {
     @include respond-to(sm) { padding: 36px 24px; }
 }
 
-.auth-logo {
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 6px;
-    color: $text;
-    text-decoration: none;
+.auth-logo { height: 32px; width: auto; // overrides below
+    display: block;
+    
+    
+    
+    
     margin-bottom: 32px;
-    span { color: $red; }
 }
 
 h2 {

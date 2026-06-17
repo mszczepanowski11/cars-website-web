@@ -2,7 +2,7 @@
     <div class="promote-page">
 
         <div class="promo-topbar">
-            <div class="tl-logo">CARI<span>ZO</span></div>
+            <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" />
             <div class="promo-steps">
                 <span class="ps done"><v-icon icon="mdi-check" size="14" />Ogłoszenie</span>
                 <span class="ps-sep" />

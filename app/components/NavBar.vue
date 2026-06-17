@@ -77,7 +77,9 @@ onUnmounted(() => {
 <template>
     <header class="carizo-nav">
         <div class="nav-inner">
-            <NuxtLink to="/" class="logo" @click="closeMobile">CARI<span>ZO</span></NuxtLink>
+            <NuxtLink to="/" class="logo" @click="closeMobile">
+                <img src="/carizo-logo.svg" alt="CARIZO" class="logo-img" />
+            </NuxtLink>
 
             <nav class="nav-links">
                 <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
@@ -154,7 +156,7 @@ onUnmounted(() => {
         <transition name="slide">
             <div v-if="mobileOpen" class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu nawigacyjne">
                 <div class="drawer-header">
-                    <span class="drawer-logo">CARI<span>ZO</span></span>
+                    <img src="/carizo-logo.svg" alt="CARIZO" class="drawer-logo" />
                     <button class="drawer-close" aria-label="Zamknij menu" @click="closeMobile">
                         <v-icon icon="mdi-close" size="22" />
                     </button>
@@ -262,13 +264,16 @@ onUnmounted(() => {
 }
 
 .logo {
-    font-size: 26px;
-    font-weight: 900;
-    letter-spacing: 5px;
-    color: $text;
     text-decoration: none;
     flex-shrink: 0;
-    span { color: $red; }
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 28px;
+    width: auto;
+    display: block;
 }
 
 .nav-links {
@@ -461,11 +466,9 @@ onUnmounted(() => {
 }
 
 .drawer-logo {
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 5px;
-    color: $text;
-    span { color: $red; }
+    height: 26px;
+    width: auto;
+    display: block;
 }
 
 .drawer-close {

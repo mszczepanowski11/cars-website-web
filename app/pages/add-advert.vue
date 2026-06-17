@@ -6,7 +6,7 @@
                 <div class="success-confetti">
                     <span v-for="i in 12" :key="i" class="confetti-dot" :style="{ '--i': i }" />
                 </div>
-                <div class="success-logo">CARI<span>ZO</span></div>
+                <img src="/carizo-logo.svg" alt="CARIZO" class="success-logo" />
                 <div class="success-icon-wrap">
                     <v-icon icon="mdi-check-circle" size="52" class="success-icon" />
                 </div>
@@ -42,7 +42,7 @@
         <!-- Top bar -->
         <div class="top-bar">
             <div class="top-left">
-                <div class="tl-logo">CARI<span>ZO</span></div>
+                <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" />
                 <button class="back-btn" @click="navigateTo('/dashboard')">
                     <v-icon icon="mdi-arrow-left" size="16" />
                     Wróć do panelu

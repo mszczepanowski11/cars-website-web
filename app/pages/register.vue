@@ -4,7 +4,7 @@
         <!-- Success screen after registration -->
         <Transition name="success-fade">
             <div v-if="registrationSuccess" class="reg-success">
-                <div class="reg-success-logo">CARI<span>ZO</span></div>
+                <img src="/carizo-logo.svg" alt="CARIZO" class="reg-success-logo" />
                 <div class="reg-success-icon email-icon">
                     <v-icon icon="mdi-email-check-outline" size="44" />
                 </div>
@@ -31,7 +31,7 @@
         </Transition>
 
         <div v-if="!registrationSuccess" class="auth-card">
-            <NuxtLink to="/" class="auth-logo">CARI<span>ZO</span></NuxtLink>
+            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
             <h2>Zarejestruj się</h2>
             <p class="auth-sub">Dołącz do społeczności CARIZO</p>
 
@@ -313,15 +313,14 @@ async function resendVerification() {
     @include respond-to(sm) { padding: 32px 20px 24px; }
 }
 
-.auth-logo {
+.auth-logo { height: 32px; width: auto; // overrides below
     display: inline-block;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 5px;
-    color: $text;
-    text-decoration: none;
+    display: block;
+    
+    
+    
+    
     margin-bottom: 28px;
-    span { color: $red; }
 }
 
 h2 {
