@@ -491,4 +491,9 @@ export interface MonthlyInvoice {
     isKSeFSent?: boolean
     billingType?: BillingType
     lineItems?: KSeFLineItem[]
+    // Seller info (for PDF generation)
+    sellerName?: string
+    sellerEmail?: string
+    sellerAddress?: string
+    sellerNip?: string
 }

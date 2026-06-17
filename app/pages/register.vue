@@ -5,22 +5,26 @@
         <Transition name="success-fade">
             <div v-if="registrationSuccess" class="reg-success">
                 <div class="reg-success-logo">CARI<span>ZO</span></div>
-                <div class="reg-success-icon">
-                    <v-icon icon="mdi-account-check-outline" size="44" />
+                <div class="reg-success-icon email-icon">
+                    <v-icon icon="mdi-email-check-outline" size="44" />
                 </div>
-                <h2 class="reg-success-title">Konto zostało utworzone!</h2>
+                <h2 class="reg-success-title">Sprawdź swoją skrzynkę!</h2>
                 <p class="reg-success-desc">
-                    Witaj w CARIZO! Twoje konto jest aktywne i gotowe do użycia.<br>
-                    Zaloguj się i zacznij korzystać z platformy.
+                    Wysłaliśmy link weryfikacyjny na adres <strong>{{ registeredEmail }}</strong>.<br>
+                    Kliknij w link w e-mailu, aby aktywować konto.
                 </p>
+                <div class="reg-success-tip">
+                    <v-icon icon="mdi-information-outline" size="15" />
+                    Nie widzisz e-maila? Sprawdź folder spam lub
+                    <button type="button" class="resend-link" :disabled="resending" @click="resendVerification">
+                        <span v-if="resending">wysyłanie...</span>
+                        <span v-else>wyślij ponownie</span>
+                    </button>.
+                </div>
                 <div class="reg-success-actions">
-                    <NuxtLink to="/" class="rsact-btn rsact-btn--primary">
-                        <v-icon icon="mdi-home-outline" size="17" />
-                        Strona główna
-                    </NuxtLink>
-                    <NuxtLink to="/add-advert" class="rsact-btn rsact-btn--secondary">
-                        <v-icon icon="mdi-plus" size="17" />
-                        Dodaj pierwsze ogłoszenie
+                    <NuxtLink to="/login" class="rsact-btn rsact-btn--primary">
+                        <v-icon icon="mdi-login" size="17" />
+                        Przejdź do logowania
                     </NuxtLink>
                 </div>
             </div>
@@ -183,6 +187,8 @@ const nip              = ref('')
 const validationError  = ref('')
 const showPassword     = ref(false)
 const registrationSuccess = ref(false)
+const registeredEmail = ref('')
+const resending = ref(false)
 
 const redirectTo = computed(() => {
     const r = route.query.redirect
@@ -244,8 +250,21 @@ async function submit() {
         nip: accountType.value === 'Business' ? nip.value : undefined,
     }, redirectTo.value)
     if (ok !== false) {
+        registeredEmail.value = email.value
         registrationSuccess.value = true
     }
+}
+
+async function resendVerification() {
+    if (resending.value || !registeredEmail.value) return
+    resending.value = true
+    try {
+        await $fetch('/api/proxy/api/Auth/resend-verification', {
+            method: 'POST',
+            body: { email: registeredEmail.value }
+        })
+    } catch {}
+    finally { resending.value = false }
 }
 </script>
 
@@ -553,7 +572,34 @@ h2 {
     line-height: 1.8;
     margin: 0;
     max-width: 380px;
+    strong { color: $text; }
 }
+
+.reg-success-tip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: $text-dark;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 360px;
+    text-align: center;
+}
+
+.resend-link {
+    background: none;
+    border: none;
+    color: $red;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.email-icon { color: #4caf50 !important; }
 
 .reg-success-actions {
     display: flex;

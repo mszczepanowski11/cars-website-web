@@ -20,7 +20,8 @@ export const useShare = () => {
     }
 
     function shareOnMessenger(url: string) {
-        window.open(`https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&app_id=&redirect_uri=${encodeURIComponent(url)}`, '_blank', 'noreferrer')
+        // Fallback: open WhatsApp if Facebook App ID is not configured
+        window.open(`https://wa.me/?text=${encodeURIComponent(url)}`, '_blank', 'noreferrer')
     }
 
     async function copyLink(url: string): Promise<void> {

@@ -49,6 +49,9 @@
                 <div v-if="error" class="auth-error">
                     <v-icon icon="mdi-alert-circle-outline" size="15" />
                     {{ error }}
+                    <NuxtLink v-if="unverifiedEmail" :to="`/register`" class="verify-hint">
+                        Zarejestruj ponownie lub sprawdź skrzynkę email
+                    </NuxtLink>
                 </div>
 
                 <button type="submit" class="auth-btn" :disabled="loading">
@@ -72,6 +75,7 @@ const password = ref('')
 const emailFocused    = ref(false)
 const passwordFocused = ref(false)
 const showPassword    = ref(false)
+const unverifiedEmail = ref(false)
 
 const redirectTo = computed(() => {
     const r = route.query.redirect
@@ -79,7 +83,11 @@ const redirectTo = computed(() => {
 })
 
 async function submit() {
+    unverifiedEmail.value = false
     await login({ email: email.value, password: password.value }, redirectTo.value)
+    if (error.value?.toLowerCase().includes('zweryfikuj') || error.value?.toLowerCase().includes('email')) {
+        unverifiedEmail.value = true
+    }
 }
 </script>
 
@@ -220,6 +228,17 @@ h2 {
     color: #e55;
     font-size: 13px;
     padding: 10px 14px;
+    flex-wrap: wrap;
+}
+
+.verify-hint {
+    display: block;
+    width: 100%;
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    margin-top: 4px;
+    text-decoration: underline;
+    &:hover { color: $text-muted; }
 }
 
 .auth-btn {
