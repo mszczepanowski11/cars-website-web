@@ -11,6 +11,7 @@
                 <NuxtLink to="/admin/users" class="nav-item"><v-icon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
                 <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
                 <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
                 <div class="nav-divider" />
                 <NuxtLink to="/admin/invoices" class="nav-item active"><v-icon icon="mdi-receipt-text-outline" size="17" />Faktury</NuxtLink>
                 <div class="nav-divider" />
