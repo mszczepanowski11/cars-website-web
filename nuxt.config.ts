@@ -7,6 +7,10 @@ export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module'],
   compatibilityDate: '2025-07-15',
 
+  typescript: {
+    typeCheck: false,
+  },
+
   app: {
     pageTransition: { name: 'page-fade', mode: 'out-in' },
   },
