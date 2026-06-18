@@ -1,6 +1,7 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 ENV NITRO_PRESET=node
+ENV HOST=0.0.0.0
 
 WORKDIR /app
 
@@ -9,15 +10,6 @@ RUN npm install --ignore-scripts
 
 COPY . .
 RUN npm run build
-
-FROM node:20-alpine
-
-ENV HOST=0.0.0.0
-ENV PORT=3000
-
-WORKDIR /app
-
-COPY --from=builder /app/.output .output
 
 EXPOSE 3000
 
