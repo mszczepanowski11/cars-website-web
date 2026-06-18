@@ -133,8 +133,11 @@
                                 :class="{ active: form.categoryId === cat.id }"
                                 @click="onCategory(cat.id)"
                             >
-                                <v-icon :icon="cat.iconName" size="20" />
-                                <span>{{ cat.name }}</span>
+                                <div class="ccb-icon-wrap">
+                                    <v-icon :icon="cat.iconName" size="28" />
+                                </div>
+                                <span class="ccb-name">{{ cat.name }}</span>
+                                <span v-if="cat.advertCount" class="ccb-count">{{ cat.advertCount.toLocaleString('pl') }}</span>
                             </button>
                         </div>
                     </div>
@@ -754,8 +757,147 @@
                     </div>
                 </div>
 
-                <!-- Step 4: Cena i opis -->
+                <!-- Step 4: Historia pojazdu -->
                 <div v-else-if="currentStep === 4" class="form-content">
+                    <div class="form-section-head">
+                        <h2>Historia pojazdu</h2>
+                        <p>Kompletna historia zwiększa <strong>zaufanie kupujących</strong> i przyspiesza sprzedaż. Każda potwierdzona pozycja podnosi ocenę ogłoszenia.</p>
+                    </div>
+                    <div class="verified-grid">
+                        <!-- VIN -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': form.vin }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': form.vin }">
+                                    <v-icon :icon="form.vin ? 'mdi-check' : 'mdi-barcode'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Numer VIN</div>
+                                    <div class="vi-desc">Unikalny identyfikator pojazdu — potwierdza jego tożsamość</div>
+                                </div>
+                                <div v-if="form.vin" class="vi-badge">+4 pkt</div>
+                            </div>
+                            <input v-model="form.vin" type="text" class="finput" placeholder="np. WBA3A5G51ENP37056" maxlength="17" style="margin-top:12px" />
+                        </div>
+
+                        <!-- First owner -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.isFirstOwner }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.isFirstOwner }">
+                                    <v-icon :icon="history.isFirstOwner ? 'mdi-check' : 'mdi-account-key-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Pierwszy właściciel</div>
+                                    <div class="vi-desc">Pojazd nigdy wcześniej nie był zarejestrowany na inną osobę</div>
+                                </div>
+                                <div v-if="history.isFirstOwner" class="vi-badge">+2 pkt</div>
+                            </div>
+                            <label class="toggle-row" style="margin-top:12px">
+                                <span class="toggle-label">Jestem pierwszym właścicielem</span>
+                                <div class="toggle-switch" :class="{ active: history.isFirstOwner }" @click="history.isFirstOwner = !history.isFirstOwner">
+                                    <div class="toggle-knob" />
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Accident free -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.isAccidentFree }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.isAccidentFree }">
+                                    <v-icon :icon="history.isAccidentFree ? 'mdi-check' : 'mdi-shield-car'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Bezwypadkowy</div>
+                                    <div class="vi-desc">Pojazd nie brał udziału w żadnych kolizjach ani wypadkach</div>
+                                </div>
+                                <div v-if="history.isAccidentFree" class="vi-badge">+3 pkt</div>
+                            </div>
+                            <label class="toggle-row" style="margin-top:12px">
+                                <span class="toggle-label">Pojazd jest bezwypadkowy</span>
+                                <div class="toggle-switch" :class="{ active: history.isAccidentFree }" @click="history.isAccidentFree = !history.isAccidentFree">
+                                    <div class="toggle-knob" />
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Service book -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.hasServiceBook }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.hasServiceBook }">
+                                    <v-icon :icon="history.hasServiceBook ? 'mdi-check' : 'mdi-book-open-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Książka serwisowa</div>
+                                    <div class="vi-desc">Pełna dokumentacja historii serwisowej pojazdu</div>
+                                </div>
+                                <div v-if="history.hasServiceBook" class="vi-badge">+2 pkt</div>
+                            </div>
+                            <label class="toggle-row" style="margin-top:12px">
+                                <span class="toggle-label">Posiadam książkę serwisową</span>
+                                <div class="toggle-switch" :class="{ active: history.hasServiceBook }" @click="history.hasServiceBook = !history.hasServiceBook">
+                                    <div class="toggle-knob" />
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- ASO Service -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.servicedAtASO }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.servicedAtASO }">
+                                    <v-icon :icon="history.servicedAtASO ? 'mdi-check' : 'mdi-wrench-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Serwisowany w ASO</div>
+                                    <div class="vi-desc">Wszystkie przeglądy wykonywane w autoryzowanym serwisie</div>
+                                </div>
+                                <div v-if="history.servicedAtASO" class="vi-badge">+2 pkt</div>
+                            </div>
+                            <label class="toggle-row" style="margin-top:12px">
+                                <span class="toggle-label">Serwisowany w autoryzowanym serwisie</span>
+                                <div class="toggle-switch" :class="{ active: history.servicedAtASO }" @click="history.servicedAtASO = !history.servicedAtASO">
+                                    <div class="toggle-knob" />
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Owners count -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.ownersCount !== null }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.ownersCount !== null }">
+                                    <v-icon :icon="history.ownersCount !== null ? 'mdi-check' : 'mdi-account-group-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Liczba właścicieli</div>
+                                    <div class="vi-desc">Ilu właścicieli miał pojazd od początku</div>
+                                </div>
+                                <div v-if="history.ownersCount !== null" class="vi-badge">+2 pkt</div>
+                            </div>
+                            <select v-model="history.ownersCount" class="finput" style="margin-top:12px">
+                                <option :value="null">Nie podaję</option>
+                                <option :value="1">1 właściciel</option>
+                                <option :value="2">2 właścicieli</option>
+                                <option :value="3">3 właścicieli</option>
+                                <option :value="4">4+ właścicieli</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Carizo verified summary -->
+                    <div class="cverified-summary">
+                        <div class="cvs-icon">
+                            <v-icon icon="mdi-shield-star-outline" size="24" />
+                        </div>
+                        <div>
+                            <div class="cvs-title">CARIZO VERIFIED</div>
+                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null].filter(Boolean).length }} z 6 punktów potwierdzonych</div>
+                        </div>
+                        <div class="cvs-score">
+                            {{ Math.round([form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null].filter(Boolean).length / 6 * 100) }}%
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Opis -->
+                <div v-else-if="currentStep === 5" class="form-content">
                     <div class="form-section-head">
                         <h2>Cena i opis</h2>
                         <p>Ustal cenę, opisz pojazd i podaj lokalizację.</p>
@@ -875,8 +1017,8 @@
                     </div>
                 </div>
 
-                <!-- Step 5: Podsumowanie -->
-                <div v-else-if="currentStep === 5" class="form-content promo-step">
+                <!-- Step 6: Promocja -->
+                <div v-else-if="currentStep === 6" class="form-content promo-step">
                     <div class="form-section-head">
                         <h2>{{ isEdit ? 'Podsumowanie zmian' : 'Podsumowanie i promocja' }}</h2>
                         <p v-if="isEdit">Sprawdź wprowadzone zmiany i zapisz ogłoszenie.</p>
@@ -1047,6 +1189,57 @@
                     </div>
                 </div>
 
+                <!-- Step 7: Podgląd -->
+                <div v-else-if="currentStep === 7" class="form-content">
+                    <div class="form-section-head">
+                        <h2>Podgląd i publikacja</h2>
+                        <p>Sprawdź jak będzie wyglądało Twoje ogłoszenie przed publikacją.</p>
+                    </div>
+                    <div class="preview-card">
+                        <div class="prev-img-wrap">
+                            <img v-if="previews.length" :src="previews[0]" class="prev-main-img" alt="Zdjęcie główne" />
+                            <div v-else class="prev-img-placeholder">
+                                <v-icon icon="mdi-image-outline" size="48" />
+                                <span>Brak zdjęć</span>
+                            </div>
+                            <div v-if="previews.length > 1" class="prev-img-count">+{{ previews.length - 1 }} zdjęć</div>
+                        </div>
+                        <div class="prev-body">
+                            <div class="prev-badges">
+                                <span v-if="form.sellerType === 'dealer'" class="prev-badge prev-badge--dealer">Dealer</span>
+                                <span class="prev-badge prev-badge--cat">{{ selectedCategory?.name ?? 'Pojazd' }}</span>
+                            </div>
+                            <div class="prev-title">{{ form.title || previewTitle }}</div>
+                            <div class="prev-price">{{ form.price ? form.price.toLocaleString('pl') + ' zł' : 'Cena do ustalenia' }}</div>
+                            <div v-if="form.isNegotiable" class="prev-nego">do negocjacji</div>
+                            <div class="prev-specs">
+                                <span v-if="form.year"><v-icon icon="mdi-calendar" size="13" />{{ form.year }}</span>
+                                <span v-if="form.mileage"><v-icon icon="mdi-speedometer" size="13" />{{ form.mileage.toLocaleString('pl') }} km</span>
+                                <span v-if="fuelTypeName"><v-icon icon="mdi-fuel" size="13" />{{ fuelTypeName }}</span>
+                                <span v-if="form.city"><v-icon icon="mdi-map-marker-outline" size="13" />{{ form.city }}</span>
+                            </div>
+                            <div v-if="form.description" class="prev-desc">{{ form.description.slice(0, 200) }}{{ form.description.length > 200 ? '...' : '' }}</div>
+                            <div class="prev-features">
+                                <span v-for="fId in form.featureIds.slice(0, 6)" :key="fId" class="prev-feat-tag">
+                                    {{ allFeatures.find(f => f.id === fId)?.name }}
+                                </span>
+                                <span v-if="form.featureIds.length > 6" class="prev-feat-tag prev-feat-tag--more">+{{ form.featureIds.length - 6 }} więcej</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-publish-row">
+                        <div class="ppr-score">
+                            <div class="ppr-score-ring" :style="{ '--score': adScore }">
+                                <span class="ppr-score-num">{{ adScore }}</span>
+                            </div>
+                            <div class="ppr-score-label">Jakość ogłoszenia</div>
+                        </div>
+                        <div class="ppr-actions">
+                            <button class="btn-cancel" @click="currentStep--">Wróć i edytuj</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Form actions -->
                 <div class="form-actions">
                     <div class="form-actions-left">
@@ -1102,41 +1295,35 @@
             <!-- Right panel -->
             <aside class="right-panel">
 
-                <div class="score-card">
-                    <div class="score-card-title">Ocena ogłoszenia</div>
-                    <div class="score-circle-area">
-                        <svg viewBox="0 0 120 120" width="130" height="130">
-                            <circle cx="60" cy="60" r="52" fill="none" stroke="#1a1a1a" stroke-width="8" />
-                            <circle cx="60" cy="60" r="52" fill="none"
-                                :stroke="adScore >= 80 ? '#2d7a3a' : adScore >= 60 ? '#e67e22' : '#8B0D1D'"
-                                stroke-width="8"
-                                stroke-linecap="round"
-                                :stroke-dasharray="`${scoreArc} 326.7`"
-                                transform="rotate(-90 60 60)"
-                                style="transition: stroke-dasharray 0.5s ease" />
+                <div class="score-panel">
+                    <div class="sp-ring-wrap">
+                        <svg class="sp-ring" viewBox="0 0 80 80">
+                            <circle cx="40" cy="40" r="34" class="sp-track" />
+                            <circle cx="40" cy="40" r="34" class="sp-fill" :stroke-dashoffset="214 - (214 * adScore / 100)" />
                         </svg>
-                        <div class="score-num">
-                            <span class="score-val">{{ adScore }}</span>
-                            <span class="score-denom">/100</span>
+                        <div class="sp-num">{{ adScore }}</div>
+                    </div>
+                    <div class="sp-label">Jakość ogłoszenia</div>
+                    <div class="sp-tier" :class="adScore >= 90 ? 'sp-tier--gold' : adScore >= 70 ? 'sp-tier--silver' : 'sp-tier--bronze'">
+                        <v-icon :icon="adScore >= 90 ? 'mdi-crown' : adScore >= 70 ? 'mdi-star' : 'mdi-star-outline'" size="13" />
+                        {{ adScore >= 90 ? 'PREMIUM VERIFIED' : adScore >= 70 ? 'DOBRA JAKOŚĆ' : 'DO UZUPEŁNIENIA' }}
+                    </div>
+                    <div class="sp-tips">
+                        <div v-if="!form.brandId && !brandTextInput" class="sp-tip">
+                            <v-icon icon="mdi-circle-small" size="16" />Dodaj markę
                         </div>
-                    </div>
-                    <div class="score-label" :class="adScore >= 80 ? 'sl-great' : adScore >= 60 ? 'sl-good' : 'sl-poor'">
-                        {{ adScore >= 80 ? 'Doskonałe ogłoszenie' : adScore >= 60 ? 'Dobre ogłoszenie' : 'Uzupełnij więcej danych' }}
-                    </div>
-
-                    <div class="score-factors">
-                        <div class="sf-heading">Postęp wypełnienia</div>
-                        <div v-for="sf in scoreFactors" :key="sf.label" class="sf-row" :class="{ 'sf-done': sf.done }">
-                            <div class="sf-check-box">
-                                <v-icon v-if="sf.done" icon="mdi-check" size="11" />
-                            </div>
-                            <span>{{ sf.label }}</span>
+                        <div v-if="selectedFiles.length + existingImages.length < 5" class="sp-tip">
+                            <v-icon icon="mdi-circle-small" size="16" />Dodaj min. 5 zdjęć
                         </div>
-                    </div>
-
-                    <div v-if="scoreTips.length" class="score-tips">
-                        <div class="st-heading"><v-icon icon="mdi-lightbulb-outline" size="13" class="st-icon" />Wskazówki</div>
-                        <div v-for="tip in scoreTips" :key="tip" class="st-tip">{{ tip }}</div>
+                        <div v-if="!form.vin" class="sp-tip">
+                            <v-icon icon="mdi-circle-small" size="16" />Podaj numer VIN
+                        </div>
+                        <div v-if="(form.description?.length ?? 0) < 200" class="sp-tip">
+                            <v-icon icon="mdi-circle-small" size="16" />Opis min. 200 znaków
+                        </div>
+                        <div v-if="form.featureIds.length < 5" class="sp-tip">
+                            <v-icon icon="mdi-circle-small" size="16" />Zaznacz wyposażenie
+                        </div>
                     </div>
                 </div>
 
@@ -1881,15 +2068,20 @@ const history = reactive({
     hasWarranty: false,
     warrantyUntil: '',
     registrationCountry: 'PL',
+    isFirstOwner: false,
+    isAccidentFree: false,
+    servicedAtASO: false,
 })
 
 const steps = [
-    { name: 'Kategoria',   desc: 'Typ pojazdu',                    icon: 'mdi-apps' },
-    { name: 'Dane pojazdu',desc: 'Marka, model, dane techniczne',  icon: 'mdi-car-outline' },
-    { name: 'Zdjęcia',     desc: 'Dodaj zdjęcia pojazdu',          icon: 'mdi-image-outline' },
-    { name: 'Wyposażenie', desc: 'Opcje i wyposażenie',            icon: 'mdi-format-list-checkbox' },
-    { name: 'Cena i opis', desc: 'Cena, opis, lokalizacja',        icon: 'mdi-text-box-outline' },
-    { name: 'Podsumowanie',desc: 'Przejrzyj i opublikuj',          icon: 'mdi-check-circle-outline' },
+    { name: 'Kategoria',        desc: 'Typ pojazdu',                   icon: 'mdi-apps' },
+    { name: 'Dane pojazdu',     desc: 'Marka, model, dane techniczne', icon: 'mdi-car-outline' },
+    { name: 'Zdjęcia',          desc: 'Galeria pojazdu',               icon: 'mdi-image-outline' },
+    { name: 'Wyposażenie',      desc: 'Opcje i wyposażenie',           icon: 'mdi-format-list-checkbox' },
+    { name: 'Historia pojazdu', desc: 'VIN, historia, dokumenty',      icon: 'mdi-shield-check-outline' },
+    { name: 'Opis',             desc: 'Opis i lokalizacja',            icon: 'mdi-text-box-outline' },
+    { name: 'Promocja',         desc: 'Wyróżnij ogłoszenie',           icon: 'mdi-crown-outline' },
+    { name: 'Podgląd',          desc: 'Przejrzyj i opublikuj',         icon: 'mdi-check-circle-outline' },
 ]
 
 const progressSteps = [
@@ -1897,8 +2089,10 @@ const progressSteps = [
     { label: 'Pojazd',     icon: 'mdi-car-outline' },
     { label: 'Zdjęcia',    icon: 'mdi-image-outline' },
     { label: 'Wyposażenie',icon: 'mdi-format-list-checkbox' },
-    { label: 'Oferta',     icon: 'mdi-text-box-outline' },
-    { label: 'Publikacja', icon: 'mdi-check-circle-outline' },
+    { label: 'Historia',   icon: 'mdi-shield-check-outline' },
+    { label: 'Opis',       icon: 'mdi-text-box-outline' },
+    { label: 'Promocja',   icon: 'mdi-crown-outline' },
+    { label: 'Podgląd',    icon: 'mdi-check-circle-outline' },
 ]
 
 const stripFeats = [
@@ -2163,8 +2357,9 @@ function validateStep(step: number): string | null {
         if (!isEdit.value && existingImages.value.length === 0 && selectedFiles.value.length < 3) return 'Dodaj minimum 3 zdjęcia.'
     }
     // Step 3: Equipment — no required fields
-    // Step 4: Price & description
-    if (step === 4) {
+    // Step 4: Historia pojazdu — no required fields
+    // Step 5: Opis i cena
+    if (step === 5) {
         if (!form.price) return 'Podaj cenę pojazdu.'
         if (!form.region) return 'Wybierz województwo.'
         if (!form.city?.trim()) return 'Podaj miasto.'
@@ -3557,42 +3752,52 @@ onMounted(async () => {
 
 .category-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-
-    @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
 }
 
 .cat-choice-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    padding: 14px 10px;
-    background: rgba(255,255,255,0.03);
-    border: 1.5px solid $border;
-    border-radius: $r-md;
-    color: $text-muted;
-    font-size: 12px;
-    font-weight: 500;
-    font-family: 'Inter', sans-serif;
+    gap: 10px;
+    padding: 24px 16px 18px;
+    border: 2px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    background: rgba(255,255,255,0.02);
+    color: $text-dim;
     cursor: pointer;
-    transition: all 0.18s;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    text-align: center;
+    min-height: 110px;
 
-    .v-icon { color: $text-dark; }
+    .ccb-icon-wrap {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        color: $text-dim;
+    }
+    .ccb-name { font-size: 13px; font-weight: 600; color: $text-dim; line-height: 1.2; }
+    .ccb-count { font-size: 10px; color: $text-dark; }
 
     &:hover {
         border-color: rgba($red, 0.3);
-        color: $text;
-        .v-icon { color: $red; }
+        background: rgba($red, 0.04);
+        .ccb-icon-wrap { background: rgba($red, 0.12); color: $red; }
+        .ccb-name { color: $text; }
     }
 
     &.active {
-        background: rgba($red, 0.1);
-        border-color: rgba($red, 0.5);
-        color: $red;
-        font-weight: 700;
-        .v-icon { color: $red; }
+        border-color: $red;
+        background: rgba($red, 0.08);
+        .ccb-icon-wrap { background: $red; color: white; }
+        .ccb-name { color: $text; font-weight: 700; }
     }
 }
 
@@ -4745,4 +4950,422 @@ onMounted(async () => {
 .success-fade-leave-active { transition: opacity 0.2s ease; }
 .success-fade-enter-from,
 .success-fade-leave-to { opacity: 0; }
+
+// ── Vehicle history step ───────────────────────────────────────────────────────
+.verified-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+.verified-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 20px;
+    transition: border-color 0.2s;
+
+    &--filled {
+        border-color: rgba($red, 0.3);
+        background: rgba($red, 0.03);
+    }
+}
+
+.vi-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.vi-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-dim;
+    flex-shrink: 0;
+    transition: all 0.2s;
+
+    &--done {
+        background: rgba($red, 0.15);
+        border-color: rgba($red, 0.3);
+        color: $red;
+    }
+}
+
+.vi-texts { flex: 1; }
+.vi-title { font-size: 14px; font-weight: 600; color: $text; }
+.vi-desc { font-size: 12px; color: $text-dim; margin-top: 3px; line-height: 1.4; }
+
+.vi-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: $red;
+    background: rgba($red, 0.1);
+    border: 1px solid rgba($red, 0.2);
+    border-radius: 5px;
+    padding: 2px 7px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.toggle-label {
+    font-size: 13px;
+    color: $text-dim;
+}
+
+.toggle-switch {
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+
+    &.active {
+        background: $red;
+        border-color: $red;
+        .toggle-knob { transform: translateX(20px); }
+    }
+}
+
+.toggle-knob {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+}
+
+.cverified-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba($red, 0.06) 0%, rgba($red, 0.02) 100%);
+    border: 1px solid rgba($red, 0.2);
+    border-radius: 14px;
+    padding: 18px 24px;
+}
+
+.cvs-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba($red, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $red;
+    flex-shrink: 0;
+}
+
+.cvs-title { font-size: 14px; font-weight: 700; color: $text; letter-spacing: 1px; text-transform: uppercase; }
+.cvs-desc { font-size: 12px; color: $text-dim; margin-top: 2px; }
+
+.cvs-score {
+    margin-left: auto;
+    font-size: 28px;
+    font-weight: 900;
+    color: $red;
+}
+
+// ── Premium score panel (right sidebar) ───────────────────────────────────────
+.score-panel {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.sp-ring-wrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 12px;
+}
+
+.sp-ring {
+    width: 80px;
+    height: 80px;
+    transform: rotate(-90deg);
+}
+
+.sp-track {
+    fill: none;
+    stroke: rgba(255,255,255,0.08);
+    stroke-width: 8;
+}
+
+.sp-fill {
+    fill: none;
+    stroke: $red;
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 214;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.sp-num {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    color: $text;
+}
+
+.sp-label {
+    text-align: center;
+    font-size: 11px;
+    color: $text-dim;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.sp-tier {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+
+    &--gold   { background: rgba(#ffd700, 0.12); color: #ffd700; border: 1px solid rgba(#ffd700, 0.25); }
+    &--silver { background: rgba($red, 0.10); color: $red; border: 1px solid rgba($red, 0.2); }
+    &--bronze { background: rgba(255,255,255,0.05); color: $text-dim; border: 1px solid rgba(255,255,255,0.1); }
+}
+
+.sp-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sp-tip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: $text-dim;
+
+    .v-icon { color: rgba($red, 0.7); }
+}
+
+// ── Preview card (step 7) ──────────────────────────────────────────────────────
+.form-content .preview-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    padding: 0;
+
+    @include respond-to(sm) { flex-direction: column; }
+}
+
+.prev-img-wrap {
+    width: 45%;
+    flex-shrink: 0;
+    position: relative;
+
+    @include respond-to(sm) { width: 100%; }
+}
+
+.prev-main-img {
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    object-fit: cover;
+    display: block;
+}
+
+.prev-img-placeholder {
+    width: 100%;
+    min-height: 280px;
+    background: rgba(255,255,255,0.02);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: $text-dark;
+    font-size: 13px;
+}
+
+.prev-img-count {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.prev-body {
+    flex: 1;
+    padding: 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.prev-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.prev-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    text-transform: uppercase;
+
+    &--dealer { background: rgba(#4fc3f7, 0.15); color: #4fc3f7; }
+    &--cat { background: rgba($red, 0.12); color: $red; border: 1px solid rgba($red, 0.2); }
+}
+
+.prev-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: $text;
+    line-height: 1.2;
+}
+
+.prev-price {
+    font-size: 28px;
+    font-weight: 900;
+    color: $red;
+    letter-spacing: -0.5px;
+}
+
+.prev-nego {
+    font-size: 12px;
+    color: $text-dim;
+    margin-top: -6px;
+}
+
+.prev-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 13px;
+        color: $text-dim;
+        .v-icon { color: $red; }
+    }
+}
+
+.prev-desc {
+    font-size: 13px;
+    color: $text-dim;
+    line-height: 1.6;
+}
+
+.prev-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+}
+
+.prev-feat-tag {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 5px;
+    padding: 3px 9px;
+    font-size: 11px;
+    color: $text-dim;
+
+    &--more { color: $red; border-color: rgba($red, 0.2); }
+}
+
+.preview-publish-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 0;
+}
+
+.ppr-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.ppr-score-ring {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: conic-gradient($red calc(var(--score) * 1%), rgba(255,255,255,0.05) 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 8px;
+        border-radius: 50%;
+        background: $bg;
+    }
+}
+
+.ppr-score-num {
+    position: relative;
+    z-index: 1;
+    font-size: 16px;
+    font-weight: 900;
+    color: $text;
+}
+
+.ppr-score-label {
+    font-size: 12px;
+    color: $text-dim;
+    margin-top: 4px;
+}
 </style>
