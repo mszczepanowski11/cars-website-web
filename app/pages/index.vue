@@ -846,9 +846,9 @@ onMounted(async () => {
 
 .hero-fs {
     position: relative;
-    height: 100vh;
-    min-height: 720px;
-    max-height: 1100px;
+    height: 72vh;
+    min-height: 580px;
+    max-height: 820px;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -886,9 +886,11 @@ onMounted(async () => {
 .hfs-content {
     position: relative;
     z-index: 2;
-    padding-top: calc(#{$nav-height} + 60px);
-    padding-bottom: 100px;
-    max-width: 820px;
+    padding-top: calc(#{$nav-height} + 40px);
+    padding-bottom: 60px;
+    max-width: 600px;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 // Eyebrow
