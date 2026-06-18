@@ -1507,40 +1507,58 @@ async function downloadPDF() {
     } finally { pdfLoading.value = false }
 }
 
-onMounted(async () => {
-    window.addEventListener('keydown', onKeydown)
-    await fetchFavoriteIds()
+// SSR-safe data fetching
+const { data: advertData } = await useAsyncData(`advert-${id}`, async () => {
     try {
-        advert.value = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`)
-        trackRecentlyViewed(Number(id))
-        isFav.value = isFavorite(id)
-        if (advert.value?.city) initMap(advert.value.city, advert.value.region ?? undefined)
-        const uid = advert.value?.userId
+        const a = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`)
+        if (!a) return null
+        const uid = a.userId
+        let s: UserProfile | null = null
+        let stats: UserStats | null = null
         if (uid && uid > 0) {
-            ;[seller.value, sellerStats.value] = await Promise.all([
+            ;[s, stats] = await Promise.all([
                 $fetch<UserProfile>(`/api/proxy/api/User/${uid}/public`).catch(() =>
                     $fetch<UserProfile>(`/api/proxy/api/User/${uid}`).catch(() => null)
                 ),
                 $fetch<UserStats>(`/api/proxy/api/User/${uid}/stats`).catch(() => null),
             ])
-            if (isLoggedIn.value) {
-                isFollowingSeller.value = await checkFollowingSeller(uid).catch(() => false)
-            }
         }
-    } catch { }
+        return { advert: a, seller: s, sellerStats: stats }
+    } catch { return null }
+})
+
+advert.value = advertData.value?.advert ?? null
+seller.value = advertData.value?.seller ?? null
+sellerStats.value = advertData.value?.sellerStats ?? null
+
+onMounted(async () => {
+    window.addEventListener('keydown', onKeydown)
+    await fetchFavoriteIds()
+    if (advert.value) {
+        trackRecentlyViewed(Number(id))
+        isFav.value = isFavorite(id)
+        if (advert.value.city) initMap(advert.value.city, advert.value.region ?? undefined)
+    }
+    const uid = seller.value?.id ?? advert.value?.userId
+    if (uid && uid > 0 && isLoggedIn.value) {
+        isFollowingSeller.value = await checkFollowingSeller(uid).catch(() => false)
+    }
     try {
-        const body: Record<string, unknown> = { page: 1, pageSize: 12 }
-        if (advert.value?.brand?.id) body.brandId = advert.value.brand.id
-        if (advert.value?.categoryId) body.categoryId = advert.value.categoryId
-        else if (advert.value?.category?.id) body.categoryId = advert.value.category.id
-        if (advert.value?.bodyType?.id) body.bodyTypeId = advert.value.bodyType.id
-        if (advert.value?.price) {
-            const p = Number(advert.value.price)
-            body.priceFrom = Math.round(p * 0.4)
-            body.priceTo   = Math.round(p * 2.5)
+        const a = advert.value
+        if (a) {
+            const body: Record<string, unknown> = { page: 1, pageSize: 12 }
+            if (a.brand?.id) body.brandId = a.brand.id
+            if (a.categoryId) body.categoryId = a.categoryId
+            else if (a.category?.id) body.categoryId = a.category.id
+            if (a.bodyType?.id) body.bodyTypeId = a.bodyType.id
+            if (a.price) {
+                const p = Number(a.price)
+                body.priceFrom = Math.round(p * 0.4)
+                body.priceTo   = Math.round(p * 2.5)
+            }
+            const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', { method: 'POST', body })
+            similar.value = (r?.items ?? []).filter(x => x.id !== id).slice(0, 6)
         }
-        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', { method: 'POST', body })
-        similar.value = r.items.filter(a => a.id !== id).slice(0, 6)
     } catch { }
 })
 

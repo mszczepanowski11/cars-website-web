@@ -1,5 +1,3 @@
-import sharp from 'sharp'
-
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
     const token = getCookie(event, 'auth_token')
@@ -39,6 +37,7 @@ export default defineEventHandler(async (event) => {
 })
 
 async function applyWatermark(inputBuffer: Buffer): Promise<Buffer> {
+    const sharp = (await import('sharp')).default
     const image = sharp(inputBuffer)
     const meta = await image.metadata()
     const w = meta.width ?? 800

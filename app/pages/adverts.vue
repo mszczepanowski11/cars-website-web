@@ -450,17 +450,46 @@ const { fetchBrands, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes
 const { fetchCategories } = useCategories()
 const { fetchFavoriteIds } = useFavorites()
 
-const brands     = ref<TaxonomyItem[]>([])
-const models     = ref<TaxonomyItem[]>([])
-const fuelTypes  = ref<TaxonomyItem[]>([])
-const bodyTypes  = ref<TaxonomyItem[]>([])
-const gearboxes  = ref<TaxonomyItem[]>([])
-const driveTypes = ref<DriveType[]>([])
-const colors     = ref<CarColor[]>([])
-const categories = ref<CategoryWithCount[]>([])
+// Initialize filter state from URL query params at setup time (SSR-safe — no onMounted)
+const f = reactive({
+    categoryId:  route.query.categoryId  ? Number(route.query.categoryId)  : null as number | null,
+    textSearch:  route.query.textSearch  ? String(route.query.textSearch)  : '',
+    brandId:     route.query.brandId     ? Number(route.query.brandId)     : null as number | null,
+    modelId:     route.query.modelId     ? Number(route.query.modelId)     : null as number | null,
+    fuelTypeId:  route.query.fuelTypeId  ? Number(route.query.fuelTypeId)  : null as number | null,
+    bodyTypeId:  route.query.bodyTypeId  ? Number(route.query.bodyTypeId)  : null as number | null,
+    gearboxId:   route.query.gearboxId   ? Number(route.query.gearboxId)   : null as number | null,
+    priceFrom:   route.query.priceFrom   ? Number(route.query.priceFrom)   : null as number | null,
+    priceTo:     route.query.priceTo     ? Number(route.query.priceTo)     : null as number | null,
+    yearFrom:    route.query.yearFrom    ? Number(route.query.yearFrom)    : null as number | null,
+    yearTo:      route.query.yearTo      ? Number(route.query.yearTo)      : null as number | null,
+    mileageFrom: route.query.mileageFrom ? Number(route.query.mileageFrom) : null as number | null,
+    mileageTo:   route.query.mileageTo   ? Number(route.query.mileageTo)   : null as number | null,
+    powerFrom:   route.query.powerFrom   ? Number(route.query.powerFrom)   : null as number | null,
+    powerTo:     route.query.powerTo     ? Number(route.query.powerTo)     : null as number | null,
+    driveTypeId: route.query.driveTypeId ? Number(route.query.driveTypeId) : null as number | null,
+    colorId:     route.query.colorId     ? Number(route.query.colorId)     : null as number | null,
+    sellerType:  (route.query.sellerType ?? '') as '' | 'private' | 'dealer',
+    condition:   (route.query.condition  ?? '') as '' | 'new' | 'used',
+    hasDamage:   route.query.hasDamage   !== undefined ? route.query.hasDamage   === 'true' : null as boolean | null,
+    hasWarranty: route.query.hasWarranty !== undefined ? route.query.hasWarranty === 'true' : null as boolean | null,
+    hasServiceBook: route.query.hasServiceBook !== undefined ? route.query.hasServiceBook === 'true' : null as boolean | null,
+    isImported:  route.query.isImported  !== undefined ? route.query.isImported  === 'true' : null as boolean | null,
+    axleCount:   null as number | null,
+    payloadFrom: null as number | null,
+    payloadTo:   null as number | null,
+    grossWeightFrom: null as number | null,
+    grossWeightTo:   null as number | null,
+    bodySubtype: '' as string,
+    hasRetarder: null as boolean | null,
+    hasTachograph: null as boolean | null,
+    sortBy:      route.query.sortBy ? String(route.query.sortBy) : '',
+})
+
+const models       = ref<TaxonomyItem[]>([])
 const adverts      = ref<CarAdvert[]>([])
 const total        = ref(0)
-const page         = ref(1)
+const page         = ref(route.query.page ? Number(route.query.page) : 1)
 const loading      = ref(false)
 const loadingMore  = ref(false)
 const pageSize     = 12
@@ -504,42 +533,6 @@ const sortOptions = [
     { label: 'Przebieg: mniej', value: 'mileage_asc' },
     { label: 'Moc: malejąco',  value: 'power_desc' },
 ]
-
-const f = reactive({
-    categoryId:  null as number | null,
-    textSearch:  '',
-    brandId:     null as number | null,
-    modelId:     null as number | null,
-    fuelTypeId:  null as number | null,
-    bodyTypeId:  null as number | null,
-    gearboxId:   null as number | null,
-    priceFrom:   null as number | null,
-    priceTo:     null as number | null,
-    yearFrom:    null as number | null,
-    yearTo:      null as number | null,
-    mileageFrom: null as number | null,
-    mileageTo:   null as number | null,
-    powerFrom:   null as number | null,
-    powerTo:     null as number | null,
-    driveTypeId: null as number | null,
-    colorId:     null as number | null,
-    sellerType:  '' as '' | 'private' | 'dealer',
-    condition:   '' as '' | 'new' | 'used',
-    hasDamage:   null as boolean | null,
-    hasWarranty: null as boolean | null,
-    hasServiceBook: null as boolean | null,
-    isImported:  null as boolean | null,
-    // Commercial / specialized filters
-    axleCount:   null as number | null,
-    payloadFrom: null as number | null,
-    payloadTo:   null as number | null,
-    grossWeightFrom: null as number | null,
-    grossWeightTo:   null as number | null,
-    bodySubtype: '' as string,
-    hasRetarder: null as boolean | null,
-    hasTachograph: null as boolean | null,
-    sortBy:      '',
-})
 
 const activeCategory = computed(() =>
     f.categoryId ? (categories.value.find(c => c.id === f.categoryId) ?? null) : null
@@ -589,14 +582,14 @@ const hasActiveFilters = computed(() =>
 )
 
 const paginationPages = computed(() => {
-    const total = totalPages.value
+    const tot = totalPages.value
     const cur = page.value
-    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+    if (tot <= 7) return Array.from({ length: tot }, (_, i) => i + 1)
     const pages: (number | string)[] = [1]
     if (cur > 3) pages.push('...')
-    for (let i = Math.max(2, cur - 1); i <= Math.min(total - 1, cur + 1); i++) pages.push(i)
-    if (cur < total - 2) pages.push('...')
-    pages.push(total)
+    for (let i = Math.max(2, cur - 1); i <= Math.min(tot - 1, cur + 1); i++) pages.push(i)
+    if (cur < tot - 2) pages.push('...')
+    pages.push(tot)
     return pages
 })
 
@@ -630,6 +623,81 @@ async function onBrandChange() {
     if (f.brandId) models.value = await fetchModels(f.brandId)
 }
 
+function buildSearchBody(p: number): Record<string, unknown> {
+    const body: Record<string, unknown> = { page: p, pageSize, sortBy: f.sortBy || undefined }
+    if (f.categoryId)   body.categoryId   = f.categoryId
+    if (f.textSearch)   body.textSearch   = f.textSearch
+    if (f.brandId)      body.brandId      = f.brandId
+    if (f.modelId)      body.modelId      = f.modelId
+    if (f.fuelTypeId)   body.fuelTypeId   = f.fuelTypeId
+    if (f.bodyTypeId)   body.bodyTypeId   = f.bodyTypeId
+    if (f.gearboxId)    body.gearboxId    = f.gearboxId
+    if (f.driveTypeId)  body.driveTypeId  = f.driveTypeId
+    if (f.colorId)      body.colorId      = f.colorId
+    if (f.priceFrom)    body.priceFrom    = f.priceFrom
+    if (f.priceTo)      body.priceTo      = f.priceTo
+    if (f.yearFrom)     body.yearFrom     = f.yearFrom
+    if (f.yearTo)       body.yearTo       = f.yearTo
+    if (f.mileageFrom)  body.mileageFrom  = f.mileageFrom
+    if (f.mileageTo)    body.mileageTo    = f.mileageTo
+    if (f.powerFrom)    body.powerFrom    = f.powerFrom
+    if (f.powerTo)      body.powerTo      = f.powerTo
+    if (f.sellerType)   body.sellerType   = f.sellerType
+    if (f.condition)    body.condition    = f.condition
+    if (f.hasDamage !== null)      body.hasDamage      = f.hasDamage
+    if (f.hasWarranty !== null)    body.hasWarranty    = f.hasWarranty
+    if (f.hasServiceBook !== null) body.hasServiceBook = f.hasServiceBook
+    if (f.isImported !== null)     body.isImported     = f.isImported
+    if (f.axleCount)               body.axleCount      = f.axleCount
+    if (f.payloadFrom)             body.payloadFrom    = f.payloadFrom
+    if (f.payloadTo)               body.payloadTo      = f.payloadTo
+    if (f.grossWeightFrom)         body.grossWeightFrom = f.grossWeightFrom
+    if (f.grossWeightTo)           body.grossWeightTo   = f.grossWeightTo
+    if (f.bodySubtype)             body.bodySubtype    = f.bodySubtype
+    if (f.hasRetarder !== null)    body.hasRetarder    = f.hasRetarder
+    if (f.hasTachograph !== null)  body.hasTachograph  = f.hasTachograph
+    return body
+}
+
+// ── SSR-safe taxonomy fetch ─────────────────────────────────────────────────────
+const { data: taxoData } = await useAsyncData('taxonomy', async () => {
+    const [b, ft, bt, gb, dt, c, cats, m] = await Promise.all([
+        fetchBrands().catch(() => [] as TaxonomyItem[]),
+        fetchFuelTypes().catch(() => [] as TaxonomyItem[]),
+        fetchBodyTypes().catch(() => [] as TaxonomyItem[]),
+        fetchGearboxes().catch(() => [] as TaxonomyItem[]),
+        fetchDriveTypes().catch(() => [] as DriveType[]),
+        fetchColors().catch(() => [] as CarColor[]),
+        fetchCategories().catch(() => [] as CategoryWithCount[]),
+        f.brandId ? fetchModels(f.brandId).catch(() => [] as TaxonomyItem[]) : Promise.resolve([] as TaxonomyItem[]),
+    ])
+    return { brands: b, fuelTypes: ft, bodyTypes: bt, gearboxes: gb, driveTypes: dt, colors: c, categories: cats, initialModels: m }
+})
+
+const brands     = computed(() => taxoData.value?.brands     ?? [])
+const fuelTypes  = computed(() => taxoData.value?.fuelTypes  ?? [])
+const bodyTypes  = computed(() => taxoData.value?.bodyTypes  ?? [])
+const gearboxes  = computed(() => taxoData.value?.gearboxes  ?? [])
+const driveTypes = computed(() => taxoData.value?.driveTypes ?? [])
+const colors     = computed(() => taxoData.value?.colors     ?? [])
+const categories = computed(() => taxoData.value?.categories ?? [])
+
+if (taxoData.value?.initialModels?.length) {
+    models.value = taxoData.value.initialModels
+}
+
+// ── SSR-safe initial advert search ────────────────────────────────────────────────
+const { data: searchData } = await useAsyncData('adverts-search', () =>
+    $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        method: 'POST',
+        body: buildSearchBody(page.value),
+    }).catch(() => ({ items: [] as CarAdvert[], totalCount: 0 }))
+)
+
+adverts.value = searchData.value?.items ?? []
+total.value   = searchData.value?.totalCount ?? 0
+
+// ── Interactive load (client-side filtering) ────────────────────────────────────────────
 async function load(p: number = page.value) {
     page.value = p
     loading.value = true
@@ -648,12 +716,12 @@ async function load(p: number = page.value) {
     if (f.yearTo)      query.yearTo      = String(f.yearTo)
     if (f.mileageFrom) query.mileageFrom = String(f.mileageFrom)
     if (f.mileageTo)   query.mileageTo   = String(f.mileageTo)
-    if (f.powerFrom)    query.powerFrom    = String(f.powerFrom)
-    if (f.powerTo)      query.powerTo      = String(f.powerTo)
-    if (f.driveTypeId)  query.driveTypeId  = String(f.driveTypeId)
-    if (f.colorId)      query.colorId      = String(f.colorId)
-    if (f.sellerType)   query.sellerType   = f.sellerType
-    if (f.condition)    query.condition    = f.condition
+    if (f.powerFrom)   query.powerFrom   = String(f.powerFrom)
+    if (f.powerTo)     query.powerTo     = String(f.powerTo)
+    if (f.driveTypeId) query.driveTypeId = String(f.driveTypeId)
+    if (f.colorId)     query.colorId     = String(f.colorId)
+    if (f.sellerType)  query.sellerType  = f.sellerType
+    if (f.condition)   query.condition   = f.condition
     if (f.hasDamage !== null)      query.hasDamage      = String(f.hasDamage)
     if (f.hasWarranty !== null)    query.hasWarranty    = String(f.hasWarranty)
     if (f.hasServiceBook !== null) query.hasServiceBook = String(f.hasServiceBook)
@@ -663,42 +731,17 @@ async function load(p: number = page.value) {
     router.replace({ query })
 
     try {
-        const body: Record<string, unknown> = { page: p, pageSize, sortBy: f.sortBy || undefined }
-        if (f.categoryId)   body.categoryId   = f.categoryId
-        if (f.textSearch)   body.textSearch   = f.textSearch
-        if (f.brandId)      body.brandId      = f.brandId
-        if (f.modelId)      body.modelId      = f.modelId
-        if (f.fuelTypeId)   body.fuelTypeId   = f.fuelTypeId
-        if (f.bodyTypeId)   body.bodyTypeId   = f.bodyTypeId
-        if (f.gearboxId)    body.gearboxId    = f.gearboxId
-        if (f.driveTypeId)  body.driveTypeId  = f.driveTypeId
-        if (f.colorId)      body.colorId      = f.colorId
-        if (f.priceFrom)    body.priceFrom    = f.priceFrom
-        if (f.priceTo)      body.priceTo      = f.priceTo
-        if (f.yearFrom)     body.yearFrom     = f.yearFrom
-        if (f.yearTo)       body.yearTo       = f.yearTo
-        if (f.mileageFrom)  body.mileageFrom  = f.mileageFrom
-        if (f.mileageTo)    body.mileageTo    = f.mileageTo
-        if (f.powerFrom)    body.powerFrom    = f.powerFrom
-        if (f.powerTo)      body.powerTo      = f.powerTo
-        if (f.sellerType)   body.sellerType   = f.sellerType
-        if (f.condition)    body.condition    = f.condition
-        if (f.hasDamage !== null)      body.hasDamage      = f.hasDamage
-        if (f.hasWarranty !== null)    body.hasWarranty    = f.hasWarranty
-        if (f.hasServiceBook !== null) body.hasServiceBook = f.hasServiceBook
-        if (f.isImported !== null)     body.isImported     = f.isImported
-        if (f.axleCount)               body.axleCount      = f.axleCount
-        if (f.payloadFrom)             body.payloadFrom    = f.payloadFrom
-        if (f.payloadTo)               body.payloadTo      = f.payloadTo
-        if (f.grossWeightFrom)         body.grossWeightFrom = f.grossWeightFrom
-        if (f.grossWeightTo)           body.grossWeightTo   = f.grossWeightTo
-        if (f.bodySubtype)             body.bodySubtype    = f.bodySubtype
-        if (f.hasRetarder !== null)    body.hasRetarder    = f.hasRetarder
-        if (f.hasTachograph !== null)  body.hasTachograph  = f.hasTachograph
-        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', { method: 'POST', body })
-        adverts.value = r.items
-        total.value = r.totalCount
-    } finally { loading.value = false }
+        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+            method: 'POST',
+            body: buildSearchBody(p),
+        })
+        adverts.value = r?.items ?? []
+        total.value   = r?.totalCount ?? 0
+    } catch {
+        adverts.value = []
+    } finally {
+        loading.value = false
+    }
 }
 
 async function loadMore() {
@@ -706,83 +749,28 @@ async function loadMore() {
     loadingMore.value = true
     const nextPage = page.value + 1
     try {
-        const body: Record<string, unknown> = { page: nextPage, pageSize, sortBy: f.sortBy || undefined }
-        if (f.categoryId)  body.categoryId  = f.categoryId
-        if (f.textSearch)  body.textSearch  = f.textSearch
-        if (f.brandId)     body.brandId     = f.brandId
-        if (f.modelId)     body.modelId     = f.modelId
-        if (f.fuelTypeId)   body.fuelTypeId   = f.fuelTypeId
-        if (f.bodyTypeId)   body.bodyTypeId   = f.bodyTypeId
-        if (f.gearboxId)    body.gearboxId    = f.gearboxId
-        if (f.driveTypeId)  body.driveTypeId  = f.driveTypeId
-        if (f.colorId)      body.colorId      = f.colorId
-        if (f.priceFrom)    body.priceFrom    = f.priceFrom
-        if (f.priceTo)      body.priceTo      = f.priceTo
-        if (f.yearFrom)     body.yearFrom     = f.yearFrom
-        if (f.yearTo)       body.yearTo       = f.yearTo
-        if (f.mileageFrom)  body.mileageFrom  = f.mileageFrom
-        if (f.mileageTo)    body.mileageTo    = f.mileageTo
-        if (f.powerFrom)    body.powerFrom    = f.powerFrom
-        if (f.powerTo)      body.powerTo      = f.powerTo
-        if (f.sellerType)   body.sellerType   = f.sellerType
-        if (f.condition)    body.condition    = f.condition
-        if (f.hasDamage !== null)      body.hasDamage      = f.hasDamage
-        if (f.hasWarranty !== null)    body.hasWarranty    = f.hasWarranty
-        if (f.hasServiceBook !== null) body.hasServiceBook = f.hasServiceBook
-        if (f.isImported !== null)     body.isImported     = f.isImported
-        if (f.axleCount)               body.axleCount      = f.axleCount
-        if (f.payloadFrom)             body.payloadFrom    = f.payloadFrom
-        if (f.payloadTo)               body.payloadTo      = f.payloadTo
-        if (f.grossWeightFrom)         body.grossWeightFrom = f.grossWeightFrom
-        if (f.grossWeightTo)           body.grossWeightTo   = f.grossWeightTo
-        if (f.bodySubtype)             body.bodySubtype    = f.bodySubtype
-        if (f.hasRetarder !== null)    body.hasRetarder    = f.hasRetarder
-        if (f.hasTachograph !== null)  body.hasTachograph  = f.hasTachograph
-        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', { method: 'POST', body })
-        adverts.value = [...adverts.value, ...r.items]
-        total.value = r.totalCount
-        page.value = nextPage
-    } finally { loadingMore.value = false }
+        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+            method: 'POST',
+            body: buildSearchBody(nextPage),
+        })
+        adverts.value = [...adverts.value, ...(r?.items ?? [])]
+        total.value   = r?.totalCount ?? 0
+        page.value    = nextPage
+    } catch {
+    } finally {
+        loadingMore.value = false
+    }
 }
 
-onMounted(async () => {
-    fetchFavoriteIds()
-    if (route.query.page)        page.value        = Number(route.query.page)
-    if (route.query.categoryId)  f.categoryId      = Number(route.query.categoryId)
-    if (route.query.brandId)     f.brandId         = Number(route.query.brandId)
-    if (route.query.modelId)     f.modelId         = Number(route.query.modelId)
-    if (route.query.fuelTypeId)  f.fuelTypeId      = Number(route.query.fuelTypeId)
-    if (route.query.bodyTypeId)  f.bodyTypeId      = Number(route.query.bodyTypeId)
-    if (route.query.gearboxId)   f.gearboxId       = Number(route.query.gearboxId)
-    if (route.query.priceFrom)   f.priceFrom       = Number(route.query.priceFrom)
-    if (route.query.priceTo)     f.priceTo         = Number(route.query.priceTo)
-    if (route.query.yearFrom)    f.yearFrom        = Number(route.query.yearFrom)
-    if (route.query.yearTo)      f.yearTo          = Number(route.query.yearTo)
-    if (route.query.mileageFrom) f.mileageFrom     = Number(route.query.mileageFrom)
-    if (route.query.mileageTo)   f.mileageTo       = Number(route.query.mileageTo)
-    if (route.query.textSearch)  f.textSearch      = String(route.query.textSearch)
-    if (route.query.sortBy)      f.sortBy          = String(route.query.sortBy)
-    if (route.query.sellerType)    f.sellerType      = route.query.sellerType as any
-    if (route.query.condition)     f.condition       = route.query.condition as any
-    if (route.query.driveTypeId)   f.driveTypeId     = Number(route.query.driveTypeId)
-    if (route.query.colorId)       f.colorId         = Number(route.query.colorId)
-    if (route.query.hasDamage)     f.hasDamage       = route.query.hasDamage === 'true'
-    if (route.query.hasWarranty)   f.hasWarranty     = route.query.hasWarranty === 'true'
-    if (route.query.hasServiceBook) f.hasServiceBook = route.query.hasServiceBook === 'true'
-    if (route.query.isImported)    f.isImported      = route.query.isImported === 'true'
-    ;[brands.value, fuelTypes.value, bodyTypes.value, gearboxes.value, driveTypes.value, colors.value, categories.value] = await Promise.all([
-        fetchBrands(), fetchFuelTypes(), fetchBodyTypes(), fetchGearboxes(), fetchDriveTypes(), fetchColors(), fetchCategories()
-    ])
-    if (f.brandId) models.value = await fetchModels(f.brandId)
-    await load(page.value)
-})
+// Fetch favorites client-side only
+onMounted(() => { fetchFavoriteIds() })
 </script>
 
 <style lang="scss" scoped>
 .page-bg { background: $bg; min-height: 100vh; padding-top: $nav-height; }
 .container { @include container; }
 
-// ── Category hero ──────────────────────────────────────────────────────────────
+// ── Category hero ──────────────────────────────────────────────────────────────────────────────
 .cat-hero {
     position: relative;
     height: 260px;
@@ -836,7 +824,7 @@ onMounted(async () => {
     margin-top: 8px;
 }
 
-// ── Page header (no category) ──────────────────────────────────────────────────
+// ── Page header (no category) ───────────────────────────────────────────────────────
 .page-header {
     padding: 48px 0 0;
 }
@@ -853,7 +841,7 @@ onMounted(async () => {
     margin-top: 6px;
 }
 
-// ── Search section ─────────────────────────────────────────────────────────────
+// ── Search section ───────────────────────────────────────────────────────────────────────
 .search-section {
     padding: 24px 0 0;
 }
@@ -1006,7 +994,7 @@ onMounted(async () => {
     }
 }
 
-// ── Layout ─────────────────────────────────────────────────────────────────────
+// ── Layout ──────────────────────────────────────────────────────────────────────────────
 .main-layout {
     display: grid;
     grid-template-columns: 268px 1fr;
@@ -1017,7 +1005,7 @@ onMounted(async () => {
     @include respond-to(md) { grid-template-columns: 1fr; }
 }
 
-// ── Sidebar ────────────────────────────────────────────────────────────────────
+// ── Sidebar ────────────────────────────────────────────────────────────────────────────
 .sidebar {
     display: flex;
     flex-direction: column;
@@ -1370,7 +1358,7 @@ onMounted(async () => {
     &:hover { opacity: 0.88; }
 }
 
-// ── Content area ───────────────────────────────────────────────────────────────
+// ── Content area ────────────────────────────────────────────────────────────────────────────
 .content { min-width: 0; }
 
 .results-hd {
@@ -1518,7 +1506,7 @@ onMounted(async () => {
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-// ── Pagination ─────────────────────────────────────────────────────────────────
+// ── Pagination ────────────────────────────────────────────────────────────────────────────────
 .pagination {
     display: flex;
     align-items: center;

@@ -41,7 +41,7 @@
                     type="button"
                     class="type-btn"
                     :class="{ 'type-active': accountType === 'Personal' }"
-                    @click="accountType = 'Personal'"
+                    @click="accountType = 'Personal'; businessSubType = null"
                 >
                     <v-icon icon="mdi-account-outline" size="18" />
                     Sprzedawca prywatny
@@ -56,6 +56,37 @@
                     Dealer / Firma
                 </button>
             </div>
+
+            <!-- Business sub-type selector -->
+            <Transition name="btype-fade">
+                <div v-if="accountType === 'Business'" class="btype-section">
+                    <p class="btype-title">Wybierz typ konta biznesowego</p>
+                    <div class="btype-cards">
+                        <button
+                            v-for="bt in businessTypes"
+                            :key="bt.key"
+                            type="button"
+                            class="btype-card"
+                            :class="{ 'btype-card--active': businessSubType === bt.key }"
+                            @click="businessSubType = bt.key"
+                        >
+                            <div class="btype-icon">
+                                <v-icon :icon="bt.icon" size="22" />
+                            </div>
+                            <div class="btype-text">
+                                <strong class="btype-name">{{ bt.name }}</strong>
+                                <span class="btype-desc">{{ bt.desc }}</span>
+                            </div>
+                            <v-icon
+                                v-if="businessSubType === bt.key"
+                                icon="mdi-check-circle"
+                                size="18"
+                                class="btype-check"
+                            />
+                        </button>
+                    </div>
+                </div>
+            </Transition>
 
             <form class="auth-form" @submit.prevent="submit">
                 <!-- Business fields -->
@@ -184,6 +215,7 @@ const { register, loading, error } = useAuth()
 const runtimeConfig = useRuntimeConfig()
 
 const accountType      = ref<'Personal' | 'Business'>('Personal')
+const businessSubType  = ref<'Dealer' | 'Komis' | 'Firma' | null>(null)
 const name             = ref('')
 const surname          = ref('')
 const email            = ref('')
@@ -200,6 +232,12 @@ const resending = ref(false)
 const turnstileToken  = ref('')
 const turnstileRef    = ref<{ reset: () => void } | null>(null)
 const turnstileSiteKey = runtimeConfig.public.turnstileSiteKey as string
+
+const businessTypes = [
+    { key: 'Dealer' as const, name: 'Dealer',  icon: 'mdi-car-key',                  desc: 'Indywidualny dealer pojazdów' },
+    { key: 'Komis'  as const, name: 'Komis',   icon: 'mdi-store-outline',             desc: 'Komis samochodowy – sprzedaż komisowa' },
+    { key: 'Firma'  as const, name: 'Firma',   icon: 'mdi-office-building-outline',   desc: 'Firma lub spółka handlowa' },
+]
 
 const redirectTo = computed(() => {
     const r = route.query.redirect
@@ -240,6 +278,10 @@ async function submit() {
         return
     }
     if (accountType.value === 'Business') {
+        if (!businessSubType.value) {
+            validationError.value = 'Wybierz typ konta biznesowego (Dealer / Komis / Firma).'
+            return
+        }
         const nipDigits = nip.value.replace(/\D/g, '')
         if (nipDigits.length !== 10) {
             validationError.value = 'NIP musi składać się z dokładnie 10 cyfr.'
@@ -257,6 +299,7 @@ async function submit() {
         phonenumber: phoneNumber.value,
         password: password.value,
         accountType: accountType.value,
+        businessType: accountType.value === 'Business' ? businessSubType.value : undefined,
         companyName: accountType.value === 'Business' ? companyName.value : undefined,
         nip: accountType.value === 'Business' ? nip.value : undefined,
         turnstileToken: turnstileToken.value,
@@ -313,14 +356,11 @@ async function resendVerification() {
     @include respond-to(sm) { padding: 32px 20px 24px; }
 }
 
-.auth-logo { height: 32px; width: auto; // overrides below
-    display: inline-block;
+.auth-logo {
     display: block;
-    
-    
-    
-    
     margin-bottom: 28px;
+    height: 32px;
+    width: auto;
 }
 
 h2 {
@@ -344,7 +384,7 @@ h2 {
     border-radius: $r-md;
     padding: 4px;
     gap: 4px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
 .type-btn {
@@ -367,6 +407,98 @@ h2 {
     &.type-active { background: $red; color: white; font-weight: 700; }
 }
 
+// ── Business sub-type ──────────────────────────────────────────────────────────
+.btype-section {
+    margin-bottom: 20px;
+}
+
+.btype-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+}
+
+.btype-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btype-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: $r-md;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    text-align: left;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+
+    &:hover {
+        border-color: rgba($red, 0.4);
+        background: rgba($red, 0.04);
+    }
+
+    &--active {
+        border-color: $red;
+        background: rgba($red, 0.07);
+    }
+}
+
+.btype-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: $r-sm;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: $text-muted;
+
+    .btype-card--active & {
+        background: rgba($red, 0.15);
+        color: $red;
+    }
+}
+
+.btype-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.btype-name {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: $text;
+    margin-bottom: 2px;
+}
+
+.btype-desc {
+    font-size: 12px;
+    color: $text-dim;
+}
+
+.btype-check {
+    color: $red;
+    flex-shrink: 0;
+}
+
+// Transition
+.btype-fade-enter-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.btype-fade-leave-active { transition: opacity 0.15s ease, transform 0.15s ease; }
+.btype-fade-enter-from,
+.btype-fade-leave-to { opacity: 0; transform: translateY(-6px); }
+
+// ── Form ──────────────────────────────────────────────────────────────────────
 .auth-form {
     display: flex;
     flex-direction: column;
@@ -649,7 +781,7 @@ h2 {
     }
 }
 
-// Transition
+// Transitions
 .success-fade-enter-active { transition: opacity 0.35s ease; }
 .success-fade-leave-active { transition: opacity 0.2s ease; }
 .success-fade-enter-from,

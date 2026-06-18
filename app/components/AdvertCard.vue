@@ -56,6 +56,15 @@ const badgeText = computed(() => {
     }
     return resolvedBadge.value ? (map[resolvedBadge.value] ?? resolvedBadge.value) : null
 })
+
+const monthlyRate = computed(() => {
+    const price = props.advert.price
+    if (!price || price < 10000) return null
+    const r = 0.0899 / 12
+    const n = 48
+    const factor = r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1)
+    return Math.round(price * factor)
+})
 </script>
 
 <template>
@@ -101,6 +110,11 @@ const badgeText = computed(() => {
                 <span v-if="advert.powerHP"><v-icon icon="mdi-engine-outline" size="14" class="mr-1" />{{ advert.powerHP }} KM</span>
             </div>
             <div class="car-price">{{ advert.price.toLocaleString('pl') }} zł</div>
+            <div v-if="monthlyRate" class="car-monthly">
+                <v-icon icon="mdi-bank-outline" size="12" class="car-monthly-icon" />
+                od {{ monthlyRate.toLocaleString('pl') }} zł/mies.
+                <span class="car-monthly-label">ING leasing</span>
+            </div>
             <div class="car-footer">
                 <span v-if="advert.city" class="car-city">
                     <v-icon icon="mdi-map-marker-outline" size="14" class="mr-1" />{{ advert.city }}
@@ -258,7 +272,29 @@ const badgeText = computed(() => {
     color: $red;
     font-size: 22px;
     font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.car-monthly {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: $text-dim;
     margin-bottom: 10px;
+
+    .car-monthly-icon { color: $text-dark; }
+}
+
+.car-monthly-label {
+    font-size: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: $text-dark;
+    font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
 .car-footer {
