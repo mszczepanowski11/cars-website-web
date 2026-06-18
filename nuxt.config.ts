@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: process.env.NITRO_PRESET ?? 'netlify',
+    preset: 'node',
   },
   devtools: { enabled: true },
 
