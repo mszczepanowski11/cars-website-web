@@ -62,14 +62,131 @@
                     <template v-for="(stat, i) in visibleStats" :key="stat.key">
                         <div v-if="i > 0" class="sstrip-sep" />
                         <div class="sstrip-item">
-                            <div v-if="statsLoading" class="sstrip-skeleton" />
-                            <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
-                            <span class="sstrip-label">{{ stat.label }}</span>
+                            <div class="sstrip-icon-badge">
+                                <v-icon :icon="stat.icon" size="22" />
+                            </div>
+                            <div class="sstrip-text">
+                                <div v-if="statsLoading" class="sstrip-skeleton" />
+                                <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
+                                <span class="sstrip-label">{{ stat.label }}</span>
+                            </div>
                         </div>
                     </template>
                 </div>
             </div>
         </div>
+
+        <!-- Search section -->
+        <section class="search-section">
+            <div class="container">
+                <div class="cat-tabs">
+                    <button
+                        v-for="cat in SEARCH_CATEGORIES"
+                        :key="cat.slug"
+                        class="cat-tab"
+                        :class="{ 'cat-tab--active': searchCat === cat.slug }"
+                        @click="selectSearchCat(cat.slug)"
+                    >
+                        <v-icon :icon="cat.icon" size="15" />
+                        <span>{{ cat.label }}</span>
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <div class="sb-input-wrap">
+                        <v-icon icon="mdi-magnify" size="20" class="sb-search-icon" />
+                        <input
+                            v-model="searchText"
+                            type="text"
+                            class="sb-input"
+                            placeholder="Szukaj: marka, model, rocznik..."
+                            @keyup.enter="doSearch"
+                        />
+                    </div>
+                    <button class="sb-btn" @click="doSearch">
+                        <v-icon icon="mdi-magnify" size="18" />
+                        <span>Szukaj</span>
+                    </button>
+                </div>
+                <div class="filter-grid">
+                    <template v-if="currentSearchConfig.hasBrand">
+                        <div class="fg-field">
+                            <label class="fg-label">Marka</label>
+                            <select v-model="searchBrandId" class="fg-select" @change="searchModelId = null; loadSearchModels()">
+                                <option :value="null">Wszystkie marki</option>
+                                <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                            </select>
+                        </div>
+                        <div v-if="currentSearchConfig.hasModel" class="fg-field">
+                            <label class="fg-label">Model</label>
+                            <select v-model="searchModelId" class="fg-select" :disabled="!searchBrandId">
+                                <option :value="null">Wszystkie modele</option>
+                                <option v-for="m in searchModels" :key="m.id" :value="m.id">{{ m.name }}</option>
+                            </select>
+                        </div>
+                    </template>
+                    <div v-if="currentSearchConfig.subtypes?.length" class="fg-field">
+                        <label class="fg-label">{{ currentSearchConfig.subtypeLabel }}</label>
+                        <select v-model="searchSubtype" class="fg-select">
+                            <option value="">Wszystkie</option>
+                            <option v-for="t in currentSearchConfig.subtypes" :key="t" :value="t">{{ t }}</option>
+                        </select>
+                    </div>
+                    <div v-if="currentSearchConfig.hasPartCategory" class="fg-field">
+                        <label class="fg-label">Kategoria części</label>
+                        <select v-model="searchSubtype" class="fg-select">
+                            <option value="">Wszystkie</option>
+                            <option v-for="t in PART_CATEGORIES" :key="t" :value="t">{{ t }}</option>
+                        </select>
+                    </div>
+                    <div v-if="currentSearchConfig.hasFuel" class="fg-field">
+                        <label class="fg-label">Paliwo</label>
+                        <select v-model="searchFuelId" class="fg-select">
+                            <option :value="null">Wszystkie</option>
+                            <option v-for="f in fuelTypes" :key="f.id" :value="f.id">{{ f.name }}</option>
+                        </select>
+                    </div>
+                    <div v-if="currentSearchConfig.hasBodyType" class="fg-field">
+                        <label class="fg-label">Nadwozie</label>
+                        <select v-model="searchBodyTypeId" class="fg-select">
+                            <option :value="null">Wszystkie</option>
+                            <option v-for="b in bodyTypes" :key="b.id" :value="b.id">{{ b.name }}</option>
+                        </select>
+                    </div>
+                    <div class="fg-field fg-range">
+                        <label class="fg-label">Cena (PLN)</label>
+                        <div class="fg-range-inputs">
+                            <input v-model="searchPriceFrom" type="number" class="fg-input" placeholder="Od" min="0" />
+                            <span class="fg-range-sep">—</span>
+                            <input v-model="searchPriceTo" type="number" class="fg-input" placeholder="Do" min="0" />
+                        </div>
+                    </div>
+                    <div class="fg-field fg-range">
+                        <label class="fg-label">Rok produkcji</label>
+                        <div class="fg-range-inputs">
+                            <input v-model="searchYearFrom" type="number" class="fg-input" placeholder="Od" min="1900" :max="currentYear" />
+                            <span class="fg-range-sep">—</span>
+                            <input v-model="searchYearTo" type="number" class="fg-input" placeholder="Do" min="1900" :max="currentYear" />
+                        </div>
+                    </div>
+                    <div v-if="currentSearchConfig.hasHours" class="fg-field fg-range">
+                        <label class="fg-label">Motogodziny</label>
+                        <div class="fg-range-inputs">
+                            <input v-model="searchHoursFrom" type="number" class="fg-input" placeholder="Od" min="0" />
+                            <span class="fg-range-sep">—</span>
+                            <input v-model="searchHoursTo" type="number" class="fg-input" placeholder="Do" min="0" />
+                        </div>
+                    </div>
+                    <div v-else-if="currentSearchConfig.hasMileage" class="fg-field fg-range">
+                        <label class="fg-label">Przebieg (km)</label>
+                        <div class="fg-range-inputs">
+                            <input v-model="searchMileageFrom" type="number" class="fg-input" placeholder="Od" min="0" />
+                            <span class="fg-range-sep">—</span>
+                            <input v-model="searchMileageTo" type="number" class="fg-input" placeholder="Do" min="0" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Ostatnio dodane -->
         <section v-if="recentlyAdded.length || featured.length" class="section">
@@ -425,7 +542,100 @@ const visibleStats = computed(() => [
 
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
-const { fetchBrands, fetchModels } = useTaxonomy()
+const { fetchBrands, fetchModels, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
+
+const currentYear = new Date().getFullYear()
+
+const SEARCH_CATEGORIES = [
+    { slug: 'auta-osobowe', label: 'Auta osobowe', icon: 'mdi-car' },
+    { slug: 'dostawcze',    label: 'Dostawcze',    icon: 'mdi-truck-delivery' },
+    { slug: 'ciezarowe',    label: 'Ciężarowe',    icon: 'mdi-truck' },
+    { slug: 'motocykle',    label: 'Motocykle',    icon: 'mdi-motorbike' },
+    { slug: 'czesci',       label: 'Części',       icon: 'mdi-cog' },
+    { slug: 'budowlane',    label: 'Budowlane',    icon: 'mdi-excavator' },
+    { slug: 'rolnicze',     label: 'Rolnicze',     icon: 'mdi-tractor' },
+    { slug: 'maszyny',      label: 'Maszyny',      icon: 'mdi-forklift' },
+    { slug: 'przyczepy',    label: 'Przyczepy',    icon: 'mdi-rv-truck' },
+    { slug: 'inne',         label: 'Inne',         icon: 'mdi-dots-horizontal-circle' },
+] as const
+
+interface SearchConfig {
+    hasBrand: boolean; hasModel: boolean; hasFuel: boolean; hasBodyType: boolean
+    hasMileage: boolean; hasHours: boolean; hasPartCategory?: boolean
+    subtypeLabel?: string; subtypes?: string[]
+}
+
+const SEARCH_CONFIGS: Record<string, SearchConfig> = {
+    'auta-osobowe': { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: true,  hasMileage: true,  hasHours: false },
+    'motocykle':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Typ motocykla', subtypes: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Skuter', 'Chopper', 'Cross'] },
+    'dostawcze':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Zabudowa', subtypes: ['Furgon', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Platforma'] },
+    'ciezarowe':    { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Typ', subtypes: ['Ciągnik siodłowy', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Cysterna', 'Śmieciarka'] },
+    'czesci':       { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, hasPartCategory: true },
+    'budowlane':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ maszyny', subtypes: ['Koparka gąsienicowa', 'Koparko-ładowarka', 'Minieksawator', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka'] },
+    'rolnicze':     { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ maszyny', subtypes: ['Ciągnik', 'Kombajn', 'Siewnik', 'Pług', 'Prasa', 'Opryskiwacz', 'Rozsiewacz'] },
+    'maszyny':      { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ', subtypes: ['Wózek widłowy', 'Dźwig/Żuraw', 'Platforma robocza', 'Agregat prądotwórczy', 'Sprężarka', 'Pompa'] },
+    'przyczepy':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, subtypeLabel: 'Typ', subtypes: ['Naczepa plandeka', 'Laweta', 'Wywrotka', 'Kempingowa', 'Kontenerowa'] },
+    'inne':         { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false },
+}
+
+const PART_CATEGORIES = ['Silnik', 'Zawieszenie', 'Hamulce', 'Elektryka', 'Karoseria', 'Wnętrze', 'Skrzynia biegów', 'Układ kierowniczy', 'Opony i felgi', 'Oświetlenie', 'Tuning', 'Inne']
+
+const searchCat = ref('auta-osobowe')
+const searchText = ref('')
+const searchBrandId = ref<number | null>(null)
+const searchModelId = ref<number | null>(null)
+const searchFuelId = ref<number | null>(null)
+const searchBodyTypeId = ref<number | null>(null)
+const searchSubtype = ref('')
+const searchPriceFrom = ref('')
+const searchPriceTo = ref('')
+const searchYearFrom = ref('')
+const searchYearTo = ref('')
+const searchMileageFrom = ref('')
+const searchMileageTo = ref('')
+const searchHoursFrom = ref('')
+const searchHoursTo = ref('')
+const searchModels = ref<TaxonomyItem[]>([])
+const fuelTypes = ref<TaxonomyItem[]>([])
+const bodyTypes = ref<TaxonomyItem[]>([])
+
+const currentSearchConfig = computed(() => SEARCH_CONFIGS[searchCat.value] ?? SEARCH_CONFIGS['auta-osobowe'])
+
+function selectSearchCat(slug: string) {
+    searchCat.value = slug
+    searchBrandId.value = null
+    searchModelId.value = null
+    searchFuelId.value = null
+    searchBodyTypeId.value = null
+    searchSubtype.value = ''
+    searchModels.value = []
+}
+
+async function loadSearchModels() {
+    if (!searchBrandId.value) { searchModels.value = []; return }
+    try { searchModels.value = await fetchModels(searchBrandId.value) } catch { searchModels.value = [] }
+}
+
+function doSearch() {
+    const query: Record<string, string> = {}
+    if (searchText.value.trim()) query.textSearch = searchText.value.trim()
+    if (searchBrandId.value) query.brandId = String(searchBrandId.value)
+    if (searchModelId.value) query.modelId = String(searchModelId.value)
+    if (searchFuelId.value) query.fuelTypeId = String(searchFuelId.value)
+    if (searchBodyTypeId.value) query.bodyTypeId = String(searchBodyTypeId.value)
+    if (searchSubtype.value) query.subtype = searchSubtype.value
+    if (searchPriceFrom.value) query.priceFrom = searchPriceFrom.value
+    if (searchPriceTo.value) query.priceTo = searchPriceTo.value
+    if (searchYearFrom.value) query.yearFrom = searchYearFrom.value
+    if (searchYearTo.value) query.yearTo = searchYearTo.value
+    if (searchMileageFrom.value) query.mileageFrom = searchMileageFrom.value
+    if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
+    if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
+    if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
+    const cat = homeCategories.value.find(c => c.slug === searchCat.value)
+    if (cat) query.categoryId = String(cat.id)
+    navigateTo({ path: '/adverts', query })
+}
 
 // ING calculator
 const ingCalcAmount = ref(80000)
@@ -500,6 +710,8 @@ onMounted(async () => {
             .then(s => { Object.assign(homeStats.value, s) })
             .catch(() => {}),
         fetchBrands().then(b => { filterBrands.value = b }).catch(() => {}),
+        fetchFuelTypes().then(f => { fuelTypes.value = f }).catch(() => {}),
+        fetchBodyTypes().then(b => { bodyTypes.value = b }).catch(() => {}),
     ])
     statsLoading.value = false
     await nextTick()
@@ -723,14 +935,14 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 72px;
+    height: 86px;
 
-    @include respond-to(sm) { flex-wrap: wrap; height: auto; padding: 8px 0; }
+    @include respond-to(sm) { flex-wrap: wrap; height: auto; padding: 10px 0; }
 }
 
 .sstrip-sep {
     width: 1px;
-    height: 30px;
+    height: 36px;
     background: $border;
     flex-shrink: 0;
 
@@ -739,18 +951,38 @@ onMounted(async () => {
 
 .sstrip-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 2px;
-    padding: 0 44px;
+    gap: 14px;
+    padding: 0 36px;
     flex: 1;
 
-    @include respond-to(md) { padding: 0 24px; }
-    @include respond-to(sm) { flex: 0 0 50%; padding: 10px 16px; }
+    @include respond-to(md) { padding: 0 20px; gap: 12px; }
+    @include respond-to(sm) { flex: 0 0 50%; padding: 12px 16px; }
+}
+
+.sstrip-icon-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: $red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+
+    @include respond-to(sm) { width: 42px; height: 42px; }
+}
+
+.sstrip-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
 
 .sstrip-num {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 900;
     color: $text;
     line-height: 1;
@@ -779,6 +1011,184 @@ onMounted(async () => {
 @keyframes shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+}
+
+// ── Search section ────────────────────────────────────────────────────────────
+.search-section {
+    padding: 40px 0 44px;
+    background: rgba(255,255,255,0.01);
+    border-bottom: 1px solid $border;
+}
+
+.cat-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+
+    &::-webkit-scrollbar { display: none; }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.cat-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid $border;
+    border-radius: 50px;
+    background: transparent;
+    color: $text-dim;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+
+    &:hover { border-color: rgba($red, 0.45); color: $text; }
+
+    &--active {
+        background: $red;
+        border-color: $red;
+        color: white;
+    }
+}
+
+.search-bar {
+    display: flex;
+    align-items: stretch;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    height: 54px;
+
+    &:focus-within { border-color: rgba($red, 0.4); }
+}
+
+.sb-input-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    min-width: 0;
+}
+
+.sb-search-icon { color: $text-dim; flex-shrink: 0; }
+
+.sb-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $text;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+
+    &::placeholder { color: $text-dark; }
+}
+
+.sb-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: $red;
+    color: white;
+    border: none;
+    padding: 0 28px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    flex-shrink: 0;
+
+    &:hover { background: lighten(#8B0D1D, 6%); }
+
+    @include respond-to(sm) { padding: 0 18px; }
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+
+    @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(xs) { grid-template-columns: 1fr; }
+}
+
+.fg-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fg-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-dim;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.fg-select {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: 8px;
+    color: $text;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    padding: 9px 12px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    option { background: #111; color: #fff; }
+    &:focus { border-color: rgba($red, 0.5); }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.fg-range {
+    @include respond-to(sm) { grid-column: span 2; }
+    @include respond-to(xs) { grid-column: span 1; }
+}
+
+.fg-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fg-range-sep {
+    color: $text-dark;
+    flex-shrink: 0;
+    font-size: 13px;
+}
+
+.fg-input {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: 8px;
+    color: $text;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    padding: 9px 10px;
+    outline: none;
+    min-width: 0;
+    transition: border-color 0.2s;
+
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba($red, 0.5); }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button { -webkit-appearance: none; }
 }
 
 // Sections
