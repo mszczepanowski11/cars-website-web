@@ -1,6 +1,6 @@
 FROM node:20
 
-ENV NITRO_PRESET=node
+ENV NITRO_PRESET=node_server
 ENV HOST=0.0.0.0
 
 WORKDIR /app
