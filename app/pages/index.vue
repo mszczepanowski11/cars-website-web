@@ -922,16 +922,16 @@ onMounted(async () => {
 
 // Title
 .hfs-title {
-    font-size: 96px;
-    line-height: 0.95;
+    font-size: 64px;
+    line-height: 1;
     font-weight: 900;
     color: $text;
-    letter-spacing: -3px;
-    margin-bottom: 26px;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
     animation: fadeInUp 0.7s 0.1s ease both;
 
-    @include respond-to(md) { font-size: 64px; letter-spacing: -2px; }
-    @include respond-to(sm) { font-size: 44px; letter-spacing: -1px; }
+    @include respond-to(md) { font-size: 48px; letter-spacing: -1.5px; }
+    @include respond-to(sm) { font-size: 34px; letter-spacing: -1px; }
 }
 
 .title-accent {
