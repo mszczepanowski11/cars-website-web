@@ -10,127 +10,15 @@
             </div>
 
             <div class="container hfs-content">
-                <!-- Title -->
-                <div class="hfs-eyebrow">
-                    <span class="eyebrow-dot" />
-                    Platforma nowej generacji
-                </div>
                 <h1 class="hfs-title">
                     Motoryzacja.<br>
-                    <span class="title-accent">W lepszym</span><br>
+                    <span class="title-accent">W&nbsp;lepszym</span><br>
                     wydaniu.
                 </h1>
                 <p class="hfs-sub">
                     CARIZO to więcej niż portal ogłoszeniowy.<br>
                     To miejsce, gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
                 </p>
-
-                <!-- Category tiles -->
-                <div class="hfs-cats">
-                    <button
-                        v-for="cat in heroCats"
-                        :key="cat.key"
-                        class="hfs-cat-tile"
-                        :class="{ active: heroCategory === cat.key }"
-                        @click="selectHeroCategory(cat.key)"
-                    >
-                        <v-icon :icon="cat.icon" size="20" class="hfs-cat-icon" />
-                        <span>{{ cat.label }}</span>
-                    </button>
-                </div>
-
-                <!-- Dynamic search bar -->
-                <div class="hfs-searchbar">
-                    <!-- Type selector (Budowlane / Rolnicze / Części) -->
-                    <template v-if="heroCatConfig.typeOptions">
-                        <div class="hfs-field">
-                            <label class="hfs-field-label">{{ heroCatConfig.typeLabel }}</label>
-                            <select v-model="heroCatType" class="hfs-select">
-                                <option :value="null">Wszystkie</option>
-                                <option v-for="t in heroCatConfig.typeOptions" :key="t" :value="t">{{ t }}</option>
-                            </select>
-                        </div>
-                        <div class="hfs-vsep" />
-                    </template>
-
-                    <!-- Brand -->
-                    <template v-if="heroCatConfig.showBrand">
-                        <div class="hfs-field">
-                            <label class="hfs-field-label">Marka</label>
-                            <select v-model="heroMarka" class="hfs-select" @change="heroModel = null; loadHeroModels()">
-                                <option :value="null">Wszystkie marki</option>
-                                <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
-                            </select>
-                        </div>
-                        <div class="hfs-vsep" />
-                    </template>
-
-                    <!-- Model -->
-                    <template v-if="heroCatConfig.showModel">
-                        <div class="hfs-field">
-                            <label class="hfs-field-label">
-                                {{ heroMarka ? 'Model' : 'Model' }}
-                            </label>
-                            <select v-model="heroModel" class="hfs-select" :disabled="!heroMarka">
-                                <option :value="null">{{ heroMarka ? 'Wszystkie modele' : 'Najpierw wybierz markę' }}</option>
-                                <option v-for="m in heroModels" :key="m.id" :value="m.id">{{ m.name }}</option>
-                            </select>
-                        </div>
-                        <div class="hfs-vsep" />
-                    </template>
-
-                    <!-- Fuel (cars / motorcycles) -->
-                    <template v-if="heroCatConfig.showFuel">
-                        <div class="hfs-field">
-                            <label class="hfs-field-label">Paliwo</label>
-                            <select v-model="heroFuel" class="hfs-select">
-                                <option :value="null">Dowolne</option>
-                                <option v-for="f in FUEL_OPTIONS" :key="f" :value="f">{{ f }}</option>
-                            </select>
-                        </div>
-                        <div class="hfs-vsep" />
-                    </template>
-
-                    <!-- Year from / to (cars / motorcycles / trucks / agri) -->
-                    <template v-if="heroCatConfig.showYear">
-                        <div class="hfs-field hfs-field--narrow">
-                            <label class="hfs-field-label">Rok od</label>
-                            <select v-model="heroYearFrom" class="hfs-select">
-                                <option :value="null">od</option>
-                                <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
-                            </select>
-                        </div>
-                        <div class="hfs-vsep" />
-                        <div class="hfs-field hfs-field--narrow">
-                            <label class="hfs-field-label">do</label>
-                            <select v-model="heroYearTo" class="hfs-select">
-                                <option :value="null">do</option>
-                                <option v-for="y in yearsReverse" :key="y" :value="y">{{ y }}</option>
-                            </select>
-                        </div>
-                        <div class="hfs-vsep" />
-                    </template>
-
-                    <!-- Price -->
-                    <div class="hfs-field">
-                        <label class="hfs-field-label">Cena max (zł)</label>
-                        <input
-                            v-model="heroPrice"
-                            type="number"
-                            class="hfs-price-input"
-                            placeholder="np. 80 000"
-                            min="0"
-                            @keyup.enter="doHeroSearch"
-                        />
-                    </div>
-
-                    <button class="hfs-search-btn" @click="doHeroSearch">
-                        <v-icon icon="mdi-magnify" size="20" />
-                        <span>Szukaj</span>
-                    </button>
-                </div>
-
-                <!-- Quick links -->
                 <div class="hfs-links">
                     <NuxtLink to="/add-advert" class="hfs-link hfs-link--primary">
                         <v-icon icon="mdi-plus-circle-outline" size="15" />
