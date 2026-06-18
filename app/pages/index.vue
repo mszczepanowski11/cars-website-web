@@ -816,10 +816,8 @@ onMounted(async () => {
 }
 
 .title-accent {
-    color: transparent;
-    -webkit-text-stroke: 2px rgba(255,255,255,0.7);
-
-    @include respond-to(sm) { -webkit-text-stroke: 1.5px rgba(255,255,255,0.7); }
+    color: $red;
+    -webkit-text-stroke: 0;
 }
 
 .hfs-sub {
