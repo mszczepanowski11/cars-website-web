@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20
 
 ENV NITRO_PRESET=node
 ENV HOST=0.0.0.0
@@ -6,7 +6,7 @@ ENV HOST=0.0.0.0
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --ignore-scripts && npm rebuild sharp
+RUN npm pkg delete scripts.postinstall && npm install
 
 COPY . .
 RUN npm run build
