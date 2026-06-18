@@ -6,7 +6,7 @@ ENV HOST=0.0.0.0
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --ignore-scripts
+RUN npm install --ignore-scripts && npm rebuild sharp
 
 COPY . .
 RUN npm run build
