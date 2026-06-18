@@ -257,7 +257,7 @@
             <div class="container">
                 <div class="why-header">
                     <div class="why-eyebrow">DLACZEGO MY</div>
-                    <h2 class="why-title">Dlaczego CARI<span>ZO</span>?</h2>
+                    <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" />
                     <p class="why-sub">Łączymy najlepszą technologię z pasją do motoryzacji</p>
                 </div>
                 <div class="why-grid">
@@ -1632,14 +1632,13 @@ onMounted(async () => {
     margin-bottom: 12px;
 }
 
-.why-title {
-    font-size: 36px;
-    font-weight: 900;
-    color: $text;
-    margin: 0 0 12px;
-    letter-spacing: -0.5px;
-
-    span { color: $red; }
+.why-logo {
+    height: 52px;
+    width: auto;
+    display: block;
+    margin: 0 auto 12px;
+    filter: brightness(0) invert(1);
+    opacity: 0.92;
 }
 
 .why-sub {
