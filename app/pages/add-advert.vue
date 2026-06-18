@@ -39,7 +39,7 @@
 
     <div class="add-page">
 
-        <!-- Top bar -->
+        <!-- ── Top bar ──────────────────────────────────────────────────────── -->
         <div class="top-bar">
             <div class="top-left">
                 <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" />
@@ -48,11 +48,14 @@
                     Wróć do panelu
                 </button>
             </div>
-            <div class="top-center">{{ isEdit ? 'Edytuj ogłoszenie' : 'Dodaj ogłoszenie' }}</div>
+            <div class="top-center">
+                <span class="tc-label">{{ isEdit ? 'Edytuj ogłoszenie' : 'Dodaj ogłoszenie' }}</span>
+                <span class="tc-step">Krok {{ currentStep + 1 }} z {{ steps.length }}</span>
+            </div>
             <div class="top-right">
                 <button class="btn-draft" :class="{ 'btn-draft--saved': draftSaved }" @click="saveDraft">
                     <v-icon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="16" />
-                    {{ draftSaved ? 'Zapisano!' : 'Zapisz szkic' }}
+                    {{ draftSaved ? 'Zapisano!' : 'Szkic' }}
                 </button>
                 <button class="btn-close" @click="navigateTo('/my-adverts')">
                     <v-icon icon="mdi-close" size="18" />
@@ -60,411 +63,359 @@
             </div>
         </div>
 
-        <!-- Body -->
+        <!-- ── Page body ─────────────────────────────────────────────────────── -->
         <div class="page-body">
 
-            <!-- Left sidebar -->
+            <!-- ── Left sidebar ──────────────────────────────────────────────── -->
             <aside class="left-sidebar">
+
+                <!-- Steps nav -->
                 <nav class="steps-nav">
                     <div v-for="(step, i) in steps" :key="i"
                         class="step-item"
                         :class="{ 'step-active': currentStep === i, 'step-done': currentStep > i }"
                         @click="currentStep > i && (currentStep = i)">
                         <div class="step-num">
-                            <v-icon v-if="currentStep > i" icon="mdi-check" size="13" />
+                            <v-icon v-if="currentStep > i" icon="mdi-check" size="12" />
                             <span v-else>{{ i + 1 }}</span>
                         </div>
                         <div class="step-info">
                             <div class="step-name">{{ step.name }}</div>
                             <div class="step-desc">{{ step.desc }}</div>
                         </div>
+                        <div v-if="currentStep > i" class="step-done-line" />
                     </div>
                 </nav>
-                <div class="sidebar-help">
-                    <v-icon icon="mdi-help-circle-outline" size="20" class="help-icon" />
-                    <div>
-                        <div class="help-title">Potrzebujesz pomocy?</div>
-                        <p class="help-sub">Sprawdź poradnik jak dodać najlepsze ogłoszenie</p>
-                        <NuxtLink to="/jak-to-dziala" target="_blank" class="help-link">Zobacz poradnik →</NuxtLink>
+
+                <!-- Premium Score panel -->
+                <div class="score-panel">
+                    <div class="score-panel-head">
+                        <v-icon icon="mdi-chart-arc" size="14" class="sp-head-icon" />
+                        <span>Premium Score</span>
+                    </div>
+                    <div class="score-circle-wrap">
+                        <svg viewBox="0 0 120 120" width="110" height="110">
+                            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="9" />
+                            <circle cx="60" cy="60" r="52" fill="none"
+                                :stroke="adScore >= 80 ? '#22c55e' : adScore >= 55 ? '#f59e0b' : '#8B0D1D'"
+                                stroke-width="9"
+                                stroke-linecap="round"
+                                :stroke-dasharray="`${scoreArc} 326.7`"
+                                transform="rotate(-90 60 60)"
+                                style="transition: stroke-dasharray 0.6s ease" />
+                        </svg>
+                        <div class="score-num-wrap">
+                            <span class="score-val">{{ adScore }}</span>
+                            <span class="score-denom">/100</span>
+                        </div>
+                    </div>
+                    <div class="score-badge" :class="adScore >= 80 ? 'sb-great' : adScore >= 55 ? 'sb-ok' : 'sb-low'">
+                        {{ adScore >= 80 ? 'Doskonałe' : adScore >= 55 ? 'Dobre' : 'Uzupełnij dane' }}
+                    </div>
+                    <div class="score-checklist">
+                        <div v-for="sf in scoreFactors" :key="sf.label" class="sc-row" :class="{ 'sc-done': sf.done }">
+                            <v-icon :icon="sf.done ? 'mdi-check-circle' : 'mdi-circle-outline'" size="13" class="sc-icon" />
+                            <span>{{ sf.label }}</span>
+                        </div>
+                    </div>
+                    <div v-if="scoreTips.length" class="score-tips">
+                        <div v-for="tip in scoreTips" :key="tip" class="st-tip">
+                            <v-icon icon="mdi-lightbulb-on-outline" size="12" class="st-icon" />
+                            {{ tip }}
+                        </div>
                     </div>
                 </div>
+
             </aside>
 
-            <!-- Center -->
+            <!-- ── Center: step content ───────────────────────────────────────── -->
             <main class="center-area">
 
-                <!-- Hero -->
-                <div class="form-hero">
-                    <div class="form-hero-text">
-                        <h1>Dodaj swoje auto.</h1>
-                        <p>Stwórz premium ogłoszenie w kilka minut.</p>
+                <!-- Error banner -->
+                <transition name="fade-err">
+                    <div v-if="stepError" class="step-error-banner">
+                        <v-icon icon="mdi-alert-circle-outline" size="16" />
+                        {{ stepError }}
                     </div>
-                </div>
-
-                <!-- Progress -->
-                <div class="progress-track">
-                    <div v-for="(ps, i) in progressSteps" :key="i"
-                        class="progress-node"
-                        :class="{ 'pn-active': currentStep === i, 'pn-done': currentStep > i }">
-                        <div class="pn-icon">
-                            <v-icon :icon="ps.icon" size="16" />
-                        </div>
-                        <span class="pn-label">{{ ps.label }}</span>
-                        <div v-if="i < progressSteps.length - 1" class="pn-line" />
+                </transition>
+                <transition name="fade-err">
+                    <div v-if="error" class="step-error-banner step-error-banner--hard">
+                        <v-icon icon="mdi-alert-circle" size="16" />
+                        {{ error }}
+                        <button class="seb-close" @click="error = ''"><v-icon icon="mdi-close" size="14" /></button>
                     </div>
-                </div>
+                </transition>
 
-                <!-- Step 0: Basic info -->
-                <div v-if="currentStep === 0" class="form-content">
-                    <div class="form-section-head">
+                <!-- ── Step panels ──────────────────────────────────────────── -->
+                <transition name="step-fade" mode="out-in">
+
+                <!-- ══ Step 0 — Kategoria ═══════════════════════════════════════ -->
+                <div v-if="currentStep === 0" key="s0" class="step-panel">
+                    <div class="step-head">
                         <h2>Wybierz kategorię</h2>
-                        <p>Zaznacz typ pojazdu — formularz dostosuje się do wybranej kategorii.</p>
+                        <p>Zaznacz typ pojazdu — formularz dostosuje się automatycznie.</p>
                     </div>
-
-                    <!-- Category -->
-                    <div class="field full-width" style="margin-bottom: 16px;">
-                        <label class="flabel">Kategoria <span class="req">*</span></label>
-                        <div class="category-grid">
-                            <button
-                                v-for="cat in advertCategories"
-                                :key="cat.id"
-                                type="button"
-                                class="cat-choice-btn"
-                                :class="{ active: form.categoryId === cat.id }"
-                                @click="onCategory(cat.id)"
-                            >
-                                <v-icon :icon="cat.iconName" size="20" />
-                                <span>{{ cat.name }}</span>
-                            </button>
-                        </div>
+                    <div class="cat-grid">
+                        <button
+                            v-for="cat in advertCategories" :key="cat.id"
+                            type="button"
+                            class="cat-card"
+                            :class="{ 'cat-card--active': form.categoryId === cat.id }"
+                            @click="onCategory(cat.id)">
+                            <div class="cat-card-icon">
+                                <v-icon :icon="cat.iconName || 'mdi-car-outline'" size="28" />
+                            </div>
+                            <div class="cat-card-name">{{ cat.name }}</div>
+                            <div class="cat-card-count">{{ cat.advertCount?.toLocaleString('pl') ?? '0' }} ogłoszeń</div>
+                            <div v-if="form.categoryId === cat.id" class="cat-card-check">
+                                <v-icon icon="mdi-check" size="14" />
+                            </div>
+                        </button>
                     </div>
-
-                    <!-- Category context banner -->
                     <transition name="fade-err">
-                        <div v-if="selectedCategory" class="cat-context-bar">
-                            <v-icon :icon="selectedCategory.iconName" size="14" class="ccb-icon" />
-                            <span><strong>{{ selectedCategory.name }}</strong> — formularz dostosowany do tej kategorii</span>
-                            <span class="ccb-count">{{ selectedCategory.advertCount?.toLocaleString('pl') ?? '' }} ogłoszeń</span>
-                        </div>
-                    </transition>
-
-                    <!-- Category note (special instructions per category) -->
-                    <transition name="fade-err">
-                        <div v-if="categoryConfig.categoryNote" class="cat-note-bar">
-                            <v-icon icon="mdi-lightbulb-outline" size="14" class="cnb-icon" />
-                            <span>{{ categoryConfig.categoryNote }}</span>
+                        <div v-if="selectedCategory && categoryConfig.categoryNote" class="cat-note">
+                            <v-icon icon="mdi-lightbulb-outline" size="14" />
+                            {{ categoryConfig.categoryNote }}
                         </div>
                     </transition>
                 </div>
 
-                <!-- ════════════════════════════════════════════════════════════ -->
-                <!-- Step 1: Dane pojazdu                                        -->
-                <!-- ════════════════════════════════════════════════════════════ -->
-                <div v-else-if="currentStep === 1" class="form-content">
-                    <div class="form-section-head">
+                <!-- ══ Step 1 — Dane pojazdu ═════════════════════════════════════ -->
+                <div v-else-if="currentStep === 1" key="s1" class="step-panel">
+                    <div class="step-head">
                         <h2>Dane pojazdu</h2>
                         <p>Podaj dane techniczne i identyfikacyjne pojazdu.</p>
                     </div>
-                    <div class="fields-grid">
 
-                        <!-- Brand: SmartSelect for known categories, text input for specialized machinery -->
-                        <div v-if="isFieldVisible('brand')" class="field">
-                            <label class="flabel">
-                                {{ categoryConfig.brandLabel ?? 'Marka' }}
-                                <span v-if="isFieldRequired('brand')" class="req">*</span>
-                            </label>
-                            <template v-if="categoryConfig.brandFieldType === 'text'">
-                                <input
-                                    v-model="brandTextInput"
-                                    type="text"
-                                    class="finput"
-                                    :placeholder="`Wpisz ${(categoryConfig.brandLabel ?? 'markę').toLowerCase()}`"
-                                />
-                            </template>
-                            <template v-else>
-                                <SmartSelect
-                                    v-model="form.brandId"
-                                    :options="brandOptions"
-                                    :placeholder="`Wybierz ${categoryConfig.brandLabel ?? 'markę'}`"
-                                    search-placeholder="marki"
-                                    prefix-icon="mdi-car-outline"
-                                    @change="onBrand"
-                                />
-                            </template>
-                            <div class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />
-                                {{ categoryConfig.brandHint ?? `${brands.length} dostępnych marek` }}
-                            </div>
-                        </div>
+                    <div class="glass-card">
+                        <div class="gc-section-title">Identyfikacja</div>
+                        <div class="fields-grid">
 
-                        <!-- Model -->
-                        <div v-if="isFieldVisible('model')" class="field">
-                            <label class="flabel">
-                                {{ categoryConfig.modelLabel ?? 'Model' }}
-                                <span v-if="isFieldRequired('model')" class="req">*</span>
-                            </label>
-                            <template v-if="categoryConfig.brandFieldType === 'text'">
-                                <input
-                                    v-model="modelTextInput"
-                                    type="text"
-                                    class="finput"
-                                    :placeholder="`Wpisz ${(categoryConfig.modelLabel ?? 'model').toLowerCase()}`"
-                                />
-                            </template>
-                            <template v-else>
-                                <SmartSelect
-                                    v-model="form.modelId"
-                                    :options="modelOptions"
-                                    :placeholder="`Wybierz ${categoryConfig.modelLabel ?? 'model'}`"
-                                    search-placeholder="modele"
-                                    :disabled="!form.brandId"
-                                    @change="onModel"
-                                />
-                                <div class="field-hint">
-                                    <template v-if="!form.brandId">
-                                        <v-icon icon="mdi-arrow-up-left" size="12" />
-                                        Najpierw wybierz {{ categoryConfig.brandLabel ?? 'markę' }}
-                                    </template>
-                                    <template v-else-if="models.length">
-                                        <v-icon icon="mdi-information-outline" size="12" />
-                                        {{ categoryConfig.modelHint ?? `${models.length} modeli dla ${brandName}` }}
-                                    </template>
+                            <!-- Brand -->
+                            <div v-if="isFieldVisible('brand')" class="field">
+                                <label class="flabel">
+                                    {{ categoryConfig.brandLabel ?? 'Marka' }}
+                                    <span v-if="isFieldRequired('brand')" class="req">*</span>
+                                </label>
+                                <template v-if="categoryConfig.brandFieldType === 'text'">
+                                    <input v-model="brandTextInput" type="text" class="finput"
+                                        :placeholder="`Wpisz ${(categoryConfig.brandLabel ?? 'markę').toLowerCase()}`" />
+                                </template>
+                                <template v-else>
+                                    <SmartSelect v-model="form.brandId" :options="brandOptions"
+                                        :placeholder="`Wybierz ${categoryConfig.brandLabel ?? 'markę'}`"
+                                        search-placeholder="marki" prefix-icon="mdi-car-outline" @change="onBrand" />
+                                </template>
+                                <div v-if="categoryConfig.brandHint" class="field-hint">
+                                    <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.brandHint }}
                                 </div>
-                            </template>
-                        </div>
-
-                        <!-- Generation (cars only) -->
-                        <div v-if="isFieldVisible('generation') && generations.length" class="field">
-                            <label class="flabel">Generacja / wersja</label>
-                            <SmartSelect
-                                v-model="form.generationId"
-                                :options="generationOptions"
-                                placeholder="Wybierz generację (opcjonalnie)"
-                                search-placeholder="generacji"
-                                :disabled="!form.modelId"
-                                @change="onGen"
-                            />
-                            <div class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ generations.length }} generacji dostępnych
                             </div>
-                        </div>
 
-                        <!-- Engine version (loaded after generation selection) -->
-                        <div v-if="isFieldVisible('generation') && engines.length" class="field">
-                            <label class="flabel">Wersja silnika</label>
-                            <SmartSelect
-                                v-model="form.engineVersionId"
-                                :options="engineOptions"
-                                placeholder="Wybierz wersję silnika (opcjonalnie)"
-                                prefix-icon="mdi-engine-outline"
-                                search-placeholder="wersji silnika"
-                            />
-                            <div class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ engines.length }} wersji silnika dostępnych
+                            <!-- Model -->
+                            <div v-if="isFieldVisible('model')" class="field">
+                                <label class="flabel">
+                                    {{ categoryConfig.modelLabel ?? 'Model' }}
+                                    <span v-if="isFieldRequired('model')" class="req">*</span>
+                                </label>
+                                <template v-if="categoryConfig.brandFieldType === 'text'">
+                                    <input v-model="modelTextInput" type="text" class="finput"
+                                        :placeholder="`Wpisz ${(categoryConfig.modelLabel ?? 'model').toLowerCase()}`" />
+                                </template>
+                                <template v-else>
+                                    <SmartSelect v-model="form.modelId" :options="modelOptions"
+                                        :placeholder="`Wybierz ${categoryConfig.modelLabel ?? 'model'}`"
+                                        search-placeholder="modele" :disabled="!form.brandId" @change="onModel" />
+                                    <div class="field-hint">
+                                        <template v-if="!form.brandId">
+                                            <v-icon icon="mdi-arrow-up-left" size="12" />Najpierw wybierz {{ categoryConfig.brandLabel ?? 'markę' }}
+                                        </template>
+                                        <template v-else-if="models.length">
+                                            <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.modelHint ?? `${models.length} modeli dla ${brandName}` }}
+                                        </template>
+                                    </div>
+                                </template>
                             </div>
-                        </div>
 
-                        <!-- Year -->
-                        <div class="field">
-                            <label class="flabel">
-                                {{ categoryConfig.yearLabel ?? 'Rok produkcji' }} <span class="req">*</span>
-                            </label>
-                            <div class="input-icon-wrap">
-                                <v-icon icon="mdi-calendar-outline" class="input-prefix" size="16" />
-                                <input v-model.number="form.year" type="number" class="finput has-prefix"
-                                    placeholder="np. 2020" min="1900" :max="new Date().getFullYear()" />
+                            <!-- Generation -->
+                            <div v-if="isFieldVisible('generation') && generations.length" class="field">
+                                <label class="flabel">Generacja / wersja</label>
+                                <SmartSelect v-model="form.generationId" :options="generationOptions"
+                                    placeholder="Wybierz generację (opcjonalnie)"
+                                    search-placeholder="generacji" :disabled="!form.modelId" @change="onGen" />
                             </div>
-                            <div v-if="categoryConfig.yearHint" class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.yearHint }}
+
+                            <!-- Engine version -->
+                            <div v-if="isFieldVisible('generation') && engines.length" class="field">
+                                <label class="flabel">Wersja silnika</label>
+                                <SmartSelect v-model="form.engineVersionId" :options="engineOptions"
+                                    placeholder="Wybierz wersję silnika (opcjonalnie)"
+                                    prefix-icon="mdi-engine-outline" search-placeholder="wersji silnika" />
                             </div>
-                        </div>
 
-                        <!-- Fuel type (not shown for machinery/trailers/parts) -->
-                        <div v-if="isFieldVisible('fuelType')" class="field">
-                            <label class="flabel">
-                                Rodzaj paliwa <span v-if="isFieldRequired('fuelType')" class="req">*</span>
-                            </label>
-                            <SmartSelect
-                                v-model="form.fuelTypeId"
-                                :options="fuelTypeOptions"
-                                placeholder="Wybierz rodzaj paliwa"
-                                prefix-icon="mdi-gas-station-outline"
-                            />
-                        </div>
-
-                        <!-- Engine capacity -->
-                        <div v-if="isFieldVisible('engine')" class="field">
-                            <label class="flabel">{{ categoryConfig.engineLabel ?? 'Pojemność silnika (cm³)' }}</label>
-                            <input v-model.number="form.engineCapacity" type="number" class="finput"
-                                :placeholder="categoryConfig.engineHint ?? 'np. 1995'" />
-                            <div v-if="categoryConfig.engineHint" class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.engineHint }}
+                            <!-- Year -->
+                            <div class="field">
+                                <label class="flabel">{{ categoryConfig.yearLabel ?? 'Rok produkcji' }} <span class="req">*</span></label>
+                                <div class="input-icon-wrap">
+                                    <v-icon icon="mdi-calendar-outline" class="input-prefix" size="16" />
+                                    <input v-model.number="form.year" type="number" class="finput has-prefix"
+                                        placeholder="np. 2020" min="1900" :max="new Date().getFullYear()" />
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Power -->
-                        <div v-if="isFieldVisible('power')" class="field">
-                            <label class="flabel">{{ categoryConfig.powerLabel ?? 'Moc (KM)' }}</label>
-                            <input v-model.number="form.power" type="number" class="finput" placeholder="np. 150" />
-                        </div>
-
-                        <!-- Gearbox (not for machinery/trailers/parts/motorcycles) -->
-                        <div v-if="isFieldVisible('gearbox')" class="field">
-                            <label class="flabel">Skrzynia biegów</label>
-                            <SmartSelect
-                                v-model="form.gearboxId"
-                                :options="gearboxOptions"
-                                placeholder="Wybierz skrzynię biegów"
-                                prefix-icon="mdi-car-shift-pattern"
-                            />
-                        </div>
-
-                        <!-- Mileage / Motohours (not for parts/trailers) -->
-                        <div v-if="isFieldVisible('mileage')" class="field">
-                            <label class="flabel">
-                                {{ categoryConfig.mileageLabel ?? 'Przebieg (km)' }}
-                                <span v-if="isFieldRequired('mileage')" class="req">*</span>
-                            </label>
-                            <div class="input-icon-wrap">
-                                <v-icon
-                                    :icon="categoryConfig.mileageLabel?.includes('mth') ? 'mdi-timer-outline' : 'mdi-speedometer'"
-                                    class="input-prefix" size="16" />
-                                <input v-model.number="form.mileage" type="number" class="finput has-prefix"
-                                    :placeholder="categoryConfig.mileageLabel?.includes('mth') ? 'np. 5 000' : 'np. 100 000'" />
+                            <!-- Fuel type -->
+                            <div v-if="isFieldVisible('fuelType')" class="field">
+                                <label class="flabel">Rodzaj paliwa <span v-if="isFieldRequired('fuelType')" class="req">*</span></label>
+                                <SmartSelect v-model="form.fuelTypeId" :options="fuelTypeOptions"
+                                    placeholder="Wybierz rodzaj paliwa" prefix-icon="mdi-gas-station-outline" />
                             </div>
-                            <div v-if="categoryConfig.mileageHint" class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.mileageHint }}
-                            </div>
-                        </div>
 
+                            <!-- Engine capacity -->
+                            <div v-if="isFieldVisible('engine')" class="field">
+                                <label class="flabel">{{ categoryConfig.engineLabel ?? 'Pojemność silnika (cm³)' }}</label>
+                                <input v-model.number="form.engineCapacity" type="number" class="finput"
+                                    :placeholder="categoryConfig.engineHint ?? 'np. 1995'" />
+                                <div v-if="categoryConfig.engineHint" class="field-hint">
+                                    <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.engineHint }}
+                                </div>
+                            </div>
+
+                            <!-- Power -->
+                            <div v-if="isFieldVisible('power')" class="field">
+                                <label class="flabel">{{ categoryConfig.powerLabel ?? 'Moc (KM)' }}</label>
+                                <input v-model.number="form.power" type="number" class="finput" placeholder="np. 150" />
+                            </div>
+
+                            <!-- Gearbox -->
+                            <div v-if="isFieldVisible('gearbox')" class="field">
+                                <label class="flabel">Skrzynia biegów</label>
+                                <SmartSelect v-model="form.gearboxId" :options="gearboxOptions"
+                                    placeholder="Wybierz skrzynię biegów" prefix-icon="mdi-car-shift-pattern" />
+                            </div>
+
+                            <!-- Mileage -->
+                            <div v-if="isFieldVisible('mileage')" class="field">
+                                <label class="flabel">
+                                    {{ categoryConfig.mileageLabel ?? 'Przebieg (km)' }}
+                                    <span v-if="isFieldRequired('mileage')" class="req">*</span>
+                                </label>
+                                <div class="input-icon-wrap">
+                                    <v-icon :icon="categoryConfig.mileageLabel?.includes('mth') ? 'mdi-timer-outline' : 'mdi-speedometer'"
+                                        class="input-prefix" size="16" />
+                                    <input v-model.number="form.mileage" type="number" class="finput has-prefix"
+                                        :placeholder="categoryConfig.mileageLabel?.includes('mth') ? 'np. 5 000' : 'np. 100 000'" />
+                                </div>
+                                <div v-if="categoryConfig.mileageHint" class="field-hint">
+                                    <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.mileageHint }}
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
 
-                    <!-- ── Category-specific extra fields ─────────────────────────────────── -->
+                    <!-- Category-specific extra fields -->
                     <transition name="fade-err">
-                        <div v-if="categoryConfig.extraFields?.length" class="extra-fields-wrap">
-                            <div class="form-section-subhead">Szczegóły ogłoszenia</div>
+                        <div v-if="categoryConfig.extraFields?.length" class="glass-card" style="margin-top:16px">
+                            <div class="gc-section-title">Szczegóły kategorii</div>
                             <div class="fields-grid">
                                 <template v-for="ef in categoryConfig.extraFields" :key="ef.key">
-
-                                    <!-- Radio (condition, type) -->
                                     <div v-if="ef.type === 'radio'" :class="['field', ef.fullWidth ? 'full-width' : '']">
                                         <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
                                         <div class="radio-group">
                                             <label v-for="opt in ef.options" :key="opt.value" class="radio-opt"
                                                 :class="{ active: extras[ef.key] === opt.value }">
-                                                <input type="radio" :name="ef.key" :value="opt.value"
-                                                    v-model="extras[ef.key]" hidden />
+                                                <input type="radio" :name="ef.key" :value="opt.value" v-model="extras[ef.key]" hidden />
                                                 {{ opt.label }}
                                             </label>
                                         </div>
                                     </div>
-
-                                    <!-- Select -->
                                     <div v-else-if="ef.type === 'select'" :class="['field', ef.fullWidth ? 'full-width' : '']">
                                         <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
-                                        <SmartSelect
-                                            :model-value="extras[ef.key]"
-                                            @update:model-value="extras[ef.key] = $event"
+                                        <SmartSelect :model-value="extras[ef.key]" @update:model-value="extras[ef.key] = $event"
                                             :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
-                                            :placeholder="`Wybierz ${ef.label.toLowerCase()}`"
-                                        />
+                                            :placeholder="`Wybierz ${ef.label.toLowerCase()}`" />
                                         <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
-
-                                    <!-- Number -->
                                     <div v-else-if="ef.type === 'number'" :class="['field', ef.fullWidth ? 'full-width' : '']">
                                         <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
                                         <div class="input-unit-wrap">
-                                            <input v-model.number="extras[ef.key]" type="number" class="finput"
-                                                :placeholder="ef.placeholder ?? ''" />
+                                            <input v-model.number="extras[ef.key]" type="number" class="finput" :placeholder="ef.placeholder ?? ''" />
                                             <span v-if="ef.unit" class="input-unit-badge">{{ ef.unit }}</span>
                                         </div>
                                         <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
-
-                                    <!-- Text -->
                                     <div v-else-if="ef.type === 'text'" :class="['field', ef.fullWidth ? 'full-width' : '']">
                                         <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
-                                        <input v-model="extras[ef.key]" type="text" class="finput"
-                                            :placeholder="ef.placeholder ?? ''" />
+                                        <input v-model="extras[ef.key]" type="text" class="finput" :placeholder="ef.placeholder ?? ''" />
                                         <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
-
-                                    <!-- Color picker -->
                                     <div v-else-if="ef.type === 'color-picker'" :class="['field', ef.fullWidth ? 'full-width' : '']">
                                         <div class="ef-color-label">
                                             <span>{{ ef.label }}</span>
-                                            <span v-if="extras[ef.key]" class="ef-color-name">
-                                                {{ colors.find(c => c.id === extras[ef.key])?.name }}
-                                            </span>
+                                            <span v-if="extras[ef.key]" class="ef-color-name">{{ colors.find(c => c.id === extras[ef.key])?.name }}</span>
                                         </div>
                                         <div class="ef-color-swatches">
-                                            <button
-                                                class="ef-color-swatch ef-color-swatch--clear"
-                                                :class="{ active: !extras[ef.key] }"
-                                                title="Nie określono"
-                                                type="button"
-                                                @click="extras[ef.key] = null"
-                                            >
+                                            <button class="ef-color-swatch ef-color-swatch--clear" :class="{ active: !extras[ef.key] }"
+                                                title="Nie określono" type="button" @click="extras[ef.key] = null">
                                                 <v-icon icon="mdi-close" size="10" />
                                             </button>
-                                            <button
-                                                v-for="col in colors"
-                                                :key="col.id"
-                                                class="ef-color-swatch"
+                                            <button v-for="col in colors" :key="col.id" class="ef-color-swatch"
                                                 :class="{ active: extras[ef.key] === col.id }"
-                                                :style="{ background: col.hexCode || '#888' }"
-                                                :title="col.name"
-                                                type="button"
-                                                @click="extras[ef.key] = extras[ef.key] === col.id ? null : col.id"
-                                            />
+                                                :style="{ background: col.hexCode || '#888' }" :title="col.name" type="button"
+                                                @click="extras[ef.key] = extras[ef.key] === col.id ? null : col.id" />
                                         </div>
                                     </div>
-
-                                    <!-- Boolean checkbox -->
                                     <div v-else-if="ef.type === 'boolean'" :class="['field field--bool', ef.fullWidth ? 'full-width' : '']">
                                         <label class="bool-check" :class="{ active: extras[ef.key] }">
                                             <input type="checkbox" v-model="extras[ef.key]" hidden />
-                                            <span class="bool-box">
-                                                <v-icon v-if="extras[ef.key]" icon="mdi-check" size="12" />
-                                            </span>
+                                            <span class="bool-box"><v-icon v-if="extras[ef.key]" icon="mdi-check" size="12" /></span>
                                             {{ ef.label }}
                                         </label>
                                     </div>
-
                                 </template>
                             </div>
                         </div>
                     </transition>
+                </div>
 
-                    <!-- ── VIN & Identification ── -->
-                    <div v-if="categoryConfig.showVinSection !== false" class="hist-section">
-                        <div class="hist-section-title"><v-icon icon="mdi-barcode-scan" size="16" />Identyfikacja pojazdu</div>
-                        <div class="fields-grid">
-                            <div class="field full-width">
-                                <label class="flabel">Numer VIN</label>
-                                <div class="vin-row">
-                                    <input v-model="form.vin" class="finput vin-input" placeholder="Wpisz 17-znakowy numer VIN" maxlength="17"
-                                        :class="{ 'input-ok': form.vin.length === 17 }" />
-                                    <button type="button" class="btn-vin-lookup"
-                                        :disabled="form.vin.length !== 17 || vinLoading"
-                                        @click="lookupVin">
-                                        <v-icon v-if="vinLoading" icon="mdi-loading" size="16" class="spin" />
-                                        <v-icon v-else icon="mdi-magnify" size="16" />
-                                        {{ vinLoading ? 'Sprawdzam...' : 'Sprawdź VIN' }}
-                                    </button>
-                                </div>
-                                <transition name="fade-err">
-                                    <span v-if="vinError" class="vin-error">
-                                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ vinError }}
-                                    </span>
-                                </transition>
-                                <p class="field-hint"><v-icon icon="mdi-information-outline" size="12" />VIN pozwala automatycznie uzupełnić dane i buduje zaufanie kupujących</p>
-                            </div>
+                <!-- ══ Step 2 — Historia pojazdu ═══════════════════════════════ -->
+                <div v-else-if="currentStep === 2" key="s2" class="step-panel">
+                    <div class="step-head">
+                        <h2>Historia pojazdu</h2>
+                        <p>Kompletna historia buduje zaufanie i przyspiesza sprzedaż nawet o 40%.</p>
+                    </div>
+
+                    <!-- CARIZO VERIFIED banner -->
+                    <div class="verified-banner">
+                        <div class="vb-icon-wrap">
+                            <v-icon icon="mdi-shield-check" size="28" class="vb-icon" />
+                        </div>
+                        <div class="vb-text">
+                            <div class="vb-title">CARIZO VERIFIED</div>
+                            <div class="vb-sub">Uzupełnij dane historyczne pojazdu i zdobądź odznakę zweryfikowanego sprzedawcy</div>
+                        </div>
+                    </div>
+
+                    <!-- VIN section -->
+                    <div class="glass-card">
+                        <div class="gc-section-title"><v-icon icon="mdi-barcode-scan" size="15" style="margin-right:6px" />Numer VIN</div>
+                        <div class="vin-row">
+                            <input v-model="form.vin" class="finput vin-input" placeholder="Wpisz 17-znakowy numer VIN" maxlength="17"
+                                :class="{ 'input-ok': form.vin.length === 17 }" />
+                            <button type="button" class="btn-vin-lookup"
+                                :disabled="form.vin.length !== 17 || vinLoading" @click="lookupVin">
+                                <v-icon v-if="vinLoading" icon="mdi-loading" size="15" class="spin" />
+                                <v-icon v-else icon="mdi-magnify" size="15" />
+                                {{ vinLoading ? 'Sprawdzam...' : 'Sprawdź VIN' }}
+                            </button>
+                        </div>
+                        <transition name="fade-err">
+                            <span v-if="vinError" class="vin-error"><v-icon icon="mdi-alert-circle-outline" size="13" />{{ vinError }}</span>
+                        </transition>
+                        <p class="field-hint" style="margin-top:8px"><v-icon icon="mdi-information-outline" size="12" />VIN pozwala automatycznie uzupełnić dane i buduje zaufanie kupujących</p>
+                        <div class="fields-grid" style="margin-top:16px">
                             <div class="field">
                                 <label class="flabel">Pierwsza data rejestracji</label>
                                 <input v-model="history.firstRegDate" type="date" class="finput" />
-                                <div class="field-hint"><v-icon icon="mdi-information-outline" size="12" />Data pierwszej rejestracji pojazdu</div>
                             </div>
                             <div class="field">
                                 <label class="flabel">Kraj rejestracji</label>
@@ -493,10 +444,9 @@
                         </div>
                     </div>
 
-                    <!-- ── Ownership & History ── -->
-                    <template v-if="categoryConfig.showHistorySection !== false">
-                    <div class="hist-section">
-                        <div class="hist-section-title"><v-icon icon="mdi-account-multiple-outline" size="16" />Właściciele i import</div>
+                    <!-- Ownership & import -->
+                    <div class="glass-card" style="margin-top:16px">
+                        <div class="gc-section-title"><v-icon icon="mdi-account-multiple-outline" size="15" style="margin-right:6px" />Właściciele i import</div>
                         <div class="fields-grid">
                             <div class="field">
                                 <label class="flabel">Liczba właścicieli</label>
@@ -513,15 +463,13 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="flabel">Pojazd sprowadzony z zagranicy?</label>
+                                <label class="flabel">Import z zagranicy?</label>
                                 <div class="radio-group">
                                     <label class="radio-opt" :class="{ active: !history.isImported }">
-                                        <input type="radio" :value="false" v-model="history.isImported" hidden />
-                                        Nie, krajowy
+                                        <input type="radio" :value="false" v-model="history.isImported" hidden />Nie, krajowy
                                     </label>
                                     <label class="radio-opt" :class="{ active: history.isImported }">
-                                        <input type="radio" :value="true" v-model="history.isImported" hidden />
-                                        Tak, import
+                                        <input type="radio" :value="true" v-model="history.isImported" hidden />Tak, import
                                     </label>
                                 </div>
                             </div>
@@ -534,9 +482,9 @@
                         </div>
                     </div>
 
-                    <!-- ── Service ── -->
-                    <div class="hist-section">
-                        <div class="hist-section-title"><v-icon icon="mdi-wrench-outline" size="16" />Serwis i przeglądy</div>
+                    <!-- Service & inspection -->
+                    <div class="glass-card" style="margin-top:16px">
+                        <div class="gc-section-title"><v-icon icon="mdi-wrench-outline" size="15" style="margin-right:6px" />Serwis i przeglądy</div>
                         <div class="fields-grid">
                             <div class="field">
                                 <label class="flabel">Następny przegląd techniczny</label>
@@ -561,20 +509,20 @@
                         </div>
                     </div>
 
-                    <!-- ── Damage & Warranty ── -->
-                    <div class="hist-section">
-                        <div class="hist-section-title"><v-icon icon="mdi-shield-check-outline" size="16" />Szkody i gwarancja</div>
+                    <!-- Damage & warranty -->
+                    <div class="glass-card" style="margin-top:16px">
+                        <div class="gc-section-title"><v-icon icon="mdi-shield-outline" size="15" style="margin-right:6px" />Szkody i gwarancja</div>
                         <div class="fields-grid">
                             <div class="field">
-                                <label class="flabel">Czy pojazd był po wypadku lub szkodzie?</label>
+                                <label class="flabel">Stan po szkodzie?</label>
                                 <div class="radio-group">
                                     <label class="radio-opt" :class="{ active: !history.hasDamage }">
                                         <input type="radio" :value="false" v-model="history.hasDamage" hidden />
-                                        <v-icon icon="mdi-check-circle-outline" size="13" style="margin-right:4px;color:#4ade80" />Bezwypadkowy
+                                        <v-icon icon="mdi-check-circle-outline" size="13" style="color:#22c55e;margin-right:4px" />Bezwypadkowy
                                     </label>
                                     <label class="radio-opt" :class="{ active: history.hasDamage }">
                                         <input type="radio" :value="true" v-model="history.hasDamage" hidden />
-                                        <v-icon icon="mdi-alert-outline" size="13" style="margin-right:4px;color:#fb923c" />Po szkodzie
+                                        <v-icon icon="mdi-alert-outline" size="13" style="color:#fb923c;margin-right:4px" />Po szkodzie
                                     </label>
                                 </div>
                             </div>
@@ -586,14 +534,12 @@
                                 </div>
                             </transition>
                             <div class="field">
-                                <label class="flabel">Gwarancja producenta / dealera</label>
-                                <div class="bool-stack">
-                                    <label class="bool-check" :class="{ active: history.hasWarranty }">
-                                        <input type="checkbox" v-model="history.hasWarranty" hidden />
-                                        <span class="bool-box"><v-icon v-if="history.hasWarranty" icon="mdi-check" size="12" /></span>
-                                        Gwarancja aktywna
-                                    </label>
-                                </div>
+                                <label class="flabel">Gwarancja</label>
+                                <label class="bool-check" :class="{ active: history.hasWarranty }">
+                                    <input type="checkbox" v-model="history.hasWarranty" hidden />
+                                    <span class="bool-box"><v-icon v-if="history.hasWarranty" icon="mdi-check" size="12" /></span>
+                                    Gwarancja aktywna
+                                </label>
                                 <transition name="fade-err">
                                     <div v-if="history.hasWarranty" style="margin-top:8px">
                                         <label class="flabel" style="font-size:11px;margin-bottom:4px">Ważna do</label>
@@ -603,37 +549,40 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="hist-quality-tip">
-                        <v-icon icon="mdi-trophy-outline" size="16" class="hq-icon" />
-                        <div>
-                            <div class="hq-title">Kompletna historia = szybsza sprzedaż</div>
-                            <div class="hq-sub">Ogłoszenia z VIN i historią serwisową sprzedają się nawet 40% szybciej.</div>
-                        </div>
-                    </div>
-                    </template>
                 </div>
 
-                <!-- Step 2: Zdjęcia -->
-                <div v-else-if="currentStep === 2" class="form-content">
-                    <div class="form-section-head">
+                <!-- ══ Step 3 — Zdjęcia ══════════════════════════════════════════ -->
+                <div v-else-if="currentStep === 3" key="s3" class="step-panel">
+                    <div class="step-head">
                         <h2>Zdjęcia</h2>
-                        <p v-if="!isEdit">Dodaj minimum <strong>3 zdjęcia</strong> pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
+                        <p v-if="!isEdit">Dodaj minimum <strong>3 zdjęcia</strong>. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
                         <p v-else>Możesz usunąć istniejące zdjęcia lub dodać nowe.</p>
                     </div>
+
+                    <!-- Quality meter -->
+                    <div class="photo-quality-bar">
+                        <div class="pqb-labels">
+                            <span>Jakość galerii</span>
+                            <span class="pqb-pct">{{ photoQualityPct }}%</span>
+                        </div>
+                        <div class="pqb-track">
+                            <div class="pqb-fill" :style="{ width: photoQualityPct + '%' }"
+                                :class="photoQualityPct >= 80 ? 'pqb-great' : photoQualityPct >= 40 ? 'pqb-ok' : 'pqb-low'" />
+                        </div>
+                        <div class="pqb-hint">{{ photoQualityPct >= 80 ? 'Doskonała galeria!' : photoQualityPct >= 40 ? 'Dobre. Zalecamy 10+ zdjęć.' : 'Dodaj więcej zdjęć dla lepszej widoczności.' }}</div>
+                    </div>
+
+                    <!-- Photo grid -->
                     <div class="img-grid">
-                        <!-- Existing images (edit mode) -->
                         <div v-for="img in existingImages" :key="`ex-${img.id}`" class="img-thumb img-thumb--existing">
                             <img :src="`/img/${img.url.split('/uploads/').pop()}`" />
-                            <button type="button" class="img-remove"
-                                :disabled="deletingImageId === img.id"
+                            <button type="button" class="img-remove" :disabled="deletingImageId === img.id"
                                 @click="deleteExistingImage(img.id)">
                                 <v-icon v-if="deletingImageId === img.id" icon="mdi-loading" size="14" class="spin" />
                                 <v-icon v-else icon="mdi-close" size="14" />
                             </button>
                             <span v-if="img.isMain" class="img-main-badge">Główne</span>
                         </div>
-                        <!-- New images being added -->
                         <div v-for="(preview, i) in previews" :key="`new-${i}`" class="img-thumb">
                             <img :src="preview" />
                             <button type="button" class="img-remove" @click="removeImage(i)">
@@ -641,571 +590,364 @@
                             </button>
                             <span v-if="!existingImages.length && i === 0" class="img-main-badge">Główne</span>
                         </div>
-                        <label v-if="(existingImages.length + selectedFiles.length) < 20" class="img-add" :class="{ 'img-add--loading': photoUploading }">
-                            <input type="file" multiple accept="image/jpeg,image/png,image/webp" @change="onFilesSelected" :disabled="photoUploading" hidden />
-                            <v-icon v-if="photoUploading" icon="mdi-loading" size="28" class="spin" />
-                            <v-icon v-else icon="mdi-plus" size="28" />
+                        <label v-if="(existingImages.length + selectedFiles.length) < 20" class="img-add"
+                            :class="{ 'img-add--loading': photoUploading }">
+                            <input type="file" multiple accept="image/jpeg,image/png,image/webp"
+                                @change="onFilesSelected" :disabled="photoUploading" hidden />
+                            <v-icon v-if="photoUploading" icon="mdi-loading" size="32" class="spin" />
+                            <v-icon v-else icon="mdi-camera-plus-outline" size="32" />
                             <span>{{ photoUploading ? 'Przetwarzanie...' : 'Dodaj zdjęcia' }}</span>
+                            <small>JPG, PNG, WEBP · maks. 20</small>
                         </label>
                     </div>
-                    <!-- Photo quality feedback -->
+
+                    <!-- Feedback -->
                     <div class="photo-hints">
                         <div class="photo-hint" :class="photoFeedback.mainOk ? 'ph-ok' : 'ph-warn'">
                             <v-icon :icon="photoFeedback.mainOk ? 'mdi-check-circle' : 'mdi-alert-circle-outline'" size="14" />
-                            {{ photoFeedback.mainOk ? 'Zdjęcie główne ustawione' : 'Brak zdjęcia głównego — pierwsze zdjęcie będzie głównym' }}
+                            {{ photoFeedback.mainOk ? 'Zdjęcie główne ustawione' : 'Brak zdjęcia głównego' }}
                         </div>
                         <div class="photo-hint" :class="photoFeedback.countClass">
-                            <v-icon :icon="photoFeedback.countIcon" size="14" />
-                            {{ photoFeedback.countMsg }}
-                        </div>
-                        <div v-if="photoFeedback.lowQuality.length" class="photo-hint ph-warn">
-                            <v-icon icon="mdi-image-size-select-large" size="14" />
-                            {{ photoFeedback.lowQuality.length }} zdjęcie(-a) mają niską rozdzielczość (poniżej 800px)
+                            <v-icon :icon="photoFeedback.countIcon" size="14" />{{ photoFeedback.countMsg }}
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 3: Wyposażenie -->
-                <div v-else-if="currentStep === 3" class="form-content">
-                    <div class="form-section-head">
+                <!-- ══ Step 4 — Wyposażenie ══════════════════════════════════════ -->
+                <div v-else-if="currentStep === 4" key="s4" class="step-panel">
+                    <div class="step-head">
                         <h2>Wyposażenie</h2>
-                        <p>Zaznacz wyposażenie pojazdu. Ogłoszenia z kompletnym wyposażeniem sprzedają się <strong>2× szybciej</strong>.</p>
+                        <p>Zaznacz wyposażenie. Ogłoszenia z kompletnym wyposażeniem sprzedają się <strong>2× szybciej</strong>.</p>
                     </div>
-                    <div v-if="isFieldVisible('bodyType')" class="field" style="margin-bottom:16px">
-                        <label class="flabel">Typ nadwozia</label>
-                        <SmartSelect
-                            v-model="form.bodyTypeId"
-                            :options="bodyTypeOptions"
-                            placeholder="Wybierz typ nadwozia"
-                            prefix-icon="mdi-car-outline"
-                        />
+
+                    <!-- Body type (cars) -->
+                    <div v-if="isFieldVisible('bodyType')" class="glass-card" style="margin-bottom:16px">
+                        <div class="gc-section-title">Typ nadwozia</div>
+                        <SmartSelect v-model="form.bodyTypeId" :options="bodyTypeOptions"
+                            placeholder="Wybierz typ nadwozia" prefix-icon="mdi-car-outline" />
                     </div>
+
                     <div v-if="!allFeatures.length" class="feat-empty">
                         <v-icon icon="mdi-format-list-checkbox" size="40" />
                         <p>Ładowanie wyposażenia...</p>
                     </div>
-                    <div v-else-if="allFeatures.length && !Object.keys(featureGroups).length" class="feat-empty">
-                        <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
-                        <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>Dane pojazdu</strong>.</p>
-                        <button type="button" class="btn-next" style="margin-top:16px" @click="currentStep++">
-                            Przejdź dalej <v-icon icon="mdi-arrow-right" size="15" />
-                        </button>
+                    <div v-else-if="!Object.keys(featureGroups).length" class="feat-empty">
+                        <v-icon icon="mdi-check-circle-outline" size="36" style="color:#22c55e" />
+                        <p>Ta kategoria nie wymaga listy wyposażenia.</p>
                     </div>
                     <template v-else>
-                        <!-- Equipment search bar -->
+                        <!-- Search -->
                         <div class="feat-search-wrap">
                             <v-icon icon="mdi-magnify" size="16" class="feat-search-icon" />
-                            <input
-                                v-model="featSearch"
-                                class="feat-search-input"
-                                placeholder="Szukaj wyposażenia..."
-                                autocomplete="off"
-                                @keydown.escape="featSearch = ''"
-                            />
-                            <button v-if="featSearch" type="button" class="feat-search-clear" @click="featSearch = ''">
-                                <v-icon icon="mdi-close" size="14" />
-                            </button>
-                        </div>
-                        <!-- expand/collapse controls -->
-                        <div class="equip-controls">
-                            <button type="button" class="equip-ctrl-btn" @click="expandAllEquip">
-                                <v-icon icon="mdi-unfold-more-horizontal" size="13" />Rozwiń wszystkie
-                            </button>
-                            <button type="button" class="equip-ctrl-btn" @click="collapseAllEquip">
-                                <v-icon icon="mdi-unfold-less-horizontal" size="13" />Zwiń wszystkie
-                            </button>
+                            <input v-model="featSearch" type="text" class="feat-search"
+                                placeholder="Szukaj wyposażenia..." />
+                            <span class="feat-count-badge">{{ form.featureIds.length }} wybrano</span>
                         </div>
 
-                        <div v-if="featSearch && !Object.keys(filteredFeatureGroups).length" class="feat-empty" style="padding:24px 0">
-                            <v-icon icon="mdi-magnify-close" size="32" />
-                            <p>Brak wyposażenia pasującego do „{{ featSearch }}"</p>
-                        </div>
-                        <div v-for="(group, cat) in filteredFeatureGroups" :key="cat" class="feat-group">
-                            <button type="button" class="feat-group-header"
-                                :class="{ 'fgh-open': openFeatGroups.has(String(cat)) || !!featSearch }"
-                                @click="toggleFeatGroup(String(cat))">
-                                <div class="fgh-left">
-                                    <v-icon :icon="featureGroupIcon(String(cat))" size="15" />
-                                    <span class="fgh-name">{{ cat }}</span>
-                                    <span class="feat-group-count"
-                                        :class="{ 'fgc-has': group.filter(f => form.featureIds.includes(f.id)).length > 0 }">
-                                        {{ group.filter(f => form.featureIds.includes(f.id)).length }}/{{ group.length }}
-                                    </span>
-                                </div>
-                                <v-icon class="fgh-arrow" icon="mdi-chevron-down" size="16" />
+                        <!-- Equipment groups as pill tags -->
+                        <div v-for="(feats, catName) in filteredFeatureGroups" :key="catName" class="feat-group">
+                            <button type="button" class="feat-group-header" @click="toggleFeatGroup(catName)">
+                                <v-icon :icon="featureGroupIcon(catName)" size="15" class="fgh-icon" />
+                                <span>{{ catName }}</span>
+                                <span class="fgh-count">{{ feats.filter(f => form.featureIds.includes(f.id)).length }}/{{ feats.length }}</span>
+                                <v-icon :icon="openFeatGroups.has(catName) ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="fgh-arrow" />
                             </button>
-                            <Transition name="equip-collapse">
-                                <div v-if="openFeatGroups.has(String(cat)) || !!featSearch" class="feat-checks">
-                                    <label v-for="feat in group" :key="feat.id" class="feat-check" :class="{ checked: form.featureIds.includes(feat.id) }">
-                                        <input type="checkbox" v-model="form.featureIds" :value="feat.id" />
-                                        <span class="feat-check-box"><v-icon v-if="form.featureIds.includes(feat.id)" icon="mdi-check" size="11" /></span>
+                            <transition name="feat-slide">
+                                <div v-if="openFeatGroups.has(catName)" class="feat-pills">
+                                    <button
+                                        v-for="feat in feats" :key="feat.id"
+                                        type="button"
+                                        class="feat-pill"
+                                        :class="{ 'feat-pill--on': form.featureIds.includes(feat.id) }"
+                                        @click="form.featureIds.includes(feat.id)
+                                            ? form.featureIds.splice(form.featureIds.indexOf(feat.id), 1)
+                                            : form.featureIds.push(feat.id)">
+                                        <v-icon v-if="form.featureIds.includes(feat.id)" icon="mdi-check" size="12" class="pill-check" />
                                         <span v-html="highlightSearch(feat.name)" />
-                                    </label>
+                                    </button>
                                 </div>
-                            </Transition>
+                            </transition>
+                        </div>
+
+                        <div class="feat-actions">
+                            <button type="button" class="feat-expand-btn" @click="expandAllEquip">Rozwiń wszystkie</button>
+                            <button type="button" class="feat-expand-btn" @click="collapseAllEquip">Zwiń wszystkie</button>
                         </div>
                     </template>
-                    <div v-if="form.featureIds.length" class="feat-summary-bar">
-                        <v-icon icon="mdi-check-circle-outline" size="16" />
-                        Zaznaczono {{ form.featureIds.length }} pozycji wyposażenia
-                        <button type="button" class="feat-clear-btn" @click="form.featureIds = []">
-                            <v-icon icon="mdi-close" size="12" /> Wyczyść
-                        </button>
-                    </div>
                 </div>
 
-                <!-- Step 4: Cena i opis -->
-                <div v-else-if="currentStep === 4" class="form-content">
-                    <div class="form-section-head">
-                        <h2>Cena i opis</h2>
-                        <p>Ustal cenę, opisz pojazd i podaj lokalizację.</p>
+                <!-- ══ Step 5 — Opis ══════════════════════════════════════════════ -->
+                <div v-else-if="currentStep === 5" key="s5" class="step-panel">
+                    <div class="step-head">
+                        <h2>Tytuł i opis</h2>
+                        <p>Dobry opis sprzedaje. Napisz co wyróżnia Twój pojazd.</p>
                     </div>
 
-                    <!-- Seller type -->
-                    <div class="field full-width" style="margin-bottom: 16px;">
-                        <label class="flabel">Typ ogłoszenia</label>
-                        <div class="radio-group">
-                            <label class="radio-opt" :class="{ active: form.sellerType === 'private' }">
-                                <input type="radio" name="sellerType" value="private" v-model="form.sellerType" hidden />
-                                <v-icon icon="mdi-account-outline" size="14" style="margin-right:5px" />
-                                Osoba prywatna
-                            </label>
-                            <label class="radio-opt" :class="{ active: form.sellerType === 'dealer' }">
-                                <input type="radio" name="sellerType" value="dealer" v-model="form.sellerType" hidden />
-                                <v-icon icon="mdi-store-outline" size="14" style="margin-right:5px" />
-                                Dealer / Firma
-                            </label>
+                    <div class="glass-card">
+                        <div class="gc-section-title">Tytuł ogłoszenia</div>
+                        <input v-model="form.title" type="text" class="finput finput--lg"
+                            :placeholder="suggestedTitle || 'np. BMW 3 seria 2020 diesel – stan idealny'"
+                            maxlength="120" />
+                        <div class="field-hint" style="margin-top:6px">
+                            <v-icon icon="mdi-information-outline" size="12" />
+                            Zostaw puste, aby użyć automatycznego tytułu: <strong>{{ suggestedTitle || previewTitle }}</strong>
                         </div>
                     </div>
 
-                    <!-- Price + negotiable -->
-                    <div class="fields-grid" style="margin-bottom:12px">
-                        <div class="field">
-                            <label class="flabel">{{ categoryConfig.priceLabel ?? 'Cena (zł)' }} <span class="req">*</span></label>
-                            <input v-model.number="form.price" type="number" class="finput finput-price" placeholder="np. 50 000" />
-                            <div v-if="categoryConfig.priceHint" class="field-hint">
-                                <v-icon icon="mdi-trending-up" size="12" />{{ categoryConfig.priceHint }}
-                            </div>
-                            <label class="nego-toggle" :class="{ active: form.isNegotiable }">
-                                <input type="checkbox" v-model="form.isNegotiable" hidden />
-                                <span class="nego-box"><v-icon v-if="form.isNegotiable" icon="mdi-check" size="11" /></span>
-                                Cena do negocjacji
-                            </label>
+                    <div class="glass-card" style="margin-top:16px">
+                        <div class="gc-section-title-row">
+                            <span class="gc-section-title" style="margin-bottom:0">Opis ogłoszenia <span class="req">*</span></span>
+                            <button type="button" class="btn-ai" :disabled="aiGenerating" @click="generateAiDescription">
+                                <v-icon v-if="aiGenerating" icon="mdi-loading" size="14" class="spin" />
+                                <v-icon v-else icon="mdi-creation-outline" size="14" />
+                                {{ aiGenerating ? 'Generuję...' : 'Generuj z AI' }}
+                            </button>
                         </div>
-                    </div>
-
-                    <!-- Title suggestion + custom title -->
-                    <transition name="fade-err">
-                        <div v-if="suggestedTitle" class="title-suggest-card">
-                            <div class="tsc-left">
-                                <v-icon icon="mdi-auto-fix" size="15" class="tsc-icon" />
-                                <div>
-                                    <div class="tsc-label">Sugerowany tytuł ogłoszenia</div>
-                                    <div class="tsc-title">{{ suggestedTitle }}</div>
-                                </div>
-                            </div>
-                            <button v-if="form.title !== suggestedTitle" class="tsc-use-btn" @click="form.title = suggestedTitle">Użyj</button>
-                            <span v-else class="tsc-used"><v-icon icon="mdi-check" size="13" />Aktywny</span>
+                        <textarea v-model="form.description" class="ftextarea ftextarea--tall"
+                            placeholder="Opisz stan pojazdu, historię serwisową, wyposażenie, powód sprzedaży..."
+                            rows="10" />
+                        <div class="desc-meta">
+                            <span class="desc-chars" :class="descQuality === 'great' ? 'dc-great' : descQuality === 'good' ? 'dc-good' : descQuality === 'ok' ? 'dc-ok' : 'dc-poor'">
+                                {{ descCharCount }} znaków
+                            </span>
+                            <span class="desc-quality-label">
+                                {{ descQuality === 'great' ? 'Doskonały opis!' : descQuality === 'good' ? 'Dobry opis' : descQuality === 'ok' ? 'Krótki — rozbuduj' : 'Za krótki opis' }}
+                            </span>
                         </div>
-                    </transition>
-                    <div class="field full-width" style="margin-top:12px">
-                        <label class="flabel">
-                            Tytuł ogłoszenia
-                            <span class="flabel-opt">(opcjonalnie — jeśli puste, użyjemy sugerowanego)</span>
-                        </label>
-                        <div class="title-input-wrap">
-                            <input v-model="form.title" type="text" class="finput"
-                                :placeholder="suggestedTitle || 'np. BMW 3 2020 świetny stan'" maxlength="120" />
-                            <span class="title-char-count" :class="{ warn: form.title.length > 100 }">{{ form.title.length }}/120</span>
-                        </div>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="field full-width" style="margin-top:16px">
-                        <label class="flabel">Opis ogłoszenia <span class="req">*</span></label>
-                        <div class="desc-wrap">
-                            <textarea v-model="form.description" class="ftextarea" rows="8"
-                                placeholder="Opisz dokładnie stan pojazdu, historię serwisową, powód sprzedaży, co zostało wymienione lub odnowione..."
-                                maxlength="5000" />
-                            <div class="desc-bar">
-                                <div class="desc-tips">
-                                    <span class="desc-tip"><v-icon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Historia serwisowa</span>
-                                    <span class="desc-tip"><v-icon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Stan techniczny</span>
-                                    <span class="desc-tip"><v-icon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Powód sprzedaży</span>
-                                </div>
-                                <div class="desc-counter" :class="descQuality">
-                                    {{ descCharCount }}<span class="desc-max">/5000</span>
-                                    <span class="desc-qlabel">
-                                        {{ descQuality === 'great' ? '✓ Świetny' : descQuality === 'good' ? 'Dobry' : descQuality === 'ok' ? 'Rozbuduj' : 'Za krótki' }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="writing-tips">
-                        <div class="wt-title"><v-icon icon="mdi-lightbulb-outline" size="14" />Wskazówki dla dobrego opisu</div>
-                        <div class="wt-grid">
-                            <div class="wt-item"><v-icon icon="mdi-history" size="13" />Historia serwisowa i naprawy</div>
-                            <div class="wt-item"><v-icon icon="mdi-wrench-outline" size="13" />Co zostało wymienione</div>
-                            <div class="wt-item"><v-icon icon="mdi-car-multiple" size="13" />Powód sprzedaży</div>
-                            <div class="wt-item"><v-icon icon="mdi-package-variant-closed" size="13" />Dodatkowe akcesoria</div>
-                        </div>
-                    </div>
-
-                    <!-- Location -->
-                    <div class="form-section-subhead">Lokalizacja</div>
-                    <div class="fields-grid">
-                        <div class="field">
-                            <label class="flabel">Województwo <span class="req">*</span></label>
-                            <div class="select-wrap">
-                                <select v-model="form.region" class="fselect">
-                                    <option :value="null" disabled>Wybierz województwo</option>
-                                    <option v-for="v in voivodeships" :key="v" :value="v">{{ v }}</option>
-                                </select>
-                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="flabel">Miasto <span class="req">*</span></label>
-                            <div class="input-icon-wrap">
-                                <v-icon icon="mdi-map-marker-outline" class="input-prefix" size="16" />
-                                <input v-model="form.city" type="text" class="finput has-prefix" placeholder="np. Warszawa" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 5: Podsumowanie -->
-                <div v-else-if="currentStep === 5" class="form-content promo-step">
-                    <div class="form-section-head">
-                        <h2>{{ isEdit ? 'Podsumowanie zmian' : 'Podsumowanie i promocja' }}</h2>
-                        <p v-if="isEdit">Sprawdź wprowadzone zmiany i zapisz ogłoszenie.</p>
-                        <p v-else>Przejrzyj ogłoszenie, wybierz promocję i opublikuj.</p>
-                    </div>
-                    <div v-if="error" class="submit-error">
-                        <v-icon icon="mdi-alert-circle-outline" size="15" />
-                        {{ error }}
-                    </div>
-
-                    <!-- Advert summary before publish -->
-                    <div class="pub-summary-card">
-                        <div class="psc-title">Podsumowanie ogłoszenia</div>
-                        <div class="psc-grid">
-                            <div class="psc-row">
-                                <v-icon icon="mdi-car-outline" size="14" class="psc-icon" />
-                                <span class="psc-label">Pojazd</span>
-                                <span class="psc-val">{{ previewTitle || '—' }}</span>
-                            </div>
-                            <div class="psc-row">
-                                <v-icon icon="mdi-calendar-outline" size="14" class="psc-icon" />
-                                <span class="psc-label">Rok</span>
-                                <span class="psc-val">{{ form.year ?? '—' }}</span>
-                            </div>
-                            <div class="psc-row">
-                                <v-icon icon="mdi-speedometer" size="14" class="psc-icon" />
-                                <span class="psc-label">Przebieg</span>
-                                <span class="psc-val">{{ form.mileage ? Number(form.mileage).toLocaleString('pl') + ' km' : '—' }}</span>
-                            </div>
-                            <div class="psc-row">
-                                <v-icon icon="mdi-tag-outline" size="14" class="psc-icon" />
-                                <span class="psc-label">Cena</span>
-                                <span class="psc-val psc-price">
-                                    {{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '—' }}
-                                    <span v-if="form.isNegotiable" class="psc-nego">do negocjacji</span>
-                                </span>
-                            </div>
-                            <div class="psc-row">
-                                <v-icon icon="mdi-image-outline" size="14" class="psc-icon" />
-                                <span class="psc-label">Zdjęcia</span>
-                                <span class="psc-val">{{ selectedFiles.length + existingImages.length }} szt.</span>
-                            </div>
-                            <div class="psc-row">
-                                <v-icon icon="mdi-map-marker-outline" size="14" class="psc-icon" />
-                                <span class="psc-label">Lokalizacja</span>
-                                <span class="psc-val">{{ [form.city, form.region].filter(Boolean).join(', ') || '—' }}</span>
-                            </div>
-                            <div v-if="form.vin" class="psc-row">
-                                <v-icon icon="mdi-barcode-scan" size="14" class="psc-icon" />
-                                <span class="psc-label">VIN</span>
-                                <span class="psc-val psc-vin">{{ form.vin }}</span>
-                            </div>
-                        </div>
-                        <div class="psc-score">
-                            <div class="psc-score-bar">
-                                <div class="psc-score-fill"
-                                    :style="{ width: adScore + '%' }"
-                                    :class="adScore >= 80 ? 'fill-great' : adScore >= 60 ? 'fill-good' : 'fill-poor'" />
-                            </div>
-                            <span class="psc-score-label">
-                                Ocena: {{ adScore }}/100 —
-                                <span :class="adScore >= 80 ? 'col-great' : adScore >= 60 ? 'col-good' : 'col-poor'">
-                                    {{ adScore >= 80 ? 'Doskonałe ogłoszenie' : adScore >= 60 ? 'Dobre ogłoszenie' : 'Uzupełnij więcej danych' }}
-                                </span>
+                        <div class="desc-tips">
+                            <span class="dt-item" :class="{ 'dt-done': descCharCount >= 50 }">
+                                <v-icon :icon="descCharCount >= 50 ? 'mdi-check-circle' : 'mdi-circle-outline'" size="12" />50 znaków
+                            </span>
+                            <span class="dt-item" :class="{ 'dt-done': descCharCount >= 200 }">
+                                <v-icon :icon="descCharCount >= 200 ? 'mdi-check-circle' : 'mdi-circle-outline'" size="12" />200 znaków
+                            </span>
+                            <span class="dt-item" :class="{ 'dt-done': descCharCount >= 500 }">
+                                <v-icon :icon="descCharCount >= 500 ? 'mdi-check-circle' : 'mdi-circle-outline'" size="12" />500 znaków
                             </span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Edit mode summary -->
-                    <div v-if="isEdit" class="edit-summary">
-                        <div class="edit-summary-row">
-                            <v-icon icon="mdi-car-outline" size="18" class="es-icon" />
-                            <div>
-                                <div class="es-label">Ogłoszenie</div>
-                                <div class="es-val">{{ previewTitle }}</div>
+                <!-- ══ Step 6 — Cena i lokalizacja ═════════════════════════════ -->
+                <div v-else-if="currentStep === 6" key="s6" class="step-panel">
+                    <div class="step-head">
+                        <h2>Cena i lokalizacja</h2>
+                        <p>Ustal cenę i podaj gdzie się znajduje pojazd.</p>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="gc-section-title">Cena</div>
+                        <div class="price-row">
+                            <div class="field" style="flex:1">
+                                <label class="flabel">{{ categoryConfig.priceLabel ?? 'Cena (zł)' }} <span class="req">*</span></label>
+                                <div class="input-icon-wrap">
+                                    <span class="input-prefix-text">zł</span>
+                                    <input v-model.number="form.price" type="number" class="finput has-prefix-text finput--price"
+                                        placeholder="np. 45 000" min="0" />
+                                </div>
+                                <div v-if="categoryConfig.priceHint" class="field-hint">
+                                    <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.priceHint }}
+                                </div>
                             </div>
                         </div>
-                        <div class="edit-summary-row">
-                            <v-icon icon="mdi-currency-usd" size="18" class="es-icon" />
-                            <div>
-                                <div class="es-label">Cena</div>
-                                <div class="es-val">{{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '—' }}</div>
-                            </div>
-                        </div>
-                        <div class="edit-summary-row">
-                            <v-icon icon="mdi-image-outline" size="18" class="es-icon" />
-                            <div>
-                                <div class="es-label">Zdjęcia</div>
-                                <div class="es-val">{{ existingImages.length }} istniejących<span v-if="selectedFiles.length"> + {{ selectedFiles.length }} nowych</span></div>
+                        <div class="price-opts">
+                            <label class="bool-check" :class="{ active: form.isNegotiable }">
+                                <input type="checkbox" v-model="form.isNegotiable" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isNegotiable" icon="mdi-check" size="12" /></span>
+                                Cena do negocjacji
+                            </label>
+                            <div class="seller-type-toggle">
+                                <label class="stt-opt" :class="{ active: form.sellerType === 'private' }">
+                                    <input type="radio" value="private" v-model="form.sellerType" hidden />
+                                    <v-icon icon="mdi-account-outline" size="15" />Osoba prywatna
+                                </label>
+                                <label class="stt-opt" :class="{ active: form.sellerType === 'dealer' }">
+                                    <input type="radio" value="dealer" v-model="form.sellerType" hidden />
+                                    <v-icon icon="mdi-domain" size="15" />Dealer / firma
+                                </label>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Plans grid (create mode only) -->
-                    <div v-if="!isEdit" class="promo-plans-grid">
-                        <!-- Free -->
-                        <div class="pp-card pp-free" :class="{ 'pp-selected': promoSelected === 'free' }" @click="promoSelected = 'free'">
-                            <div class="pp-header">
-                                <div class="pp-icon"><v-icon icon="mdi-car-outline" size="24" /></div>
-                                <div class="pp-name">Podstawowe</div>
-                                <span class="pp-badge-free">DARMOWE</span>
+                    <div class="glass-card" style="margin-top:16px">
+                        <div class="gc-section-title">Lokalizacja</div>
+                        <div class="fields-grid">
+                            <div class="field">
+                                <label class="flabel">Województwo <span class="req">*</span></label>
+                                <div class="select-wrap">
+                                    <select v-model="form.region" class="fselect">
+                                        <option :value="null" disabled>Wybierz województwo</option>
+                                        <option v-for="v in voivodeships" :key="v" :value="v">{{ v }}</option>
+                                    </select>
+                                    <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                                </div>
                             </div>
-                            <div class="pp-price">0 zł</div>
-                            <div class="pp-desc">Standardowe ogłoszenie w wynikach wyszukiwania.</div>
-                            <ul class="pp-feats">
-                                <li><v-icon icon="mdi-check" size="13" />Widoczne w wynikach</li>
-                                <li><v-icon icon="mdi-check" size="13" />30 dni aktywności</li>
-                                <li class="pp-feat-no"><v-icon icon="mdi-close" size="13" />Brak wyróżnienia</li>
-                            </ul>
-                            <div class="pp-sel-bar" />
-                        </div>
-
-                        <!-- Paid plans -->
-                        <div v-for="plan in promoPlans" :key="plan.key"
-                            class="pp-card"
-                            :class="[`pp-${plan.key.toLowerCase()}`, { 'pp-selected': promoSelected === plan.key, 'pp-popular': plan.popular }]"
-                            @click="promoSelected = plan.key; promoDays = plan.defaultDays">
-                            <div v-if="plan.popular" class="pp-popular-badge">NAJPOPULARNIEJSZY</div>
-                            <div class="pp-header">
-                                <div class="pp-icon"><v-icon :icon="plan.icon" size="24" /></div>
-                                <div class="pp-name">{{ plan.name }}</div>
+                            <div class="field">
+                                <label class="flabel">Miasto <span class="req">*</span></label>
+                                <div class="input-icon-wrap">
+                                    <v-icon icon="mdi-map-marker-outline" class="input-prefix" size="16" />
+                                    <input v-model="form.city" type="text" class="finput has-prefix" placeholder="np. Warszawa" />
+                                </div>
                             </div>
-                            <div class="pp-price">od <strong>{{ getPromoPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</strong></div>
-                            <div class="pp-desc">{{ plan.desc }}</div>
-                            <ul class="pp-feats">
-                                <li v-for="f in plan.feats" :key="f"><v-icon icon="mdi-check" size="13" />{{ f }}</li>
-                            </ul>
-                            <div v-if="promoSelected === plan.key" class="pp-days">
-                                <button v-for="d in plan.days" :key="d"
-                                    class="pp-day-btn" :class="{ active: promoDays === d }"
-                                    @click.stop="promoDays = d">
-                                    {{ d }} dni · {{ getPromoDisplayPrice(plan.key, d).toFixed(2) }} zł
-                                </button>
-                            </div>
-                            <div class="pp-sel-bar" />
                         </div>
                     </div>
 
-                    <!-- Summary + coupon (create mode only) -->
-                    <div v-if="!isEdit" class="promo-summary">
-                        <div v-if="promoSelected === 'free'" class="ps-free-info">
-                            <v-icon icon="mdi-check-circle-outline" size="18" />
-                            Opublikujesz ogłoszenie bez promocji (darmowe)
-                        </div>
-                        <div v-else class="ps-paid-info">
-                            <div class="ps-plan-name">{{ selectedPromoPlan?.name }} – {{ promoDays }} dni</div>
-                            <div class="ps-plan-price">
-                                <span v-if="couponResult?.isValid" class="ps-original">{{ selectedPromoPrice?.toFixed(2) }} zł</span>
-                                {{ finalPromoPrice.toFixed(2) }} zł
+                    <!-- Promotion plans (create mode) -->
+                    <div v-if="!isEdit" class="glass-card" style="margin-top:16px">
+                        <div class="gc-section-title">Promocja ogłoszenia</div>
+                        <p class="promo-intro">Opcjonalnie wyróżnij ogłoszenie i sprzedaj szybciej.</p>
+                        <div class="promo-grid">
+                            <!-- Free -->
+                            <div class="promo-card" :class="{ 'promo-card--active': promoSelected === 'free' }"
+                                @click="promoSelected = 'free'">
+                                <div class="pc-name">Bezpłatne</div>
+                                <div class="pc-price">0 zł</div>
+                                <div class="pc-desc">Standardowe ogłoszenie</div>
                             </div>
-                            <div v-if="couponResult?.isValid" class="ps-coupon-ok">
-                                <v-icon icon="mdi-tag-outline" size="13" />Rabat zastosowany
+                            <div v-for="plan in promoPlans" :key="plan.key"
+                                class="promo-card" :class="{ 'promo-card--active': promoSelected === plan.key, 'promo-card--popular': plan.popular }"
+                                @click="promoSelected = plan.key; promoDays = plan.defaultDays">
+                                <div v-if="plan.popular" class="pc-popular-badge">Popularne</div>
+                                <v-icon :icon="plan.icon" size="18" class="pc-icon" />
+                                <div class="pc-name">{{ plan.name }}</div>
+                                <div class="pc-price">od {{ getPromoPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</div>
+                                <div class="pc-desc">{{ plan.desc }}</div>
+                                <div v-if="promoSelected === plan.key" class="pc-days-row">
+                                    <button v-for="d in plan.days" :key="d"
+                                        type="button" class="pc-day-btn" :class="{ active: promoDays === d }"
+                                        @click.stop="promoDays = d">
+                                        {{ d }}d — {{ getPromoDisplayPrice(plan.key, d).toFixed(2) }} zł
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div v-if="promoSelected !== 'free'" class="ps-coupon-row">
-                            <div class="ps-coupon-wrap">
-                                <input v-model="couponCode" class="ps-coupon-input"
-                                    placeholder="Kod rabatowy (opcjonalnie)"
-                                    :disabled="couponLoading"
-                                    @keyup.enter="applyCoupon" />
-                                <button class="ps-coupon-btn" :disabled="!couponCode || couponLoading" @click="applyCoupon">
+                        <!-- Coupon -->
+                        <div v-if="promoSelected !== 'free'" class="promo-coupon">
+                            <div class="promo-coupon-row">
+                                <input v-model="couponCode" type="text" class="finput" placeholder="Kod rabatowy (opcjonalnie)" />
+                                <button class="btn-coupon" :disabled="!couponCode || couponLoading" @click="applyCoupon">
                                     <v-icon v-if="couponLoading" icon="mdi-loading" size="13" class="spin" />
                                     <span v-else>Zastosuj</span>
                                 </button>
                             </div>
                             <div v-if="couponError" class="ps-coupon-error">{{ couponError }}</div>
+                            <div v-if="couponResult?.isValid" class="ps-coupon-ok">
+                                <v-icon icon="mdi-tag-outline" size="13" /> Kupon zastosowany — {{ couponResult.discountDescription }}
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Form actions -->
-                <div class="form-actions">
-                    <div class="form-actions-left">
-                        <button class="btn-cancel" @click="currentStep > 0 ? currentStep-- : navigateTo('/my-adverts')">
-                            {{ currentStep > 0 ? 'Wstecz' : 'Anuluj' }}
-                        </button>
-                        <transition name="fade-err">
-                            <span v-if="stepError" class="step-error">
-                                <v-icon icon="mdi-alert-circle-outline" size="14" />{{ stepError }}
-                            </span>
-                        </transition>
+                <!-- ══ Step 7 — Publikacja ══════════════════════════════════════ -->
+                <div v-else-if="currentStep === 7" key="s7" class="step-panel">
+                    <div class="step-head">
+                        <h2>Podgląd i publikacja</h2>
+                        <p>Sprawdź ogłoszenie przed publikacją. Po opublikowaniu pojawi się w wyszukiwarce CARIZO.</p>
                     </div>
-                    <button v-if="currentStep < steps.length - 1" class="btn-next" @click="goNext">
-                        Dalej: {{ steps[currentStep + 1]?.name }}
-                        <v-icon icon="mdi-arrow-right" size="16" />
-                    </button>
-                    <template v-else>
+
+                    <!-- Preview card -->
+                    <div class="preview-advert-card">
+                        <div class="pac-img-wrap">
+                            <img :src="previews[0] ?? '/car-placeholder.svg'" class="pac-img" alt="Podgląd" />
+                            <div v-if="previews.length > 1" class="pac-photo-count">
+                                <v-icon icon="mdi-image-multiple-outline" size="14" />{{ previews.length }} zdjęć
+                            </div>
+                        </div>
+                        <div class="pac-info">
+                            <div class="pac-category">{{ selectedCategory?.name ?? '' }}</div>
+                            <h3 class="pac-title">{{ form.title || suggestedTitle || previewTitle }}</h3>
+                            <div class="pac-specs">
+                                <span v-if="form.year">{{ form.year }}</span>
+                                <span v-if="fuelTypeName" class="pac-dot">·</span>
+                                <span v-if="fuelTypeName">{{ fuelTypeName }}</span>
+                                <span v-if="form.mileage" class="pac-dot">·</span>
+                                <span v-if="form.mileage">{{ Number(form.mileage).toLocaleString('pl') }} km</span>
+                                <span v-if="form.power" class="pac-dot">·</span>
+                                <span v-if="form.power">{{ form.power }} KM</span>
+                            </div>
+                            <div class="pac-price">
+                                {{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '— zł' }}
+                                <span v-if="form.isNegotiable" class="pac-nego">do negocjacji</span>
+                            </div>
+                            <div v-if="form.city || form.region" class="pac-location">
+                                <v-icon icon="mdi-map-marker-outline" size="13" />
+                                {{ [form.city, form.region].filter(Boolean).join(', ') }}
+                            </div>
+                            <p v-if="form.description" class="pac-desc">{{ form.description.slice(0, 200) }}{{ form.description.length > 200 ? '...' : '' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Summary stats -->
+                    <div class="pub-summary-grid">
+                        <div class="psg-item">
+                            <v-icon icon="mdi-image-outline" size="20" class="psg-icon" />
+                            <div class="psg-val">{{ selectedFiles.length + existingImages.length }}</div>
+                            <div class="psg-label">zdjęć</div>
+                        </div>
+                        <div class="psg-item">
+                            <v-icon icon="mdi-format-list-checkbox" size="20" class="psg-icon" />
+                            <div class="psg-val">{{ form.featureIds.length }}</div>
+                            <div class="psg-label">wyposażenia</div>
+                        </div>
+                        <div class="psg-item">
+                            <v-icon icon="mdi-text-box-outline" size="20" class="psg-icon" />
+                            <div class="psg-val">{{ descCharCount }}</div>
+                            <div class="psg-label">znaków opisu</div>
+                        </div>
+                        <div class="psg-item" :class="adScore >= 80 ? 'psg-great' : adScore >= 55 ? 'psg-ok' : 'psg-low'">
+                            <v-icon icon="mdi-chart-arc" size="20" class="psg-icon" />
+                            <div class="psg-val">{{ adScore }}/100</div>
+                            <div class="psg-label">jakość</div>
+                        </div>
+                    </div>
+
+                    <!-- Publish actions -->
+                    <div class="publish-actions">
                         <template v-if="isEdit">
-                            <button class="btn-publish-free" :disabled="loading" @click="submit">
-                                <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-                                <v-icon v-else icon="mdi-content-save-outline" size="16" />
+                            <button class="btn-publish-main" :disabled="loading" @click="submit">
+                                <v-icon v-if="loading" icon="mdi-loading" size="18" class="spin" />
+                                <v-icon v-else icon="mdi-content-save-outline" size="18" />
                                 {{ loading ? 'Zapisywanie...' : 'Zapisz zmiany' }}
                             </button>
                         </template>
                         <template v-else>
-                            <button v-if="promoSelected === 'free'" class="btn-publish-free" :disabled="loading" @click="submit">
-                                <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-                                <v-icon v-else icon="mdi-check" size="16" />
-                                {{ loading ? 'Publikowanie...' : 'Opublikuj za darmo' }}
+                            <button v-if="promoSelected === 'free'" class="btn-publish-main" :disabled="loading" @click="submit">
+                                <v-icon v-if="loading" icon="mdi-loading" size="18" class="spin" />
+                                <v-icon v-else icon="mdi-rocket-launch-outline" size="18" />
+                                {{ loading ? 'Publikowanie...' : 'Opublikuj ogłoszenie' }}
                             </button>
-                            <button v-else class="btn-pay" :disabled="loading || paying" @click="submit">
-                                <v-icon v-if="loading || paying" icon="mdi-loading" size="16" class="spin" />
-                                <v-icon v-else icon="mdi-credit-card-outline" size="16" />
-                                {{ loading ? 'Tworzę ogłoszenie...' : paying ? 'Przekierowuję...' : `Zapłać ${finalPromoPrice.toFixed(2)} zł` }}
+                            <button v-else class="btn-publish-main btn-publish-pay" :disabled="loading || paying" @click="submit">
+                                <v-icon v-if="loading || paying" icon="mdi-loading" size="18" class="spin" />
+                                <v-icon v-else icon="mdi-credit-card-outline" size="18" />
+                                {{ loading ? 'Tworzę ogłoszenie...' : paying ? 'Przekierowuję...' : `Zapłać i opublikuj — ${finalPromoPrice.toFixed(2)} zł` }}
                             </button>
                         </template>
-                    </template>
-                </div>
-
-                <!-- Bottom strip -->
-                <div class="bottom-strip">
-                    <div v-for="f in stripFeats" :key="f.title" class="strip-feat">
-                        <v-icon :icon="f.icon" size="20" class="strip-icon" />
-                        <div>
-                            <div class="strip-title">{{ f.title }}</div>
-                            <div class="strip-desc">{{ f.desc }}</div>
+                        <div class="pub-disclaimer">
+                            <v-icon icon="mdi-lock-outline" size="13" />
+                            Ogłoszenie będzie widoczne natychmiast po opublikowaniu.
                         </div>
                     </div>
+                </div>
+
+                </transition>
+
+                <!-- ── Navigation ────────────────────────────────────────────── -->
+                <div class="nav-row">
+                    <button class="btn-prev" @click="currentStep > 0 ? currentStep-- : navigateTo('/my-adverts')">
+                        <v-icon icon="mdi-arrow-left" size="16" />
+                        {{ currentStep > 0 ? 'Wstecz' : 'Anuluj' }}
+                    </button>
+                    <button v-if="currentStep < steps.length - 1" class="btn-next-main" @click="goNext">
+                        Dalej: {{ steps[currentStep + 1]?.name }}
+                        <v-icon icon="mdi-arrow-right" size="16" />
+                    </button>
                 </div>
 
             </main>
 
-            <!-- Right panel -->
-            <aside class="right-panel">
-
-                <div class="score-card">
-                    <div class="score-card-title">Ocena ogłoszenia</div>
-                    <div class="score-circle-area">
-                        <svg viewBox="0 0 120 120" width="130" height="130">
-                            <circle cx="60" cy="60" r="52" fill="none" stroke="#1a1a1a" stroke-width="8" />
-                            <circle cx="60" cy="60" r="52" fill="none"
-                                :stroke="adScore >= 80 ? '#2d7a3a' : adScore >= 60 ? '#e67e22' : '#8B0D1D'"
-                                stroke-width="8"
-                                stroke-linecap="round"
-                                :stroke-dasharray="`${scoreArc} 326.7`"
-                                transform="rotate(-90 60 60)"
-                                style="transition: stroke-dasharray 0.5s ease" />
-                        </svg>
-                        <div class="score-num">
-                            <span class="score-val">{{ adScore }}</span>
-                            <span class="score-denom">/100</span>
-                        </div>
-                    </div>
-                    <div class="score-label" :class="adScore >= 80 ? 'sl-great' : adScore >= 60 ? 'sl-good' : 'sl-poor'">
-                        {{ adScore >= 80 ? 'Doskonałe ogłoszenie' : adScore >= 60 ? 'Dobre ogłoszenie' : 'Uzupełnij więcej danych' }}
-                    </div>
-
-                    <div class="score-factors">
-                        <div class="sf-heading">Postęp wypełnienia</div>
-                        <div v-for="sf in scoreFactors" :key="sf.label" class="sf-row" :class="{ 'sf-done': sf.done }">
-                            <div class="sf-check-box">
-                                <v-icon v-if="sf.done" icon="mdi-check" size="11" />
-                            </div>
-                            <span>{{ sf.label }}</span>
-                        </div>
-                    </div>
-
-                    <div v-if="scoreTips.length" class="score-tips">
-                        <div class="st-heading"><v-icon icon="mdi-lightbulb-outline" size="13" class="st-icon" />Wskazówki</div>
-                        <div v-for="tip in scoreTips" :key="tip" class="st-tip">{{ tip }}</div>
-                    </div>
-                </div>
-
-                <div class="preview-card">
-                    <div class="preview-card-title">Podgląd ogłoszenia</div>
-                    <div class="preview-img-wrap">
-                        <img
-                            :src="previews[0] ?? '/car-placeholder.svg'"
-                            alt=""
-                        />
-                    </div>
-                    <div class="preview-details">
-                        <div class="preview-car-name">{{ previewTitle }}</div>
-                        <div class="preview-meta-row">
-                            <span v-if="form.year">{{ form.year }}</span>
-                            <template v-if="fuelTypeName"><span class="dot">•</span><span>{{ fuelTypeName }}</span></template>
-                            <template v-if="form.mileage"><span class="dot">•</span><span>{{ Number(form.mileage).toLocaleString('pl') }} km</span></template>
-                        </div>
-                        <div class="preview-price">
-                            {{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '— zł' }}
-                            <span v-if="form.isNegotiable" class="preview-nego">do negocjacji</span>
-                        </div>
-                    </div>
-                    <button class="preview-full-btn" @click="previewOpen = true">
-                        <v-icon icon="mdi-eye-outline" size="15" />
-                        Zobacz pełny podgląd
-                    </button>
-                </div>
-
-            </aside>
-
         </div>
     </div>
-
-    <!-- Preview modal -->
-    <Teleport to="body">
-        <transition name="fade">
-            <div v-if="previewOpen" class="preview-modal-overlay" @click.self="previewOpen = false">
-                <div class="preview-modal">
-                    <div class="pm-header">
-                        <span class="pm-title">Podgląd ogłoszenia</span>
-                        <button class="pm-close" @click="previewOpen = false">
-                            <v-icon icon="mdi-close" size="20" />
-                        </button>
-                    </div>
-                    <div class="pm-body">
-                        <div class="pm-img-wrap">
-                            <img :src="previews[0] ?? '/car-placeholder.svg'" class="pm-img" alt="" />
-                            <div class="pm-img-count" v-if="previews.length > 1">+{{ previews.length - 1 }} zdjęć</div>
-                        </div>
-                        <div class="pm-content">
-                            <div class="pm-brand">{{ brandName }}</div>
-                            <h2 class="pm-name">{{ previewTitle }}</h2>
-                            <div class="pm-meta">
-                                <span v-if="form.year">{{ form.year }}</span>
-                                <span v-if="fuelTypeName">{{ fuelTypeName }}</span>
-                                <span v-if="form.mileage">{{ Number(form.mileage).toLocaleString('pl') }} km</span>
-                                <span v-if="form.city">{{ form.city }}</span>
-                            </div>
-                            <div class="pm-price">{{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '— zł' }}</div>
-                            <p v-if="form.description" class="pm-desc">{{ form.description }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </transition>
-    </Teleport>
 </template>
-
 <script setup lang="ts">
 import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption } from '~/types'
 
@@ -1708,6 +1450,7 @@ const vinError = ref('')
 const previewOpen = ref(false)
 const photoUploading = ref(false)
 const paying = ref(false)
+const aiGenerating = ref(false)
 
 // Promotion plan state
 const promoSelected = ref<string>('free')
@@ -1815,7 +1558,7 @@ function loadDraft() {
         if (saved.history) Object.assign(history, saved.history)
         if (saved.brandTextInput) brandTextInput.value = saved.brandTextInput
         if (saved.modelTextInput) modelTextInput.value = saved.modelTextInput
-        if (typeof saved.step === 'number' && saved.step >= 0 && saved.step < steps.length) currentStep.value = saved.step
+        if (typeof saved.step === 'number' && saved.step >= 0 && saved.step < 8) currentStep.value = saved.step
     } catch {}
 }
 
@@ -1884,22 +1627,17 @@ const history = reactive({
 })
 
 const steps = [
-    { name: 'Kategoria',   desc: 'Typ pojazdu',                    icon: 'mdi-apps' },
-    { name: 'Dane pojazdu',desc: 'Marka, model, dane techniczne',  icon: 'mdi-car-outline' },
-    { name: 'Zdjęcia',     desc: 'Dodaj zdjęcia pojazdu',          icon: 'mdi-image-outline' },
-    { name: 'Wyposażenie', desc: 'Opcje i wyposażenie',            icon: 'mdi-format-list-checkbox' },
-    { name: 'Cena i opis', desc: 'Cena, opis, lokalizacja',        icon: 'mdi-text-box-outline' },
-    { name: 'Podsumowanie',desc: 'Przejrzyj i opublikuj',          icon: 'mdi-check-circle-outline' },
+    { name: 'Kategoria',    desc: 'Typ pojazdu',             icon: 'mdi-apps' },
+    { name: 'Dane pojazdu', desc: 'Marka, model, parametry', icon: 'mdi-car-outline' },
+    { name: 'Historia',     desc: 'VIN i historia',          icon: 'mdi-shield-check-outline' },
+    { name: 'Zdjęcia',      desc: 'Galeria pojazdu',         icon: 'mdi-image-outline' },
+    { name: 'Wyposażenie',  desc: 'Opcje i pakiety',         icon: 'mdi-format-list-checkbox' },
+    { name: 'Opis',         desc: 'Tytuł i opis',            icon: 'mdi-text-box-outline' },
+    { name: 'Cena',         desc: 'Cena i lokalizacja',      icon: 'mdi-currency-usd' },
+    { name: 'Publikacja',   desc: 'Przejrzyj i opublikuj',   icon: 'mdi-check-circle-outline' },
 ]
 
-const progressSteps = [
-    { label: 'Kategoria',  icon: 'mdi-apps' },
-    { label: 'Pojazd',     icon: 'mdi-car-outline' },
-    { label: 'Zdjęcia',    icon: 'mdi-image-outline' },
-    { label: 'Wyposażenie',icon: 'mdi-format-list-checkbox' },
-    { label: 'Oferta',     icon: 'mdi-text-box-outline' },
-    { label: 'Publikacja', icon: 'mdi-check-circle-outline' },
-]
+const progressSteps = steps
 
 const stripFeats = [
     { icon: 'mdi-lock-outline', title: 'Bezpieczne transakcje', desc: 'Weryfikujemy i dbamy o bezpieczeństwo' },
@@ -1961,6 +1699,10 @@ const adScore = computed(() => {
 })
 
 const scoreArc = computed(() => (adScore.value / 100) * 326.7)
+
+const photoQualityPct = computed(() =>
+    Math.min(100, Math.round((selectedFiles.value.length + existingImages.value.length) / 12 * 100))
+)
 
 const scoreFactors = computed(() => {
     const photos = selectedFiles.value.length + existingImages.value.length
@@ -2151,24 +1893,27 @@ function validateStep(step: number): string | null {
         if (!form.year) return 'Podaj rok produkcji.'
         if (cfg.required.includes('fuelType') && !form.fuelTypeId) return 'Wybierz rodzaj paliwa.'
         if (cfg.required.includes('mileage') && !form.mileage && form.mileage !== 0) return `Podaj ${cfg.mileageLabel ?? 'przebieg'}.`
-        // Validate extra required fields
         for (const ef of (cfg.extraFields ?? [])) {
             if (ef.required && !extras[ef.key] && extras[ef.key] !== false) {
                 return `Pole "${ef.label}" jest wymagane.`
             }
         }
     }
-    // Step 2: Photos
-    if (step === 2) {
+    // Step 2: Historia — no required fields (VIN optional)
+    // Step 3: Photos
+    if (step === 3) {
         if (!isEdit.value && existingImages.value.length === 0 && selectedFiles.value.length < 3) return 'Dodaj minimum 3 zdjęcia.'
     }
-    // Step 3: Equipment — no required fields
-    // Step 4: Price & description
-    if (step === 4) {
+    // Step 4: Equipment — no required fields
+    // Step 5: Description
+    if (step === 5) {
+        if (!form.description?.trim()) return 'Dodaj opis ogłoszenia.'
+    }
+    // Step 6: Price & location
+    if (step === 6) {
         if (!form.price) return 'Podaj cenę pojazdu.'
         if (!form.region) return 'Wybierz województwo.'
         if (!form.city?.trim()) return 'Podaj miasto.'
-        if (!form.description?.trim()) return 'Dodaj opis ogłoszenia.'
     }
     return null
 }
@@ -2309,8 +2054,22 @@ function buildDescription(): string {
     return sections.filter(Boolean).join('\n\n')
 }
 
+async function generateAiDescription() {
+    aiGenerating.value = true
+    try {
+        const brand = (categoryConfig.value.brandFieldType === 'text' ? brandTextInput.value : brandName.value) || ''
+        const model = (categoryConfig.value.brandFieldType === 'text' ? modelTextInput.value : modelName.value) || ''
+        const result = await $fetch<{ description: string }>('/api/ai/description', {
+            method: 'POST',
+            body: { brand, model, year: form.year, fuel: fuelTypeName.value, mileage: form.mileage, power: form.power, condition: extras.condition },
+        })
+        if (result.description) form.description = result.description
+    } catch {}
+    finally { aiGenerating.value = false }
+}
+
 async function submit() {
-    const err = validateStep(4)
+    const err = validateStep(6)
     if (err) {
         error.value = err
         return
@@ -2605,8 +2364,8 @@ onMounted(async () => {
     }
 })
 </script>
-
 <style lang="scss" scoped>
+
 // ── Page shell ────────────────────────────────────────────────────────────────
 .add-page {
     display: flex;
@@ -2627,80 +2386,38 @@ onMounted(async () => {
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    background: $bg;
+    background: rgba(5,5,5,0.95);
+    backdrop-filter: blur(12px);
     z-index: 10;
 }
-
-.top-left {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.tl-logo {
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: 4px;
-    color: $text;
-    span { color: $red; }
-}
-
+.top-left { display: flex; align-items: center; gap: 18px; }
+.tl-logo { height: 24px; opacity: 0.9; }
 .back-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: none;
-    color: $text-dim;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: color 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    background: transparent; border: none; color: $text-dim;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: inherit; transition: color 0.2s;
     &:hover { color: $text; }
 }
-
 .top-center {
-    font-size: 14px;
-    font-weight: 600;
-    color: $text-muted;
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+    .tc-label { font-size: 13px; font-weight: 600; color: $text-muted; }
+    .tc-step { font-size: 11px; color: $text-faint; }
 }
-
-.top-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
+.top-right { display: flex; align-items: center; gap: 10px; }
 .btn-draft {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: 1px solid $border;
-    border-radius: $r-sm;
-    color: $text-muted;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 7px 14px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: border-color 0.2s, color 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    background: transparent; border: 1px solid $border; border-radius: $r-sm;
+    color: $text-muted; font-size: 13px; padding: 6px 12px; cursor: pointer;
+    font-family: inherit; transition: border-color 0.2s, color 0.2s;
     &:hover { border-color: $text-dim; color: $text; }
+    &--saved { border-color: rgba(34,197,94,0.4); color: #22c55e; }
 }
-
 .btn-close {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    background: transparent;
-    border: 1px solid $border;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $text-dim;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
+    width: 34px; height: 34px; border-radius: 8px;
+    background: transparent; border: 1px solid $border;
+    display: flex; align-items: center; justify-content: center;
+    color: $text-dim; cursor: pointer; transition: border-color 0.2s, color 0.2s;
     &:hover { border-color: $text-dim; color: $text; }
 }
 
@@ -2713,2036 +2430,653 @@ onMounted(async () => {
 
 // ── Left sidebar ──────────────────────────────────────────────────────────────
 .left-sidebar {
-    width: 240px;
-    min-width: 240px;
+    width: 260px;
+    min-width: 260px;
     border-right: 1px solid $border;
-    background: #070707;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    padding: 24px 0 24px;
+    gap: 0;
+    background: rgba(13,13,13,0.5);
 }
 
+// Steps nav
 .steps-nav {
-    flex: 1;
-    padding: 20px 0;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
-
 .step-item {
     display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 14px 20px;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 10px;
+    border-radius: $r-sm;
     cursor: default;
-    transition: background 0.15s;
-
-    &.step-active {
-        background: rgba($red, 0.08);
-        .step-num { background: $red; border-color: $red; color: white; }
-        .step-name { color: $text; }
-    }
-
+    transition: background 0.2s;
+    position: relative;
     &.step-done {
         cursor: pointer;
-        .step-num { background: rgba($red, 0.15); border-color: rgba($red, 0.3); color: $red; }
-        &:hover { background: rgba(255,255,255,0.02); }
+        &:hover { background: rgba(255,255,255,0.04); }
     }
+    &.step-active { background: rgba(139,13,29,0.12); }
 }
-
 .step-num {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    border-radius: 50%;
-    border: 1.5px solid $border;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    color: $text-dark;
-    margin-top: 1px;
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    background: $border; color: $text-dim;
+    .step-active & { background: $red; color: #fff; }
+    .step-done & { background: rgba(34,197,94,0.2); color: #22c55e; }
 }
-
-.step-info { min-width: 0; }
-
+.step-info { flex: 1; min-width: 0; }
 .step-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: $text-muted;
-    margin-bottom: 2px;
+    font-size: 13px; font-weight: 600; color: $text-muted;
+    .step-active & { color: $text; }
+    .step-done & { color: $text-dim; }
 }
-
 .step-desc {
-    font-size: 11px;
-    color: $text-dark;
+    font-size: 11px; color: $text-faint;
+    .step-active & { color: $text-dim; }
 }
 
-.sidebar-help {
-    margin: 16px;
-    padding: 16px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid $border;
+// Score panel
+.score-panel {
+    margin: 20px 16px 0;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
     border-radius: $r-md;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
+    padding: 16px;
 }
-
-.help-icon { color: $text-dark; flex-shrink: 0; margin-top: 2px; }
-
-.help-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: $text-muted;
-    margin-bottom: 4px;
+.score-panel-head {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: $text-faint; margin-bottom: 14px;
+    .sp-head-icon { color: $red; }
 }
-
-.help-sub {
-    font-size: 11px;
-    color: $text-dark;
-    line-height: 1.5;
-    margin-bottom: 8px;
+.score-circle-wrap {
+    position: relative; display: flex; justify-content: center;
+    align-items: center; margin-bottom: 12px;
+    svg { display: block; }
 }
-
-.help-link {
-    font-size: 12px;
-    font-weight: 600;
-    color: $red;
-    &:hover { opacity: 0.8; }
+.score-num-wrap {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center; line-height: 1;
+    .score-val { font-size: 26px; font-weight: 800; color: $text; }
+    .score-denom { font-size: 11px; color: $text-faint; }
+}
+.score-badge {
+    text-align: center; font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; margin: 0 auto 14px;
+    display: inline-block; width: fit-content;
+    &.sb-great { background: rgba(34,197,94,0.15); color: #22c55e; }
+    &.sb-ok { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    &.sb-low { background: rgba(139,13,29,0.2); color: #f87171; }
+}
+.score-checklist { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.sc-row {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11.5px; color: $text-faint;
+    .sc-icon { flex-shrink: 0; color: $text-faint; }
+    &.sc-done { color: $text-dim; .sc-icon { color: #22c55e; } }
+}
+.score-tips { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid $border; padding-top: 10px; }
+.st-tip {
+    display: flex; align-items: flex-start; gap: 6px;
+    font-size: 11px; color: $text-faint; line-height: 1.4;
+    .st-icon { flex-shrink: 0; color: #f59e0b; margin-top: 1px; }
 }
 
 // ── Center area ───────────────────────────────────────────────────────────────
 .center-area {
     flex: 1;
     overflow-y: auto;
+    padding: 32px 40px 60px;
     display: flex;
     flex-direction: column;
+    gap: 0;
 }
 
-.form-hero {
-    min-height: 160px;
-    background:
-        linear-gradient(to right, rgba(5,5,5,0.92) 40%, rgba(5,5,5,0.5)),
-        url('/hero-car.jpg') center / cover;
-    display: flex;
-    align-items: center;
-    padding: 32px 40px;
-    flex-shrink: 0;
+// Error banners
+.step-error-banner {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(139,13,29,0.15); border: 1px solid rgba(139,13,29,0.3);
+    border-radius: $r-sm; padding: 12px 16px; font-size: 13.5px;
+    color: #fca5a5; margin-bottom: 20px;
+    &--hard { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); }
+}
+.seb-close {
+    margin-left: auto; background: none; border: none; color: inherit; cursor: pointer; padding: 0;
 }
 
-.form-hero-text {
-    h1 {
-        font-size: 30px;
-        font-weight: 900;
-        color: $text;
-        margin-bottom: 6px;
-    }
-    p {
-        font-size: 14px;
-        color: $text-muted;
-    }
-}
+// ── Step panel ────────────────────────────────────────────────────────────────
+.step-panel { display: flex; flex-direction: column; gap: 0; }
 
-// ── Progress track ────────────────────────────────────────────────────────────
-.progress-track {
-    display: flex;
-    align-items: center;
-    padding: 20px 40px;
-    border-bottom: 1px solid $border;
-    background: #070707;
-    flex-shrink: 0;
-}
-
-.progress-node {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    position: relative;
-
-    &.pn-done {
-        .pn-icon { background: rgba($red, 0.15); border-color: rgba($red, 0.4); color: $red; }
-        .pn-label { color: $text-muted; }
-        .pn-line { background: rgba($red, 0.3); }
-    }
-
-    &.pn-active {
-        .pn-icon { background: $red; border-color: $red; color: white; }
-        .pn-label { color: $text; font-weight: 600; }
-    }
-}
-
-.pn-icon {
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
-    border-radius: 50%;
-    border: 1.5px solid $border;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $text-dark;
-    transition: all 0.2s;
-}
-
-.pn-label {
-    font-size: 13px;
-    color: $text-dark;
-    white-space: nowrap;
-}
-
-.pn-line {
-    flex: 1;
-    height: 1px;
-    background: $border;
-    margin: 0 14px 0 14px;
-}
-
-// ── Form content ──────────────────────────────────────────────────────────────
-.form-content {
-    padding: 32px 40px 24px;
-    flex: 1;
-}
-
-.form-section-head {
+.step-head {
     margin-bottom: 28px;
-
-    h2 {
-        font-size: 22px;
-        font-weight: 800;
-        color: $text;
-        margin-bottom: 4px;
-    }
-
-    p {
-        font-size: 13px;
-        color: $text-dim;
-    }
+    h2 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: $text; margin: 0 0 6px; }
+    p { font-size: 14px; color: $text-dim; margin: 0; line-height: 1.5; }
 }
 
+// ── Glass card (section container) ───────────────────────────────────────────
+.glass-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-lg;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+}
+.gc-section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: $text-faint; margin-bottom: 18px;
+    display: flex; align-items: center;
+}
+.gc-section-title-row {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+    .gc-section-title { margin-bottom: 0; }
+}
+
+// ── Fields grid ───────────────────────────────────────────────────────────────
 .fields-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 16px 20px;
+    .full-width { grid-column: 1 / -1; }
 }
-
-.field {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field--bool { justify-content: flex-end; }
 
 .flabel {
-    font-size: 12px;
-    font-weight: 600;
-    color: $text-dim;
-    letter-spacing: 0.2px;
+    font-size: 12px; font-weight: 600; color: $text-muted; letter-spacing: 0.02em;
+    .req { color: $red; margin-left: 2px; }
 }
-
-.req { color: $red; }
-
-.fselect, .finput {
-    width: 100%;
-    background: #0d0d0d;
-    border: 1px solid $border;
-    border-radius: $r-sm;
-    color: $text;
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    padding: 11px 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    appearance: none;
-
-    &:focus { border-color: rgba($red, 0.5); }
-    &::placeholder { color: $text-dark; }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
+.finput {
+    background: rgba(0,0,0,0.3); border: 1px solid $border-alt;
+    border-radius: $r-sm; padding: 10px 14px; font-size: 14px;
+    color: $text; font-family: inherit; transition: border-color 0.2s;
+    outline: none; width: 100%;
+    &::placeholder { color: $text-faint; }
+    &:focus { border-color: rgba(139,13,29,0.5); }
+    &.input-ok { border-color: rgba(34,197,94,0.4); }
+    &--lg { font-size: 15px; padding: 12px 14px; }
+    &--price { font-size: 22px; font-weight: 700; padding: 12px 14px; }
 }
-
-.fselect { cursor: pointer; padding-right: 36px; }
-
-.input-ok { border-color: rgba(45, 122, 58, 0.6) !important; }
-
-.vin-row {
-    display: flex;
-    gap: 10px;
-    align-items: stretch;
-}
-
-.vin-input { flex: 1; width: auto !important; min-width: 0; }
-
-.btn-vin-lookup {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0 18px;
-    background: rgba($red, 0.15);
-    border: 1px solid rgba($red, 0.4);
-    border-radius: $r-sm;
-    color: $red;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.2s, border-color 0.2s;
-
-    &:hover:not(:disabled) { background: rgba($red, 0.25); border-color: rgba($red, 0.7); }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
-}
-
-.vin-error {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: $red;
-    font-size: 12px;
-    margin-top: 6px;
-}
-
-.vin-hint {
-    color: $text-dark;
-    font-size: 12px;
-    margin-top: 6px;
-}
-
-.finput-price {
-    border-color: rgba($red, 0.4);
-    &:focus { border-color: $red; }
-}
-
-.select-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.sel-arrow {
-    position: absolute;
-    right: 12px;
-    color: $text-dim;
-    pointer-events: none;
-}
-
-.input-icon-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-prefix {
-    position: absolute;
-    left: 12px;
-    color: $text-dim;
-    pointer-events: none;
-    z-index: 1;
-
-    &.in-select { z-index: 1; }
-}
-
-.finput.has-prefix,
-.fselect.has-prefix {
-    padding-left: 36px;
-}
-
-// ── VIN bar ───────────────────────────────────────────────────────────────────
-.vin-bar {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: #0d0d0d;
-    border: 1px solid $border;
-    border-radius: $r-md;
-    padding: 16px 20px;
-}
-
-.vin-doc-icon { color: $text-dark; flex-shrink: 0; }
-
-.vin-text { flex: 1; min-width: 0; }
-
-.vin-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: $text;
-    margin-bottom: 2px;
-}
-
-.vin-sub {
-    font-size: 12px;
-    color: $text-dark;
-}
-
-.vin-input {
-    width: 180px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: $r-sm;
-    padding: 9px 12px;
-    color: $text;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    outline: none;
-    letter-spacing: 1px;
-    transition: border-color 0.2s;
-    &::placeholder { color: $text-dark; letter-spacing: 0; }
-    &:focus { border-color: rgba($red, 0.5); }
-}
-
-.vin-btn {
-    background: transparent;
-    border: 1px solid rgba($red, 0.5);
-    border-radius: $r-sm;
-    color: $red;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 9px 18px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    white-space: nowrap;
-    transition: background 0.2s;
-    &:hover:not(:disabled) { background: rgba($red, 0.08); }
-    &:disabled { opacity: 0.4; cursor: default; }
-}
-
-.vin-error {
-    font-size: 12px; color: #f87171; margin-top: 8px; padding: 0 20px;
-}
-
-.btn-draft--saved { color: #4ade80; border-color: rgba(74, 222, 128, 0.4); }
-
-.preview-modal-overlay {
-    position: fixed; inset: 0; z-index: 2000;
-    background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center; padding: 20px;
-}
-
-.preview-modal {
-    background: #0d0d0d; border: 1px solid $border;
-    border-radius: $r-lg; width: 100%; max-width: 680px; max-height: 90vh;
-    overflow-y: auto; box-shadow: 0 24px 80px rgba(0,0,0,0.8);
-}
-
-.pm-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 20px; border-bottom: 1px solid $border;
-}
-
-.pm-title { font-size: 15px; font-weight: 700; color: $text; }
-
-.pm-close {
-    background: transparent; border: none; color: $text-dim; cursor: pointer;
-    transition: color 0.2s; &:hover { color: $text; }
-}
-
-.pm-body { padding: 24px; }
-
-.pm-img-wrap {
-    position: relative; aspect-ratio: 16/9; border-radius: $r-md; overflow: hidden;
-    background: #111; margin-bottom: 20px;
-}
-
-.pm-img { width: 100%; height: 100%; object-fit: cover; }
-
-.pm-img-count {
-    position: absolute; bottom: 10px; right: 10px;
-    background: rgba(0,0,0,0.7); color: white;
-    font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
-}
-
-.pm-brand { font-size: 12px; color: $red; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-.pm-name { font-size: 24px; font-weight: 900; color: $text; margin-bottom: 10px; }
-.pm-meta {
-    display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; color: $text-dim; margin-bottom: 12px;
-}
-.pm-price { font-size: 28px; font-weight: 900; color: $red; margin-bottom: 16px; }
-.pm-desc { font-size: 14px; color: $text-muted; line-height: 1.7; white-space: pre-wrap; }
-
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-
-.form-section-subhead {
-    font-size: 13px; font-weight: 700; color: $text-muted; text-transform: uppercase;
-    letter-spacing: 0.5px; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid $border;
-}
-
-.photo-count-bar {
-    display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500;
-    padding: 8px 14px; border-radius: $r-sm; margin-bottom: 16px;
-    &.pc-ok { color: #4caf50; background: rgba(76,175,80,0.08); border: 1px solid rgba(76,175,80,0.2); }
-    &.pc-warn { color: #ff9800; background: rgba(255,152,0,0.08); border: 1px solid rgba(255,152,0,0.2); }
-}
-
-// ── Form actions ──────────────────────────────────────────────────────────────
-.form-actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 40px;
-    border-top: 1px solid $border;
-    background: $bg;
-    flex-shrink: 0;
-}
-
-.form-actions-left { display: flex; align-items: center; gap: 14px; }
-
-.step-error {
-    display: flex; align-items: center; gap: 6px; font-size: 12px; color: #ff9800;
-}
-
-.fade-err-enter-active, .fade-err-leave-active { transition: opacity 0.3s; }
-.fade-err-enter-from, .fade-err-leave-to { opacity: 0; }
-
-.btn-cancel {
-    background: transparent;
-    border: 1px solid $border;
-    border-radius: $r-sm;
-    color: $text-muted;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 11px 24px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: border-color 0.2s, color 0.2s;
-    &:hover { border-color: $text-dim; color: $text; }
-}
-
-.btn-next {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: $red;
-    border: none;
-    border-radius: $r-sm;
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 11px 28px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: opacity 0.2s;
-    &:hover { opacity: 0.88; }
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
-}
-
-// ── Bottom strip ──────────────────────────────────────────────────────────────
-.bottom-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    border-top: 1px solid $border;
-    flex-shrink: 0;
-}
-
-.strip-feat {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 18px 20px;
-    border-right: 1px solid $border;
-
-    &:last-child { border-right: none; }
-}
-
-.strip-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
-
-.strip-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: $text-muted;
-    margin-bottom: 3px;
-}
-
-.strip-desc {
-    font-size: 11px;
-    color: $text-dark;
-    line-height: 1.4;
-}
-
-// ── Right panel ───────────────────────────────────────────────────────────────
-.right-panel {
-    width: 268px;
-    min-width: 268px;
-    border-left: 1px solid $border;
-    background: #070707;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-
-.score-card {
-    padding: 22px 20px;
-    border-bottom: 1px solid $border;
-}
-
-.score-card-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: $text;
-    margin-bottom: 16px;
-}
-
-.score-circle-area {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 14px;
-}
-
-.score-num {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    line-height: 1;
-}
-
-.score-val {
-    display: block;
-    font-size: 30px;
-    font-weight: 900;
-    color: $text;
-}
-
-.score-denom {
-    display: block;
-    font-size: 12px;
-    color: $text-dim;
-    margin-top: 2px;
-}
-
-.score-label {
-    font-size: 12px;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 16px;
-    &.sl-great { color: #4caf50; }
-    &.sl-good  { color: #e67e22; }
-    &.sl-poor  { color: lighten($red, 15%); }
-}
-
-.score-factors { margin-bottom: 12px; }
-
-.score-tips {
-    border-top: 1px solid $border;
-    padding-top: 12px;
-    margin-top: 4px;
-}
-
-.st-heading {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    font-weight: 700;
-    color: $text-dim;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-}
-
-.st-icon { color: #f39c12; }
-
-.st-tip {
-    font-size: 11px;
-    color: $text-dim;
-    line-height: 1.55;
-    padding: 6px 8px;
-    background: rgba(255,255,255,0.025);
-    border-left: 2px solid rgba($red, 0.4);
-    border-radius: 0 4px 4px 0;
-    margin-bottom: 6px;
-}
-
-.sf-heading {
-    font-size: 11px;
-    font-weight: 700;
-    color: $text-dim;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-}
-
-.sf-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 7px;
-    font-size: 12px;
-    color: $text-dark;
-
-    &.sf-done {
-        color: $text-muted;
-        .sf-check-box { background: rgba(45, 122, 58, 0.2); border-color: rgba(45, 122, 58, 0.5); color: #4caf50; }
-    }
-}
-
-.sf-check-box {
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    border-radius: 50%;
-    border: 1.5px solid $border;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: transparent;
-}
-
-// ── Preview card ──────────────────────────────────────────────────────────────
-.preview-card {
-    padding: 20px;
-}
-
-.preview-card-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: $text;
-    margin-bottom: 14px;
-}
-
-.preview-img-wrap {
-    border-radius: $r-md;
-    overflow: hidden;
-    margin-bottom: 12px;
-    img {
-        width: 100%;
-        height: 130px;
-        object-fit: cover;
-        display: block;
-    }
-}
-
-.preview-details { margin-bottom: 14px; }
-
-.preview-car-name {
-    font-size: 14px;
-    font-weight: 700;
-    color: $text;
-    margin-bottom: 4px;
-}
-
-.preview-meta-row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: $text-dim;
-    margin-bottom: 6px;
-    flex-wrap: wrap;
-}
-
-.dot { color: $text-dark; }
-
-.preview-price {
-    font-size: 18px;
-    font-weight: 800;
-    color: $red;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.preview-nego {
-    font-size: 10px;
-    font-weight: 600;
-    background: rgba($red, 0.12);
-    color: rgba($red, 0.75);
-    padding: 2px 8px;
-    border-radius: 20px;
-}
-
-.preview-full-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: transparent;
-    border: 1px solid $border;
-    border-radius: $r-sm;
-    color: $text-muted;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 9px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: border-color 0.2s, color 0.2s;
-    &:hover { border-color: $text-dim; color: $text; }
-}
-
-// ── Photos step ───────────────────────────────────────────────────────────────
-.img-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 12px;
-}
-
-.img-thumb {
-    position: relative;
-    aspect-ratio: 4/3;
-    border-radius: $r-md;
-    overflow: hidden;
-    border: 1px solid $border;
-    img { width: 100%; height: 100%; object-fit: cover; display: block; }
-}
-
-.img-remove {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    &:hover { background: rgba(0,0,0,0.9); }
-}
-
-.img-main-badge {
-    position: absolute;
-    bottom: 6px;
-    left: 6px;
-    background: $red;
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 4px;
-}
-
-.img-add {
-    aspect-ratio: 4/3;
-    border-radius: $r-md;
-    border: 2px dashed $border;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    cursor: pointer;
-    color: $text-dark;
-    font-size: 12px;
-    font-weight: 500;
-    transition: border-color 0.2s, color 0.2s;
-    &:hover { border-color: $red; color: $red; }
-    &--loading { border-color: rgba($red, 0.4); color: $text-muted; cursor: wait; }
-}
-
-// ── Details step ──────────────────────────────────────────────────────────────
 .ftextarea {
-    width: 100%;
-    background: #0d0d0d;
-    border: 1px solid $border;
-    border-radius: $r-sm;
-    color: $text;
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    padding: 12px 14px;
-    outline: none;
-    resize: vertical;
-    transition: border-color 0.2s;
-    &:focus { border-color: rgba($red, 0.5); }
-    &::placeholder { color: $text-dark; }
+    background: rgba(0,0,0,0.3); border: 1px solid $border-alt;
+    border-radius: $r-sm; padding: 12px 14px; font-size: 14px;
+    color: $text; font-family: inherit; transition: border-color 0.2s;
+    outline: none; resize: vertical; width: 100%; line-height: 1.6;
+    &::placeholder { color: $text-faint; }
+    &:focus { border-color: rgba(139,13,29,0.5); }
+    &--tall { min-height: 200px; }
 }
-
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-
-    @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+.fselect {
+    appearance: none; background: rgba(0,0,0,0.3); border: 1px solid $border-alt;
+    border-radius: $r-sm; padding: 10px 36px 10px 14px; font-size: 14px;
+    color: $text; font-family: inherit; width: 100%; outline: none;
+    transition: border-color 0.2s; cursor: pointer;
+    &:focus { border-color: rgba(139,13,29,0.5); }
 }
+.select-wrap { position: relative; }
+.sel-arrow { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: $text-dim; }
 
-.cat-choice-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 14px 10px;
-    background: rgba(255,255,255,0.03);
-    border: 1.5px solid $border;
-    border-radius: $r-md;
-    color: $text-muted;
-    font-size: 12px;
-    font-weight: 500;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    transition: all 0.18s;
-
-    .v-icon { color: $text-dark; }
-
-    &:hover {
-        border-color: rgba($red, 0.3);
-        color: $text;
-        .v-icon { color: $red; }
-    }
-
-    &.active {
-        background: rgba($red, 0.1);
-        border-color: rgba($red, 0.5);
-        color: $red;
-        font-weight: 700;
-        .v-icon { color: $red; }
-    }
+.input-icon-wrap { position: relative; display: flex; align-items: center; }
+.input-prefix {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: $text-dim; pointer-events: none;
 }
-
-.equip-controls {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
+.input-prefix-text {
+    position: absolute; left: 14px; font-size: 16px; font-weight: 700;
+    color: $text-dim; pointer-events: none; z-index: 1;
 }
+.has-prefix { padding-left: 36px; }
+.has-prefix-text { padding-left: 28px; }
 
-.equip-ctrl-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: transparent;
-    border: 1px solid $border;
-    border-radius: 6px;
-    color: $text-dim;
-    font-size: 11px;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    padding: 5px 12px;
-    cursor: pointer;
-    transition: all 0.15s;
-    &:hover { border-color: rgba($red, 0.3); color: $text; }
+.input-unit-wrap { position: relative; display: flex; align-items: center; }
+.input-unit-badge {
+    position: absolute; right: 12px; font-size: 12px; color: $text-dim;
+    pointer-events: none; font-weight: 600;
 }
-
-.feat-group { margin-bottom: 4px; }
-
-.feat-group-header {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid $border;
-    border-radius: 8px;
-    padding: 10px 14px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: background 0.15s, border-color 0.15s;
-    margin-bottom: 0;
-
-    &:hover { background: rgba(255,255,255,0.04); border-color: rgba($red, 0.2); }
-
-    &.fgh-open {
-        border-color: rgba($red, 0.25);
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        border-bottom-color: transparent;
-    }
-
-    .fgh-arrow {
-        color: $text-dark;
-        transition: transform 0.2s;
-        flex-shrink: 0;
-    }
-    &.fgh-open .fgh-arrow { transform: rotate(180deg); }
-}
-
-.fgh-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    .v-icon { color: $text-dim; }
-}
-
-.fgh-name {
-    font-size: 12px;
-    font-weight: 700;
-    color: $text-muted;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
-
-.feat-group-count {
-    font-size: 10px;
-    font-weight: 600;
-    color: $text-dark;
-    background: rgba(255,255,255,0.05);
-    border-radius: 20px;
-    padding: 1px 7px;
-
-    &.fgc-has { color: $red; background: rgba($red, 0.1); }
-}
-
-.feat-checks {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 5px;
-    border: 1px solid rgba($red, 0.25);
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    padding: 10px 12px 12px;
-    margin-bottom: 4px;
-}
-
-// Accordion collapse transition
-.equip-collapse-enter-active,
-.equip-collapse-leave-active {
-    transition: max-height 0.22s ease, opacity 0.18s ease;
-    max-height: 800px;
-    overflow: hidden;
-    opacity: 1;
-}
-.equip-collapse-enter-from,
-.equip-collapse-leave-to {
-    max-height: 0;
-    opacity: 0;
-}
-
-.feat-check {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    color: $text-muted;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid transparent;
-    transition: all 0.15s;
-
-    &:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
-    &.checked { background: rgba($red, 0.08); border-color: rgba($red, 0.25); color: $text; }
-
-    input[type='checkbox'] { display: none; }
-
-    .feat-check-box {
-        width: 16px;
-        height: 16px;
-        border-radius: 4px;
-        border: 1.5px solid rgba(255,255,255,0.2);
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        transition: all 0.15s;
-    }
-    &.checked .feat-check-box { background: $red; border-color: $red; }
-}
-
-.feat-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px;
-    color: $text-dim;
-    gap: 12px;
-}
-
-.feat-summary-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    background: rgba($red, 0.08);
-    border: 1px solid rgba($red, 0.2);
-    color: $red;
-    font-size: 13px;
-    font-weight: 600;
-    margin-top: 16px;
-}
-
-.feat-clear-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: transparent;
-    border: 1px solid rgba($red, 0.35);
-    border-radius: 12px;
-    color: rgba($red, 0.7);
-    font-size: 11px;
-    font-family: 'Inter', sans-serif;
-    padding: 2px 10px;
-    cursor: pointer;
-    margin-left: auto;
-    transition: all 0.15s;
-    &:hover { background: rgba($red, 0.1); color: $red; }
-}
-
-.feat-search-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    background: #0d0d0d;
-    border: 1px solid $border;
-    border-radius: 8px;
-    padding: 0 12px;
-    margin-bottom: 20px;
-    transition: border-color 0.2s;
-    &:focus-within { border-color: rgba($red, 0.4); }
-}
-
-.feat-search-icon { color: $text-dark; flex-shrink: 0; }
-
-.feat-search-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: $text;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    padding: 10px 8px;
-    &::placeholder { color: $text-dim; }
-}
-
-.feat-search-clear {
-    background: transparent;
-    border: none;
-    color: $text-dark;
-    cursor: pointer;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    &:hover { color: $red; }
-}
-
-:deep(.feat-hl) {
-    background: rgba($red, 0.25);
-    color: $text;
-    border-radius: 2px;
-    padding: 0 1px;
-}
-
-.photo-hints {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 16px;
-}
-
-.photo-hint {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-
-    &.ph-ok    { background: rgba(#4ade80, 0.08); border: 1px solid rgba(#4ade80, 0.2); color: #4ade80; }
-    &.ph-warn  { background: rgba(#facc15, 0.08); border: 1px solid rgba(#facc15, 0.2); color: #facc15; }
-    &.ph-error { background: rgba($red, 0.08);    border: 1px solid rgba($red, 0.2);    color: $red;     }
-}
-
-.submit-error {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(220,50,50,0.08);
-    border: 1px solid rgba(220,50,50,0.22);
-    border-radius: $r-sm;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #e55;
-    margin-bottom: 16px;
-    .v-icon { flex-shrink: 0; }
-}
-
-.spin { animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-// ── Promo step ────────────────────────────────────────────────────────────────
-.promo-step { padding-bottom: 0; }
-
-.promo-plans-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-    @media (max-width: 1100px) { grid-template-columns: repeat(3, 1fr); }
-    @media (max-width: 700px) { grid-template-columns: 1fr 1fr; }
-}
-
-.pp-card {
-    background: #0a0a0a;
-    border: 1.5px solid $border;
-    border-radius: 12px;
-    padding: 18px 16px;
-    cursor: pointer;
-    position: relative;
-    transition: border-color 0.2s, transform 0.15s;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    &:hover { border-color: rgba($red, 0.35); transform: translateY(-2px); }
-    &.pp-selected { border-color: $red; background: rgba($red, 0.04); }
-    &.pp-popular { border-color: rgba($red, 0.4); }
-}
-
-.pp-popular-badge {
-    position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
-    background: $red; color: white; font-size: 9px; font-weight: 800;
-    padding: 2px 8px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.5px;
-}
-
-.pp-header { display: flex; align-items: center; gap: 8px; }
-.pp-icon { color: $red; flex-shrink: 0; }
-.pp-name { font-size: 14px; font-weight: 800; color: $text; }
-.pp-badge-free {
-    font-size: 9px; font-weight: 800; color: #4caf50;
-    background: rgba(76,175,80,0.12); border: 1px solid rgba(76,175,80,0.3);
-    padding: 2px 7px; border-radius: 20px; margin-left: auto;
-}
-.pp-price { font-size: 18px; font-weight: 900; color: $red; strong { font-size: 22px; } }
-.pp-desc { font-size: 11px; color: $text-dim; line-height: 1.5; }
-.pp-feats {
-    list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; flex: 1;
-    li { display: flex; align-items: center; gap: 6px; font-size: 11px; color: $text-muted;
-        .v-icon { color: #4caf50; flex-shrink: 0; }
-    }
-    .pp-feat-no { color: $text-dark; .v-icon { color: $text-dark; } }
-}
-.pp-days { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
-.pp-day-btn {
-    background: transparent; border: 1px solid $border; border-radius: 6px;
-    color: $text-dim; font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif;
-    padding: 4px 10px; cursor: pointer; transition: all 0.15s;
-    &.active { border-color: $red; background: rgba($red, 0.12); color: $text; }
-    &:hover:not(.active) { border-color: $text-dim; color: $text; }
-}
-.pp-sel-bar {
-    height: 3px; border-radius: 3px; background: transparent; margin-top: auto;
-    .pp-selected & { background: $red; }
-}
-
-.promo-summary {
-    background: #0a0a0a;
-    border: 1px solid $border;
-    border-radius: 12px;
-    padding: 16px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.ps-free-info {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 13px; color: #4caf50; font-weight: 500;
-}
-
-.ps-paid-info { display: flex; flex-direction: column; gap: 2px; }
-.ps-plan-name { font-size: 13px; font-weight: 700; color: $text; }
-.ps-plan-price { font-size: 20px; font-weight: 900; color: $red; }
-.ps-original { text-decoration: line-through; color: $text-dim; font-size: 14px; font-weight: 400; margin-right: 6px; }
-.ps-coupon-ok { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #4caf50; }
-
-.ps-coupon-row { display: flex; flex-direction: column; gap: 5px; }
-.ps-coupon-wrap { display: flex; gap: 6px; }
-.ps-coupon-input {
-    flex: 1; min-width: 0;
-    background: #0d0d0d; border: 1px solid $border; border-radius: 8px;
-    color: $text; font-size: 13px; font-family: 'Inter', sans-serif;
-    padding: 8px 13px; outline: none;
-    &::placeholder { color: $text-dark; }
-    &:focus { border-color: rgba($red, 0.4); }
-    &:disabled { opacity: 0.5; }
-}
-.ps-coupon-btn {
-    background: transparent; border: 1px solid $border; border-radius: 8px;
-    color: $text-muted; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
-    padding: 8px 14px; cursor: pointer; white-space: nowrap; transition: all 0.15s;
-    &:hover:not(:disabled) { border-color: $red; color: $text; }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
-}
-.ps-coupon-error { font-size: 12px; color: #e55; }
-
-// ── Smart form additions ──────────────────────────────────────────────────────
-.cat-context-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba($red, 0.07);
-    border: 1px solid rgba($red, 0.2);
-    border-radius: $r-sm;
-    padding: 8px 14px;
-    font-size: 12px;
-    color: $text-muted;
-    margin-bottom: 20px;
-
-    strong { color: $text; }
-}
-
-.ccb-icon { color: $red; flex-shrink: 0; }
-
-.ccb-count {
-    margin-left: auto;
-    font-size: 11px;
-    color: $text-dark;
-}
-
-.cat-note-bar {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    background: rgba(#f5a623, 0.06);
-    border: 1px solid rgba(#f5a623, 0.2);
-    border-radius: $r-sm;
-    padding: 9px 14px;
-    font-size: 12px;
-    color: rgba(#f5a623, 0.9);
-    margin-bottom: 20px;
-    line-height: 1.5;
-}
-
-.cnb-icon { color: #f5a623; flex-shrink: 0; margin-top: 1px; }
 
 .field-hint {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    color: $text-dark;
-    margin-top: 5px;
-    .v-icon { color: $text-dark; flex-shrink: 0; }
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11.5px; color: $text-faint; line-height: 1.4;
 }
-
-.title-suggest-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: #0a0a0a;
-    border: 1px solid rgba($red, 0.2);
-    border-radius: $r-md;
-    padding: 14px 18px;
-    margin-top: 16px;
-    margin-bottom: 4px;
-}
-
-.tsc-left {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    flex: 1;
-    min-width: 0;
-}
-
-.tsc-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
-
-.tsc-label {
-    font-size: 11px;
-    color: $text-dark;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    margin-bottom: 3px;
-}
-
-.tsc-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: $text;
-}
-
-.tsc-use-btn {
-    background: rgba($red, 0.12);
-    border: 1px solid rgba($red, 0.35);
-    border-radius: $r-sm;
-    color: $red;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 7px 16px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    white-space: nowrap;
-    transition: all 0.15s;
-    &:hover { background: rgba($red, 0.22); border-color: rgba($red, 0.6); }
-}
-
-.tsc-used {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: #4caf50;
-    white-space: nowrap;
-    .v-icon { color: #4caf50; }
-}
-
-// ── Edit mode ─────────────────────────────────────────────────────────────────
-.img-thumb--existing { opacity: 1; }
-
-.edit-summary {
-    background: #0a0a0a;
-    border: 1px solid $border;
-    border-radius: 12px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 20px;
-}
-
-.edit-summary-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-}
-
-.es-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
-.es-label { font-size: 11px; color: $text-dim; text-transform: uppercase; letter-spacing: 0.4px; }
-.es-val { font-size: 15px; font-weight: 700; color: $text; margin-top: 2px; }
-
-.btn-publish-free {
-    display: flex; align-items: center; gap: 8px;
-    background: #2d7a3a; border: none; border-radius: $r-sm;
-    color: white; font-size: 14px; font-weight: 700;
-    padding: 11px 28px; cursor: pointer; font-family: 'Inter', sans-serif;
-    transition: opacity 0.2s;
-    &:hover:not(:disabled) { opacity: 0.9; }
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
-}
-
-.btn-pay {
-    display: flex; align-items: center; gap: 8px;
-    background: $red; border: none; border-radius: $r-sm;
-    color: white; font-size: 14px; font-weight: 700;
-    padding: 11px 28px; cursor: pointer; font-family: 'Inter', sans-serif;
-    transition: opacity 0.2s;
-    &:hover:not(:disabled) { opacity: 0.88; }
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
-}
-
-// ── Extra fields ──────────────────────────────────────────────────────────────
-.extra-fields-wrap { margin-top: 8px; }
-
-.full-width { grid-column: 1 / -1; }
-
-// Color picker (extraField type: color-picker)
-.ef-color-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    font-weight: 600;
-    color: $text-dim;
-    letter-spacing: 0.2px;
-}
-
-.ef-color-name {
-    font-size: 10px;
-    font-weight: 500;
-    color: $red;
-    text-transform: none;
-    letter-spacing: 0;
-}
-
-.ef-color-swatches {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-    padding: 4px 0;
-}
-
-.ef-color-swatch {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    cursor: pointer;
-    padding: 0;
-    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
-    outline: none;
-
-    &:hover { transform: scale(1.18); }
-
-    &.active {
-        border-color: $red;
-        box-shadow: 0 0 0 2px rgba($red, 0.35);
-        transform: scale(1.12);
-    }
-
-    &--clear {
-        background: rgba(255,255,255,0.06);
-        border-color: rgba(255,255,255,0.12);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $text-dim;
-
-        &.active {
-            border-color: $red;
-            color: $red;
-            box-shadow: 0 0 0 2px rgba($red, 0.35);
-        }
-
-        &:hover { transform: scale(1.1); color: $text; }
-    }
-}
-
-.radio-group {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.radio-opt {
-    display: flex;
-    align-items: center;
-    padding: 9px 18px;
-    background: rgba(255,255,255,0.03);
-    border: 1.5px solid $border;
-    border-radius: $r-sm;
-    font-size: 13px;
-    font-weight: 500;
-    color: $text-muted;
-    cursor: pointer;
-    transition: all 0.15s;
-    user-select: none;
-
-    &:hover { border-color: rgba($red, 0.3); color: $text; }
-    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.5); color: $red; font-weight: 700; }
-}
-
-.input-unit-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-unit-badge {
-    position: absolute;
-    right: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: $text-dark;
-    pointer-events: none;
-    background: #0c0c0c;
-    padding-left: 4px;
-}
-
-.field--bool { display: flex; align-items: center; }
 
 .bool-check {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 13px;
-    color: $text-muted;
-    padding: 8px 0;
+    display: flex; align-items: center; gap: 9px; cursor: pointer;
+    font-size: 13.5px; color: $text-muted; padding: 8px 0;
     user-select: none;
-
     &.active { color: $text; }
+    .bool-box {
+        width: 18px; height: 18px; border-radius: 5px;
+        border: 1.5px solid $border-alt; display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; transition: background 0.2s, border-color 0.2s;
+    }
+    &.active .bool-box { background: $red; border-color: $red; }
+}
+.bool-stack { display: flex; flex-direction: column; gap: 2px; }
+
+.radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.radio-opt {
+    padding: 7px 14px; border-radius: 8px; border: 1px solid $border;
+    font-size: 13px; color: $text-muted; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    display: flex; align-items: center; gap: 4px;
+    &.active { border-color: $red; color: $text; background: rgba(139,13,29,0.1); }
 }
 
-.bool-box {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    border-radius: 4px;
-    border: 1.5px solid $border;
-    background: #0c0c0c;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-    .v-icon { color: $red; }
-
-    .bool-check.active & { border-color: $red; background: rgba($red, 0.1); }
+// Color picker
+.ef-color-label { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: $text-muted; margin-bottom: 8px; }
+.ef-color-name { font-size: 11px; color: $text-dim; }
+.ef-color-swatches { display: flex; flex-wrap: wrap; gap: 7px; }
+.ef-color-swatch {
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent;
+    transition: border-color 0.2s, transform 0.15s; display: flex; align-items: center; justify-content: center;
+    &.active { border-color: #fff; transform: scale(1.15); }
+    &--clear { background: $border; color: $text-dim; }
 }
 
-.bool-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+// ── Category grid ─────────────────────────────────────────────────────────────
+.cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+}
+.cat-card {
+    position: relative; background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07); border-radius: $r-lg;
+    padding: 24px 16px 20px; cursor: pointer; text-align: center;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    &:hover { border-color: rgba(139,13,29,0.4); background: rgba(139,13,29,0.06); transform: translateY(-2px); }
+    &--active { border-color: $red; background: rgba(139,13,29,0.12); }
+}
+.cat-card-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
+    color: $text-muted;
+    .cat-card--active & { background: rgba(139,13,29,0.2); color: $text; }
+}
+.cat-card-name { font-size: 14px; font-weight: 700; color: $text; }
+.cat-card-count { font-size: 11px; color: $text-faint; }
+.cat-card-check {
+    position: absolute; top: 10px; right: 10px; width: 20px; height: 20px;
+    background: $red; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #fff;
+}
+.cat-note {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin-top: 20px; padding: 12px 16px;
+    background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2);
+    border-radius: $r-sm; font-size: 13px; color: #fcd34d;
 }
 
-// ── Title input ───────────────────────────────────────────────────────────────
-.title-input-wrap {
-    position: relative;
+// ── CARIZO VERIFIED banner ────────────────────────────────────────────────────
+.verified-banner {
+    display: flex; align-items: center; gap: 16px;
+    background: linear-gradient(135deg, rgba(139,13,29,0.15) 0%, rgba(139,13,29,0.05) 100%);
+    border: 1px solid rgba(139,13,29,0.3); border-radius: $r-lg;
+    padding: 20px 24px; margin-bottom: 20px;
 }
-
-.title-char-count {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 11px;
-    color: $text-dark;
-    pointer-events: none;
-    background: #0c0c0c;
-    padding-left: 4px;
-
-    &.warn { color: #f5a623; }
+.vb-icon-wrap {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: rgba(139,13,29,0.2); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    .vb-icon { color: $red; }
 }
+.vb-title { font-size: 15px; font-weight: 800; letter-spacing: 0.06em; color: $text; margin-bottom: 4px; }
+.vb-sub { font-size: 12.5px; color: $text-dim; line-height: 1.4; }
 
-.flabel-opt {
-    font-size: 10px;
-    font-weight: 400;
-    color: $text-dark;
-    margin-left: 6px;
-    text-transform: none;
-    letter-spacing: 0;
+// ── VIN row ───────────────────────────────────────────────────────────────────
+.vin-row { display: flex; gap: 10px; align-items: center; }
+.vin-input { flex: 1; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
+.btn-vin-lookup {
+    display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    background: rgba(139,13,29,0.15); border: 1px solid rgba(139,13,29,0.3);
+    border-radius: $r-sm; color: #fca5a5; font-size: 13px; font-weight: 600;
+    padding: 10px 16px; cursor: pointer; font-family: inherit; transition: background 0.2s;
+    &:hover:not(:disabled) { background: rgba(139,13,29,0.25); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
+.vin-error { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #fca5a5; margin-top: 4px; }
 
-// ── Negotiable price toggle ───────────────────────────────────────────────────
-.nego-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-    cursor: pointer;
-    font-size: 12px;
-    color: $text-dark;
-    user-select: none;
-    transition: color 0.15s;
-
-    &.active { color: $text-muted; }
+// ── Photo section ─────────────────────────────────────────────────────────────
+.photo-quality-bar {
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-lg; padding: 18px 24px; margin-bottom: 20px;
 }
-
-.nego-box {
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    border-radius: 3px;
-    border: 1.5px solid $border;
-    background: #0c0c0c;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-    .v-icon { color: $red; }
-
-    .nego-toggle.active & { border-color: $red; background: rgba($red, 0.1); }
+.pqb-labels { display: flex; justify-content: space-between; font-size: 12px; color: $text-dim; margin-bottom: 8px; }
+.pqb-pct { font-weight: 700; color: $text; }
+.pqb-track { height: 6px; background: $border; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.pqb-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease;
+    &.pqb-great { background: #22c55e; }
+    &.pqb-ok { background: #f59e0b; }
+    &.pqb-low { background: $red; }
 }
+.pqb-hint { font-size: 11.5px; color: $text-faint; }
 
-// ── Description area ─────────────────────────────────────────────────────────
-.desc-wrap {
-    position: relative;
+.img-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
+    margin-bottom: 16px;
 }
-
-.desc-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    background: #0a0a0a;
+.img-thumb {
+    position: relative; aspect-ratio: 4/3; border-radius: $r-sm; overflow: hidden;
     border: 1px solid $border;
-    border-top: none;
-    border-radius: 0 0 $r-sm $r-sm;
-    margin-top: -1px;
+    img { width: 100%; height: 100%; object-fit: cover; }
+}
+.img-remove {
+    position: absolute; top: 6px; right: 6px; width: 24px; height: 24px;
+    background: rgba(0,0,0,0.7); border-radius: 50%; border: none;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    color: #fff; transition: background 0.2s;
+    &:hover { background: rgba(139,13,29,0.8); }
+}
+.img-main-badge {
+    position: absolute; bottom: 6px; left: 6px; background: $red; color: #fff;
+    font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.03em;
+}
+.img-add {
+    aspect-ratio: 4/3; border-radius: $r-sm; border: 2px dashed rgba(255,255,255,0.12);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    cursor: pointer; color: $text-faint; transition: border-color 0.2s, color 0.2s; text-align: center;
+    span { font-size: 13px; }
+    small { font-size: 10px; }
+    &:hover { border-color: rgba(139,13,29,0.4); color: $text-dim; }
+    &--loading { opacity: 0.6; cursor: wait; }
+}
+.photo-hints { display: flex; flex-direction: column; gap: 6px; }
+.photo-hint {
+    display: flex; align-items: center; gap: 7px; font-size: 12.5px;
+    &.ph-ok { color: #86efac; }
+    &.ph-warn { color: #fde68a; }
+    &.ph-error { color: #fca5a5; }
 }
 
-.desc-tips {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.desc-tip {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    color: $text-dark;
-}
-
-.tip-icon { color: rgba($red, 0.5); }
-
-.desc-counter {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: $text-dark;
-    white-space: nowrap;
-
-    &.poor { color: #e55; }
-    &.ok { color: #f5a623; }
-    &.good { color: #60a5fa; }
-    &.great { color: #4ade80; }
-}
-
-.desc-max { font-weight: 400; color: $text-dark; font-size: 11px; }
-
-.desc-qlabel {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.04);
-
-    .desc-counter.poor & { background: rgba(#e55, 0.12); color: #e55; }
-    .desc-counter.ok & { background: rgba(#f5a623, 0.12); color: #f5a623; }
-    .desc-counter.good & { background: rgba(#60a5fa, 0.12); color: #60a5fa; }
-    .desc-counter.great & { background: rgba(#4ade80, 0.12); color: #4ade80; }
-}
-
-.desc-wrap .ftextarea {
-    border-bottom-left-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-}
-
-// ── Writing tips panel ────────────────────────────────────────────────────────
-.writing-tips {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid $border;
-    border-radius: $r-sm;
-    padding: 14px 18px;
+// ── Equipment pills ───────────────────────────────────────────────────────────
+.feat-search-wrap {
+    position: relative; display: flex; align-items: center; gap: 0;
     margin-bottom: 20px;
 }
-
-.wt-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    color: $text-muted;
-    margin-bottom: 10px;
-    .v-icon { color: #f5a623; }
+.feat-search-icon { position: absolute; left: 14px; color: $text-dim; pointer-events: none; }
+.feat-search {
+    flex: 1; background: rgba(0,0,0,0.3); border: 1px solid $border-alt;
+    border-radius: $r-sm; padding: 10px 14px 10px 40px; font-size: 14px;
+    color: $text; font-family: inherit; outline: none;
+    &::placeholder { color: $text-faint; }
+    &:focus { border-color: rgba(139,13,29,0.5); }
+}
+.feat-count-badge {
+    position: absolute; right: 12px; background: rgba(139,13,29,0.15);
+    border-radius: 20px; padding: 2px 10px; font-size: 11px;
+    font-weight: 700; color: #fca5a5;
+}
+.feat-group { margin-bottom: 8px; }
+.feat-group-header {
+    width: 100%; display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: $r-sm; padding: 11px 14px; cursor: pointer;
+    font-size: 13px; font-weight: 600; color: $text-muted; font-family: inherit;
+    transition: background 0.2s;
+    &:hover { background: rgba(255,255,255,0.04); }
+    .fgh-icon { color: $red; flex-shrink: 0; }
+    .fgh-count { margin-left: auto; font-size: 11px; color: $text-faint; }
+    .fgh-arrow { color: $text-faint; }
+}
+.feat-pills {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    padding: 14px 4px 8px;
+}
+.feat-pill {
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 12px; border-radius: 20px; cursor: pointer;
+    font-size: 12.5px; font-family: inherit; font-weight: 500;
+    border: 1px solid $border; color: $text-muted;
+    background: rgba(255,255,255,0.02);
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    &:hover { border-color: rgba(139,13,29,0.4); color: $text; }
+    &--on { border-color: $red; background: rgba(139,13,29,0.12); color: $text; }
+    .pill-check { color: $red; flex-shrink: 0; }
+}
+.feat-actions {
+    display: flex; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid $border;
+}
+.feat-expand-btn {
+    background: transparent; border: 1px solid $border; border-radius: $r-sm;
+    color: $text-dim; font-size: 12px; padding: 6px 12px; cursor: pointer; font-family: inherit;
+    &:hover { border-color: $text-faint; color: $text; }
+}
+.feat-empty {
+    text-align: center; padding: 60px 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    color: $text-faint; font-size: 14px;
 }
 
-.wt-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
+// ── Description / title step ──────────────────────────────────────────────────
+.btn-ai {
+    display: flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, rgba(139,13,29,0.2), rgba(139,13,29,0.1));
+    border: 1px solid rgba(139,13,29,0.3); border-radius: $r-sm;
+    color: #fca5a5; font-size: 12px; font-weight: 600; padding: 6px 14px;
+    cursor: pointer; font-family: inherit; transition: background 0.2s;
+    &:hover:not(:disabled) { background: rgba(139,13,29,0.3); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+.desc-meta {
+    display: flex; align-items: center; gap: 12px; margin-top: 10px;
+    .desc-chars { font-size: 13px; font-weight: 700;
+        &.dc-great { color: #22c55e; } &.dc-good { color: #86efac; }
+        &.dc-ok { color: #fde68a; } &.dc-poor { color: #fca5a5; }
+    }
+    .desc-quality-label { font-size: 12px; color: $text-faint; }
+}
+.desc-tips {
+    display: flex; gap: 16px; margin-top: 8px;
+    .dt-item {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 11.5px; color: $text-faint;
+        &.dt-done { color: #22c55e; }
+    }
 }
 
-.wt-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 12px;
-    color: $text-dark;
-    .v-icon { color: rgba($red, 0.5); flex-shrink: 0; }
+// ── Price step ────────────────────────────────────────────────────────────────
+.price-row { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
+.price-opts { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; border-top: 1px solid $border; padding-top: 14px; }
+.seller-type-toggle { display: flex; gap: 8px; }
+.stt-opt {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: $r-sm; border: 1px solid $border;
+    font-size: 13px; color: $text-muted; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    &.active { border-color: $red; background: rgba(139,13,29,0.1); color: $text; }
 }
-
-// ── History step ──────────────────────────────────────────────────────────────
-.hist-section {
-    background: #080808;
-    border: 1px solid $border;
-    border-radius: $r-md;
-    padding: 20px 20px 16px;
-    margin-bottom: 16px;
+.promo-intro { font-size: 13px; color: $text-dim; margin-bottom: 16px; }
+.promo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.promo-card {
+    position: relative; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: $r-md; padding: 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    &:hover { border-color: rgba(255,255,255,0.14); }
+    &--active { border-color: $red; background: rgba(139,13,29,0.1); }
+    &--popular { border-color: rgba(245,158,11,0.3); }
+    .pc-popular-badge {
+        position: absolute; top: -1px; right: 10px;
+        background: #f59e0b; color: #000; font-size: 10px; font-weight: 800;
+        padding: 2px 8px; border-radius: 0 0 6px 6px; letter-spacing: 0.05em;
+    }
+    .pc-icon { color: $red; margin-bottom: 8px; display: block; }
+    .pc-name { font-size: 14px; font-weight: 700; color: $text; margin-bottom: 4px; }
+    .pc-price { font-size: 18px; font-weight: 800; color: $red; margin-bottom: 6px; }
+    .pc-desc { font-size: 11.5px; color: $text-faint; line-height: 1.4; }
+    .pc-days-row { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; }
+    .pc-day-btn {
+        background: rgba(255,255,255,0.04); border: 1px solid $border;
+        border-radius: 6px; padding: 5px 10px; font-size: 12px; color: $text-muted;
+        cursor: pointer; font-family: inherit; transition: background 0.15s;
+        &.active { background: rgba(139,13,29,0.2); border-color: $red; color: $text; }
+    }
 }
-
-.hist-section-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    color: $text-muted;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    .v-icon { color: $red; }
+.promo-coupon { border-top: 1px solid $border; padding-top: 14px; }
+.promo-coupon-row { display: flex; gap: 10px; }
+.btn-coupon {
+    background: rgba(255,255,255,0.05); border: 1px solid $border; border-radius: $r-sm;
+    color: $text-muted; font-size: 13px; padding: 10px 16px; cursor: pointer; font-family: inherit;
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &:hover:not(:disabled) { border-color: $text-dim; color: $text; }
 }
+.ps-coupon-error { font-size: 12px; color: #fca5a5; margin-top: 6px; }
+.ps-coupon-ok { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #86efac; margin-top: 6px; }
 
-.hist-quality-tip {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    background: rgba(45, 122, 58, 0.08);
-    border: 1px solid rgba(74, 222, 128, 0.15);
-    border-radius: $r-md;
-    padding: 16px 20px;
-    margin-top: 4px;
-}
-
-.hq-icon { color: #4ade80; flex-shrink: 0; margin-top: 2px; }
-.hq-title { font-size: 13px; font-weight: 700; color: $text; margin-bottom: 4px; }
-.hq-sub { font-size: 12px; color: $text-dark; line-height: 1.5; }
-
-// ── Publish summary card ──────────────────────────────────────────────────────
-.pub-summary-card {
-    background: #080808;
-    border: 1px solid $border;
-    border-radius: $r-md;
-    padding: 20px;
+// ── Publish step ──────────────────────────────────────────────────────────────
+.preview-advert-card {
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-xl; overflow: hidden; display: flex; gap: 0;
     margin-bottom: 24px;
 }
+.pac-img-wrap {
+    width: 280px; flex-shrink: 0; position: relative;
+    img.pac-img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 200px; }
+    .pac-photo-count {
+        position: absolute; bottom: 10px; right: 10px;
+        background: rgba(0,0,0,0.75); color: #fff; font-size: 11px;
+        padding: 3px 8px; border-radius: 6px;
+        display: flex; align-items: center; gap: 4px;
+    }
+}
+.pac-info { flex: 1; padding: 24px 28px; display: flex; flex-direction: column; gap: 8px; }
+.pac-category { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: $red; }
+.pac-title { font-size: 20px; font-weight: 800; color: $text; margin: 0; }
+.pac-specs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13px; color: $text-dim; }
+.pac-dot { color: $text-faint; }
+.pac-price { font-size: 26px; font-weight: 800; color: $text; }
+.pac-nego { font-size: 13px; font-weight: 500; color: $text-dim; margin-left: 8px; }
+.pac-location { display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: $text-dim; }
+.pac-desc { font-size: 13.5px; color: $text-dim; line-height: 1.6; margin: 0; }
 
-.psc-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: $text-muted;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 14px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+.pub-summary-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px;
+}
+.psg-item {
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: $r-md; padding: 20px 16px; text-align: center;
+    .psg-icon { color: $text-faint; margin-bottom: 8px; display: block; }
+    .psg-val { font-size: 22px; font-weight: 800; color: $text; }
+    .psg-label { font-size: 11px; color: $text-faint; margin-top: 2px; }
+    &.psg-great { border-color: rgba(34,197,94,0.3); .psg-icon { color: #22c55e; } .psg-val { color: #22c55e; } }
+    &.psg-ok { border-color: rgba(245,158,11,0.3); .psg-icon { color: #f59e0b; } .psg-val { color: #f59e0b; } }
+    &.psg-low { border-color: rgba(139,13,29,0.3); .psg-icon { color: $red; } .psg-val { color: #fca5a5; } }
 }
 
-.psc-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
+.publish-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.btn-publish-main {
+    display: flex; align-items: center; gap: 10px;
+    background: $red; border: none; border-radius: $r-md;
+    color: #fff; font-size: 16px; font-weight: 700; padding: 16px 32px;
+    cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.15s;
+    &:hover:not(:disabled) { background: darken(#8B0D1D, 8%); transform: translateY(-1px); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+    &.btn-publish-pay { background: linear-gradient(135deg, #1a1a1a, #2a0a10); border: 1px solid $red; }
+}
+.pub-disclaimer { display: flex; align-items: center; gap: 6px; font-size: 12px; color: $text-faint; }
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+.nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 36px; padding-top: 24px; border-top: 1px solid $border;
+}
+.btn-prev {
+    display: flex; align-items: center; gap: 7px;
+    background: transparent; border: 1px solid $border; border-radius: $r-sm;
+    color: $text-muted; font-size: 13.5px; font-weight: 600; padding: 10px 18px;
+    cursor: pointer; font-family: inherit; transition: border-color 0.2s, color 0.2s;
+    &:hover { border-color: $text-dim; color: $text; }
+}
+.btn-next-main {
+    display: flex; align-items: center; gap: 8px;
+    background: $red; border: none; border-radius: $r-sm;
+    color: #fff; font-size: 14px; font-weight: 700; padding: 11px 24px;
+    cursor: pointer; font-family: inherit; transition: background 0.2s;
+    &:hover { background: darken(#8B0D1D, 8%); }
 }
 
-.psc-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-}
+// ── Transitions ───────────────────────────────────────────────────────────────
+.step-fade-enter-active, .step-fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.step-fade-enter-from { opacity: 0; transform: translateX(14px); }
+.step-fade-leave-to { opacity: 0; transform: translateX(-14px); }
 
-.psc-icon { color: $red; flex-shrink: 0; }
+.feat-slide-enter-active, .feat-slide-leave-active { transition: opacity 0.2s, max-height 0.25s; overflow: hidden; max-height: 2000px; }
+.feat-slide-enter-from, .feat-slide-leave-to { opacity: 0; max-height: 0; }
 
-.psc-label {
-    color: $text-dark;
-    min-width: 90px;
-    flex-shrink: 0;
-}
+.fade-err-enter-active, .fade-err-leave-active { transition: opacity 0.25s; }
+.fade-err-enter-from, .fade-err-leave-to { opacity: 0; }
 
-.psc-val {
-    color: $text;
-    font-weight: 600;
-    flex: 1;
-}
-
-.psc-price { color: $red; }
-
-.psc-nego {
-    display: inline-block;
-    margin-left: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    background: rgba($red, 0.12);
-    color: rgba($red, 0.8);
-    padding: 1px 8px;
-    border-radius: 20px;
-}
-
-.psc-vin {
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-    color: $text-muted;
-}
-
-.psc-score {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.psc-score-bar {
-    height: 5px;
-    background: #1a1a1a;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.psc-score-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.6s ease;
-
-    &.fill-great { background: #4ade80; }
-    &.fill-good { background: #60a5fa; }
-    &.fill-poor { background: $red; }
-}
-
-.psc-score-label {
-    font-size: 12px;
-    color: $text-dark;
-}
-
-.col-great { color: #4ade80; font-weight: 700; }
-.col-good { color: #60a5fa; font-weight: 700; }
-.col-poor { color: $red; font-weight: 700; }
+.success-fade-enter-active, .success-fade-leave-active { transition: opacity 0.4s; }
+.success-fade-enter-from, .success-fade-leave-to { opacity: 0; }
 
 // ── Success screen ────────────────────────────────────────────────────────────
 .success-screen {
-    position: fixed;
-    inset: 0;
-    background: $bg;
-    z-index: 9000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 16px;
-    overflow-y: auto;
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(5,5,5,0.96); backdrop-filter: blur(20px);
+    display: flex; align-items: center; justify-content: center;
 }
-
 .success-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    text-align: center;
-    max-width: 520px;
-    width: 100%;
-    position: relative;
-    animation: success-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    max-width: 520px; width: 90%; text-align: center; padding: 48px 40px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 28px; position: relative;
 }
-
-@keyframes success-pop {
-    from { opacity: 0; transform: scale(0.88) translateY(20px); }
-    to   { opacity: 1; transform: scale(1)   translateY(0);     }
-}
-
-.success-confetti {
-    position: absolute;
-    inset: -40px;
-    pointer-events: none;
-    overflow: hidden;
-}
-
+.success-logo { height: 28px; margin-bottom: 24px; opacity: 0.8; }
+.success-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: 28px; }
 .confetti-dot {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    opacity: 0;
-    animation: confetti-fall 1.8s ease-out calc(var(--i) * 0.08s) both;
-
-    &:nth-child(1)  { left:  8%; background: $red;      top: -10px; transform: rotate(20deg); }
-    &:nth-child(2)  { left: 20%; background: #ffd700;   top: -10px; transform: rotate(-30deg); border-radius: 50%; }
-    &:nth-child(3)  { left: 35%; background: #4caf50;   top: -10px; transform: rotate(45deg); }
-    &:nth-child(4)  { left: 50%; background: $red;      top: -10px; border-radius: 50%; }
-    &:nth-child(5)  { left: 65%; background: #2196f3;   top: -10px; transform: rotate(-20deg); }
-    &:nth-child(6)  { left: 80%; background: #ffd700;   top: -10px; transform: rotate(60deg); }
-    &:nth-child(7)  { left: 92%; background: $red;      top: -10px; border-radius: 50%; }
-    &:nth-child(8)  { left: 14%; background: #e040fb;   top: -10px; transform: rotate(-45deg); }
-    &:nth-child(9)  { left: 28%; background: #ff5722;   top: -10px; }
-    &:nth-child(10) { left: 58%; background: #26c6da;   top: -10px; border-radius: 50%; }
-    &:nth-child(11) { left: 72%; background: #ec407a;   top: -10px; transform: rotate(30deg); }
-    &:nth-child(12) { left: 44%; background: #66bb6a;   top: -10px; transform: rotate(-15deg); border-radius: 50%; }
+    position: absolute; width: 7px; height: 7px; border-radius: 50%;
+    background: $red; opacity: 0;
+    top: calc(5% * var(--i)); left: calc(8% * var(--i));
+    animation: confetti-pop 1.2s calc(0.08s * var(--i)) ease forwards;
 }
-
-@keyframes confetti-fall {
-    0%   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
-    100% { opacity: 0; transform: translateY(200px) rotate(720deg) scale(0.5); }
+@keyframes confetti-pop {
+    0% { opacity: 0; transform: translateY(0) scale(0); }
+    40% { opacity: 1; transform: translateY(-40px) scale(1.2); }
+    100% { opacity: 0; transform: translateY(-80px) scale(0.5); }
 }
-
-.success-logo {
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: 6px;
-    color: $text;
-    span { color: $red; }
-}
-
-.success-icon-wrap {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: rgba(76,175,80,0.1);
-    border: 2px solid rgba(76,175,80,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: icon-pulse 2s ease-in-out infinite;
-}
-
-.success-icon { color: #4caf50; }
-
-@keyframes icon-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.25); }
-    50%       { box-shadow: 0 0 0 16px rgba(76,175,80,0); }
-}
-
-.success-title {
-    font-size: 28px;
-    font-weight: 900;
-    color: $text;
-    line-height: 1.2;
-    margin: 0;
-
-    @include respond-to(sm) { font-size: 22px; }
-}
-
-.success-desc {
-    font-size: 15px;
-    color: $text-muted;
-    line-height: 1.8;
-    margin: 0;
-    max-width: 420px;
-}
-
-.success-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    max-width: 380px;
-}
-
+.success-icon-wrap { margin-bottom: 20px; }
+.success-icon { color: #22c55e; }
+.success-title { font-size: 24px; font-weight: 800; color: $text; margin: 0 0 12px; }
+.success-desc { font-size: 14px; color: $text-dim; line-height: 1.6; margin: 0 0 28px; }
+.success-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .sact-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    padding: 15px 24px;
-    border-radius: $r-md;
-    font-size: 15px;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    text-decoration: none;
-    cursor: pointer;
-    transition: opacity 0.2s, border-color 0.2s, color 0.2s;
-
-    &--primary {
-        background: $red;
-        color: white;
-        border: none;
-        &:hover { opacity: 0.88; }
-    }
-    &--secondary {
-        background: transparent;
-        color: $text;
-        border: 1px solid rgba(255,255,255,0.15);
-        &:hover { border-color: rgba(255,255,255,0.3); }
-    }
-    &--ghost {
-        background: transparent;
-        color: $text-dim;
-        border: 1px solid rgba(255,255,255,0.06);
-        font-size: 14px;
-        font-weight: 500;
-        padding: 12px 20px;
-        &:hover { color: $text-muted; }
-    }
+    display: flex; align-items: center; gap: 8px; padding: 12px 24px;
+    border-radius: $r-md; font-size: 14px; font-weight: 600; text-decoration: none;
+    transition: background 0.2s; width: 100%; justify-content: center; max-width: 340px;
+    &--primary { background: $red; color: #fff; &:hover { background: darken(#8B0D1D, 8%); } }
+    &--secondary { background: rgba(255,255,255,0.07); color: $text; border: 1px solid $border; &:hover { background: rgba(255,255,255,0.1); } }
+    &--ghost { background: transparent; color: $text-dim; &:hover { color: $text; } }
 }
-
 .success-tip {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 13px;
-    color: $text-dim;
-    background: rgba($red, 0.06);
-    border: 1px solid rgba($red, 0.15);
-    border-radius: $r-md;
-    padding: 10px 16px;
-    max-width: 380px;
-    width: 100%;
-    text-align: left;
+    margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 12.5px; color: $text-faint;
+    .tip-link { color: $text-dim; text-decoration: underline; }
 }
 
-.tip-icon { color: rgba($red, 0.7); flex-shrink: 0; }
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-.tip-link {
-    color: $red;
-    font-weight: 600;
-    &:hover { text-decoration: underline; }
+// feat highlight
+:deep(.feat-hl) { background: rgba(139,13,29,0.25); color: $text; border-radius: 2px; padding: 0 2px; }
+
+// ── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 1100px) {
+    .left-sidebar { width: 220px; min-width: 220px; }
+    .score-panel { display: none; }
+}
+@media (max-width: 780px) {
+    .left-sidebar { display: none; }
+    .center-area { padding: 20px 16px 60px; }
+    .fields-grid { grid-template-columns: 1fr; }
+    .cat-grid { grid-template-columns: repeat(2, 1fr); }
+    .preview-advert-card { flex-direction: column; }
+    .pac-img-wrap { width: 100%; }
+    .pub-summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .promo-grid { grid-template-columns: 1fr; }
 }
 
-// Transition for success screen
-.success-fade-enter-active { transition: opacity 0.3s ease; }
-.success-fade-leave-active { transition: opacity 0.2s ease; }
-.success-fade-enter-from,
-.success-fade-leave-to { opacity: 0; }
 </style>
