@@ -5,10 +5,8 @@ ENV HOST=0.0.0.0
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm pkg delete scripts.postinstall && npm install
-
 COPY . .
+RUN npm install
 RUN npm run build
 
 EXPOSE 3000
