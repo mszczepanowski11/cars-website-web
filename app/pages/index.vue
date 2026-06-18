@@ -1661,8 +1661,6 @@ onMounted(async () => {
     width: auto;
     display: block;
     margin: 0 auto 12px;
-    filter: brightness(0) invert(1);
-    opacity: 0.92;
 }
 
 .why-sub {
