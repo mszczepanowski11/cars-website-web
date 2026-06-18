@@ -1,5 +1,7 @@
 FROM node:20-alpine AS builder
 
+ENV NITRO_PRESET=node
+
 WORKDIR /app
 
 COPY package*.json ./
