@@ -1,93 +1,203 @@
 <template>
     <div class="home">
 
-        <!-- Hero fullscreen -->
+        <!-- ─── Hero ─────────────────────────────────────────────────── -->
         <section class="hero-fs">
             <div class="hfs-bg">
                 <img src="/hero-car.jpg" alt="" class="hfs-img" />
                 <div class="hfs-overlay" />
+                <div class="hfs-grain" />
             </div>
+
             <div class="container hfs-content">
+                <!-- Title -->
+                <div class="hfs-eyebrow">
+                    <span class="eyebrow-dot" />
+                    Platforma nowej generacji
+                </div>
                 <h1 class="hfs-title">
-                    Motoryzacja.<br>
-                    <span>W&nbsp;lepszym</span> wydaniu.
+                    MOTORYZACJA.<br>
+                    <span class="title-accent">W LEPSZYM</span><br>
+                    WYDANIU.
                 </h1>
                 <p class="hfs-sub">
-                    Tysiące zweryfikowanych ogłoszeń. Znajdź swoje wymarzone auto.
+                    CARIZO to więcej niż portal ogłoszeniowy.<br>
+                    To miejsce, gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
                 </p>
+
+                <!-- Category tiles -->
+                <div class="hfs-cats">
+                    <button
+                        v-for="cat in heroCats"
+                        :key="cat.key"
+                        class="hfs-cat-tile"
+                        :class="{ active: heroCategory === cat.key }"
+                        @click="selectHeroCategory(cat.key)"
+                    >
+                        <v-icon :icon="cat.icon" size="20" class="hfs-cat-icon" />
+                        <span>{{ cat.label }}</span>
+                    </button>
+                </div>
+
+                <!-- Dynamic search bar -->
                 <div class="hfs-searchbar">
+                    <!-- Type selector (Budowlane / Rolnicze / Części) -->
+                    <template v-if="heroCatConfig.typeOptions">
+                        <div class="hfs-field">
+                            <label class="hfs-field-label">{{ heroCatConfig.typeLabel }}</label>
+                            <select v-model="heroCatType" class="hfs-select">
+                                <option :value="null">Wszystkie</option>
+                                <option v-for="t in heroCatConfig.typeOptions" :key="t" :value="t">{{ t }}</option>
+                            </select>
+                        </div>
+                        <div class="hfs-vsep" />
+                    </template>
+
+                    <!-- Brand -->
+                    <template v-if="heroCatConfig.showBrand">
+                        <div class="hfs-field">
+                            <label class="hfs-field-label">Marka</label>
+                            <select v-model="heroMarka" class="hfs-select" @change="heroModel = null; loadHeroModels()">
+                                <option :value="null">Wszystkie marki</option>
+                                <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                            </select>
+                        </div>
+                        <div class="hfs-vsep" />
+                    </template>
+
+                    <!-- Model -->
+                    <template v-if="heroCatConfig.showModel">
+                        <div class="hfs-field">
+                            <label class="hfs-field-label">
+                                {{ heroMarka ? 'Model' : 'Model' }}
+                            </label>
+                            <select v-model="heroModel" class="hfs-select" :disabled="!heroMarka">
+                                <option :value="null">{{ heroMarka ? 'Wszystkie modele' : 'Najpierw wybierz markę' }}</option>
+                                <option v-for="m in heroModels" :key="m.id" :value="m.id">{{ m.name }}</option>
+                            </select>
+                        </div>
+                        <div class="hfs-vsep" />
+                    </template>
+
+                    <!-- Fuel (cars / motorcycles) -->
+                    <template v-if="heroCatConfig.showFuel">
+                        <div class="hfs-field">
+                            <label class="hfs-field-label">Paliwo</label>
+                            <select v-model="heroFuel" class="hfs-select">
+                                <option :value="null">Dowolne</option>
+                                <option v-for="f in FUEL_OPTIONS" :key="f" :value="f">{{ f }}</option>
+                            </select>
+                        </div>
+                        <div class="hfs-vsep" />
+                    </template>
+
+                    <!-- Year from / to (cars / motorcycles / trucks / agri) -->
+                    <template v-if="heroCatConfig.showYear">
+                        <div class="hfs-field hfs-field--narrow">
+                            <label class="hfs-field-label">Rok od</label>
+                            <select v-model="heroYearFrom" class="hfs-select">
+                                <option :value="null">od</option>
+                                <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
+                            </select>
+                        </div>
+                        <div class="hfs-vsep" />
+                        <div class="hfs-field hfs-field--narrow">
+                            <label class="hfs-field-label">do</label>
+                            <select v-model="heroYearTo" class="hfs-select">
+                                <option :value="null">do</option>
+                                <option v-for="y in yearsReverse" :key="y" :value="y">{{ y }}</option>
+                            </select>
+                        </div>
+                        <div class="hfs-vsep" />
+                    </template>
+
+                    <!-- Price -->
                     <div class="hfs-field">
-                        <label class="hfs-field-label">Marka</label>
-                        <select v-model="heroMarka" class="hfs-select" @change="heroModel = null; loadHeroModels()">
-                            <option :value="null">Wszystkie</option>
-                            <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
-                        </select>
+                        <label class="hfs-field-label">Cena max (zł)</label>
+                        <input
+                            v-model="heroPrice"
+                            type="number"
+                            class="hfs-price-input"
+                            placeholder="np. 80 000"
+                            min="0"
+                            @keyup.enter="doHeroSearch"
+                        />
                     </div>
-                    <div class="hfs-vsep" />
-                    <div class="hfs-field">
-                        <label class="hfs-field-label">Model</label>
-                        <select v-model="heroModel" class="hfs-select" :disabled="!heroMarka">
-                            <option :value="null">Wszystkie</option>
-                            <option v-for="m in heroModels" :key="m.id" :value="m.id">{{ m.name }}</option>
-                        </select>
-                    </div>
-                    <div class="hfs-vsep" />
-                    <div class="hfs-field">
-                        <label class="hfs-field-label">Cena max</label>
-                        <input v-model="heroPrice" type="number" class="hfs-price-input" placeholder="np. 50 000" min="0" @keyup.enter="doHeroSearch" />
-                    </div>
+
                     <button class="hfs-search-btn" @click="doHeroSearch">
                         <v-icon icon="mdi-magnify" size="20" />
                         <span>Szukaj</span>
                     </button>
                 </div>
+
+                <!-- Quick links -->
                 <div class="hfs-links">
-                    <NuxtLink to="/add-advert" class="hfs-link">
-                        Dodaj ogłoszenie <v-icon icon="mdi-arrow-right" size="13" />
+                    <NuxtLink to="/add-advert" class="hfs-link hfs-link--primary">
+                        <v-icon icon="mdi-plus-circle-outline" size="15" />
+                        Dodaj ogłoszenie
                     </NuxtLink>
-                    <NuxtLink to="/categories" class="hfs-link">
-                        Wszystkie kategorie <v-icon icon="mdi-arrow-right" size="13" />
+                    <NuxtLink to="/adverts" class="hfs-link">
+                        Przeglądaj wszystkie
+                        <v-icon icon="mdi-arrow-right" size="13" />
                     </NuxtLink>
                 </div>
             </div>
+
+            <!-- scroll indicator -->
             <div class="hfs-scroll">
-                <v-icon icon="mdi-chevron-down" size="24" />
+                <v-icon icon="mdi-chevron-down" size="26" />
             </div>
         </section>
 
-        <!-- Stats strip -->
+        <!-- ─── Stats strip ──────────────────────────────────────────── -->
         <div class="stats-strip">
             <div class="container">
                 <div class="sstrip-inner">
                     <template v-for="(stat, i) in visibleStats" :key="stat.key">
                         <div v-if="i > 0" class="sstrip-sep" />
                         <div class="sstrip-item">
-                            <div v-if="statsLoading" class="sstrip-skeleton" />
-                            <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
-                            <span class="sstrip-label">{{ stat.label }}</span>
+                            <div class="sstrip-icon-wrap">
+                                <v-icon :icon="stat.icon" size="20" />
+                            </div>
+                            <div class="sstrip-text">
+                                <div v-if="statsLoading" class="sstrip-skeleton" />
+                                <strong
+                                    v-else
+                                    :ref="el => { if (el) countUpRefs[stat.key] = el as Element }"
+                                    class="sstrip-num"
+                                >{{ formatStat(stat.value) }}</strong>
+                                <span class="sstrip-label">{{ stat.label }}</span>
+                            </div>
                         </div>
                     </template>
                 </div>
             </div>
         </div>
 
-        <!-- Ostatnio dodane -->
+        <!-- ─── Recently added ───────────────────────────────────────── -->
         <section v-if="recentlyAdded.length || featured.length" class="section">
             <div class="container">
                 <div class="sec-top">
-                    <h2>Ostatnio dodane</h2>
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">NOWE OGŁOSZENIA</div>
+                        <h2>Ostatnio dodane</h2>
+                    </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Wszystkie ogłoszenia
                         <v-icon icon="mdi-arrow-right" size="16" />
                     </NuxtLink>
                 </div>
                 <div class="cars-grid">
-                    <AdvertCard v-for="a in (recentlyAdded.length ? recentlyAdded : featured)" :key="a.id" :advert="a" />
+                    <AdvertCard
+                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured)"
+                        :key="a.id"
+                        :advert="a"
+                    />
                 </div>
             </div>
         </section>
 
-        <!-- Samochody premium (showcase) -->
+        <!-- ─── Premium showcase ─────────────────────────────────────── -->
         <section class="section premium-showcase-section">
             <div class="container">
                 <div class="psc-header">
@@ -124,7 +234,7 @@
             </div>
         </section>
 
-        <!-- Polecane / TOP listings -->
+        <!-- ─── Top adverts ──────────────────────────────────────────── -->
         <section v-if="topAdverts.length" class="section">
             <div class="container">
                 <div class="sec-top">
@@ -146,7 +256,32 @@
             </div>
         </section>
 
-        <!-- ING Finansowanie -->
+        <!-- ─── Why CARIZO ───────────────────────────────────────────── -->
+        <section class="section why-section">
+            <div class="container">
+                <div class="why-header">
+                    <div class="why-eyebrow">DLACZEGO MY</div>
+                    <h2 class="why-title">Dlaczego CARI<span>ZO</span>?</h2>
+                    <p class="why-sub">Łączymy najlepszą technologię z pasją do motoryzacji</p>
+                </div>
+                <div class="why-grid">
+                    <div v-for="f in feats" :key="f.title" class="why-card">
+                        <div class="why-card-icon">
+                            <v-icon :icon="f.icon" size="28" />
+                        </div>
+                        <div class="why-card-body">
+                            <h3 class="why-card-title">{{ f.title }}</h3>
+                            <p class="why-card-desc">{{ f.desc }}</p>
+                        </div>
+                        <div class="why-card-arrow">
+                            <v-icon icon="mdi-arrow-right" size="16" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── ING Finansowanie ──────────────────────────────────────── -->
         <section class="section ing-section">
             <div class="container">
                 <div class="ing-wrapper">
@@ -225,7 +360,7 @@
             </div>
         </section>
 
-        <!-- Events -->
+        <!-- ─── Events ───────────────────────────────────────────────── -->
         <section v-if="events.length" class="section events-section">
             <div class="container">
                 <div class="sec-top">
@@ -236,7 +371,6 @@
                     </NuxtLink>
                 </div>
 
-                <!-- Featured event banner -->
                 <div v-if="featuredEvent" class="featured-banner" @click="navigateTo(`/wydarzenie/${featuredEvent.id}`)">
                     <div class="fb-img-wrap">
                         <img :src="getEventImageUrl(featuredEvent)" :alt="featuredEvent.name" />
@@ -306,23 +440,7 @@
             </div>
         </section>
 
-        <!-- Why CARIZO -->
-        <section id="about" class="section">
-            <div class="container">
-                <h2 class="section-title">Dlaczego CARI<span>ZO</span>?</h2>
-                <div class="feat-grid">
-                    <div v-for="f in feats" :key="f.title" class="feat-card">
-                        <div class="feat-icon">
-                            <v-icon :icon="f.icon" size="28" />
-                        </div>
-                        <h3>{{ f.title }}</h3>
-                        <p>{{ f.desc }}</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Newsletter -->
+        <!-- ─── Newsletter ───────────────────────────────────────────── -->
         <section id="contact" class="section">
             <div class="container">
                 <div class="newsletter">
@@ -374,22 +492,102 @@ const featured = ref<CarAdvert[]>([])
 const topAdverts = ref<CarAdvert[]>([])
 const recentlyAdded = ref<CarAdvert[]>([])
 const events = ref<CarEvent[]>([])
-const homeCategories = ref<import('~/types').CategoryWithCount[]>([])
-const searchCategories = computed(() => homeCategories.value)
+const filterBrands = ref<TaxonomyItem[]>([])
+const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
+const statsLoading = ref(true)
 
-// Hero search
-const heroMarka = ref<number | null>(null)
-const heroModel = ref<number | null>(null)
-const heroPrice = ref('')
-const heroModels = ref<TaxonomyItem[]>([])
+// ─── Hero search state ────────────────────────────────────────────────────────
 
-// Premium showcase (static)
-const premiumShowcase = [
-    { brand: 'BMW',      model: 'M5',       spec: 'V8 4.4 BiTurbo · 625 KM' },
-    { brand: 'Porsche',  model: '911 GT3',  spec: 'Flat-6 4.0 · 510 KM' },
-    { brand: 'Audi',     model: 'RS6 Avant',spec: 'V8 4.0 BiTurbo · 600 KM' },
-    { brand: 'Mercedes', model: 'AMG GT63', spec: 'V8 4.0 BiTurbo · 630 KM' },
-]
+const heroMarka   = ref<number | null>(null)
+const heroModel   = ref<number | null>(null)
+const heroPrice   = ref('')
+const heroModels  = ref<TaxonomyItem[]>([])
+const heroCategory = ref('samochody')
+const heroCatType  = ref<string | null>(null)
+const heroFuel     = ref<string | null>(null)
+const heroYearFrom = ref<number | null>(null)
+const heroYearTo   = ref<number | null>(null)
+
+const FUEL_OPTIONS  = ['Benzyna', 'Diesel', 'Elektryczny', 'Hybryda', 'Hybryda plug-in', 'LPG', 'CNG', 'Wodór']
+const CURRENT_YEAR  = new Date().getFullYear()
+const years         = Array.from({ length: CURRENT_YEAR - 1979 }, (_, i) => CURRENT_YEAR - i)
+const yearsReverse  = [...years]
+
+// ─── Category configs ─────────────────────────────────────────────────────────
+
+const heroCats = [
+    { key: 'samochody',  label: 'Samochody',  icon: 'mdi-car',              categoryId: null },
+    { key: 'motocykle',  label: 'Motocykle',   icon: 'mdi-motorbike',        categoryId: 6    },
+    { key: 'dostawcze',  label: 'Dostawcze',   icon: 'mdi-van-utility',      categoryId: 2    },
+    { key: 'ciezarowe',  label: 'Ciężarowe',   icon: 'mdi-truck',            categoryId: 3    },
+    { key: 'rolnicze',   label: 'Rolnicze',    icon: 'mdi-tractor',          categoryId: 8    },
+    { key: 'budowlane',  label: 'Budowlane',   icon: 'mdi-excavator',        categoryId: 9    },
+    { key: 'kampery',    label: 'Kampery',     icon: 'mdi-rv-truck',         categoryId: 7    },
+    { key: 'czesci',     label: 'Części',      icon: 'mdi-cog-outline',      categoryId: 5    },
+] as const
+
+const CATEGORY_CONFIGS: Record<string, {
+    showBrand: boolean
+    showModel: boolean
+    showFuel: boolean
+    showYear: boolean
+    typeLabel: string
+    typeOptions: string[] | null
+    categoryId: number | null
+}> = {
+    samochody: {
+        showBrand: true, showModel: true, showFuel: true, showYear: true,
+        typeLabel: '', typeOptions: null, categoryId: null,
+    },
+    motocykle: {
+        showBrand: true, showModel: true, showFuel: false, showYear: true,
+        typeLabel: 'Typ', typeOptions: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Crossowy', 'Scooter', 'Chopper', 'Elektryczny'],
+        categoryId: 6,
+    },
+    dostawcze: {
+        showBrand: true, showModel: true, showFuel: false, showYear: false,
+        typeLabel: 'Zabudowa', typeOptions: ['Skrzyniowy', 'Furgon', 'Chłodnia', 'Izoterma', 'Wywrotka', 'Kontener'],
+        categoryId: 2,
+    },
+    ciezarowe: {
+        showBrand: true, showModel: false, showFuel: false, showYear: false,
+        typeLabel: 'Typ pojazdu', typeOptions: ['Ciągnik siodłowy', 'Wywrotka', 'Kontenerowiec', 'Chłodnia', 'Cysterna', 'Furgon', 'Żuraw'],
+        categoryId: 3,
+    },
+    rolnicze: {
+        showBrand: true, showModel: false, showFuel: false, showYear: true,
+        typeLabel: 'Typ maszyny', typeOptions: ['Traktor', 'Kombajn', 'Siewnik', 'Pług', 'Opryskiwacz', 'Prasa', 'Rozsiewacz', 'Przyczepa rolnicza'],
+        categoryId: 8,
+    },
+    budowlane: {
+        showBrand: true, showModel: false, showFuel: false, showYear: false,
+        typeLabel: 'Typ maszyny', typeOptions: ['Koparka', 'Koparko-ładowarka', 'Ładowarka', 'Dźwig', 'Walec', 'Spycharka', 'Wywrotka', 'Żuraw'],
+        categoryId: 9,
+    },
+    kampery: {
+        showBrand: true, showModel: false, showFuel: false, showYear: true,
+        typeLabel: 'Typ', typeOptions: ['Kamper', 'Przyczepa kempingowa', 'Przyczepa kempingowa składana', 'Bus kempingowy'],
+        categoryId: 7,
+    },
+    czesci: {
+        showBrand: true, showModel: false, showFuel: false, showYear: false,
+        typeLabel: 'Kategoria', typeOptions: ['Silnik', 'Skrzynia biegów', 'Zawieszenie', 'Układ hamulcowy', 'Elektryka', 'Karoseria', 'Wnętrze', 'Opony / Felgi', 'Szyby', 'Chłodnica', 'Wydech'],
+        categoryId: 5,
+    },
+}
+
+const heroCatConfig = computed(() => CATEGORY_CONFIGS[heroCategory.value] ?? CATEGORY_CONFIGS.samochody)
+
+function selectHeroCategory(key: string) {
+    heroCategory.value = key
+    heroMarka.value = null
+    heroModel.value = null
+    heroCatType.value = null
+    heroFuel.value = null
+    heroYearFrom.value = null
+    heroYearTo.value = null
+    heroModels.value = []
+}
 
 async function loadHeroModels() {
     if (!heroMarka.value) { heroModels.value = []; return }
@@ -398,36 +596,56 @@ async function loadHeroModels() {
 
 function doHeroSearch() {
     const query: Record<string, string> = {}
+    const cfg = heroCatConfig.value
+    if (cfg.categoryId) query.categoryId = String(cfg.categoryId)
     if (heroMarka.value) query.brandId = String(heroMarka.value)
     if (heroModel.value) query.modelId = String(heroModel.value)
     if (heroPrice.value) query.priceTo = heroPrice.value
+    if (heroCatType.value) query.textSearch = heroCatType.value
+    if (heroFuel.value) query.fuelType = heroFuel.value
+    if (heroYearFrom.value) query.yearFrom = String(heroYearFrom.value)
+    if (heroYearTo.value) query.yearTo = String(heroYearTo.value)
     navigateTo({ path: '/adverts', query })
 }
 
-// Count-up
+// ─── Premium showcase ─────────────────────────────────────────────────────────
+
+const premiumShowcase = [
+    { brand: 'BMW',      model: 'M5',        spec: 'V8 4.4 BiTurbo · 625 KM' },
+    { brand: 'Porsche',  model: '911 GT3',   spec: 'Flat-6 4.0 · 510 KM'     },
+    { brand: 'Audi',     model: 'RS6 Avant', spec: 'V8 4.0 BiTurbo · 600 KM' },
+    { brand: 'Mercedes', model: 'AMG GT63',  spec: 'V8 4.0 BiTurbo · 630 KM' },
+]
+
+// ─── Features / Why CARIZO ───────────────────────────────────────────────────
+
+const feats = [
+    { title: 'Bezpieczeństwo',          desc: 'Zweryfikowane ogłoszenia i sprzedawcy. Kupuj i sprzedawaj z pełnym zaufaniem.',             icon: 'mdi-shield-check-outline'   },
+    { title: 'Zweryfikowane pojazdy',   desc: 'Pełna historia pojazdu. Więcej pewności przy każdym zakupie.',                              icon: 'mdi-car-info'               },
+    { title: 'Inteligentne narzędzia',  desc: 'Nowoczesne wyszukiwanie, wycena AI i inteligentne filtry. Znajdź idealne auto szybciej.',   icon: 'mdi-cpu-64-bit'             },
+    { title: 'Społeczność motoryzacyjna', desc: 'Dla ludzi kochających motoryzację. Wydarzenia, recenzje i aktywna społeczność.',          icon: 'mdi-account-group-outline'  },
+]
+
+// ─── Stats ────────────────────────────────────────────────────────────────────
+
 const countUpRefs = ref<Record<string, Element>>({})
 const { observe: countUpObserve } = useCountUp()
 
-const email = ref('')
-const subscribeLoading = ref(false)
-const subscribeSuccess = ref(false)
-const subscribeError = ref('')
-const filterBrands = ref<TaxonomyItem[]>([])
-const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
-const statsLoading = ref(true)
-
 const visibleStats = computed(() => [
-    { key: 'activeAdverts', icon: 'mdi-car-outline',           label: 'Aktywnych ogłoszeń', value: homeStats.value.activeAdverts },
-    { key: 'soldVehicles',  icon: 'mdi-handshake-outline',     label: 'Sprzedanych aut',    value: homeStats.value.soldVehicles  },
-    { key: 'events',        icon: 'mdi-calendar-star-outline', label: 'Wydarzeń',            value: homeStats.value.events        },
-    { key: 'totalUsers',    icon: 'mdi-account-group-outline', label: 'Użytkowników',        value: homeStats.value.totalUsers    },
+    { key: 'activeAdverts', icon: 'mdi-shield-check-outline',  label: 'Zweryfikowanych ogłoszeń', value: homeStats.value.activeAdverts },
+    { key: 'soldVehicles',  icon: 'mdi-car-outline',           label: 'Sprzedanych pojazdów',     value: homeStats.value.soldVehicles  },
+    { key: 'totalUsers',    icon: 'mdi-account-group-outline', label: 'Użytkowników w Polsce',    value: homeStats.value.totalUsers    },
+    { key: 'events',        icon: 'mdi-domain',                label: 'Zweryfikowanych dealerów', value: homeStats.value.events        },
 ])
 
-const { getUpcoming } = useEvents()
-const { getImageUrl } = useImageUrl()
-const { fetchBrands, fetchModels } = useTaxonomy()
+function formatStat(n: number): string {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
+    if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K'
+    return n.toLocaleString('pl')
+}
 
-// ING calculator
+// ─── ING Calculator ───────────────────────────────────────────────────────────
+
 const ingCalcAmount = ref(80000)
 const ingCalcMonths = ref(48)
 const ingMonthlyRate = computed(() => {
@@ -437,33 +655,29 @@ const ingMonthlyRate = computed(() => {
     return Math.round(pv * rate * Math.pow(1 + rate, n) / (Math.pow(1 + rate, n) - 1))
 })
 
+// ─── Events ───────────────────────────────────────────────────────────────────
+
+const { getUpcoming } = useEvents()
+const { getImageUrl } = useImageUrl()
+const { fetchBrands, fetchModels } = useTaxonomy()
+
 const featuredEvent = computed(() => events.value.find(e => e.isFeatured) ?? null)
 
-function formatStat(n: number): string {
-    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
-    if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K'
-    return n.toLocaleString('pl')
-}
-
 const eventPlaceholder = '/car-placeholder.svg'
-
 function getEventImageUrl(ev: CarEvent): string {
     const main = ev.images?.find(i => i.isMain) ?? ev.images?.[0]
     return getImageUrl(main?.url, eventPlaceholder)
 }
-
 function formatEventDate(dateStr: string): string {
-    const date = new Date(dateStr)
-    return date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })
+    return new Date(dateStr).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-const feats = [
-    { title: 'Bezpieczeństwo', desc: 'Weryfikujemy ogłoszenia i dbamy o Twoje bezpieczeństwo.', icon: 'mdi-shield-check-outline' },
-    { title: 'Inteligentne narzędzia', desc: 'AI pomaga w wycenie, opisie i analizie rynku.', icon: 'mdi-cpu-64-bit' },
-    { title: 'Zaufani sprzedawcy', desc: 'Współpracujemy tylko ze sprawdzonymi użytkownikami.', icon: 'mdi-account-star-outline' },
-    { title: 'Najlepsze oferty', desc: 'Codziennie tysiące nowych, atrakcyjnych ofert w jednym miejscu.', icon: 'mdi-tag-outline' },
-]
+// ─── Newsletter ───────────────────────────────────────────────────────────────
 
+const email = ref('')
+const subscribeLoading = ref(false)
+const subscribeSuccess = ref(false)
+const subscribeError = ref('')
 
 async function subscribeNewsletter() {
     if (!email.value.trim()) return
@@ -481,27 +695,43 @@ async function subscribeNewsletter() {
     }
 }
 
-onMounted(async () => {
-    await Promise.allSettled([
+// ─── SSR-safe data fetching ───────────────────────────────────────────────────
+
+const { data: homeData } = await useAsyncData('home-data', async () => {
+    const [featuredResult, recentResult, evts, stats, brands] = await Promise.allSettled([
         $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
             method: 'POST',
             body: { page: 1, pageSize: 50, sortBy: 'featured' }
-        }).then(r => {
-            const promoted = r.items.filter(a => a.badge === 'FEATURED' || a.badge === 'TOP' || a.badge === 'PREMIUM')
-            featured.value = promoted.filter(a => a.badge === 'FEATURED').slice(0, 4)
-            topAdverts.value = promoted.filter(a => a.badge === 'TOP' || a.badge === 'PREMIUM').slice(0, 6)
-        }).catch(() => {}),
+        }),
         $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
             method: 'POST',
             body: { page: 1, pageSize: 8, sortBy: '' }
-        }).then(r => { recentlyAdded.value = r.items }).catch(() => {}),
-        getUpcoming(6).then(e => { events.value = e }),
-        $fetch<typeof homeStats.value>('/api/stats/home')
-            .then(s => { Object.assign(homeStats.value, s) })
-            .catch(() => {}),
-        fetchBrands().then(b => { filterBrands.value = b }).catch(() => {}),
+        }),
+        getUpcoming(6).catch(() => []),
+        $fetch<{ activeAdverts: number; totalUsers: number; soldVehicles: number; events: number }>('/api/stats/home').catch(() => null),
+        fetchBrands().catch(() => []),
     ])
-    statsLoading.value = false
+    return {
+        featuredItems: featuredResult.status === 'fulfilled' ? featuredResult.value.items : [],
+        recentItems:   recentResult.status   === 'fulfilled' ? recentResult.value.items   : [],
+        events:        evts.status           === 'fulfilled' ? (evts.value ?? [])          : [],
+        stats:         stats.status          === 'fulfilled' ? stats.value                 : null,
+        brands:        brands.status         === 'fulfilled' ? brands.value                : [],
+    }
+})
+
+if (homeData.value) {
+    const promoted = (homeData.value.featuredItems ?? []).filter((a: CarAdvert) => a.badge === 'FEATURED' || a.badge === 'TOP' || a.badge === 'PREMIUM')
+    featured.value      = promoted.filter((a: CarAdvert) => a.badge === 'FEATURED').slice(0, 4)
+    topAdverts.value    = promoted.filter((a: CarAdvert) => a.badge === 'TOP' || a.badge === 'PREMIUM').slice(0, 6)
+    recentlyAdded.value = homeData.value.recentItems ?? []
+    events.value        = homeData.value.events ?? []
+    filterBrands.value  = homeData.value.brands ?? []
+    if (homeData.value.stats) Object.assign(homeStats.value, homeData.value.stats)
+}
+statsLoading.value = false
+
+onMounted(async () => {
     await nextTick()
     visibleStats.value.forEach(stat => {
         const el = countUpRefs.value[stat.key]
@@ -514,12 +744,13 @@ onMounted(async () => {
 .home { background: $bg; }
 .container { @include container; }
 
-// ── Fullscreen Hero ──────────────────────────────────────────────────────────
+// ─── Hero fullscreen ──────────────────────────────────────────────────────────
+
 .hero-fs {
     position: relative;
     height: 100vh;
-    min-height: 680px;
-    max-height: 1000px;
+    min-height: 720px;
+    max-height: 1100px;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -542,59 +773,158 @@ onMounted(async () => {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.2) 100%),
-        linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%);
+        linear-gradient(105deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.72) 45%, rgba(0,0,0,0.25) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
+}
+
+.hfs-grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
 }
 
 .hfs-content {
     position: relative;
     z-index: 2;
-    padding-top: calc(#{$nav-height} + 40px);
-    padding-bottom: 80px;
-    max-width: 640px;
+    padding-top: calc(#{$nav-height} + 60px);
+    padding-bottom: 100px;
+    max-width: 820px;
 }
 
+// Eyebrow
+.hfs-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 22px;
+    animation: fadeInUp 0.7s ease both;
+}
+.eyebrow-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $red;
+    box-shadow: 0 0 8px rgba($red, 0.8);
+    animation: pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.6; transform: scale(0.7); }
+}
+
+// Title
 .hfs-title {
-    font-size: 80px;
-    line-height: 1.04;
+    font-size: 96px;
+    line-height: 0.95;
     font-weight: 900;
     color: $text;
-    letter-spacing: -1.5px;
-    margin-bottom: 20px;
+    letter-spacing: -3px;
+    margin-bottom: 26px;
+    animation: fadeInUp 0.7s 0.1s ease both;
 
-    span { color: rgba(255,255,255,0.75); font-weight: 300; }
+    @include respond-to(md) { font-size: 64px; letter-spacing: -2px; }
+    @include respond-to(sm) { font-size: 44px; letter-spacing: -1px; }
+}
 
-    @include respond-to(md) { font-size: 58px; }
-    @include respond-to(sm) { font-size: 40px; letter-spacing: -0.5px; }
+.title-accent {
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255,255,255,0.7);
+
+    @include respond-to(sm) { -webkit-text-stroke: 1.5px rgba(255,255,255,0.7); }
 }
 
 .hfs-sub {
-    font-size: 16px;
-    color: rgba(255,255,255,0.65);
-    line-height: 1.7;
+    font-size: 17px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.75;
     margin-bottom: 36px;
-    max-width: 480px;
+    max-width: 520px;
     font-weight: 400;
+    animation: fadeInUp 0.7s 0.2s ease both;
+
+    strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+
+    @include respond-to(sm) { font-size: 15px; }
 }
 
-// Hero search bar
+// ─── Category tiles ───────────────────────────────────────────────────────────
+
+.hfs-cats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    animation: fadeInUp 0.7s 0.3s ease both;
+}
+
+.hfs-cat-tile {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 9px 16px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s;
+    backdrop-filter: blur(8px);
+
+    &:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.22);
+        color: rgba(255,255,255,0.9);
+        transform: translateY(-1px);
+    }
+
+    &.active {
+        background: $red;
+        border-color: $red;
+        color: #fff;
+        box-shadow: 0 4px 20px rgba($red, 0.4);
+    }
+}
+
+.hfs-cat-icon { flex-shrink: 0; }
+
+// ─── Search bar ───────────────────────────────────────────────────────────────
+
 .hfs-searchbar {
     display: flex;
     align-items: stretch;
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 16px;
+    background: rgba(10,10,10,0.55);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 18px;
     overflow: hidden;
-    max-width: 580px;
-    height: 64px;
-    margin-bottom: 24px;
+    height: 72px;
+    margin-bottom: 22px;
+    animation: fadeInUp 0.7s 0.4s ease both;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    transition: border-color 0.2s, box-shadow 0.2s;
 
-    @include respond-to(sm) {
-        flex-direction: column;
+    &:focus-within {
+        border-color: rgba(255,255,255,0.25);
+        box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba($red, 0.2);
+    }
+
+    @include respond-to(md) {
+        flex-wrap: wrap;
         height: auto;
-        border-radius: 14px;
+        border-radius: 16px;
     }
 }
 
@@ -602,26 +932,38 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 0 18px;
+    padding: 0 20px;
     flex: 1;
     min-width: 0;
-    border-right: 1px solid rgba(255,255,255,0.12);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    transition: background 0.15s;
+
+    &:hover { background: rgba(255,255,255,0.03); }
+    &:focus-within { background: rgba(255,255,255,0.04); }
+
+    &--narrow { flex: 0 0 90px; }
+
+    @include respond-to(md) {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding: 12px 16px;
+        flex: 0 0 50%;
+    }
 
     @include respond-to(sm) {
-        border-right: none;
-        border-bottom: 1px solid rgba(255,255,255,0.12);
-        padding: 10px 16px;
+        flex: 1 1 100%;
     }
 }
 
 .hfs-field-label {
     font-size: 10px;
     font-weight: 700;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.4);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
     margin-bottom: 3px;
     display: block;
+    white-space: nowrap;
 }
 
 .hfs-select,
@@ -629,25 +971,21 @@ onMounted(async () => {
     background: transparent;
     border: none;
     outline: none;
-    color: white;
+    color: rgba(255,255,255,0.9);
     font-size: 14px;
     font-weight: 500;
     font-family: 'Inter', sans-serif;
     width: 100%;
     cursor: pointer;
 
-    option { background: #111; color: #fff; }
-    &::placeholder { color: rgba(255,255,255,0.4); }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    option { background: #0d0d0d; color: #fff; }
+    &::placeholder { color: rgba(255,255,255,0.3); }
+    &:disabled { opacity: 0.35; cursor: not-allowed; }
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button { -webkit-appearance: none; }
 }
 
 .hfs-vsep {
-    width: 1px;
-    background: rgba(255,255,255,0.12);
-    flex-shrink: 0;
-    align-self: stretch;
     display: none;
 }
 
@@ -655,25 +993,27 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 9px;
     background: $red;
     color: white;
     border: none;
-    padding: 0 26px;
-    font-size: 14px;
+    padding: 0 32px;
+    font-size: 15px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
     white-space: nowrap;
-    transition: background 0.2s;
     flex-shrink: 0;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.3px;
 
-    &:hover { background: lighten(#8B0D1D, 6%); }
+    &:hover { background: lighten(#8B0D1D, 8%); transform: none; }
+    &:active { transform: scale(0.98); }
 
-    @include respond-to(sm) {
+    @include respond-to(md) {
         width: 100%;
-        padding: 14px;
-        border-radius: 0 0 12px 12px;
+        padding: 16px;
+        border-radius: 0 0 14px 14px;
     }
 }
 
@@ -681,37 +1021,50 @@ onMounted(async () => {
     display: flex;
     gap: 24px;
     flex-wrap: wrap;
+    animation: fadeInUp 0.7s 0.5s ease both;
 }
 
 .hfs-link {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    color: rgba(255,255,255,0.6);
+    gap: 6px;
+    color: rgba(255,255,255,0.5);
     font-size: 13px;
     font-weight: 500;
     text-decoration: none;
     transition: color 0.2s;
 
-    &:hover { color: rgba(255,255,255,0.9); }
+    &:hover { color: rgba(255,255,255,0.85); }
+
+    &--primary {
+        color: $red;
+        font-weight: 600;
+        &:hover { color: lighten(#8B0D1D, 20%); }
+    }
 }
 
 .hfs-scroll {
     position: absolute;
-    bottom: 28px;
+    bottom: 32px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2;
-    color: rgba(255,255,255,0.35);
-    animation: bounce 2s ease infinite;
+    color: rgba(255,255,255,0.3);
+    animation: bounce 2.4s ease infinite;
 }
 
 @keyframes bounce {
     0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(8px); }
+    50% { transform: translateX(-50%) translateY(10px); }
 }
 
-// ── Stats strip ───────────────────────────────────────────────────────────────
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+// ─── Stats strip ──────────────────────────────────────────────────────────────
+
 .stats-strip {
     border-top: 1px solid $border;
     border-bottom: 1px solid $border;
@@ -723,14 +1076,14 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 72px;
+    height: 90px;
 
     @include respond-to(sm) { flex-wrap: wrap; height: auto; padding: 8px 0; }
 }
 
 .sstrip-sep {
     width: 1px;
-    height: 30px;
+    height: 40px;
     background: $border;
     flex-shrink: 0;
 
@@ -739,14 +1092,38 @@ onMounted(async () => {
 
 .sstrip-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 2px;
-    padding: 0 44px;
+    gap: 16px;
+    padding: 0 40px;
     flex: 1;
+    transition: background 0.2s;
 
-    @include respond-to(md) { padding: 0 24px; }
-    @include respond-to(sm) { flex: 0 0 50%; padding: 10px 16px; }
+    &:hover { background: rgba(255,255,255,0.02); }
+
+    @include respond-to(md) { padding: 0 22px; gap: 12px; }
+    @include respond-to(sm) { flex: 0 0 50%; padding: 14px 16px; }
+}
+
+.sstrip-icon-wrap {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba($red, 0.1);
+    border: 1px solid rgba($red, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $red;
+
+    @include respond-to(sm) { width: 40px; height: 40px; border-radius: 11px; }
+}
+
+.sstrip-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
 }
 
 .sstrip-num {
@@ -756,6 +1133,8 @@ onMounted(async () => {
     line-height: 1;
     letter-spacing: -0.5px;
     font-variant-numeric: tabular-nums;
+
+    @include respond-to(md) { font-size: 21px; }
 }
 
 .sstrip-label {
@@ -764,11 +1143,11 @@ onMounted(async () => {
     font-weight: 500;
     white-space: nowrap;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
 }
 
 .sstrip-skeleton {
-    width: 64px;
+    width: 72px;
     height: 24px;
     border-radius: 6px;
     background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.05) 75%);
@@ -777,21 +1156,13 @@ onMounted(async () => {
 }
 
 @keyframes shimmer {
-    0% { background-position: 200% 0; }
+    0%   { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
 
-// Sections
+// ─── Section commons ──────────────────────────────────────────────────────────
+
 .section { margin-top: 90px; }
-
-.section-title {
-    font-size: 32px;
-    font-weight: 700;
-    color: $text;
-    margin-bottom: 32px;
-
-    span { color: $red; }
-}
 
 .sec-top {
     @include section-top;
@@ -802,450 +1173,61 @@ onMounted(async () => {
         gap: 4px;
         color: $red;
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: opacity 0.2s;
+
+        &:hover { opacity: 0.8; }
     }
 }
-
-.cars-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 22px;
-
-    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
-    @include respond-to(sm) { grid-template-columns: 1fr; }
-}
-
-.feat-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 22px;
-
-    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
-    @include respond-to(sm) { grid-template-columns: 1fr; }
-}
-
-.feat-card {
-    @include card;
-    padding: 32px 24px;
-
-    h3 {
-        color: $text;
-        font-weight: 700;
-        margin: 16px 0 10px;
-        font-size: 15px;
-    }
-
-    p {
-        color: $text-dim;
-        line-height: 1.7;
-        font-size: 13px;
-    }
-}
-
-.feat-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    background: rgba($red, 0.1);
-    border: 1px solid rgba($red, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $red;
-}
-
-// Events
-.events-section h2 span { color: $red; }
-
-.featured-banner {
-    display: flex;
-    align-items: stretch;
-    border: 1px solid rgba($red, 0.3);
-    border-radius: $r-xl;
-    background: linear-gradient(135deg, rgba($red, 0.05) 0%, #0a0a0a 100%);
-    overflow: hidden;
-    margin-bottom: 28px;
-    cursor: pointer;
-    transition: border-color 0.3s, transform 0.3s;
-
-    &:hover { border-color: rgba($red, 0.55); transform: translateY(-2px); }
-
-    @include respond-to(sm) { flex-direction: column; }
-}
-
-.fb-img-wrap {
-    width: 44%;
-    flex-shrink: 0;
-
-    img { width: 100%; height: 100%; min-height: 260px; object-fit: cover; display: block; }
-
-    @include respond-to(sm) { width: 100%; img { min-height: 200px; } }
-}
-
-.fb-body {
-    padding: 28px 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    flex: 1;
-}
-
-.fb-label {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #ffd700;
-}
-
-.crown-icon { color: #ffd700; }
-
-.fb-name {
-    font-size: 24px;
-    font-weight: 900;
-    color: $text;
-    line-height: 1.2;
-
-    @include respond-to(sm) { font-size: 20px; }
-}
-
-.fb-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    color: $text-dim;
-    font-size: 13px;
-
-    span { display: flex; align-items: center; gap: 5px; .v-icon { color: $red; } }
-}
-
-.fb-desc { font-size: 14px; color: $text-dim; line-height: 1.7; flex: 1; }
-
-.fb-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    color: $red;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.events-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 22px;
-
-    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
-    @include respond-to(sm) { grid-template-columns: 1fr; }
-}
-
-.event-card {
-    @include card;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    transition: transform 0.3s ease, border-color 0.3s ease;
-
-    &:hover {
-        transform: translateY(-5px);
-        border-color: rgba($red, 0.35);
-    }
-}
-
-.event-img-wrap {
-    position: relative;
-
-    img {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-        display: block;
-    }
-}
-
-.event-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba($red, 0.9);
-    color: white;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    padding: 3px 9px;
-    border-radius: 5px;
-
-    &--featured { background: rgba(#ffd700, 0.9); color: #1a1200; }
-}
-
-.event-date-chip {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(6px);
-    color: $text-muted;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.event-body {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    flex: 1;
-}
-
-.event-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: $text;
-    line-height: 1.3;
-}
-
-.event-loc {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: $text-dim;
-    font-size: 12px;
-}
-
-.event-loc-icon { color: $red; }
-
-.event-desc {
-    font-size: 12px;
-    color: $text-dim;
-    line-height: 1.6;
-    flex: 1;
-}
-
-.event-organizer {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: $text-dim;
-    font-size: 11px;
-
-    .v-icon { color: $text-dark; }
-}
-
-.event-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-top: auto;
-    padding-top: 6px;
-}
-
-.event-interested {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: $text-dim;
-    font-size: 11px;
-
-    .v-icon { color: $red; }
-}
-
-.event-link-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    color: $red;
-    font-size: 12px;
-    font-weight: 600;
-    margin-left: auto;
-    transition: opacity 0.2s;
-    text-decoration: none;
-
-    &:hover { opacity: 0.8; }
-}
-
-.events-see-all-row {
-    display: flex;
-    justify-content: center;
-    margin-top: 36px;
-}
-
-.btn-see-all-events {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    border: 1px solid rgba($red, 0.4);
-    border-radius: $r-sm;
-    color: $red;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 12px 28px;
-    text-decoration: none;
-    transition: background 0.2s, border-color 0.2s;
-
-    &:hover { background: rgba($red, 0.07); border-color: $red; }
-}
-
-// Newsletter
-.newsletter {
-    background: linear-gradient(135deg, #1c0408 0%, #0d0105 100%);
-    border: 1px solid rgba($red, 0.3);
-    border-radius: $r-xl;
-    padding: 45px;
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    margin-bottom: 30px;
-
-    @include respond-to(md) { flex-wrap: wrap; }
-    @include respond-to(sm) { flex-direction: column; align-items: flex-start; }
-}
-
-.news-icon {
-    flex-shrink: 0;
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    background: rgba($red, 0.15);
-    border: 1px solid rgba($red, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $red;
-}
-
-.news-text {
-    flex: 1;
-
-    h2 {
-        font-size: 26px;
-        font-weight: 800;
-        color: $text;
-    }
-
-    p {
-        color: $text-muted;
-        margin-top: 6px;
-        font-size: 14px;
-    }
-}
-
-.news-form {
-    display: flex;
-    gap: 12px;
-    flex-shrink: 0;
-
-    @include respond-to(sm) { flex-direction: column; width: 100%; }
-}
-
-.news-input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: $r-sm;
-    padding: 12px 18px;
-    color: $text;
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    width: 260px;
-    outline: none;
-    transition: border-color 0.2s;
-
-    &::placeholder { color: $text-dim; }
-    &:focus { border-color: rgba($red, 0.5); }
-
-    @include respond-to(sm) { width: 100%; }
-}
-
-.btn-subscribe {
-    background: $red;
-    color: white;
-    border: none;
-    border-radius: $r-sm;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 12px 28px;
-    cursor: pointer;
-    white-space: nowrap;
-    font-family: 'Inter', sans-serif;
-    transition: opacity 0.2s;
-
-    &:hover { opacity: 0.88; }
-    &:disabled { opacity: 0.6; cursor: not-allowed; }
-}
-
-.subscribe-feedback {
-    font-size: 13px;
-    margin-top: 10px;
-    text-align: center;
-}
-
-.subscribe-ok { color: #4caf50; }
-.subscribe-err { color: #e55; }
 
 .sec-top-left {
     display: flex;
     flex-direction: column;
     gap: 6px;
+
     h2 { margin: 0; }
 }
 
-.premium-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
+.sec-eyebrow {
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.08em;
     color: $red;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
-    .v-icon { color: $red; }
 }
 
-// ── Premium Showcase ──────────────────────────────────────────────────────────
-.premium-showcase-section {
-    background: linear-gradient(180deg, rgba($red, 0.03) 0%, transparent 100%);
-    border-top: 1px solid rgba(255,255,255,0.04);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    padding-bottom: 20px;
+// ─── Cars grid ────────────────────────────────────────────────────────────────
+
+.cars-grid {
+    @include cars-grid;
 }
+
+// ─── Premium showcase ─────────────────────────────────────────────────────────
+
+.premium-showcase-section { }
 
 .psc-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 32px;
-    flex-wrap: wrap;
+    @include section-top;
+    margin-bottom: 28px;
 }
 
+.psc-header-text { display: flex; flex-direction: column; gap: 4px; }
+
 .psc-eyebrow {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 3px;
     color: $red;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
-    margin-bottom: 8px;
 }
 
 .psc-title {
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 800;
     color: $text;
-    line-height: 1.1;
-    margin: 0 0 8px;
+    margin: 0;
 }
 
 .psc-sub {
@@ -1260,79 +1242,69 @@ onMounted(async () => {
     gap: 16px;
 
     @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
-    @include respond-to(sm) { grid-template-columns: 1fr; gap: 12px; }
+    @include respond-to(sm) { grid-template-columns: 1fr 1fr; }
 }
 
 .psc-card {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 24px 22px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.07);
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid $border;
     border-radius: $r-xl;
+    padding: 24px 20px 20px;
     text-decoration: none;
-    color: $text;
-    min-height: 200px;
-    transition: border-color 0.25s, background 0.25s, transform 0.25s;
+    transition: border-color 0.22s, transform 0.22s, background 0.22s;
     position: relative;
     overflow: hidden;
 
     &::before {
         content: '';
         position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(to right, $red, rgba($red, 0));
+        inset: 0;
+        background: linear-gradient(135deg, rgba($red, 0.06) 0%, transparent 60%);
         opacity: 0;
-        transition: opacity 0.3s;
+        transition: opacity 0.22s;
     }
 
     &:hover {
-        border-color: rgba($red, 0.3);
-        background: rgba(255,255,255,0.04);
-        transform: translateY(-4px);
+        border-color: rgba($red, 0.35);
+        transform: translateY(-3px);
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
 
         &::before { opacity: 1; }
+
         .psc-cta { color: $red; }
     }
 }
 
-.psc-top-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-}
+.psc-top-row { display: flex; justify-content: flex-start; }
 
 .psc-badge {
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: rgba($red, 0.8);
+    background: rgba($red, 0.12);
     border: 1px solid rgba($red, 0.3);
+    color: $red;
+    padding: 3px 8px;
     border-radius: 4px;
-    padding: 3px 7px;
 }
 
-.psc-car-name { margin-top: auto; }
-
 .psc-brand {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     color: $text-dim;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
 }
 
 .psc-model {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 900;
     color: $text;
     line-height: 1.1;
-    letter-spacing: -0.5px;
 }
 
 .psc-spec {
@@ -1342,58 +1314,161 @@ onMounted(async () => {
 }
 
 .psc-cta {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 13px;
-    font-weight: 600;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
     color: $text-dim;
-    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: auto;
     transition: color 0.2s;
 }
 
-// ING section
-.ing-section {
-    margin-top: 90px;
+// ─── Premium label ────────────────────────────────────────────────────────────
+
+.premium-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #f39c12;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: rgba(243,156,18,0.1);
+    border: 1px solid rgba(243,156,18,0.25);
+    padding: 3px 10px;
+    border-radius: 20px;
 }
 
-.ing-wrapper {
-    background: linear-gradient(135deg, #0c0c10 0%, #08080c 100%);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: $r-xl;
-    padding: 48px;
-    overflow: hidden;
-    position: relative;
+// ─── Why CARIZO ───────────────────────────────────────────────────────────────
 
-    &::before {
-        content: '';
-        position: absolute;
-        top: -60px;
-        right: -60px;
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, rgba(255,100,0,0.06) 0%, transparent 70%);
-        pointer-events: none;
+.why-section { }
+
+.why-header {
+    text-align: center;
+    margin-bottom: 52px;
+}
+
+.why-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    color: $red;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.why-title {
+    font-size: 36px;
+    font-weight: 900;
+    color: $text;
+    margin: 0 0 12px;
+    letter-spacing: -0.5px;
+
+    span { color: $red; }
+}
+
+.why-sub {
+    font-size: 15px;
+    color: $text-dim;
+    margin: 0;
+}
+
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+.why-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: $r-xl;
+    padding: 24px 28px;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    cursor: default;
+
+    &:hover {
+        border-color: rgba($red, 0.3);
+        background: rgba(255,255,255,0.04);
+        transform: translateY(-2px);
+
+        .why-card-icon { background: rgba($red, 0.15); border-color: rgba($red, 0.3); color: $red; }
+        .why-card-arrow { color: $red; opacity: 1; }
     }
+}
+
+.why-card-icon {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-dim;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.why-card-body { flex: 1; min-width: 0; }
+
+.why-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text;
+    margin: 0 0 6px;
+}
+
+.why-card-desc {
+    font-size: 13px;
+    color: $text-dim;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.why-card-arrow {
+    flex-shrink: 0;
+    color: $text-dark;
+    opacity: 0.5;
+    transition: color 0.2s, opacity 0.2s;
+}
+
+// ─── ING Section ──────────────────────────────────────────────────────────────
+
+.ing-section { }
+
+.ing-wrapper {
+    border: 1px solid $border;
+    border-radius: $r-xl;
+    padding: 40px 36px;
+    background: rgba(255,255,255,0.01);
 
     @include respond-to(sm) { padding: 28px 20px; }
 }
 
-.ing-header {
-    margin-bottom: 36px;
-}
+.ing-header { margin-bottom: 28px; }
 
 .ing-logo-area {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 20px;
 }
 
 .ing-logo-badge {
-    width: 60px;
-    height: 60px;
-    background: #FF6200;
+    width: 52px;
+    height: 52px;
     border-radius: 14px;
+    background: #FF6200;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1401,28 +1476,29 @@ onMounted(async () => {
 }
 
 .ing-logo-text {
-    color: white;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 900;
+    color: #fff;
     letter-spacing: 1px;
 }
 
 .ing-pretitle {
     font-size: 11px;
     font-weight: 700;
-    color: #FF6200;
-    letter-spacing: 2px;
+    color: $text-dark;
     text-transform: uppercase;
+    letter-spacing: 1.5px;
     margin-bottom: 6px;
 }
 
 .ing-title {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 800;
     color: $text;
-    line-height: 1.2;
+    margin: 0;
+    line-height: 1.3;
+
     span { color: #FF6200; }
-    @include respond-to(sm) { font-size: 22px; }
 }
 
 .ing-cards {
@@ -1435,33 +1511,22 @@ onMounted(async () => {
 }
 
 .ing-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.025);
+    border: 1px solid $border;
     border-radius: $r-lg;
-    padding: 22px 20px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s;
 
-    &:hover {
-        border-color: rgba(#FF6200, 0.3);
-        background: rgba(255,255,255,0.05);
-    }
-
-    &--calc { border-color: rgba(#FF6200, 0.2); }
+    &:hover { border-color: rgba(255,102,0,0.35); }
+    &--calc { border-color: rgba(255,102,0,0.2); background: rgba(255,102,0,0.04); }
 }
 
 .ing-card-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-    background: rgba(#FF6200, 0.12);
-    border: 1px solid rgba(#FF6200, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: #FF6200;
+    flex-shrink: 0;
 }
 
 .ing-card-title {
@@ -1471,7 +1536,7 @@ onMounted(async () => {
 }
 
 .ing-card-desc {
-    font-size: 12.5px;
+    font-size: 13px;
     color: $text-dim;
     line-height: 1.6;
     flex: 1;
@@ -1480,7 +1545,7 @@ onMounted(async () => {
 .ing-card-feat {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
 
     span {
         display: flex;
@@ -1488,6 +1553,7 @@ onMounted(async () => {
         gap: 6px;
         font-size: 12px;
         color: $text-muted;
+
         .v-icon { color: #FF6200; }
     }
 }
@@ -1502,42 +1568,364 @@ onMounted(async () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
-    color: $text-dim;
+
+    label { font-size: 12px; color: $text-dark; }
 }
 
-.icm-val {
-    font-weight: 700;
-    color: $text;
-    font-size: 13px;
-}
+.icm-val { font-size: 13px; font-weight: 700; color: $text; }
 
 .icm-range {
     width: 100%;
     accent-color: #FF6200;
     cursor: pointer;
-    margin: 0;
 }
 
 .icm-result {
-    background: rgba(#FF6200, 0.1);
-    border: 1px solid rgba(#FF6200, 0.25);
-    border-radius: $r-sm;
-    padding: 10px 14px;
     font-size: 13px;
-    color: $text-muted;
+    color: $text-dim;
     text-align: center;
-    margin-top: 4px;
+    padding: 10px;
+    background: rgba(255,102,0,0.08);
+    border: 1px solid rgba(255,102,0,0.2);
+    border-radius: $r-sm;
 
-    strong {
-        color: #FF6200;
-        font-size: 18px;
-    }
+    strong { color: #FF6200; font-size: 20px; font-weight: 900; }
 }
 
 .ing-disclaimer {
-    margin-top: 20px;
     font-size: 11px;
     color: $text-dark;
+    margin-top: 20px;
+    line-height: 1.5;
+}
+
+// ─── Events ───────────────────────────────────────────────────────────────────
+
+.events-section { }
+
+.featured-banner {
+    display: grid;
+    grid-template-columns: 42% 1fr;
+    border-radius: $r-xl;
+    overflow: hidden;
+    border: 1px solid $border;
+    cursor: pointer;
+    margin-bottom: 28px;
+    transition: border-color 0.2s, transform 0.2s;
+
+    &:hover { border-color: rgba($red, 0.4); transform: translateY(-2px); }
+
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+.fb-img-wrap {
+    img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 220px; }
+}
+
+.fb-body {
+    padding: 28px;
+    background: rgba(255,255,255,0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fb-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #f39c12;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    .crown-icon { color: #f39c12; }
+}
+
+.fb-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: $text;
+    line-height: 1.3;
+}
+
+.fb-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: $text-dim;
+        .v-icon { color: $text-dark; }
+    }
+}
+
+.fb-desc {
+    font-size: 13px;
+    color: $text-dim;
+    line-height: 1.7;
+    flex: 1;
+    margin: 0;
+}
+
+.fb-cta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    color: $red;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(sm) { grid-template-columns: 1fr; }
+}
+
+.event-card {
+    background: #080808;
+    border: 1px solid $border;
+    border-radius: $r-xl;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+
+    &:hover { border-color: rgba($red, 0.35); transform: translateY(-2px); }
+}
+
+.event-img-wrap {
+    position: relative;
+
+    img { width: 100%; height: 160px; object-fit: cover; display: block; }
+}
+
+.event-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.65);
+    color: $text-muted;
+    backdrop-filter: blur(4px);
+
+    &--featured {
+        background: rgba(243,156,18,0.2);
+        color: #f39c12;
+        border: 1px solid rgba(243,156,18,0.3);
+
+        .v-icon { color: #f39c12; }
+    }
+}
+
+.event-date-chip {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: $text-muted;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    .v-icon { color: $text-dark; }
+}
+
+.event-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.event-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text;
+    line-height: 1.3;
+}
+
+.event-loc {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: $text-dim;
+}
+.event-loc-icon { color: $red; }
+
+.event-organizer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: $text-dark;
+    .v-icon { color: $text-dark; }
+}
+
+.event-desc {
+    font-size: 12px;
+    color: $text-dark;
+    line-height: 1.5;
+}
+
+.event-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.event-interested {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: $text-dark;
+    .v-icon { color: $text-dark; }
+}
+
+.event-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: $red;
+    text-decoration: none;
+    transition: opacity 0.2s;
+
+    &:hover { opacity: 0.8; }
+}
+
+.events-see-all-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+}
+
+.btn-see-all-events {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: $r-lg;
+    color: $text-muted;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 28px;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+
+    &:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.15); color: $text; }
+}
+
+// ─── Newsletter ───────────────────────────────────────────────────────────────
+
+.newsletter {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: $r-xl;
+    padding: 32px 36px;
+    flex-wrap: wrap;
+
+    @include respond-to(sm) { padding: 24px 20px; gap: 18px; }
+}
+
+.news-icon { color: $red; flex-shrink: 0; }
+
+.news-text {
+    flex: 1;
+    min-width: 200px;
+
+    h2 { font-size: 20px; font-weight: 700; color: $text; margin: 0 0 4px; }
+    p { font-size: 14px; color: $text-dim; margin: 0; }
+}
+
+.news-form {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+
+    @include respond-to(sm) { width: 100%; }
+}
+
+.news-input {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: $r-md;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 11px 16px;
+    outline: none;
+    width: 240px;
+    transition: border-color 0.2s;
+
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba(255,255,255,0.2); }
+
+    @include respond-to(sm) { width: 100%; flex: 1; }
+}
+
+.btn-subscribe {
+    background: $red;
+    border: none;
+    border-radius: $r-md;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 11px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+
+    &:hover { background: lighten(#8B0D1D, 7%); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.subscribe-feedback {
+    width: 100%;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: $r-sm;
+}
+.subscribe-ok  { background: rgba(45,122,58,0.1); border: 1px solid rgba(45,122,58,0.3); color: #4caf50; }
+.subscribe-err { background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.25); color: #e74c3c; }
+
+// ─── Shared utilities ─────────────────────────────────────────────────────────
+
+h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: $text;
+    margin: 0 0 8px;
+    letter-spacing: -0.3px;
+
+    span { color: $red; }
 }
 </style>
