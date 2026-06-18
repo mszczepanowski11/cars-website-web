@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY . .
 RUN npm install
-RUN npm run build && ls -la .output/ && ls -la .output/server/
+RUN npm run build && ls -la .output/server/ && head -80 .output/server/index.mjs
 
 EXPOSE 3000
 
