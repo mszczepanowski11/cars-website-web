@@ -888,9 +888,7 @@ onMounted(async () => {
     z-index: 2;
     padding-top: calc(#{$nav-height} + 40px);
     padding-bottom: 60px;
-    max-width: 600px;
-    margin-left: 0;
-    padding-left: 0;
+    max-width: 680px;
 }
 
 // Eyebrow
