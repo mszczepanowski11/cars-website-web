@@ -6,7 +6,6 @@
   },
   "deploy": {
     "startCommand": "node .output/server/index.mjs",
-    "healthcheckPath": "/coming-soon",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }
