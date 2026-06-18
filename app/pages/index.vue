@@ -16,9 +16,9 @@
                     Platforma nowej generacji
                 </div>
                 <h1 class="hfs-title">
-                    MOTORYZACJA.<br>
-                    <span class="title-accent">W LEPSZYM</span><br>
-                    WYDANIU.
+                    Motoryzacja.<br>
+                    <span class="title-accent">W lepszym</span><br>
+                    wydaniu.
                 </h1>
                 <p class="hfs-sub">
                     CARIZO to więcej niż portal ogłoszeniowy.<br>
