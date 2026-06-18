@@ -19,6 +19,11 @@
                     CARIZO to więcej niż portal ogłoszeniowy.<br>
                     To miejsce, gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
                 </p>
+                <div class="hfs-feats">
+                    <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zweryfikowane ogłoszenia</span>
+                    <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zaufani sprzedawcy</span>
+                    <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Inteligentne narzędzia</span>
+                </div>
                 <div class="hfs-links">
                     <NuxtLink to="/add-advert" class="hfs-link hfs-link--primary">
                         <v-icon icon="mdi-plus-circle-outline" size="15" />
@@ -1106,6 +1111,25 @@ onMounted(async () => {
         padding: 16px;
         border-radius: 0 0 14px 14px;
     }
+}
+
+.hfs-feats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    animation: fadeInUp 0.7s 0.35s ease both;
+}
+
+.hfs-feat {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+
+    .v-icon { color: $red; flex-shrink: 0; }
 }
 
 .hfs-links {
