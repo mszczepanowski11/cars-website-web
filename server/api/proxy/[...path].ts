@@ -26,10 +26,11 @@ export default defineEventHandler(async (event) => {
         try {
             return await $fetch(targetUrl.toString(), opts)
         } catch (err: any) {
-            // Forward the API's status code and error body to the client
             const status = err?.response?.status ?? err?.statusCode ?? 500
-            const data = err?.data ?? err?.response?._data ?? err?.message ?? 'Proxy error'
-            throw createError({ statusCode: status, data })
+            const raw = err?.data ?? err?.response?._data ?? err?.message ?? 'Proxy error'
+            const msg = typeof raw === 'string' ? raw : JSON.stringify(raw)
+            console.error(`[proxy] ${method} ${path} → ${status}: ${msg}`)
+            throw createError({ statusCode: status, statusMessage: msg.slice(0, 500) })
         }
     }
 
