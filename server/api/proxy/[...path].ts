@@ -18,25 +18,23 @@ export default defineEventHandler(async (event) => {
     const headers: Record<string, string> = {}
     if (token) headers['Authorization'] = `Bearer ${token}`
 
-    async function proxyFetch(options: Parameters<typeof $fetch>[1]) {
+    const hasBody = !['GET', 'HEAD', 'DELETE'].includes(method)
+
+    async function proxyFetch(body?: FormData | any) {
+        const opts: any = { method, headers }
+        if (body !== undefined) opts.body = body
         try {
-            return await $fetch(targetUrl.toString(), options)
+            return await $fetch(targetUrl.toString(), opts)
         } catch (err: any) {
-            const statusCode = err?.response?.status ?? err?.statusCode ?? 500
-            const backendData = err?.data ?? err?.response?._data
-            const message =
-                (typeof backendData?.message === 'string' ? backendData.message : null) ??
-                err?.statusMessage ??
-                err?.message ??
-                'Request failed'
-            throw createError({ statusCode, statusMessage: message, data: backendData })
+            // Forward the API's status code and error body to the client
+            const status = err?.response?.status ?? err?.statusCode ?? 500
+            const data = err?.data ?? err?.response?._data ?? err?.message ?? 'Proxy error'
+            throw createError({ statusCode: status, data })
         }
     }
 
-    const hasBody = !['GET', 'HEAD', 'DELETE'].includes(method)
-
     if (!hasBody) {
-        return proxyFetch({ method: method as any, headers })
+        return proxyFetch()
     }
 
     const contentType = getRequestHeader(event, 'content-type') ?? ''
@@ -56,11 +54,11 @@ export default defineEventHandler(async (event) => {
                     formData.append(part.name ?? 'field', part.data.toString('utf-8'))
                 }
             }
-            return proxyFetch({ method: method as any, body: formData, headers })
+            return proxyFetch(formData)
         }
     }
 
     const body = await readBody(event)
     headers['Content-Type'] = 'application/json'
-    return proxyFetch({ method: method as any, body, headers })
+    return proxyFetch(body)
 })
