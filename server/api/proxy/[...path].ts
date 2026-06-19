@@ -18,10 +18,25 @@ export default defineEventHandler(async (event) => {
     const headers: Record<string, string> = {}
     if (token) headers['Authorization'] = `Bearer ${token}`
 
+    async function proxyFetch(options: Parameters<typeof $fetch>[1]) {
+        try {
+            return await $fetch(targetUrl.toString(), options)
+        } catch (err: any) {
+            const statusCode = err?.response?.status ?? err?.statusCode ?? 500
+            const backendData = err?.data ?? err?.response?._data
+            const message =
+                (typeof backendData?.message === 'string' ? backendData.message : null) ??
+                err?.statusMessage ??
+                err?.message ??
+                'Request failed'
+            throw createError({ statusCode, statusMessage: message, data: backendData })
+        }
+    }
+
     const hasBody = !['GET', 'HEAD', 'DELETE'].includes(method)
 
     if (!hasBody) {
-        return $fetch(targetUrl.toString(), { method: method as any, headers })
+        return proxyFetch({ method: method as any, headers })
     }
 
     const contentType = getRequestHeader(event, 'content-type') ?? ''
@@ -41,12 +56,11 @@ export default defineEventHandler(async (event) => {
                     formData.append(part.name ?? 'field', part.data.toString('utf-8'))
                 }
             }
-            // Do not set Content-Type — let $fetch set it with the correct boundary
-            return $fetch(targetUrl.toString(), { method: method as any, body: formData, headers })
+            return proxyFetch({ method: method as any, body: formData, headers })
         }
     }
 
     const body = await readBody(event)
     headers['Content-Type'] = 'application/json'
-    return $fetch(targetUrl.toString(), { method: method as any, body, headers })
+    return proxyFetch({ method: method as any, body, headers })
 })

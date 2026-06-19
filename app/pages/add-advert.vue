@@ -2578,7 +2578,7 @@ async function submit() {
             if (history.registrationCountry) cleanEdit.registrationCountry = history.registrationCountry
             cleanEdit.hasServiceBook = history.hasServiceBook
             cleanEdit.hasFullServiceHistory = history.hasFullServiceHistory
-            if (history.nextInspection) cleanEdit.nextInspection = history.nextInspection
+            if (typeof history.nextInspection === 'string' && history.nextInspection.trim()) cleanEdit.nextInspection = history.nextInspection
             cleanEdit.hasDamage = history.hasDamage
             if (history.damageDesc) cleanEdit.damageDescription = history.damageDesc
             cleanEdit.hasWarranty = history.hasWarranty
@@ -2660,7 +2660,7 @@ async function submit() {
             if (history.registrationCountry) cleanBody.registrationCountry = history.registrationCountry
             cleanBody.hasServiceBook = history.hasServiceBook
             cleanBody.hasFullServiceHistory = history.hasFullServiceHistory
-            if (history.nextInspection) cleanBody.nextInspection = history.nextInspection
+            if (typeof history.nextInspection === 'string' && history.nextInspection.trim()) cleanBody.nextInspection = history.nextInspection
             cleanBody.hasDamage = history.hasDamage
             if (history.damageDesc) cleanBody.damageDescription = history.damageDesc
             cleanBody.hasWarranty = history.hasWarranty
@@ -2796,7 +2796,7 @@ onMounted(async () => {
             history.registrationCountry = advert.registrationCountry ?? 'PL'
             history.hasServiceBook = advert.hasServiceBook ?? false
             history.hasFullServiceHistory = advert.hasFullServiceHistory ?? false
-            history.nextInspection = advert.nextInspection ?? ''
+            history.nextInspection = (typeof advert.nextInspection === 'string' ? advert.nextInspection : '') || ''
             history.hasDamage = advert.hasDamage ?? false
             history.damageDesc = advert.damageDescription ?? ''
             history.hasWarranty = advert.hasWarranty ?? false
