@@ -11,10 +11,6 @@ export default defineNuxtConfig({
     typeCheck: false,
   },
 
-  app: {
-    pageTransition: { name: 'page-fade', mode: 'out-in' },
-  },
-
   nitro: {
     preset: 'node_server',
   },

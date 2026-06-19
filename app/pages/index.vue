@@ -735,7 +735,7 @@ function doSearch() {
     if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
     if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
     if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
-    const cat = homeCategories.value.find(c => c.slug === searchCat.value)
+    const cat = homeCategories.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })
 }
@@ -762,6 +762,8 @@ const ingMonthlyRate = computed(() => {
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
 const { fetchBrands, fetchModels, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
+const { STATIC_CATEGORIES } = useCategories()
+const homeCategories = STATIC_CATEGORIES
 
 const featuredEvent = computed(() => events.value.find(e => e.isFeatured) ?? null)
 
