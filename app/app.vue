@@ -6,7 +6,7 @@
     <AppAnnouncementBar />
     <NavBar />
     <v-main>
-      <NuxtPage :transition="{ name: 'page-fade', mode: 'out-in' }" />
+      <NuxtPage :transition="{ name: 'page-fade' }" />
     </v-main>
     <AppFooter />
     <ComparePanel />
