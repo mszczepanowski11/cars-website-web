@@ -3,40 +3,43 @@
 
         <!-- ─── Hero ─────────────────────────────────────────────────── -->
         <section class="hero-fs">
-            <div class="hfs-bg">
-                <img src="/hero-car.jpg" alt="" class="hfs-img" />
-                <div class="hfs-overlay" />
-                <div class="hfs-grain" />
+            <!-- LEFT: text -->
+            <div class="hfs-left">
+                <div class="hfs-left-inner">
+                    <div class="hfs-eyebrow">
+                        <span class="eyebrow-dot" />
+                        Platforma motoryzacyjna
+                    </div>
+                    <h1 class="hfs-title">
+                        Motoryzacja.<br>
+                        <span class="title-accent">W&nbsp;lepszym wydaniu.</span>
+                    </h1>
+                    <p class="hfs-sub">
+                        Więcej niż portal ogłoszeniowy — miejsce,<br>
+                        gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
+                    </p>
+                    <div class="hfs-feats">
+                        <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zweryfikowane ogłoszenia</span>
+                        <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zaufani sprzedawcy</span>
+                        <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Inteligentne narzędzia</span>
+                    </div>
+                    <div class="hfs-links">
+                        <NuxtLink to="/add-advert" class="hfs-link hfs-link--primary">
+                            <v-icon icon="mdi-plus-circle-outline" size="15" />
+                            Dodaj ogłoszenie
+                        </NuxtLink>
+                        <NuxtLink to="/adverts" class="hfs-link">
+                            Przeglądaj wszystkie
+                            <v-icon icon="mdi-arrow-right" size="13" />
+                        </NuxtLink>
+                    </div>
+                </div>
             </div>
 
-            <div class="container hfs-content">
-                <div class="hfs-eyebrow">
-                    <span class="eyebrow-dot" />
-                    Platforma motoryzacyjna
-                </div>
-                <h1 class="hfs-title">
-                    Motoryzacja.<br>
-                    <span class="title-accent">W&nbsp;lepszym wydaniu.</span>
-                </h1>
-                <p class="hfs-sub">
-                    Więcej niż portal ogłoszeniowy — miejsce,<br>
-                    gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
-                </p>
-                <div class="hfs-feats">
-                    <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zweryfikowane ogłoszenia</span>
-                    <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zaufani sprzedawcy</span>
-                    <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Inteligentne narzędzia</span>
-                </div>
-                <div class="hfs-links">
-                    <NuxtLink to="/add-advert" class="hfs-link hfs-link--primary">
-                        <v-icon icon="mdi-plus-circle-outline" size="15" />
-                        Dodaj ogłoszenie
-                    </NuxtLink>
-                    <NuxtLink to="/adverts" class="hfs-link">
-                        Przeglądaj wszystkie
-                        <v-icon icon="mdi-arrow-right" size="13" />
-                    </NuxtLink>
-                </div>
+            <!-- RIGHT: image -->
+            <div class="hfs-right">
+                <img src="/hero-car.jpg" alt="" class="hfs-img" />
+                <div class="hfs-fade" />
             </div>
 
             <!-- scroll indicator -->
@@ -845,22 +848,54 @@ onMounted(async () => {
 .home { background: $bg; }
 .container { @include container; }
 
-// ─── Hero fullscreen ──────────────────────────────────────────────────────────
+// ─── Hero split layout ────────────────────────────────────────────────────────
 
 .hero-fs {
-    position: relative;
-    height: 72vh;
-    min-height: 580px;
-    max-height: 820px;
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    min-height: 660px;
+    height: 82vh;
+    max-height: 920px;
     overflow: hidden;
+    background: $bg;
+    padding-top: $nav-height;
 }
 
-.hfs-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
+.hfs-left {
+    flex: 0 0 50%;
+    display: flex;
+    align-items: center;
+    // align text with the container's left edge
+    padding-left: max(40px, calc(50vw - 620px));
+    padding-right: 48px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+    background: $bg;
+    position: relative;
+    z-index: 2;
+
+    @include respond-to(md) {
+        flex: 0 0 60%;
+        padding-left: 32px;
+        padding-right: 32px;
+    }
+    @include respond-to(sm) {
+        flex: 0 0 100%;
+        padding: 40px 24px;
+    }
+}
+
+.hfs-left-inner {
+    max-width: 540px;
+    width: 100%;
+}
+
+.hfs-right {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+
+    @include respond-to(sm) { display: none; }
 }
 
 .hfs-img {
@@ -870,28 +905,12 @@ onMounted(async () => {
     object-position: center 35%;
 }
 
-.hfs-overlay {
+.hfs-fade {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(105deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.72) 45%, rgba(0,0,0,0.25) 100%),
-        linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
-}
-
-.hfs-grain {
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-.hfs-content {
-    position: relative;
-    z-index: 2;
-    padding-top: calc(#{$nav-height} + 40px);
-    padding-bottom: 60px;
-    max-width: 680px;
+        linear-gradient(to right, $bg 0%, transparent 40%),
+        linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.35) 100%);
 }
 
 // Eyebrow
