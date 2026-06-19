@@ -2590,7 +2590,7 @@ async function submit() {
             for (const file of selectedFiles.value) {
                 const fd = new FormData()
                 fd.append('file', file)
-                await $fetch(`/api/advert/${editId.value}/images`, { method: 'POST', body: fd })
+                await $fetch(`/api/proxy/api/Advert/${editId.value}/images`, { method: 'POST', body: fd })
             }
             await navigateTo('/my-adverts')
         } else {
