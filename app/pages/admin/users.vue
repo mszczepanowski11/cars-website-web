@@ -168,7 +168,7 @@ async function fetchUsers() {
         if (search.value) query.search = search.value
         if (typeFilter.value === 'blocked') query.isBlocked = true
         else if (typeFilter.value !== 'all') query.accountType = typeFilter.value
-        const r = await $fetch<{ items: AdminUser[]; totalCount: number }>('/api/proxy/api/Admin/User', { query })
+        const r = await $fetch<{ items: AdminUser[]; totalCount: number }>('/api/proxy/api/Admin/users', { query })
         users.value = r.items
         totalCount.value = r.totalCount
     } catch { users.value = [] } finally { loading.value = false }
@@ -178,10 +178,10 @@ async function toggleBlock(u: AdminUser) {
     actionLoading.value = u.id
     try {
         if (u.isBlocked) {
-            await $fetch(`/api/proxy/api/Admin/User/${u.id}/unblock`, { method: 'POST', body: {} })
+            await $fetch(`/api/proxy/api/Admin/users/${u.id}/unblock`, { method: 'POST', body: {} })
             u.isBlocked = false
         } else {
-            await $fetch(`/api/proxy/api/Admin/User/${u.id}/block`, { method: 'POST', body: {} })
+            await $fetch(`/api/proxy/api/Admin/users/${u.id}/block`, { method: 'POST', body: {} })
             u.isBlocked = true
         }
     } catch {} finally { actionLoading.value = null }
@@ -191,7 +191,7 @@ async function deleteUser(u: AdminUser) {
     if (!confirm(`Czy na pewno chcesz usunąć konto ${u.name} ${u.surname} (${u.email})? Tej operacji nie można cofnąć.`)) return
     actionLoading.value = u.id
     try {
-        await $fetch(`/api/proxy/api/Admin/User/${u.id}`, { method: 'DELETE', body: { note: 'Usunięte przez administratora' } })
+        await $fetch(`/api/proxy/api/Admin/users/${u.id}`, { method: 'DELETE', body: { note: 'Usunięte przez administratora' } })
         users.value = users.value.filter(x => x.id !== u.id)
         totalCount.value--
     } catch {} finally { actionLoading.value = null }
