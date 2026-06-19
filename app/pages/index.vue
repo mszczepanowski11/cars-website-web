@@ -12,11 +12,12 @@
                     </div>
                     <h1 class="hfs-title">
                         Motoryzacja.<br>
-                        <span class="title-accent">W&nbsp;lepszym wydaniu.</span>
+                        <span class="title-accent">W&nbsp;lepszym</span><br>
+                        wydaniu.
                     </h1>
                     <p class="hfs-sub">
-                        Więcej niż portal ogłoszeniowy — miejsce,<br>
-                        gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
+                        CARIZO to więcej niż portal ogłoszeniowy —<br>
+                        miejsce, gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
                     </p>
                     <div class="hfs-feats">
                         <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zweryfikowane ogłoszenia</span>
