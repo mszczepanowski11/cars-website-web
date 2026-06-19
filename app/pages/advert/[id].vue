@@ -1383,7 +1383,8 @@ watch(advert, (a) => {
     const title = a.title ?? `${a.brand?.name ?? ''} ${a.model?.name ?? ''}`.trim()
     const desc = a.description?.slice(0, 160) ?? `${a.year ?? ''} · ${Number(a.price).toLocaleString('pl')} zł · ${a.city ?? ''}`
     const imgUrl = a.images?.find(i => i.isMain)?.url ?? a.images?.[0]?.url ?? ''
-    const absImg = imgUrl ? `${config.public.siteUrl}${imgUrl.startsWith('/img/') ? imgUrl : '/img/' + imgUrl.split('/uploads/').pop()}` : ''
+    const imgPath = getImageUrl(imgUrl)
+    const absImg = imgPath && imgPath !== placeholder ? (imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`) : ''
     const url = currentUrl()
     useHead({
         title: `${title} — CARIZO`,

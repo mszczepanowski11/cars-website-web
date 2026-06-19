@@ -182,8 +182,10 @@ async function fetchAdverts() {
     try {
         const query: Record<string, any> = { page: page.value, pageSize }
         if (search.value) query.search = search.value
-        if (statusFilter.value !== 'all') query.status = statusFilter.value
-        const r = await $fetch<{ items: AdminAdvert[]; totalCount: number }>('/api/proxy/api/Admin/Advert', { query })
+        if (statusFilter.value === 'active') { query.isActive = true; query.isHidden = false }
+        else if (statusFilter.value === 'hidden') { query.isHidden = true }
+        else if (statusFilter.value === 'expired') { query.isActive = false; query.isHidden = false }
+        const r = await $fetch<{ items: AdminAdvert[]; totalCount: number }>('/api/proxy/api/Admin/adverts', { query })
         adverts.value = r.items
         totalCount.value = r.totalCount
     } catch { adverts.value = [] } finally { loading.value = false }
@@ -192,8 +194,8 @@ async function fetchAdverts() {
 async function toggleHide(a: AdminAdvert) {
     actionLoading.value = a.id
     try {
-        const endpoint = a.isHidden ? 'show' : 'hide'
-        await $fetch(`/api/proxy/api/Admin/Advert/${a.id}/${endpoint}`, { method: 'POST', body: {} })
+        const endpoint = a.isHidden ? 'unhide' : 'hide'
+        await $fetch(`/api/proxy/api/Admin/adverts/${a.id}/${endpoint}`, { method: 'POST', body: {} })
         a.isHidden = !a.isHidden
     } catch {} finally { actionLoading.value = null }
 }
@@ -204,7 +206,7 @@ async function doDelete() {
     if (deleteId.value === null) return
     actionLoading.value = deleteId.value
     try {
-        await $fetch(`/api/proxy/api/Admin/Advert/${deleteId.value}`, { method: 'DELETE' })
+        await $fetch(`/api/proxy/api/Admin/adverts/${deleteId.value}`, { method: 'DELETE' })
         adverts.value = adverts.value.filter(a => a.id !== deleteId.value)
         totalCount.value--
         deleteId.value = null

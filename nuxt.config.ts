@@ -23,6 +23,23 @@ export default defineNuxtConfig({
   css: ['~/assets/scss/main.scss', '@mdi/font/css/materialdesignicons.min.css'],
 
   vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          // Rename chunks whose names contain 'adver' — ad blockers block them
+          chunkFileNames: (chunk) => {
+            const n = (chunk.name ?? '').toLowerCase()
+            if (n.includes('adver')) return '_nuxt/listings.[hash].js'
+            return '_nuxt/[name].[hash].js'
+          },
+          assetFileNames: (asset) => {
+            const n = (asset.name ?? '').toLowerCase()
+            if (n.includes('adver') && n.endsWith('.css')) return '_nuxt/listings.[hash].css'
+            return '_nuxt/[name].[hash][extname]'
+          },
+        }
+      }
+    },
     css: {
       preprocessorOptions: {
         scss: {

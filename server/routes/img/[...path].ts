@@ -1,7 +1,9 @@
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
     const path = event.context.params?.path ?? ''
-    const backendUrl = `${config.public.apiBase.replace(/\/$/, '')}/uploads/${path}`
+    // /img/photos/ is an alias for /uploads/adverts/ — "adverts" in URL path triggers ad blockers
+    const uploadPath = path.startsWith('photos/') ? 'adverts/' + path.slice('photos/'.length) : path
+    const backendUrl = `${config.public.apiBase.replace(/\/$/, '')}/uploads/${uploadPath}`
 
     const response = await fetch(backendUrl)
     if (!response.ok) {
