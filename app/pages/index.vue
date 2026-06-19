@@ -138,6 +138,16 @@
                             <option v-for="f in fuelTypes" :key="f.id" :value="f.id">{{ f.name }}</option>
                         </select>
                     </div>
+                    <div v-if="currentSearchConfig.hasCondition" class="fg-field">
+                        <label class="fg-label">Stan pojazdu</label>
+                        <select v-model="searchCondition" class="fg-select">
+                            <option value="">Wszystkie</option>
+                            <option value="Nowe">Nowe</option>
+                            <option value="Używane">Używane</option>
+                            <option value="Uszkodzone">Uszkodzone</option>
+                            <option value="Odrestaurowane">Odrestaurowane</option>
+                        </select>
+                    </div>
                     <div v-if="currentSearchConfig.hasBodyType" class="fg-field">
                         <label class="fg-label">Nadwozie</label>
                         <select v-model="searchBodyTypeId" class="fg-select">
@@ -665,14 +675,15 @@ const SEARCH_CATEGORIES = [
 interface SearchConfig {
     hasBrand: boolean; hasModel: boolean; hasFuel: boolean; hasBodyType: boolean
     hasMileage: boolean; hasHours: boolean; hasPartCategory?: boolean
+    hasCondition?: boolean
     subtypeLabel?: string; subtypes?: string[]
 }
 
 const SEARCH_CONFIGS: Record<string, SearchConfig> = {
-    'auta-osobowe': { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: true,  hasMileage: true,  hasHours: false },
-    'motocykle':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Typ motocykla', subtypes: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Skuter', 'Chopper', 'Cross'] },
-    'dostawcze':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Zabudowa', subtypes: ['Furgon', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Platforma'] },
-    'ciezarowe':    { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Typ', subtypes: ['Ciągnik siodłowy', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Cysterna', 'Śmieciarka'] },
+    'auta-osobowe': { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: true,  hasMileage: true,  hasHours: false, hasCondition: true },
+    'motocykle':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Typ motocykla', subtypes: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Skuter', 'Chopper', 'Cross'] },
+    'dostawcze':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Zabudowa', subtypes: ['Furgon', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Platforma'] },
+    'ciezarowe':    { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Typ', subtypes: ['Ciągnik siodłowy', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Cysterna', 'Śmieciarka'] },
     'czesci':       { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, hasPartCategory: true },
     'budowlane':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ maszyny', subtypes: ['Koparka gąsienicowa', 'Koparko-ładowarka', 'Minieksawator', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka'] },
     'rolnicze':     { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ maszyny', subtypes: ['Ciągnik', 'Kombajn', 'Siewnik', 'Pług', 'Prasa', 'Opryskiwacz', 'Rozsiewacz'] },
@@ -698,6 +709,7 @@ const searchMileageFrom = ref('')
 const searchMileageTo = ref('')
 const searchHoursFrom = ref('')
 const searchHoursTo = ref('')
+const searchCondition = ref('')
 const searchModels = ref<TaxonomyItem[]>([])
 const fuelTypes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
@@ -711,6 +723,7 @@ function selectSearchCat(slug: string) {
     searchFuelId.value = null
     searchBodyTypeId.value = null
     searchSubtype.value = ''
+    searchCondition.value = ''
     searchModels.value = []
 }
 
@@ -735,6 +748,7 @@ function doSearch() {
     if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
     if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
     if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
+    if (searchCondition.value) query.condition = searchCondition.value
     const cat = homeCategories.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })
