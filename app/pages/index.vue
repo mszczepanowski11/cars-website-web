@@ -1658,29 +1658,50 @@ onMounted(async () => {
 
 .why-header {
     text-align: center;
-    margin-bottom: 52px;
+    margin-bottom: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
 }
 
 .why-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
     font-size: 10px;
     font-weight: 700;
     color: $red;
-    letter-spacing: 2.5px;
+    letter-spacing: 4px;
     text-transform: uppercase;
-    margin-bottom: 12px;
+    margin-bottom: 22px;
+
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 1px;
+        background: $red;
+        opacity: 0.6;
+    }
 }
 
 .why-logo {
-    height: 52px;
+    height: 68px;
     width: auto;
     display: block;
-    margin: 0 auto 12px;
+    margin: 0 auto 20px;
+    filter: drop-shadow(0 0 24px rgba(139, 13, 29, 0.25));
 }
 
 .why-sub {
-    font-size: 15px;
-    color: $text-dim;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.38);
     margin: 0;
+    letter-spacing: 0.4px;
+    max-width: 420px;
+    line-height: 1.6;
 }
 
 .why-grid {
