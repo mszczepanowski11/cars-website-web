@@ -924,7 +924,6 @@ onMounted(async () => {
     text-transform: uppercase;
     color: rgba(255,255,255,0.55);
     margin-bottom: 22px;
-    animation: fadeInUp 0.7s ease both;
 }
 .eyebrow-dot {
     display: inline-block;
@@ -948,7 +947,6 @@ onMounted(async () => {
     color: $text;
     letter-spacing: -2.5px;
     margin-bottom: 24px;
-    animation: fadeInUp 0.7s 0.1s ease both;
 
     @include respond-to(md) { font-size: 52px; letter-spacing: -1.5px; }
     @include respond-to(sm) { font-size: 38px; letter-spacing: -1px; }
@@ -967,7 +965,6 @@ onMounted(async () => {
     margin-bottom: 28px;
     max-width: 460px;
     font-weight: 400;
-    animation: fadeInUp 0.7s 0.2s ease both;
 
     strong { color: rgba(255,255,255,0.8); font-weight: 600; }
 
@@ -981,7 +978,6 @@ onMounted(async () => {
     gap: 8px;
     flex-wrap: wrap;
     margin-bottom: 14px;
-    animation: fadeInUp 0.7s 0.3s ease both;
 }
 
 .hfs-cat-tile {
@@ -1031,7 +1027,6 @@ onMounted(async () => {
     overflow: hidden;
     height: 72px;
     margin-bottom: 22px;
-    animation: fadeInUp 0.7s 0.4s ease both;
     box-shadow: 0 8px 40px rgba(0,0,0,0.4);
     transition: border-color 0.2s, box-shadow 0.2s;
 
@@ -1141,7 +1136,6 @@ onMounted(async () => {
     gap: 20px;
     flex-wrap: wrap;
     margin-bottom: 28px;
-    animation: fadeInUp 0.7s 0.35s ease both;
 }
 
 .hfs-feat {
@@ -1159,7 +1153,6 @@ onMounted(async () => {
     display: flex;
     gap: 24px;
     flex-wrap: wrap;
-    animation: fadeInUp 0.7s 0.5s ease both;
 }
 
 .hfs-link {
