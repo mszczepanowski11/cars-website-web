@@ -2507,6 +2507,25 @@ function buildDescription(): string {
     return sections.filter(Boolean).join('\n\n')
 }
 
+function submitImojeForm(result: { paymentUrl: string, formFields?: Record<string, string> }) {
+    if (result.formFields && Object.keys(result.formFields).length && result.paymentUrl) {
+        const form = document.createElement('form')
+        form.method = 'POST'
+        form.action = result.paymentUrl
+        for (const [key, value] of Object.entries(result.formFields)) {
+            const input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = key
+            input.value = value
+            form.appendChild(input)
+        }
+        document.body.appendChild(form)
+        form.submit()
+    } else if (result.paymentUrl) {
+        window.location.href = result.paymentUrl
+    }
+}
+
 async function submit() {
     const err = validateStep(4)
     if (err) {
@@ -2714,12 +2733,9 @@ async function submit() {
                     }
                     if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
                     console.log('[payment/initiate] calling with body:', JSON.stringify(body))
-                    const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+                    const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string> }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
                     console.log('[payment/initiate] result:', JSON.stringify(result))
-                    if (result.paymentUrl) {
-                        console.log('[payment/initiate] redirecting to:', result.paymentUrl)
-                        window.location.href = result.paymentUrl
-                    }
+                    submitImojeForm(result)
                 } catch (payErr: any) {
                     paying.value = false
                     publishedAdvertId.value = id
@@ -2727,8 +2743,8 @@ async function submit() {
                     const payMsg = (payErr?.data?.message ?? payErr?.statusMessage ?? payErr?.message ?? '') as string
                     console.error('[payment/initiate] failed after advert created:', payMsg, payErr)
                     error.value = `Ogłoszenie zostało opublikowane! Nie udało się zainicjować płatności${payMsg ? ` (${payMsg})` : ''}. Możesz opłacić promocję z panelu „Moje ogłoszenia".`
-                    if (imageErrors.length > 0) {
-                        error.value += ` Ponadto ${imageErrors.length} zdjęcie(a) nie zostało przesłane.`
+                    if (imageErrors > 0) {
+                        error.value += ` Ponadto ${imageErrors} zdjęcie(a) nie zostało przesłane.`
                     }
                 }
             }

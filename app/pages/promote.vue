@@ -370,6 +370,25 @@ function selectAndPurchase(key: string) {
     selectedPlan.value = key
 }
 
+function submitImojeForm(result: { paymentUrl: string, formFields?: Record<string, string> }) {
+    if (result.formFields && Object.keys(result.formFields).length && result.paymentUrl) {
+        const form = document.createElement('form')
+        form.method = 'POST'
+        form.action = result.paymentUrl
+        for (const [key, value] of Object.entries(result.formFields)) {
+            const input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = key
+            input.value = value
+            form.appendChild(input)
+        }
+        document.body.appendChild(form)
+        form.submit()
+    } else if (result.paymentUrl) {
+        window.location.href = result.paymentUrl
+    }
+}
+
 async function applyCoupon() {
     if (!couponCode.value.trim()) return
     const plan = plans.find(p => p.key === selectedPlan.value)
@@ -423,10 +442,8 @@ async function doPurchase() {
                 cancelUrl: `${siteUrl}/payment/return?status=cancel&advertId=${selectedAdvertId.value}`,
             }
             if (couponValid.value && couponCode.value) body.couponCode = couponCode.value
-            const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-            if (result.paymentUrl) {
-                window.location.href = result.paymentUrl
-            }
+            const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string> }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+            submitImojeForm(result)
         }
     } catch (e: any) {
         purchaseError.value = e?.data?.message ?? 'Nie udało się aktywować promocji.'
