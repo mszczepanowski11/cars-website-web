@@ -2688,29 +2688,42 @@ async function submit() {
             }
             if (imageErrors.length > 0) {
                 console.warn('[upload] image errors:', imageErrors)
-                error.value = `Ogłoszenie zostało zapisane, ale ${imageErrors.length} zdjęcie(a) nie zostało przesłane. Możesz je dodać w edycji ogłoszenia.\n${imageErrors.join('\n')}`
-                loading.value = false
-                return
             }
             localStorage.removeItem('carizo_advert_draft')
 
-            // Publish advert (endpoint may not exist yet — ignore 404/405)
-            await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
+            await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch((e: any) => {
+                console.warn('[publish] failed (non-critical):', e?.message)
+            })
 
             if (promoSelected.value === 'free') {
                 publishedAdvertId.value = id
                 showSuccess.value = true
-            } else {
-                loading.value = false
-                paying.value = true
-                const body: Record<string, unknown> = {
-                    advertId: id,
-                    serviceType: promoSelected.value,
-                    durationDays: promoDays.value,
+                if (imageErrors.length > 0) {
+                    error.value = `${imageErrors.length} zdjęcie(a) nie zostało przesłane: ${imageErrors.join('; ')}. Możesz je dodać w edycji ogłoszenia.`
                 }
-                if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
-                const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-                if (result.paymentUrl) window.location.href = result.paymentUrl
+            } else {
+                try {
+                    loading.value = false
+                    paying.value = true
+                    const body: Record<string, unknown> = {
+                        advertId: id,
+                        serviceType: promoSelected.value,
+                        durationDays: promoDays.value,
+                    }
+                    if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
+                    const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+                    if (result.paymentUrl) window.location.href = result.paymentUrl
+                } catch (payErr: any) {
+                    paying.value = false
+                    publishedAdvertId.value = id
+                    showSuccess.value = true
+                    const payMsg = (payErr?.data?.message ?? payErr?.statusMessage ?? payErr?.message ?? '') as string
+                    console.error('[payment/initiate] failed after advert created:', payMsg, payErr)
+                    error.value = `Ogłoszenie zostało opublikowane! Nie udało się zainicjować płatności${payMsg ? ` (${payMsg})` : ''}. Możesz opłacić promocję z panelu „Moje ogłoszenia".`
+                    if (imageErrors.length > 0) {
+                        error.value += ` Ponadto ${imageErrors.length} zdjęcie(a) nie zostało przesłane.`
+                    }
+                }
             }
         }
     } catch (e: any) {
