@@ -87,7 +87,6 @@
                                     <th>VAT</th>
                                     <th>Brutto</th>
                                     <th>Status</th>
-                                    <th>KSeF</th>
                                     <th>Akcje</th>
                                 </tr>
                             </thead>
@@ -109,12 +108,6 @@
                                     <td class="td-num">{{ inv.vatAmount.toFixed(2) }}</td>
                                     <td class="td-amount">{{ inv.totalAmount.toFixed(2) }} PLN</td>
                                     <td><span class="status-badge" :class="invoiceStatusClass(inv.status)">{{ invoiceStatusLabel(inv.status) }}</span></td>
-                                    <td>
-                                        <span v-if="inv.kSeFReferenceNumber" class="ksef-badge">
-                                            <v-icon icon="mdi-check" size="11" />KSeF
-                                        </span>
-                                        <span v-else class="ksef-badge ksef-no">—</span>
-                                    </td>
                                     <td>
                                         <div class="actions">
                                             <button class="act-btn" title="Pobierz PDF" :disabled="pdfLoadingId === inv.id" @click="downloadPdfAdmin(inv)">
@@ -416,8 +409,6 @@ onMounted(() => { loadInvoices(); loadPayments() })
 .user-name { color: $text; font-size: 13px; font-weight: 500; }
 .user-email { color: $text-dim; font-size: 11px; }
 .user-company { color: $text-dark; font-size: 11px; display: flex; align-items: center; gap: 3px; }
-
-.ksef-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; background: rgba(76,175,80,0.1); color: #4caf50; &.ksef-no { background: transparent; color: $text-dark; } }
 
 .status-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.status-ok { background: rgba(76,175,80,0.12); color: #4caf50; } &.status-pending { background: rgba(255,152,0,0.12); color: #ff9800; } &.status-generated { background: rgba(33,150,243,0.12); color: #2196f3; } &.status-refunded { background: rgba(41,128,185,0.12); color: #5dade2; } &.status-fail { background: rgba($red, 0.12); color: $red; } }
 

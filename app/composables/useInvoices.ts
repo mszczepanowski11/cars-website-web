@@ -125,12 +125,6 @@ export const useInvoices = () => {
 
         doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(100, 100, 100)
         doc.text('Forma płatności: płatność elektroniczna (ING IMOJE)', 14, y)
-        if (inv.kSeFReferenceNumber) {
-            y += 10
-            doc.setFillColor(232, 245, 233); doc.roundedRect(14, y, W - 28, 10, 2, 2, 'F')
-            doc.setTextColor(56, 142, 60)
-            doc.text(`✓ Wysłano do KSeF: ${inv.kSeFReferenceNumber}`, 18, y + 6.5)
-        }
 
         doc.setFontSize(7); doc.setTextColor(160, 160, 160)
         doc.text('Dokument wygenerowany przez system CARIZO | carizo.pl | Nie wymaga podpisu ani pieczęci.', W / 2, 289, { align: 'center' })
