@@ -8,7 +8,7 @@ export const usePayment = () => {
         return $fetch('/api/proxy/api/Payment/price', { query: { serviceType, durationDays } })
     }
 
-    async function initiatePayment(dto: { serviceType: string; advertId?: number; eventId?: number; durationDays: number }): Promise<PaymentInitiated> {
+    async function initiatePayment(dto: { serviceType: string; advertId?: number; eventId?: number; durationDays: number; returnUrl?: string; cancelUrl?: string; couponCode?: string }): Promise<PaymentInitiated> {
         loading.value = true
         error.value = null
         try {

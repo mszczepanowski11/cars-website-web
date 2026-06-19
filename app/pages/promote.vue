@@ -248,6 +248,7 @@ const { purchasePromotion } = usePromotions()
 const { validateCoupon } = useCoupons()
 const { getImageUrl, placeholder } = useImageUrl()
 const { getPrice: getPriceApi } = usePayment()
+const config = useRuntimeConfig()
 
 type MultiPlanKey = 'highlight' | 'top' | 'premium'
 
@@ -413,10 +414,13 @@ async function doPurchase() {
             // Ensure advert is published before payment redirect
             await $fetch(`/api/proxy/api/Advert/${selectedAdvertId.value}/publish`, { method: 'POST', body: {} }).catch(() => {})
 
+            const siteUrl = config.public.siteUrl
             const body: Record<string, unknown> = {
                 advertId: selectedAdvertId.value,
                 serviceType: plan.promotionType,
                 durationDays: days,
+                returnUrl: `${siteUrl}/payment/return?status=success&advertId=${selectedAdvertId.value}`,
+                cancelUrl: `${siteUrl}/payment/return?status=cancel&advertId=${selectedAdvertId.value}`,
             }
             if (couponValid.value && couponCode.value) body.couponCode = couponCode.value
             const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })

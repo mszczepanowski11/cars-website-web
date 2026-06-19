@@ -1411,6 +1411,7 @@ const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetch
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { fetchCategories } = useCategories()
+const config = useRuntimeConfig()
 
 const brands = ref<TaxonomyItem[]>([])
 const models = ref<TaxonomyItem[]>([])
@@ -2251,10 +2252,13 @@ async function submit() {
             } else {
                 loading.value = false
                 paying.value = true
+                const siteUrl = config.public.siteUrl
                 const body: Record<string, unknown> = {
                     advertId: id,
                     serviceType: promoSelected.value,
                     durationDays: promoDays.value,
+                    returnUrl: `${siteUrl}/payment/return?status=success&advertId=${id}`,
+                    cancelUrl: `${siteUrl}/payment/return?status=cancel&advertId=${id}`,
                 }
                 if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
                 const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })

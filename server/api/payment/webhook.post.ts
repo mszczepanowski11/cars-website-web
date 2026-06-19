@@ -44,7 +44,13 @@ export default defineEventHandler(async (event) => {
 
     // Validate HMAC-SHA256 signature from ING IMOJE
     const webhookSecret = config.imojeWebhookSecret as string | undefined
-    if (webhookSecret) {
+    if (!webhookSecret) {
+        // Secret not configured — reject in production, warn in dev
+        if (process.env.NODE_ENV === 'production') {
+            throw createError({ statusCode: 500, statusMessage: 'Webhook secret not configured' })
+        }
+        console.warn('[webhook] IMOJE_WEBHOOK_SECRET not set — skipping signature check (dev only)')
+    } else {
         const receivedSig = getHeader(event, 'x-imoje-signature') ?? notification.signature ?? ''
         const expectedSig = createHmac('sha256', webhookSecret)
             .update(rawBody)
