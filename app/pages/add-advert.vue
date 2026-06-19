@@ -2236,10 +2236,23 @@ async function submit() {
             const id: number = created?.id ?? created?.advertId ?? created
             if (!id) throw new Error('Brak ID ogłoszenia w odpowiedzi: ' + JSON.stringify(created))
 
+            const imageErrors: string[] = []
             for (const file of selectedFiles.value) {
                 const fd = new FormData()
                 fd.append('file', file)
-                await $fetch(`/api/advert/${id}/images`, { method: 'POST', body: fd }).catch(() => {})
+                try {
+                    await $fetch(`/api/advert/${id}/images`, { method: 'POST', body: fd })
+                } catch (imgErr: any) {
+                    const msg = imgErr?.data?.message ?? imgErr?.statusMessage ?? imgErr?.message ?? 'nieznany błąd'
+                    console.error(`[upload image] failed for ${file.name}:`, msg, imgErr)
+                    imageErrors.push(`${file.name}: ${msg}`)
+                }
+            }
+            if (imageErrors.length > 0) {
+                console.warn('[upload] image errors:', imageErrors)
+                error.value = `Ogłoszenie zostało zapisane, ale ${imageErrors.length} zdjęcie(a) nie zostało przesłane. Możesz je dodać w edycji ogłoszenia.\n${imageErrors.join('\n')}`
+                loading.value = false
+                return
             }
             localStorage.removeItem('carizo_advert_draft')
 
