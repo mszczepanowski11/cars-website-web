@@ -10,14 +10,17 @@
             </div>
 
             <div class="container hfs-content">
+                <div class="hfs-eyebrow">
+                    <span class="eyebrow-dot" />
+                    Platforma motoryzacyjna
+                </div>
                 <h1 class="hfs-title">
                     Motoryzacja.<br>
-                    <span class="title-accent">W&nbsp;lepszym</span><br>
-                    wydaniu.
+                    <span class="title-accent">W&nbsp;lepszym wydaniu.</span>
                 </h1>
                 <p class="hfs-sub">
-                    CARIZO to więcej niż portal ogłoszeniowy.<br>
-                    To miejsce, gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
+                    Więcej niż portal ogłoszeniowy — miejsce,<br>
+                    gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
                 </p>
                 <div class="hfs-feats">
                     <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zweryfikowane ogłoszenia</span>
@@ -920,35 +923,36 @@ onMounted(async () => {
 
 // Title
 .hfs-title {
-    font-size: 64px;
-    line-height: 1;
+    font-size: 72px;
+    line-height: 1.06;
     font-weight: 900;
     color: $text;
-    letter-spacing: -2px;
-    margin-bottom: 20px;
+    letter-spacing: -2.5px;
+    margin-bottom: 24px;
     animation: fadeInUp 0.7s 0.1s ease both;
 
-    @include respond-to(md) { font-size: 48px; letter-spacing: -1.5px; }
-    @include respond-to(sm) { font-size: 34px; letter-spacing: -1px; }
+    @include respond-to(md) { font-size: 52px; letter-spacing: -1.5px; }
+    @include respond-to(sm) { font-size: 38px; letter-spacing: -1px; }
 }
 
 .title-accent {
     color: $red;
     -webkit-text-stroke: 0;
+    display: block;
 }
 
 .hfs-sub {
-    font-size: 17px;
-    color: rgba(255,255,255,0.6);
-    line-height: 1.75;
-    margin-bottom: 36px;
-    max-width: 520px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.8;
+    margin-bottom: 28px;
+    max-width: 460px;
     font-weight: 400;
     animation: fadeInUp 0.7s 0.2s ease both;
 
-    strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+    strong { color: rgba(255,255,255,0.8); font-weight: 600; }
 
-    @include respond-to(sm) { font-size: 15px; }
+    @include respond-to(sm) { font-size: 14px; }
 }
 
 // ─── Category tiles ───────────────────────────────────────────────────────────
