@@ -29,9 +29,19 @@ export default defineEventHandler(async (event) => {
         outputBuffer = await applyWatermark(filePart.data)
         console.log(`[images.post] watermark applied, output size=${outputBuffer.length}B`)
     } catch (sharpErr) {
-        console.error('[images.post] sharp watermark failed, sending original:', sharpErr)
-        outputBuffer = filePart.data
-        outputMime = fileType
+        console.error('[images.post] watermark failed, using original:', sharpErr)
+        try {
+            const sharp = (await import('sharp')).default
+            outputBuffer = await sharp(filePart.data)
+                .resize({ width: 1920, withoutEnlargement: true })
+                .jpeg({ quality: 85 })
+                .toBuffer()
+            outputMime = 'image/jpeg'
+        } catch (err2) {
+            console.error('[images.post] fallback resize failed, using raw buffer:', err2)
+            outputBuffer = filePart.data
+            outputMime = fileType
+        }
     }
 
     // Build filename with correct extension
