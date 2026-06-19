@@ -22,6 +22,18 @@ export default defineEventHandler(async (event) => {
             maxAge: 60 * 60 * 24 * 30,
             path: '/'
         })
+        // Store JWT expiry so the client middleware can detect expired sessions
+        try {
+            const [, rawPayload] = data.token.split('.')
+            const claims = JSON.parse(Buffer.from(rawPayload, 'base64').toString('utf8'))
+            setCookie(event, 'auth_expiry', String(claims.exp as number), {
+                httpOnly: false,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 60 * 60 * 24 * 30,
+                path: '/'
+            })
+        } catch { /* ignore */ }
         return { success: true }
     } catch (err: any) {
         throw createError({
