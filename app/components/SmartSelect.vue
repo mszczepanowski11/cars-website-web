@@ -155,7 +155,7 @@ onMounted(() => {
     &:hover:not(.disabled) { border-color: #333; }
     &.disabled { opacity: 0.45; cursor: not-allowed; }
 
-    .ss-wrap.open & { border-color: $red; }
+    .ss-wrap.open & { border-color: #444; }
     &--filled { border-color: #2a2a2a; }
 }
 
