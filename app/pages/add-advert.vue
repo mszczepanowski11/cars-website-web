@@ -2674,20 +2674,16 @@ async function submit() {
             const id: number = created?.id ?? created?.advertId ?? created
             if (!id) throw new Error('Brak ID ogłoszenia w odpowiedzi: ' + JSON.stringify(created))
 
-            const imageErrors: string[] = []
+            let imageErrors = 0
             for (const file of selectedFiles.value) {
                 const fd = new FormData()
                 fd.append('file', file)
                 try {
                     await $fetch(`/api/advert/${id}/images`, { method: 'POST', body: fd })
                 } catch (imgErr: any) {
-                    const msg = imgErr?.data?.message ?? imgErr?.statusMessage ?? imgErr?.message ?? 'nieznany błąd'
-                    console.error(`[upload image] failed for ${file.name}:`, msg, imgErr)
-                    imageErrors.push(`${file.name}: ${msg}`)
+                    imageErrors++
+                    console.error('[image upload error]', imgErr?.data ?? imgErr?.statusMessage ?? imgErr)
                 }
-            }
-            if (imageErrors.length > 0) {
-                console.warn('[upload] image errors:', imageErrors)
             }
             localStorage.removeItem('carizo_advert_draft')
 
@@ -2697,7 +2693,11 @@ async function submit() {
 
             console.log('[submit] promoSelected=', promoSelected.value, '| advertId=', id, '| durationDays=', promoDays.value)
 
-            if (promoSelected.value === 'free') {
+            if (imageErrors > 0) {
+                loading.value = false
+                publishedAdvertId.value = id
+                error.value = `Ogłoszenie zostało zapisane (ID ${id}), ale ${imageErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych — błąd serwera. Możesz dodać zdjęcia później w panelu edycji.`
+            } else if (promoSelected.value === 'free') {
                 publishedAdvertId.value = id
                 showSuccess.value = true
                 if (imageErrors.length > 0) {
