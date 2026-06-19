@@ -867,8 +867,7 @@ onMounted(async () => {
     flex: 0 0 50%;
     display: flex;
     align-items: center;
-    // align text with the container's left edge
-    padding-left: max(40px, calc(50vw - 620px));
+    padding-left: #{max(40px, calc(50vw - 620px))};
     padding-right: 48px;
     padding-top: 48px;
     padding-bottom: 48px;
