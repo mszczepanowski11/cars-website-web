@@ -627,7 +627,7 @@
                     <div class="img-grid">
                         <!-- Existing images (edit mode) -->
                         <div v-for="img in existingImages" :key="`ex-${img.id}`" class="img-thumb img-thumb--existing">
-                            <img :src="`/img/${img.url.split('/uploads/').pop()}`" />
+                            <img :src="getImageUrl(img.url)" />
                             <button type="button" class="img-remove"
                                 :disabled="deletingImageId === img.id"
                                 @click="deleteExistingImage(img.id)">
@@ -1395,8 +1395,11 @@
 
 <script setup lang="ts">
 import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption } from '~/types'
+import { useImageUrl } from '~/composables/useImageUrl'
 
 definePageMeta({ middleware: 'auth' })
+
+const { getImageUrl } = useImageUrl()
 
 // ── Category field configuration ──────────────────────────────────────────────
 interface ExtraField {
