@@ -2695,6 +2695,8 @@ async function submit() {
                 console.warn('[publish] failed (non-critical):', e?.message)
             })
 
+            console.log('[submit] promoSelected=', promoSelected.value, '| advertId=', id, '| durationDays=', promoDays.value)
+
             if (promoSelected.value === 'free') {
                 publishedAdvertId.value = id
                 showSuccess.value = true
@@ -2711,8 +2713,13 @@ async function submit() {
                         durationDays: promoDays.value,
                     }
                     if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
+                    console.log('[payment/initiate] calling with body:', JSON.stringify(body))
                     const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-                    if (result.paymentUrl) window.location.href = result.paymentUrl
+                    console.log('[payment/initiate] result:', JSON.stringify(result))
+                    if (result.paymentUrl) {
+                        console.log('[payment/initiate] redirecting to:', result.paymentUrl)
+                        window.location.href = result.paymentUrl
+                    }
                 } catch (payErr: any) {
                     paying.value = false
                     publishedAdvertId.value = id
