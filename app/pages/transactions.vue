@@ -75,6 +75,7 @@
 import type { Transaction, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Transakcje — CARIZO' })
 
 const { getMyTransactions, cancelTransaction } = useTransactions()
 

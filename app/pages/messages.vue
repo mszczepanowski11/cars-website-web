@@ -42,6 +42,7 @@
 <script setup lang="ts">
 import type { Conversation } from '~/types'
 definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Wiadomości — CARIZO' })
 
 const conversations = ref<Conversation[]>([])
 const loading = ref(false)
