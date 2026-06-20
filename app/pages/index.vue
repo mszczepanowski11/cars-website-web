@@ -12,11 +12,12 @@
                     </div>
                     <h1 class="hfs-title">
                         Motoryzacja.<br>
-                        <span class="title-accent">W&nbsp;lepszym wydaniu.</span>
+                        <span class="title-accent">W&nbsp;lepszym</span><br>
+                        wydaniu.
                     </h1>
                     <p class="hfs-sub">
-                        Więcej niż portal ogłoszeniowy — miejsce,<br>
-                        gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
+                        CARIZO to więcej niż portal ogłoszeniowy —<br>
+                        miejsce, gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
                     </p>
                     <div class="hfs-feats">
                         <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zweryfikowane ogłoszenia</span>
@@ -136,6 +137,16 @@
                         <select v-model="searchFuelId" class="fg-select">
                             <option :value="null">Wszystkie</option>
                             <option v-for="f in fuelTypes" :key="f.id" :value="f.id">{{ f.name }}</option>
+                        </select>
+                    </div>
+                    <div v-if="currentSearchConfig.hasCondition" class="fg-field">
+                        <label class="fg-label">Stan pojazdu</label>
+                        <select v-model="searchCondition" class="fg-select">
+                            <option value="">Wszystkie</option>
+                            <option value="Nowe">Nowe</option>
+                            <option value="Używane">Używane</option>
+                            <option value="Uszkodzone">Uszkodzone</option>
+                            <option value="Odrestaurowane">Odrestaurowane</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.hasBodyType" class="fg-field">
@@ -665,14 +676,15 @@ const SEARCH_CATEGORIES = [
 interface SearchConfig {
     hasBrand: boolean; hasModel: boolean; hasFuel: boolean; hasBodyType: boolean
     hasMileage: boolean; hasHours: boolean; hasPartCategory?: boolean
+    hasCondition?: boolean
     subtypeLabel?: string; subtypes?: string[]
 }
 
 const SEARCH_CONFIGS: Record<string, SearchConfig> = {
-    'auta-osobowe': { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: true,  hasMileage: true,  hasHours: false },
-    'motocykle':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Typ motocykla', subtypes: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Skuter', 'Chopper', 'Cross'] },
-    'dostawcze':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Zabudowa', subtypes: ['Furgon', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Platforma'] },
-    'ciezarowe':    { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Typ', subtypes: ['Ciągnik siodłowy', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Cysterna', 'Śmieciarka'] },
+    'auta-osobowe': { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: true,  hasMileage: true,  hasHours: false, hasCondition: true },
+    'motocykle':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Typ motocykla', subtypes: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Skuter', 'Chopper', 'Cross'] },
+    'dostawcze':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Zabudowa', subtypes: ['Furgon', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Platforma'] },
+    'ciezarowe':    { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Typ', subtypes: ['Ciągnik siodłowy', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Cysterna', 'Śmieciarka'] },
     'czesci':       { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, hasPartCategory: true },
     'budowlane':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ maszyny', subtypes: ['Koparka gąsienicowa', 'Koparko-ładowarka', 'Minieksawator', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka'] },
     'rolnicze':     { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ maszyny', subtypes: ['Ciągnik', 'Kombajn', 'Siewnik', 'Pług', 'Prasa', 'Opryskiwacz', 'Rozsiewacz'] },
@@ -698,6 +710,7 @@ const searchMileageFrom = ref('')
 const searchMileageTo = ref('')
 const searchHoursFrom = ref('')
 const searchHoursTo = ref('')
+const searchCondition = ref('')
 const searchModels = ref<TaxonomyItem[]>([])
 const fuelTypes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
@@ -711,6 +724,7 @@ function selectSearchCat(slug: string) {
     searchFuelId.value = null
     searchBodyTypeId.value = null
     searchSubtype.value = ''
+    searchCondition.value = ''
     searchModels.value = []
 }
 
@@ -735,7 +749,8 @@ function doSearch() {
     if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
     if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
     if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
-    const cat = homeCategories.value.find(c => c.slug === searchCat.value)
+    if (searchCondition.value) query.condition = searchCondition.value
+    const cat = homeCategories.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })
 }
@@ -762,6 +777,8 @@ const ingMonthlyRate = computed(() => {
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
 const { fetchBrands, fetchModels, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
+const { STATIC_CATEGORIES } = useCategories()
+const homeCategories = STATIC_CATEGORIES
 
 const featuredEvent = computed(() => events.value.find(e => e.isFeatured) ?? null)
 
@@ -865,8 +882,7 @@ onMounted(async () => {
     flex: 0 0 50%;
     display: flex;
     align-items: center;
-    // align text with the container's left edge
-    padding-left: max(40px, calc(50vw - 620px));
+    padding-left: #{max(40px, calc(50vw - 620px))};
     padding-right: 48px;
     padding-top: 48px;
     padding-bottom: 48px;
@@ -1293,16 +1309,16 @@ onMounted(async () => {
 
 // ── Search section ────────────────────────────────────────────────────────────
 .search-section {
-    padding: 40px 0 44px;
+    padding: 44px 0 52px;
     background: rgba(255,255,255,0.01);
     border-bottom: 1px solid $border;
 }
 
 .cat-tabs {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     overflow-x: auto;
     padding-bottom: 2px;
 
@@ -1315,13 +1331,13 @@ onMounted(async () => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 16px;
+    padding: 10px 18px;
     border: 1px solid $border;
     border-radius: 50px;
     background: transparent;
     color: $text-dim;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
     font-family: 'Inter', sans-serif;
@@ -1333,6 +1349,7 @@ onMounted(async () => {
         background: $red;
         border-color: $red;
         color: white;
+        box-shadow: 0 2px 12px rgba($red, 0.35);
     }
 }
 
@@ -1344,7 +1361,7 @@ onMounted(async () => {
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 18px;
-    height: 54px;
+    height: 56px;
 
     &:focus-within { border-color: rgba($red, 0.4); }
 }
@@ -1395,9 +1412,10 @@ onMounted(async () => {
 
 .filter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
 
+    @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
     @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
     @include respond-to(xs) { grid-template-columns: 1fr; }
 }
@@ -1427,6 +1445,7 @@ onMounted(async () => {
     outline: none;
     cursor: pointer;
     transition: border-color 0.2s;
+    min-height: 42px;
 
     option { background: #111; color: #fff; }
     &:focus { border-color: rgba($red, 0.5); }
@@ -1441,7 +1460,7 @@ onMounted(async () => {
 .fg-range-inputs {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 }
 
 .fg-range-sep {
@@ -1458,9 +1477,10 @@ onMounted(async () => {
     color: $text;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
-    padding: 9px 10px;
+    padding: 9px 6px;
     outline: none;
     min-width: 0;
+    min-height: 42px;
     transition: border-color 0.2s;
 
     &::placeholder { color: $text-dark; }
@@ -1658,29 +1678,50 @@ onMounted(async () => {
 
 .why-header {
     text-align: center;
-    margin-bottom: 52px;
+    margin-bottom: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
 }
 
 .why-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
     font-size: 10px;
     font-weight: 700;
     color: $red;
-    letter-spacing: 2.5px;
+    letter-spacing: 4px;
     text-transform: uppercase;
-    margin-bottom: 12px;
+    margin-bottom: 22px;
+
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 1px;
+        background: $red;
+        opacity: 0.6;
+    }
 }
 
 .why-logo {
-    height: 52px;
+    height: 68px;
     width: auto;
     display: block;
-    margin: 0 auto 12px;
+    margin: 0 auto 20px;
+    filter: drop-shadow(0 0 24px rgba(139, 13, 29, 0.25));
 }
 
 .why-sub {
-    font-size: 15px;
-    color: $text-dim;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.38);
     margin: 0;
+    letter-spacing: 0.4px;
+    max-width: 420px;
+    line-height: 1.6;
 }
 
 .why-grid {

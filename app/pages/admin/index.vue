@@ -156,7 +156,9 @@ onMounted(async () => {
             getStats(),
             getLogs({ page: 1, pageSize: 30 })
         ])
-    } catch { }
+    } catch (err: any) {
+        console.error(err)
+    }
     finally { loading.value = false }
 })
 
