@@ -1309,16 +1309,16 @@ onMounted(async () => {
 
 // ── Search section ────────────────────────────────────────────────────────────
 .search-section {
-    padding: 40px 0 44px;
+    padding: 44px 0 52px;
     background: rgba(255,255,255,0.01);
     border-bottom: 1px solid $border;
 }
 
 .cat-tabs {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     overflow-x: auto;
     padding-bottom: 2px;
 
@@ -1331,13 +1331,13 @@ onMounted(async () => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 16px;
+    padding: 10px 18px;
     border: 1px solid $border;
     border-radius: 50px;
     background: transparent;
     color: $text-dim;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
     font-family: 'Inter', sans-serif;
@@ -1349,6 +1349,7 @@ onMounted(async () => {
         background: $red;
         border-color: $red;
         color: white;
+        box-shadow: 0 2px 12px rgba($red, 0.35);
     }
 }
 
@@ -1360,7 +1361,7 @@ onMounted(async () => {
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 18px;
-    height: 54px;
+    height: 56px;
 
     &:focus-within { border-color: rgba($red, 0.4); }
 }
@@ -1411,9 +1412,10 @@ onMounted(async () => {
 
 .filter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
 
+    @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
     @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
     @include respond-to(xs) { grid-template-columns: 1fr; }
 }
@@ -1443,6 +1445,7 @@ onMounted(async () => {
     outline: none;
     cursor: pointer;
     transition: border-color 0.2s;
+    min-height: 42px;
 
     option { background: #111; color: #fff; }
     &:focus { border-color: rgba($red, 0.5); }
@@ -1457,7 +1460,7 @@ onMounted(async () => {
 .fg-range-inputs {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 }
 
 .fg-range-sep {
@@ -1474,9 +1477,10 @@ onMounted(async () => {
     color: $text;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
-    padding: 9px 10px;
+    padding: 9px 6px;
     outline: none;
     min-width: 0;
+    min-height: 42px;
     transition: border-color 0.2s;
 
     &::placeholder { color: $text-dark; }
