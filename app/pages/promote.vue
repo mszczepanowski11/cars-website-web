@@ -446,7 +446,14 @@ async function doPurchase() {
             submitImojeForm(result)
         }
     } catch (e: any) {
-        purchaseError.value = e?.data?.message ?? 'Nie udało się aktywować promocji.'
+        const msg = e?.data?.message ?? e?.message ?? ''
+        if (msg.toLowerCase().includes('właścicielem')) {
+            purchaseError.value = 'Nie możesz promować tego ogłoszenia — nie jesteś jego właścicielem.'
+        } else if (e?.status === 403) {
+            purchaseError.value = 'Brak uprawnień do tej operacji.'
+        } else {
+            purchaseError.value = msg || 'Nie udało się zainicjować płatności. Spróbuj ponownie.'
+        }
     } finally { purchasing.value = false }
 }
 
