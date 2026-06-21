@@ -6,9 +6,16 @@ const isLoggedIn = computed(() => !!authStatus.value)
 const { logout } = useAuth()
 const { unreadCount, fetchUnreadCount } = useMessages()
 const { fetchUnreadCount: fetchNotifCount, startPolling, stopPolling } = useNotifications()
+const { isPremiereActive, isPremiereUpcoming } = usePromotion()
+const annBarDismissed = ref(true)
+
+const showAnnBar = computed(() =>
+    !annBarDismissed.value && (isPremiereActive.value || isPremiereUpcoming.value)
+)
 
 const isAdmin = ref(false)
 onMounted(async () => {
+    annBarDismissed.value = localStorage.getItem('annBarDismissed') === '1'
     fetchUnreadCount()
     if (isLoggedIn.value) {
         fetchNotifCount()
@@ -75,7 +82,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <header class="carizo-nav">
+    <header class="carizo-nav" :style="{ top: showAnnBar ? '38px' : '0' }">
         <div class="nav-inner">
             <NuxtLink to="/" class="logo" @click="closeMobile">
                 <img src="/carizo-logo.svg" alt="CARIZO" class="logo-img" />
@@ -246,7 +253,7 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .carizo-nav {
     position: fixed;
-    top: $ann-height;
+    top: 0;
     width: 100%;
     z-index: 998;
     background: rgba(4, 4, 4, 0.95);
