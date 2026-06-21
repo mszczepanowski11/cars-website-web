@@ -2,6 +2,7 @@ export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
     let token = getCookie(event, 'auth_token')
     const method = getMethod(event)
+    const path = event.context.params?.path ?? ''
 
     const PUBLIC_POST_PATHS = ['api/Advert/search', 'api/Payment/webhook']
     const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/'))
@@ -10,7 +11,6 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
 
-    const path = event.context.params?.path ?? ''
     const query = getQuery(event)
 
     const targetUrl = new URL(`${config.public.apiBase}${path}`)
