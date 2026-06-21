@@ -32,6 +32,14 @@
                     <v-icon icon="mdi-receipt-text-outline" size="17" />
                     Faktury
                 </NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item" :class="{ active: route.path === '/admin/taxonomy' }">
+                    <v-icon icon="mdi-tag-multiple-outline" size="17" />
+                    Wyposażenie
+                </NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item" :class="{ active: route.path === '/admin/quality-report' }">
+                    <v-icon icon="mdi-database-check-outline" size="17" />
+                    Jakość danych
+                </NuxtLink>
                 <div class="nav-divider" />
                 <NuxtLink to="/dashboard" class="nav-item">
                     <v-icon icon="mdi-arrow-left" size="17" />
