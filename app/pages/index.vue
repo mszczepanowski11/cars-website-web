@@ -232,6 +232,24 @@
                             <input v-model="searchMileageTo" type="number" class="fg-input" placeholder="Do" min="0" />
                         </div>
                     </div>
+
+                    <div v-if="currentSearchConfig.hasEngineSize" class="fg-field fg-range">
+                        <label class="fg-label">Pojemność (cm³)</label>
+                        <div class="fg-range-inputs">
+                            <input v-model="searchEngineSizeFrom" type="number" class="fg-input" placeholder="Od" min="0" />
+                            <span class="fg-range-sep">—</span>
+                            <input v-model="searchEngineSizeTo" type="number" class="fg-input" placeholder="Do" min="0" />
+                        </div>
+                    </div>
+
+                    <div v-if="currentSearchConfig.hasPower" class="fg-field fg-range">
+                        <label class="fg-label">Moc (KM)</label>
+                        <div class="fg-range-inputs">
+                            <input v-model="searchPowerFrom" type="number" class="fg-input" placeholder="Od" min="0" />
+                            <span class="fg-range-sep">—</span>
+                            <input v-model="searchPowerTo" type="number" class="fg-input" placeholder="Do" min="0" />
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -721,19 +739,19 @@ const SEARCH_CATEGORIES = [
 interface SearchConfig {
     hasBrand: boolean; hasModel: boolean; hasFuel: boolean; hasBodyType: boolean
     hasMileage: boolean; hasHours: boolean; hasPartCategory?: boolean
-    hasCondition?: boolean
+    hasCondition?: boolean; hasEngineSize?: boolean; hasPower?: boolean
     subtypeLabel?: string; subtypes?: string[]
 }
 
 const SEARCH_CONFIGS: Record<string, SearchConfig> = {
     'auta-osobowe': { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: true,  hasMileage: true,  hasHours: false, hasCondition: true },
-    'motocykle':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Typ motocykla', subtypes: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Skuter', 'Chopper', 'Cross'] },
+    'motocykle':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, hasEngineSize: true, subtypeLabel: 'Typ motocykla', subtypes: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Skuter', 'Chopper', 'Cross'] },
     'dostawcze':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Zabudowa', subtypes: ['Furgon', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Platforma'] },
     'ciezarowe':    { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Typ', subtypes: ['Ciągnik siodłowy', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Cysterna', 'Śmieciarka'] },
     'czesci':       { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, hasPartCategory: true },
-    'budowlane':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ maszyny', subtypes: ['Koparka gąsienicowa', 'Koparko-ładowarka', 'Minieksawator', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka'] },
-    'rolnicze':     { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ maszyny', subtypes: ['Ciągnik', 'Kombajn', 'Siewnik', 'Pług', 'Prasa', 'Opryskiwacz', 'Rozsiewacz'] },
-    'maszyny':      { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Typ', subtypes: ['Wózek widłowy', 'Dźwig/Żuraw', 'Platforma robocza', 'Agregat prądotwórczy', 'Sprężarka', 'Pompa'] },
+    'budowlane':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ maszyny', subtypes: ['Koparka gąsienicowa', 'Koparko-ładowarka', 'Minieksawator', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka'] },
+    'rolnicze':     { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ maszyny', subtypes: ['Ciągnik', 'Kombajn', 'Siewnik', 'Pług', 'Prasa', 'Opryskiwacz', 'Rozsiewacz'] },
+    'maszyny':      { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ', subtypes: ['Wózek widłowy', 'Dźwig/Żuraw', 'Platforma robocza', 'Agregat prądotwórczy', 'Sprężarka', 'Pompa'] },
     'przyczepy':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, subtypeLabel: 'Typ', subtypes: ['Naczepa plandeka', 'Laweta', 'Wywrotka', 'Kempingowa', 'Kontenerowa'] },
     'inne':         { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false },
 }
@@ -772,6 +790,10 @@ const searchMileageFrom = ref('')
 const searchMileageTo = ref('')
 const searchHoursFrom = ref('')
 const searchHoursTo = ref('')
+const searchEngineSizeFrom = ref('')
+const searchEngineSizeTo = ref('')
+const searchPowerFrom = ref('')
+const searchPowerTo = ref('')
 const searchCondition = ref('')
 const searchModels = ref<TaxonomyItem[]>([])
 const searchGenerations = ref<any[]>([])
@@ -802,6 +824,10 @@ function selectSearchCat(slug: string) {
     searchGearboxId.value = null
     searchSubtype.value = ''
     searchCondition.value = ''
+    searchEngineSizeFrom.value = ''
+    searchEngineSizeTo.value = ''
+    searchPowerFrom.value = ''
+    searchPowerTo.value = ''
     searchModels.value = []
     searchGenerations.value = []
     const cat = homeCategories.find((c: any) => c.slug === slug)
@@ -878,6 +904,10 @@ function doSearch() {
     if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
     if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
     if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
+    if (searchEngineSizeFrom.value) query.engineSizeFrom = searchEngineSizeFrom.value
+    if (searchEngineSizeTo.value) query.engineSizeTo = searchEngineSizeTo.value
+    if (searchPowerFrom.value) query.powerFrom = searchPowerFrom.value
+    if (searchPowerTo.value) query.powerTo = searchPowerTo.value
     if (searchCondition.value) query.condition = searchCondition.value
     const cat = homeCategories.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
