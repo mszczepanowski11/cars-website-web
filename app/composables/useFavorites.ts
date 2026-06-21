@@ -10,8 +10,16 @@ export const useFavorites = () => {
         if (!isLoggedIn.value) { favoriteIds.value = []; initialized.value = false; return }
         if (initialized.value) return
         try {
-            const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Favorite?page=1&pageSize=200')
-            favoriteIds.value = r.items.map(a => a.id)
+            const ids: number[] = []
+            let page = 1
+            let hasMore = true
+            while (hasMore) {
+                const r = await $fetch<PagedResult<CarAdvert>>(`/api/proxy/api/Favorite?page=${page}&pageSize=100`)
+                ids.push(...r.items.map(a => a.id))
+                hasMore = r.items.length === 100 && ids.length < r.totalCount
+                page++
+            }
+            favoriteIds.value = ids
             initialized.value = true
         } catch {}
     }
