@@ -734,9 +734,16 @@
                             prefix-icon="mdi-car-outline"
                         />
                     </div>
-                    <div v-if="!allFeatures.length" class="feat-empty">
-                        <v-icon icon="mdi-format-list-checkbox" size="40" />
+                    <div v-if="!featuresLoaded" class="feat-empty">
+                        <v-icon icon="mdi-loading" size="40" class="spin" />
                         <p>Ładowanie wyposażenia...</p>
+                    </div>
+                    <div v-else-if="!allFeatures.length" class="feat-empty">
+                        <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
+                        <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>Dane pojazdu</strong>.</p>
+                        <button type="button" class="btn-next" style="margin-top:16px" @click="currentStep++">
+                            Przejdź dalej <v-icon icon="mdi-arrow-right" size="15" />
+                        </button>
                     </div>
                     <div v-else-if="allFeatures.length && !Object.keys(featureGroups).length" class="feat-empty">
                         <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
@@ -1324,6 +1331,19 @@
                         <v-icon icon="mdi-arrow-right" size="16" />
                     </button>
                     <template v-else>
+                        <div v-if="limitError" class="limit-error-banner">
+                            <v-icon icon="mdi-store-outline" size="18" />
+                            <div class="limit-error-text">
+                                <strong>{{ limitError === 'private_limit_yearly' ? 'Osiągnąłeś roczny limit 3 ogłoszeń' : 'Masz już aktywne ogłoszenie' }}</strong>
+                                <span>Konto prywatne pozwala na max. 1 aktywne i 3 roczne ogłoszenia. Przejdź na konto biznesowe, by publikować bez ograniczeń.</span>
+                            </div>
+                            <NuxtLink to="/account/upgrade" class="limit-error-cta">Konto biznesowe</NuxtLink>
+                        </div>
+                        <div v-else-if="error" class="submit-error-inline">
+                            <v-icon icon="mdi-alert-circle-outline" size="15" />{{ error }}
+                        </div>
+                    </template>
+                    <template v-if="currentStep === steps.length - 1">
                         <template v-if="isEdit">
                             <button class="btn-publish-free" :disabled="loading" @click="submit">
                                 <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
@@ -1960,8 +1980,10 @@ const bodyTypes = ref<TaxonomyItem[]>([])
 const driveTypes = ref<DriveType[]>([])
 const colors = ref<CarColor[]>([])
 const allFeatures = ref<Feature[]>([])
+const featuresLoaded = ref(false)
 const loading = ref(false)
 const error = ref('')
+const limitError = ref<'private_limit_active' | 'private_limit_yearly' | null>(null)
 const stepError = ref('')
 const selectedFiles = ref<File[]>([])
 const previews = ref<string[]>([])
@@ -2566,6 +2588,7 @@ function removeImage(index: number) {
 }
 
 async function loadContextFeatures() {
+    featuresLoaded.value = false
     try {
         const cats = await fetchFeatureCategoriesByContext(
             selectedCategory.value?.id ?? null,
@@ -2575,7 +2598,9 @@ async function loadContextFeatures() {
         allFeatures.value = cats.flatMap(cat =>
             cat.features.map(f => ({ id: f.id, name: f.name, category: { id: cat.id, name: cat.name, vehicleCategoryId: cat.vehicleCategoryId } }))
         )
-    } catch { /* keep existing features */ }
+    } catch { /* keep existing features */ } finally {
+        featuresLoaded.value = true
+    }
 }
 
 async function onBrand() {
@@ -2775,6 +2800,7 @@ async function submit() {
         }
     }
     error.value = ''
+    limitError.value = null
     loading.value = true
     if (!isEdit.value) form.title = form.title || suggestedTitle.value || previewTitle.value || 'Ogłoszenie'
 
@@ -3006,7 +3032,14 @@ async function submit() {
         } else {
             msg = bd?.message ?? bd?.title ?? bd?.detail ?? ''
         }
-        error.value = msg || e?.message || 'Błąd podczas zapisywania ogłoszenia.'
+        const errCode = bd?.error as string | undefined
+        if (errCode === 'private_limit_yearly' || errCode === 'private_limit_active') {
+            limitError.value = errCode
+            error.value = ''
+        } else {
+            limitError.value = null
+            error.value = msg || e?.message || 'Błąd podczas zapisywania ogłoszenia.'
+        }
         console.error('[submit] error response:', JSON.stringify(bd ?? e?.message))
     } finally {
         loading.value = false
@@ -4421,6 +4454,48 @@ onMounted(async () => {
     color: #e55;
     margin-bottom: 16px;
     .v-icon { flex-shrink: 0; }
+}
+
+.submit-error-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #e55;
+    max-width: 300px;
+    .v-icon { flex-shrink: 0; }
+}
+
+.limit-error-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 160, 0, 0.08);
+    border: 1px solid rgba(255, 160, 0, 0.3);
+    border-radius: $r-sm;
+    padding: 12px 16px;
+    flex: 1;
+    margin-right: 12px;
+    .v-icon { color: #f59e0b; flex-shrink: 0; }
+}
+
+.limit-error-text {
+    flex: 1;
+    strong { display: block; font-size: 13px; color: #f59e0b; margin-bottom: 2px; }
+    span { font-size: 12px; color: $text-dim; line-height: 1.4; }
+}
+
+.limit-error-cta {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    background: #f59e0b;
+    color: #000;
+    border-radius: $r-sm;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    &:hover { opacity: 0.88; }
 }
 
 .spin { animation: spin 0.8s linear infinite; }
