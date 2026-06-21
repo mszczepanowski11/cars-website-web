@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     const path = event.context.params?.path ?? ''
 
     const PUBLIC_POST_PATHS = ['api/Advert/search', 'api/Payment/webhook']
-    const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/'))
+    const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/')) || /^api\/Advert\/\d+\/view$/.test(path)
 
     if (!token && !['GET', 'HEAD'].includes(method) && !isPublicPost) {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })

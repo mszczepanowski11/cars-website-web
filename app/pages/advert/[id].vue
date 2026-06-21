@@ -1449,6 +1449,8 @@ onMounted(async () => {
     await fetchFavoriteIds()
     if (advert.value) {
         trackRecentlyViewed(Number(id))
+        // Track view
+        $fetch(`/api/proxy/api/Advert/${id}/view`, { method: 'POST' }).catch(() => {})
         isFav.value = isFavorite(id)
         if (advert.value.city) initMap(advert.value.city, advert.value.region ?? undefined)
     }
