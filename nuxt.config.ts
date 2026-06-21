@@ -17,6 +17,17 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'node_server',
+    routeRules: {
+      '/**': {
+        headers: {
+          'X-Frame-Options': 'SAMEORIGIN',
+          'X-Content-Type-Options': 'nosniff',
+          'Referrer-Policy': 'strict-origin-when-cross-origin',
+          'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+        }
+      }
+    }
   },
   devtools: { enabled: process.env.NODE_ENV !== 'production' },
 
@@ -78,6 +89,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Server-only secrets (never exposed to client)
+    anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? '',
     imojeWebhookSecret: process.env.NUXT_IMOJE_WEBHOOK_SECRET ?? '',
     internalServiceSecret: process.env.NUXT_INTERNAL_SERVICE_SECRET ?? '',
     turnstileSecretKey: process.env.NUXT_TURNSTILE_SECRET_KEY ?? '',

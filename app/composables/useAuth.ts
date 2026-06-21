@@ -57,7 +57,9 @@ export const useAuth = () => {
         name: string; surname: string; email: string
         phonenumber: string; password: string
         accountType: 'Personal' | 'Business'
-        companyName?: string; nip?: string; turnstileToken?: string
+        companyName?: string; nip?: string
+        businessType?: 'Dealer' | 'Komis' | 'Firma'
+        turnstileToken?: string
     }, redirectTo?: string) {
         loading.value = true
         error.value = ''

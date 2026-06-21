@@ -1,9 +1,9 @@
 import type { Notification, NotificationPreference, UpdateNotificationPreferenceDto, PagedResult } from '~/types'
 
-let _pollTimer: ReturnType<typeof setInterval> | null = null
-let _pollInterval = 30_000
-
 export const useNotifications = () => {
+    let _pollTimer: ReturnType<typeof setInterval> | null = null
+    let _pollInterval = 30_000
+
     const notifications = useState<Notification[]>('notifications', () => [])
     const unreadCount = useState('notifications-unread', () => 0)
     const loading = ref(false)

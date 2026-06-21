@@ -105,11 +105,11 @@ const monthlyRate = computed(() => {
             <div class="car-meta">
                 <span><v-icon icon="mdi-calendar-outline" size="14" class="mr-1" />{{ advert.year }}</span>
                 <span><v-icon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–' }}</span>
-                <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage.toLocaleString('pl') }} km</span>
+                <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage?.toLocaleString('pl-PL') ?? '—' }} km</span>
                 <span v-if="gearboxShort"><v-icon icon="mdi-car-shift-pattern" size="14" class="mr-1" />{{ gearboxShort }}</span>
                 <span v-if="advert.powerHP"><v-icon icon="mdi-engine-outline" size="14" class="mr-1" />{{ advert.powerHP }} KM</span>
             </div>
-            <div class="car-price">{{ advert.price.toLocaleString('pl') }} zł</div>
+            <div class="car-price">{{ advert.price?.toLocaleString('pl-PL') ?? 'Do negocjacji' }} {{ advert.price != null ? 'zł' : '' }}</div>
             <div v-if="monthlyRate" class="car-monthly">
                 <v-icon icon="mdi-bank-outline" size="12" class="car-monthly-icon" />
                 od {{ monthlyRate.toLocaleString('pl') }} zł/mies.

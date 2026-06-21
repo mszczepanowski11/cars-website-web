@@ -84,6 +84,7 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: 'Zaloguj się — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 const { login, loginWithGoogle, loginWithFacebook, loading, error } = useAuth()
 const runtimeConfig = useRuntimeConfig()

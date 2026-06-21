@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import type { CarAdvert } from '~/types'
 const props = defineProps<{ modelValue: boolean; advertId: number | null }>()
-defineEmits(['update:modelValue'])
+const emit = defineEmits<{ 'update:modelValue': [boolean] }>()
 
 const { getImageUrl, placeholder } = useImageUrl()
 const advert = ref<CarAdvert | null>(null)
@@ -97,7 +97,7 @@ watch(() => props.modelValue, (open) => {
 })
 
 onMounted(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') defineEmits['update:modelValue']?.(false) }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') emit('update:modelValue', false) }
     window.addEventListener('keydown', onKey)
     onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 })

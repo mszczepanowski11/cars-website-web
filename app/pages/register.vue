@@ -227,6 +227,7 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: 'Zarejestruj się — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 const { register, loginWithFacebook, loading, error } = useAuth()
 const runtimeConfig = useRuntimeConfig()

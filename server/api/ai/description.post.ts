@@ -5,7 +5,8 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     const { brand, model, year, fuel, mileage, power, features, history } = body
 
-    const apiKey = process.env.ANTHROPIC_API_KEY
+    const config = useRuntimeConfig()
+    const apiKey = (config as any).anthropicApiKey || process.env.ANTHROPIC_API_KEY || ''
     if (!apiKey) {
         return { description: generateTemplate(brand, model, year, fuel, mileage, power) }
     }
@@ -19,7 +20,7 @@ export default defineEventHandler(async (event) => {
                 'content-type': 'application/json',
             },
             body: JSON.stringify({
-                model: 'claude-haiku-4-5-20251001',
+                model: 'claude-haiku-4-5-20251022',
                 max_tokens: 1024,
                 messages: [{
                     role: 'user',

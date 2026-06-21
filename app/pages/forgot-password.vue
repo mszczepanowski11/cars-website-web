@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Resetowanie hasła — CARIZO' })
+useHead({ title: 'Przypomnij hasło — CARIZO' })
 const runtimeConfig = useRuntimeConfig()
 
 const email = ref('')

@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Resetowanie hasła — CARIZO' })
+useHead({ title: 'Ustaw nowe hasło — CARIZO' })
 
 const route = useRoute()
 const token = computed(() => route.query.token as string | undefined)

@@ -20,7 +20,11 @@ const newsletterErr = ref('')
 
 async function subscribeNewsletter() {
     const e = newsletterEmail.value.trim()
-    if (!e || !e.includes('@')) return
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRe.test(e)) {
+        newsletterErr.value = 'Podaj prawidłowy adres email.'
+        return
+    }
     newsletterLoading.value = true
     newsletterErr.value = ''
     try {
@@ -77,7 +81,6 @@ async function subscribeNewsletter() {
           <NuxtLink to="/dashboard">Moje konto</NuxtLink>
           <NuxtLink to="/favorites">Ulubione</NuxtLink>
           <NuxtLink to="/my-adverts">Moje ogłoszenia</NuxtLink>
-          <NuxtLink to="/dashboard">Powiadomienia</NuxtLink>
         </div>
 
         <div class="footer-col">

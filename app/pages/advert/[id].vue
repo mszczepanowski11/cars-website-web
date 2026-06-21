@@ -909,7 +909,11 @@
 import type { CarAdvert, Feature, PagedResult, UserProfile, UserStats, Review } from '~/types'
 
 const route = useRoute()
-const id = Number(route.params.id)
+const rawId = Number(route.params.id)
+if (isNaN(rawId) || rawId <= 0) {
+    throw createError({ statusCode: 404, statusMessage: 'Ogłoszenie nie istnieje' })
+}
+const id = rawId
 const config = useRuntimeConfig()
 
 const { shareNative, shareOnFacebook, shareOnX, shareOnWhatsApp, copyLink, copied: linkCopied } = useShare()
@@ -1378,15 +1382,16 @@ async function toggleFollowSeller() {
     }
 }
 
-watch(advert, (a) => {
-    if (!a) return
+useHead(computed(() => {
+    const a = advert.value
+    if (!a) return { title: 'Ogłoszenie — CARIZO' }
     const title = a.title ?? `${a.brand?.name ?? ''} ${a.model?.name ?? ''}`.trim()
     const desc = a.description?.slice(0, 160) ?? `${a.year ?? ''} · ${Number(a.price).toLocaleString('pl')} zł · ${a.city ?? ''}`
     const imgUrl = a.images?.find(i => i.isMain)?.url ?? a.images?.[0]?.url ?? ''
     const imgPath = getImageUrl(imgUrl)
     const absImg = imgPath && imgPath !== placeholder ? (imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`) : ''
     const url = currentUrl()
-    useHead({
+    return {
         title: `${title} — CARIZO`,
         meta: [
             { name: 'description', content: desc },
@@ -1402,8 +1407,8 @@ watch(advert, (a) => {
             ...(absImg ? [{ name: 'twitter:image', content: absImg }] : []),
         ],
         link: [{ rel: 'canonical', href: url }]
-    })
-})
+    }
+}))
 
 watch(activeTab, async (tab) => {
     if (tab === 'Opinie' && sellerReviews.value.length === 0 && advert.value?.userId) {

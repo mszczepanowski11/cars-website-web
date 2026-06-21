@@ -125,6 +125,7 @@
 <script setup lang="ts">
 import type { MonthlyInvoice } from '~/types'
 
+useHead({ title: 'Status płatności — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 const { getMyInvoices, generatePdf } = useInvoices()
 
@@ -141,6 +142,9 @@ const eventId = computed(() => route.query.eventId ? Number(route.query.eventId)
 const invoicePolling = ref(false)
 const latestInvoice = ref<MonthlyInvoice | null>(null)
 const pdfLoading = ref(false)
+const pollTimerRef = ref<ReturnType<typeof setTimeout> | null>(null)
+
+onUnmounted(() => { if (pollTimerRef.value) clearTimeout(pollTimerRef.value) })
 
 async function pollForInvoice(attempts = 0) {
     if (attempts >= 6) { invoicePolling.value = false; return }
@@ -152,7 +156,7 @@ async function pollForInvoice(attempts = 0) {
             return
         }
     } catch { }
-    setTimeout(() => pollForInvoice(attempts + 1), 3000)
+    pollTimerRef.value = setTimeout(() => pollForInvoice(attempts + 1), 3000)
 }
 
 async function downloadInvoicePdf() {

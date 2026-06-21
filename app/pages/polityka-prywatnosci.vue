@@ -38,7 +38,6 @@
                                 <li><strong>Klasyczna metoda uwierzytelniania (E-mail i Hasło):</strong> adres e-mail, imię i nazwisko, numer telefonu kontaktowego oraz hasło dostępu, które zostaje nieodwracalnie przekształcone metodami kryptograficznymi (haszowanie) i nie jest znane Administratorowi.</li>
                                 <li><strong>Logowanie przez konto Google (Google Ireland Limited):</strong> unikalny identyfikator użytkownika (Google ID), adres e-mail, imię i nazwisko oraz informacja o zweryfikowaniu adresu e-mail przez Google.</li>
                                 <li><strong>Logowanie przez konto Facebook (Meta Platforms Ireland Limited):</strong> unikalny identyfikator użytkownika w ekosystemie Meta (Facebook ID), adres e-mail, imię i nazwisko oraz opcjonalnie publiczne zdjęcie profilowe.</li>
-                                <li><strong>Logowanie przez Sign in with Apple (Apple Distribution International Limited):</strong> unikalny identyfikator użytkownika (Apple ID), imię i nazwisko (o ile Użytkownik nie zablokował ich przekazywania) oraz adres e-mail lub zamaskowany adres e-mail wygenerowany przez Apple Email Relay Service.</li>
                             </ul>
                         </li>
                         <li>
@@ -162,7 +161,7 @@
                             <ul>
                                 <li><strong>Inni użytkownicy sieci:</strong> dane kontaktowe sprzedawcy (imię, telefon) są publicznie ujawniane w Ogłoszeniu w celu umożliwienia realizacji transakcji zakupu pojazdu.</li>
                                 <li><strong>Dostawcy usług płatniczych:</strong> zewnętrzni operatorzy instytucji płatniczych obsługujący bramkę transakcyjną w Serwisie. CARIZO nie rejestruje, nie przetwarza ani nie przechowuje pełnych danych kart płatniczych Użytkowników.</li>
-                                <li><strong>Partnerzy technologiczno-reklamowi:</strong> Google Ireland Limited (GA4, Google Ads, Google Maps), Meta Platforms Ireland Limited (Meta Pixel), Microsoft Ireland Operations Limited (Clarity) oraz Apple Distribution International Limited – przetwarzający dane na własnych zasadach, o ile Użytkownik wyraził na to zgodę.</li>
+                                <li><strong>Partnerzy technologiczno-reklamowi:</strong> Google Ireland Limited (GA4, Google Ads, Google Maps), Meta Platforms Ireland Limited (Meta Pixel) oraz Microsoft Ireland Operations Limited (Clarity) – przetwarzający dane na własnych zasadach, o ile Użytkownik wyraził na to zgodę.</li>
                                 <li><strong>Organy uprawnione:</strong> Sądy, Prokuratura, Policja, Prezes UODO lub UOKiK – wyłącznie na podstawie oficjalnego wezwania i w granicach obowiązujących przepisów prawa.</li>
                             </ul>
                         </li>
@@ -171,7 +170,7 @@
 
                 <section class="doc-section">
                     <h2>§7 Międzynarodowe transfery danych (Poza Obszar EOG)</h2>
-                    <p>Z uwagi na wykorzystanie narzędzi analitycznych i marketingowych dostarczanych przez podmioty z grupy kapitałowej Google, Meta, Microsoft oraz Apple, dane telemetryczne i identyfikatory reklamowe Użytkowników mogą być przekazywane do państw trzecich, w tym do Stanów Zjednoczonych Ameryki Północnej. Transfer ten realizowany jest w oparciu o:</p>
+                    <p>Z uwagi na wykorzystanie narzędzi analitycznych i marketingowych dostarczanych przez podmioty z grupy kapitałowej Google, Meta oraz Microsoft, dane telemetryczne i identyfikatory reklamowe Użytkowników mogą być przekazywane do państw trzecich, w tym do Stanów Zjednoczonych Ameryki Północnej. Transfer ten realizowany jest w oparciu o:</p>
                     <ul>
                         <li>Decyzję wykonawczą Komisji Europejskiej z dnia 10 lipca 2023 r. stwierdzającą odpowiedni stopień ochrony danych w ramach EU-US Data Privacy Framework, lub</li>
                         <li>Standardowe Klauzule Umowne (SCC) zatwierdzone przez Komisję Europejską, nakładające na podmioty spoza EOG obowiązek stosowania zabezpieczeń tożsamych z RODO.</li>

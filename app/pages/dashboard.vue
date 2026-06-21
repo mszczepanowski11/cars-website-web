@@ -769,6 +769,7 @@
 import type { CarAdvert, UserProfile, UserStats, Review, Notification, NotificationPreference, SavedSearch, FollowedAdvert, AccountSettings, UpdateProfileDto, SearchAdvertDto } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Panel użytkownika — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { fetchProfile, fetchStats, updateProfile, updatePassword, fetchSettings, updateSettings, deleteAccount } = useUser()
 const { getMyReceivedReviews } = useReviews()
