@@ -286,20 +286,31 @@
                         <div v-if="isFieldVisible('fuelType')" class="field">
                             <label class="flabel">
                                 Rodzaj paliwa <span v-if="isFieldRequired('fuelType')" class="req">*</span>
+                                <span v-if="engineLocked.fuelType" class="field-locked-badge">
+                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika
+                                </span>
                             </label>
                             <SmartSelect
                                 v-model="form.fuelTypeId"
                                 :options="fuelTypeOptions"
                                 placeholder="Wybierz rodzaj paliwa"
                                 prefix-icon="mdi-gas-station-outline"
+                                :disabled="engineLocked.fuelType"
                             />
                         </div>
 
                         <!-- Engine capacity -->
                         <div v-if="isFieldVisible('engine')" class="field">
-                            <label class="flabel">{{ categoryConfig.engineLabel ?? 'Pojemność silnika (cm³)' }}</label>
+                            <label class="flabel">
+                                {{ categoryConfig.engineLabel ?? 'Pojemność silnika (cm³)' }}
+                                <span v-if="engineLocked.capacity" class="field-locked-badge">
+                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika
+                                </span>
+                            </label>
                             <input v-model.number="form.engineCapacity" type="number" class="finput"
-                                :placeholder="categoryConfig.engineHint ?? 'np. 1995'" />
+                                :class="{ 'finput--locked': engineLocked.capacity }"
+                                :placeholder="categoryConfig.engineHint ?? 'np. 1995'"
+                                :readonly="engineLocked.capacity" />
                             <div v-if="categoryConfig.engineHint" class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.engineHint }}
                             </div>
@@ -307,8 +318,16 @@
 
                         <!-- Power -->
                         <div v-if="isFieldVisible('power')" class="field">
-                            <label class="flabel">{{ categoryConfig.powerLabel ?? 'Moc (KM)' }}</label>
-                            <input v-model.number="form.power" type="number" class="finput" placeholder="np. 150" />
+                            <label class="flabel">
+                                {{ categoryConfig.powerLabel ?? 'Moc (KM)' }}
+                                <span v-if="engineLocked.power" class="field-locked-badge">
+                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika
+                                </span>
+                            </label>
+                            <input v-model.number="form.power" type="number" class="finput"
+                                :class="{ 'finput--locked': engineLocked.power }"
+                                placeholder="np. 150"
+                                :readonly="engineLocked.power" />
                         </div>
 
                         <!-- Gearbox (not for machinery/trailers/parts/motorcycles) -->
@@ -964,7 +983,17 @@
 
                     <!-- Description -->
                     <div class="field full-width" style="margin-top:16px">
-                        <label class="flabel">Opis ogłoszenia <span class="req">*</span></label>
+                        <div class="desc-label-row">
+                            <label class="flabel">Opis ogłoszenia <span class="req">*</span></label>
+                            <button type="button" class="btn-ai-desc" :disabled="aiDescLoading" @click="generateAiDescription">
+                                <v-icon :icon="aiDescLoading ? 'mdi-loading' : 'mdi-auto-fix'" size="15"
+                                    :class="{ 'spin': aiDescLoading }" />
+                                {{ aiDescLoading ? 'Generuję...' : '✨ Wygeneruj opis AI' }}
+                            </button>
+                        </div>
+                        <transition name="fade-err">
+                            <div v-if="aiDescError" class="ai-desc-error">{{ aiDescError }}</div>
+                        </transition>
                         <div class="desc-wrap">
                             <textarea v-model="form.description" class="ftextarea" rows="8"
                                 placeholder="Opisz dokładnie stan pojazdu, historię serwisową, powód sprzedaży, co zostało wymienione lub odnowione..."
@@ -1324,6 +1353,28 @@
                         <div v-if="form.featureIds.length < 5" class="sp-tip">
                             <v-icon icon="mdi-circle-small" size="16" />Zaznacz wyposażenie
                         </div>
+                    </div>
+                    <!-- Missing data suggestions -->
+                    <div v-if="adScore < 90" class="sp-missing">
+                        <div class="sp-missing-title">Uzupełnij aby zwiększyć skuteczność:</div>
+                        <div v-if="!form.vin" class="sp-missing-item">
+                            <v-icon icon="mdi-identifier" size="13" />VIN
+                        </div>
+                        <div v-if="selectedFiles.length + existingImages.length < 5" class="sp-missing-item">
+                            <v-icon icon="mdi-image-multiple-outline" size="13" />Minimum 5 zdjęć
+                        </div>
+                        <div v-if="!history.hasServiceBook" class="sp-missing-item">
+                            <v-icon icon="mdi-book-open-outline" size="13" />Historia serwisowa
+                        </div>
+                        <div v-if="(form.description?.length ?? 0) < 500" class="sp-missing-item">
+                            <v-icon icon="mdi-text-long" size="13" />Opis powyżej 500 znaków
+                        </div>
+                        <div v-if="form.featureIds.length < 5" class="sp-missing-item">
+                            <v-icon icon="mdi-format-list-checkbox" size="13" />Wyposażenie (min. 5 opcji)
+                        </div>
+                    </div>
+                    <div v-else class="sp-premium-verified">
+                        <v-icon icon="mdi-crown" size="14" />CARIZO PREMIUM VERIFIED
                     </div>
                 </div>
 
@@ -2058,6 +2109,13 @@ const form = reactive({
 })
 
 const extras = reactive<Record<string, any>>({})
+
+const engineLocked = reactive({
+    fuelType: false,
+    power: false,
+    capacity: false,
+})
+
 const brandTextInput = ref('')
 const modelTextInput = ref('')
 
@@ -2111,6 +2169,9 @@ const stripFeats = [
 const brandName = computed(() => brands.value.find(b => b.id === form.brandId)?.name ?? '')
 const modelName = computed(() => models.value.find(m => m.id === form.modelId)?.name ?? '')
 const fuelTypeName = computed(() => fuelTypes.value.find(f => f.id === form.fuelTypeId)?.name ?? '')
+
+const aiDescLoading = ref(false)
+const aiDescError = ref('')
 
 const previewTitle = computed(() => {
     const parts = [brandName.value, modelName.value].filter(Boolean)
@@ -2466,15 +2527,77 @@ async function onBrand() {
     form.modelId = null; form.generationId = null; form.engineVersionId = null
     models.value = []; generations.value = []; engines.value = []
     if (form.brandId) models.value = await fetchModels(form.brandId)
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
 }
 async function onModel() {
     form.generationId = null; form.engineVersionId = null
     generations.value = []; engines.value = []
     if (form.modelId) generations.value = await fetchGenerations(form.modelId)
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
 }
 async function onGen() {
     form.engineVersionId = null; engines.value = []
     if (form.generationId) engines.value = await fetchEngines(form.generationId)
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
+}
+
+watch(() => form.engineVersionId, (newId) => {
+    if (!newId) {
+        engineLocked.fuelType = false
+        engineLocked.power = false
+        engineLocked.capacity = false
+        return
+    }
+    const engine = engines.value.find((e: any) => e.id === newId)
+    if (!engine) return
+
+    // Auto-fill fuel type from engine spec
+    if ((engine as any).fuelTypeId) {
+        form.fuelTypeId = (engine as any).fuelTypeId
+        engineLocked.fuelType = true
+    }
+    // Auto-fill power
+    const hp = (engine as any).powerHP ?? (engine as any).horsepower
+    if (hp) {
+        form.power = hp
+        engineLocked.power = true
+    }
+    // Auto-fill displacement
+    if ((engine as any).displacement) {
+        form.engineCapacity = (engine as any).displacement
+        engineLocked.capacity = true
+    }
+})
+
+async function generateAiDescription() {
+    aiDescLoading.value = true
+    aiDescError.value = ''
+    try {
+        const res = await $fetch<{ description: string }>('/api/proxy/api/Advert/ai-description', {
+            method: 'POST',
+            body: {
+                brand: brandName.value || brandTextInput.value,
+                model: modelName.value || modelTextInput.value,
+                generation: generations.value.find((g: any) => g.id === form.generationId)?.name ?? '',
+                year: form.year,
+                mileage: form.mileage,
+                fuelType: fuelTypeName.value,
+                powerHP: form.power,
+                engineCapacity: form.engineCapacity,
+                gearbox: gearboxes.value.find((g: any) => g.id === form.gearboxId)?.name ?? '',
+                hasServiceBook: history.hasServiceBook,
+                hasFullServiceHistory: history.hasFullServiceHistory,
+                ownersCount: history.ownersCount,
+                featuresCount: form.featureIds.length,
+            }
+        })
+        form.description = res.description
+    } catch {
+        aiDescError.value = 'Nie udało się wygenerować opisu. Spróbuj ponownie.'
+        setTimeout(() => { aiDescError.value = '' }, 4000)
+    } finally {
+        aiDescLoading.value = false
+    }
 }
 
 // Serialize category extras + history + seller info into description
@@ -3285,6 +3408,67 @@ onMounted(async () => {
     border-color: rgba($red, 0.4);
     &:focus { border-color: $red; }
 }
+
+.field-locked-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #8B0D1D;
+    background: rgba(139, 13, 29, 0.12);
+    border: 1px solid rgba(139, 13, 29, 0.25);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.finput--locked {
+    opacity: 0.75;
+    cursor: not-allowed;
+    background: rgba(255,255,255,0.03);
+}
+
+.desc-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    .flabel { margin-bottom: 0; }
+}
+
+.btn-ai-desc {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #8B0D1D, #b01424);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    white-space: nowrap;
+    &:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.ai-desc-error {
+    background: rgba(139, 13, 29, 0.12);
+    border: 1px solid rgba(139, 13, 29, 0.3);
+    border-radius: 6px;
+    color: #e07070;
+    font-size: 12px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+}
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.spin { animation: spin 0.8s linear infinite; display: inline-block; }
 
 .select-wrap {
     position: relative;
@@ -5257,6 +5441,38 @@ onMounted(async () => {
     color: $text-dim;
 
     .v-icon { color: rgba($red, 0.7); }
+}
+
+.sp-missing {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+}
+.sp-missing-title {
+    font-size: 10px;
+    color: $text-dim;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+.sp-missing-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: $text-muted;
+    padding: 3px 0;
+}
+.sp-premium-verified {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 // ── Preview card (step 7) ──────────────────────────────────────────────────────
