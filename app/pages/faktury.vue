@@ -92,10 +92,6 @@
                                 <div v-if="inv.country">{{ inv.country }}</div>
                                 <div>{{ inv.userEmail }}</div>
                             </div>
-                            <div v-if="inv.kSeFReferenceNumber" class="inv-ksef">
-                                <v-icon icon="mdi-check-circle" size="13" />
-                                KSeF: {{ inv.kSeFReferenceNumber }}
-                            </div>
                         </div>
 
                         <div class="inv-card-actions">
@@ -328,14 +324,6 @@ async function downloadPdf(inv: MonthlyInvoice) {
         if (inv.sentAt) { y += 5; doc.text(`Data opłacenia: ${new Date(inv.sentAt).toLocaleDateString('pl-PL')}`, 14, y) }
         y += 10
 
-        // KSeF badge
-        if (inv.kSeFReferenceNumber) {
-            doc.setFillColor(232, 245, 233); doc.roundedRect(14, y, W - 28, 10, 2, 2, 'F')
-            doc.setFontSize(8); doc.setTextColor(56, 142, 60)
-            doc.text(`✓ Wysłano do KSeF: ${inv.kSeFReferenceNumber}`, 18, y + 6.5)
-            y += 14
-        }
-
         // Footer
         doc.setFontSize(7); doc.setTextColor(160, 160, 160)
         doc.text('Dokument wygenerowany przez system CARIZO | carizo.pl | Nie wymaga podpisu ani pieczęci.', W / 2, 289, { align: 'center' })
@@ -549,16 +537,6 @@ function serviceLabel(t: string) {
     font-size: 12px;
     color: $text-muted;
     line-height: 1.7;
-}
-
-.inv-ksef {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    color: #4caf50;
-    margin-top: 8px;
-    .v-icon { color: #4caf50; }
 }
 
 .inv-card-actions {

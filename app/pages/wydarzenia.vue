@@ -152,6 +152,8 @@
 <script setup lang="ts">
 import type { CarEvent, PagedResult } from '~/types'
 
+useHead({ title: 'Wydarzenia motoryzacyjne — CARIZO' })
+
 const { getEvents, attendEvent, unattendEvent } = useEvents()
 const { getImageUrl } = useImageUrl()
 const { isLoggedIn } = useAuth()

@@ -188,10 +188,6 @@
                                 <v-icon :icon="!advert?.hasDamage ? 'mdi-check-circle' : 'mdi-alert-circle'" size="14" />
                                 <span>Bezwypadkowy</span>
                             </div>
-                            <div class="vtb-item vtb-ok">
-                                <v-icon icon="mdi-check-circle" size="14" />
-                                <span>Telefon zweryfikowany</span>
-                            </div>
                             <div class="vtb-item" :class="seller?.accountType === 'Business' ? 'vtb-ok' : 'vtb-pending'">
                                 <v-icon :icon="seller?.accountType === 'Business' ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
                                 <span>Zweryfikowany sprzedawca</span>
@@ -533,85 +529,14 @@
                     </div>
                 </section>
 
-                <!-- SECTION 6: Secondary tabs (Historia ceny, Finansowanie, Opinie) -->
+                <!-- SECTION 6: Secondary tabs (Finansowanie, Opinie) -->
                 <div class="tabs-wrap" id="tabs-section">
                     <div class="tabs-nav">
                         <button v-for="tab in tabs" :key="tab" class="tab-btn" :class="{ 'tab-active': activeTab === tab }" @click="activeTab = tab">{{ tab }}</button>
                     </div>
 
-                    <!-- Historia ceny -->
-                    <div v-if="activeTab === 'Historia ceny'" class="tab-content">
-                        <div class="price-history-section">
-                            <div class="ph-header">
-                                <v-icon icon="mdi-chart-line" size="18" class="ph-icon" />
-                                <div>
-                                    <div class="ph-title">Historia ceny ogłoszenia</div>
-                                    <div class="ph-sub">Śledź zmiany ceny od momentu dodania ogłoszenia</div>
-                                </div>
-                            </div>
-                            <div class="ph-chart-wrap">
-                                <div class="ph-current-price-row">
-                                    <div class="ph-price-badge">
-                                        <span class="ph-price-val">{{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' zł' : '—' }}</span>
-                                        <span class="ph-price-label">Aktualna cena</span>
-                                    </div>
-                                    <div v-if="priceAnalysis" class="ph-market-badge" :class="priceAnalysis.cls">
-                                        <v-icon :icon="priceAnalysis.icon" size="14" />
-                                        <div>
-                                            <div class="phm-label">{{ priceAnalysis.label }}</div>
-                                            <div class="phm-sub">{{ priceAnalysis.sub }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- SVG price trend chart -->
-                                <div class="ph-graph-area">
-                                    <svg viewBox="0 0 400 120" preserveAspectRatio="none" class="ph-svg" aria-label="Historia ceny">
-                                        <defs>
-                                            <linearGradient id="phGrad" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stop-color="#8B0D1D" stop-opacity="0.3"/>
-                                                <stop offset="100%" stop-color="#8B0D1D" stop-opacity="0"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M0,60 Q100,55 200,58 Q300,62 400,60 L400,120 L0,120 Z" fill="url(#phGrad)" />
-                                        <path d="M0,60 Q100,55 200,58 Q300,62 400,60" fill="none" stroke="#8B0D1D" stroke-width="2" stroke-linecap="round"/>
-                                        <circle cx="400" cy="60" r="5" fill="#8B0D1D" />
-                                    </svg>
-                                    <div class="ph-graph-dates">
-                                        <span>{{ advertPublishedDate }}</span>
-                                        <span>Dziś</span>
-                                    </div>
-                                </div>
-                                <div class="ph-timeline">
-                                    <div class="ph-event ph-event--add">
-                                        <div class="ph-event-dot" />
-                                        <div class="ph-event-body">
-                                            <div class="ph-event-label">Ogłoszenie dodane</div>
-                                            <div class="ph-event-date">{{ advertPublishedDate }}</div>
-                                            <div class="ph-event-price">{{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' zł' : '—' }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="ph-event ph-event--current">
-                                        <div class="ph-event-dot" />
-                                        <div class="ph-event-body">
-                                            <div class="ph-event-label">Cena aktualna</div>
-                                            <div class="ph-event-date">Dziś</div>
-                                            <div class="ph-event-price">{{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' zł' : '—' }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="ph-alert-follow">
-                                    <v-icon icon="mdi-bell-outline" size="15" class="ph-alert-icon" />
-                                    <span>Obserwuj ogłoszenie aby otrzymywać powiadomienia o zmianach ceny.</span>
-                                    <button class="ph-follow-btn" @click="toggleFav">
-                                        {{ isFav ? 'Obserwujesz' : 'Obserwuj' }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Finansowanie -->
-                    <div v-else-if="activeTab === 'Finansowanie'" class="tab-content">
+                    <div v-if="activeTab === 'Finansowanie'" class="tab-content">
                         <div v-if="advert?.price" class="financing-tab">
                             <div class="fin-header">
                                 <div class="fin-price-display">
@@ -984,7 +909,7 @@ const finInquirySuccess = ref(false)
 const mainLayoutRef = ref<HTMLElement | null>(null)
 
 const activeImg = ref(0)
-const activeTab = ref('Historia ceny')
+const activeTab = ref('Finansowanie')
 const showFullDesc = ref(false)
 const openEquipGroups = ref(new Set<string>())
 const isFav = ref(false)
@@ -1045,7 +970,7 @@ function scrollToTabs() {
     })
 }
 
-const tabs = ['Historia ceny', 'Finansowanie', 'Opinie']
+const tabs = ['Finansowanie', 'Opinie']
 
 // ── Parse structured description sections ─────────────────────────────────────
 const parsedTechData = computed(() => {
@@ -1382,33 +1307,39 @@ async function toggleFollowSeller() {
     }
 }
 
-useHead(computed(() => {
-    const a = advert.value
-    if (!a) return { title: 'Ogłoszenie — CARIZO' }
-    const title = a.title ?? `${a.brand?.name ?? ''} ${a.model?.name ?? ''}`.trim()
-    const desc = a.description?.slice(0, 160) ?? `${a.year ?? ''} · ${Number(a.price).toLocaleString('pl')} zł · ${a.city ?? ''}`
+watch(advert, (a) => {
+    if (!a) return
+    const brandName = a.brand?.name ?? ''
+    const modelName = a.model?.name ?? ''
+    const year = a.year ?? ''
+    const pageTitle = [year, brandName, modelName].filter(Boolean).join(' ') + ' – CARIZO'
+    const ogTitle = [year, brandName, modelName].filter(Boolean).join(' ')
+    const rawDesc = a.description
+        ? a.description.replace(/📋 Dane techniczne:[\s\S]*$/, '').replace(/🔍 Historia pojazdu:[\s\S]*$/, '').trim()
+        : ''
+    const desc = rawDesc.length > 0
+        ? rawDesc.slice(0, 160)
+        : [year, brandName, modelName, a.fuelType?.name, a.mileage ? `${Number(a.mileage).toLocaleString('pl')} km` : '', a.price ? `${Number(a.price).toLocaleString('pl')} zł` : ''].filter(Boolean).join(' · ').slice(0, 160)
     const imgUrl = a.images?.find(i => i.isMain)?.url ?? a.images?.[0]?.url ?? ''
     const imgPath = getImageUrl(imgUrl)
     const absImg = imgPath && imgPath !== placeholder ? (imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`) : ''
     const url = currentUrl()
-    return {
-        title: `${title} — CARIZO`,
-        meta: [
-            { name: 'description', content: desc },
-            { property: 'og:type', content: 'website' },
-            { property: 'og:url', content: url },
-            { property: 'og:title', content: title },
-            { property: 'og:description', content: desc },
-            ...(absImg ? [{ property: 'og:image', content: absImg }] : []),
-            { property: 'og:site_name', content: 'CARIZO' },
-            { name: 'twitter:card', content: 'summary_large_image' },
-            { name: 'twitter:title', content: title },
-            { name: 'twitter:description', content: desc },
-            ...(absImg ? [{ name: 'twitter:image', content: absImg }] : []),
-        ],
-        link: [{ rel: 'canonical', href: url }]
-    }
-}))
+    useSeoMeta({
+        title: pageTitle,
+        description: desc,
+        ogType: 'website',
+        ogUrl: url,
+        ogTitle: ogTitle,
+        ogDescription: desc,
+        ...(absImg ? { ogImage: absImg } : {}),
+        ogSiteName: 'CARIZO',
+        twitterCard: 'summary_large_image',
+        twitterTitle: ogTitle,
+        twitterDescription: desc,
+        ...(absImg ? { twitterImage: absImg } : {}),
+    })
+    useHead({ link: [{ rel: 'canonical', href: url }] })
+})
 
 watch(activeTab, async (tab) => {
     if (tab === 'Opinie' && sellerReviews.value.length === 0 && advert.value?.userId) {

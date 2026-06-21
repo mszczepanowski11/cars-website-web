@@ -22,12 +22,12 @@
                     Faktura zostanie wysłana na Twój adres e-mail.
                 </p>
 
-                <!-- Invoice status polling -->
-                <div v-if="invoicePolling" class="invoice-status invoice-pending">
-                    <v-icon icon="mdi-loading" size="16" class="spin" />
-                    Generuję fakturę...
+                <!-- Invoice info -->
+                <div class="invoice-status invoice-pending">
+                    <v-icon icon="mdi-receipt-outline" size="16" />
+                    Faktura zbiorcza zostanie wygenerowana 1. dnia następnego miesiąca i wysłana na Twój e-mail.
                 </div>
-                <div v-else-if="latestInvoice" class="invoice-status invoice-ready">
+                <div v-if="latestInvoice" class="invoice-status invoice-ready">
                     <v-icon icon="mdi-receipt-check-outline" size="16" />
                     Faktura {{ latestInvoice.invoiceNumber }} jest gotowa
                     <button class="inv-dl-btn" :disabled="pdfLoading" @click="downloadInvoicePdf">
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="return-actions">
-                    <NuxtLink v-if="eventId" :to="`/events/${eventId}`" class="btn-red">
+                    <NuxtLink v-if="eventId" :to="`/wydarzenie/${eventId}`" class="btn-red">
                         <v-icon icon="mdi-calendar-star" size="17" />
                         Zobacz wydarzenie
                     </NuxtLink>
@@ -46,7 +46,7 @@
                         <v-icon icon="mdi-eye-outline" size="17" />
                         Zobacz ogłoszenie
                     </NuxtLink>
-                    <NuxtLink v-if="eventId" to="/events" class="btn-outline">
+                    <NuxtLink v-if="eventId" to="/wydarzenia" class="btn-outline">
                         <v-icon icon="mdi-calendar-outline" size="15" />
                         Wszystkie wydarzenia
                     </NuxtLink>
@@ -85,7 +85,7 @@
                         <v-icon icon="mdi-refresh" size="17" />
                         Spróbuj ponownie
                     </NuxtLink>
-                    <NuxtLink v-if="eventId" to="/events" class="btn-outline">
+                    <NuxtLink v-if="eventId" to="/wydarzenia" class="btn-outline">
                         Wszystkie wydarzenia
                     </NuxtLink>
                     <NuxtLink v-else to="/my-adverts" class="btn-outline">
@@ -139,7 +139,6 @@ const status = computed(() => {
 const advertId = computed(() => route.query.advertId ? Number(route.query.advertId) : null)
 const eventId = computed(() => route.query.eventId ? Number(route.query.eventId) : null)
 
-const invoicePolling = ref(false)
 const latestInvoice = ref<MonthlyInvoice | null>(null)
 const pdfLoading = ref(false)
 const pollTimerRef = ref<ReturnType<typeof setTimeout> | null>(null)
@@ -166,13 +165,6 @@ async function downloadInvoicePdf() {
     catch (e) { console.error(e) }
     finally { pdfLoading.value = false }
 }
-
-onMounted(() => {
-    if (status.value === 'success') {
-        invoicePolling.value = true
-        pollForInvoice()
-    }
-})
 </script>
 
 <style lang="scss" scoped>

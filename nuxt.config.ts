@@ -11,10 +11,6 @@ export default defineNuxtConfig({
     typeCheck: false, // TODO: enable once all type errors are resolved
   },
 
-  app: {
-    pageTransition: { name: 'page-fade', mode: 'out-in' },
-  },
-
   nitro: {
     preset: 'node_server',
     routeRules: {

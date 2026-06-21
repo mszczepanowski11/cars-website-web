@@ -41,39 +41,38 @@ export default defineEventHandler(async (event) => {
         }
     }
 
-    async function proxyFetch(options: Parameters<typeof $fetch>[1]) {
+    const headers = buildHeaders(token)
+    const hasBody = !['GET', 'HEAD', 'DELETE'].includes(method)
+
+    async function proxyFetch(body?: FormData | any) {
+        const opts: any = { method, headers }
+        if (body !== undefined) opts.body = body
         try {
-            return await $fetch(targetUrl.toString(), options)
+            return await $fetch(targetUrl.toString(), opts)
         } catch (err: any) {
             const statusCode = err?.response?.status ?? err?.statusCode ?? 500
             if (statusCode === 401 && token) {
                 const newToken = await tryRefreshToken()
                 if (newToken) {
                     try {
-                        const retryOpts = { ...options, headers: { ...buildHeaders(newToken), ...(options as any)?.headers } }
-                        return await $fetch(targetUrl.toString(), retryOpts)
+                        return await $fetch(targetUrl.toString(), { ...opts, headers: buildHeaders(newToken) })
                     } catch (retryErr: any) {
                         const rc = retryErr?.response?.status ?? retryErr?.statusCode ?? 500
-                        throw createError({ statusCode: rc, statusMessage: retryErr?.data?.message ?? 'Request failed' })
+                        const raw = retryErr?.data ?? retryErr?.response?._data ?? retryErr?.message ?? 'Request failed'
+                        const msg = typeof raw === 'string' ? raw : JSON.stringify(raw)
+                        throw createError({ statusCode: rc, statusMessage: msg.slice(0, 500) })
                     }
                 }
             }
-            const backendData = err?.data ?? err?.response?._data
-            const message =
-                (typeof backendData?.message === 'string' ? backendData.message : null) ??
-                err?.statusMessage ??
-                err?.message ??
-                'Request failed'
-            throw createError({ statusCode, statusMessage: message, data: backendData })
+            const raw = err?.data ?? err?.response?._data ?? err?.message ?? 'Proxy error'
+            const msg = typeof raw === 'string' ? raw : JSON.stringify(raw)
+            console.error(`[proxy] ${method} ${path} → ${statusCode}: ${msg}`)
+            throw createError({ statusCode, statusMessage: msg.slice(0, 500) })
         }
     }
 
-    const headers = buildHeaders(token)
-
-    const hasBody = !['GET', 'HEAD', 'DELETE'].includes(method)
-
     if (!hasBody) {
-        return proxyFetch({ method: method as any, headers })
+        return proxyFetch()
     }
 
     const contentType = getRequestHeader(event, 'content-type') ?? ''
@@ -93,11 +92,11 @@ export default defineEventHandler(async (event) => {
                     formData.append(part.name ?? 'field', part.data.toString('utf-8'))
                 }
             }
-            return proxyFetch({ method: method as any, body: formData, headers })
+            return proxyFetch(formData)
         }
     }
 
     const body = await readBody(event)
     headers['Content-Type'] = 'application/json'
-    return proxyFetch({ method: method as any, body, headers })
+    return proxyFetch(body)
 })
