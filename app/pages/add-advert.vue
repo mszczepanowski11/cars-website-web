@@ -988,7 +988,7 @@
                             <button type="button" class="btn-ai-desc" :disabled="aiDescLoading" @click="generateAiDescription">
                                 <v-icon :icon="aiDescLoading ? 'mdi-loading' : 'mdi-auto-fix'" size="15"
                                     :class="{ 'spin': aiDescLoading }" />
-                                {{ aiDescLoading ? 'Generuję...' : '✨ Wygeneruj opis AI' }}
+                                {{ aiDescLoading ? 'Generuję...' : '✨ Wygeneruj opis' }}
                             </button>
                         </div>
                         <transition name="fade-err">
@@ -2569,35 +2569,74 @@ watch(() => form.engineVersionId, (newId) => {
     }
 })
 
-async function generateAiDescription() {
+function generateAiDescription() {
     aiDescLoading.value = true
     aiDescError.value = ''
-    try {
-        const res = await $fetch<{ description: string }>('/api/proxy/api/Advert/ai-description', {
-            method: 'POST',
-            body: {
-                brand: brandName.value || brandTextInput.value,
-                model: modelName.value || modelTextInput.value,
-                generation: generations.value.find((g: any) => g.id === form.generationId)?.name ?? '',
-                year: form.year,
-                mileage: form.mileage,
-                fuelType: fuelTypeName.value,
-                powerHP: form.power,
-                engineCapacity: form.engineCapacity,
-                gearbox: gearboxes.value.find((g: any) => g.id === form.gearboxId)?.name ?? '',
-                hasServiceBook: history.hasServiceBook,
-                hasFullServiceHistory: history.hasFullServiceHistory,
-                ownersCount: history.ownersCount,
-                featuresCount: form.featureIds.length,
-            }
-        })
-        form.description = res.description
-    } catch {
-        aiDescError.value = 'Nie udało się wygenerować opisu. Spróbuj ponownie.'
-        setTimeout(() => { aiDescError.value = '' }, 4000)
-    } finally {
-        aiDescLoading.value = false
+
+    const brand = brandName.value || brandTextInput.value || ''
+    const model = modelName.value || modelTextInput.value || ''
+    const gen = generations.value.find((g: any) => g.id === form.generationId)?.name ?? ''
+    const year = form.year
+    const mileage = form.mileage
+    const fuel = fuelTypeName.value || ''
+    const power = form.power
+    const capacity = form.engineCapacity
+    const gearbox = (gearboxes.value.find((g: any) => g.id === form.gearboxId)?.name ?? '') as string
+    const owners = history.ownersCount
+    const serviceBook = history.hasServiceBook
+    const fullHistory = history.hasFullServiceHistory
+    const featCount = form.featureIds.length
+
+    const parts: string[] = []
+
+    // Intro
+    const carLabel = [brand, model, gen, year ? `(${year})` : ''].filter(Boolean).join(' ')
+    if (carLabel) {
+        parts.push(`Sprzedam ${carLabel}.`)
     }
+
+    // Technical block
+    const techParts: string[] = []
+    if (fuel) techParts.push(`silnik ${fuel.toLowerCase()}`)
+    if (capacity) techParts.push(`${capacity} cm³`)
+    if (power) techParts.push(`${power} KM`)
+    const gearboxLower = gearbox.toLowerCase()
+    if (gearboxLower) {
+        const gearLabel = gearboxLower.includes('automat') || gearboxLower.includes('auto') ? 'skrzynia automatyczna' : 'skrzynia manualna'
+        techParts.push(gearLabel)
+    }
+    if (techParts.length) {
+        parts.push(`Pojazd wyposażony w ${techParts.join(', ')}.`)
+    }
+
+    // Mileage
+    if (mileage != null && mileage > 0) {
+        parts.push(`Przebieg wynosi ${mileage.toLocaleString('pl-PL')} km.`)
+    }
+
+    // Service history
+    if (fullHistory) {
+        parts.push('Samochód posiada pełną udokumentowaną historię serwisową — wszystkie przeglądy wykonywane terminowo w autoryzowanym serwisie.')
+    } else if (serviceBook) {
+        parts.push('Do pojazdu dołączona jest książka serwisowa z wpisami.')
+    }
+
+    // Owners
+    if (owners != null && owners > 0) {
+        const ownerLabel = owners === 1 ? 'jednego właściciela' : `${owners} właścicieli`
+        parts.push(`Auto było w rękach ${ownerLabel}.`)
+    }
+
+    // Equipment
+    if (featCount > 0) {
+        parts.push(`Pojazd posiada ${featCount} pozycji wyposażenia dodatkowego — pełna lista widoczna w ogłoszeniu.`)
+    }
+
+    // Closing
+    parts.push('Samochód do jazdy, bez ukrytych wad. Możliwość oględzin i jazdy próbnej po wcześniejszym umówieniu. Cena do negocjacji.')
+
+    form.description = parts.join(' ')
+    aiDescLoading.value = false
 }
 
 // Serialize category extras + history + seller info into description
