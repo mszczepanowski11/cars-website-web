@@ -800,6 +800,10 @@ const subscribeError = ref('')
 
 async function subscribeNewsletter() {
     if (!email.value.trim()) return
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        subscribeError.value = 'Podaj prawidłowy adres email.'
+        return
+    }
     subscribeLoading.value = true
     subscribeError.value = ''
     subscribeSuccess.value = false

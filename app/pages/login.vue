@@ -104,7 +104,8 @@ const facebookAppId    = runtimeConfig.public.facebookAppId as string
 
 const redirectTo = computed(() => {
     const r = route.query.redirect
-    return typeof r === 'string' && r.startsWith('/') ? r : '/'
+    // Prevent open redirect: must start with / but NOT with // (protocol-relative URLs)
+    return typeof r === 'string' && /^\/[^/]/.test(r) ? r : '/'
 })
 
 onMounted(() => {

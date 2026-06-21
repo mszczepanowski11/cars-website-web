@@ -126,11 +126,11 @@ function scrollToHighlighted() {
     })
 }
 
-onMounted(() => {
-    document.addEventListener('click', (e) => {
-        if (wrapRef.value && !wrapRef.value.contains(e.target as Node)) close()
-    })
-})
+const _outsideClickHandler = (e: MouseEvent) => {
+    if (wrapRef.value && !wrapRef.value.contains(e.target as Node)) close()
+}
+onMounted(() => document.addEventListener('click', _outsideClickHandler))
+onUnmounted(() => document.removeEventListener('click', _outsideClickHandler))
 </script>
 
 <style lang="scss" scoped>
