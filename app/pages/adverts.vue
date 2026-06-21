@@ -31,19 +31,35 @@
             <div class="container">
                 <div class="search-card" :class="{ 'search-card--focused': searchFocused }">
                     <div class="sc-main">
-                        <div class="sc-input-wrap">
+                        <div class="sc-input-wrap" style="position:relative">
                             <v-icon icon="mdi-magnify" size="20" class="sc-icon" />
                             <input
                                 v-model="f.textSearch"
                                 class="sc-input"
                                 placeholder="Wyszukaj markę, model, słowo kluczowe..."
-                                @keyup.enter="load(1)"
-                                @focus="searchFocused = true"
-                                @blur="searchFocused = false"
+                                autocomplete="off"
+                                @keyup.enter="load(1); showSuggestions = false"
+                                @focus="searchFocused = true; showSuggestions = true"
+                                @blur="setTimeout(() => { showSuggestions = false }, 150)"
+                                @input="showSuggestions = true"
                             />
-                            <button v-if="f.textSearch" class="sc-clear" @click="f.textSearch = ''">
+                            <button v-if="f.textSearch" class="sc-clear" @click="f.textSearch = ''; showSuggestions = false">
                                 <v-icon icon="mdi-close" size="16" />
                             </button>
+                            <!-- Autocomplete dropdown -->
+                            <div v-if="showSuggestions && autocompleteItems.length" class="ac-dropdown">
+                                <button
+                                    v-for="item in autocompleteItems"
+                                    :key="item.type + item.id"
+                                    type="button"
+                                    class="ac-item"
+                                    @mousedown.prevent="applyAutocomplete(item)"
+                                >
+                                    <v-icon :icon="item.type === 'brand' ? 'mdi-car-outline' : 'mdi-car-settings'" size="14" class="ac-icon" />
+                                    <span class="ac-name">{{ item.name }}</span>
+                                    <span class="ac-type">{{ item.type === 'brand' ? 'Marka' : 'Model' }}</span>
+                                </button>
+                            </div>
                         </div>
                         <template v-if="filterConfig.showBrandModel">
                         <div class="sc-divider" />
@@ -809,6 +825,33 @@ async function loadMore() {
     } finally {
         loadingMore.value = false
     }
+}
+
+// ── Autocomplete ──────────────────────────────────────────────────────────────
+const showSuggestions = ref(false)
+const autocompleteItems = computed(() => {
+    const q = f.textSearch.trim().toLowerCase()
+    if (q.length < 2) return []
+    const brandMatches = brands.value
+        .filter(b => b.name.toLowerCase().includes(q))
+        .slice(0, 4)
+        .map(b => ({ type: 'brand' as const, id: b.id, name: b.name }))
+    const modelMatches = models.value
+        .filter(m => m.name.toLowerCase().includes(q))
+        .slice(0, 3)
+        .map(m => ({ type: 'model' as const, id: m.id, name: m.name }))
+    return [...brandMatches, ...modelMatches].slice(0, 6)
+})
+function applyAutocomplete(item: { type: 'brand' | 'model'; id: number; name: string }) {
+    f.textSearch = ''
+    showSuggestions.value = false
+    if (item.type === 'brand') {
+        f.brandId = item.id
+        onBrandChange()
+    } else {
+        f.modelId = item.id
+    }
+    load(1)
 }
 
 // Fetch favorites client-side only; also load category-specific brands if URL has categoryId
@@ -1612,5 +1655,58 @@ onMounted(async () => {
     color: $red;
     margin-bottom: 14px;
     .fcb-clear { margin-left: auto; background: transparent; border: none; color: $red; cursor: pointer; display: flex; align-items: center; padding: 0; }
+}
+
+// ── Autocomplete dropdown ────────────────────────────────────────────────────────────────────
+.ac-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #0d0d0d;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: $r-md;
+    overflow: hidden;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.ac-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.12s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: rgba(255,255,255,0.05); }
+}
+
+.ac-icon { color: $text-dim; flex-shrink: 0; }
+
+.ac-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text;
+}
+
+.ac-type {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $text-dim;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid $border;
+    border-radius: 4px;
+    padding: 2px 6px;
 }
 </style>
