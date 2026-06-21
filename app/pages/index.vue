@@ -1055,20 +1055,22 @@ if (homeData.value) {
 }
 statsLoading.value = false
 
-const [mvRes, pcRes] = await Promise.allSettled([
-    $fetch<{items: CarAdvert[]}|CarAdvert[]>('/api/proxy/api/Advert/most-viewed', { query: { count: 8 } }),
-    $fetch<{items: CarAdvert[]}|CarAdvert[]>('/api/proxy/api/Advert/premium-collection', { query: { count: 8 } })
-])
-if (mvRes.status === 'fulfilled') {
-    const mv = mvRes.value
-    mostViewed.value = Array.isArray(mv) ? mv : (mv as any).items ?? []
-}
-if (pcRes.status === 'fulfilled') {
-    const pc = pcRes.value
-    premiumCollection.value = Array.isArray(pc) ? pc : (pc as any).items ?? []
-}
-if (mostViewed.value.length > 0) {
-    carOfWeek.value = mostViewed.value[0]
+// most-viewed and premium-collection fetched client-side only to avoid SSR crashes
+if (import.meta.client) {
+    Promise.allSettled([
+        $fetch<CarAdvert[]>('/api/proxy/api/Advert/most-viewed', { query: { count: 8 } }).catch(() => [] as CarAdvert[]),
+        $fetch<CarAdvert[]>('/api/proxy/api/Advert/premium-collection', { query: { count: 8 } }).catch(() => [] as CarAdvert[])
+    ]).then(([mvRes, pcRes]) => {
+        if (mvRes.status === 'fulfilled') {
+            const mv = mvRes.value
+            mostViewed.value = Array.isArray(mv) ? mv : (mv as any).items ?? []
+        }
+        if (pcRes.status === 'fulfilled') {
+            const pc = pcRes.value
+            premiumCollection.value = Array.isArray(pc) ? pc : (pc as any).items ?? []
+        }
+        if (mostViewed.value.length > 0) carOfWeek.value = mostViewed.value[0]
+    })
 }
 
 onMounted(async () => {
