@@ -454,7 +454,7 @@ useSeoMeta({
 
 const route = useRoute()
 const router = useRouter()
-const { fetchBrands, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors } = useTaxonomy()
 const { fetchCategories } = useCategories()
 const { fetchFavoriteIds } = useFavorites()
 
@@ -601,9 +601,20 @@ const paginationPages = computed(() => {
     return pages
 })
 
-function selectCategory(cat: CategoryWithCount) {
-    f.categoryId = f.categoryId === cat.id ? null : cat.id
+async function selectCategory(cat: CategoryWithCount) {
+    const newId = f.categoryId === cat.id ? null : cat.id
+    if (newId !== f.categoryId) {
+        f.brandId = null
+        f.modelId = null
+        models.value = []
+    }
+    f.categoryId = newId
     mobileFiltersOpen.value = false
+    if (f.categoryId) {
+        fetchBrandsByCategory(f.categoryId).then(b => { dynamicBrands.value = b }).catch(() => { dynamicBrands.value = null })
+    } else {
+        dynamicBrands.value = null
+    }
     load(1)
 }
 
@@ -682,7 +693,9 @@ const { data: taxoData } = await useAsyncData('taxonomy', async () => {
     return { brands: b, fuelTypes: ft, bodyTypes: bt, gearboxes: gb, driveTypes: dt, colors: c, categories: cats, initialModels: m }
 })
 
-const brands     = computed(() => taxoData.value?.brands     ?? [])
+const allBrands  = computed(() => taxoData.value?.brands     ?? [])
+const dynamicBrands = ref<{ id: number; name: string }[] | null>(null)
+const brands     = computed(() => dynamicBrands.value ?? allBrands.value)
 const fuelTypes  = computed(() => taxoData.value?.fuelTypes  ?? [])
 const bodyTypes  = computed(() => taxoData.value?.bodyTypes  ?? [])
 const gearboxes  = computed(() => taxoData.value?.gearboxes  ?? [])
@@ -770,8 +783,13 @@ async function loadMore() {
     }
 }
 
-// Fetch favorites client-side only
-onMounted(() => { fetchFavoriteIds() })
+// Fetch favorites client-side only; also load category-specific brands if URL has categoryId
+onMounted(async () => {
+    fetchFavoriteIds()
+    if (f.categoryId) {
+        try { dynamicBrands.value = await fetchBrandsByCategory(f.categoryId) } catch { dynamicBrands.value = null }
+    }
+})
 </script>
 
 <style lang="scss" scoped>

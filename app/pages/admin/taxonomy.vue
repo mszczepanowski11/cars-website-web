@@ -70,7 +70,7 @@
                                 <td class="td-id">#{{ f.id }}</td>
                                 <td class="td-name">{{ f.name }}</td>
                                 <td><span class="cat-badge">{{ f.category?.name ?? '—' }}</span></td>
-                                <td class="td-dim">{{ f.category?.vehicleCategoryId ? `ID ${f.category.vehicleCategoryId}` : 'Wszystkie' }}</td>
+                                <td class="td-dim">{{ f.category?.vehicleCategoryId ? (vehicleCategories.find((vc: any) => vc.id === f.category.vehicleCategoryId)?.name ?? `ID ${f.category.vehicleCategoryId}`) : 'Wszystkie' }}</td>
                                 <td>
                                     <button class="btn-action btn-delete" @click="deleteFeature(f.id, f.name)">
                                         <v-icon icon="mdi-delete-outline" size="13" />Usuń
