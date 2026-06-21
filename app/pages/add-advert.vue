@@ -427,10 +427,17 @@
 
                                     <!-- Number -->
                                     <div v-else-if="ef.type === 'number'" :class="['field', ef.fullWidth ? 'full-width' : '']">
-                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <label class="flabel">
+                                            {{ ef.label }} <span v-if="ef.required" class="req">*</span>
+                                            <span v-if="efIsLocked(ef.key)" class="field-locked-badge">
+                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika
+                                            </span>
+                                        </label>
                                         <div class="input-unit-wrap">
-                                            <input v-model.number="extras[ef.key]" type="number" class="finput"
-                                                :placeholder="ef.placeholder ?? ''" />
+                                            <input v-model.number="extras[ef.key]" type="number"
+                                                :class="['finput', efIsLocked(ef.key) ? 'finput--locked' : '']"
+                                                :placeholder="ef.placeholder ?? ''"
+                                                :readonly="efIsLocked(ef.key)" />
                                             <span v-if="ef.unit" class="input-unit-badge">{{ ef.unit }}</span>
                                         </div>
                                         <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
@@ -2170,11 +2177,17 @@ const form = reactive({
 
 const extras = reactive<Record<string, any>>({})
 
-const engineLocked = reactive({
-    fuelType: false,
-    power: false,
-    capacity: false,
-})
+const engineLocked = reactive({ fuelType: false, power: false, capacity: false, consumptionCity: false, consumptionHwy: false, consumptionMix: false })
+
+const EF_LOCK_MAP: Record<string, keyof typeof engineLocked> = {
+    fuelConsumptionCity: 'consumptionCity',
+    fuelConsumptionHwy: 'consumptionHwy',
+    fuelConsumptionMix: 'consumptionMix',
+}
+function efIsLocked(key: string): boolean {
+    const lockKey = EF_LOCK_MAP[key]
+    return lockKey ? engineLocked[lockKey] : false
+}
 
 const brandTextInput = ref('')
 const modelTextInput = ref('')
@@ -2607,20 +2620,20 @@ async function onBrand() {
     form.modelId = null; form.generationId = null; form.engineVersionId = null
     models.value = []; generations.value = []; engines.value = []
     if (form.brandId) models.value = await fetchModels(form.brandId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
     await loadContextFeatures()
 }
 async function onModel() {
     form.generationId = null; form.engineVersionId = null
     generations.value = []; engines.value = []
     if (form.modelId) generations.value = await fetchGenerations(form.modelId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
     await loadContextFeatures()
 }
 async function onGen() {
     form.engineVersionId = null; engines.value = []
     if (form.generationId) engines.value = await fetchEngines(form.generationId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
 }
 
 watch(() => form.engineVersionId, (newId) => {
@@ -2628,6 +2641,9 @@ watch(() => form.engineVersionId, (newId) => {
         engineLocked.fuelType = false
         engineLocked.power = false
         engineLocked.capacity = false
+        engineLocked.consumptionCity = false
+        engineLocked.consumptionHwy = false
+        engineLocked.consumptionMix = false
         return
     }
     const engine = engines.value.find((e: any) => e.id === newId)
@@ -2648,6 +2664,19 @@ watch(() => form.engineVersionId, (newId) => {
     if ((engine as any).displacement) {
         form.engineCapacity = (engine as any).displacement
         engineLocked.capacity = true
+    }
+    // Auto-fill fuel consumption
+    if ((engine as any).fuelConsumptionCity != null) {
+        extras.fuelConsumptionCity = (engine as any).fuelConsumptionCity
+        engineLocked.consumptionCity = true
+    }
+    if ((engine as any).fuelConsumptionHighway != null) {
+        extras.fuelConsumptionHwy = (engine as any).fuelConsumptionHighway
+        engineLocked.consumptionHwy = true
+    }
+    if ((engine as any).fuelConsumptionCombined != null) {
+        extras.fuelConsumptionMix = (engine as any).fuelConsumptionCombined
+        engineLocked.consumptionMix = true
     }
 })
 
