@@ -29,6 +29,14 @@ function onQuickView(e: Event) {
     emit('quickView', props.advert.id)
 }
 
+const isParts = computed(() => props.advert.category?.slug === 'czesci' || !!props.advert.catalogNumber)
+
+const compatibilityCount = computed(() => {
+    const c = props.advert.compatibility
+    if (!c) return 0
+    return c.split(',').filter(s => s.trim().length > 0).length
+})
+
 const gearboxShort = computed(() => {
     const n = props.advert.gearbox?.name ?? ''
     if (!n) return null
@@ -104,7 +112,20 @@ const monthlyRate = computed(() => {
         </div>
         <div class="car-body">
             <h3 class="car-title">{{ advert.title }}</h3>
-            <div class="car-meta">
+            <!-- Parts-specific meta -->
+            <div v-if="isParts" class="car-meta">
+                <span v-if="advert.catalogNumber" class="meta-catalog">
+                    <v-icon icon="mdi-barcode-scan" size="14" class="mr-1" />{{ advert.catalogNumber }}
+                </span>
+                <span v-if="advert.bodySubtype" class="meta-part-cat">
+                    <v-icon icon="mdi-cog-outline" size="14" class="mr-1" />{{ advert.bodySubtype }}
+                </span>
+                <span v-if="compatibilityCount > 0" class="meta-compat">
+                    <v-icon icon="mdi-car-multiple" size="14" class="mr-1" />pasuje do {{ compatibilityCount }} {{ compatibilityCount === 1 ? 'modelu' : 'modeli' }}
+                </span>
+            </div>
+            <!-- Standard vehicle meta -->
+            <div v-else class="car-meta">
                 <span><v-icon icon="mdi-calendar-outline" size="14" class="mr-1" />{{ advert.year }}</span>
                 <span><v-icon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–' }}</span>
                 <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage?.toLocaleString('pl-PL') ?? '—' }} km</span>
@@ -268,6 +289,25 @@ const monthlyRate = computed(() => {
     margin-bottom: 12px;
 
     span { display: flex; align-items: center; }
+}
+
+.meta-catalog {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: $text-muted;
+}
+
+.meta-part-cat {
+    text-transform: capitalize;
+}
+
+.meta-compat {
+    color: rgb(34, 197, 94);
+    font-weight: 600;
 }
 
 .car-price {

@@ -48,6 +48,13 @@ export interface CarAdvert {
     isHidden?: boolean; isActive?: boolean
     viewCount?: number; favoriteCount?: number; soldAt?: string; expiresAt?: string
     slug?: string; updatedAt?: string
+
+    // Commercial / truck / trailer
+    axleCount?: number; payload?: number; cargoLength?: number; cargoHeight?: number; volume?: number
+    hasRetarder?: boolean; hasTachograph?: boolean; bodySubtype?: string
+
+    // Parts specific
+    catalogNumber?: string; compatibility?: string
 }
 
 export interface PagedResult<T> { items: T[]; totalCount: number }
