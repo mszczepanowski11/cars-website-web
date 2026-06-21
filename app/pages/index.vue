@@ -475,7 +475,7 @@
                             {{ subscribeLoading ? 'Zapisywanie...' : 'Zapisz się' }}
                         </button>
                     </div>
-                    <p v-if="subscribeSuccess" class="subscribe-feedback subscribe-ok">Dziękujemy! Zostałeś zapisany do newslettera.</p>
+                    <p v-if="subscribeSuccess" class="subscribe-feedback subscribe-ok">{{ subscribeMessage }}</p>
                     <p v-if="subscribeError" class="subscribe-feedback subscribe-err">{{ subscribeError }}</p>
                 </div>
             </div>
@@ -796,6 +796,7 @@ function formatEventDate(dateStr: string): string {
 const email = ref('')
 const subscribeLoading = ref(false)
 const subscribeSuccess = ref(false)
+const subscribeMessage = ref('')
 const subscribeError = ref('')
 
 async function subscribeNewsletter() {
@@ -807,8 +808,10 @@ async function subscribeNewsletter() {
     subscribeLoading.value = true
     subscribeError.value = ''
     subscribeSuccess.value = false
+    subscribeMessage.value = ''
     try {
-        await $fetch('/api/proxy/api/Newsletter/subscribe', { method: 'POST', body: { email: email.value } })
+        const res = await $fetch<{ message: string }>('/api/proxy/api/Newsletter/subscribe', { method: 'POST', body: { email: email.value } })
+        subscribeMessage.value = res?.message ?? 'Sprawdź swoją skrzynkę email i kliknij link potwierdzający.'
         subscribeSuccess.value = true
         email.value = ''
     } catch (e: any) {
