@@ -165,6 +165,15 @@ async function downloadInvoicePdf() {
     catch (e) { console.error(e) }
     finally { pdfLoading.value = false }
 }
+
+onMounted(async () => {
+    if (status.value === 'success') {
+        try {
+            const result = await getMyInvoices()
+            if (result?.items?.length) latestInvoice.value = result.items[0]
+        } catch (e) { console.error(e) }
+    }
+})
 </script>
 
 <style lang="scss" scoped>

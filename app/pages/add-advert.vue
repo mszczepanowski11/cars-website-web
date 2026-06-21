@@ -2620,11 +2620,11 @@ async function submit() {
             if (history.registrationCountry) cleanEdit.registrationCountry = history.registrationCountry
             cleanEdit.hasServiceBook = history.hasServiceBook
             cleanEdit.hasFullServiceHistory = history.hasFullServiceHistory
-            if (typeof history.nextInspection === 'string' && history.nextInspection.trim()) cleanEdit.nextInspection = history.nextInspection
+            if (typeof history.nextInspection === 'string' && history.nextInspection.trim()) cleanEdit.nextInspection = history.nextInspection.length === 7 ? `${history.nextInspection}-01` : history.nextInspection
             cleanEdit.hasDamage = history.hasDamage
             if (history.damageDesc) cleanEdit.damageDescription = history.damageDesc
             cleanEdit.hasWarranty = history.hasWarranty
-            if (history.warrantyUntil) cleanEdit.warrantyUntil = history.warrantyUntil
+            if (history.warrantyUntil) cleanEdit.warrantyUntil = history.warrantyUntil.length === 7 ? `${history.warrantyUntil}-01` : history.warrantyUntil
             await $fetch(`/api/proxy/api/Advert/${editId.value}`, {
                 method: 'PUT',
                 body: cleanEdit,
@@ -2702,11 +2702,11 @@ async function submit() {
             if (history.registrationCountry) cleanBody.registrationCountry = history.registrationCountry
             cleanBody.hasServiceBook = history.hasServiceBook
             cleanBody.hasFullServiceHistory = history.hasFullServiceHistory
-            if (typeof history.nextInspection === 'string' && history.nextInspection.trim()) cleanBody.nextInspection = history.nextInspection
+            if (typeof history.nextInspection === 'string' && history.nextInspection.trim()) cleanBody.nextInspection = history.nextInspection.length === 7 ? `${history.nextInspection}-01` : history.nextInspection
             cleanBody.hasDamage = history.hasDamage
             if (history.damageDesc) cleanBody.damageDescription = history.damageDesc
             cleanBody.hasWarranty = history.hasWarranty
-            if (history.warrantyUntil) cleanBody.warrantyUntil = history.warrantyUntil
+            if (history.warrantyUntil) cleanBody.warrantyUntil = history.warrantyUntil.length === 7 ? `${history.warrantyUntil}-01` : history.warrantyUntil
             console.log('[submit] body →', JSON.stringify(cleanBody))
             const created = await $fetch<any>('/api/proxy/api/Advert', {
                 method: 'POST',
@@ -2845,11 +2845,11 @@ onMounted(async () => {
             history.registrationCountry = advert.registrationCountry ?? 'PL'
             history.hasServiceBook = advert.hasServiceBook ?? false
             history.hasFullServiceHistory = advert.hasFullServiceHistory ?? false
-            history.nextInspection = (typeof advert.nextInspection === 'string' ? advert.nextInspection : '') || ''
+            history.nextInspection = advert.nextInspection ? String(advert.nextInspection).substring(0, 7) : ''
             history.hasDamage = advert.hasDamage ?? false
             history.damageDesc = advert.damageDescription ?? ''
             history.hasWarranty = advert.hasWarranty ?? false
-            history.warrantyUntil = advert.warrantyUntil ?? ''
+            history.warrantyUntil = advert.warrantyUntil ? String(advert.warrantyUntil).substring(0, 7) : ''
             existingImages.value = advert.images ?? []
             if (form.brandId) models.value = await fetchModels(form.brandId)
             if (form.modelId) generations.value = await fetchGenerations(form.modelId)

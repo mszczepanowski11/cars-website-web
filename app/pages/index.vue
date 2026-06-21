@@ -886,7 +886,7 @@ onMounted(async () => {
     flex: 0 0 50%;
     display: flex;
     align-items: center;
-    padding-left: #{max(40px, calc(50vw - 620px))};
+    padding-left: #{max(4vw, calc((100vw - 1450px) / 2))};
     padding-right: 48px;
     padding-top: 48px;
     padding-bottom: 48px;
@@ -1226,7 +1226,7 @@ onMounted(async () => {
 .sstrip-inner {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     height: 90px;
 
     @include respond-to(sm) { flex-wrap: wrap; height: auto; padding: 10px 0; }
@@ -1246,14 +1246,16 @@ onMounted(async () => {
     flex-direction: row;
     align-items: center;
     gap: 16px;
-    padding: 0 40px;
+    padding: 0 32px;
     flex: 1;
     transition: background 0.2s;
 
+    &:first-child { padding-left: 0; }
+    &:last-child  { padding-right: 0; }
     &:hover { background: rgba(255,255,255,0.02); }
 
-    @include respond-to(md) { padding: 0 22px; gap: 12px; }
-    @include respond-to(sm) { flex: 0 0 50%; padding: 14px 16px; }
+    @include respond-to(md) { padding: 0 18px; gap: 12px; &:first-child { padding-left: 0; } &:last-child { padding-right: 0; } }
+    @include respond-to(sm) { flex: 0 0 50%; padding: 14px 16px; &:first-child { padding-left: 16px; } &:last-child { padding-right: 16px; } }
 }
 
 .sstrip-icon-badge {

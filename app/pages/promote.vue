@@ -241,6 +241,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ middleware: 'auth' })
+
 import type { CarAdvert, CouponValidation } from '~/types'
 
 const { isPremiereActive, isPremiereUpcoming, remainingToEnd, remainingToStart, pad } = usePromotion()
