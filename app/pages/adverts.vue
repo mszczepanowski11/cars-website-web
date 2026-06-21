@@ -444,6 +444,14 @@
 import { useCategories } from '~/composables/useCategories'
 import type { TaxonomyItem, DriveType, CarColor, CarAdvert, PagedResult, CategoryWithCount } from '~/types'
 
+useSeoMeta({
+    title: 'Ogłoszenia samochodowe — CARIZO',
+    description: 'Przeglądaj tysiące ofert sprzedaży samochodów w Polsce. Filtruj po marce, modelu, cenie i przebiegu.',
+    ogTitle: 'Ogłoszenia samochodowe — CARIZO',
+    ogDescription: 'Najlepsza platforma motoryzacyjna w Polsce — tysiące ogłoszeń.',
+    robots: 'index, follow',
+})
+
 const route = useRoute()
 const router = useRouter()
 const { fetchBrands, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors } = useTaxonomy()

@@ -22,7 +22,7 @@
                                 </span>
                             </div>
                             <h1 class="seller-name">
-                                {{ seller.accountType === 'Business' && seller.companyName ? seller.companyName : `${seller.name} ${seller.surname}` }}
+                                {{ sellerDisplayName }}
                             </h1>
                             <div class="seller-meta">
                                 <span v-if="seller.city || seller.region" class="meta-item">
@@ -199,6 +199,13 @@ const activeTab = ref<'adverts' | 'reviews'>('adverts')
 
 const isSelf = computed(() => isLoggedIn.value && currentUserId.value === sellerId)
 
+const sellerDisplayName = computed(() => {
+    if (!seller.value) return 'Sprzedawca'
+    if (seller.value.accountType === 'Business' && seller.value.companyName) return seller.value.companyName
+    const parts = [seller.value.name, seller.value.surname].filter(Boolean)
+    return parts.length ? parts.join(' ') : 'Sprzedawca'
+})
+
 const joinedYear = computed(() => {
     if (!seller.value?.createdAt) return '?'
     return new Date(seller.value.createdAt).getFullYear()
@@ -294,7 +301,7 @@ onMounted(async () => {
     }
 
     if (seller.value) {
-        useHead({ title: `${seller.value.accountType === 'Business' && seller.value.companyName ? seller.value.companyName : seller.value.name + ' ' + seller.value.surname} — CARIZO` })
+        useHead(computed(() => ({ title: seller.value ? `${seller.value.accountType === 'Business' && seller.value.companyName ? seller.value.companyName : [seller.value.name, seller.value.surname].filter(Boolean).join(' ') || 'Sprzedawca'} — CARIZO` : 'Sprzedawca — CARIZO' })))
         await Promise.all([
             loadAdverts(true),
             loadReviews(true),

@@ -63,7 +63,12 @@
 
                 <!-- Gallery column -->
                 <div class="gallery-col">
-                    <div class="main-photo-wrap" @click="openLightbox(activeImg)">
+                    <div
+                        class="main-photo-wrap"
+                        @click="openLightbox(activeImg)"
+                        @touchstart.passive="touchStartX = $event.changedTouches[0].clientX"
+                        @touchend.passive="onSwipe($event)"
+                    >
                         <div class="photo-badges">
                             <span v-if="advert?.isVerified" class="badge-verified">
                                 <v-icon icon="mdi-check-circle" size="12" /> VERIFIED
@@ -692,13 +697,9 @@
                                 <span class="seller-reviews">({{ sellerStats.reviewCount }})</span>
                             </div>
                             <div class="seller-meta-row">
-                                <span v-if="seller?.createdAt" class="seller-meta-item">
+                                <span v-if="seller?.createdAt && new Date(seller.createdAt).getFullYear() >= 2020" class="seller-meta-item">
                                     <v-icon icon="mdi-calendar-outline" size="12" />
                                     na CARIZO od {{ new Date(seller.createdAt).getFullYear() }} r.
-                                </span>
-                                <span class="seller-meta-item seller-response">
-                                    <v-icon icon="mdi-clock-fast" size="12" />
-                                    Odpowiada szybko
                                 </span>
                             </div>
                         </div>
@@ -722,61 +723,16 @@
                     </NuxtLink>
                 </div>
 
-                <!-- Completeness / trust score card -->
-                <div class="sidebar-card completeness-card">
-                    <div class="card-title">
-                        <v-icon icon="mdi-clipboard-check-outline" size="15" class="card-title-icon" />
-                        Kompletność ogłoszenia
-                    </div>
-                    <div class="compl-score-row">
-                        <div class="compl-circle">
-                            <svg viewBox="0 0 80 80" width="72" height="72">
-                                <circle cx="40" cy="40" r="32" fill="none" stroke="#1a1a1a" stroke-width="6" />
-                                <circle cx="40" cy="40" r="32" fill="none"
-                                    :stroke="completenessColor"
-                                    stroke-width="6"
-                                    stroke-linecap="round"
-                                    :stroke-dasharray="`${(completenessScore / 100) * 201} 201`"
-                                    transform="rotate(-90 40 40)"
-                                    style="transition: stroke-dasharray 0.6s ease" />
-                            </svg>
-                            <div class="compl-pct">{{ completenessScore }}<span>%</span></div>
-                        </div>
-                        <div class="compl-info">
-                            <div class="compl-label" :style="{ color: completenessColor }">{{ completenessLabel }}</div>
-                            <div class="compl-desc">Ogłoszenie zawiera podstawowe dane. Wyższy wynik = lepsza jakość oferty.</div>
-                        </div>
-                    </div>
-                    <div class="compl-checks">
-                        <div class="cc-item" :class="{ done: !!(advert?.brand && advert?.model) }">
-                            <v-icon :icon="(advert?.brand && advert?.model) ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Marka i model
-                        </div>
-                        <div class="cc-item" :class="{ done: (advert?.images?.length ?? 0) >= 5 }">
-                            <v-icon :icon="(advert?.images?.length ?? 0) >= 5 ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Minimum 5 zdjęć
-                        </div>
-                        <div class="cc-item" :class="{ done: (advert?.description?.length ?? 0) >= 100 }">
-                            <v-icon :icon="(advert?.description?.length ?? 0) >= 100 ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Opis ogłoszenia
-                        </div>
-                        <div class="cc-item" :class="{ done: (advert?.features?.length ?? 0) >= 3 }">
-                            <v-icon :icon="(advert?.features?.length ?? 0) >= 3 ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Wyposażenie
-                        </div>
-                        <div class="cc-item" :class="{ done: !!advert?.vin }">
-                            <v-icon :icon="advert?.vin ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Numer VIN
-                        </div>
-                    </div>
-                </div>
-
                 <div class="sidebar-card">
                     <div class="card-title"><v-icon icon="mdi-map-marker-outline" size="15" class="card-title-icon" />Lokalizacja</div>
                     <div v-if="advert?.city" class="location-addr"><v-icon icon="mdi-map-marker" size="16" class="loc-pin" /><span class="loc-city">{{ advert.city }}<template v-if="advert?.region">, {{ advert.region }}</template></span></div>
                     <div class="map-wrap">
                         <iframe v-if="mapSrc" :src="mapSrc" class="map-iframe" frameborder="0" loading="lazy" allowfullscreen />
-                        <div v-else class="map-loading"><v-icon icon="mdi-map-outline" size="32" class="map-loading-icon" /><span>{{ advert?.city ?? 'Brak lokalizacji' }}</span></div>
+                        <div v-else class="map-fallback">
+                            <v-icon icon="mdi-map-marker" size="22" class="map-fallback-pin" />
+                            <span class="map-fallback-city">{{ advert?.city ?? 'Brak lokalizacji' }}<template v-if="advert?.region">, {{ advert.region }}</template></span>
+                            <span class="map-fallback-sub">Dokładna lokalizacja ustalana indywidualnie</span>
+                        </div>
                     </div>
                     <a v-if="advert?.city" :href="`https://www.google.com/maps/search/${encodeURIComponent((advert.city) + ', Polska')}`" target="_blank" rel="noopener" class="outline-btn w-full">
                         <v-icon icon="mdi-open-in-new" size="15" />Otwórz w Google Maps
@@ -795,7 +751,7 @@
                         <div class="calc-row"><label>Okres ({{ calcMonths }} mies.)</label><input v-model.number="calcMonths" type="range" min="12" max="84" step="12" class="calc-range" /></div>
                         <div v-if="calcMode === 'leasing'" class="calc-row"><label>Wykup ({{ calcResidual }}%)</label><input v-model.number="calcResidual" type="range" min="1" max="30" step="1" class="calc-range" /></div>
                         <div class="calc-result"><span>Szacunkowa rata</span><strong>{{ calcMonthlyPayment }} zł / mies.</strong></div>
-                        <button class="outline-btn w-full" style="margin-top: 4px" @click="activeTab = 'Finansowanie'; scrollToTabs()">
+                        <button class="calc-fin-btn" @click="activeTab = 'Finansowanie'; scrollToTabs()">
                             <v-icon icon="mdi-file-document-outline" size="15" />Zapytaj o finansowanie
                         </button>
                         <p class="calc-disclaimer">Wynik orientacyjny.</p>
@@ -828,13 +784,32 @@
     </Teleport>
 
     <ReportModal v-model="reportOpen" target-type="Advert" :target-id="id" />
+
+    <!-- Mobile sticky contact bar -->
+    <Teleport to="body">
+        <div v-if="seller" class="mobile-cta-bar">
+            <button v-if="seller?.phoneNumber" class="mcb-phone" @click="showPhone = !showPhone">
+                <v-icon :icon="showPhone ? 'mdi-phone' : 'mdi-phone-outline'" size="18" />
+                <span>{{ showPhone ? seller.phoneNumber : 'Zadzwoń' }}</span>
+            </button>
+            <button class="mcb-message" :disabled="!!contactLoading" @click="contactSeller">
+                <v-icon v-if="contactLoading" icon="mdi-loading" size="18" class="spin" />
+                <v-icon v-else icon="mdi-message-text-outline" size="18" />
+                <span>Napisz</span>
+            </button>
+        </div>
+    </Teleport>
 </template>
 
 <script setup lang="ts">
 import type { CarAdvert, Feature, PagedResult, UserProfile, UserStats, Review } from '~/types'
 
 const route = useRoute()
-const id = Number(route.params.id)
+const rawId = Number(route.params.id)
+if (isNaN(rawId) || rawId <= 0) {
+    throw createError({ statusCode: 404, statusMessage: 'Ogłoszenie nie istnieje' })
+}
+const id = rawId
 const config = useRuntimeConfig()
 
 const { shareNative, shareOnFacebook, shareOnX, shareOnWhatsApp, copyLink, copied: linkCopied } = useShare()
@@ -1308,7 +1283,7 @@ watch(advert, (a) => {
     const brandName = a.brand?.name ?? ''
     const modelName = a.model?.name ?? ''
     const year = a.year ?? ''
-    const pageTitle = [year, brandName, modelName].filter(Boolean).join(' ') + ' – Carizo'
+    const pageTitle = [year, brandName, modelName].filter(Boolean).join(' ') + ' – CARIZO'
     const ogTitle = [year, brandName, modelName].filter(Boolean).join(' ')
     const rawDesc = a.description
         ? a.description.replace(/📋 Dane techniczne:[\s\S]*$/, '').replace(/🔍 Historia pojazdu:[\s\S]*$/, '').trim()
@@ -1328,7 +1303,7 @@ watch(advert, (a) => {
         ogTitle: ogTitle,
         ogDescription: desc,
         ...(absImg ? { ogImage: absImg } : {}),
-        ogSiteName: 'Carizo',
+        ogSiteName: 'CARIZO',
         twitterCard: 'summary_large_image',
         twitterTitle: ogTitle,
         twitterDescription: desc,
@@ -1366,6 +1341,15 @@ async function doSubmitReview() {
     } finally {
         reviewSubmitting.value = false
     }
+}
+
+// Touch swipe for gallery
+const touchStartX = ref(0)
+function onSwipe(e: TouchEvent) {
+    const dx = e.changedTouches[0].clientX - touchStartX.value
+    if (Math.abs(dx) < 40) return
+    if (dx < 0 && activeImg.value < allImages.value.length - 1) activeImg.value++
+    else if (dx > 0 && activeImg.value > 0) activeImg.value--
 }
 
 // Recently viewed tracking
@@ -1659,7 +1643,8 @@ onUnmounted(() => {
     padding: 24px 0 20px;
 
     @include respond-to(md) {
-        padding: 16px 0 12px;
+        padding: 0;
+        border-bottom: none;
     }
 }
 
@@ -1673,7 +1658,7 @@ onUnmounted(() => {
 
     @include respond-to(md) {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 0;
     }
 }
 
@@ -1689,6 +1674,14 @@ onUnmounted(() => {
     aspect-ratio: 16/10;
 
     &:hover .photo-overlay { opacity: 1; }
+
+    @include respond-to(md) {
+        border-radius: 0;
+        aspect-ratio: unset;
+        height: 66vw;
+        max-height: 70vh;
+        min-height: 240px;
+    }
 }
 
 .main-photo-img {
@@ -1809,6 +1802,11 @@ onUnmounted(() => {
     overflow-x: auto;
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
+
+    @include respond-to(md) {
+        padding: 0 16px;
+        margin-top: 10px;
+    }
 }
 
 .photo-thumb {
@@ -1848,6 +1846,12 @@ onUnmounted(() => {
     flex-direction: column;
     gap: 12px;
     min-width: 0;
+
+    @include respond-to(md) {
+        padding: 20px 16px 16px;
+        border-bottom: 1px solid $border;
+        background: $bg;
+    }
 }
 
 .info-brand-line {
@@ -2341,6 +2345,7 @@ onUnmounted(() => {
 
     @include respond-to(md) {
         grid-template-columns: 1fr;
+        padding-bottom: 90px;
     }
 }
 
@@ -2943,7 +2948,7 @@ onUnmounted(() => {
 
 .fin-input {
     background: #111;
-    border: 1px solid $border;
+    border: 1px solid #2d2d2d;
     border-radius: $r-sm;
     color: $text;
     font-size: 13px;
@@ -3478,18 +3483,31 @@ onUnmounted(() => {
     border: none;
 }
 
-.map-loading {
-    height: 160px;
+.map-fallback {
+    height: 110px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    color: $text-dark;
-    font-size: 13px;
+    gap: 6px;
+    background: #0d0d0d;
+    border-radius: $r-md;
+    text-align: center;
+    padding: 16px;
 }
 
-.map-loading-icon { color: $text-dim; }
+.map-fallback-pin { color: $red; }
+
+.map-fallback-city {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text;
+}
+
+.map-fallback-sub {
+    font-size: 11px;
+    color: $text-dark;
+}
 
 // Calc card
 .calc-card { }
@@ -3548,6 +3566,26 @@ onUnmounted(() => {
 }
 
 .calc-disclaimer { font-size: 10px; color: $text-dark; line-height: 1.4; margin: 0; }
+
+.calc-fin-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: $red;
+    border: none;
+    border-radius: $r-sm;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 11px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.88; }
+}
 
 .sidebar-report-row {
     display: flex;
@@ -4091,5 +4129,66 @@ onUnmounted(() => {
     padding: 36px 0 36px 40px;
 
     @include respond-to(md) { padding: 24px 0; }
+}
+
+// ── Mobile sticky contact bar ─────────────────────────────────────────────────
+.mobile-cta-bar {
+    display: none;
+
+    @include respond-to(md) {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        gap: 10px;
+        padding: 12px 16px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+        background: rgba(#080808, 0.95);
+        border-top: 1px solid #232323;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+}
+
+.mcb-phone {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: $red;
+    border: none;
+    border-radius: $r-sm;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 13px 12px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.88; }
+    span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+}
+
+.mcb-message {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid #2d2d2d;
+    border-radius: $r-sm;
+    color: $text;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 13px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    &:hover { background: rgba(255,255,255,0.12); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 </style>

@@ -1398,6 +1398,7 @@ import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarCo
 import { useImageUrl } from '~/composables/useImageUrl'
 
 definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Dodaj ogłoszenie — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getImageUrl } = useImageUrl()
 
@@ -2016,7 +2017,9 @@ async function lookupVin() {
     try {
         const data = await $fetch<Partial<typeof form>>(`/api/proxy/api/Advert/vin/${form.vin}`)
         if (data.brandId) form.brandId = data.brandId
+        if (form.brandId) await onBrand()
         if (data.modelId) form.modelId = data.modelId
+        if (form.modelId) await onModel()
         if (data.year) form.year = data.year
         if (data.fuelTypeId) form.fuelTypeId = data.fuelTypeId
         if (data.gearboxId) form.gearboxId = data.gearboxId
@@ -2234,12 +2237,21 @@ const filteredFeatureGroups = computed(() => {
     return result
 })
 
+function escapeHtml(s: string): string {
+    return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+}
+
 function highlightSearch(name: string): string {
     const q = featSearch.value.trim()
-    if (!q) return name
-    const idx = name.toLowerCase().indexOf(q.toLowerCase())
-    if (idx === -1) return name
-    return name.slice(0, idx) + `<mark class="feat-hl">${name.slice(idx, idx + q.length)}</mark>` + name.slice(idx + q.length)
+    const safeName = escapeHtml(name)
+    if (!q) return safeName
+    const idx = safeName.toLowerCase().indexOf(q.toLowerCase())
+    if (idx === -1) return safeName
+    return safeName.slice(0, idx) + `<mark class="feat-hl">${safeName.slice(idx, idx + q.length)}</mark>` + safeName.slice(idx + q.length)
 }
 
 // Photo quality feedback
@@ -2357,10 +2369,17 @@ function validateStep(step: number): string | null {
     }
     // Step 2: Photos
     if (step === 2) {
-        if (!isEdit.value && existingImages.value.length === 0 && selectedFiles.value.length < 3) return 'Dodaj minimum 3 zdjęcia.'
+        const totalPhotos = existingImages.value.length + selectedFiles.value.length
+        if (isEdit.value && totalPhotos < 1) return 'Ogłoszenie musi zawierać co najmniej 1 zdjęcie.'
+        if (!isEdit.value && totalPhotos < 3) return 'Dodaj minimum 3 zdjęcia.'
     }
     // Step 3: Equipment — no required fields
-    // Step 4: Historia pojazdu — no required fields
+    // Step 4: Historia pojazdu — VIN required per Regulamin §4.1
+    if (step === 4) {
+        if (categoryConfig.value.showVinSection !== false) {
+            if (!form.vin || form.vin.length !== 17) return 'Podaj prawidłowy numer VIN (17 znaków). Numer VIN jest obowiązkowy.'
+        }
+    }
     // Step 5: Opis i cena
     if (step === 5) {
         if (!form.price) return 'Podaj cenę pojazdu.'
@@ -2527,10 +2546,14 @@ function submitImojeForm(result: { paymentUrl: string, formFields?: Record<strin
 }
 
 async function submit() {
-    const err = validateStep(4)
-    if (err) {
-        error.value = err
-        return
+    for (const stepIdx of [4, 5]) {
+        const err = validateStep(stepIdx)
+        if (err) {
+            stepError.value = err
+            currentStep.value = stepIdx
+            setTimeout(() => { stepError.value = '' }, 4000)
+            return
+        }
     }
     error.value = ''
     loading.value = true
@@ -2704,7 +2727,10 @@ async function submit() {
                     console.error('[image upload error]', imgErr?.data ?? imgErr?.statusMessage ?? imgErr)
                 }
             }
-            localStorage.removeItem('carizo_advert_draft')
+            if (imageErrors.length > 0) {
+                console.warn('[upload] image errors:', imageErrors)
+            }
+            localStorage.removeItem(draftKey.value)
 
             await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch((e: any) => {
                 console.warn('[publish] failed (non-critical):', e?.message)

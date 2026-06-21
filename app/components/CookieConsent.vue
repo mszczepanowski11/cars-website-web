@@ -8,7 +8,8 @@
                         <span>
                             Używamy plików cookie, aby zapewnić najlepsze działanie serwisu.
                             Korzystając z CARIZO, akceptujesz naszą
-                            <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink>
+                            <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink>,
+                            <NuxtLink to="/polityka-cookies" class="cookie-link">Politykę cookies</NuxtLink>
                             oraz
                             <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink>.
                         </span>
@@ -27,20 +28,39 @@
 const visible = ref(false)
 
 onMounted(() => {
-    if (!localStorage.getItem('cookieConsent')) {
+    const stored = localStorage.getItem('cookieConsent')
+    if (!stored) {
         visible.value = true
+    } else {
+        applyConsent(stored === 'all' ? 'all' : 'essential')
     }
+    window.addEventListener('openCookieSettings', () => {
+        visible.value = true
+    })
 })
 
 function accept() {
     localStorage.setItem('cookieConsent', 'all')
     visible.value = false
+    applyConsent('all')
     window.dispatchEvent(new Event('cookieConsentAccepted'))
 }
 
 function reject() {
     localStorage.setItem('cookieConsent', 'essential')
     visible.value = false
+    applyConsent('essential')
+}
+
+function applyConsent(level: 'all' | 'essential') {
+    if (typeof window === 'undefined' || typeof (window as any).gtag !== 'function') return
+    const granted = level === 'all' ? 'granted' : 'denied'
+    ;(window as any).gtag('consent', 'update', {
+        analytics_storage: granted,
+        ad_storage: granted,
+        functionality_storage: granted,
+        personalization_storage: granted,
+    })
 }
 </script>
 

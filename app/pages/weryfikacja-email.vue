@@ -67,6 +67,7 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: 'Weryfikacja email — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 
 const status = ref<'loading' | 'success' | 'error'>('loading')

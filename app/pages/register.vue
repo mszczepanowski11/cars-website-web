@@ -185,6 +185,14 @@
                     </div>
                 </div>
 
+                <label class="age-check">
+                    <input v-model="ageConfirmed" type="checkbox" class="age-check-input" />
+                    <span class="age-check-box" :class="{ 'age-check-box--checked': ageConfirmed }">
+                        <v-icon v-if="ageConfirmed" icon="mdi-check" size="13" />
+                    </span>
+                    <span class="age-check-label">Mam ukończone 18 lat i akceptuję <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> oraz <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink> <span class="req">*</span></span>
+                </label>
+
                 <div v-if="validationError || error" class="auth-error">
                     <v-icon icon="mdi-alert-circle-outline" size="15" />
                     {{ validationError || error }}
@@ -203,6 +211,15 @@
                 </button>
             </form>
 
+            <div class="auth-divider"><span>lub</span></div>
+
+            <button v-if="facebookAppId" class="fb-btn" :disabled="fbLoading" @click="handleFacebookLogin">
+                <svg class="fb-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span>{{ fbLoading ? 'Logowanie...' : 'Kontynuuj z Facebook' }}</span>
+            </button>
+
             <p class="auth-link">Masz już konto? <NuxtLink to="/login">Zaloguj się</NuxtLink></p>
         </div>
 
@@ -210,8 +227,9 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: 'Zarejestruj się — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
-const { register, loading, error } = useAuth()
+const { register, loginWithFacebook, loading, error } = useAuth()
 const runtimeConfig = useRuntimeConfig()
 
 const accountType      = ref<'Personal' | 'Business'>('Personal')
@@ -226,12 +244,15 @@ const companyName      = ref('')
 const nip              = ref('')
 const validationError  = ref('')
 const showPassword     = ref(false)
+const ageConfirmed     = ref(false)
 const registrationSuccess = ref(false)
 const registeredEmail = ref('')
 const resending = ref(false)
 const turnstileToken  = ref('')
 const turnstileRef    = ref<{ reset: () => void } | null>(null)
+const fbLoading        = ref(false)
 const turnstileSiteKey = runtimeConfig.public.turnstileSiteKey as string
+const facebookAppId    = runtimeConfig.public.facebookAppId as string
 
 const businessTypes = [
     { key: 'Dealer' as const, name: 'Dealer',  icon: 'mdi-car-key',                  desc: 'Indywidualny dealer pojazdów' },
@@ -264,6 +285,10 @@ const strengthLabel = computed(() => {
 
 async function submit() {
     validationError.value = ''
+    if (!ageConfirmed.value) {
+        validationError.value = 'Musisz potwierdzić, że masz ukończone 18 lat.'
+        return
+    }
     if (password.value !== passwordConfirm.value) {
         validationError.value = 'Hasła nie są identyczne.'
         return
@@ -309,6 +334,42 @@ async function submit() {
         registeredEmail.value = email.value
         registrationSuccess.value = true
     }
+}
+
+onMounted(() => {
+    if (facebookAppId) loadFacebookSDK()
+})
+
+function loadFacebookSDK() {
+    if ((window as any).FB) return
+    ;(window as any).fbAsyncInit = function () {
+        ;(window as any).FB.init({
+            appId: facebookAppId,
+            cookie: true,
+            xfbml: false,
+            version: 'v19.0',
+        })
+    }
+    if (!document.getElementById('facebook-jssdk')) {
+        const script = document.createElement('script')
+        script.id = 'facebook-jssdk'
+        script.src = 'https://connect.facebook.net/pl_PL/sdk.js'
+        script.async = true
+        script.defer = true
+        document.head.appendChild(script)
+    }
+}
+
+async function handleFacebookLogin() {
+    if (!(window as any).FB) return
+    fbLoading.value = true
+    ;(window as any).FB.login(async (response: any) => {
+        if (response.authResponse?.accessToken) {
+            await loginWithFacebook(response.authResponse.accessToken, redirectTo.value)
+        } else {
+            fbLoading.value = false
+        }
+    }, { scope: 'email,public_profile' })
 }
 
 async function resendVerification() {
@@ -780,6 +841,96 @@ h2 {
         &:hover { border-color: rgba(255,255,255,0.3); }
     }
 }
+
+.age-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.age-check-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.age-check-box {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid $border;
+    border-radius: 4px;
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, background 0.2s;
+    margin-top: 2px;
+    color: white;
+
+    &--checked {
+        background: $red;
+        border-color: $red;
+    }
+}
+
+.age-check-label {
+    font-size: 13px;
+    color: $text-muted;
+    line-height: 1.5;
+
+    a { color: $red; font-weight: 500; &:hover { text-decoration: underline; } }
+}
+
+.cookie-link {
+    color: $red;
+    text-decoration: none;
+    font-weight: 500;
+    &:hover { text-decoration: underline; }
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0 16px;
+    color: $text-dark;
+    font-size: 12px;
+
+    &::before, &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: $border;
+    }
+}
+
+.fb-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: #1877f2;
+    color: white;
+    border: none;
+    border-radius: $r-md;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-bottom: 4px;
+
+    &:hover:not(:disabled) { opacity: 0.9; }
+    &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+.fb-icon { flex-shrink: 0; }
 
 // Transitions
 .success-fade-enter-active { transition: opacity 0.35s ease; }

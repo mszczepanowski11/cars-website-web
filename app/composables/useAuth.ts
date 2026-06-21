@@ -36,11 +36,30 @@ export const useAuth = () => {
         }
     }
 
+    async function loginWithFacebook(accessToken: string, redirectTo?: string) {
+        loading.value = true
+        error.value = ''
+        try {
+            await $fetch('/api/auth/facebook', { method: 'POST', body: { accessToken } })
+            await navigateTo(redirectTo || '/')
+        } catch (err: any) {
+            if (err?.status === 429 || err?.statusCode === 429) {
+                error.value = err?.data?.statusMessage || 'Zbyt wiele prób. Poczekaj chwilę i spróbuj ponownie.'
+            } else {
+                error.value = err?.data?.statusMessage || err?.message || 'Logowanie przez Facebook nie powiodło się.'
+            }
+        } finally {
+            loading.value = false
+        }
+    }
+
     async function register(dto: {
         name: string; surname: string; email: string
         phonenumber: string; password: string
         accountType: 'Personal' | 'Business'
-        companyName?: string; nip?: string; turnstileToken?: string
+        companyName?: string; nip?: string
+        businessType?: 'Dealer' | 'Komis' | 'Firma'
+        turnstileToken?: string
     }, redirectTo?: string) {
         loading.value = true
         error.value = ''
@@ -72,5 +91,5 @@ export const useAuth = () => {
         await navigateTo('/')
     }
 
-    return { login, loginWithGoogle, logout, register, loading, error }
+    return { login, loginWithGoogle, loginWithFacebook, logout, register, loading, error }
 }

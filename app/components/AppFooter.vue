@@ -9,6 +9,10 @@ const social = {
     youtube:   (config.public as any).socialYoutube   || null,
 }
 
+function openCookieSettings() {
+    window.dispatchEvent(new Event('openCookieSettings'))
+}
+
 const newsletterEmail = ref('')
 const newsletterLoading = ref(false)
 const newsletterOk = ref(false)
@@ -16,7 +20,11 @@ const newsletterErr = ref('')
 
 async function subscribeNewsletter() {
     const e = newsletterEmail.value.trim()
-    if (!e || !e.includes('@')) return
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRe.test(e)) {
+        newsletterErr.value = 'Podaj prawidłowy adres email.'
+        return
+    }
     newsletterLoading.value = true
     newsletterErr.value = ''
     try {
@@ -44,9 +52,6 @@ async function subscribeNewsletter() {
             <a v-if="social.instagram" :href="social.instagram" target="_blank" rel="noopener" class="social-link" title="Instagram"><v-icon icon="mdi-instagram" size="18" /></a>
             <a v-if="social.facebook" :href="social.facebook" target="_blank" rel="noopener" class="social-link" title="Facebook"><v-icon icon="mdi-facebook" size="18" /></a>
             <a v-if="social.youtube" :href="social.youtube" target="_blank" rel="noopener" class="social-link" title="YouTube"><v-icon icon="mdi-youtube" size="18" /></a>
-            <template v-if="!social.tiktok && !social.instagram && !social.facebook && !social.youtube">
-                <span class="social-placeholder">Dołącz wkrótce</span>
-            </template>
           </div>
         </div>
 
@@ -63,7 +68,9 @@ async function subscribeNewsletter() {
           <NuxtLink to="/jak-to-dziala">Jak to działa</NuxtLink>
           <NuxtLink to="/regulamin">Regulamin</NuxtLink>
           <NuxtLink to="/polityka-prywatnosci">Polityka prywatności</NuxtLink>
+          <NuxtLink to="/polityka-cookies">Polityka cookies</NuxtLink>
           <NuxtLink to="/pomoc">Pomoc i FAQ</NuxtLink>
+          <button class="footer-cookie-btn" @click="openCookieSettings">Ustawienia plików cookies</button>
         </div>
 
         <div class="footer-col">
@@ -71,7 +78,6 @@ async function subscribeNewsletter() {
           <NuxtLink to="/dashboard">Moje konto</NuxtLink>
           <NuxtLink to="/favorites">Ulubione</NuxtLink>
           <NuxtLink to="/my-adverts">Moje ogłoszenia</NuxtLink>
-          <NuxtLink to="/dashboard">Powiadomienia</NuxtLink>
         </div>
 
         <div class="footer-col">
@@ -165,9 +171,6 @@ async function subscribeNewsletter() {
 
 .footer-social { display: flex; gap: 8px; align-items: center; }
 
-.social-placeholder {
-  font-size: 12px; color: $text-dark;
-}
 
 .social-link {
   width: 34px;
@@ -319,6 +322,19 @@ async function subscribeNewsletter() {
 }
 
 .heart { color: $red; }
+
+.footer-cookie-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: $text-muted;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s;
+  &:hover { color: $text; }
+}
 
 .footer-soon {
   color: $text-dark;
