@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
-    const token = getCookie(event, 'auth_token')
+    let token = getCookie(event, 'auth_token')
     const method = getMethod(event)
 
     if (!token && !['GET', 'HEAD'].includes(method)) {
@@ -15,14 +15,49 @@ export default defineEventHandler(async (event) => {
         targetUrl.searchParams.set(k, String(v))
     }
 
-    const headers: Record<string, string> = {}
-    if (token) headers['Authorization'] = `Bearer ${token}`
+    const buildHeaders = (t: string | undefined) => {
+        const h: Record<string, string> = {}
+        if (t) h['Authorization'] = `Bearer ${t}`
+        return h
+    }
+
+    async function tryRefreshToken() {
+        const refreshToken = getCookie(event, 'refresh_token')
+        if (!refreshToken) return null
+        try {
+            const data = await $fetch<{ token: string; refreshToken: string }>(
+                `${config.public.apiBase}api/Auth/refresh`,
+                { method: 'POST', body: { refreshToken } }
+            )
+            const cookieOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict' as const, path: '/' }
+            setCookie(event, 'auth_token', data.token, { ...cookieOpts, maxAge: 60 * 60 * 2 })
+            setCookie(event, 'refresh_token', data.refreshToken, { ...cookieOpts, maxAge: 60 * 60 * 24 * 30 })
+            return data.token
+        } catch {
+            deleteCookie(event, 'auth_token')
+            deleteCookie(event, 'refresh_token')
+            deleteCookie(event, 'auth_status')
+            return null
+        }
+    }
 
     async function proxyFetch(options: Parameters<typeof $fetch>[1]) {
         try {
             return await $fetch(targetUrl.toString(), options)
         } catch (err: any) {
             const statusCode = err?.response?.status ?? err?.statusCode ?? 500
+            if (statusCode === 401 && token) {
+                const newToken = await tryRefreshToken()
+                if (newToken) {
+                    try {
+                        const retryOpts = { ...options, headers: { ...buildHeaders(newToken), ...(options as any)?.headers } }
+                        return await $fetch(targetUrl.toString(), retryOpts)
+                    } catch (retryErr: any) {
+                        const rc = retryErr?.response?.status ?? retryErr?.statusCode ?? 500
+                        throw createError({ statusCode: rc, statusMessage: retryErr?.data?.message ?? 'Request failed' })
+                    }
+                }
+            }
             const backendData = err?.data ?? err?.response?._data
             const message =
                 (typeof backendData?.message === 'string' ? backendData.message : null) ??
@@ -32,6 +67,8 @@ export default defineEventHandler(async (event) => {
             throw createError({ statusCode, statusMessage: message, data: backendData })
         }
     }
+
+    const headers = buildHeaders(token)
 
     const hasBody = !['GET', 'HEAD', 'DELETE'].includes(method)
 
