@@ -120,7 +120,7 @@
                 <div class="filter-grid">
                     <template v-if="currentSearchConfig.hasBrand">
                         <div class="fg-field">
-                            <label class="fg-label">Marka</label>
+                            <label class="fg-label">{{ currentSearchConfig.brandLabel ?? 'Marka' }}</label>
                             <select v-model="searchBrandId" class="fg-select" @change="onBrandChange">
                                 <option :value="null">Wszystkie marki</option>
                                 <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
@@ -242,6 +242,15 @@
                             <input v-model="searchPowerFrom" type="number" class="fg-input" placeholder="Od" min="0" />
                             <span class="fg-range-sep">—</span>
                             <input v-model="searchPowerTo" type="number" class="fg-input" placeholder="Do" min="0" />
+                        </div>
+                    </div>
+
+                    <div v-if="currentSearchConfig.hasPayload" class="fg-field fg-range">
+                        <label class="fg-label">Ładowność (kg)</label>
+                        <div class="fg-range-inputs">
+                            <input v-model="searchPayloadFrom" type="number" class="fg-input" placeholder="Od" min="0" />
+                            <span class="fg-range-sep">—</span>
+                            <input v-model="searchPayloadTo" type="number" class="fg-input" placeholder="Do" min="0" />
                         </div>
                     </div>
                 </div>
@@ -778,6 +787,7 @@ interface SearchConfig {
     hasBrand: boolean; hasModel: boolean; hasFuel: boolean; hasBodyType: boolean
     hasMileage: boolean; hasHours: boolean; hasPartCategory?: boolean
     hasCondition?: boolean; hasEngineSize?: boolean; hasPower?: boolean
+    hasPayload?: boolean; brandLabel?: string
     subtypeLabel?: string; subtypes?: string[]
 }
 
@@ -786,8 +796,8 @@ const SEARCH_CONFIGS: Record<string, SearchConfig> = {
     'motocykle':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, hasEngineSize: true, subtypeLabel: 'Typ motocykla', subtypes: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Skuter', 'Chopper', 'Cross'] },
     'dostawcze':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Zabudowa', subtypes: ['Furgon', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Platforma'] },
     'ciezarowe':    { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Typ', subtypes: ['Ciągnik siodłowy', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Cysterna', 'Śmieciarka'] },
-    'czesci':       { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, hasPartCategory: true },
-    'budowlane':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ maszyny', subtypes: ['Koparka gąsienicowa', 'Koparko-ładowarka', 'Minieksawator', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka'] },
+    'czesci':       { hasBrand: true,  hasModel: true,  hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, hasPartCategory: true, brandLabel: 'Marka pojazdu' },
+    'budowlane':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, hasPayload: true, subtypeLabel: 'Typ maszyny', subtypes: ['Koparka gąsienicowa', 'Koparko-ładowarka', 'Minieksawator', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka'] },
     'rolnicze':     { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ maszyny', subtypes: ['Ciągnik', 'Kombajn', 'Siewnik', 'Pług', 'Prasa', 'Opryskiwacz', 'Rozsiewacz'] },
     'maszyny':      { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ', subtypes: ['Wózek widłowy', 'Dźwig/Żuraw', 'Platforma robocza', 'Agregat prądotwórczy', 'Sprężarka', 'Pompa'] },
     'przyczepy':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, subtypeLabel: 'Typ', subtypes: ['Naczepa plandeka', 'Laweta', 'Wywrotka', 'Kempingowa', 'Kontenerowa'] },
@@ -832,6 +842,8 @@ const searchEngineSizeFrom = ref('')
 const searchEngineSizeTo = ref('')
 const searchPowerFrom = ref('')
 const searchPowerTo = ref('')
+const searchPayloadFrom = ref('')
+const searchPayloadTo = ref('')
 const searchCondition = ref('')
 const searchModels = ref<TaxonomyItem[]>([])
 const searchGenerations = ref<any[]>([])
@@ -866,6 +878,8 @@ function selectSearchCat(slug: string) {
     searchEngineSizeTo.value = ''
     searchPowerFrom.value = ''
     searchPowerTo.value = ''
+    searchPayloadFrom.value = ''
+    searchPayloadTo.value = ''
     searchModels.value = []
     searchGenerations.value = []
     const cat = homeCategories.find((c: any) => c.slug === slug)
@@ -940,8 +954,10 @@ function doSearch() {
     if (searchYearTo.value) query.yearTo = searchYearTo.value
     if (searchMileageFrom.value) query.mileageFrom = searchMileageFrom.value
     if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
-    if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
-    if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
+    if (searchHoursFrom.value) query.mileageFrom = searchHoursFrom.value
+    if (searchHoursTo.value) query.mileageTo = searchHoursTo.value
+    if (searchPayloadFrom.value) query.payloadFrom = searchPayloadFrom.value
+    if (searchPayloadTo.value) query.payloadTo = searchPayloadTo.value
     if (searchEngineSizeFrom.value) query.engineSizeFrom = searchEngineSizeFrom.value
     if (searchEngineSizeTo.value) query.engineSizeTo = searchEngineSizeTo.value
     if (searchPowerFrom.value) query.powerFrom = searchPowerFrom.value

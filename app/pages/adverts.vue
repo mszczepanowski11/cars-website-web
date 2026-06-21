@@ -274,6 +274,34 @@
                         </div>
                     </div>
 
+                    <!-- Catalog number (parts) -->
+                    <div v-if="filterConfig.showCatalogNumber" class="filter-section">
+                        <div class="filter-section-label">
+                            <v-icon icon="mdi-barcode-scan" size="14" />
+                            Nr katalogowy / OEM
+                        </div>
+                        <input
+                            v-model="f.catalogNumber"
+                            type="text"
+                            class="filter-input-text"
+                            placeholder="np. 1K0615301L"
+                            @change="load(1)"
+                        />
+                    </div>
+
+                    <!-- Payload (trucks / machinery) -->
+                    <div v-if="filterConfig.showPayload" class="filter-section">
+                        <div class="filter-section-label">
+                            <v-icon icon="mdi-weight" size="14" />
+                            Ładowność (kg)
+                        </div>
+                        <div class="range-row">
+                            <input v-model.number="f.payloadFrom" type="number" class="range-input" placeholder="Od" min="0" @change="load(1)" />
+                            <span class="range-sep">–</span>
+                            <input v-model.number="f.payloadTo" type="number" class="range-input" placeholder="Do" min="0" @change="load(1)" />
+                        </div>
+                    </div>
+
                     <!-- Fuel type -->
                     <div v-if="filterConfig.showFuelType" class="filter-section">
                         <div class="filter-section-label">
@@ -544,11 +572,12 @@ const f = reactive({
     hasServiceBook: route.query.hasServiceBook !== undefined ? route.query.hasServiceBook === 'true' : null as boolean | null,
     isImported:  route.query.isImported  !== undefined ? route.query.isImported  === 'true' : null as boolean | null,
     axleCount:   null as number | null,
-    payloadFrom: null as number | null,
-    payloadTo:   null as number | null,
+    payloadFrom: route.query.payloadFrom ? Number(route.query.payloadFrom) : null as number | null,
+    payloadTo:   route.query.payloadTo   ? Number(route.query.payloadTo)   : null as number | null,
     grossWeightFrom: null as number | null,
     grossWeightTo:   null as number | null,
     bodySubtype: route.query.bodySubtype ? String(route.query.bodySubtype) : '' as string,
+    catalogNumber: route.query.catalogNumber ? String(route.query.catalogNumber) : '' as string,
     hasRetarder: null as boolean | null,
     hasTachograph: null as boolean | null,
     sortBy:      route.query.sortBy ? String(route.query.sortBy) : '',
@@ -613,11 +642,11 @@ const filterConfig = computed(() => {
     const isMoto = slug === 'motocykle' || slug?.includes('moto')
     const isParts = slug === 'czesci' || slug?.includes('czesc') || slug?.includes('part')
     const isTrailer = slug === 'przyczepy' || slug?.includes('przyczepa') || slug?.includes('naczepa')
-    const isMachinery = slug === 'maszyny' || slug?.includes('maszyn') || slug?.includes('rolnicze')
+    const isMachinery = slug === 'maszyny' || slug === 'budowlane' || slug?.includes('maszyn') || slug?.includes('rolnicze') || slug?.includes('budowlane')
     const isTruck = slug === 'dostawcze' || slug?.includes('dostawcze') || slug?.includes('ciezarowe') || slug?.includes('ciężar')
 
     return {
-        showBrandModel: !isParts,
+        showBrandModel: true,
         showFuelType: !isParts && !isTrailer,
         showGearbox: !isParts && !isTrailer && !isMoto,
         showBodyType: !isParts && !isMoto && !isTrailer && !isMachinery,
@@ -628,10 +657,12 @@ const filterConfig = computed(() => {
         showColor: !isParts && !isTrailer && !isMachinery,
         showYear: true,
         showPrice: true,
+        showPayload: isTruck || isMachinery,
+        showCatalogNumber: isParts,
         mileageLabel: isMachinery ? 'Motogodziny (mth)' : 'Przebieg (km)',
         mileageFromKey: isMachinery ? 'mileageFrom' : 'mileageFrom',
-        brandLabel: isMoto ? 'Marka motocykla' : isParts ? 'Producent' : isTruck ? 'Marka pojazdu' : 'Marka',
-        modelLabel: isMoto ? 'Model' : isParts ? 'Nr katalogowy' : 'Model',
+        brandLabel: isMoto ? 'Marka motocykla' : isParts ? 'Marka pojazdu' : isTruck ? 'Marka pojazdu' : 'Marka',
+        modelLabel: isMoto ? 'Model' : isParts ? 'Model pojazdu' : 'Model',
     }
 })
 
@@ -648,6 +679,7 @@ const hasActiveFilters = computed(() =>
        f.priceFrom || f.priceTo || f.yearFrom || f.yearTo ||
        f.mileageFrom || f.mileageTo || f.powerFrom || f.powerTo ||
        f.engineSizeFrom || f.engineSizeTo ||
+       f.payloadFrom || f.payloadTo || f.catalogNumber ||
        f.sellerType || f.condition ||
        f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null)
 )
@@ -694,7 +726,7 @@ function clearFilters() {
     f.hasDamage = null; f.hasWarranty = null; f.hasServiceBook = null; f.isImported = null
     f.axleCount = null; f.payloadFrom = null; f.payloadTo = null
     f.grossWeightFrom = null; f.grossWeightTo = null; f.bodySubtype = ''
-    f.hasRetarder = null; f.hasTachograph = null
+    f.hasRetarder = null; f.hasTachograph = null; f.catalogNumber = ''
     f.sortBy = ''
     models.value = []
     load(1)
@@ -741,6 +773,7 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.bodySubtype)             body.bodySubtype    = f.bodySubtype
     if (f.hasRetarder !== null)    body.hasRetarder    = f.hasRetarder
     if (f.hasTachograph !== null)  body.hasTachograph  = f.hasTachograph
+    if (f.catalogNumber)           body.catalogNumber  = f.catalogNumber
     return body
 }
 
@@ -816,7 +849,10 @@ async function load(p: number = page.value) {
     if (f.hasWarranty !== null)    query.hasWarranty    = String(f.hasWarranty)
     if (f.hasServiceBook !== null) query.hasServiceBook = String(f.hasServiceBook)
     if (f.isImported !== null)     query.isImported     = String(f.isImported)
-    if (f.bodySubtype)  query.bodySubtype = f.bodySubtype
+    if (f.bodySubtype)       query.bodySubtype  = f.bodySubtype
+    if (f.payloadFrom)       query.payloadFrom  = String(f.payloadFrom)
+    if (f.payloadTo)         query.payloadTo    = String(f.payloadTo)
+    if (f.catalogNumber)     query.catalogNumber = f.catalogNumber
     if (f.sortBy)      query.sortBy      = f.sortBy
     if (p > 1)         query.page        = String(p)
     router.replace({ query })
@@ -1360,6 +1396,22 @@ onMounted(async () => {
 
 .filter-select-wrap {
     position: relative;
+}
+
+.filter-input-text {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: $r-md;
+    color: $text;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.18s;
+
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba($red, 0.5); }
 }
 
 .filter-select {
