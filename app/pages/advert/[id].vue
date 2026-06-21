@@ -63,7 +63,12 @@
 
                 <!-- Gallery column -->
                 <div class="gallery-col">
-                    <div class="main-photo-wrap" @click="openLightbox(activeImg)">
+                    <div
+                        class="main-photo-wrap"
+                        @click="openLightbox(activeImg)"
+                        @touchstart.passive="touchStartX = $event.changedTouches[0].clientX"
+                        @touchend.passive="onSwipe($event)"
+                    >
                         <div class="photo-badges">
                             <span v-if="advert?.isVerified" class="badge-verified">
                                 <v-icon icon="mdi-check-circle" size="12" /> VERIFIED
@@ -718,55 +723,6 @@
                     </NuxtLink>
                 </div>
 
-                <!-- Completeness / trust score card -->
-                <div class="sidebar-card completeness-card">
-                    <div class="card-title">
-                        <v-icon icon="mdi-clipboard-check-outline" size="15" class="card-title-icon" />
-                        Kompletność ogłoszenia
-                    </div>
-                    <div class="compl-score-row">
-                        <div class="compl-circle">
-                            <svg viewBox="0 0 80 80" width="72" height="72">
-                                <circle cx="40" cy="40" r="32" fill="none" stroke="#1a1a1a" stroke-width="6" />
-                                <circle cx="40" cy="40" r="32" fill="none"
-                                    :stroke="completenessColor"
-                                    stroke-width="6"
-                                    stroke-linecap="round"
-                                    :stroke-dasharray="`${(completenessScore / 100) * 201} 201`"
-                                    transform="rotate(-90 40 40)"
-                                    style="transition: stroke-dasharray 0.6s ease" />
-                            </svg>
-                            <div class="compl-pct">{{ completenessScore }}<span>%</span></div>
-                        </div>
-                        <div class="compl-info">
-                            <div class="compl-label" :style="{ color: completenessColor }">{{ completenessLabel }}</div>
-                            <div class="compl-desc">Ogłoszenie zawiera podstawowe dane. Wyższy wynik = lepsza jakość oferty.</div>
-                        </div>
-                    </div>
-                    <div class="compl-checks">
-                        <div class="cc-item" :class="{ done: !!(advert?.brand && advert?.model) }">
-                            <v-icon :icon="(advert?.brand && advert?.model) ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Marka i model
-                        </div>
-                        <div class="cc-item" :class="{ done: (advert?.images?.length ?? 0) >= 5 }">
-                            <v-icon :icon="(advert?.images?.length ?? 0) >= 5 ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Minimum 5 zdjęć
-                        </div>
-                        <div class="cc-item" :class="{ done: (advert?.description?.length ?? 0) >= 100 }">
-                            <v-icon :icon="(advert?.description?.length ?? 0) >= 100 ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Opis ogłoszenia
-                        </div>
-                        <div class="cc-item" :class="{ done: (advert?.features?.length ?? 0) >= 3 }">
-                            <v-icon :icon="(advert?.features?.length ?? 0) >= 3 ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Wyposażenie
-                        </div>
-                        <div class="cc-item" :class="{ done: !!advert?.vin }">
-                            <v-icon :icon="advert?.vin ? 'mdi-check-circle' : 'mdi-circle-outline'" size="14" />
-                            Numer VIN
-                        </div>
-                    </div>
-                </div>
-
                 <div class="sidebar-card">
                     <div class="card-title"><v-icon icon="mdi-map-marker-outline" size="15" class="card-title-icon" />Lokalizacja</div>
                     <div v-if="advert?.city" class="location-addr"><v-icon icon="mdi-map-marker" size="16" class="loc-pin" /><span class="loc-city">{{ advert.city }}<template v-if="advert?.region">, {{ advert.region }}</template></span></div>
@@ -1387,6 +1343,15 @@ async function doSubmitReview() {
     }
 }
 
+// Touch swipe for gallery
+const touchStartX = ref(0)
+function onSwipe(e: TouchEvent) {
+    const dx = e.changedTouches[0].clientX - touchStartX.value
+    if (Math.abs(dx) < 40) return
+    if (dx < 0 && activeImg.value < allImages.value.length - 1) activeImg.value++
+    else if (dx > 0 && activeImg.value > 0) activeImg.value--
+}
+
 // Recently viewed tracking
 const { track: trackRecentlyViewed } = useRecentlyViewed()
 
@@ -1678,7 +1643,8 @@ onUnmounted(() => {
     padding: 24px 0 20px;
 
     @include respond-to(md) {
-        padding: 16px 0 12px;
+        padding: 0;
+        border-bottom: none;
     }
 }
 
@@ -1692,7 +1658,7 @@ onUnmounted(() => {
 
     @include respond-to(md) {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 0;
     }
 }
 
@@ -1708,6 +1674,14 @@ onUnmounted(() => {
     aspect-ratio: 16/10;
 
     &:hover .photo-overlay { opacity: 1; }
+
+    @include respond-to(md) {
+        border-radius: 0;
+        aspect-ratio: unset;
+        height: 66vw;
+        max-height: 70vh;
+        min-height: 240px;
+    }
 }
 
 .main-photo-img {
@@ -1828,6 +1802,11 @@ onUnmounted(() => {
     overflow-x: auto;
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
+
+    @include respond-to(md) {
+        padding: 0 16px;
+        margin-top: 10px;
+    }
 }
 
 .photo-thumb {
@@ -1867,6 +1846,12 @@ onUnmounted(() => {
     flex-direction: column;
     gap: 12px;
     min-width: 0;
+
+    @include respond-to(md) {
+        padding: 20px 16px 16px;
+        border-bottom: 1px solid $border;
+        background: $bg;
+    }
 }
 
 .info-brand-line {
