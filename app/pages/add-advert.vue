@@ -2845,11 +2845,11 @@ onMounted(async () => {
             history.registrationCountry = advert.registrationCountry ?? 'PL'
             history.hasServiceBook = advert.hasServiceBook ?? false
             history.hasFullServiceHistory = advert.hasFullServiceHistory ?? false
-            history.nextInspection = (typeof advert.nextInspection === 'string' ? advert.nextInspection : '') || ''
+            history.nextInspection = advert.nextInspection ? String(advert.nextInspection).substring(0, 7) : ''
             history.hasDamage = advert.hasDamage ?? false
             history.damageDesc = advert.damageDescription ?? ''
             history.hasWarranty = advert.hasWarranty ?? false
-            history.warrantyUntil = advert.warrantyUntil ?? ''
+            history.warrantyUntil = advert.warrantyUntil ? String(advert.warrantyUntil).substring(0, 7) : ''
             existingImages.value = advert.images ?? []
             if (form.brandId) models.value = await fetchModels(form.brandId)
             if (form.modelId) generations.value = await fetchGenerations(form.modelId)
