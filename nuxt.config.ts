@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
 
   typescript: {
-    typeCheck: false,
+    typeCheck: false, // TODO: enable once all type errors are resolved
   },
 
   app: {
@@ -18,7 +18,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'node_server',
   },
-  devtools: { enabled: true },
+  devtools: { enabled: process.env.NODE_ENV !== 'production' },
 
   css: ['~/assets/scss/main.scss', '@mdi/font/css/materialdesignicons.min.css'],
 
