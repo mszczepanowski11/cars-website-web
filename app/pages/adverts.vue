@@ -166,6 +166,33 @@
                         <button class="fcb-clear" @click="f.categoryId = null; load(1)"><v-icon icon="mdi-close" size="12"/></button>
                     </div>
 
+                    <!-- Parts category filter -->
+                    <div v-if="categorySlug === 'czesci'" class="filter-section">
+                        <div class="filter-section-label">
+                            <v-icon icon="mdi-cog-outline" size="14" />
+                            Kategoria części
+                        </div>
+                        <select v-model="f.bodySubtype" class="filter-select" @change="load(1)">
+                            <option value="">Wszystkie</option>
+                            <option value="silnik">Silnik i osprzęt</option>
+                            <option value="skrzynia">Skrzynia biegów / napęd</option>
+                            <option value="zawieszenie">Zawieszenie i układ kierowniczy</option>
+                            <option value="hamulce">Hamulce</option>
+                            <option value="elektryka">Elektryka i elektronika</option>
+                            <option value="nadwozie-zewn">Nadwozie zewnętrzne</option>
+                            <option value="nadwozie-wewn">Wnętrze / tapicerka</option>
+                            <option value="oswietlenie">Oświetlenie</option>
+                            <option value="chlodnica">Układ chłodzenia</option>
+                            <option value="wydech">Układ wydechowy</option>
+                            <option value="paliwo">Układ paliwowy</option>
+                            <option value="klimatyzacja">Klimatyzacja / ogrzewanie</option>
+                            <option value="kola">Koła, felgi i opony</option>
+                            <option value="akcesoria">Akcesoria i tuning</option>
+                            <option value="narzedzia">Narzędzia i wyposażenie warsztatu</option>
+                            <option value="inne">Inne</option>
+                        </select>
+                    </div>
+
                     <!-- Price -->
                     <div class="filter-section">
                         <div class="filter-section-label">
@@ -488,7 +515,7 @@ const f = reactive({
     payloadTo:   null as number | null,
     grossWeightFrom: null as number | null,
     grossWeightTo:   null as number | null,
-    bodySubtype: '' as string,
+    bodySubtype: route.query.bodySubtype ? String(route.query.bodySubtype) : '' as string,
     hasRetarder: null as boolean | null,
     hasTachograph: null as boolean | null,
     sortBy:      route.query.sortBy ? String(route.query.sortBy) : '',
@@ -747,6 +774,7 @@ async function load(p: number = page.value) {
     if (f.hasWarranty !== null)    query.hasWarranty    = String(f.hasWarranty)
     if (f.hasServiceBook !== null) query.hasServiceBook = String(f.hasServiceBook)
     if (f.isImported !== null)     query.isImported     = String(f.isImported)
+    if (f.bodySubtype)  query.bodySubtype = f.bodySubtype
     if (f.sortBy)      query.sortBy      = f.sortBy
     if (p > 1)         query.page        = String(p)
     router.replace({ query })
