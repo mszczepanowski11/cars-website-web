@@ -8,21 +8,20 @@
                 <div class="hfs-left-inner">
                     <div class="hfs-eyebrow">
                         <span class="eyebrow-dot" />
-                        Platforma motoryzacyjna
+                        Nowoczesna platforma motoryzacyjna
                     </div>
                     <h1 class="hfs-title">
-                        Motoryzacja.<br>
-                        <span class="title-accent">W&nbsp;lepszym</span><br>
-                        wydaniu.
+                        Samochody.<br>
+                        <span class="title-accent">Bez&nbsp;kompromisów.</span>
                     </h1>
                     <p class="hfs-sub">
-                        CARIZO to więcej niż portal ogłoszeniowy —<br>
-                        miejsce, gdzie <strong>technologia</strong> spotyka <strong>pasję do motoryzacji</strong>.
+                        Zweryfikowane ogłoszenia, historia VIN i narzędzia AI —<br>
+                        <strong>inteligentniejszy sposób</strong> na kupno i sprzedaż auta.
                     </p>
                     <div class="hfs-feats">
-                        <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zweryfikowane ogłoszenia</span>
-                        <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Zaufani sprzedawcy</span>
-                        <span class="hfs-feat"><v-icon icon="mdi-check-circle-outline" size="15" />Inteligentne narzędzia</span>
+                        <span class="hfs-feat"><v-icon icon="mdi-shield-check-outline" size="15" />Weryfikowani sprzedawcy</span>
+                        <span class="hfs-feat"><v-icon icon="mdi-car-search-outline" size="15" />Historia pojazdu VIN</span>
+                        <span class="hfs-feat"><v-icon icon="mdi-cpu-64-bit" size="15" />Wycena AI</span>
                     </div>
                     <div class="hfs-links">
                         <NuxtLink to="/add-advert" class="hfs-link hfs-link--primary">
@@ -30,7 +29,7 @@
                             Dodaj ogłoszenie
                         </NuxtLink>
                         <NuxtLink to="/adverts" class="hfs-link">
-                            Przeglądaj wszystkie
+                            Przeglądaj ogłoszenia
                             <v-icon icon="mdi-arrow-right" size="13" />
                         </NuxtLink>
                     </div>

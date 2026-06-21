@@ -278,7 +278,7 @@ onUnmounted(() => {
 }
 
 .logo-img {
-    height: 28px;
+    height: 36px;
     width: auto;
     display: block;
 }
@@ -473,7 +473,7 @@ onUnmounted(() => {
 }
 
 .drawer-logo {
-    height: 26px;
+    height: 32px;
     width: auto;
     display: block;
 }
