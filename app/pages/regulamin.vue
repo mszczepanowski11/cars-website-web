@@ -4,7 +4,7 @@
             <div class="container">
                 <div class="hero-eyebrow">Dokumenty prawne</div>
                 <h1>Regulamin <span>serwisu</span></h1>
-                <p>Ostatnia aktualizacja: 1 czerwca 2026</p>
+                <p>Ostatnia aktualizacja: 23.06.2026</p>
             </div>
         </div>
 
@@ -12,69 +12,165 @@
             <div class="doc-content">
 
                 <section class="doc-section">
-                    <h2>§1. Postanowienia ogólne</h2>
-                    <p>Niniejszy Regulamin określa zasady korzystania z serwisu CARIZO, dostępnego pod adresem carizo.pl, prowadzonego przez CARIZO sp. z o.o. z siedzibą w Polsce.</p>
-                    <p>Korzystanie z Serwisu oznacza akceptację niniejszego Regulaminu. Jeśli nie zgadzasz się z jego postanowieniami, prosimy o zaprzestanie korzystania z Serwisu.</p>
+                    <h2>REGULAMIN SERWISU INTERNETOWEGO CARIZO (DLA KLIENTÓW INDYWIDUALNYCH)</h2>
                 </section>
 
                 <section class="doc-section">
-                    <h2>§2. Definicje</h2>
-                    <ul>
-                        <li><strong>Serwis</strong> – platforma ogłoszeniowa CARIZO dostępna pod adresem carizo.pl</li>
-                        <li><strong>Użytkownik</strong> – osoba fizyczna lub prawna korzystająca z Serwisu</li>
-                        <li><strong>Ogłoszenie</strong> – oferta sprzedaży lub zakupu pojazdu zamieszczona w Serwisie</li>
-                        <li><strong>Konto</strong> – indywidualne konto Użytkownika w Serwisie</li>
-                        <li><strong>Operator</strong> – CARIZO sp. z o.o.</li>
-                    </ul>
+                    <h2>SŁOWNIK POJĘĆ</h2>
+                    <ol>
+                        <li><strong>Administrator</strong> – Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej pod numerem NIP: 9452331007, REGON: 544870688.</li>
+                        <li><strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.pl wraz ze wszystkimi jej podstronami i subdomenami.</li>
+                        <li><strong>Użytkownik Indywidualny (Użytkownik)</strong> – osoba fizyczna posiadająca pełną zdolność do czynności prawnych, będąca konsumentem w rozumieniu art. 22¹ Kodeksu cywilnego, korzystająca z zasobów Serwisu w celach niezwiązanych bezpośrednio z jej działalnością gospodarczą lub zawodową.</li>
+                        <li><strong>Konto</strong> – przydzielona danemu Użytkownikowi część Serwisu, zabezpieczona hasłem, umożliwiająca zarządzanie ogłoszeniami, usługami promowania oraz komunikacją wewnętrzną.</li>
+                        <li><strong>Ogłoszenie</strong> – sporządzone przez Użytkownika i publikowane w Serwisie zaproszenie do zawarcia umowy sprzedaży pojazdu mechanicznego lub części motoryzacyjnych, stanowiące informację handlową w rozumieniu przepisów prawa.</li>
+                        <li><strong>Cennik</strong> – zestawienie opłat za usługi odpłatne, w tym pakiety wyróżnień i promowania, publikowane w sposób jawny i bezpośrednio dostępny w Serwisie.</li>
+                    </ol>
                 </section>
 
                 <section class="doc-section">
-                    <h2>§3. Rejestracja i konto</h2>
-                    <p>Korzystanie z pełnej funkcjonalności Serwisu wymaga rejestracji i utworzenia Konta. Rejestracja jest bezpłatna i dostępna dla osób pełnoletnich.</p>
-                    <p>Użytkownik zobowiązuje się do podania prawdziwych danych podczas rejestracji oraz ich aktualizowania w razie zmiany. Zabrania się tworzenia kont fikcyjnych oraz podszywania się pod inne osoby.</p>
-                    <p>Użytkownik jest odpowiedzialny za zachowanie poufności danych dostępowych do Konta.</p>
+                    <h2>§1 Postanowienia ogólne i charakter usług</h2>
+                    <ol>
+                        <li>Niniejsze postanowienia stanowią wzorzec umowny określający zasady, warunki techniczne oraz prawne korzystania z Serwisu internetowego CARIZO, prawa i obowiązki Użytkowników Indywidualnych oraz zakres odpowiedzialności Administratora.</li>
+                        <li>Serwis CARIZO jest internetową platformą o charakterze handlowym (marketplace), która udostępnia Użytkownikom przestrzeń teleinformatyczną oraz narzędzia techniczne do publikacji i przeglądania Ogłoszeń motoryzacyjnych.</li>
+                        <li><strong>Status prawny platformy:</strong> Administrator dostarcza wyłącznie usługi pośrednictwa cyfrowego (usługi hostingu). CARIZO nie jest salonem samochodowym, komisem, hurtownią, autoryzowanym dealerem ani stroną jakichkolwiek transakcji handlowych inicjowanych w Serwisie. Wszelkie umowy sprzedaży pojazdów lub części zawierane są bezpośrednio pomiędzy Użytkownikami, na ich własny koszt i ryzyko.</li>
+                        <li>CARIZO nie bierze udziału w kontaktach pomiędzy Użytkownikami, nie uczestniczy w negocjacjach cenowych, nie pośredniczy w przekazywaniu środków finansowych za pojazdy ani nie gwarantuje, że opublikowanie Ogłoszenia doprowadzi do sfinalizowania transakcji sprzedaży.</li>
+                        <li>Każdy Użytkownik z momentem rozpoczęcia korzystania z jakichkolwiek zasobów Serwisu (w tym samego przeglądania stron) potwierdza, że zapoznał się z niniejszymi zapisami i zobowiązuje się do ich bezwzględnego przestrzegania.</li>
+                        <li>Z Serwisu w zakresie tworzenia Konta oraz publikacji Ogłoszeń mogą korzystać wyłącznie osoby, które ukończyły 18. rok życia i posiadają pełną zdolność do czynności prawnych. Przeglądanie Serwisu i subskrypcja newslettera są dozwolone dla osób, które ukończyły 16. rok życia.</li>
+                        <li>Korzystając z Serwisu, Użytkownik zobowiązany jest do działania w sposób zgodny z prawem, dobrymi obyczajami oraz zasadami współżycia społecznego. Zabrania się dostarczania przez Użytkownika treści o charakterze bezprawnym, naruszających dobra osobiste osób trzecich lub zakłócających działanie infrastruktury IT Serwisu.</li>
+                    </ol>
                 </section>
 
                 <section class="doc-section">
-                    <h2>§4. Zasady zamieszczania ogłoszeń</h2>
-                    <p>Użytkownik może zamieszczać ogłoszenia dotyczące pojazdów, których jest właścicielem lub posiada uprawnienie do ich sprzedaży. Zabrania się zamieszczania ogłoszeń:</p>
-                    <ul>
-                        <li>dotyczących pojazdów kradzionych lub pochodzących z przestępstwa</li>
-                        <li>zawierających nieprawdziwe informacje lub wprowadzających w błąd</li>
-                        <li>naruszających prawa osób trzecich</li>
-                        <li>niezgodnych z obowiązującym prawem</li>
-                        <li>zawierających treści obraźliwe lub niestosowne</li>
-                    </ul>
-                    <p>Operator zastrzega sobie prawo do usunięcia ogłoszeń naruszających Regulamin bez uprzedniego powiadomienia.</p>
+                    <h2>§2 Warunki techniczne i dostępność serwisu</h2>
+                    <ol>
+                        <li>Przeglądanie zasobów Serwisu, w tym wyszukiwanie, filtrowanie i przeglądanie opublikowanych Ogłoszeń, jest bezpłatne i nie wymaga posiadania Konta ani logowania.</li>
+                        <li>Do korzystania z pełnej funkcjonalności Serwisu, w tym publikacji Ogłoszeń, zakupu usług dodatkowych oraz korzystania z wewnętrznego systemu komunikacji, niezbędne jest zarejestrowanie Konta, posiadanie aktywnego adresu e-mail oraz numeru telefonu komórkowego u polskiego operatora telekomunikacyjnego.</li>
+                        <li>CARIZO dokłada wszelkich starań w celu zapewnienia stałego i nieprzerwanego działania Serwisu, jednakże zastrzega sobie prawo do wprowadzania przerw technicznych niezbędnych do konserwacji, aktualizacji lub rozbudowy systemu informatycznego.</li>
+                        <li>CARIZO nie ponosi odpowiedzialności za szkody, utracone korzyści ani zakłócenia w funkcjonowaniu platformy powstałe w wyniku przerw technicznych lub awarii leżących po stronie zewnętrznych dostawców usług teleinformatycznych oraz operatorów hostingu.</li>
+                    </ol>
                 </section>
 
                 <section class="doc-section">
-                    <h2>§5. Płatności i promocje</h2>
-                    <p>Podstawowe zamieszczenie ogłoszenia jest bezpłatne. Serwis oferuje płatne opcje promocji ogłoszeń (TOP, Premium, Wyróżnienie, Odświeżenie), których ceny dostępne są w cenniku.</p>
-                    <p>Płatności obsługiwane są przez system płatności ING IMOJE. Operator nie przechowuje danych kart płatniczych.</p>
-                    <p>W przypadku nieudanej płatności lub rezygnacji, Użytkownik może ubiegać się o zwrot środków zgodnie z procedurą reklamacyjną.</p>
+                    <h2>§3 Zasady publikacji ogłoszeń i cennik</h2>
+                    <ol>
+                        <li>Dodawanie Ogłoszeń przez Użytkowników Indywidualnych w ich podstawowym wariancie jest bezpłatne.</li>
+                        <li>CARIZO oferuje dodatkowe, odpłatne usługi zwiększające widoczność ofert (usługi promowania, podbicia, wyróżnienia na stronie głównej). Aktualny zakres tych usług, ich specyfikacja oraz ceny określane są w Cenniku dostępnym w Serwisie.</li>
+                        <li>Standardowy czas publikacji Ogłoszenia wynosi 30 dni.</li>
+                        <li>Po upływie 30 dni Ogłoszenie wygasa automatycznie i zostaje przeniesione do archiwum Konta Użytkownika. Użytkownik ma możliwość ponownej, ręcznej aktywacji Ogłoszenia z poziomu swojego Konta.</li>
+                        <li>Serwis nie stosuje mechanizmów automatycznego odnawiania Ogłoszeń ani automatycznego pobierania opłat finansowych z kont bankowych lub kart Użytkownika bez jego wyraźnej, każdorazowej i uprzedniej zgody.</li>
+                        <li>Ogłoszenie jest ściśle i nierozerwalnie przypisane do jednego, konkretnego pojazdu lub zestawu części zdefiniowanego w momencie jego utworzenia. Zabrania się zmiany przedmiotu Ogłoszenia w trakcie jego emisji (w tym poprzez edycję parametrów, opisu lub zdjęć w celu zaoferowania innego pojazdu w ramach tego samego ogłoszenia).</li>
+                        <li>W przypadku intencjonalnego usunięcia Ogłoszenia przez Użytkownika przed zakończeniem standardowego lub przedłużonego okresu publikacji (np. w wyniku wcześniejszej sprzedaży pojazdu), wniesione opłaty za usługi promowania nie podlegają zwrotowi ani proporcjonalnemu rozliczeniu, z zastrzeżeniem praw konsumenckich opisanych w §6.</li>
+                    </ol>
                 </section>
 
                 <section class="doc-section">
-                    <h2>§6. Odpowiedzialność</h2>
-                    <p>Operator nie ponosi odpowiedzialności za treść ogłoszeń zamieszczanych przez Użytkowników ani za transakcje zawierane między Użytkownikami poza Serwisem.</p>
-                    <p>Operator dokłada wszelkich starań w celu zapewnienia nieprzerwanego działania Serwisu, jednak nie gwarantuje jego dostępności przez 24 godziny na dobę, 7 dni w tygodniu.</p>
+                    <h2>§4 Wymagania dotyczące treści ogłoszeń, parametrów i zdjęć</h2>
+                    <ol>
+                        <li>Podczas dodawania Ogłoszenia dotyczącego pojazdu, Użytkownik ma obowiązek podania prawidłowego, autentycznego i kompletnego 17-znakowego numeru VIN (Vehicle Identification Number). Podanie numeru rejestracyjnego pojazdu jest opcjonalne.</li>
+                        <li>Użytkownik wprowadza wszelkie dane techniczne, opis oraz stan pojazdu samodzielnie i ponosi pełną odpowiedzialność za ich zgodność ze stanem faktycznym i prawnym pojazdu. Treść oferty musi odzwierciedlać rzeczywisty zamiar sprzedaży pojazdu.</li>
+                        <li>W treści Ogłoszenia Użytkownik zobowiązany jest podać całkowitą, rzeczywistą cenę brutto pojazdu. Zabrania się podawania w polu „Cena" kwot rat leasingowych, rat kredytowych, kwot odstępnego lub cen rażąco zaniżonych w celu manipulacji wynikami wyszukiwania. Szczegóły dotyczące finansowania mogą być zawarte wyłącznie w polu opisu.</li>
+                        <li>Przedmiotem jednego Ogłoszenia może być wyłącznie jeden konkretny pojazd. Niedozwolone jest oferowanie w treści jednego Ogłoszenia kilku pojazdów na wybór, zamianę lub prezentowanie ofert o charakterze ogólnym.</li>
+                        <li>Opis pojazdu musi odnosić się wyłącznie do przedmiotu sprzedaży. Zabrania się stosowania tzw. spamu słów kluczowych (wpisywania nazw innych marek, modeli i haseł niezwiązanych z ofertą) oraz umieszczania odnośników (linków) przekierowujących do konkurencyjnych serwisów ogłoszeniowych.</li>
+                        <li>
+                            Zdjęcia dodawane do Ogłoszenia muszą przedstawiać oferowany pojazd w jego aktualnym stanie faktycznym. Zabrania się:
+                            <ul>
+                                <li>Używania zdjęć katalogowych, reklamowych (pochodzących od producentów) lub przerobionych cyfrowo;</li>
+                                <li>Nakładania na zdjęcia dodatkowych elementów graficznych, takich jak numery telefonów, adresy e-mail, napisy promocyjne (np. „OKAZJA", „PILNIE", „ZOBACZ");</li>
+                                <li>Umieszczania na zdjęciach znaków wodnych lub logotypów innych serwisów internetowych.</li>
+                            </ul>
+                        </li>
+                    </ol>
                 </section>
 
                 <section class="doc-section">
-                    <h2>§7. Ochrona danych osobowych</h2>
-                    <p>Dane osobowe Użytkowników przetwarzane są zgodnie z Polityką Prywatności dostępną pod adresem carizo.pl/polityka-prywatnosci oraz z obowiązującymi przepisami RODO.</p>
+                    <h2>§5 System rekomendacji i mechanizm plasowania ofert</h2>
+                    <ol>
+                        <li>Ogłoszenia dodane przez Użytkownika są publikowane w Serwisie automatycznie po zatwierdzeniu formularza lub zaksięgowaniu opłaty za opcjonalne promowanie.</li>
+                        <li>
+                            Kolejność wyświetlania Ogłoszeń w wynikach wyszukiwania (tzw. plasowanie domyślne / trafność) opiera się na zautomatyzowanym algorytmie uwzględniającym obiektywne kryteria techniczne. Głównymi parametrami decydującymi o pozycji Ogłoszenia na liście są:
+                            <ul>
+                                <li>Korzystanie z aktywnych usług promowania (Ogłoszenia z płatnym wyróżnieniem pozycjonowane są wyżej);</li>
+                                <li>Aktualność oferty: data publikacji, data ostatniej aktualizacji lub ponownej aktywacji z archiwum;</li>
+                                <li>Stopień dopasowania do filtrów technicznych zdefiniowanych przez osobę przeglądającą Serwis (w tym: cena, rocznik, przebieg, moc silnika, pojemność silnika, rodzaj paliwa, typ nadwozia, stan pojazdu nowy/używany, dostępność wideo, obecność numeru VIN oraz lokalizacja geograficzna pojazdu).</li>
+                            </ul>
+                        </li>
+                    </ol>
                 </section>
 
                 <section class="doc-section">
-                    <h2>§8. Zmiany Regulaminu</h2>
-                    <p>Operator zastrzega sobie prawo do zmiany Regulaminu. O wszelkich zmianach Użytkownicy zostaną poinformowani z co najmniej 14-dniowym wyprzedzeniem za pośrednictwem poczty elektronicznej lub powiadomienia w Serwisie.</p>
+                    <h2>§6 Odstąpienie od umowy i procedura reklamacyjna</h2>
+                    <ol>
+                        <li>Użytkownikowi będącemu konsumentem przysługuje prawo do odstąpienia od umowy o świadczenie usług drogą elektroniczną (w tym umowy o prowadzenie Konta oraz umów o usługi promowania) w terminie 14 dni od jej zawarcia, bez podania przyczyny, poprzez złożenie jednoznacznego oświadczenia woli na adres e-mail: <strong>kontakt@carizo.eu</strong>.</li>
+                        <li>W przypadku zakupu odpłatnych usług promowania Ogłoszenia, których świadczenie — na wyraźne żądanie Użytkownika wyrażone poprzez aktywację opcji w panelu — rozpoczęło się przed upływem terminu do odstąpienia od umowy, Użytkownik traci prawo do odstąpienia od umowy z momentem pełnego wykonania usługi polegającej na emisji wyróżnienia przez CARIZO.</li>
+                        <li>Użytkownik ma prawo do złożenia reklamacji w przypadku niewykonania lub nienależytego wykonania usług o charakterze teleinformatycznym przez CARIZO (np. błędy techniczne w wyświetlaniu płatnego promowania, nieprawidłowe działanie Konta).</li>
+                        <li>Reklamacje należy zgłaszać drogą elektroniczną na adres e-mail: <strong>kontakt@carizo.eu</strong>. Zgłoszenie powinno zawierać: identyfikator Konta lub ID Ogłoszenia, opis zaistniałego problemu technicznego oraz dane kontaktowe.</li>
+                        <li>CARIZO rozpatruje reklamacje konsumenckie w nieprzekraczalnym, ustawowym terminie 14 dni od dnia ich prawidłowego otrzymania. Odpowiedź wysyłana jest na adres e-mail przypisany do Konta Użytkownika.</li>
+                    </ol>
                 </section>
 
                 <section class="doc-section">
-                    <h2>§9. Postanowienia końcowe</h2>
-                    <p>W sprawach nieuregulowanych niniejszym Regulaminem zastosowanie mają przepisy prawa polskiego, w szczególności Kodeksu cywilnego oraz ustawy o świadczeniu usług drogą elektroniczną.</p>
-                    <p>Wszelkie spory między Użytkownikiem a Operatorem rozstrzygane będą przez właściwy sąd powszechny.</p>
+                    <h2>§7 Komunikacja w Serwisie oraz treści reklamowe</h2>
+                    <ol>
+                        <li>Kontakt pomiędzy Użytkownikami w celu przeprowadzenia transakcji odbywa się za pomocą danych udostępnionych przez sprzedawcę (numer telefonu, adres e-mail) oraz za pośrednictwem wewnętrznego systemu wiadomości (czatu) zintegrowanego z Serwisem.</li>
+                        <li>CARIZO zastrzega sobie prawo do wyświetlania w ramach Serwisu reklam oraz ofert partnerów zewnętrznych, w szczególności z branży motoryzacyjnej, finansowej (leasing, kredyty), ubezpieczeniowej oraz dostawców raportów historii pojazdów.</li>
+                    </ol>
+                </section>
+
+                <section class="doc-section">
+                    <h2>§8 Prawa autorskie i licencje</h2>
+                    <ol>
+                        <li>Użytkownik oświadcza, że posiada pełne prawa, w tym autorskie prawa majątkowe, do materiałów fotograficznych oraz opisów umieszczanych w Ogłoszeniu.</li>
+                        <li>Serwis automatycznie nakłada na zdjęcia publikowane przez Użytkowników znak wodny z logotypem „CARIZO" w celu przeciwdziałania nieuprawnionemu wykorzystywaniu fotografii przez podmioty trzecie.</li>
+                        <li>Z momentem publikacji Ogłoszenia, Użytkownik udziela na rzecz CARIZO niewyłącznej, nieodpłatnej, nieograniczonej terytorialnie i czasowo licencji na wykorzystanie zdjęcia oraz opisów w celu prawidłowego funkcjonowania Serwisu, promocji platformy, prowadzenia działań marketingowych, a także prezentowania ofert w mediach społecznościowych oraz zewnętrznych materiałach reklamowych. Licencja obejmuje prawo do kadrowania, zmiany rozdzielczości oraz formatowania materiałów graficznych.</li>
+                        <li>W przypadku, gdy jakikolwiek podmiot trzeci wystąpi z roszczeniami prawnymi lub finansowymi wobec CARIZO z tytułu naruszenia jego praw autorskich, praw własności przemysłowej lub dóbr osobistych poprzez treść lub zdjęcia zamieszczone w Ogłoszeniu przez Użytkownika, Użytkownik ten zobowiązuje się do pełnego zwolnienia CARIZO z odpowiedzialności oraz pokrycia wszelkich udokumentowanych kosztów obrony, sporów prawnych, kosztów zastępstwa procesowego oraz zasądzonych odszkodowań.</li>
+                    </ol>
+                </section>
+
+                <section class="doc-section">
+                    <h2>§9 Moderacja, blokady kont i zakaz automatyzacji</h2>
+                    <ol>
+                        <li>CARIZO nie prowadzi uprzedniej, obowiązkowej ręcznej weryfikacji (moderacji) każdego Ogłoszenia przed jego publikacją. Użytkownicy oraz organy zewnętrzne mają możliwość zgłaszania za pośrednictwem elektronicznego formularza interfejsu ofert naruszających prawo lub niniejsze warunki.</li>
+                        <li>Każde zgłoszenie nielegalnych treści w rozumieniu art. 16 Aktu o usługach cyfrowych (DSA) powinno zawierać: precyzyjną lokalizację treści (link URL), uzasadnienie, dane zgłaszającego (z wyjątkiem zgłoszeń dotyczących przestępstw pedofilskich) oraz oświadczenie o działaniu w dobrej wierze.</li>
+                        <li>
+                            CARIZO zastrzega sobie prawo do weryfikacji następczej, edycji, ukrycia lub całkowitego usunięcia Ogłoszenia, a także czasowego lub stałego zablokowania Konta Użytkownika w przypadku stwierdzenia:
+                            <ul>
+                                <li>podawania nieprawdziwych danych osobowych lub kontaktowych,</li>
+                                <li>publikowania duplikatów Ogłoszeń dotyczących tego samego pojazdu,</li>
+                                <li>wprowadzenia nieprawidłowego, fałszywego lub cudzego numeru VIN,</li>
+                                <li>manipulacji parametrami Ogłoszenia (w tym ceną i zdjęciami) opisanymi w §4,</li>
+                                <li>uzasadnionego podejrzenia próby oszustwa (scam, phishing) lub działań na szkodę innych Użytkowników,</li>
+                                <li>naruszania praw osób trzecich,</li>
+                                <li>publikowania treści wulgarnych, obraźliwych lub niezgodnych z prawem.</li>
+                            </ul>
+                        </li>
+                        <li>Zabrania się korzystania z jakichkolwiek narzędzi automatycznych (w szczególności botów, skryptów, programów filtrujących lub tzw. web crawlerów/scraperów) w celu monitorowania, kopiowania, pobierania lub automatycznego agregowania zasobów Serwisu, w tym treści Ogłoszeń oraz danych kontaktowych Użytkowników, bez uprzedniej zgody CARIZO pod rygorem natychmiastowego zablokowania dostępu do Serwisu oraz podjęcia kroków prawnych.</li>
+                        <li>W przypadku zastosowania blokady Konta lub usunięcia treści, CARIZO niezwłocznie powiadomi Użytkownika o podjętej decyzji wraz z uzasadnieniem drogą elektroniczną. Użytkownikowi przysługuje prawo do złożenia bezpłatnego odwołania od decyzji w terminie 14 dni za pośrednictwem adresu e-mail: <strong>kontakt@carizo.eu</strong>.</li>
+                    </ol>
+                </section>
+
+                <section class="doc-section">
+                    <h2>§10 Likwidacja Konta Użytkownika</h2>
+                    <ol>
+                        <li>Użytkownik ma prawo do rozwiązania umowy o świadczenie usług drogą elektroniczną w każdym czasie i bez podania przyczyny poprzez samodzielne usunięcie Konta z poziomu panelu użytkownika.</li>
+                        <li>Usunięcie Konta skutkuje trwałym usunięciem lub anonimizacją danych osobowych Użytkownika, z wyjątkiem informacji, których obowiązek przechowywania wynika bezpośrednio z bezwzględnie obowiązujących przepisów prawa podatkowego i rachunkowego.</li>
+                    </ol>
+                </section>
+
+                <section class="doc-section">
+                    <h2>§11 Wyłączenie odpowiedzialności Administratora</h2>
+                    <ol>
+                        <li>CARIZO nie jest stroną transakcji ani umów cywilnoprawnych zawieranych pomiędzy Użytkownikami Serwisu. Pełną i wyłączną odpowiedzialność za treść Ogłoszenia, stan techniczny, prawny i faktyczny pojazdu, a także za prawidłowy przebieg i realizację transakcji ponoszą wyłącznie strony tej transakcji.</li>
+                        <li>Wszelkie dodatkowe narzędzia udostępniane w przyszłości przez platformę (takie jak wzory umów kupna-sprzedaży w formacie PDF, usługi finansowe lub raporty historii pojazdów) mają charakter wyłącznie pomocniczy i orientacyjny. CARIZO nie ponosi odpowiedzialności za skutki prawne i finansowe wynikające z ich wykorzystania przez Użytkowników.</li>
+                    </ol>
+                </section>
+
+                <section class="doc-section">
+                    <h2>§12 Postanowienia końcowe</h2>
+                    <ol>
+                        <li>CARIZO zastrzega sobie prawo do zmiany niniejszych warunków z ważnych przyczyn technicznych, prawnych lub organizacyjnych. O zmianach zarejestrowani Użytkownicy zostaną powiadomieni drogą mailową z zachowaniem 14-dniowego okresu wypowiedzenia.</li>
+                        <li>W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego, ustawy o prawach konsumenta oraz ustawy z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej.</li>
+                        <li>Treść niniejszych postanowień wchodzi w życie z dniem 23.06.2026.</li>
+                    </ol>
                 </section>
 
             </div>
@@ -83,7 +179,10 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Regulamin — CARIZO' })
+useHead({
+    title: 'Regulamin — CARIZO',
+    meta: [{ name: 'description', content: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.' }]
+})
 </script>
 
 <style lang="scss" scoped>
@@ -117,7 +216,7 @@ useHead({ title: 'Regulamin — CARIZO' })
     margin-bottom: 40px;
 
     h2 {
-        font-size: 20px; font-weight: 800; color: $text;
+        font-size: 18px; font-weight: 800; color: $text;
         margin-bottom: 16px;
         padding-bottom: 10px;
         border-bottom: 1px solid $border;
@@ -128,8 +227,16 @@ useHead({ title: 'Regulamin — CARIZO' })
         margin-bottom: 12px;
     }
 
-    ul {
+    ol {
         padding-left: 20px; margin-bottom: 12px;
+        li {
+            font-size: 14px; color: $text-muted; line-height: 1.8;
+            margin-bottom: 10px;
+        }
+    }
+
+    ul {
+        padding-left: 20px; margin-top: 8px;
         li {
             font-size: 14px; color: $text-muted; line-height: 1.8; margin-bottom: 4px;
         }
