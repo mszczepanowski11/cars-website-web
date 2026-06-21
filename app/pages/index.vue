@@ -191,10 +191,10 @@
                     </div>
 
                     <div v-if="currentSearchConfig.hasPartCategory" class="fg-field">
-                        <label class="fg-label">Kategoria</label>
+                        <label class="fg-label">Kategoria części</label>
                         <select v-model="searchSubtype" class="fg-select">
                             <option value="">Wszystkie</option>
-                            <option v-for="t in PART_CATEGORIES" :key="t" :value="t">{{ t }}</option>
+                            <option v-for="t in PART_CATEGORIES" :key="t.value" :value="t.value">{{ t.label }}</option>
                         </select>
                     </div>
 
@@ -738,7 +738,24 @@ const SEARCH_CONFIGS: Record<string, SearchConfig> = {
     'inne':         { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false },
 }
 
-const PART_CATEGORIES = ['Silnik', 'Zawieszenie', 'Hamulce', 'Elektryka', 'Karoseria', 'Wnętrze', 'Skrzynia biegów', 'Układ kierowniczy', 'Opony i felgi', 'Oświetlenie', 'Tuning', 'Inne']
+const PART_CATEGORIES = [
+    { value: 'silnik',        label: 'Silnik i osprzęt' },
+    { value: 'skrzynia',      label: 'Skrzynia biegów / napęd' },
+    { value: 'zawieszenie',   label: 'Zawieszenie i układ kierowniczy' },
+    { value: 'hamulce',       label: 'Hamulce' },
+    { value: 'elektryka',     label: 'Elektryka i elektronika' },
+    { value: 'nadwozie-zewn', label: 'Nadwozie zewnętrzne' },
+    { value: 'nadwozie-wewn', label: 'Wnętrze / tapicerka' },
+    { value: 'oswietlenie',   label: 'Oświetlenie' },
+    { value: 'chlodnica',     label: 'Układ chłodzenia' },
+    { value: 'wydech',        label: 'Układ wydechowy' },
+    { value: 'paliwo',        label: 'Układ paliwowy' },
+    { value: 'klimatyzacja',  label: 'Klimatyzacja / ogrzewanie' },
+    { value: 'kola',          label: 'Koła, felgi i opony' },
+    { value: 'akcesoria',     label: 'Akcesoria i tuning' },
+    { value: 'narzedzia',     label: 'Narzędzia i wyposażenie warsztatu' },
+    { value: 'inne',          label: 'Inne' },
+]
 
 const searchCat = ref('auta-osobowe')
 const searchText = ref('')
@@ -852,7 +869,7 @@ function doSearch() {
     if (searchFuelId.value) query.fuelTypeId = String(searchFuelId.value)
     if (searchGearboxId.value) query.gearboxId = String(searchGearboxId.value)
     if (searchBodyTypeId.value) query.bodyTypeId = String(searchBodyTypeId.value)
-    if (searchSubtype.value) query.subtype = searchSubtype.value
+    if (searchSubtype.value) query.bodySubtype = searchSubtype.value
     if (searchPriceFrom.value) query.priceFrom = searchPriceFrom.value
     if (searchPriceTo.value) query.priceTo = searchPriceTo.value
     if (searchYearFrom.value) query.yearFrom = searchYearFrom.value

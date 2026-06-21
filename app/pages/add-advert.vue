@@ -2776,6 +2776,7 @@ async function submit() {
             if (extras.trailerType) cleanEdit.bodySubtype = extras.trailerType
             if (extras.machineType) cleanEdit.bodySubtype = extras.machineType
             if (extras.truckType) cleanEdit.bodySubtype = extras.truckType
+            if (extras.partCategory) cleanEdit.bodySubtype = extras.partCategory
             if (extras.partNumber) cleanEdit.catalogNumber = extras.partNumber
             if (extras.compatibility) cleanEdit.compatibility = extras.compatibility
             if (extras.seatsCount != null) cleanEdit.seatsCount = Number(extras.seatsCount)
@@ -2858,6 +2859,7 @@ async function submit() {
             if (extras.trailerType) cleanBody.bodySubtype = extras.trailerType
             if (extras.machineType) cleanBody.bodySubtype = extras.machineType
             if (extras.truckType) cleanBody.bodySubtype = extras.truckType
+            if (extras.partCategory) cleanBody.bodySubtype = extras.partCategory
             if (extras.partNumber) cleanBody.catalogNumber = extras.partNumber
             if (extras.compatibility) cleanBody.compatibility = extras.compatibility
             if (extras.seatsCount != null) cleanBody.seatsCount = Number(extras.seatsCount)
@@ -3008,6 +3010,9 @@ onMounted(async () => {
             form.engineCapacity = advert.engineSize ?? null
             // Restore extras from structured fields
             if (advert.condition) extras.condition = advert.condition
+            if (advert.bodySubtype && selectedCategory.value?.slug === 'czesci') extras.partCategory = advert.bodySubtype
+            if (advert.catalogNumber) extras.partNumber = advert.catalogNumber
+            if (advert.compatibility) extras.compatibility = advert.compatibility
             if (advert.doorCount) extras.doors = String(advert.doorCount)
             if (advert.driveType) extras.driveType = advert.driveType.slug
             if (advert.color) extras.color = advert.color.id ?? advert.color.name
