@@ -15,6 +15,13 @@ export const useTaxonomy = () => {
     fetchFeatures: () => $fetch<Feature[]>('/api/proxy/api/Taxonomy/features'),
     fetchFeatureCategories: () => $fetch('/api/proxy/api/Taxonomy/feature-categories'),
     fetchFeatureCategoriesByVehicle: (vehicleCategoryId: number) => $fetch(`/api/proxy/api/Taxonomy/feature-categories/by-vehicle/${vehicleCategoryId}`),
+    fetchFeatureCategoriesByContext: (vehicleCategoryId?: number | null, brandId?: number | null, modelId?: number | null) => {
+        const q: Record<string, string> = {}
+        if (vehicleCategoryId) q.vehicleCategoryId = String(vehicleCategoryId)
+        if (brandId) q.brandId = String(brandId)
+        if (modelId) q.modelId = String(modelId)
+        return $fetch<{ id: number; name: string; vehicleCategoryId?: number | null; brandId?: number | null; modelId?: number | null; features: { id: number; name: string }[] }[]>('/api/proxy/api/Taxonomy/feature-categories/by-context', { query: q })
+    },
     fetchCategories: () => $fetch('/api/proxy/api/Taxonomy/categories'),
   }
 }

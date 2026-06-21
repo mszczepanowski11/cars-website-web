@@ -100,24 +100,34 @@
                             <option value="">Wszystkie pojazdy</option>
                             <option v-for="vc in vehicleCategories" :key="vc.id" :value="vc.id">{{ vc.name }}</option>
                         </select>
+                        <select v-model="newCatBrandId" class="afc-select" @change="newCatModelId = ''; loadNewCatModels()">
+                            <option value="">Wszystkie marki</option>
+                            <option v-for="b in allBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                        </select>
+                        <select v-model="newCatModelId" class="afc-select" :disabled="!newCatBrandId">
+                            <option value="">Wszystkie modele</option>
+                            <option v-for="m in newCatModels" :key="m.id" :value="m.id">{{ m.name }}</option>
+                        </select>
                         <button class="btn-confirm" :disabled="!newCatName || addingCat" @click="addCategory">
                             <v-icon v-if="addingCat" icon="mdi-loading" size="13" class="spin" />
                             Dodaj
                         </button>
-                        <button class="btn-cancel" @click="showAddCat = false; newCatName = ''">Anuluj</button>
+                        <button class="btn-cancel" @click="showAddCat = false; newCatName = ''; newCatBrandId = ''; newCatModelId = ''">Anuluj</button>
                     </div>
                 </div>
 
                 <div class="feat-table">
                     <table>
                         <thead>
-                            <tr><th>ID</th><th>Nazwa kategorii</th><th>Typ pojazdu</th><th>Akcje</th></tr>
+                            <tr><th>ID</th><th>Nazwa kategorii</th><th>Typ pojazdu</th><th>Marka</th><th>Model</th><th>Akcje</th></tr>
                         </thead>
                         <tbody>
                             <tr v-for="c in featureCategories" :key="c.id">
                                 <td class="td-id">#{{ c.id }}</td>
                                 <td class="td-name">{{ c.name }}</td>
-                                <td class="td-dim">{{ c.vehicleCategoryName ?? 'Wszystkie pojazdy' }}</td>
+                                <td class="td-dim">{{ c.vehicleCategoryName ?? 'Wszystkie' }}</td>
+                                <td class="td-dim">{{ c.brandName ?? '—' }}</td>
+                                <td class="td-dim">{{ c.modelName ?? '—' }}</td>
                                 <td>
                                     <button class="btn-action btn-delete" @click="deleteCategory(c.id, c.name)">
                                         <v-icon icon="mdi-delete-outline" size="13" />Usuń
@@ -148,6 +158,10 @@ const newFeatureName = ref('')
 const newFeatureCatId = ref<number | ''>('')
 const newCatName = ref('')
 const newCatVehicleId = ref<number | ''>('')
+const newCatBrandId = ref<number | ''>('')
+const newCatModelId = ref<number | ''>('')
+const newCatModels = ref<{ id: number; name: string }[]>([])
+const allBrands = ref<{ id: number; name: string }[]>([])
 const addingFeature = ref(false)
 const addingCat = ref(false)
 
@@ -175,6 +189,15 @@ async function loadVehicleCategories() {
     vehicleCategories.value = await $fetch('/api/proxy/api/Taxonomy/categories').catch(() => [])
 }
 
+async function loadAllBrands() {
+    allBrands.value = await $fetch<{ id: number; name: string }[]>('/api/proxy/api/Taxonomy/brands').catch(() => [])
+}
+
+async function loadNewCatModels() {
+    if (!newCatBrandId.value) { newCatModels.value = []; return }
+    newCatModels.value = await $fetch<{ id: number; name: string }[]>(`/api/proxy/api/Taxonomy/brands/${newCatBrandId.value}/models`).catch(() => [])
+}
+
 async function addFeature() {
     if (!newFeatureName.value || !newFeatureCatId.value) return
     addingFeature.value = true
@@ -199,12 +222,20 @@ async function addCategory() {
     try {
         await $fetch('/api/proxy/api/Admin/feature-categories', {
             method: 'POST',
-            body: { name: newCatName.value, vehicleCategoryId: newCatVehicleId.value || null }
+            body: {
+                name: newCatName.value,
+                vehicleCategoryId: newCatVehicleId.value || null,
+                brandId: newCatBrandId.value || null,
+                modelId: newCatModelId.value || null,
+            }
         })
         await loadCategories()
         showAddCat.value = false
         newCatName.value = ''
         newCatVehicleId.value = ''
+        newCatBrandId.value = ''
+        newCatModelId.value = ''
+        newCatModels.value = []
     } catch {} finally { addingCat.value = false }
 }
 
@@ -215,7 +246,7 @@ async function deleteCategory(id: number, name: string) {
 }
 
 onMounted(async () => {
-    await Promise.all([loadFeatures(), loadCategories(), loadVehicleCategories()])
+    await Promise.all([loadFeatures(), loadCategories(), loadVehicleCategories(), loadAllBrands()])
 })
 </script>
 
