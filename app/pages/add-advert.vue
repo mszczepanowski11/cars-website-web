@@ -1945,7 +1945,7 @@ const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
 
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext } = useTaxonomy()
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { fetchCategories } = useCategories()
@@ -2296,12 +2296,8 @@ const categoryConfig = computed<CatFieldConfig>(() => {
 })
 
 const featureGroups = computed(() => {
-    const vehicleCatId = selectedCategory.value?.id ?? null
     const g: Record<string, Feature[]> = {}
     for (const f of allFeatures.value) {
-        const fvc = f.category?.vehicleCategoryId ?? null
-        // Strict: when a vehicle category is selected, only show features tied to it
-        if (vehicleCatId != null && fvc !== vehicleCatId) continue
         const cat = f.category?.name ?? 'Inne'
         ;(g[cat] ??= []).push(f)
     }
@@ -2445,6 +2441,8 @@ async function onCategory(catId: number) {
             brands.value = await fetchBrands()
         }
     }
+    // Reload features for the new category context
+    if (changed) await loadContextFeatures()
     // Auto-advance to vehicle data step on first category selection
     if (changed && currentStep.value === 0) {
         setTimeout(() => { currentStep.value = 1 }, 250)
@@ -2567,17 +2565,32 @@ function removeImage(index: number) {
     previews.value.splice(index, 1)
 }
 
+async function loadContextFeatures() {
+    try {
+        const cats = await fetchFeatureCategoriesByContext(
+            selectedCategory.value?.id ?? null,
+            form.brandId,
+            form.modelId
+        )
+        allFeatures.value = cats.flatMap(cat =>
+            cat.features.map(f => ({ id: f.id, name: f.name, category: { id: cat.id, name: cat.name, vehicleCategoryId: cat.vehicleCategoryId } }))
+        )
+    } catch { /* keep existing features */ }
+}
+
 async function onBrand() {
     form.modelId = null; form.generationId = null; form.engineVersionId = null
     models.value = []; generations.value = []; engines.value = []
     if (form.brandId) models.value = await fetchModels(form.brandId)
     engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
+    await loadContextFeatures()
 }
 async function onModel() {
     form.generationId = null; form.engineVersionId = null
     generations.value = []; engines.value = []
     if (form.modelId) generations.value = await fetchGenerations(form.modelId)
     engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
+    await loadContextFeatures()
 }
 async function onGen() {
     form.engineVersionId = null; engines.value = []
@@ -3011,9 +3024,10 @@ async function deleteExistingImage(imageId: number) {
 }
 
 onMounted(async () => {
-    ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value] = await Promise.all([
-        fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories()
+    ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, advertCategories.value] = await Promise.all([
+        fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchCategories()
     ])
+    await loadContextFeatures()
 
     if (isEdit.value && editId.value) {
         try {
