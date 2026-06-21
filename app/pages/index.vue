@@ -8,29 +8,23 @@
                 <div class="hfs-left-inner">
                     <div class="hfs-eyebrow">
                         <span class="eyebrow-dot" />
-                        Nowoczesna platforma motoryzacyjna
+                        Motoryzacja. Na poziomie premium.
                     </div>
                     <h1 class="hfs-title">
-                        Samochody.<br>
-                        <span class="title-accent">Bez&nbsp;kompromisów.</span>
+                        Motoryzacja.<br>
+                        <span class="title-accent">Na&nbsp;poziomie&nbsp;premium.</span>
                     </h1>
                     <p class="hfs-sub">
-                        Zweryfikowane ogłoszenia, historia VIN i narzędzia AI —<br>
-                        <strong>inteligentniejszy sposób</strong> na kupno i sprzedaż auta.
+                        Zweryfikowane ogłoszenia, historia VIN, inteligentna wycena AI i profesjonalni sprzedawcy w jednym miejscu.
                     </p>
-                    <div class="hfs-feats">
-                        <span class="hfs-feat"><v-icon icon="mdi-shield-check-outline" size="15" />Weryfikowani sprzedawcy</span>
-                        <span class="hfs-feat"><v-icon icon="mdi-car-search-outline" size="15" />Historia pojazdu VIN</span>
-                        <span class="hfs-feat"><v-icon icon="mdi-cpu-64-bit" size="15" />Wycena AI</span>
-                    </div>
                     <div class="hfs-links">
-                        <NuxtLink to="/add-advert" class="hfs-link hfs-link--primary">
+                        <NuxtLink to="/adverts" class="hfs-link hfs-link--primary">
+                            <v-icon icon="mdi-magnify" size="15" />
+                            Znajdź samochód
+                        </NuxtLink>
+                        <NuxtLink to="/add-advert" class="hfs-link">
                             <v-icon icon="mdi-plus-circle-outline" size="15" />
                             Dodaj ogłoszenie
-                        </NuxtLink>
-                        <NuxtLink to="/adverts" class="hfs-link">
-                            Przeglądaj ogłoszenia
-                            <v-icon icon="mdi-arrow-right" size="13" />
                         </NuxtLink>
                     </div>
                 </div>
@@ -256,6 +250,48 @@
                         :key="a.id"
                         :advert="a"
                     />
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Most viewed ─────────────────────────────────────────────── -->
+        <section v-if="mostViewed.length" class="section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">NAJCZĘŚCIEJ OGLĄDANE</div>
+                        <h2>Popularne ogłoszenia</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                </div>
+                <div class="cars-grid">
+                    <AdvertCard v-for="a in mostViewed" :key="a.id" :advert="a" />
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Car of week ──────────────────────────────────────────────── -->
+        <section v-if="carOfWeek" class="section cow-section">
+            <div class="container">
+                <div class="cow-header">
+                    <div class="cow-eyebrow"><v-icon icon="mdi-trophy-outline" size="16" />SAMOCHÓD TYGODNIA</div>
+                </div>
+                <AdvertCard :advert="carOfWeek" class="cow-card" />
+            </div>
+        </section>
+
+        <!-- ─── Premium Collection ───────────────────────────────────────── -->
+        <section v-if="premiumCollection.length" class="section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">PREMIUM COLLECTION</div>
+                        <h2>Pojazdy premium</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                </div>
+                <div class="cars-grid">
+                    <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
                 </div>
             </div>
         </section>
@@ -554,6 +590,9 @@ useHead({
 const featured = ref<CarAdvert[]>([])
 const topAdverts = ref<CarAdvert[]>([])
 const recentlyAdded = ref<CarAdvert[]>([])
+const mostViewed = ref<CarAdvert[]>([])
+const carOfWeek = ref<CarAdvert | null>(null)
+const premiumCollection = ref<CarAdvert[]>([])
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
@@ -962,6 +1001,22 @@ if (homeData.value) {
     if (homeData.value.stats) Object.assign(homeStats.value, homeData.value.stats)
 }
 statsLoading.value = false
+
+const [mvRes, pcRes] = await Promise.allSettled([
+    $fetch<{items: CarAdvert[]}|CarAdvert[]>('/api/proxy/api/Advert/most-viewed', { query: { count: 8 } }),
+    $fetch<{items: CarAdvert[]}|CarAdvert[]>('/api/proxy/api/Advert/premium-collection', { query: { count: 8 } })
+])
+if (mvRes.status === 'fulfilled') {
+    const mv = mvRes.value
+    mostViewed.value = Array.isArray(mv) ? mv : (mv as any).items ?? []
+}
+if (pcRes.status === 'fulfilled') {
+    const pc = pcRes.value
+    premiumCollection.value = Array.isArray(pc) ? pc : (pc as any).items ?? []
+}
+if (mostViewed.value.length > 0) {
+    carOfWeek.value = mostViewed.value[0]
+}
 
 onMounted(async () => {
     await nextTick()
@@ -2437,4 +2492,11 @@ h2 {
 
     span { color: $red; }
 }
+
+// ─── Car of week / Most viewed / Premium collection ───────────────────────────
+
+.cow-section { background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 100%); }
+.cow-header { display: flex; align-items: center; margin-bottom: 24px; }
+.cow-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 2px; color: $red; text-transform: uppercase; }
+.cow-card { max-width: 400px; }
 </style>
