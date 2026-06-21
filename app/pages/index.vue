@@ -72,6 +72,43 @@
         <!-- Search section -->
         <section class="search-section">
             <div class="container">
+
+                <!-- Smart search bar with brand autocomplete -->
+                <div class="ss-bar">
+                    <div class="ss-input-wrap">
+                        <v-icon icon="mdi-magnify" size="20" class="ss-icon" />
+                        <input
+                            v-model="smartSearch"
+                            type="text"
+                            class="ss-input"
+                            placeholder="BMW M3, Audi RS6, szukaj ogłoszeń..."
+                            autocomplete="off"
+                            @focus="ssDropOpen = true"
+                            @blur="onSmartBlur"
+                            @keyup.enter="doSearch"
+                        />
+                        <button v-if="smartSearch" class="ss-clear" @click="clearSmartSearch">
+                            <v-icon icon="mdi-close" size="16" />
+                        </button>
+                        <div v-if="ssDropOpen && ssResults.length" class="ss-suggestions">
+                            <div
+                                v-for="b in ssResults"
+                                :key="b.id"
+                                class="ss-item"
+                                @mousedown.prevent="selectSmartBrand(b)"
+                            >
+                                <v-icon icon="mdi-car-outline" size="14" class="ss-item-icon" />
+                                <span>{{ b.name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="ss-btn" @click="doSearch">
+                        <v-icon icon="mdi-magnify" size="18" />
+                        <span>Szukaj</span>
+                    </button>
+                </div>
+
+                <!-- Category tabs -->
                 <div class="cat-tabs">
                     <button
                         v-for="cat in SEARCH_CATEGORIES"
@@ -80,57 +117,37 @@
                         :class="{ 'cat-tab--active': searchCat === cat.slug }"
                         @click="selectSearchCat(cat.slug)"
                     >
-                        <v-icon :icon="cat.icon" size="15" />
-                        <span>{{ cat.label }}</span>
+                        <v-icon :icon="cat.icon" size="14" />
+                        {{ cat.label }}
                     </button>
                 </div>
-                <div class="search-bar">
-                    <div class="sb-input-wrap">
-                        <v-icon icon="mdi-magnify" size="20" class="sb-search-icon" />
-                        <input
-                            v-model="searchText"
-                            type="text"
-                            class="sb-input"
-                            placeholder="Szukaj: marka, model, rocznik..."
-                            @keyup.enter="doSearch"
-                        />
-                    </div>
-                    <button class="sb-btn" @click="doSearch">
-                        <v-icon icon="mdi-magnify" size="18" />
-                        <span>Szukaj</span>
-                    </button>
-                </div>
+
+                <!-- Dynamic filter grid -->
                 <div class="filter-grid">
                     <template v-if="currentSearchConfig.hasBrand">
                         <div class="fg-field">
                             <label class="fg-label">Marka</label>
-                            <select v-model="searchBrandId" class="fg-select" @change="searchModelId = null; loadSearchModels()">
+                            <select v-model="searchBrandId" class="fg-select" @change="onBrandChange">
                                 <option :value="null">Wszystkie marki</option>
                                 <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
                             </select>
                         </div>
                         <div v-if="currentSearchConfig.hasModel" class="fg-field">
                             <label class="fg-label">Model</label>
-                            <select v-model="searchModelId" class="fg-select" :disabled="!searchBrandId">
-                                <option :value="null">Wszystkie modele</option>
+                            <select v-model="searchModelId" class="fg-select" :disabled="!searchBrandId" @change="onModelChange">
+                                <option :value="null">{{ searchBrandId ? 'Wszystkie modele' : 'Wybierz markę' }}</option>
                                 <option v-for="m in searchModels" :key="m.id" :value="m.id">{{ m.name }}</option>
                             </select>
                         </div>
+                        <div v-if="currentSearchConfig.hasModel && searchGenerations.length" class="fg-field">
+                            <label class="fg-label">Generacja</label>
+                            <select v-model="searchGenerationId" class="fg-select">
+                                <option :value="null">Wszystkie generacje</option>
+                                <option v-for="g in searchGenerations" :key="g.id" :value="g.id">{{ g.name }}</option>
+                            </select>
+                        </div>
                     </template>
-                    <div v-if="currentSearchConfig.subtypes?.length" class="fg-field">
-                        <label class="fg-label">{{ currentSearchConfig.subtypeLabel }}</label>
-                        <select v-model="searchSubtype" class="fg-select">
-                            <option value="">Wszystkie</option>
-                            <option v-for="t in currentSearchConfig.subtypes" :key="t" :value="t">{{ t }}</option>
-                        </select>
-                    </div>
-                    <div v-if="currentSearchConfig.hasPartCategory" class="fg-field">
-                        <label class="fg-label">Kategoria części</label>
-                        <select v-model="searchSubtype" class="fg-select">
-                            <option value="">Wszystkie</option>
-                            <option v-for="t in PART_CATEGORIES" :key="t" :value="t">{{ t }}</option>
-                        </select>
-                    </div>
+
                     <div v-if="currentSearchConfig.hasFuel" class="fg-field">
                         <label class="fg-label">Paliwo</label>
                         <select v-model="searchFuelId" class="fg-select">
@@ -138,16 +155,15 @@
                             <option v-for="f in fuelTypes" :key="f.id" :value="f.id">{{ f.name }}</option>
                         </select>
                     </div>
-                    <div v-if="currentSearchConfig.hasCondition" class="fg-field">
-                        <label class="fg-label">Stan pojazdu</label>
-                        <select v-model="searchCondition" class="fg-select">
-                            <option value="">Wszystkie</option>
-                            <option value="Nowe">Nowe</option>
-                            <option value="Używane">Używane</option>
-                            <option value="Uszkodzone">Uszkodzone</option>
-                            <option value="Odrestaurowane">Odrestaurowane</option>
+
+                    <div v-if="searchCat === 'auta-osobowe'" class="fg-field">
+                        <label class="fg-label">Skrzynia</label>
+                        <select v-model="searchGearboxId" class="fg-select">
+                            <option :value="null">Wszystkie</option>
+                            <option v-for="g in gearboxes" :key="g.id" :value="g.id">{{ g.name }}</option>
                         </select>
                     </div>
+
                     <div v-if="currentSearchConfig.hasBodyType" class="fg-field">
                         <label class="fg-label">Nadwozie</label>
                         <select v-model="searchBodyTypeId" class="fg-select">
@@ -155,6 +171,33 @@
                             <option v-for="b in bodyTypes" :key="b.id" :value="b.id">{{ b.name }}</option>
                         </select>
                     </div>
+
+                    <div v-if="currentSearchConfig.hasCondition" class="fg-field">
+                        <label class="fg-label">Stan</label>
+                        <select v-model="searchCondition" class="fg-select">
+                            <option value="">Wszystkie</option>
+                            <option value="Nowe">Nowe</option>
+                            <option value="Używane">Używane</option>
+                            <option value="Uszkodzone">Uszkodzone</option>
+                        </select>
+                    </div>
+
+                    <div v-if="currentSearchConfig.subtypes?.length" class="fg-field">
+                        <label class="fg-label">{{ currentSearchConfig.subtypeLabel }}</label>
+                        <select v-model="searchSubtype" class="fg-select">
+                            <option value="">Wszystkie</option>
+                            <option v-for="t in currentSearchConfig.subtypes" :key="t" :value="t">{{ t }}</option>
+                        </select>
+                    </div>
+
+                    <div v-if="currentSearchConfig.hasPartCategory" class="fg-field">
+                        <label class="fg-label">Kategoria</label>
+                        <select v-model="searchSubtype" class="fg-select">
+                            <option value="">Wszystkie</option>
+                            <option v-for="t in PART_CATEGORIES" :key="t" :value="t">{{ t }}</option>
+                        </select>
+                    </div>
+
                     <div class="fg-field fg-range">
                         <label class="fg-label">Cena (PLN)</label>
                         <div class="fg-range-inputs">
@@ -163,6 +206,7 @@
                             <input v-model="searchPriceTo" type="number" class="fg-input" placeholder="Do" min="0" />
                         </div>
                     </div>
+
                     <div class="fg-field fg-range">
                         <label class="fg-label">Rok produkcji</label>
                         <div class="fg-range-inputs">
@@ -171,6 +215,7 @@
                             <input v-model="searchYearTo" type="number" class="fg-input" placeholder="Do" min="1900" :max="currentYear" />
                         </div>
                     </div>
+
                     <div v-if="currentSearchConfig.hasHours" class="fg-field fg-range">
                         <label class="fg-label">Motogodziny</label>
                         <div class="fg-range-inputs">
@@ -188,6 +233,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </section>
 
@@ -711,8 +757,21 @@ const searchHoursFrom = ref('')
 const searchHoursTo = ref('')
 const searchCondition = ref('')
 const searchModels = ref<TaxonomyItem[]>([])
+const searchGenerations = ref<any[]>([])
+const searchGenerationId = ref<number | null>(null)
+const searchGearboxId = ref<number | null>(null)
+const gearboxes = ref<TaxonomyItem[]>([])
 const fuelTypes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
+
+// Smart search bar
+const smartSearch = ref('')
+const ssDropOpen = ref(false)
+const ssResults = computed(() => {
+    const q = smartSearch.value.trim().toLowerCase()
+    if (!q || q.length < 2) return []
+    return filterBrands.value.filter(b => b.name.toLowerCase().startsWith(q)).slice(0, 8)
+})
 
 const currentSearchConfig = computed(() => SEARCH_CONFIGS[searchCat.value] ?? SEARCH_CONFIGS['auta-osobowe'])
 
@@ -720,11 +779,14 @@ function selectSearchCat(slug: string) {
     searchCat.value = slug
     searchBrandId.value = null
     searchModelId.value = null
+    searchGenerationId.value = null
     searchFuelId.value = null
     searchBodyTypeId.value = null
+    searchGearboxId.value = null
     searchSubtype.value = ''
     searchCondition.value = ''
     searchModels.value = []
+    searchGenerations.value = []
 }
 
 async function loadSearchModels() {
@@ -732,12 +794,57 @@ async function loadSearchModels() {
     try { searchModels.value = await fetchModels(searchBrandId.value) } catch { searchModels.value = [] }
 }
 
+async function loadSearchGenerations() {
+    if (!searchModelId.value) { searchGenerations.value = []; return }
+    try { searchGenerations.value = await fetchGenerations(searchModelId.value) } catch { searchGenerations.value = [] }
+}
+
+async function onBrandChange() {
+    searchModelId.value = null
+    searchGenerationId.value = null
+    searchModels.value = []
+    searchGenerations.value = []
+    if (searchBrandId.value) await loadSearchModels()
+}
+
+async function onModelChange() {
+    searchGenerationId.value = null
+    searchGenerations.value = []
+    if (searchModelId.value) await loadSearchGenerations()
+}
+
+function selectSmartBrand(b: TaxonomyItem) {
+    smartSearch.value = b.name
+    searchBrandId.value = b.id
+    searchModelId.value = null
+    searchGenerationId.value = null
+    searchModels.value = []
+    searchGenerations.value = []
+    ssDropOpen.value = false
+    loadSearchModels()
+}
+
+function clearSmartSearch() {
+    smartSearch.value = ''
+    searchBrandId.value = null
+    searchModelId.value = null
+    searchGenerationId.value = null
+    searchModels.value = []
+    searchGenerations.value = []
+}
+
+function onSmartBlur() {
+    setTimeout(() => { ssDropOpen.value = false }, 150)
+}
+
 function doSearch() {
     const query: Record<string, string> = {}
-    if (searchText.value.trim()) query.textSearch = searchText.value.trim()
+    if (smartSearch.value.trim() && !searchBrandId.value) query.textSearch = smartSearch.value.trim()
     if (searchBrandId.value) query.brandId = String(searchBrandId.value)
     if (searchModelId.value) query.modelId = String(searchModelId.value)
+    if (searchGenerationId.value) query.generationId = String(searchGenerationId.value)
     if (searchFuelId.value) query.fuelTypeId = String(searchFuelId.value)
+    if (searchGearboxId.value) query.gearboxId = String(searchGearboxId.value)
     if (searchBodyTypeId.value) query.bodyTypeId = String(searchBodyTypeId.value)
     if (searchSubtype.value) query.subtype = searchSubtype.value
     if (searchPriceFrom.value) query.priceFrom = searchPriceFrom.value
@@ -775,7 +882,7 @@ const ingMonthlyRate = computed(() => {
 
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
-const { fetchBrands, fetchModels, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
+const { fetchBrands, fetchModels, fetchGenerations, fetchGearboxes, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
 const { STATIC_CATEGORIES } = useCategories()
 const homeCategories = STATIC_CATEGORIES
 
@@ -864,6 +971,11 @@ onMounted(async () => {
     })
     try { fuelTypes.value = await fetchFuelTypes() } catch {}
     try { bodyTypes.value = await fetchBodyTypes() } catch {}
+    try { gearboxes.value = await fetchGearboxes() } catch {}
+    try {
+        const brands = await fetchBrands()
+        if (brands.length) filterBrands.value = brands
+    } catch {}
 })
 </script>
 
@@ -1316,17 +1428,118 @@ onMounted(async () => {
 }
 
 // ── Search section ────────────────────────────────────────────────────────────
+// ─── Search section ──────────────────────────────────────────────────────────
+
 .search-section {
-    padding: 44px 0 52px;
-    background: rgba(255,255,255,0.01);
+    padding: 40px 0 48px;
     border-bottom: 1px solid $border;
 }
 
+// Smart search bar
+.ss-bar {
+    display: flex;
+    align-items: stretch;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    height: 58px;
+    position: relative;
+
+    &:focus-within { border-color: rgba($red, 0.5); box-shadow: 0 0 0 3px rgba($red, 0.07); }
+}
+
+.ss-input-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    min-width: 0;
+    position: relative;
+}
+
+.ss-icon { color: $text-dim; flex-shrink: 0; }
+
+.ss-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $text;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+
+    &::placeholder { color: $text-dark; }
+}
+
+.ss-clear {
+    background: transparent;
+    border: none;
+    color: $text-dim;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+    &:hover { color: $text; }
+}
+
+.ss-suggestions {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    z-index: 200;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
+
+.ss-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: $text-muted;
+    transition: background 0.12s, color 0.12s;
+
+    &:hover { background: rgba($red, 0.1); color: $text; }
+}
+
+.ss-item-icon { color: $text-dim; flex-shrink: 0; }
+
+.ss-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: $red;
+    color: white;
+    border: none;
+    padding: 0 32px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    border-radius: 0 14px 14px 0;
+    transition: opacity 0.18s;
+    flex-shrink: 0;
+
+    &:hover { opacity: 0.88; }
+    @include respond-to(sm) { padding: 0 20px; }
+}
+
+// Category tabs
 .cat-tabs {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     overflow-x: auto;
     padding-bottom: 2px;
 
@@ -1339,89 +1552,33 @@ onMounted(async () => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 10px 18px;
+    padding: 9px 16px;
     border: 1px solid $border;
     border-radius: 50px;
     background: transparent;
     color: $text-dim;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
     font-family: 'Inter', sans-serif;
-    transition: all 0.2s;
+    transition: all 0.18s;
 
-    &:hover { border-color: rgba($red, 0.45); color: $text; }
+    &:hover { border-color: rgba($red, 0.4); color: $text; }
 
     &--active {
         background: $red;
         border-color: $red;
         color: white;
-        box-shadow: 0 2px 12px rgba($red, 0.35);
+        box-shadow: 0 2px 14px rgba($red, 0.3);
     }
 }
 
-.search-bar {
-    display: flex;
-    align-items: stretch;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 18px;
-    height: 56px;
-
-    &:focus-within { border-color: rgba($red, 0.4); }
-}
-
-.sb-input-wrap {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0 16px;
-    min-width: 0;
-}
-
-.sb-search-icon { color: $text-dim; flex-shrink: 0; }
-
-.sb-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: $text;
-    font-size: 15px;
-    font-family: 'Inter', sans-serif;
-
-    &::placeholder { color: $text-dark; }
-}
-
-.sb-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: $red;
-    color: white;
-    border: none;
-    padding: 0 28px;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.2s;
-    flex-shrink: 0;
-
-    &:hover { background: lighten(#8B0D1D, 6%); }
-
-    @include respond-to(sm) { padding: 0 18px; }
-}
-
+// Filter grid
 .filter-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 14px;
+    gap: 12px;
 
     @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
     @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
@@ -1435,35 +1592,32 @@ onMounted(async () => {
 }
 
 .fg-label {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     color: $text-dim;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.8px;
 }
 
 .fg-select {
     background: rgba(255,255,255,0.04);
     border: 1px solid $border;
-    border-radius: 8px;
+    border-radius: 10px;
     color: $text;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
-    padding: 9px 12px;
+    padding: 10px 12px;
     outline: none;
     cursor: pointer;
-    transition: border-color 0.2s;
-    min-height: 42px;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    min-height: 44px;
 
     option { background: #111; color: #fff; }
-    &:focus { border-color: rgba($red, 0.5); }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &:focus { border-color: rgba($red, 0.5); box-shadow: 0 0 0 2px rgba($red, 0.07); }
+    &:disabled { opacity: 0.35; cursor: not-allowed; }
 }
 
-.fg-range {
-    @include respond-to(sm) { grid-column: span 2; }
-    @include respond-to(xs) { grid-column: span 1; }
-}
+.fg-range { @include respond-to(sm) { grid-column: span 2; } }
 
 .fg-range-inputs {
     display: flex;
