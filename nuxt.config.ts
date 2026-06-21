@@ -107,6 +107,7 @@ export default defineNuxtConfig({
       socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM ?? '',
       socialTiktok:    process.env.NUXT_PUBLIC_SOCIAL_TIKTOK    ?? '',
       socialYoutube:   process.env.NUXT_PUBLIC_SOCIAL_YOUTUBE   ?? '',
+      devAccessKey:    process.env.DEV_ACCESS_KEY ?? '',
     }
   }
 })

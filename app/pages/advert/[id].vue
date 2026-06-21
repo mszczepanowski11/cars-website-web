@@ -1250,11 +1250,7 @@ async function submitFinancingInquiry() {
         })
         finInquirySuccess.value = true
     } catch (e: any) {
-        if (e?.status === 404 || e?.status === 405) {
-            finInquirySuccess.value = true
-        } else {
-            finError.value = e?.data?.message ?? 'Nie udało się wysłać zapytania. Spróbuj ponownie.'
-        }
+        finError.value = e?.data?.message ?? 'Nie udało się wysłać zapytania. Spróbuj ponownie.'
     } finally {
         finSubmitting.value = false
     }
