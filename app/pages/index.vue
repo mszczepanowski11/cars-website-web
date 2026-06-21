@@ -787,6 +787,12 @@ function selectSearchCat(slug: string) {
     searchCondition.value = ''
     searchModels.value = []
     searchGenerations.value = []
+    const cat = homeCategories.find((c: any) => c.slug === slug)
+    if (cat?.id) {
+        fetchBrandsByCategory(cat.id).then((b: any) => { filterBrands.value = b }).catch(() => {})
+    } else {
+        fetchBrands().then((b: any) => { filterBrands.value = b }).catch(() => {})
+    }
 }
 
 async function loadSearchModels() {
@@ -882,7 +888,7 @@ const ingMonthlyRate = computed(() => {
 
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
-const { fetchBrands, fetchModels, fetchGenerations, fetchGearboxes, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchGearboxes, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
 const { STATIC_CATEGORIES } = useCategories()
 const homeCategories = STATIC_CATEGORIES
 
