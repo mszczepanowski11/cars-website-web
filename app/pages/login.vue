@@ -71,14 +71,21 @@
 
             <div v-if="googleClientId" ref="googleBtnRef" class="google-btn-wrap"></div>
 
-            <p class="auth-link">Nie masz konta? <NuxtLink to="/register">Zarejestruj się bezpłatnie</NuxtLink></p>
+            <button v-if="facebookAppId" class="fb-btn" :disabled="fbLoading" @click="handleFacebookLogin">
+                <svg class="fb-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span>{{ fbLoading ? 'Logowanie...' : 'Kontynuuj z Facebook' }}</span>
+            </button>
+
+            <p class="auth-link">Nie masz konto? <NuxtLink to="/register">Zarejestruj się bezpłatnie</NuxtLink></p>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
-const { login, loginWithGoogle, loading, error } = useAuth()
+const { login, loginWithGoogle, loginWithFacebook, loading, error } = useAuth()
 const runtimeConfig = useRuntimeConfig()
 const email    = ref('')
 const password = ref('')
@@ -89,8 +96,10 @@ const unverifiedEmail = ref(false)
 const turnstileToken  = ref('')
 const turnstileRef    = ref<{ reset: () => void } | null>(null)
 const googleBtnRef    = ref<HTMLElement | null>(null)
+const fbLoading        = ref(false)
 const turnstileSiteKey = runtimeConfig.public.turnstileSiteKey as string
 const googleClientId   = runtimeConfig.public.googleClientId as string
+const facebookAppId    = runtimeConfig.public.facebookAppId as string
 
 const redirectTo = computed(() => {
     const r = route.query.redirect
@@ -99,6 +108,7 @@ const redirectTo = computed(() => {
 
 onMounted(() => {
     if (googleClientId) loadGoogleGSI()
+    if (facebookAppId) loadFacebookSDK()
 })
 
 function loadGoogleGSI() {
@@ -134,6 +144,38 @@ function initGoogle() {
             })
         }
     })
+}
+
+function loadFacebookSDK() {
+    if ((window as any).FB) return
+    ;(window as any).fbAsyncInit = function () {
+        ;(window as any).FB.init({
+            appId: facebookAppId,
+            cookie: true,
+            xfbml: false,
+            version: 'v19.0',
+        })
+    }
+    if (!document.getElementById('facebook-jssdk')) {
+        const script = document.createElement('script')
+        script.id = 'facebook-jssdk'
+        script.src = 'https://connect.facebook.net/pl_PL/sdk.js'
+        script.async = true
+        script.defer = true
+        document.head.appendChild(script)
+    }
+}
+
+async function handleFacebookLogin() {
+    if (!(window as any).FB) return
+    fbLoading.value = true
+    ;(window as any).FB.login(async (response: any) => {
+        if (response.authResponse?.accessToken) {
+            await loginWithFacebook(response.authResponse.accessToken, redirectTo.value)
+        } else {
+            fbLoading.value = false
+        }
+    }, { scope: 'email,public_profile' })
 }
 
 async function handleGoogleCredential(response: { credential: string }) {
@@ -352,6 +394,30 @@ h2 {
     :deep(div) { width: 100% !important; }
     :deep(iframe) { width: 100% !important; }
 }
+
+.fb-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: #1877f2;
+    color: white;
+    border: none;
+    border-radius: $r-md;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-bottom: 16px;
+
+    &:hover:not(:disabled) { opacity: 0.9; }
+    &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+.fb-icon { flex-shrink: 0; }
 
 .auth-link {
     color: $text-dim;

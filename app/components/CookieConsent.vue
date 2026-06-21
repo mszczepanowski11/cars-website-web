@@ -8,7 +8,8 @@
                         <span>
                             Używamy plików cookie, aby zapewnić najlepsze działanie serwisu.
                             Korzystając z CARIZO, akceptujesz naszą
-                            <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink>
+                            <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink>,
+                            <NuxtLink to="/polityka-cookies" class="cookie-link">Politykę cookies</NuxtLink>
                             oraz
                             <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink>.
                         </span>
@@ -30,6 +31,9 @@ onMounted(() => {
     if (!localStorage.getItem('cookieConsent')) {
         visible.value = true
     }
+    window.addEventListener('openCookieSettings', () => {
+        visible.value = true
+    })
 })
 
 function accept() {

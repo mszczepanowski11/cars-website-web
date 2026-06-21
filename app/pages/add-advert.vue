@@ -2360,7 +2360,12 @@ function validateStep(step: number): string | null {
         if (!isEdit.value && existingImages.value.length === 0 && selectedFiles.value.length < 3) return 'Dodaj minimum 3 zdjęcia.'
     }
     // Step 3: Equipment — no required fields
-    // Step 4: Historia pojazdu — no required fields
+    // Step 4: Historia pojazdu — VIN required per Regulamin §4.1
+    if (step === 4) {
+        if (categoryConfig.value.showVinSection !== false) {
+            if (!form.vin || form.vin.length !== 17) return 'Podaj prawidłowy numer VIN (17 znaków). Numer VIN jest obowiązkowy.'
+        }
+    }
     // Step 5: Opis i cena
     if (step === 5) {
         if (!form.price) return 'Podaj cenę pojazdu.'

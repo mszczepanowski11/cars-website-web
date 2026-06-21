@@ -93,6 +93,7 @@ export default defineNuxtConfig({
       clarityId:   process.env.NUXT_PUBLIC_CLARITY_ID   ?? '',
       turnstileSiteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY ?? '',
       googleClientId:   process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID   ?? '',
+      facebookAppId:    process.env.NUXT_PUBLIC_FACEBOOK_APP_ID    ?? '',
       // Social media links — set in .env
       socialFacebook:  process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK  ?? '',
       socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM ?? '',

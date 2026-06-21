@@ -9,6 +9,10 @@ const social = {
     youtube:   (config.public as any).socialYoutube   || null,
 }
 
+function openCookieSettings() {
+    window.dispatchEvent(new Event('openCookieSettings'))
+}
+
 const newsletterEmail = ref('')
 const newsletterLoading = ref(false)
 const newsletterOk = ref(false)
@@ -63,7 +67,9 @@ async function subscribeNewsletter() {
           <NuxtLink to="/jak-to-dziala">Jak to działa</NuxtLink>
           <NuxtLink to="/regulamin">Regulamin</NuxtLink>
           <NuxtLink to="/polityka-prywatnosci">Polityka prywatności</NuxtLink>
+          <NuxtLink to="/polityka-cookies">Polityka cookies</NuxtLink>
           <NuxtLink to="/pomoc">Pomoc i FAQ</NuxtLink>
+          <button class="footer-cookie-btn" @click="openCookieSettings">Ustawienia plików cookies</button>
         </div>
 
         <div class="footer-col">
@@ -319,6 +325,19 @@ async function subscribeNewsletter() {
 }
 
 .heart { color: $red; }
+
+.footer-cookie-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: $text-muted;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s;
+  &:hover { color: $text; }
+}
 
 .footer-soon {
   color: $text-dark;
