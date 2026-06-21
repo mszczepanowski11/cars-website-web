@@ -3,7 +3,10 @@ export default defineEventHandler(async (event) => {
     let token = getCookie(event, 'auth_token')
     const method = getMethod(event)
 
-    if (!token && !['GET', 'HEAD'].includes(method)) {
+    const PUBLIC_POST_PATHS = ['api/Advert/search', 'api/Payment/webhook']
+    const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/'))
+
+    if (!token && !['GET', 'HEAD'].includes(method) && !isPublicPost) {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
 
