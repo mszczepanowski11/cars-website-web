@@ -153,7 +153,7 @@
                     </div>
                     <div class="stat-card">
                         <v-icon icon="mdi-star-outline" size="22" class="stat-icon" />
-                        <div class="stat-num">{{ stats?.averageRating ? stats.averageRating.toFixed(1) : '—' }}</div>
+                        <div class="stat-num">{{ stats?.averageRating ? stats.averageRating.toFixed(1) : 'Brak' }}</div>
                         <div class="stat-label">Ocena sprzedawcy</div>
                         <div v-if="stats?.averageRating" class="stat-stars">
                             <v-icon v-for="n in 5" :key="n"
@@ -882,7 +882,9 @@ const initials = computed(() => {
 
 const memberSince = computed(() => {
     if (!profile.value?.createdAt) return '—'
-    return new Date(profile.value.createdAt).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' })
+    const d = new Date(profile.value.createdAt)
+    if (d.getFullYear() < 2020) return '—'
+    return d.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' })
 })
 
 function formatViews(n: number) {

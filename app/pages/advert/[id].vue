@@ -692,13 +692,9 @@
                                 <span class="seller-reviews">({{ sellerStats.reviewCount }})</span>
                             </div>
                             <div class="seller-meta-row">
-                                <span v-if="seller?.createdAt" class="seller-meta-item">
+                                <span v-if="seller?.createdAt && new Date(seller.createdAt).getFullYear() >= 2020" class="seller-meta-item">
                                     <v-icon icon="mdi-calendar-outline" size="12" />
                                     na CARIZO od {{ new Date(seller.createdAt).getFullYear() }} r.
-                                </span>
-                                <span class="seller-meta-item seller-response">
-                                    <v-icon icon="mdi-clock-fast" size="12" />
-                                    Odpowiada szybko
                                 </span>
                             </div>
                         </div>
@@ -2947,7 +2943,7 @@ onUnmounted(() => {
 
 .fin-input {
     background: #111;
-    border: 1px solid $border;
+    border: 1px solid #2d2d2d;
     border-radius: $r-sm;
     color: $text;
     font-size: 13px;
