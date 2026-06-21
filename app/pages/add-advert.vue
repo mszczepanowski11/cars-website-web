@@ -757,12 +757,18 @@
                                 <v-icon class="fgh-arrow" icon="mdi-chevron-down" size="16" />
                             </button>
                             <Transition name="equip-collapse">
-                                <div v-if="openFeatGroups.has(String(cat)) || !!featSearch" class="feat-checks">
-                                    <label v-for="feat in group" :key="feat.id" class="feat-check" :class="{ checked: form.featureIds.includes(feat.id) }">
-                                        <input type="checkbox" v-model="form.featureIds" :value="feat.id" />
-                                        <span class="feat-check-box"><v-icon v-if="form.featureIds.includes(feat.id)" icon="mdi-check" size="11" /></span>
+                                <div v-if="openFeatGroups.has(String(cat)) || !!featSearch" class="feat-badges">
+                                    <button
+                                        v-for="feat in group"
+                                        :key="feat.id"
+                                        type="button"
+                                        class="feat-badge"
+                                        :class="{ 'feat-badge--on': form.featureIds.includes(feat.id) }"
+                                        @click="toggleFeature(feat.id)"
+                                    >
+                                        <v-icon v-if="form.featureIds.includes(feat.id)" icon="mdi-check" size="12" class="feat-badge-icon" />
                                         <span v-html="highlightSearch(feat.name)" />
-                                    </label>
+                                    </button>
                                 </div>
                             </Transition>
                         </div>
@@ -2261,9 +2267,9 @@ const featureGroups = computed(() => {
     const vehicleCatId = selectedCategory.value?.id ?? null
     const g: Record<string, Feature[]> = {}
     for (const f of allFeatures.value) {
-        const fvc = f.category?.vehicleCategoryId
-        // Exclude features that belong to a different vehicle category
-        if (fvc != null && vehicleCatId != null && fvc !== vehicleCatId) continue
+        const fvc = f.category?.vehicleCategoryId ?? null
+        // Strict: when a vehicle category is selected, only show features tied to it
+        if (vehicleCatId != null && fvc !== vehicleCatId) continue
         const cat = f.category?.name ?? 'Inne'
         ;(g[cat] ??= []).push(f)
     }
@@ -2286,6 +2292,11 @@ function toggleFeatGroup(cat: string) {
 }
 function expandAllEquip() { openFeatGroups.value = new Set(Object.keys(featureGroups.value)) }
 function collapseAllEquip() { openFeatGroups.value = new Set() }
+function toggleFeature(id: number) {
+    const idx = form.featureIds.indexOf(id)
+    if (idx >= 0) form.featureIds.splice(idx, 1)
+    else form.featureIds.push(id)
+}
 
 const filteredFeatureGroups = computed(() => {
     const q = featSearch.value.trim().toLowerCase()
@@ -2390,6 +2401,7 @@ async function onCategory(catId: number) {
         for (const key of Object.keys(extras)) delete extras[key]
         brandTextInput.value = ''
         modelTextInput.value = ''
+        form.featureIds = []
     }
     // Reload brands filtered by category (fall back to all brands if none returned)
     const cfg = categoryConfig.value
@@ -4185,14 +4197,14 @@ onMounted(async () => {
     &.fgc-has { color: $red; background: rgba($red, 0.1); }
 }
 
-.feat-checks {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 5px;
-    border: 1px solid rgba($red, 0.25);
+.feat-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border: 1px solid rgba($red, 0.22);
     border-top: none;
-    border-radius: 0 0 8px 8px;
-    padding: 10px 12px 12px;
+    border-radius: 0 0 10px 10px;
+    padding: 14px 14px 16px;
     margin-bottom: 4px;
 }
 
@@ -4210,36 +4222,34 @@ onMounted(async () => {
     opacity: 0;
 }
 
-.feat-check {
-    display: flex;
+.feat-badge {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    cursor: pointer;
+    gap: 5px;
+    padding: 7px 15px;
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.04);
+    color: #888;
     font-size: 13px;
-    color: $text-muted;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid transparent;
-    transition: all 0.15s;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    white-space: nowrap;
 
-    &:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
-    &.checked { background: rgba($red, 0.08); border-color: rgba($red, 0.25); color: $text; }
-
-    input[type='checkbox'] { display: none; }
-
-    .feat-check-box {
-        width: 16px;
-        height: 16px;
-        border-radius: 4px;
-        border: 1.5px solid rgba(255,255,255,0.2);
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        transition: all 0.15s;
+    &:hover {
+        border-color: rgba(255,255,255,0.22);
+        background: rgba(255,255,255,0.07);
+        color: #ccc;
     }
-    &.checked .feat-check-box { background: $red; border-color: $red; }
+
+    &--on {
+        border-color: $red;
+        background: rgba($red, 0.15);
+        color: #fff;
+
+        .feat-badge-icon { color: $red; }
+    }
 }
 
 .feat-empty {
