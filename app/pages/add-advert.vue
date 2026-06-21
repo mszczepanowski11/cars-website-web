@@ -233,6 +233,22 @@
                                         {{ categoryConfig.modelHint ?? `${models.length} modeli dla ${brandName}` }}
                                     </template>
                                 </div>
+                                <!-- AI hint: popular models for selected brand -->
+                                <div v-if="form.brandId && !form.modelId && models.length > 1" class="ai-hints">
+                                    <span class="ai-hints-label">
+                                        <v-icon icon="mdi-lightning-bolt" size="12" />
+                                        Popularne:
+                                    </span>
+                                    <button
+                                        v-for="m in models.slice(0, 5)"
+                                        :key="m.id"
+                                        type="button"
+                                        class="ai-hint-chip"
+                                        @click="form.modelId = m.id; onModel()"
+                                    >
+                                        {{ m.name }}
+                                    </button>
+                                </div>
                             </template>
                         </div>
 
@@ -264,6 +280,22 @@
                             />
                             <div class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ engines.length }} wersji silnika dostępnych
+                            </div>
+                            <!-- AI hint: popular engine versions -->
+                            <div v-if="!form.engineVersionId && engines.length > 1" class="ai-hints">
+                                <span class="ai-hints-label">
+                                    <v-icon icon="mdi-lightning-bolt" size="12" />
+                                    Popularne:
+                                </span>
+                                <button
+                                    v-for="e in engines.slice(0, 5)"
+                                    :key="e.id"
+                                    type="button"
+                                    class="ai-hint-chip"
+                                    @click="form.engineVersionId = e.id"
+                                >
+                                    {{ e.name }}
+                                </button>
                             </div>
                         </div>
 
@@ -4533,6 +4565,39 @@ onMounted(async () => {
     color: $text-dark;
     margin-top: 5px;
     .v-icon { color: $text-dark; flex-shrink: 0; }
+}
+
+.ai-hints {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+.ai-hints-label {
+    font-size: 11px;
+    color: $text-dark;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+    .v-icon { color: $red; }
+}
+.ai-hint-chip {
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid rgba($red, 0.4);
+    background: rgba($red, 0.06);
+    color: $text;
+    cursor: pointer;
+    transition: all 0.15s;
+    &:hover {
+        border-color: $red;
+        background: rgba($red, 0.15);
+        color: $text;
+    }
 }
 
 .title-suggest-card {
