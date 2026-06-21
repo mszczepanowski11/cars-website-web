@@ -1,6 +1,20 @@
 export default defineNuxtPlugin(() => {
     const config = useRuntimeConfig()
 
+    // Set default consent state to denied BEFORE any analytics script loads.
+    // This satisfies Google Consent Mode v2 requirements — scripts can load but
+    // won't send identifying data until the user accepts cookies.
+    ;(window as any).dataLayer = (window as any).dataLayer || []
+    function gtag(...args: unknown[]) { (window as any).dataLayer.push(args) }
+    gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        functionality_storage: 'denied',
+        personalization_storage: 'denied',
+    })
+
     function injectScript(src: string, id: string) {
         if (document.getElementById(id)) return
         const s = document.createElement('script')

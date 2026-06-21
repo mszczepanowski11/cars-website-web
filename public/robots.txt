@@ -1,2 +1,23 @@
 User-agent: *
-Disallow: /
+Disallow: /dashboard
+Disallow: /add-advert
+Disallow: /my-adverts
+Disallow: /messages
+Disallow: /messages/
+Disallow: /faktury
+Disallow: /transactions
+Disallow: /admin/
+Disallow: /payment/
+Disallow: /promote-advert/
+Disallow: /promote-event/
+Disallow: /dodaj-wydarzenie
+Disallow: /moje-wydarzenia
+Disallow: /favorites
+Disallow: /weryfikacja-email
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /advert/redesign-reference
+Disallow: /coming-soon
+Allow: /
+
+Sitemap: https://carizo.pl/sitemap.xml
