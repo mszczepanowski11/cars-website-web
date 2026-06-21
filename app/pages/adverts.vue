@@ -261,6 +261,19 @@
                         </div>
                     </div>
 
+                    <!-- Engine size (motorcycles) -->
+                    <div v-if="filterConfig.showEngineSize" class="filter-section">
+                        <div class="filter-section-label">
+                            <v-icon icon="mdi-engine-outline" size="14" />
+                            Pojemność (cm³)
+                        </div>
+                        <div class="range-row">
+                            <input v-model.number="f.engineSizeFrom" type="number" class="range-input" placeholder="Od" min="0" />
+                            <span class="range-sep">–</span>
+                            <input v-model.number="f.engineSizeTo" type="number" class="range-input" placeholder="Do" min="0" />
+                        </div>
+                    </div>
+
                     <!-- Fuel type -->
                     <div v-if="filterConfig.showFuelType" class="filter-section">
                         <div class="filter-section-label">
@@ -516,8 +529,10 @@ const f = reactive({
     yearTo:      route.query.yearTo      ? Number(route.query.yearTo)      : null as number | null,
     mileageFrom: route.query.mileageFrom ? Number(route.query.mileageFrom) : null as number | null,
     mileageTo:   route.query.mileageTo   ? Number(route.query.mileageTo)   : null as number | null,
-    powerFrom:   route.query.powerFrom   ? Number(route.query.powerFrom)   : null as number | null,
-    powerTo:     route.query.powerTo     ? Number(route.query.powerTo)     : null as number | null,
+    powerFrom:        route.query.powerFrom        ? Number(route.query.powerFrom)        : null as number | null,
+    powerTo:          route.query.powerTo          ? Number(route.query.powerTo)          : null as number | null,
+    engineSizeFrom:   route.query.engineSizeFrom   ? Number(route.query.engineSizeFrom)   : null as number | null,
+    engineSizeTo:     route.query.engineSizeTo     ? Number(route.query.engineSizeTo)     : null as number | null,
     driveTypeId: route.query.driveTypeId ? Number(route.query.driveTypeId) : null as number | null,
     colorId:     route.query.colorId     ? Number(route.query.colorId)     : null as number | null,
     sellerType:  (route.query.sellerType ?? '') as '' | 'private' | 'dealer',
@@ -557,6 +572,7 @@ const activeFiltersCount = computed(() => {
     if (f.priceFrom || f.priceTo) n++
     if (f.yearFrom || f.yearTo) n++
     if (f.mileageFrom || f.mileageTo) n++
+    if (f.engineSizeFrom || f.engineSizeTo) n++
     if (f.driveTypeId) n++
     if (f.colorId) n++
     if (f.sellerType) n++
@@ -604,6 +620,7 @@ const filterConfig = computed(() => {
         showGearbox: !isParts && !isTrailer && !isMoto,
         showBodyType: !isParts && !isMoto && !isTrailer && !isMachinery,
         showPower: !isParts,
+        showEngineSize: isMoto,
         showMileage: !isParts,
         showDriveType: !isParts && !isMoto && !isTrailer,
         showColor: !isParts && !isTrailer && !isMachinery,
@@ -628,6 +645,7 @@ const hasActiveFilters = computed(() =>
        f.gearboxId || f.driveTypeId || f.colorId ||
        f.priceFrom || f.priceTo || f.yearFrom || f.yearTo ||
        f.mileageFrom || f.mileageTo || f.powerFrom || f.powerTo ||
+       f.engineSizeFrom || f.engineSizeTo ||
        f.sellerType || f.condition ||
        f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null)
 )
@@ -669,6 +687,7 @@ function clearFilters() {
     f.yearFrom = null; f.yearTo = null
     f.mileageFrom = null; f.mileageTo = null
     f.powerFrom = null; f.powerTo = null
+    f.engineSizeFrom = null; f.engineSizeTo = null
     f.sellerType = ''; f.condition = ''
     f.hasDamage = null; f.hasWarranty = null; f.hasServiceBook = null; f.isImported = null
     f.axleCount = null; f.payloadFrom = null; f.payloadTo = null
@@ -702,8 +721,10 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.yearTo)       body.yearTo       = f.yearTo
     if (f.mileageFrom)  body.mileageFrom  = f.mileageFrom
     if (f.mileageTo)    body.mileageTo    = f.mileageTo
-    if (f.powerFrom)    body.powerFrom    = f.powerFrom
-    if (f.powerTo)      body.powerTo      = f.powerTo
+    if (f.powerFrom)         body.powerFrom         = f.powerFrom
+    if (f.powerTo)           body.powerTo           = f.powerTo
+    if (f.engineSizeFrom)    body.engineSizeFrom    = f.engineSizeFrom
+    if (f.engineSizeTo)      body.engineSizeTo      = f.engineSizeTo
     if (f.sellerType)   body.sellerType   = f.sellerType
     if (f.condition)    body.condition    = f.condition
     if (f.hasDamage !== null)      body.hasDamage      = f.hasDamage
@@ -780,8 +801,10 @@ async function load(p: number = page.value) {
     if (f.yearTo)      query.yearTo      = String(f.yearTo)
     if (f.mileageFrom) query.mileageFrom = String(f.mileageFrom)
     if (f.mileageTo)   query.mileageTo   = String(f.mileageTo)
-    if (f.powerFrom)   query.powerFrom   = String(f.powerFrom)
-    if (f.powerTo)     query.powerTo     = String(f.powerTo)
+    if (f.powerFrom)       query.powerFrom       = String(f.powerFrom)
+    if (f.powerTo)         query.powerTo         = String(f.powerTo)
+    if (f.engineSizeFrom)  query.engineSizeFrom  = String(f.engineSizeFrom)
+    if (f.engineSizeTo)    query.engineSizeTo    = String(f.engineSizeTo)
     if (f.driveTypeId) query.driveTypeId = String(f.driveTypeId)
     if (f.colorId)     query.colorId     = String(f.colorId)
     if (f.sellerType)  query.sellerType  = f.sellerType
