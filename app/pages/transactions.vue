@@ -75,7 +75,7 @@
 import type { Transaction, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Transakcje — CARIZO' })
+useHead({ title: 'Transakcje — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getMyTransactions, cancelTransaction } = useTransactions()
 

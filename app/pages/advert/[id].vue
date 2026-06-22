@@ -1,5 +1,17 @@
 <template>
-    <div class="advert-page">
+    <!-- Not found / error state -->
+    <div v-if="!advert" class="advert-not-found">
+        <div class="anf-inner">
+            <v-icon icon="mdi-car-off" size="64" class="anf-icon" />
+            <h1 class="anf-title">Ogłoszenie nie istnieje</h1>
+            <p class="anf-desc">To ogłoszenie mogło zostać usunięte, wygasnąć lub link jest nieprawidłowy.</p>
+            <NuxtLink to="/adverts" class="anf-btn">
+                <v-icon icon="mdi-magnify" size="18" />
+                Przeglądaj ogłoszenia
+            </NuxtLink>
+        </div>
+    </div>
+    <div v-else class="advert-page">
 
         <!-- Sticky topbar -->
         <div class="advert-topbar">
@@ -4208,5 +4220,58 @@ onUnmounted(() => {
     transition: background 0.2s;
     &:hover { background: rgba(255,255,255,0.12); }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ── Not found state ────────────────────────────────────────────────────────────
+.advert-not-found {
+    min-height: 100vh;
+    background: $bg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    padding-top: calc(#{$nav-height} + 40px);
+}
+
+.anf-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+    max-width: 420px;
+}
+
+.anf-icon { color: $text-dark; opacity: 0.5; }
+
+.anf-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: $text;
+    margin: 0;
+}
+
+.anf-desc {
+    font-size: 15px;
+    color: $text-dim;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.anf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: $red;
+    color: white;
+    border-radius: $r-md;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 24px;
+    text-decoration: none;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.88; }
 }
 </style>

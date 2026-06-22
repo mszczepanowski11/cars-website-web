@@ -106,7 +106,7 @@ const monthlyRate = computed(() => {
                     <v-icon icon="mdi-compare" size="16" />
                 </button>
             </div>
-            <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" @click="toggleFav">
+            <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" :aria-label="isFavorite(advert.id) ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'" @click="toggleFav">
                 <v-icon :icon="isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
             </button>
         </div>

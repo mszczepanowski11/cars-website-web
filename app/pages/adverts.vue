@@ -26,25 +26,100 @@
             </div>
         </div>
 
-        <!-- NEW Search bar -->
-        <div class="search-section">
+        <!-- ── Filter panel ── -->
+        <div class="fp-wrap">
             <div class="container">
-                <div class="search-card" :class="{ 'search-card--focused': searchFocused }">
-                    <div class="sc-main">
-                        <div class="sc-input-wrap" style="position:relative">
-                            <v-icon icon="mdi-magnify" size="20" class="sc-icon" />
+                <div class="fp-panel">
+
+                    <!-- PRIMARY ROW -->
+                    <div class="fp-primary">
+                        <!-- Category -->
+                        <div class="fp-field">
+                            <label class="fp-label">Kategoria</label>
+                            <div class="fp-select-wrap">
+                                <v-icon icon="mdi-tag-multiple-outline" size="14" class="fp-field-icon" />
+                                <select v-model="f.categoryId" class="fp-select" @change="onCategoryChange">
+                                    <option :value="null">Wszystkie</option>
+                                    <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="fp-divider" />
+
+                        <!-- Brand -->
+                        <div class="fp-field">
+                            <label class="fp-label">Marka</label>
+                            <div class="fp-select-wrap">
+                                <v-icon icon="mdi-car-outline" size="14" class="fp-field-icon" />
+                                <select v-model="f.brandId" class="fp-select" @change="onBrandChange">
+                                    <option :value="null">Wszystkie marki</option>
+                                    <option v-for="b in brands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="fp-divider" />
+
+                        <!-- Model -->
+                        <div class="fp-field">
+                            <label class="fp-label">Model</label>
+                            <div class="fp-select-wrap">
+                                <v-icon icon="mdi-car-settings" size="14" class="fp-field-icon" />
+                                <select v-model="f.modelId" class="fp-select" :disabled="!f.brandId">
+                                    <option :value="null">Wszystkie modele</option>
+                                    <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="fp-divider" />
+
+                        <!-- Price range -->
+                        <div class="fp-field fp-field--range">
+                            <label class="fp-label">Cena (zł)</label>
+                            <div class="fp-range">
+                                <input v-model.number="f.priceFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                <span class="fp-range-sep">–</span>
+                                <input v-model.number="f.priceTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                            </div>
+                        </div>
+
+                        <div class="fp-divider" />
+
+                        <!-- Location -->
+                        <div class="fp-field">
+                            <label class="fp-label">Lokalizacja</label>
+                            <div class="fp-input-wrap">
+                                <v-icon icon="mdi-map-marker-outline" size="14" class="fp-field-icon" />
+                                <input v-model="f.locationCity" type="text" class="fp-text-input" placeholder="Miasto lub region" />
+                            </div>
+                        </div>
+
+                        <!-- Search button -->
+                        <button class="fp-search-btn" @click="load(1)">
+                            <v-icon icon="mdi-magnify" size="17" />
+                            Szukaj
+                            <span v-if="total > 0" class="fp-btn-count">{{ total.toLocaleString('pl') }}</span>
+                        </button>
+                    </div>
+
+                    <!-- SECONDARY ROW: keyword + more filters -->
+                    <div class="fp-secondary">
+                        <div class="fp-keyword-wrap" style="position:relative">
+                            <v-icon icon="mdi-text-search" size="15" class="fp-kw-icon" />
                             <input
                                 v-model="f.textSearch"
-                                class="sc-input"
-                                placeholder="Wyszukaj markę, model, słowo kluczowe..."
+                                class="fp-keyword-input"
+                                placeholder="Słowo kluczowe, wyposażenie, opis..."
                                 autocomplete="off"
                                 @keyup.enter="load(1); showSuggestions = false"
-                                @focus="searchFocused = true; showSuggestions = true"
+                                @focus="showSuggestions = true"
                                 @blur="setTimeout(() => { showSuggestions = false }, 150)"
                                 @input="showSuggestions = true"
                             />
-                            <button v-if="f.textSearch" class="sc-clear" @click="f.textSearch = ''; showSuggestions = false">
-                                <v-icon icon="mdi-close" size="16" />
+                            <button v-if="f.textSearch" class="fp-kw-clear" @click="f.textSearch = ''; showSuggestions = false">
+                                <v-icon icon="mdi-close" size="13" />
                             </button>
                             <!-- Autocomplete dropdown -->
                             <div v-if="showSuggestions && autocompleteItems.length" class="ac-dropdown">
@@ -57,40 +132,28 @@
                                 >
                                     <v-icon
                                         :icon="item.type === 'brand' ? 'mdi-car-outline' : item.type === 'feature' ? 'mdi-star-check-outline' : 'mdi-car-settings'"
-                                        size="14"
-                                        class="ac-icon"
+                                        size="13" class="ac-icon"
                                     />
                                     <span class="ac-name">{{ item.name }}</span>
                                     <span class="ac-type">{{ item.type === 'brand' ? 'Marka' : item.type === 'feature' ? 'Wyposażenie' : 'Model' }}</span>
                                 </button>
                             </div>
                         </div>
-                        <template v-if="filterConfig.showBrandModel">
-                        <div class="sc-divider" />
-                        <div class="sc-select-wrap">
-                            <v-icon icon="mdi-car-outline" size="16" class="sc-sel-icon" />
-                            <select v-model="f.brandId" class="sc-select" @change="onBrandChange">
-                                <option :value="null">Wszystkie marki</option>
-                                <option v-for="b in brands" :key="b.id" :value="b.id">{{ b.name }}</option>
-                            </select>
+
+                        <div class="fp-secondary-right">
+                            <button
+                                class="fp-more-btn"
+                                :class="{ 'fp-more-btn--active': showMoreFilters }"
+                                @click="showMoreFilters = !showMoreFilters"
+                            >
+                                <v-icon :icon="showMoreFilters ? 'mdi-chevron-up' : 'mdi-tune-variant'" size="15" />
+                                {{ showMoreFilters ? 'Mniej filtrów' : 'Więcej filtrów' }}
+                                <span v-if="advancedFiltersCount > 0" class="fp-more-count">{{ advancedFiltersCount }}</span>
+                            </button>
                         </div>
-                        <div class="sc-divider" />
-                        <div class="sc-select-wrap">
-                            <v-icon icon="mdi-car-settings" size="16" class="sc-sel-icon" />
-                            <select v-model="f.modelId" class="sc-select" :disabled="!f.brandId">
-                                <option :value="null">Wszystkie modele</option>
-                                <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
-                            </select>
-                        </div>
-                        </template>
-                        <button class="sc-btn" @click="load(1)">
-                            <v-icon icon="mdi-magnify" size="18" />
-                            Szukaj
-                            <span v-if="total > 0" class="sc-count">{{ total.toLocaleString('pl') }}</span>
-                        </button>
                     </div>
 
-                    <!-- Quick filter chips -->
+                    <!-- ACTIVE CHIPS -->
                     <div v-if="hasActiveFilters" class="sc-chips">
                         <div v-if="activeCategory" class="sc-chip" @click="f.categoryId = null; load(1)">
                             <v-icon icon="mdi-tag-outline" size="12" />
@@ -104,6 +167,11 @@
                         </div>
                         <div v-if="f.modelId && activeModel" class="sc-chip" @click="f.modelId = null; load(1)">
                             {{ activeModel.name }}
+                            <v-icon icon="mdi-close" size="11" />
+                        </div>
+                        <div v-if="f.locationCity" class="sc-chip" @click="f.locationCity = ''; load(1)">
+                            <v-icon icon="mdi-map-marker-outline" size="12" />
+                            {{ f.locationCity }}
                             <v-icon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.fuelTypeId" class="sc-chip" @click="f.fuelTypeId = null; load(1)">
@@ -127,348 +195,307 @@
                             Przebieg: {{ f.mileageFrom ? f.mileageFrom.toLocaleString('pl') : '0' }} – {{ f.mileageTo ? f.mileageTo.toLocaleString('pl') : '∞' }} km
                             <v-icon icon="mdi-close" size="11" />
                         </div>
+                        <div v-if="f.gearboxId" class="sc-chip" @click="f.gearboxId = null; load(1)">
+                            {{ gearboxes.find(g => g.id === f.gearboxId)?.name }}
+                            <v-icon icon="mdi-close" size="11" />
+                        </div>
+                        <div v-if="f.driveTypeId" class="sc-chip" @click="f.driveTypeId = null; load(1)">
+                            {{ driveTypes.find(d => d.id === f.driveTypeId)?.name }}
+                            <v-icon icon="mdi-close" size="11" />
+                        </div>
+                        <div v-if="f.colorId" class="sc-chip" @click="f.colorId = null; load(1)">
+                            <v-icon icon="mdi-palette-outline" size="12" />
+                            {{ colors.find(c => c.id === f.colorId)?.name }}
+                            <v-icon icon="mdi-close" size="11" />
+                        </div>
+                        <div v-if="f.condition" class="sc-chip" @click="f.condition = ''; load(1)">
+                            {{ f.condition === 'new' ? 'Nowy' : 'Używany' }}
+                            <v-icon icon="mdi-close" size="11" />
+                        </div>
+                        <div v-if="f.euroNorm" class="sc-chip" @click="f.euroNorm = ''; load(1)">
+                            {{ f.euroNorm }}
+                            <v-icon icon="mdi-close" size="11" />
+                        </div>
+                        <div v-if="f.vin" class="sc-chip" @click="f.vin = ''; load(1)">
+                            VIN: {{ f.vin }}
+                            <v-icon icon="mdi-close" size="11" />
+                        </div>
+                        <div v-if="f.hasFinancing === true" class="sc-chip" @click="f.hasFinancing = null; load(1)">
+                            Z finansowaniem
+                            <v-icon icon="mdi-close" size="11" />
+                        </div>
+                        <div v-for="fid in f.featureIds" :key="fid" class="sc-chip" @click="f.featureIds = f.featureIds.filter(x => x !== fid); load(1)">
+                            <v-icon icon="mdi-star-check-outline" size="12" />
+                            {{ allFeatures.find(feat => feat.id === fid)?.name }}
+                            <v-icon icon="mdi-close" size="11" />
+                        </div>
                         <button class="sc-chip sc-chip--clear" @click="clearFilters">
                             <v-icon icon="mdi-close-circle" size="12" />
                             Wyczyść wszystko
                         </button>
                     </div>
+
+                    <!-- EXPANDED FILTERS PANEL -->
+                    <transition name="fp-expand">
+                        <div v-if="showMoreFilters" class="fp-expanded">
+                            <div class="fp-grid">
+
+                                <!-- Fuel type -->
+                                <div v-if="filterConfig.showFuelType" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-gas-station-outline" size="13" />Rodzaj paliwa</div>
+                                    <div class="filter-options">
+                                        <button v-for="ft in fuelTypes" :key="ft.id" class="fopt-btn" :class="{ active: f.fuelTypeId === ft.id }" @click="f.fuelTypeId = f.fuelTypeId === ft.id ? null : ft.id">{{ ft.name }}</button>
+                                    </div>
+                                </div>
+
+                                <!-- Gearbox -->
+                                <div v-if="filterConfig.showGearbox" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-car-shift-pattern" size="13" />Skrzynia biegów</div>
+                                    <div class="filter-options">
+                                        <button v-for="gb in gearboxes" :key="gb.id" class="fopt-btn" :class="{ active: f.gearboxId === gb.id }" @click="f.gearboxId = f.gearboxId === gb.id ? null : gb.id">{{ gb.name }}</button>
+                                    </div>
+                                </div>
+
+                                <!-- Drive type -->
+                                <div v-if="filterConfig.showDriveType && driveTypes.length" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-car-traction-control" size="13" />Napęd</div>
+                                    <div class="filter-options">
+                                        <button v-for="dt in driveTypes" :key="dt.id" class="fopt-btn" :class="{ active: f.driveTypeId === dt.id }" @click="f.driveTypeId = f.driveTypeId === dt.id ? null : dt.id">{{ dt.name }}</button>
+                                    </div>
+                                </div>
+
+                                <!-- Power -->
+                                <div v-if="filterConfig.showPower" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-engine-outline" size="13" />Moc (KM)</div>
+                                    <div class="fp-range">
+                                        <input v-model.number="f.powerFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <span class="fp-range-sep">–</span>
+                                        <input v-model.number="f.powerTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                    </div>
+                                </div>
+
+                                <!-- Mileage -->
+                                <div v-if="filterConfig.showMileage" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-speedometer" size="13" />{{ filterConfig.mileageLabel }}</div>
+                                    <div class="fp-range">
+                                        <input v-model.number="f.mileageFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <span class="fp-range-sep">–</span>
+                                        <input v-model.number="f.mileageTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                    </div>
+                                </div>
+
+                                <!-- Year -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-calendar-outline" size="13" />Rok produkcji</div>
+                                    <div class="fp-range">
+                                        <input v-model.number="f.yearFrom" type="number" class="fp-range-input" placeholder="Od" min="1900" max="2099" />
+                                        <span class="fp-range-sep">–</span>
+                                        <input v-model.number="f.yearTo" type="number" class="fp-range-input" placeholder="Do" min="1900" max="2099" />
+                                    </div>
+                                </div>
+
+                                <!-- Condition -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-car-wrench" size="13" />Stan pojazdu</div>
+                                    <div class="filter-options">
+                                        <button class="fopt-btn" :class="{ active: f.condition === 'new' }" @click="f.condition = f.condition === 'new' ? '' : 'new'">Nowy</button>
+                                        <button class="fopt-btn" :class="{ active: f.condition === 'used' }" @click="f.condition = f.condition === 'used' ? '' : 'used'">Używany</button>
+                                    </div>
+                                </div>
+
+                                <!-- Color -->
+                                <div v-if="filterConfig.showColor && colors.length" class="fp-group">
+                                    <div class="fp-group-label">
+                                        <v-icon icon="mdi-palette-outline" size="13" />Kolor
+                                        <span v-if="f.colorId" class="color-sel-name">{{ colors.find(c => c.id === f.colorId)?.name }}</span>
+                                    </div>
+                                    <div class="color-swatches">
+                                        <button class="color-swatch color-swatch--all" :class="{ active: !f.colorId }" title="Wszystkie" @click="f.colorId = null">
+                                            <v-icon icon="mdi-close" size="10" />
+                                        </button>
+                                        <button
+                                            v-for="col in colors"
+                                            :key="col.id"
+                                            class="color-swatch"
+                                            :class="{ active: f.colorId === col.id }"
+                                            :style="{ background: col.hexCode || '#888' }"
+                                            :title="col.name"
+                                            @click="f.colorId = f.colorId === col.id ? null : col.id"
+                                        />
+                                    </div>
+                                </div>
+
+                                <!-- Doors -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-car-door" size="13" />Liczba drzwi</div>
+                                    <div class="filter-options">
+                                        <button
+                                            v-for="d in [2, 3, 4, 5]" :key="d"
+                                            class="fopt-btn"
+                                            :class="{ active: f.doorsFrom === d && f.doorsTo === d }"
+                                            @click="f.doorsFrom === d ? (f.doorsFrom = null, f.doorsTo = null) : (f.doorsFrom = d, f.doorsTo = d)"
+                                        >{{ d }}</button>
+                                    </div>
+                                </div>
+
+                                <!-- Seats -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-seat-passenger" size="13" />Liczba miejsc</div>
+                                    <div class="fp-range">
+                                        <input v-model.number="f.seatsFrom" type="number" class="fp-range-input" placeholder="Od" min="1" max="50" />
+                                        <span class="fp-range-sep">–</span>
+                                        <input v-model.number="f.seatsTo" type="number" class="fp-range-input" placeholder="Do" min="1" max="50" />
+                                    </div>
+                                </div>
+
+                                <!-- Emission CO2 -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-molecule-co2" size="13" />Emisja CO₂ (g/km)</div>
+                                    <div class="fp-range">
+                                        <input v-model.number="f.emissionFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <span class="fp-range-sep">–</span>
+                                        <input v-model.number="f.emissionTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                    </div>
+                                </div>
+
+                                <!-- Euro norm -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-leaf" size="13" />Norma Euro</div>
+                                    <div class="filter-options">
+                                        <button
+                                            v-for="norm in ['Euro 1','Euro 2','Euro 3','Euro 4','Euro 5','Euro 6','Euro 6d']"
+                                            :key="norm"
+                                            class="fopt-btn"
+                                            :class="{ active: f.euroNorm === norm }"
+                                            @click="f.euroNorm = f.euroNorm === norm ? '' : norm"
+                                        >{{ norm }}</button>
+                                    </div>
+                                </div>
+
+                                <!-- VIN -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-barcode-scan" size="13" />Numer VIN</div>
+                                    <div class="fp-input-wrap">
+                                        <input v-model="f.vin" type="text" class="fp-text-input" placeholder="Wyszukaj po VIN" maxlength="17" style="text-transform:uppercase" />
+                                    </div>
+                                </div>
+
+                                <!-- Financing -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-credit-card-outline" size="13" />Finansowanie</div>
+                                    <div class="filter-options">
+                                        <button class="fopt-btn" :class="{ active: f.hasFinancing === true }" @click="f.hasFinancing = f.hasFinancing === true ? null : true">
+                                            <v-icon icon="mdi-check" size="12" class="btn-check-icon" v-if="f.hasFinancing === true" />
+                                            Z finansowaniem
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Seller type -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-account-outline" size="13" />Sprzedawca</div>
+                                    <div class="filter-options">
+                                        <button class="fopt-btn" :class="{ active: f.sellerType === 'private' }" @click="f.sellerType = f.sellerType === 'private' ? '' : 'private'">Prywatny</button>
+                                        <button class="fopt-btn" :class="{ active: f.sellerType === 'dealer' }" @click="f.sellerType = f.sellerType === 'dealer' ? '' : 'dealer'">Dealer</button>
+                                    </div>
+                                </div>
+
+                                <!-- Additional flags -->
+                                <div class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-information-outline" size="13" />Dodatkowe</div>
+                                    <div class="filter-checks">
+                                        <label class="fcheck"><input type="checkbox" :checked="f.hasDamage === false" @change="f.hasDamage = f.hasDamage === false ? null : false" />Bezwypadkowy</label>
+                                        <label class="fcheck"><input type="checkbox" :checked="f.hasWarranty === true" @change="f.hasWarranty = f.hasWarranty === true ? null : true" />Gwarancja</label>
+                                        <label class="fcheck"><input type="checkbox" :checked="f.hasServiceBook === true" @change="f.hasServiceBook = f.hasServiceBook === true ? null : true" />Książka serwisowa</label>
+                                        <label class="fcheck"><input type="checkbox" :checked="f.isImported === true" @change="f.isImported = f.isImported === true ? null : true" />Import</label>
+                                    </div>
+                                </div>
+
+                                <!-- Equipment / features -->
+                                <div v-if="allFeatures.length" class="fp-group fp-group--wide">
+                                    <div class="fp-group-label"><v-icon icon="mdi-star-check-outline" size="13" />Wyposażenie</div>
+                                    <div class="filter-options">
+                                        <button
+                                            v-for="feat in allFeatures"
+                                            :key="feat.id"
+                                            class="fopt-btn"
+                                            :class="{ active: f.featureIds.includes(feat.id) }"
+                                            @click="toggleFeature(feat.id)"
+                                        >{{ feat.name }}</button>
+                                    </div>
+                                </div>
+
+                                <!-- Body type (if applicable) -->
+                                <div v-if="filterConfig.showBodyType" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-car-estate" size="13" />Typ nadwozia</div>
+                                    <div class="fp-select-wrap">
+                                        <select v-model="f.bodyTypeId" class="fp-select">
+                                            <option :value="null">Wszystkie</option>
+                                            <option v-for="bt in bodyTypes" :key="bt.id" :value="bt.id">{{ bt.name }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Engine size (motorcycles) -->
+                                <div v-if="filterConfig.showEngineSize" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-engine-outline" size="13" />Pojemność (cm³)</div>
+                                    <div class="fp-range">
+                                        <input v-model.number="f.engineSizeFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <span class="fp-range-sep">–</span>
+                                        <input v-model.number="f.engineSizeTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                    </div>
+                                </div>
+
+                                <!-- Payload (trucks) -->
+                                <div v-if="filterConfig.showPayload" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-weight" size="13" />Ładowność (kg)</div>
+                                    <div class="fp-range">
+                                        <input v-model.number="f.payloadFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <span class="fp-range-sep">–</span>
+                                        <input v-model.number="f.payloadTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                    </div>
+                                </div>
+
+                                <!-- Catalog number (parts) -->
+                                <div v-if="filterConfig.showCatalogNumber" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-barcode-scan" size="13" />Nr katalogowy / OEM</div>
+                                    <div class="fp-input-wrap">
+                                        <input v-model="f.catalogNumber" type="text" class="fp-text-input" placeholder="np. 1K0615301L" />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Expanded footer -->
+                            <div class="fp-expanded-footer">
+                                <button v-if="hasActiveFilters" class="fp-clear-btn" @click="clearFilters">
+                                    <v-icon icon="mdi-close-circle-outline" size="14" />
+                                    Wyczyść wszystko
+                                </button>
+                                <button class="fp-apply-btn" @click="load(1); showMoreFilters = false">
+                                    <v-icon icon="mdi-magnify" size="15" />
+                                    Pokaż {{ total.toLocaleString('pl') }} ogłoszeń
+                                </button>
+                            </div>
+                        </div>
+                    </transition>
+
                 </div>
             </div>
         </div>
 
-        <div v-if="mobileFiltersOpen" class="sidebar-backdrop" @click="mobileFiltersOpen = false" />
-
+        <!-- ── Content ── -->
         <div class="container main-layout">
-
-            <!-- ── Sidebar ── -->
-            <aside class="sidebar" :class="{ 'sidebar--open': mobileFiltersOpen }">
-                <div class="sidebar-mobile-hd">
-                    <span class="sidebar-mobile-title">Filtry i kategorie</span>
-                    <button class="sidebar-mobile-close" @click="mobileFiltersOpen = false">
-                        <v-icon icon="mdi-close" size="18" />
-                    </button>
-                </div>
-
-                <!-- Categories -->
-                <div class="sidebar-block">
-                    <h3 class="sidebar-title">
-                        <v-icon icon="mdi-tag-multiple-outline" size="16" class="stitle-icon" />
-                        Kategorie
-                    </h3>
-                    <div
-                        v-for="cat in categories"
-                        :key="cat.id"
-                        class="cat-item"
-                        :class="{ active: f.categoryId === cat.id }"
-                        @click="selectCategory(cat)"
-                    >
-                        <div class="cat-item-icon">
-                            <v-icon :icon="cat.iconName || 'mdi-car-outline'" size="15" />
-                        </div>
-                        <span class="cat-item-name">{{ cat.name }}</span>
-                        <span class="cat-item-count">{{ cat.advertCount }}</span>
-                    </div>
-                </div>
-
-                <!-- Filters -->
-                <div class="sidebar-block">
-                    <div class="filter-hd">
-                        <h3 class="sidebar-title">
-                            <v-icon icon="mdi-tune" size="16" class="stitle-icon" />
-                            Filtry
-                        </h3>
-                        <button v-if="hasActiveFilters" class="clear-btn" @click="clearFilters">Wyczyść</button>
-                    </div>
-
-                    <div v-if="activeCategory" class="filter-cat-badge">
-                        <v-icon :icon="activeCategory.iconName || 'mdi-tag-outline'" size="14"/>
-                        {{ activeCategory.name }}
-                        <button class="fcb-clear" @click="f.categoryId = null; load(1)"><v-icon icon="mdi-close" size="12"/></button>
-                    </div>
-
-                    <!-- Parts category filter -->
-                    <div v-if="categorySlug === 'czesci'" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-cog-outline" size="14" />
-                            Kategoria części
-                        </div>
-                        <select v-model="f.bodySubtype" class="filter-select" @change="load(1)">
-                            <option value="">Wszystkie</option>
-                            <option value="silnik">Silnik i osprzęt</option>
-                            <option value="skrzynia">Skrzynia biegów / napęd</option>
-                            <option value="zawieszenie">Zawieszenie i układ kierowniczy</option>
-                            <option value="hamulce">Hamulce</option>
-                            <option value="elektryka">Elektryka i elektronika</option>
-                            <option value="nadwozie-zewn">Nadwozie zewnętrzne</option>
-                            <option value="nadwozie-wewn">Wnętrze / tapicerka</option>
-                            <option value="oswietlenie">Oświetlenie</option>
-                            <option value="chlodnica">Układ chłodzenia</option>
-                            <option value="wydech">Układ wydechowy</option>
-                            <option value="paliwo">Układ paliwowy</option>
-                            <option value="klimatyzacja">Klimatyzacja / ogrzewanie</option>
-                            <option value="kola">Koła, felgi i opony</option>
-                            <option value="akcesoria">Akcesoria i tuning</option>
-                            <option value="narzedzia">Narzędzia i wyposażenie warsztatu</option>
-                            <option value="inne">Inne</option>
-                        </select>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-currency-usd" size="14" />
-                            Cena (zł)
-                        </div>
-                        <div class="range-row">
-                            <input v-model.number="f.priceFrom" type="number" class="range-input" placeholder="Od" min="0" />
-                            <span class="range-sep">–</span>
-                            <input v-model.number="f.priceTo" type="number" class="range-input" placeholder="Do" min="0" />
-                        </div>
-                    </div>
-
-                    <!-- Year -->
-                    <div class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-calendar-outline" size="14" />
-                            Rok produkcji
-                        </div>
-                        <div class="range-row">
-                            <input v-model.number="f.yearFrom" type="number" class="range-input" placeholder="Od" min="1900" max="2099" />
-                            <span class="range-sep">–</span>
-                            <input v-model.number="f.yearTo" type="number" class="range-input" placeholder="Do" min="1900" max="2099" />
-                        </div>
-                    </div>
-
-                    <!-- Mileage -->
-                    <div v-if="filterConfig.showMileage" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-speedometer" size="14" />
-                            {{ filterConfig.mileageLabel }}
-                        </div>
-                        <div class="range-row">
-                            <input v-model.number="f.mileageFrom" type="number" class="range-input" placeholder="Od" min="0" />
-                            <span class="range-sep">–</span>
-                            <input v-model.number="f.mileageTo" type="number" class="range-input" placeholder="Do" min="0" />
-                        </div>
-                    </div>
-
-                    <!-- Power -->
-                    <div v-if="filterConfig.showPower" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-engine-outline" size="14" />
-                            Moc (KM)
-                        </div>
-                        <div class="range-row">
-                            <input v-model.number="f.powerFrom" type="number" class="range-input" placeholder="Od" min="0" />
-                            <span class="range-sep">–</span>
-                            <input v-model.number="f.powerTo" type="number" class="range-input" placeholder="Do" min="0" />
-                        </div>
-                    </div>
-
-                    <!-- Engine size (motorcycles) -->
-                    <div v-if="filterConfig.showEngineSize" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-engine-outline" size="14" />
-                            Pojemność (cm³)
-                        </div>
-                        <div class="range-row">
-                            <input v-model.number="f.engineSizeFrom" type="number" class="range-input" placeholder="Od" min="0" />
-                            <span class="range-sep">–</span>
-                            <input v-model.number="f.engineSizeTo" type="number" class="range-input" placeholder="Do" min="0" />
-                        </div>
-                    </div>
-
-                    <!-- Catalog number (parts) -->
-                    <div v-if="filterConfig.showCatalogNumber" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-barcode-scan" size="14" />
-                            Nr katalogowy / OEM
-                        </div>
-                        <input
-                            v-model="f.catalogNumber"
-                            type="text"
-                            class="filter-input-text"
-                            placeholder="np. 1K0615301L"
-                            @change="load(1)"
-                        />
-                    </div>
-
-                    <!-- Payload (trucks / machinery) -->
-                    <div v-if="filterConfig.showPayload" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-weight" size="14" />
-                            Ładowność (kg)
-                        </div>
-                        <div class="range-row">
-                            <input v-model.number="f.payloadFrom" type="number" class="range-input" placeholder="Od" min="0" @change="load(1)" />
-                            <span class="range-sep">–</span>
-                            <input v-model.number="f.payloadTo" type="number" class="range-input" placeholder="Do" min="0" @change="load(1)" />
-                        </div>
-                    </div>
-
-                    <!-- Fuel type -->
-                    <div v-if="filterConfig.showFuelType" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-gas-station-outline" size="14" />
-                            Rodzaj paliwa
-                        </div>
-                        <div class="filter-options">
-                            <button
-                                v-for="ft in fuelTypes" :key="ft.id"
-                                class="fopt-btn"
-                                :class="{ active: f.fuelTypeId === ft.id }"
-                                @click="f.fuelTypeId = f.fuelTypeId === ft.id ? null : ft.id"
-                            >{{ ft.name }}</button>
-                        </div>
-                    </div>
-
-                    <!-- Body type -->
-                    <div v-if="filterConfig.showBodyType" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-car-estate" size="14" />
-                            Typ nadwozia
-                        </div>
-                        <div class="filter-select-wrap">
-                            <select v-model="f.bodyTypeId" class="filter-select">
-                                <option :value="null">Wszystkie</option>
-                                <option v-for="bt in bodyTypes" :key="bt.id" :value="bt.id">{{ bt.name }}</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Gearbox -->
-                    <div v-if="filterConfig.showGearbox" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-car-shift-pattern" size="14" />
-                            Skrzynia biegów
-                        </div>
-                        <div class="filter-options">
-                            <button
-                                v-for="gb in gearboxes" :key="gb.id"
-                                class="fopt-btn"
-                                :class="{ active: f.gearboxId === gb.id }"
-                                @click="f.gearboxId = f.gearboxId === gb.id ? null : gb.id"
-                            >{{ gb.name }}</button>
-                        </div>
-                    </div>
-
-                    <!-- Seller type -->
-                    <div class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-account-outline" size="14" />
-                            Sprzedawca
-                        </div>
-                        <div class="filter-options">
-                            <button class="fopt-btn" :class="{ active: f.sellerType === 'private' }" @click="f.sellerType = f.sellerType === 'private' ? '' : 'private'">Prywatny</button>
-                            <button class="fopt-btn" :class="{ active: f.sellerType === 'dealer' }" @click="f.sellerType = f.sellerType === 'dealer' ? '' : 'dealer'">Dealer</button>
-                        </div>
-                    </div>
-
-                    <!-- Condition -->
-                    <div class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-car-wrench" size="14" />
-                            Stan pojazdu
-                        </div>
-                        <div class="filter-options">
-                            <button class="fopt-btn" :class="{ active: f.condition === 'new' }" @click="f.condition = f.condition === 'new' ? '' : 'new'">Nowy</button>
-                            <button class="fopt-btn" :class="{ active: f.condition === 'used' }" @click="f.condition = f.condition === 'used' ? '' : 'used'">Używany</button>
-                        </div>
-                    </div>
-
-                    <!-- Drive type -->
-                    <div v-if="filterConfig.showDriveType && driveTypes.length" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-car-traction-control" size="14" />
-                            Napęd
-                        </div>
-                        <div class="filter-select-wrap">
-                            <select v-model="f.driveTypeId" class="filter-select">
-                                <option :value="null">Wszystkie</option>
-                                <option v-for="dt in driveTypes" :key="dt.id" :value="dt.id">{{ dt.name }}</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Color -->
-                    <div v-if="filterConfig.showColor && colors.length" class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-palette-outline" size="14" />
-                            Kolor
-                            <span v-if="f.colorId" class="color-sel-name">{{ colors.find(c => c.id === f.colorId)?.name }}</span>
-                        </div>
-                        <div class="color-swatches">
-                            <button
-                                class="color-swatch color-swatch--all"
-                                :class="{ active: !f.colorId }"
-                                title="Wszystkie kolory"
-                                @click="f.colorId = null"
-                            >
-                                <v-icon icon="mdi-close" size="10" />
-                            </button>
-                            <button
-                                v-for="col in colors"
-                                :key="col.id"
-                                class="color-swatch"
-                                :class="{ active: f.colorId === col.id }"
-                                :style="{ background: col.hexCode || '#888' }"
-                                :title="col.name"
-                                @click="f.colorId = f.colorId === col.id ? null : col.id"
-                            />
-                        </div>
-                    </div>
-
-                    <!-- Boolean flags -->
-                    <div class="filter-section">
-                        <div class="filter-section-label">
-                            <v-icon icon="mdi-information-outline" size="14" />
-                            Dodatkowe
-                        </div>
-                        <div class="filter-checks">
-                            <label class="fcheck">
-                                <input type="checkbox" :checked="f.hasDamage === false" @change="f.hasDamage = f.hasDamage === false ? null : false" />
-                                Bezwypadkowy
-                            </label>
-                            <label class="fcheck">
-                                <input type="checkbox" :checked="f.hasWarranty === true" @change="f.hasWarranty = f.hasWarranty === true ? null : true" />
-                                Gwarancja
-                            </label>
-                            <label class="fcheck">
-                                <input type="checkbox" :checked="f.hasServiceBook === true" @change="f.hasServiceBook = f.hasServiceBook === true ? null : true" />
-                                Książka serwisowa
-                            </label>
-                            <label class="fcheck">
-                                <input type="checkbox" :checked="f.isImported === true" @change="f.isImported = f.isImported === true ? null : true" />
-                                Import
-                            </label>
-                        </div>
-                    </div>
-
-                    <button class="apply-btn" @click="load(1); mobileFiltersOpen = false">
-                        <v-icon icon="mdi-magnify" size="16" />
-                        Zastosuj filtry
-                    </button>
-                </div>
-            </aside>
-
-            <!-- ── Content ── -->
             <div class="content">
                 <div class="results-hd">
                     <p class="result-count">
                         Znaleziono <strong>{{ total.toLocaleString('pl') }}</strong> ogłoszeń
                     </p>
-                    <div class="results-hd-right">
-                        <button class="mobile-filter-toggle" @click="mobileFiltersOpen = true">
-                            <v-icon icon="mdi-tune-variant" size="15" />
-                            Filtry
-                            <span v-if="activeFiltersCount" class="mft-count">{{ activeFiltersCount }}</span>
-                        </button>
-                        <div class="sort-wrap">
+                    <div class="sort-wrap">
                         <v-icon icon="mdi-sort" size="16" class="sort-icon" />
                         <select v-model="f.sortBy" class="sort-select" @change="load(1)">
                             <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
-                    </div>
                     </div>
                 </div>
 
@@ -522,8 +549,8 @@
                     </div>
                 </template>
             </div>
-
         </div>
+
     </div>
 
     <QuickViewModal v-model="quickViewOpen" :advert-id="quickViewId" />
@@ -586,6 +613,17 @@ const f = reactive({
     hasTachograph: null as boolean | null,
     featureIds:  route.query.featureIds ? String(route.query.featureIds).split(',').map(Number).filter(Boolean) : [] as number[],
     sortBy:      route.query.sortBy ? String(route.query.sortBy) : '',
+    // New fields
+    locationCity: route.query.locationCity ? String(route.query.locationCity) : '' as string,
+    vin:          route.query.vin          ? String(route.query.vin)          : '' as string,
+    doorsFrom:    route.query.doorsFrom    ? Number(route.query.doorsFrom)    : null as number | null,
+    doorsTo:      route.query.doorsTo      ? Number(route.query.doorsTo)      : null as number | null,
+    seatsFrom:    route.query.seatsFrom    ? Number(route.query.seatsFrom)    : null as number | null,
+    seatsTo:      route.query.seatsTo      ? Number(route.query.seatsTo)      : null as number | null,
+    emissionFrom: route.query.emissionFrom ? Number(route.query.emissionFrom) : null as number | null,
+    emissionTo:   route.query.emissionTo   ? Number(route.query.emissionTo)   : null as number | null,
+    euroNorm:     route.query.euroNorm     ? String(route.query.euroNorm)     : '' as string,
+    hasFinancing: route.query.hasFinancing !== undefined ? route.query.hasFinancing === 'true' : null as boolean | null,
 })
 
 const models       = ref<TaxonomyItem[]>([])
@@ -597,28 +635,45 @@ const loading      = ref(false)
 const loadingMore  = ref(false)
 const pageSize     = 12
 const searchFocused = ref(false)
-const mobileFiltersOpen = ref(false)
+const showMoreFilters = ref(false)
+const showSuggestions = ref(false)
+
+// Auto-open expanded filters if advanced filters are active from URL
+const advancedFiltersCount = computed(() => {
+    let n = 0
+    if (f.fuelTypeId) n++
+    if (f.gearboxId) n++
+    if (f.driveTypeId) n++
+    if (f.powerFrom || f.powerTo) n++
+    if (f.mileageFrom || f.mileageTo) n++
+    if (f.yearFrom || f.yearTo) n++
+    if (f.condition) n++
+    if (f.colorId) n++
+    if (f.doorsFrom || f.doorsTo) n++
+    if (f.seatsFrom || f.seatsTo) n++
+    if (f.emissionFrom || f.emissionTo) n++
+    if (f.euroNorm) n++
+    if (f.vin) n++
+    if (f.hasFinancing !== null) n++
+    if (f.featureIds.length) n++
+    if (f.sellerType) n++
+    if (f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null) n++
+    if (f.bodyTypeId) n++
+    if (f.engineSizeFrom || f.engineSizeTo) n++
+    if (f.payloadFrom || f.payloadTo) n++
+    if (f.catalogNumber) n++
+    return n
+})
+
+// Open expanded panel if advanced filters active on page load
+if (advancedFiltersCount.value > 0) showMoreFilters.value = true
 
 const activeFiltersCount = computed(() => {
     let n = 0
     if (f.categoryId) n++
     if (f.brandId) n++
-    if (f.fuelTypeId) n++
-    if (f.bodyTypeId) n++
-    if (f.gearboxId) n++
-    if (f.priceFrom || f.priceTo) n++
-    if (f.yearFrom || f.yearTo) n++
-    if (f.mileageFrom || f.mileageTo) n++
-    if (f.engineSizeFrom || f.engineSizeTo) n++
-    if (f.driveTypeId) n++
-    if (f.colorId) n++
-    if (f.sellerType) n++
-    if (f.condition) n++
-    if (f.hasDamage !== null) n++
-    if (f.hasWarranty !== null) n++
-    if (f.hasServiceBook !== null) n++
-    if (f.isImported !== null) n++
-    return n
+    if (f.locationCity) n++
+    return n + advancedFiltersCount.value
 })
 
 // Quick view
@@ -688,7 +743,9 @@ const hasActiveFilters = computed(() =>
        f.payloadFrom || f.payloadTo || f.catalogNumber ||
        f.featureIds.length > 0 ||
        f.sellerType || f.condition ||
-       f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null)
+       f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null ||
+       f.locationCity || f.vin || f.doorsFrom || f.doorsTo || f.seatsFrom || f.seatsTo ||
+       f.emissionFrom || f.emissionTo || f.euroNorm || f.hasFinancing !== null)
 )
 
 const paginationPages = computed(() => {
@@ -703,6 +760,12 @@ const paginationPages = computed(() => {
     return pages
 })
 
+function onCategoryChange() {
+    const cat = categories.value.find(c => c.id === f.categoryId)
+    if (cat) selectCategory(cat)
+    else { f.brandId = null; f.modelId = null; models.value = []; dynamicBrands.value = null; load(1) }
+}
+
 async function selectCategory(cat: CategoryWithCount) {
     const newId = f.categoryId === cat.id ? null : cat.id
     if (newId !== f.categoryId) {
@@ -711,13 +774,18 @@ async function selectCategory(cat: CategoryWithCount) {
         models.value = []
     }
     f.categoryId = newId
-    mobileFiltersOpen.value = false
     if (f.categoryId) {
         fetchBrandsByCategory(f.categoryId).then(b => { dynamicBrands.value = b }).catch(() => { dynamicBrands.value = null })
     } else {
         dynamicBrands.value = null
     }
     load(1)
+}
+
+function toggleFeature(id: number) {
+    const idx = f.featureIds.indexOf(id)
+    if (idx === -1) f.featureIds.push(id)
+    else f.featureIds.splice(idx, 1)
 }
 
 function clearFilters() {
@@ -736,6 +804,11 @@ function clearFilters() {
     f.hasRetarder = null; f.hasTachograph = null; f.catalogNumber = ''
     f.featureIds = []
     f.sortBy = ''
+    f.locationCity = ''; f.vin = ''
+    f.doorsFrom = null; f.doorsTo = null
+    f.seatsFrom = null; f.seatsTo = null
+    f.emissionFrom = null; f.emissionTo = null
+    f.euroNorm = ''; f.hasFinancing = null
     models.value = []
     load(1)
 }
@@ -783,6 +856,17 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.hasTachograph !== null)  body.hasTachograph  = f.hasTachograph
     if (f.catalogNumber)           body.catalogNumber  = f.catalogNumber
     if (f.featureIds.length)       body.featureIds     = f.featureIds
+    // New fields (passed to API; API will ignore unknown fields gracefully)
+    if (f.locationCity)            body.locationCity   = f.locationCity
+    if (f.vin)                     body.vin            = f.vin.toUpperCase()
+    if (f.doorsFrom)               body.doorsFrom      = f.doorsFrom
+    if (f.doorsTo)                 body.doorsTo        = f.doorsTo
+    if (f.seatsFrom)               body.seatsFrom      = f.seatsFrom
+    if (f.seatsTo)                 body.seatsTo        = f.seatsTo
+    if (f.emissionFrom)            body.emissionFrom   = f.emissionFrom
+    if (f.emissionTo)              body.emissionTo     = f.emissionTo
+    if (f.euroNorm)                body.euroNorm       = f.euroNorm
+    if (f.hasFinancing !== null)   body.hasFinancing   = f.hasFinancing
     return body
 }
 
@@ -863,6 +947,16 @@ async function load(p: number = page.value) {
     if (f.payloadTo)         query.payloadTo    = String(f.payloadTo)
     if (f.catalogNumber)     query.catalogNumber = f.catalogNumber
     if (f.featureIds.length) query.featureIds   = f.featureIds.join(',')
+    if (f.locationCity)  query.locationCity  = f.locationCity
+    if (f.vin)           query.vin           = f.vin
+    if (f.doorsFrom)     query.doorsFrom     = String(f.doorsFrom)
+    if (f.doorsTo)       query.doorsTo       = String(f.doorsTo)
+    if (f.seatsFrom)     query.seatsFrom     = String(f.seatsFrom)
+    if (f.seatsTo)       query.seatsTo       = String(f.seatsTo)
+    if (f.emissionFrom)  query.emissionFrom  = String(f.emissionFrom)
+    if (f.emissionTo)    query.emissionTo    = String(f.emissionTo)
+    if (f.euroNorm)      query.euroNorm      = f.euroNorm
+    if (f.hasFinancing !== null) query.hasFinancing = String(f.hasFinancing)
     if (f.sortBy)      query.sortBy      = f.sortBy
     if (p > 1)         query.page        = String(p)
     router.replace({ query })
@@ -900,7 +994,6 @@ async function loadMore() {
 }
 
 // ── Autocomplete ──────────────────────────────────────────────────────────────
-const showSuggestions = ref(false)
 type AcType = 'brand' | 'model' | 'feature'
 const autocompleteItems = computed(() => {
     const q = f.textSearch.trim().toLowerCase()
@@ -919,6 +1012,7 @@ const autocompleteItems = computed(() => {
         .map(feat => ({ type: 'feature' as AcType, id: feat.id, name: feat.name, sub: feat.category?.name ?? '' }))
     return [...brandMatches, ...modelMatches, ...featureMatches].slice(0, 7)
 })
+
 function applyAutocomplete(item: { type: AcType; id: number; name: string }) {
     showSuggestions.value = false
     if (item.type === 'brand') {
@@ -1004,70 +1098,216 @@ onMounted(async () => {
 }
 
 // ── Page header (no category) ───────────────────────────────────────────────────────
-.page-header {
-    padding: 48px 0 0;
+.page-header { padding: 48px 0 0; }
+
+.page-title { font-size: 38px; font-weight: 900; color: $text; }
+.page-sub { color: $text-muted; font-size: 15px; margin-top: 6px; }
+
+// ── Filter panel ─────────────────────────────────────────────────────────────────────
+.fp-wrap {
+    padding: 20px 0 0;
 }
 
-.page-title {
-    font-size: 38px;
-    font-weight: 900;
-    color: $text;
-}
-
-.page-sub {
-    color: $text-muted;
-    font-size: 15px;
-    margin-top: 6px;
-}
-
-// ── Search section ───────────────────────────────────────────────────────────────────────
-.search-section {
-    padding: 24px 0 0;
-}
-
-.search-card {
+.fp-panel {
     @include card($r-xl);
     padding: 0;
     overflow: hidden;
     border-color: $border;
-    transition: border-color 0.2s;
+}
 
-    &--focused {
-        border-color: rgba($red, 0.4);
-        box-shadow: 0 0 0 3px rgba($red, 0.06);
+// PRIMARY ROW
+.fp-primary {
+    display: flex;
+    align-items: stretch;
+    min-height: 64px;
+    overflow-x: auto;
+
+    @include respond-to(md) {
+        flex-wrap: wrap;
+        min-height: auto;
+        overflow-x: visible;
     }
 }
 
-.sc-main {
-    display: flex;
-    align-items: center;
-    height: 58px;
+.fp-divider {
+    width: 1px;
+    background: $border;
+    flex-shrink: 0;
+    margin: 12px 0;
+
+    @include respond-to(md) { display: none; }
 }
 
-.sc-input-wrap {
+.fp-field {
+    flex: 1;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px 16px;
+    gap: 4px;
+
+    @include respond-to(md) {
+        min-width: calc(50% - 1px);
+        flex: none;
+        border-bottom: 1px solid $border;
+
+        &:nth-child(odd) { border-right: 1px solid $border; }
+    }
+
+    @include respond-to(sm) {
+        min-width: 100%;
+        border-right: none !important;
+    }
+
+    &--range {
+        min-width: 180px;
+        @include respond-to(md) { min-width: calc(50% - 1px); }
+        @include respond-to(sm) { min-width: 100%; }
+    }
+}
+
+.fp-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: $text-dim;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.fp-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fp-field-icon { color: $red; flex-shrink: 0; }
+
+.fp-select {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+
+    option { background: #111; color: $text; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.fp-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fp-text-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    flex: 1;
+    min-width: 0;
+
+    &::placeholder { color: $text-faint; }
+}
+
+.fp-range {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fp-range-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+
+    &::placeholder { color: $text-faint; }
+    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { -webkit-appearance: none; }
+    -moz-appearance: textfield;
+}
+
+.fp-range-sep { color: $text-dim; font-size: 13px; flex-shrink: 0; }
+
+.fp-search-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: $red;
+    color: white;
+    border: none;
+    padding: 0 28px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:hover { opacity: 0.88; }
+
+    @include respond-to(md) {
+        width: 100%;
+        justify-content: center;
+        padding: 14px;
+        font-size: 15px;
+    }
+}
+
+.fp-btn-count {
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 1px 8px;
+    font-size: 12px;
+}
+
+// SECONDARY ROW
+.fp-secondary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-top: 1px solid $border;
+    background: rgba(255,255,255,0.015);
+
+    @include respond-to(sm) { flex-wrap: wrap; }
+}
+
+.fp-keyword-wrap {
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 18px;
-    height: 100%;
+    gap: 8px;
+    min-width: 0;
 }
 
-.sc-icon { color: $text-dim; flex-shrink: 0; }
+.fp-kw-icon { color: $text-dim; flex-shrink: 0; }
 
-.sc-input {
+.fp-keyword-input {
     flex: 1;
     background: transparent;
     border: none;
     outline: none;
     color: $text;
-    font-size: 15px;
+    font-size: 14px;
     font-family: 'Inter', sans-serif;
 
     &::placeholder { color: $text-faint; }
 }
 
-.sc-clear {
+.fp-kw-clear {
     background: none;
     border: none;
     color: $text-dim;
@@ -1077,68 +1317,56 @@ onMounted(async () => {
     align-items: center;
     border-radius: 50%;
     transition: color 0.15s;
-
     &:hover { color: $text; }
 }
 
-.sc-divider {
-    width: 1px;
-    height: 28px;
-    background: $border;
+.fp-secondary-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-shrink: 0;
+
+    @include respond-to(sm) { width: 100%; justify-content: flex-end; }
 }
 
-.sc-select-wrap {
-    display: flex;
+.fp-more-btn {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 0 16px;
-    height: 100%;
-}
-
-.sc-sel-icon { color: $text-dim; flex-shrink: 0; }
-
-.sc-select {
+    gap: 6px;
     background: transparent;
-    border: none;
-    outline: none;
+    border: 1px solid $border;
+    border-radius: $r-sm;
     color: $text-muted;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
     font-family: 'Inter', sans-serif;
+    padding: 7px 14px;
     cursor: pointer;
-    min-width: 130px;
-    max-width: 160px;
+    white-space: nowrap;
+    transition: all 0.15s;
 
-    option { background: #111; color: $text; }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &:hover { border-color: $text-dim; color: $text; }
+
+    &--active {
+        background: rgba($red, 0.08);
+        border-color: rgba($red, 0.3);
+        color: $red;
+    }
 }
 
-.sc-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.fp-more-count {
     background: $red;
     color: white;
-    border: none;
-    height: 100%;
-    padding: 0 28px;
-    font-size: 14px;
+    font-size: 10px;
     font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    white-space: nowrap;
-
-    &:hover { opacity: 0.88; }
+    border-radius: 10px;
+    padding: 1px 6px;
+    min-width: 16px;
+    text-align: center;
+    line-height: 1.4;
 }
 
-.sc-count {
-    background: rgba(255,255,255,0.2);
-    border-radius: 20px;
-    padding: 1px 8px;
-    font-size: 12px;
-}
-
+// CHIPS
 .sc-chips {
     display: flex;
     flex-wrap: wrap;
@@ -1173,185 +1401,43 @@ onMounted(async () => {
     }
 }
 
-// ── Layout ──────────────────────────────────────────────────────────────────────────────
-.main-layout {
+// EXPANDED FILTERS
+.fp-expanded {
+    border-top: 1px solid $border;
+    padding: 20px 20px 0;
+}
+
+.fp-expand-enter-active,
+.fp-expand-leave-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform-origin: top;
+}
+.fp-expand-enter-from,
+.fp-expand-leave-to {
+    opacity: 0;
+    transform: translateY(-8px);
+}
+
+.fp-grid {
     display: grid;
-    grid-template-columns: 268px 1fr;
-    gap: 24px;
-    padding-top: 28px;
-    padding-bottom: 80px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px 24px;
 
-    @include respond-to(md) { grid-template-columns: 1fr; }
+    @include respond-to(lg) { grid-template-columns: repeat(3, 1fr); }
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(sm) { grid-template-columns: 1fr; }
 }
 
-// ── Sidebar ────────────────────────────────────────────────────────────────────────────
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    align-self: start;
-    position: sticky;
-    top: calc($nav-height + 16px);
-
-    @include respond-to(md) {
-        position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: min(360px, 92vw);
-        z-index: 300;
-        overflow-y: auto;
-        padding: 0 16px 60px;
-        background: $bg;
-        box-shadow: 4px 0 32px rgba(0,0,0,0.6);
-        transform: translateX(-105%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        gap: 12px;
-        align-self: auto;
-
-        &--open { transform: translateX(0); }
+.fp-group {
+    &--wide {
+        grid-column: 1 / -1;
     }
 }
 
-.sidebar-backdrop {
-    display: none;
-    @include respond-to(md) {
-        display: block;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.65);
-        z-index: 299;
-        backdrop-filter: blur(2px);
-    }
-}
-
-.sidebar-mobile-hd {
-    display: none;
-    @include respond-to(md) {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 20px 4px 14px;
-        border-bottom: 1px solid $border;
-        margin-bottom: 4px;
-        flex-shrink: 0;
-    }
-}
-
-.sidebar-mobile-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: $text;
-}
-
-.sidebar-mobile-close {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid $border;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
+.fp-group-label {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: $text-muted;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    &:hover { background: rgba(255,255,255,0.1); color: $text; }
-}
-
-.sidebar-block {
-    @include card($r-xl);
-    padding: 20px;
-}
-
-.sidebar-title {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 14px;
-    font-weight: 700;
-    color: $text;
-    margin-bottom: 14px;
-}
-
-.stitle-icon { color: $red; }
-
-// Category list
-.cat-item {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 8px 9px;
-    border-radius: $r-sm;
-    cursor: pointer;
-    transition: background 0.15s;
-    color: $text-muted;
-    font-size: 13px;
-
-    &:hover { background: rgba(255,255,255,0.04); color: $text; }
-
-    &.active {
-        background: rgba($red, 0.1);
-        color: $text;
-        border-left: 2px solid $red;
-        padding-left: 7px;
-    }
-}
-
-.cat-item-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: rgba($red, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $red;
-    flex-shrink: 0;
-}
-
-.cat-item-name { flex: 1; }
-
-.cat-item-count {
-    font-size: 11px;
-    color: $text-faint;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-    padding: 1px 7px;
-}
-
-// Filter sections
-.filter-hd {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-
-    .sidebar-title { margin-bottom: 0; }
-}
-
-.clear-btn {
-    background: none;
-    border: none;
-    color: $red;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-
-    &:hover { opacity: 0.8; }
-}
-
-.filter-section {
-    margin-bottom: 18px;
-
-    &:last-of-type { margin-bottom: 14px; }
-}
-
-.filter-section-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    gap: 5px;
     font-size: 11px;
     font-weight: 700;
     color: $text-dim;
@@ -1362,36 +1448,50 @@ onMounted(async () => {
     .v-icon { color: $red; }
 }
 
-.range-row {
+.fp-expanded-footer {
     display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 0;
+    border-top: 1px solid $border;
+    margin-top: 20px;
+}
+
+.fp-clear-btn {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-}
-
-.range-input {
-    flex: 1;
-    background: rgba(255,255,255,0.04);
+    background: transparent;
     border: 1px solid $border;
     border-radius: $r-sm;
-    padding: 8px 10px;
-    color: $text;
+    color: $text-muted;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
-    outline: none;
-    min-width: 0;
-    transition: border-color 0.2s;
-
-    &::placeholder { color: $text-faint; }
-    &:focus { border-color: rgba($red, 0.4); }
-
-    // Hide number spinners
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button { -webkit-appearance: none; }
-    -moz-appearance: textfield;
+    padding: 9px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    &:hover { border-color: $red; color: $red; }
 }
 
-.range-sep { color: $text-dim; font-size: 13px; flex-shrink: 0; }
+.fp-apply-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: $red;
+    color: white;
+    border: none;
+    border-radius: $r-sm;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.88; }
+}
 
+// Reused filter option styles
 .filter-options {
     display: flex;
     flex-wrap: wrap;
@@ -1409,46 +1509,39 @@ onMounted(async () => {
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 
     &:hover { border-color: rgba($red, 0.3); color: $text; }
     &.active { background: rgba($red, 0.12); border-color: rgba($red, 0.4); color: $red; font-weight: 700; }
 }
 
-.filter-select-wrap {
-    position: relative;
+.btn-check-icon { color: $red; }
+
+.filter-checks {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.filter-input-text {
-    width: 100%;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: $r-md;
-    color: $text;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    padding: 9px 12px;
-    outline: none;
-    transition: border-color 0.18s;
-
-    &::placeholder { color: $text-dark; }
-    &:focus { border-color: rgba($red, 0.5); }
-}
-
-.filter-select {
-    width: 100%;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: $r-sm;
-    padding: 8px 10px;
+.fcheck {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     color: $text-muted;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    outline: none;
+    font-size: 12px;
     cursor: pointer;
-    transition: border-color 0.2s;
+    user-select: none;
 
-    option { background: #111; color: $text; }
-    &:focus { border-color: rgba($red, 0.4); }
+    input[type=checkbox] {
+        accent-color: $red;
+        width: 14px;
+        height: 14px;
+        cursor: pointer;
+    }
+
+    &:hover { color: $text; }
 }
 
 .color-sel-name {
@@ -1508,52 +1601,55 @@ onMounted(async () => {
     }
 }
 
-.filter-checks {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+// ── Autocomplete dropdown ─────────────────────────────────────────────────────────────────────
+.ac-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #111;
+    border: 1px solid $border;
+    border-radius: $r-md;
+    z-index: 200;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
-.fcheck {
+.ac-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: $text-muted;
-    font-size: 12px;
-    cursor: pointer;
-    user-select: none;
-
-    input[type=checkbox] {
-        accent-color: $red;
-        width: 14px;
-        height: 14px;
-        cursor: pointer;
-    }
-
-    &:hover { color: $text; }
-}
-
-.apply-btn {
+    gap: 10px;
+    padding: 10px 14px;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    background: $red;
-    color: white;
+    background: none;
     border: none;
-    border-radius: $r-sm;
-    padding: 11px;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: opacity 0.2s;
+    text-align: left;
+    transition: background 0.12s;
+    font-family: 'Inter', sans-serif;
 
-    &:hover { opacity: 0.88; }
+    &:hover { background: rgba(255,255,255,0.05); }
+    &:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.04); }
 }
 
-// ── Content area ────────────────────────────────────────────────────────────────────────────
+.ac-icon { color: $red; flex-shrink: 0; }
+
+.ac-name { flex: 1; font-size: 13px; color: $text; }
+
+.ac-type {
+    font-size: 11px;
+    color: $text-dim;
+    background: rgba(255,255,255,0.06);
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+// ── Layout ──────────────────────────────────────────────────────────────────────────────
+.main-layout {
+    padding-top: 24px;
+    padding-bottom: 80px;
+}
+
 .content { min-width: 0; }
 
 .results-hd {
@@ -1561,47 +1657,6 @@ onMounted(async () => {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-}
-
-.results-hd-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.mobile-filter-toggle {
-    display: none;
-
-    @include respond-to(md) {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid $border;
-        border-radius: $r-sm;
-        color: $text-muted;
-        font-size: 13px;
-        font-weight: 600;
-        font-family: 'Inter', sans-serif;
-        padding: 7px 12px;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: border-color 0.2s, color 0.2s;
-
-        &:hover { border-color: $text-dim; color: $text; }
-    }
-}
-
-.mft-count {
-    background: $red;
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    border-radius: 10px;
-    padding: 1px 6px;
-    min-width: 16px;
-    text-align: center;
-    line-height: 1.4;
 }
 
 .result-count {
@@ -1633,13 +1688,6 @@ onMounted(async () => {
 
     option { background: #111; color: $text; }
     &:focus { border-color: rgba($red, 0.4); }
-}
-
-.loading-state {
-    display: flex;
-    justify-content: center;
-    padding: 80px 0;
-    color: $text-dim;
 }
 
 .spin { animation: spin 1s linear infinite; }
@@ -1738,73 +1786,5 @@ onMounted(async () => {
     }
 
     &--dot { cursor: default; border-color: transparent; background: transparent; }
-}
-
-.filter-cat-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba($red, 0.1);
-    border: 1px solid rgba($red, 0.25);
-    border-radius: $r-sm;
-    padding: 8px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: $red;
-    margin-bottom: 14px;
-    .fcb-clear { margin-left: auto; background: transparent; border: none; color: $red; cursor: pointer; display: flex; align-items: center; padding: 0; }
-}
-
-// ── Autocomplete dropdown ────────────────────────────────────────────────────────────────────
-.ac-dropdown {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    background: #0d0d0d;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: $r-md;
-    overflow: hidden;
-    z-index: 200;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-}
-
-.ac-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 14px;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    cursor: pointer;
-    text-align: left;
-    font-family: 'Inter', sans-serif;
-    transition: background 0.12s;
-
-    &:last-child { border-bottom: none; }
-    &:hover { background: rgba(255,255,255,0.05); }
-}
-
-.ac-icon { color: $text-dim; flex-shrink: 0; }
-
-.ac-name {
-    flex: 1;
-    font-size: 13px;
-    font-weight: 500;
-    color: $text;
-}
-
-.ac-type {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: $text-dim;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid $border;
-    border-radius: 4px;
-    padding: 2px 6px;
 }
 </style>
