@@ -92,6 +92,7 @@ export default defineNuxtConfig({
     // Maintenance mode — set NUXT_SITE_PASSWORD to a non-empty value to enable
     sitePassword: process.env.NUXT_SITE_PASSWORD ?? '',
     public: {
+      maintenanceMode: process.env.NUXT_PUBLIC_MAINTENANCE_MODE ?? '',
       apiBase: process.env.NUXT_PUBLIC_API_BASE ?? 'http://localhost:5105/',
       premiereStart: process.env.NUXT_PUBLIC_PREMIERE_START ?? '2026-06-12T00:00:00+02:00',
       premiereEnd: process.env.NUXT_PUBLIC_PREMIERE_END ?? '2026-06-15T00:00:00+02:00',
