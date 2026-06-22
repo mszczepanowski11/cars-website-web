@@ -89,6 +89,8 @@ export default defineNuxtConfig({
     imojeWebhookSecret: process.env.NUXT_IMOJE_WEBHOOK_SECRET ?? '',
     internalServiceSecret: process.env.NUXT_INTERNAL_SERVICE_SECRET ?? '',
     turnstileSecretKey: process.env.NUXT_TURNSTILE_SECRET_KEY ?? '',
+    // Maintenance mode — set NUXT_SITE_PASSWORD to a non-empty value to enable
+    sitePassword: process.env.NUXT_SITE_PASSWORD ?? '',
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE ?? 'http://localhost:5105/',
       premiereStart: process.env.NUXT_PUBLIC_PREMIERE_START ?? '2026-06-12T00:00:00+02:00',
