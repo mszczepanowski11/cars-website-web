@@ -125,10 +125,10 @@
                         <li>
                             Szczegółowe instrukcje dotyczące sposobów konfiguracji, blokowania oraz usuwania Plików Cookies udostępniane są przez producentów oprogramowania:
                             <ul>
-                                <li>Google Chrome: <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Centrum Pomocy Google Chrome</a></li>
-                                <li>Mozilla Firefox: <a href="https://support.mozilla.org/pl/kb/usuwanie-ciasteczek" target="_blank" rel="noopener">Centrum Pomocy Mozilla Firefox</a></li>
-                                <li>Apple Safari: <a href="https://support.apple.com/pl-pl/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Podręcznik Użytkownika Apple Safari</a></li>
-                                <li>Microsoft Edge: <a href="https://support.microsoft.com/pl-pl/microsoft-edge/usuwanie-plik%C3%B3w-cookie-w-przegl%C4%85darce-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener">Strona Wsparcia Microsoft Edge</a></li>
+                                <li>Google Chrome: <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer">Centrum Pomocy Google Chrome</a></li>
+                                <li>Mozilla Firefox: <a href="https://support.mozilla.org/pl/kb/usuwanie-ciasteczek" target="_blank" rel="noopener noreferrer">Centrum Pomocy Mozilla Firefox</a></li>
+                                <li>Apple Safari: <a href="https://support.apple.com/pl-pl/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer">Podręcznik Użytkownika Apple Safari</a></li>
+                                <li>Microsoft Edge: <a href="https://support.microsoft.com/pl-pl/microsoft-edge/usuwanie-plik%C3%B3w-cookie-w-przegl%C4%85darce-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer">Strona Wsparcia Microsoft Edge</a></li>
                             </ul>
                         </li>
                     </ol>

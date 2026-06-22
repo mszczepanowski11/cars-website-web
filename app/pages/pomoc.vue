@@ -59,7 +59,7 @@
                     <div class="cc-title">Nie znalazłeś odpowiedzi?</div>
                     <div class="cc-sub">Skontaktuj się z naszym zespołem wsparcia.</div>
                 </div>
-                <a href="mailto:pomoc@carizo.pl" class="btn-contact">Napisz do nas</a>
+                <a href="mailto:kontakt@carizo.eu" class="btn-contact">Napisz do nas</a>
             </div>
 
         </div>

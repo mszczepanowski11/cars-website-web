@@ -42,10 +42,10 @@
                             <button class="btn-fav" :class="{ active: isFavorite }" @click="toggleFavorite" title="Dodaj do ulubionych">
                                 <v-icon :icon="isFavorite ? 'mdi-heart' : 'mdi-heart-outline'" size="17" />
                             </button>
-                            <a v-if="event.ticketsUrl" :href="event.ticketsUrl" target="_blank" rel="noopener" class="btn-ticket">
+                            <a v-if="event.ticketsUrl" :href="event.ticketsUrl" target="_blank" rel="noopener noreferrer" class="btn-ticket">
                                 <v-icon icon="mdi-ticket-outline" size="16" />Kup bilety
                             </a>
-                            <a v-if="event.websiteUrl" :href="event.websiteUrl" target="_blank" rel="noopener" class="btn-web">
+                            <a v-if="event.websiteUrl" :href="event.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn-web">
                                 <v-icon icon="mdi-web" size="16" />Strona
                             </a>
                         </div>
@@ -60,16 +60,16 @@
                         <div class="section-block">
                             <h2 class="block-title">Udostępnij</h2>
                             <div class="share-btns">
-                                <a :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`" target="_blank" rel="noopener" class="share-btn share-fb">
+                                <a :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`" target="_blank" rel="noopener noreferrer" class="share-btn share-fb">
                                     <v-icon icon="mdi-facebook" size="18" />Facebook
                                 </a>
-                                <a :href="`https://wa.me/?text=${encodeURIComponent(event.name + ' ' + shareUrl)}`" target="_blank" rel="noopener" class="share-btn share-wa">
+                                <a :href="`https://wa.me/?text=${encodeURIComponent(event.name + ' ' + shareUrl)}`" target="_blank" rel="noopener noreferrer" class="share-btn share-wa">
                                     <v-icon icon="mdi-whatsapp" size="18" />WhatsApp
                                 </a>
                                 <a :href="`fb-messenger://share/?link=${encodeURIComponent(shareUrl)}`" class="share-btn share-ms">
                                     <v-icon icon="mdi-facebook-messenger" size="18" />Messenger
                                 </a>
-                                <a href="https://www.instagram.com" target="_blank" rel="noopener" class="share-btn share-ig">
+                                <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="share-btn share-ig">
                                     <v-icon icon="mdi-instagram" size="18" />Instagram
                                 </a>
                                 <button class="share-btn share-copy" @click="copyLink">

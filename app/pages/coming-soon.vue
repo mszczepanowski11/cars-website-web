@@ -8,6 +8,10 @@
   </div>
 </template>
 
+<script setup lang="ts">
+useSeoMeta({ robots: 'noindex, nofollow' })
+</script>
+
 <style lang="scss" scoped>
 .cs-root {
   min-height: 100vh;

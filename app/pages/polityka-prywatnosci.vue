@@ -202,7 +202,7 @@
                             <p class="authority-box">
                                 <strong>Prezes Urzędu Ochrony Danych Osobowych</strong><br>
                                 ul. Stawki 2, 00-193 Warszawa<br>
-                                <a href="https://uodo.gov.pl" target="_blank" rel="noopener">uodo.gov.pl</a>
+                                <a href="https://uodo.gov.pl" target="_blank" rel="noopener noreferrer">uodo.gov.pl</a>
                             </p>
                         </li>
                     </ol>

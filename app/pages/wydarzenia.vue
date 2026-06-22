@@ -98,16 +98,16 @@
                                         <v-icon icon="mdi-share-variant-outline" size="15" />
                                     </button>
                                     <div v-if="sharePopupId === ev.id" class="share-popup" @click.stop>
-                                        <a :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl(ev.id))}`" target="_blank" rel="noopener" class="share-item">
+                                        <a :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl(ev.id))}`" target="_blank" rel="noopener noreferrer" class="share-item">
                                             <v-icon icon="mdi-facebook" size="16" />Facebook
                                         </a>
-                                        <a :href="`https://wa.me/?text=${encodeURIComponent(ev.name + ' ' + getShareUrl(ev.id))}`" target="_blank" rel="noopener" class="share-item">
+                                        <a :href="`https://wa.me/?text=${encodeURIComponent(ev.name + ' ' + getShareUrl(ev.id))}`" target="_blank" rel="noopener noreferrer" class="share-item">
                                             <v-icon icon="mdi-whatsapp" size="16" />WhatsApp
                                         </a>
                                         <a :href="`fb-messenger://share/?link=${encodeURIComponent(getShareUrl(ev.id))}`" class="share-item">
                                             <v-icon icon="mdi-facebook-messenger" size="16" />Messenger
                                         </a>
-                                        <a href="https://www.instagram.com" target="_blank" rel="noopener" class="share-item">
+                                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="share-item">
                                             <v-icon icon="mdi-instagram" size="16" />Instagram
                                         </a>
                                         <button class="share-item" @click="copyLink(ev.id)">
@@ -117,11 +117,11 @@
                                     </div>
                                 </div>
                                 <!-- External links -->
-                                <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener" class="btn-ticket" @click.stop>
+                                <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener noreferrer" class="btn-ticket" @click.stop>
                                     <v-icon icon="mdi-ticket-outline" size="14" />
                                     Bilety
                                 </a>
-                                <a v-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener" class="btn-web" @click.stop>
+                                <a v-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn-web" @click.stop>
                                     <v-icon icon="mdi-web" size="14" />
                                     Strona
                                 </a>

@@ -338,7 +338,7 @@
       <a
         :href="`https://www.google.com/maps/search/${encodeURIComponent((advert.city ?? '') + ' ' + (advert.region ?? ''))}`"
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
         class="m-3 mt-0 border border-[#252525] rounded-xl h-10 flex items-center justify-center gap-2 text-[13px] text-[#aaa]"
       >
         <span>🗺</span>

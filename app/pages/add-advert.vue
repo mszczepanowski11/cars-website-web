@@ -2319,11 +2319,12 @@ function escapeHtml(s: string): string {
 
 function highlightSearch(name: string): string {
     const q = featSearch.value.trim()
-    const safeName = escapeHtml(name)
-    if (!q) return safeName
-    const idx = safeName.toLowerCase().indexOf(q.toLowerCase())
-    if (idx === -1) return safeName
-    return safeName.slice(0, idx) + `<mark class="feat-hl">${safeName.slice(idx, idx + q.length)}</mark>` + safeName.slice(idx + q.length)
+    if (!q) return escapeHtml(name)
+    const idx = name.toLowerCase().indexOf(q.toLowerCase())
+    if (idx === -1) return escapeHtml(name)
+    return escapeHtml(name.slice(0, idx))
+        + `<mark class="feat-hl">${escapeHtml(name.slice(idx, idx + q.length))}</mark>`
+        + escapeHtml(name.slice(idx + q.length))
 }
 
 // Photo quality feedback
@@ -2976,7 +2977,20 @@ async function deleteExistingImage(imageId: number) {
     finally { deletingImageId.value = null }
 }
 
+const isDirty = computed(() => !isEdit.value && (
+    !!form.title || !!form.brandId || !!form.price ||
+    selectedFiles.value.length > 0 || selectedFeatureIds.value.size > 0
+))
+
+function onBeforeUnload(e: BeforeUnloadEvent) {
+    if (isDirty.value) {
+        e.preventDefault()
+        e.returnValue = ''
+    }
+}
+
 onMounted(async () => {
+    window.addEventListener('beforeunload', onBeforeUnload)
     ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value] = await Promise.all([
         fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories()
     ])
@@ -3050,6 +3064,10 @@ onMounted(async () => {
             } catch {}
         }))
     }
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener('beforeunload', onBeforeUnload)
 })
 </script>
 

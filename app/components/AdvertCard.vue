@@ -82,6 +82,8 @@ const monthlyRate = computed(() => {
                 :src="mainImageUrl"
                 :alt="advert.title"
                 loading="lazy"
+                width="420"
+                height="200"
             />
             <span v-if="resolvedBadge" :class="['card-badge', `card-badge--${resolvedBadge.toLowerCase()}`]">
                 <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" class="badge-icon" />

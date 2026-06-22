@@ -113,11 +113,17 @@ onMounted(() => {
     if (facebookAppId) loadFacebookSDK()
 })
 
+let _gsiTimer: ReturnType<typeof setInterval> | null = null
+
+onUnmounted(() => {
+    if (_gsiTimer !== null) { clearInterval(_gsiTimer); _gsiTimer = null }
+})
+
 function loadGoogleGSI() {
     if ((window as any).google?.accounts?.id) { initGoogle(); return }
     if (document.querySelector('script[src*="accounts.google.com/gsi"]')) {
-        const timer = setInterval(() => {
-            if ((window as any).google?.accounts?.id) { clearInterval(timer); initGoogle() }
+        _gsiTimer = setInterval(() => {
+            if ((window as any).google?.accounts?.id) { clearInterval(_gsiTimer!); _gsiTimer = null; initGoogle() }
         }, 50)
         return
     }

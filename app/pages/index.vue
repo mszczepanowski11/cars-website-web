@@ -519,10 +519,10 @@
                                     <v-icon icon="mdi-account-check-outline" size="13" />
                                     {{ ev.interestedCount }}
                                 </div>
-                                <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener" class="event-link-btn" @click.stop>
+                                <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener noreferrer" class="event-link-btn" @click.stop>
                                     Kup bilety <v-icon icon="mdi-arrow-right" size="14" />
                                 </a>
-                                <a v-else-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener" class="event-link-btn" @click.stop>
+                                <a v-else-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener noreferrer" class="event-link-btn" @click.stop>
                                     Więcej <v-icon icon="mdi-arrow-right" size="14" />
                                 </a>
                             </div>

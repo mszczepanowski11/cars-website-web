@@ -523,10 +523,10 @@
                             <div class="vrs-title"><v-icon icon="mdi-shield-search" size="15" />Sprawdź historię pojazdu</div>
                             <p class="vrs-desc">Zamów raport VIN aby poznać pełną historię pojazdu, kolizje, przebieg z serwisów i więcej.</p>
                             <div class="vrs-btns">
-                                <a href="https://autodna.pl" target="_blank" rel="noopener" class="vrs-btn">
+                                <a href="https://autodna.pl" target="_blank" rel="noopener noreferrer" class="vrs-btn">
                                     <v-icon icon="mdi-file-search-outline" size="15" /> AutoDNA
                                 </a>
-                                <a href="https://www.carvertical.com/pl" target="_blank" rel="noopener" class="vrs-btn">
+                                <a href="https://www.carvertical.com/pl" target="_blank" rel="noopener noreferrer" class="vrs-btn">
                                     <v-icon icon="mdi-car-search-outline" size="15" /> carVertical
                                 </a>
                             </div>
@@ -734,7 +734,7 @@
                             <span class="map-fallback-sub">Dokładna lokalizacja ustalana indywidualnie</span>
                         </div>
                     </div>
-                    <a v-if="advert?.city" :href="`https://www.google.com/maps/search/${encodeURIComponent((advert.city) + ', Polska')}`" target="_blank" rel="noopener" class="outline-btn w-full">
+                    <a v-if="advert?.city" :href="`https://www.google.com/maps/search/${encodeURIComponent((advert.city) + ', Polska')}`" target="_blank" rel="noopener noreferrer" class="outline-btn w-full">
                         <v-icon icon="mdi-open-in-new" size="15" />Otwórz w Google Maps
                     </a>
                 </div>
