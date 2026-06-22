@@ -111,6 +111,7 @@
 import type { CreateEventDto } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const editId = route.query.id ? Number(route.query.id) : null

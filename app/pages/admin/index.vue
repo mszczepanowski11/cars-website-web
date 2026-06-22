@@ -142,6 +142,7 @@
 import type { AdminStats, AdminActionLog } from '~/types'
 
 definePageMeta({ middleware: 'admin' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const { getStats, getLogs } = useAdmin()

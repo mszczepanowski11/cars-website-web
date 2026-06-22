@@ -302,8 +302,8 @@
                 <div class="psc-header">
                     <div class="psc-header-text">
                         <div class="psc-eyebrow">PREMIUM</div>
-                        <h2 class="psc-title">Samochody premium</h2>
-                        <p class="psc-sub">Odkryj wyjątkowe oferty z najwyższej półki motoryzacji</p>
+                        <h2 class="psc-title">Marki premium</h2>
+                        <p class="psc-sub">Odkryj ogłoszenia od topowych producentów motoryzacji</p>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Przeglądaj wszystkie
@@ -313,7 +313,7 @@
                 <div class="psc-grid">
                     <NuxtLink
                         v-for="car in premiumShowcase"
-                        :key="car.model"
+                        :key="car.brand"
                         :to="`/adverts?textSearch=${encodeURIComponent(car.brand)}`"
                         class="psc-card"
                     >
@@ -322,9 +322,8 @@
                         </div>
                         <div class="psc-car-name">
                             <div class="psc-brand">{{ car.brand }}</div>
-                            <div class="psc-model">{{ car.model }}</div>
                         </div>
-                        <div class="psc-spec">{{ car.spec }}</div>
+                        <div class="psc-spec">{{ car.tagline }}</div>
                         <div class="psc-cta">
                             Szukaj ofert <v-icon icon="mdi-arrow-right" size="14" />
                         </div>
@@ -713,10 +712,10 @@ function doHeroSearch() {
 // ─── Premium showcase ─────────────────────────────────────────────────────────
 
 const premiumShowcase = [
-    { brand: 'BMW',      model: 'M5',        spec: 'V8 4.4 BiTurbo · 625 KM' },
-    { brand: 'Porsche',  model: '911 GT3',   spec: 'Flat-6 4.0 · 510 KM'     },
-    { brand: 'Audi',     model: 'RS6 Avant', spec: 'V8 4.0 BiTurbo · 600 KM' },
-    { brand: 'Mercedes', model: 'AMG GT63',  spec: 'V8 4.0 BiTurbo · 630 KM' },
+    { brand: 'BMW',      tagline: 'Najwyższe osiągi i luksus' },
+    { brand: 'Porsche',  tagline: 'Ikona sportowej motoryzacji' },
+    { brand: 'Audi',     tagline: 'Technologia i elegancja' },
+    { brand: 'Mercedes', tagline: 'Prestiż i komfort jazdy' },
 ]
 
 // ─── Features / Why CARIZO ───────────────────────────────────────────────────

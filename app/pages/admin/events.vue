@@ -136,6 +136,7 @@
 import type { AdminEvent } from '~/types'
 
 definePageMeta({ middleware: 'admin' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { getImageUrl, placeholder } = useImageUrl()
 const { adminGetEvents, publishEvent, rejectEvent, archiveEvent, featureEvent, unfeatureEvent, deleteEvent } = useEvents()

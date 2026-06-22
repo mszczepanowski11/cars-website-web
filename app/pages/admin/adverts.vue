@@ -134,6 +134,7 @@
 import type { AdminAdvert } from '~/types'
 
 definePageMeta({ middleware: 'admin' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { getImageUrl, placeholder } = useImageUrl()
 

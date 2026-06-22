@@ -121,6 +121,7 @@
 import type { AdminUser } from '~/types'
 
 definePageMeta({ middleware: 'admin' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const users = ref<AdminUser[]>([])
 const loading = ref(true)

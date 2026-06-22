@@ -134,6 +134,7 @@
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'admin' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const view = ref<'features' | 'categories'>('features')
 const featureSearch = ref('')
