@@ -1274,59 +1274,59 @@ async function toggleFollowSeller() {
     }
 }
 
+// ── SEO / meta (computed at setup top-level so they work on SSR) ─────────────
 const seoTitle = computed(() => {
     const a = advert.value
     if (!a) return 'CARIZO'
-    const brandName = a.brand?.name ?? ''
-    const modelName = a.model?.name ?? ''
-    const year = a.year ?? ''
-    return [year, brandName, modelName].filter(Boolean).join(' ') + ' – CARIZO'
+    const parts = [a.year, a.brand?.name, a.model?.name].filter(Boolean)
+    return parts.join(' ') + ' – CARIZO'
 })
+
 const seoOgTitle = computed(() => {
     const a = advert.value
     if (!a) return 'CARIZO'
-    const brandName = a.brand?.name ?? ''
-    const modelName = a.model?.name ?? ''
-    const year = a.year ?? ''
-    return [year, brandName, modelName].filter(Boolean).join(' ')
+    return [a.year, a.brand?.name, a.model?.name].filter(Boolean).join(' ')
 })
-const seoDesc = computed(() => {
+
+const seoDescription = computed(() => {
     const a = advert.value
     if (!a) return ''
-    const brandName = a.brand?.name ?? ''
-    const modelName = a.model?.name ?? ''
-    const year = a.year ?? ''
     const rawDesc = a.description
         ? a.description.replace(/📋 Dane techniczne:[\s\S]*$/, '').replace(/🔍 Historia pojazdu:[\s\S]*$/, '').trim()
         : ''
-    return rawDesc.length > 0
-        ? rawDesc.slice(0, 160)
-        : [year, brandName, modelName, a.fuelType?.name, a.mileage ? `${Number(a.mileage).toLocaleString('pl')} km` : '', a.price ? `${Number(a.price).toLocaleString('pl')} zł` : ''].filter(Boolean).join(' · ').slice(0, 160)
+    if (rawDesc.length > 0) return rawDesc.slice(0, 160)
+    return [a.year, a.brand?.name, a.model?.name, a.fuelType?.name,
+        a.mileage ? `${Number(a.mileage).toLocaleString('pl')} km` : '',
+        a.price ? `${Number(a.price).toLocaleString('pl')} zł` : '',
+    ].filter(Boolean).join(' · ').slice(0, 160)
 })
-const seoImg = computed(() => {
+
+const seoImage = computed(() => {
     const a = advert.value
-    if (!a) return undefined
+    if (!a) return ''
     const imgUrl = a.images?.find(i => i.isMain)?.url ?? a.images?.[0]?.url ?? ''
     const imgPath = getImageUrl(imgUrl)
-    return imgPath && imgPath !== placeholder ? (imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`) : undefined
+    if (!imgPath || imgPath === placeholder) return ''
+    return imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`
 })
 const seoUrl = computed(() => currentUrl())
 
 useSeoMeta({
     title: seoTitle,
-    description: seoDesc,
+    description: seoDescription,
     ogType: 'website',
-    ogUrl: seoUrl,
+    ogUrl: seoCanonical,
     ogTitle: seoOgTitle,
-    ogDescription: seoDesc,
-    ogImage: seoImg,
+    ogDescription: seoDescription,
+    ogImage: seoImage,
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
     twitterTitle: seoOgTitle,
-    twitterDescription: seoDesc,
-    twitterImage: seoImg,
+    twitterDescription: seoDescription,
+    twitterImage: seoImage,
 })
-useHead({ link: [{ rel: 'canonical', href: seoUrl }] })
+
+useHead({ link: [{ rel: 'canonical', href: seoCanonical }] })
 
 watch(activeTab, async (tab) => {
     if (tab === 'Opinie' && sellerReviews.value.length === 0 && advert.value?.userId) {

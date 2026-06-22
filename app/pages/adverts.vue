@@ -487,8 +487,8 @@
                         />
                     </div>
                     <div v-if="!adverts.length" class="no-results">
-                        <v-icon icon="mdi-magnify-remove-outline" size="64" class="no-results-icon" />
-                        <p>Brak ogłoszeń</p>
+                        <v-icon icon="mdi-car-off" size="64" class="no-results-icon" />
+                        <p>Nie znaleziono ogłoszeń</p>
                         <span>Spróbuj innych kryteriów wyszukiwania lub usuń część filtrów</span>
                         <button v-if="hasActiveFilters" class="clear-filters-btn" @click="clearFilters">
                             <v-icon icon="mdi-filter-remove-outline" size="15" />

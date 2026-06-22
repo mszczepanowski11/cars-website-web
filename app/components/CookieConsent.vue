@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-interface CookiePrefs { analytics: boolean; marketing: boolean }
+interface CookiePrefs { analytics: boolean; marketing: boolean; timestamp?: string }
 
 const visible = ref(false)
 const showPanel = ref(false)
@@ -120,7 +120,8 @@ function savePrefs() {
 }
 
 function persist(p: CookiePrefs) {
-    localStorage.setItem('cookieConsent', JSON.stringify(p))
+    const withTimestamp: CookiePrefs = { ...p, timestamp: new Date().toISOString() }
+    localStorage.setItem('cookieConsent', JSON.stringify(withTimestamp))
     visible.value = false
     showPanel.value = false
     applyConsent(p)
