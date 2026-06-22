@@ -141,6 +141,7 @@ const eventId = computed(() => route.query.eventId ? Number(route.query.eventId)
 
 const latestInvoice = ref<MonthlyInvoice | null>(null)
 const pdfLoading = ref(false)
+const invoicePolling = ref(false)
 const pollTimerRef = ref<ReturnType<typeof setTimeout> | null>(null)
 
 onUnmounted(() => { if (pollTimerRef.value) clearTimeout(pollTimerRef.value) })
@@ -168,10 +169,8 @@ async function downloadInvoicePdf() {
 
 onMounted(async () => {
     if (status.value === 'success') {
-        try {
-            const result = await getMyInvoices()
-            if (result?.items?.length) latestInvoice.value = result.items[0]
-        } catch (e) { console.error(e) }
+        invoicePolling.value = true
+        pollForInvoice()
     }
 })
 </script>

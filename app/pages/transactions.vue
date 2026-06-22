@@ -120,6 +120,7 @@ async function load(p: number = page.value) {
 }
 
 async function doCancel(tx: Transaction) {
+    if (!confirm(`Czy na pewno chcesz anulować tę transakcję?`)) return
     cancelLoading.value = tx.id
     try {
         await cancelTransaction(tx.id)

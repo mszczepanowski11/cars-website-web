@@ -183,7 +183,7 @@
                                                 class="status-select"
                                                 :value="p.status"
                                                 :disabled="statusUpdating === p.id"
-                                                @change="(e) => correctStatus(p.id, (e.target as HTMLSelectElement).value as PaymentStatusType)"
+                                                @change="(e) => handleStatusChange(p.id, (e.target as HTMLSelectElement).value)"
                                             >
                                                 <option value="Pending">Oczekująca</option>
                                                 <option value="Completed">Opłacona</option>
@@ -309,6 +309,11 @@ async function downloadPdfAdmin(inv: MonthlyInvoice) {
     try { await generatePdf(inv) }
     catch (e) { console.error('PDF error:', e) }
     finally { pdfLoadingId.value = null }
+}
+
+async function handleStatusChange(paymentId: number, newStatus: string) {
+    if (!confirm(`Zmienić status płatności #${paymentId} na "${newStatus}"?`)) return
+    await correctStatus(paymentId, newStatus as PaymentStatusType)
 }
 
 async function correctStatus(paymentId: number, newStatus: PaymentStatusType) {

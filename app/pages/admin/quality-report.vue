@@ -134,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'admin-auth' })
+definePageMeta({ middleware: 'admin' })
 
 const loading = ref(false)
 const report = ref<any>(null)

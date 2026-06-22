@@ -225,7 +225,7 @@
                             <v-icon icon="mdi-phone-outline" size="17" />
                             {{ showPhone ? seller.phoneNumber : 'Pokaż numer telefonu' }}
                         </button>
-                        <button class="cta-message" :disabled="!!contactLoading" @click="contactSeller">
+                        <button class="cta-message" :disabled="contactLoading" @click="contactSeller">
                             <v-icon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
                             <v-icon v-else icon="mdi-message-text-outline" size="17" />
                             {{ contactLoading ? 'Otwieranie...' : 'Napisz wiadomość' }}
@@ -792,7 +792,7 @@
                 <v-icon :icon="showPhone ? 'mdi-phone' : 'mdi-phone-outline'" size="18" />
                 <span>{{ showPhone ? seller.phoneNumber : 'Zadzwoń' }}</span>
             </button>
-            <button class="mcb-message" :disabled="!!contactLoading" @click="contactSeller">
+            <button class="mcb-message" :disabled="contactLoading" @click="contactSeller">
                 <v-icon v-if="contactLoading" icon="mdi-loading" size="18" class="spin" />
                 <v-icon v-else icon="mdi-message-text-outline" size="18" />
                 <span>Napisz</span>

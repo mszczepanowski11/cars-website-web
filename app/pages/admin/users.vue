@@ -84,7 +84,7 @@
                                 </td>
                                 <td>
                                     <div class="action-row">
-                                        <button class="btn-action" :class="u.isBlocked ? 'btn-unblock' : 'btn-block'"
+                                        <button v-if="!u.isAdmin" class="btn-action" :class="u.isBlocked ? 'btn-unblock' : 'btn-block'"
                                             :disabled="actionLoading === u.id"
                                             @click="toggleBlock(u)">
                                             <v-icon v-if="actionLoading === u.id" icon="mdi-loading" size="13" class="spin" />
