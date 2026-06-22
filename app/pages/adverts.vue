@@ -31,19 +31,35 @@
             <div class="container">
                 <div class="search-card" :class="{ 'search-card--focused': searchFocused }">
                     <div class="sc-main">
-                        <div class="sc-input-wrap">
+                        <div class="sc-input-wrap" style="position:relative">
                             <v-icon icon="mdi-magnify" size="20" class="sc-icon" />
                             <input
                                 v-model="f.textSearch"
                                 class="sc-input"
                                 placeholder="Wyszukaj markę, model, słowo kluczowe..."
-                                @keyup.enter="load(1)"
-                                @focus="searchFocused = true"
-                                @blur="searchFocused = false"
+                                autocomplete="off"
+                                @keyup.enter="load(1); showSuggestions = false"
+                                @focus="searchFocused = true; showSuggestions = true"
+                                @blur="setTimeout(() => { showSuggestions = false }, 150)"
+                                @input="showSuggestions = true"
                             />
-                            <button v-if="f.textSearch" class="sc-clear" @click="f.textSearch = ''">
+                            <button v-if="f.textSearch" class="sc-clear" @click="f.textSearch = ''; showSuggestions = false">
                                 <v-icon icon="mdi-close" size="16" />
                             </button>
+                            <!-- Autocomplete dropdown -->
+                            <div v-if="showSuggestions && autocompleteItems.length" class="ac-dropdown">
+                                <button
+                                    v-for="item in autocompleteItems"
+                                    :key="item.type + item.id"
+                                    type="button"
+                                    class="ac-item"
+                                    @mousedown.prevent="applyAutocomplete(item)"
+                                >
+                                    <v-icon :icon="item.type === 'brand' ? 'mdi-car-outline' : 'mdi-car-settings'" size="14" class="ac-icon" />
+                                    <span class="ac-name">{{ item.name }}</span>
+                                    <span class="ac-type">{{ item.type === 'brand' ? 'Marka' : 'Model' }}</span>
+                                </button>
+                            </div>
                         </div>
                         <template v-if="filterConfig.showBrandModel">
                         <div class="sc-divider" />
@@ -166,6 +182,33 @@
                         <button class="fcb-clear" @click="f.categoryId = null; load(1)"><v-icon icon="mdi-close" size="12"/></button>
                     </div>
 
+                    <!-- Parts category filter -->
+                    <div v-if="categorySlug === 'czesci'" class="filter-section">
+                        <div class="filter-section-label">
+                            <v-icon icon="mdi-cog-outline" size="14" />
+                            Kategoria części
+                        </div>
+                        <select v-model="f.bodySubtype" class="filter-select" @change="load(1)">
+                            <option value="">Wszystkie</option>
+                            <option value="silnik">Silnik i osprzęt</option>
+                            <option value="skrzynia">Skrzynia biegów / napęd</option>
+                            <option value="zawieszenie">Zawieszenie i układ kierowniczy</option>
+                            <option value="hamulce">Hamulce</option>
+                            <option value="elektryka">Elektryka i elektronika</option>
+                            <option value="nadwozie-zewn">Nadwozie zewnętrzne</option>
+                            <option value="nadwozie-wewn">Wnętrze / tapicerka</option>
+                            <option value="oswietlenie">Oświetlenie</option>
+                            <option value="chlodnica">Układ chłodzenia</option>
+                            <option value="wydech">Układ wydechowy</option>
+                            <option value="paliwo">Układ paliwowy</option>
+                            <option value="klimatyzacja">Klimatyzacja / ogrzewanie</option>
+                            <option value="kola">Koła, felgi i opony</option>
+                            <option value="akcesoria">Akcesoria i tuning</option>
+                            <option value="narzedzia">Narzędzia i wyposażenie warsztatu</option>
+                            <option value="inne">Inne</option>
+                        </select>
+                    </div>
+
                     <!-- Price -->
                     <div class="filter-section">
                         <div class="filter-section-label">
@@ -215,6 +258,19 @@
                             <input v-model.number="f.powerFrom" type="number" class="range-input" placeholder="Od" min="0" />
                             <span class="range-sep">–</span>
                             <input v-model.number="f.powerTo" type="number" class="range-input" placeholder="Do" min="0" />
+                        </div>
+                    </div>
+
+                    <!-- Engine size (motorcycles) -->
+                    <div v-if="filterConfig.showEngineSize" class="filter-section">
+                        <div class="filter-section-label">
+                            <v-icon icon="mdi-engine-outline" size="14" />
+                            Pojemność (cm³)
+                        </div>
+                        <div class="range-row">
+                            <input v-model.number="f.engineSizeFrom" type="number" class="range-input" placeholder="Od" min="0" />
+                            <span class="range-sep">–</span>
+                            <input v-model.number="f.engineSizeTo" type="number" class="range-input" placeholder="Do" min="0" />
                         </div>
                     </div>
 
@@ -456,7 +512,7 @@ useSeoMeta({
 
 const route = useRoute()
 const router = useRouter()
-const { fetchBrands, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors } = useTaxonomy()
 const { fetchCategories } = useCategories()
 const { fetchFavoriteIds } = useFavorites()
 
@@ -475,8 +531,10 @@ const f = reactive({
     yearTo:      route.query.yearTo      ? Number(route.query.yearTo)      : null as number | null,
     mileageFrom: route.query.mileageFrom ? Number(route.query.mileageFrom) : null as number | null,
     mileageTo:   route.query.mileageTo   ? Number(route.query.mileageTo)   : null as number | null,
-    powerFrom:   route.query.powerFrom   ? Number(route.query.powerFrom)   : null as number | null,
-    powerTo:     route.query.powerTo     ? Number(route.query.powerTo)     : null as number | null,
+    powerFrom:        route.query.powerFrom        ? Number(route.query.powerFrom)        : null as number | null,
+    powerTo:          route.query.powerTo          ? Number(route.query.powerTo)          : null as number | null,
+    engineSizeFrom:   route.query.engineSizeFrom   ? Number(route.query.engineSizeFrom)   : null as number | null,
+    engineSizeTo:     route.query.engineSizeTo     ? Number(route.query.engineSizeTo)     : null as number | null,
     driveTypeId: route.query.driveTypeId ? Number(route.query.driveTypeId) : null as number | null,
     colorId:     route.query.colorId     ? Number(route.query.colorId)     : null as number | null,
     sellerType:  (route.query.sellerType ?? '') as '' | 'private' | 'dealer',
@@ -490,7 +548,7 @@ const f = reactive({
     payloadTo:   null as number | null,
     grossWeightFrom: null as number | null,
     grossWeightTo:   null as number | null,
-    bodySubtype: '' as string,
+    bodySubtype: route.query.bodySubtype ? String(route.query.bodySubtype) : '' as string,
     hasRetarder: null as boolean | null,
     hasTachograph: null as boolean | null,
     sortBy:      route.query.sortBy ? String(route.query.sortBy) : '',
@@ -516,6 +574,7 @@ const activeFiltersCount = computed(() => {
     if (f.priceFrom || f.priceTo) n++
     if (f.yearFrom || f.yearTo) n++
     if (f.mileageFrom || f.mileageTo) n++
+    if (f.engineSizeFrom || f.engineSizeTo) n++
     if (f.driveTypeId) n++
     if (f.colorId) n++
     if (f.sellerType) n++
@@ -563,6 +622,7 @@ const filterConfig = computed(() => {
         showGearbox: !isParts && !isTrailer && !isMoto,
         showBodyType: !isParts && !isMoto && !isTrailer && !isMachinery,
         showPower: !isParts,
+        showEngineSize: isMoto,
         showMileage: !isParts,
         showDriveType: !isParts && !isMoto && !isTrailer,
         showColor: !isParts && !isTrailer && !isMachinery,
@@ -587,6 +647,7 @@ const hasActiveFilters = computed(() =>
        f.gearboxId || f.driveTypeId || f.colorId ||
        f.priceFrom || f.priceTo || f.yearFrom || f.yearTo ||
        f.mileageFrom || f.mileageTo || f.powerFrom || f.powerTo ||
+       f.engineSizeFrom || f.engineSizeTo ||
        f.sellerType || f.condition ||
        f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null)
 )
@@ -603,9 +664,20 @@ const paginationPages = computed(() => {
     return pages
 })
 
-function selectCategory(cat: CategoryWithCount) {
-    f.categoryId = f.categoryId === cat.id ? null : cat.id
+async function selectCategory(cat: CategoryWithCount) {
+    const newId = f.categoryId === cat.id ? null : cat.id
+    if (newId !== f.categoryId) {
+        f.brandId = null
+        f.modelId = null
+        models.value = []
+    }
+    f.categoryId = newId
     mobileFiltersOpen.value = false
+    if (f.categoryId) {
+        fetchBrandsByCategory(f.categoryId).then(b => { dynamicBrands.value = b }).catch(() => { dynamicBrands.value = null })
+    } else {
+        dynamicBrands.value = null
+    }
     load(1)
 }
 
@@ -617,6 +689,7 @@ function clearFilters() {
     f.yearFrom = null; f.yearTo = null
     f.mileageFrom = null; f.mileageTo = null
     f.powerFrom = null; f.powerTo = null
+    f.engineSizeFrom = null; f.engineSizeTo = null
     f.sellerType = ''; f.condition = ''
     f.hasDamage = null; f.hasWarranty = null; f.hasServiceBook = null; f.isImported = null
     f.axleCount = null; f.payloadFrom = null; f.payloadTo = null
@@ -650,8 +723,10 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.yearTo)       body.yearTo       = f.yearTo
     if (f.mileageFrom)  body.mileageFrom  = f.mileageFrom
     if (f.mileageTo)    body.mileageTo    = f.mileageTo
-    if (f.powerFrom)    body.powerFrom    = f.powerFrom
-    if (f.powerTo)      body.powerTo      = f.powerTo
+    if (f.powerFrom)         body.powerFrom         = f.powerFrom
+    if (f.powerTo)           body.powerTo           = f.powerTo
+    if (f.engineSizeFrom)    body.engineSizeFrom    = f.engineSizeFrom
+    if (f.engineSizeTo)      body.engineSizeTo      = f.engineSizeTo
     if (f.sellerType)   body.sellerType   = f.sellerType
     if (f.condition)    body.condition    = f.condition
     if (f.hasDamage !== null)      body.hasDamage      = f.hasDamage
@@ -684,7 +759,9 @@ const { data: taxoData } = await useAsyncData('taxonomy', async () => {
     return { brands: b, fuelTypes: ft, bodyTypes: bt, gearboxes: gb, driveTypes: dt, colors: c, categories: cats, initialModels: m }
 })
 
-const brands     = computed(() => taxoData.value?.brands     ?? [])
+const allBrands  = computed(() => taxoData.value?.brands     ?? [])
+const dynamicBrands = ref<{ id: number; name: string }[] | null>(null)
+const brands     = computed(() => dynamicBrands.value ?? allBrands.value)
 const fuelTypes  = computed(() => taxoData.value?.fuelTypes  ?? [])
 const bodyTypes  = computed(() => taxoData.value?.bodyTypes  ?? [])
 const gearboxes  = computed(() => taxoData.value?.gearboxes  ?? [])
@@ -727,8 +804,10 @@ async function load(p: number = page.value) {
     if (f.yearTo)      query.yearTo      = String(f.yearTo)
     if (f.mileageFrom) query.mileageFrom = String(f.mileageFrom)
     if (f.mileageTo)   query.mileageTo   = String(f.mileageTo)
-    if (f.powerFrom)   query.powerFrom   = String(f.powerFrom)
-    if (f.powerTo)     query.powerTo     = String(f.powerTo)
+    if (f.powerFrom)       query.powerFrom       = String(f.powerFrom)
+    if (f.powerTo)         query.powerTo         = String(f.powerTo)
+    if (f.engineSizeFrom)  query.engineSizeFrom  = String(f.engineSizeFrom)
+    if (f.engineSizeTo)    query.engineSizeTo    = String(f.engineSizeTo)
     if (f.driveTypeId) query.driveTypeId = String(f.driveTypeId)
     if (f.colorId)     query.colorId     = String(f.colorId)
     if (f.sellerType)  query.sellerType  = f.sellerType
@@ -737,6 +816,7 @@ async function load(p: number = page.value) {
     if (f.hasWarranty !== null)    query.hasWarranty    = String(f.hasWarranty)
     if (f.hasServiceBook !== null) query.hasServiceBook = String(f.hasServiceBook)
     if (f.isImported !== null)     query.isImported     = String(f.isImported)
+    if (f.bodySubtype)  query.bodySubtype = f.bodySubtype
     if (f.sortBy)      query.sortBy      = f.sortBy
     if (p > 1)         query.page        = String(p)
     router.replace({ query })
@@ -773,8 +853,40 @@ async function loadMore() {
     }
 }
 
-// Fetch favorites client-side only
-onMounted(() => { fetchFavoriteIds() })
+// ── Autocomplete ──────────────────────────────────────────────────────────────
+const showSuggestions = ref(false)
+const autocompleteItems = computed(() => {
+    const q = f.textSearch.trim().toLowerCase()
+    if (q.length < 2) return []
+    const brandMatches = brands.value
+        .filter(b => b.name.toLowerCase().includes(q))
+        .slice(0, 4)
+        .map(b => ({ type: 'brand' as const, id: b.id, name: b.name }))
+    const modelMatches = models.value
+        .filter(m => m.name.toLowerCase().includes(q))
+        .slice(0, 3)
+        .map(m => ({ type: 'model' as const, id: m.id, name: m.name }))
+    return [...brandMatches, ...modelMatches].slice(0, 6)
+})
+function applyAutocomplete(item: { type: 'brand' | 'model'; id: number; name: string }) {
+    f.textSearch = ''
+    showSuggestions.value = false
+    if (item.type === 'brand') {
+        f.brandId = item.id
+        onBrandChange()
+    } else {
+        f.modelId = item.id
+    }
+    load(1)
+}
+
+// Fetch favorites client-side only; also load category-specific brands if URL has categoryId
+onMounted(async () => {
+    fetchFavoriteIds()
+    if (f.categoryId) {
+        try { dynamicBrands.value = await fetchBrandsByCategory(f.categoryId) } catch { dynamicBrands.value = null }
+    }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -1569,5 +1681,58 @@ onMounted(() => { fetchFavoriteIds() })
     color: $red;
     margin-bottom: 14px;
     .fcb-clear { margin-left: auto; background: transparent; border: none; color: $red; cursor: pointer; display: flex; align-items: center; padding: 0; }
+}
+
+// ── Autocomplete dropdown ────────────────────────────────────────────────────────────────────
+.ac-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #0d0d0d;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: $r-md;
+    overflow: hidden;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.ac-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.12s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: rgba(255,255,255,0.05); }
+}
+
+.ac-icon { color: $text-dim; flex-shrink: 0; }
+
+.ac-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text;
+}
+
+.ac-type {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $text-dim;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid $border;
+    border-radius: 4px;
+    padding: 2px 6px;
 }
 </style>

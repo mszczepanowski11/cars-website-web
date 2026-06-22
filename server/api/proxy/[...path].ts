@@ -10,6 +10,8 @@ export default defineEventHandler(async (event) => {
     if (!token && !['GET', 'HEAD'].includes(method) && !isPublicPost) {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
+
+
     const query = getQuery(event)
 
     const targetUrl = new URL(`${config.public.apiBase}${path}`)

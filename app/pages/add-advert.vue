@@ -233,6 +233,22 @@
                                         {{ categoryConfig.modelHint ?? `${models.length} modeli dla ${brandName}` }}
                                     </template>
                                 </div>
+                                <!-- AI hint: popular models for selected brand -->
+                                <div v-if="form.brandId && !form.modelId && models.length > 1" class="ai-hints">
+                                    <span class="ai-hints-label">
+                                        <v-icon icon="mdi-lightning-bolt" size="12" />
+                                        Popularne:
+                                    </span>
+                                    <button
+                                        v-for="m in models.slice(0, 5)"
+                                        :key="m.id"
+                                        type="button"
+                                        class="ai-hint-chip"
+                                        @click="form.modelId = m.id; onModel()"
+                                    >
+                                        {{ m.name }}
+                                    </button>
+                                </div>
                             </template>
                         </div>
 
@@ -264,6 +280,22 @@
                             />
                             <div class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ engines.length }} wersji silnika dostępnych
+                            </div>
+                            <!-- AI hint: popular engine versions -->
+                            <div v-if="!form.engineVersionId && engines.length > 1" class="ai-hints">
+                                <span class="ai-hints-label">
+                                    <v-icon icon="mdi-lightning-bolt" size="12" />
+                                    Popularne:
+                                </span>
+                                <button
+                                    v-for="e in engines.slice(0, 5)"
+                                    :key="e.id"
+                                    type="button"
+                                    class="ai-hint-chip"
+                                    @click="form.engineVersionId = e.id"
+                                >
+                                    {{ e.name }}
+                                </button>
                             </div>
                         </div>
 
@@ -395,10 +427,17 @@
 
                                     <!-- Number -->
                                     <div v-else-if="ef.type === 'number'" :class="['field', ef.fullWidth ? 'full-width' : '']">
-                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <label class="flabel">
+                                            {{ ef.label }} <span v-if="ef.required" class="req">*</span>
+                                            <span v-if="efIsLocked(ef.key)" class="field-locked-badge">
+                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika
+                                            </span>
+                                        </label>
                                         <div class="input-unit-wrap">
-                                            <input v-model.number="extras[ef.key]" type="number" class="finput"
-                                                :placeholder="ef.placeholder ?? ''" />
+                                            <input v-model.number="extras[ef.key]" type="number"
+                                                :class="['finput', efIsLocked(ef.key) ? 'finput--locked' : '']"
+                                                :placeholder="ef.placeholder ?? ''"
+                                                :readonly="efIsLocked(ef.key)" />
                                             <span v-if="ef.unit" class="input-unit-badge">{{ ef.unit }}</span>
                                         </div>
                                         <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
@@ -702,9 +741,16 @@
                             prefix-icon="mdi-car-outline"
                         />
                     </div>
-                    <div v-if="!allFeatures.length" class="feat-empty">
-                        <v-icon icon="mdi-format-list-checkbox" size="40" />
+                    <div v-if="!featuresLoaded" class="feat-empty">
+                        <v-icon icon="mdi-loading" size="40" class="spin" />
                         <p>Ładowanie wyposażenia...</p>
+                    </div>
+                    <div v-else-if="!allFeatures.length" class="feat-empty">
+                        <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
+                        <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>Dane pojazdu</strong>.</p>
+                        <button type="button" class="btn-next" style="margin-top:16px" @click="currentStep++">
+                            Przejdź dalej <v-icon icon="mdi-arrow-right" size="15" />
+                        </button>
                     </div>
                     <div v-else-if="allFeatures.length && !Object.keys(featureGroups).length" class="feat-empty">
                         <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
@@ -1292,6 +1338,19 @@
                         <v-icon icon="mdi-arrow-right" size="16" />
                     </button>
                     <template v-else>
+                        <div v-if="limitError" class="limit-error-banner">
+                            <v-icon icon="mdi-store-outline" size="18" />
+                            <div class="limit-error-text">
+                                <strong>{{ limitError === 'private_limit_yearly' ? 'Osiągnąłeś roczny limit 3 ogłoszeń' : 'Masz już aktywne ogłoszenie' }}</strong>
+                                <span>Konto prywatne pozwala na max. 1 aktywne i 3 roczne ogłoszenia. Przejdź na konto biznesowe, by publikować bez ograniczeń.</span>
+                            </div>
+                            <NuxtLink to="/account/upgrade" class="limit-error-cta">Konto biznesowe</NuxtLink>
+                        </div>
+                        <div v-else-if="error" class="submit-error-inline">
+                            <v-icon icon="mdi-alert-circle-outline" size="15" />{{ error }}
+                        </div>
+                    </template>
+                    <template v-if="currentStep === steps.length - 1">
                         <template v-if="isEdit">
                             <button class="btn-publish-free" :disabled="loading" @click="submit">
                                 <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
@@ -1913,7 +1972,7 @@ const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
 
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext } = useTaxonomy()
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { fetchCategories } = useCategories()
@@ -1928,8 +1987,10 @@ const bodyTypes = ref<TaxonomyItem[]>([])
 const driveTypes = ref<DriveType[]>([])
 const colors = ref<CarColor[]>([])
 const allFeatures = ref<Feature[]>([])
+const featuresLoaded = ref(false)
 const loading = ref(false)
 const error = ref('')
+const limitError = ref<'private_limit_active' | 'private_limit_yearly' | null>(null)
 const stepError = ref('')
 const selectedFiles = ref<File[]>([])
 const previews = ref<string[]>([])
@@ -2116,11 +2177,17 @@ const form = reactive({
 
 const extras = reactive<Record<string, any>>({})
 
-const engineLocked = reactive({
-    fuelType: false,
-    power: false,
-    capacity: false,
-})
+const engineLocked = reactive({ fuelType: false, power: false, capacity: false, consumptionCity: false, consumptionHwy: false, consumptionMix: false })
+
+const EF_LOCK_MAP: Record<string, keyof typeof engineLocked> = {
+    fuelConsumptionCity: 'consumptionCity',
+    fuelConsumptionHwy: 'consumptionHwy',
+    fuelConsumptionMix: 'consumptionMix',
+}
+function efIsLocked(key: string): boolean {
+    const lockKey = EF_LOCK_MAP[key]
+    return lockKey ? engineLocked[lockKey] : false
+}
 
 const brandTextInput = ref('')
 const modelTextInput = ref('')
@@ -2264,12 +2331,8 @@ const categoryConfig = computed<CatFieldConfig>(() => {
 })
 
 const featureGroups = computed(() => {
-    const vehicleCatId = selectedCategory.value?.id ?? null
     const g: Record<string, Feature[]> = {}
     for (const f of allFeatures.value) {
-        const fvc = f.category?.vehicleCategoryId ?? null
-        // Strict: when a vehicle category is selected, only show features tied to it
-        if (vehicleCatId != null && fvc !== vehicleCatId) continue
         const cat = f.category?.name ?? 'Inne'
         ;(g[cat] ??= []).push(f)
     }
@@ -2414,6 +2477,8 @@ async function onCategory(catId: number) {
             brands.value = await fetchBrands()
         }
     }
+    // Reload features for the new category context
+    if (changed) await loadContextFeatures()
     // Auto-advance to vehicle data step on first category selection
     if (changed && currentStep.value === 0) {
         setTimeout(() => { currentStep.value = 1 }, 250)
@@ -2536,22 +2601,40 @@ function removeImage(index: number) {
     previews.value.splice(index, 1)
 }
 
+async function loadContextFeatures() {
+    featuresLoaded.value = false
+    try {
+        const cats = await fetchFeatureCategoriesByContext(
+            selectedCategory.value?.id ?? null,
+            form.brandId,
+            form.modelId
+        )
+        allFeatures.value = cats.flatMap(cat =>
+            cat.features.map(f => ({ id: f.id, name: f.name, category: { id: cat.id, name: cat.name, vehicleCategoryId: cat.vehicleCategoryId } }))
+        )
+    } catch { /* keep existing features */ } finally {
+        featuresLoaded.value = true
+    }
+}
+
 async function onBrand() {
     form.modelId = null; form.generationId = null; form.engineVersionId = null
     models.value = []; generations.value = []; engines.value = []
     if (form.brandId) models.value = await fetchModels(form.brandId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    await loadContextFeatures()
 }
 async function onModel() {
     form.generationId = null; form.engineVersionId = null
     generations.value = []; engines.value = []
     if (form.modelId) generations.value = await fetchGenerations(form.modelId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    await loadContextFeatures()
 }
 async function onGen() {
     form.engineVersionId = null; engines.value = []
     if (form.generationId) engines.value = await fetchEngines(form.generationId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
 }
 
 watch(() => form.engineVersionId, (newId) => {
@@ -2559,6 +2642,9 @@ watch(() => form.engineVersionId, (newId) => {
         engineLocked.fuelType = false
         engineLocked.power = false
         engineLocked.capacity = false
+        engineLocked.consumptionCity = false
+        engineLocked.consumptionHwy = false
+        engineLocked.consumptionMix = false
         return
     }
     const engine = engines.value.find((e: any) => e.id === newId)
@@ -2579,6 +2665,19 @@ watch(() => form.engineVersionId, (newId) => {
     if ((engine as any).displacement) {
         form.engineCapacity = (engine as any).displacement
         engineLocked.capacity = true
+    }
+    // Auto-fill fuel consumption
+    if ((engine as any).fuelConsumptionCity != null) {
+        extras.fuelConsumptionCity = (engine as any).fuelConsumptionCity
+        engineLocked.consumptionCity = true
+    }
+    if ((engine as any).fuelConsumptionHighway != null) {
+        extras.fuelConsumptionHwy = (engine as any).fuelConsumptionHighway
+        engineLocked.consumptionHwy = true
+    }
+    if ((engine as any).fuelConsumptionCombined != null) {
+        extras.fuelConsumptionMix = (engine as any).fuelConsumptionCombined
+        engineLocked.consumptionMix = true
     }
 })
 
@@ -2731,6 +2830,7 @@ async function submit() {
         }
     }
     error.value = ''
+    limitError.value = null
     loading.value = true
     if (!isEdit.value) form.title = form.title || suggestedTitle.value || previewTitle.value || 'Ogłoszenie'
 
@@ -2777,6 +2877,7 @@ async function submit() {
             if (extras.trailerType) cleanEdit.bodySubtype = extras.trailerType
             if (extras.machineType) cleanEdit.bodySubtype = extras.machineType
             if (extras.truckType) cleanEdit.bodySubtype = extras.truckType
+            if (extras.partCategory) cleanEdit.bodySubtype = extras.partCategory
             if (extras.partNumber) cleanEdit.catalogNumber = extras.partNumber
             if (extras.compatibility) cleanEdit.compatibility = extras.compatibility
             if (extras.seatsCount != null) cleanEdit.seatsCount = Number(extras.seatsCount)
@@ -2859,6 +2960,7 @@ async function submit() {
             if (extras.trailerType) cleanBody.bodySubtype = extras.trailerType
             if (extras.machineType) cleanBody.bodySubtype = extras.machineType
             if (extras.truckType) cleanBody.bodySubtype = extras.truckType
+            if (extras.partCategory) cleanBody.bodySubtype = extras.partCategory
             if (extras.partNumber) cleanBody.catalogNumber = extras.partNumber
             if (extras.compatibility) cleanBody.compatibility = extras.compatibility
             if (extras.seatsCount != null) cleanBody.seatsCount = Number(extras.seatsCount)
@@ -2960,7 +3062,14 @@ async function submit() {
         } else {
             msg = bd?.message ?? bd?.title ?? bd?.detail ?? ''
         }
-        error.value = msg || e?.message || 'Błąd podczas zapisywania ogłoszenia.'
+        const errCode = bd?.error as string | undefined
+        if (errCode === 'private_limit_yearly' || errCode === 'private_limit_active') {
+            limitError.value = errCode
+            error.value = ''
+        } else {
+            limitError.value = null
+            error.value = msg || e?.message || 'Błąd podczas zapisywania ogłoszenia.'
+        }
         console.error('[submit] error response:', JSON.stringify(bd ?? e?.message))
     } finally {
         loading.value = false
@@ -2994,6 +3103,7 @@ onMounted(async () => {
     ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value] = await Promise.all([
         fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories()
     ])
+    await loadContextFeatures()
 
     if (isEdit.value && editId.value) {
         try {
@@ -3022,6 +3132,9 @@ onMounted(async () => {
             form.engineCapacity = advert.engineSize ?? null
             // Restore extras from structured fields
             if (advert.condition) extras.condition = advert.condition
+            if (advert.bodySubtype && selectedCategory.value?.slug === 'czesci') extras.partCategory = advert.bodySubtype
+            if (advert.catalogNumber) extras.partNumber = advert.catalogNumber
+            if (advert.compatibility) extras.compatibility = advert.compatibility
             if (advert.doorCount) extras.doors = String(advert.doorCount)
             if (advert.driveType) extras.driveType = advert.driveType.slug
             if (advert.color) extras.color = advert.color.id ?? advert.color.name
@@ -4390,6 +4503,48 @@ onBeforeUnmount(() => {
     .v-icon { flex-shrink: 0; }
 }
 
+.submit-error-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #e55;
+    max-width: 300px;
+    .v-icon { flex-shrink: 0; }
+}
+
+.limit-error-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 160, 0, 0.08);
+    border: 1px solid rgba(255, 160, 0, 0.3);
+    border-radius: $r-sm;
+    padding: 12px 16px;
+    flex: 1;
+    margin-right: 12px;
+    .v-icon { color: #f59e0b; flex-shrink: 0; }
+}
+
+.limit-error-text {
+    flex: 1;
+    strong { display: block; font-size: 13px; color: #f59e0b; margin-bottom: 2px; }
+    span { font-size: 12px; color: $text-dim; line-height: 1.4; }
+}
+
+.limit-error-cta {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    background: #f59e0b;
+    color: #000;
+    border-radius: $r-sm;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    &:hover { opacity: 0.88; }
+}
+
 .spin { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -4546,6 +4701,39 @@ onBeforeUnmount(() => {
     color: $text-dark;
     margin-top: 5px;
     .v-icon { color: $text-dark; flex-shrink: 0; }
+}
+
+.ai-hints {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+.ai-hints-label {
+    font-size: 11px;
+    color: $text-dark;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+    .v-icon { color: $red; }
+}
+.ai-hint-chip {
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid rgba($red, 0.4);
+    background: rgba($red, 0.06);
+    color: $text;
+    cursor: pointer;
+    transition: all 0.15s;
+    &:hover {
+        border-color: $red;
+        background: rgba($red, 0.15);
+        color: $text;
+    }
 }
 
 .title-suggest-card {
