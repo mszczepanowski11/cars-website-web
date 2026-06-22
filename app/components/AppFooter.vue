@@ -67,6 +67,7 @@ async function subscribeNewsletter() {
           <h4>Informacje</h4>
           <NuxtLink to="/jak-to-dziala">Jak to działa</NuxtLink>
           <NuxtLink to="/regulamin">Regulamin</NuxtLink>
+          <NuxtLink to="/regulamin-b2b">Regulamin B2B</NuxtLink>
           <NuxtLink to="/polityka-prywatnosci">Polityka prywatności</NuxtLink>
           <NuxtLink to="/polityka-cookies">Polityka cookies</NuxtLink>
           <NuxtLink to="/pomoc">Pomoc i FAQ</NuxtLink>

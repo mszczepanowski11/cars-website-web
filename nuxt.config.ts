@@ -7,6 +7,18 @@ export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module'],
   compatibilityDate: '2025-07-15',
 
+  app: {
+    head: {
+      script: [
+        {
+          // Cookie Consent Mode v2 — must run BEFORE GTM/GA4 loads
+          children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',functionality_storage:'denied',personalization_storage:'denied'});`,
+          tagPriority: 'critical',
+        },
+      ],
+    },
+  },
+
   typescript: {
     typeCheck: false, // TODO: enable once all type errors are resolved
   },
