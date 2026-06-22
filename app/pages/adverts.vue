@@ -3,7 +3,7 @@
 
         <!-- Category hero (always shown when category selected) -->
         <div v-if="activeCategory" class="cat-hero">
-            <img src="/hero-car.jpg" class="cat-hero-img" alt="" />
+            <img src="/hero-car.jpg" class="cat-hero-img" alt="CARIZO – ogłoszenia motoryzacyjne" fetchpriority="high" />
             <div class="cat-hero-overlay" />
             <div class="container cat-hero-inner">
                 <nav class="breadcrumb">
@@ -470,8 +470,8 @@
                             {{ loadingMore ? 'Ładowanie…' : `Załaduj więcej (${total - adverts.length} pozostałych)` }}
                         </button>
                     </div>
-                    <div v-if="totalPages > 1" class="pagination">
-                        <button class="page-btn" :disabled="page === 1" @click="load(page - 1)">
+                    <div v-if="totalPages > 1" class="pagination" role="navigation" aria-label="Paginacja wyników">
+                        <button class="page-btn" aria-label="Poprzednia strona" :disabled="page === 1" @click="load(page - 1)">
                             <v-icon icon="mdi-chevron-left" size="18" />
                         </button>
                         <button
@@ -480,9 +480,11 @@
                             class="page-btn"
                             :class="{ 'page-btn--active': p === page, 'page-btn--dot': p === '...' }"
                             :disabled="p === '...'"
+                            :aria-label="p !== '...' ? `Strona ${p}` : undefined"
+                            :aria-current="p === page ? 'page' : undefined"
                             @click="p !== '...' && load(Number(p))"
                         >{{ p }}</button>
-                        <button class="page-btn" :disabled="page >= totalPages" @click="load(page + 1)">
+                        <button class="page-btn" aria-label="Następna strona" :disabled="page >= totalPages" @click="load(page + 1)">
                             <v-icon icon="mdi-chevron-right" size="18" />
                         </button>
                     </div>
@@ -772,7 +774,8 @@ if (taxoData.value?.initialModels?.length) {
 }
 
 // ── SSR-safe initial advert search ────────────────────────────────────────────────
-const { data: searchData } = await useAsyncData('adverts-search', () =>
+const searchKey = computed(() => `adverts-search-${JSON.stringify(buildSearchBody(page.value))}`)
+const { data: searchData } = await useAsyncData(searchKey, () =>
     $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
         method: 'POST',
         body: buildSearchBody(page.value),

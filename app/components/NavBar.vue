@@ -46,8 +46,10 @@ const categories = [
     { id: 6, label: 'Motocykle', icon: 'mdi-motorbike' },
     { id: 2, label: 'Dostawcze', icon: 'mdi-truck-outline' },
     { id: 3, label: 'Ciężarowe', icon: 'mdi-truck' },
+    { id: 7, label: 'Kampery', icon: 'mdi-rv-truck' },
+    { id: 8, label: 'Rolnicze', icon: 'mdi-tractor' },
+    { id: 9, label: 'Budowlane', icon: 'mdi-excavator' },
     { id: 5, label: 'Części', icon: 'mdi-car-cog' },
-    { id: 4, label: 'Maszyny', icon: 'mdi-excavator' },
 ]
 
 function closeMobile() {

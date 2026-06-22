@@ -221,6 +221,7 @@
 import type { PaymentRecord, MonthlyInvoice, PaymentStatusType, InvoiceStatusType } from '~/types'
 
 definePageMeta({ middleware: 'admin' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const tab = ref<'invoices' | 'payments'>('invoices')
 const { getAdminInvoices, generatePdf, adminGenerate, adminResendInvoice, adminUpdatePaymentStatus } = useInvoices()

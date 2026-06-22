@@ -77,7 +77,7 @@
                                 <tr>
                                     <td><strong>Analityczne i Wydajnościowe</strong></td>
                                     <td>Służą do agregowania zanonimizowanych danych o ruchu w Serwisie, badaniu unikalnych odsłon ogłoszeń, mapowaniu ścieżek poruszania się Użytkownika, identyfikacji błędów technicznych oraz mierzeniu konwersji procesów rejestracji i realizacji płatności.</td>
-                                    <td>Zależnie od parametrów dostawców zewnętrznych (Google, Microsoft) – maksymalnie do 24 miesięcy.</td>
+                                    <td>Zależnie od parametrów dostawców zewnętrznych (Google, Microsoft) – maksymalnie do 24 miesięcy. Nagrania sesji Microsoft Clarity: <strong>30 dni</strong>.</td>
                                     <td>Art. 6 ust. 1 lit. a RODO w zw. z art. 398 ust. 1 Prawa komunikacji elektronicznej.</td>
                                 </tr>
                                 <tr>
@@ -98,9 +98,9 @@
                             W strukturze Serwisu zaimplementowano kody skryptów zewnętrznych dostawców technologicznych. Podmioty te mogą umieszczać własne Pliki Cookies w Urządzeniu Końcowym Użytkownika. Do autoryzowanych partnerów Serwisu należą:
                             <ul>
                                 <li><strong>Google Ireland Limited:</strong> Google Analytics 4 (analityka ruchu), Google Ads (zarządzanie kampaniami reklamowymi), Google Tag Manager (zarządzanie tagami technicznymi) oraz Google Maps (geolokalizacja i wyświetlanie map w Ogłoszeniach).</li>
-                                <li><strong>Meta Platforms Ireland Limited:</strong> Meta Pixel oraz Konwersji API w celu mierzenia skuteczności kampanii w mediach społecznościowych i prowadzenia działań remarketingowych.</li>
-                                <li><strong>Microsoft Ireland Operations Limited:</strong> Microsoft Clarity służący do zaawansowanej analizy zachowań Użytkowników (mapy cieplne, nagrania sesji).</li>
-                                <li><strong>Dostawcy Systemów Komunikacyjnych i Powiadomień:</strong> systemy obsługi newsletterów oraz systemy powiadomień przeglądarkowych typu Web-Push (np. PushPushGo) służące do przesyłania powiadomień o nowych ofertach.</li>
+                                <li><strong>Meta Platforms Ireland Limited:</strong> Meta Pixel w celu mierzenia skuteczności kampanii w mediach społecznościowych i prowadzenia działań remarketingowych.</li>
+                                <li><strong>Microsoft Ireland Operations Limited:</strong> Microsoft Clarity służący do zaawansowanej analizy zachowań Użytkowników (mapy cieplne, nagrania sesji). Czas retencji nagrań sesji: <strong>30 dni</strong>.</li>
+                                <li><strong>Dostawcy Systemów Komunikacyjnych:</strong> systemy obsługi newsletterów służące do przesyłania powiadomień o nowych ofertach.</li>
                             </ul>
                         </li>
                         <li>Serwis posiada zaimplementowany standard <strong>Google Consent Mode v2</strong>. W zależności od decyzji Użytkownika podjętej w panelu CMP, Serwis przesyła do systemów Google precyzyjne parametry stanu zgody: <code>ad_storage</code>, <code>analytics_storage</code>, <code>ad_user_data</code> oraz <code>ad_personalization</code>.</li>
@@ -125,10 +125,10 @@
                         <li>
                             Szczegółowe instrukcje dotyczące sposobów konfiguracji, blokowania oraz usuwania Plików Cookies udostępniane są przez producentów oprogramowania:
                             <ul>
-                                <li>Google Chrome: <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Centrum Pomocy Google Chrome</a></li>
-                                <li>Mozilla Firefox: <a href="https://support.mozilla.org/pl/kb/usuwanie-ciasteczek" target="_blank" rel="noopener">Centrum Pomocy Mozilla Firefox</a></li>
-                                <li>Apple Safari: <a href="https://support.apple.com/pl-pl/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Podręcznik Użytkownika Apple Safari</a></li>
-                                <li>Microsoft Edge: <a href="https://support.microsoft.com/pl-pl/microsoft-edge/usuwanie-plik%C3%B3w-cookie-w-przegl%C4%85darce-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener">Strona Wsparcia Microsoft Edge</a></li>
+                                <li>Google Chrome: <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer">Centrum Pomocy Google Chrome</a></li>
+                                <li>Mozilla Firefox: <a href="https://support.mozilla.org/pl/kb/usuwanie-ciasteczek" target="_blank" rel="noopener noreferrer">Centrum Pomocy Mozilla Firefox</a></li>
+                                <li>Apple Safari: <a href="https://support.apple.com/pl-pl/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer">Podręcznik Użytkownika Apple Safari</a></li>
+                                <li>Microsoft Edge: <a href="https://support.microsoft.com/pl-pl/microsoft-edge/usuwanie-plik%C3%B3w-cookie-w-przegl%C4%85darce-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer">Strona Wsparcia Microsoft Edge</a></li>
                             </ul>
                         </li>
                     </ol>

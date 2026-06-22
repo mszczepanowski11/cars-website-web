@@ -79,6 +79,11 @@ const visible = ref(false)
 const showPanel = ref(false)
 const prefs = ref<CookiePrefs>({ analytics: false, marketing: false })
 
+function onOpenCookieSettings() {
+    visible.value = true
+    showPanel.value = true
+}
+
 onMounted(() => {
     const stored = localStorage.getItem('cookieConsent')
     if (!stored) {
@@ -86,10 +91,11 @@ onMounted(() => {
     } else {
         applyConsent(parseStored(stored))
     }
-    window.addEventListener('openCookieSettings', () => {
-        visible.value = true
-        showPanel.value = true
-    })
+    window.addEventListener('openCookieSettings', onOpenCookieSettings)
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener('openCookieSettings', onOpenCookieSettings)
 })
 
 function parseStored(stored: string): CookiePrefs {

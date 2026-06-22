@@ -17,6 +17,7 @@
                         <li>Niniejsza Polityka Prywatności określa zasady, podstawy prawne, zakres oraz sposoby przetwarzania i ochrony danych osobowych Użytkowników korzystających z platformy internetowej CARIZO.</li>
                         <li>Administratorem danych osobowych w rozumieniu art. 4 pkt 7 Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO) jest Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem: ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej pod numerem NIP: 9452331007, REGON: 544870688 (dalej jako: „Administrator" lub „CARIZO").</li>
                         <li>W celu zapewnienia najwyższego standardu ochrony danych, Administrator wyznaczył punkt kontaktowy, za pośrednictwem którego Użytkownik może zgłaszać wszelkie zapytania oraz realizować swoje prawa związane z prywatnością, dostępny pod adresem e-mail: <strong>kontakt@carizo.eu</strong>.</li>
+                        <li><strong>Inspektor Ochrony Danych (IOD/DPO):</strong> Administrator nie jest zobowiązany do wyznaczenia Inspektora Ochrony Danych w rozumieniu art. 37 RODO, gdyż przetwarzanie danych przez CARIZO nie stanowi działalności wymagającej regularnego i systematycznego monitorowania podmiotów danych na dużą skalę ani nie obejmuje przetwarzania danych szczególnych kategorii na dużą skalę. Wszelkie żądania dotyczące danych osobowych należy kierować bezpośrednio do Administratora na adres e-mail: <strong>kontakt@carizo.eu</strong>.</li>
                     </ol>
                 </section>
 
@@ -202,7 +203,7 @@
                             <p class="authority-box">
                                 <strong>Prezes Urzędu Ochrony Danych Osobowych</strong><br>
                                 ul. Stawki 2, 00-193 Warszawa<br>
-                                <a href="https://uodo.gov.pl" target="_blank" rel="noopener">uodo.gov.pl</a>
+                                <a href="https://uodo.gov.pl" target="_blank" rel="noopener noreferrer">uodo.gov.pl</a>
                             </p>
                         </li>
                     </ol>

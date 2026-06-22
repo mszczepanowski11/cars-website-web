@@ -162,6 +162,7 @@
 import type { CouponValidation, BillingData, UserProfile } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const eventId = computed(() => Number(route.params.id))

@@ -1,5 +1,8 @@
 interface BucketEntry { count: number; resetAt: number }
 
+// NOTE: in-memory store — resets on each process restart and is not shared across
+// multiple worker instances. For multi-replica deployments replace with a Redis-backed
+// counter (e.g. @upstash/redis) so rate limiting is consistent across all instances.
 const buckets = new Map<string, BucketEntry>()
 
 // ip:key → { count, resetAt }

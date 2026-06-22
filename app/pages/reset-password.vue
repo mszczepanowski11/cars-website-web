@@ -95,6 +95,7 @@
 
 <script setup lang="ts">
 useHead({ title: 'Ustaw nowe hasło — CARIZO' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const token = computed(() => route.query.token as string | undefined)

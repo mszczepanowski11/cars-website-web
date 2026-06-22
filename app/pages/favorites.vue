@@ -72,6 +72,7 @@
 import type { CarAdvert, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 useHead({ title: 'Ulubione — CARIZO' })
 
 const adverts = ref<CarAdvert[]>([])

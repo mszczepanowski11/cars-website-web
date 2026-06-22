@@ -32,7 +32,7 @@
 
             <!-- RIGHT: image -->
             <div class="hfs-right">
-                <img src="/hero-car.jpg" alt="" class="hfs-img" />
+                <img src="/hero-car.jpg" alt="CARIZO – motoryzacja online" class="hfs-img" fetchpriority="high" />
                 <div class="hfs-fade" />
             </div>
 
@@ -320,8 +320,8 @@
                 <div class="psc-header">
                     <div class="psc-header-text">
                         <div class="psc-eyebrow">PREMIUM</div>
-                        <h2 class="psc-title">Samochody premium</h2>
-                        <p class="psc-sub">Odkryj wyjątkowe oferty z najwyższej półki motoryzacji</p>
+                        <h2 class="psc-title">Marki premium</h2>
+                        <p class="psc-sub">Odkryj ogłoszenia od topowych producentów motoryzacji</p>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Przeglądaj wszystkie
@@ -331,7 +331,7 @@
                 <div class="psc-grid">
                     <NuxtLink
                         v-for="car in premiumShowcase"
-                        :key="car.model"
+                        :key="car.brand"
                         :to="`/adverts?textSearch=${encodeURIComponent(car.brand)}`"
                         class="psc-card"
                     >
@@ -340,9 +340,8 @@
                         </div>
                         <div class="psc-car-name">
                             <div class="psc-brand">{{ car.brand }}</div>
-                            <div class="psc-model">{{ car.model }}</div>
                         </div>
-                        <div class="psc-spec">{{ car.spec }}</div>
+                        <div class="psc-spec">{{ car.tagline }}</div>
                         <div class="psc-cta">
                             Szukaj ofert <v-icon icon="mdi-arrow-right" size="14" />
                         </div>
@@ -435,7 +434,7 @@
                             <div class="ing-card-feat">
                                 <span><v-icon icon="mdi-check" size="13" />decyzja w 15 minut</span>
                                 <span><v-icon icon="mdi-check" size="13" />brak prowizji</span>
-                                <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%</span>
+                                <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%*</span>
                             </div>
                         </div>
                         <div class="ing-card">
@@ -472,7 +471,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej.</div>
+                    <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej. RRSO od 7,99% dotyczy oferty przykładowej zgodnie z Ustawą o kredycie konsumenckim; aktualna stawka może się różnić.</div>
                 </div>
             </div>
         </section>
@@ -537,10 +536,10 @@
                                     <v-icon icon="mdi-account-check-outline" size="13" />
                                     {{ ev.interestedCount }}
                                 </div>
-                                <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener" class="event-link-btn" @click.stop>
+                                <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener noreferrer" class="event-link-btn" @click.stop>
                                     Kup bilety <v-icon icon="mdi-arrow-right" size="14" />
                                 </a>
-                                <a v-else-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener" class="event-link-btn" @click.stop>
+                                <a v-else-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener noreferrer" class="event-link-btn" @click.stop>
                                     Więcej <v-icon icon="mdi-arrow-right" size="14" />
                                 </a>
                             </div>
@@ -731,10 +730,10 @@ function doHeroSearch() {
 // ─── Premium showcase ─────────────────────────────────────────────────────────
 
 const premiumShowcase = [
-    { brand: 'BMW',      model: 'M5',        spec: 'V8 4.4 BiTurbo · 625 KM' },
-    { brand: 'Porsche',  model: '911 GT3',   spec: 'Flat-6 4.0 · 510 KM'     },
-    { brand: 'Audi',     model: 'RS6 Avant', spec: 'V8 4.0 BiTurbo · 600 KM' },
-    { brand: 'Mercedes', model: 'AMG GT63',  spec: 'V8 4.0 BiTurbo · 630 KM' },
+    { brand: 'BMW',      tagline: 'Najwyższe osiągi i luksus' },
+    { brand: 'Porsche',  tagline: 'Ikona sportowej motoryzacji' },
+    { brand: 'Audi',     tagline: 'Technologia i elegancja' },
+    { brand: 'Mercedes', tagline: 'Prestiż i komfort jazdy' },
 ]
 
 // ─── Features / Why CARIZO ───────────────────────────────────────────────────
@@ -755,7 +754,7 @@ const visibleStats = computed(() => [
     { key: 'activeAdverts', icon: 'mdi-shield-check-outline',  label: 'Zweryfikowanych ogłoszeń', value: homeStats.value.activeAdverts },
     { key: 'soldVehicles',  icon: 'mdi-car-outline',           label: 'Sprzedanych pojazdów',     value: homeStats.value.soldVehicles  },
     { key: 'totalUsers',    icon: 'mdi-account-group-outline', label: 'Użytkowników w Polsce',    value: homeStats.value.totalUsers    },
-    { key: 'events',        icon: 'mdi-domain',                label: 'Zweryfikowanych dealerów', value: homeStats.value.events        },
+    { key: 'events',        icon: 'mdi-calendar-star',         label: 'Wydarzeń motoryzacyjnych',  value: homeStats.value.events        },
 ])
 
 // ─── Search section ──────────────────────────────────────────────────────────

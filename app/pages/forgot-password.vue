@@ -66,6 +66,7 @@
 
 <script setup lang="ts">
 useHead({ title: 'Przypomnij hasło — CARIZO' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 const runtimeConfig = useRuntimeConfig()
 
 const email = ref('')

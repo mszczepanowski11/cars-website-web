@@ -71,6 +71,7 @@
 import type { CarAdvert } from '~/types'
 
 useHead({ title: 'Porównywarka — CARIZO' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { compared, toggle } = useCompare()
 const { getImageUrl, placeholder } = useImageUrl()

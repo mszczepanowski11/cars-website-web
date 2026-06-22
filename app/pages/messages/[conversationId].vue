@@ -64,6 +64,7 @@
 <script setup lang="ts">
 import type { Conversation, MessageItem } from '~/types'
 definePageMeta({ middleware: 'auth' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const conversationId = Number(route.params.conversationId)

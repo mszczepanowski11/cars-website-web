@@ -119,6 +119,7 @@
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'admin' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 import type { AdminReport } from '~/types'
 

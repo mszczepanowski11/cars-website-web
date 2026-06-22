@@ -176,6 +176,7 @@
 import type { CouponValidation, BillingData, UserProfile } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const advertId = computed(() => Number(route.params.id))
@@ -257,6 +258,21 @@ const selectedPrice = computed(() => {
 const finalPrice = computed(() => couponResult.value?.isValid ? couponResult.value.finalPrice : (selectedPrice.value ?? 0))
 
 onMounted(async () => {
+    // Verify ownership before showing promotion options
+    try {
+        const [advert, me] = await Promise.all([
+            $fetch<{ userId: number }>(`/api/proxy/api/Advert/${advertId.value}`),
+            $fetch<{ id: number }>('/api/proxy/api/User/me'),
+        ])
+        if (advert.userId !== me.id) {
+            await navigateTo('/', { replace: true })
+            return
+        }
+    } catch {
+        await navigateTo('/', { replace: true })
+        return
+    }
+
     const queries = plans.flatMap(p => p.days.map(d => ({ key: p.key, days: d })))
     await Promise.allSettled(queries.map(async ({ key, days }) => {
         try {
