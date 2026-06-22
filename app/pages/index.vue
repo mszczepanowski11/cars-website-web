@@ -11,11 +11,12 @@
                         Motoryzacja. Na poziomie premium.
                     </div>
                     <h1 class="hfs-title">
-                        Motoryzacja.<br>
-                        <span class="title-accent">Na&nbsp;poziomie&nbsp;premium.</span>
+                        Kupuj pewniej.<br>
+                        <span class="title-accent">Sprzedawaj&nbsp;szybciej.</span>
                     </h1>
                     <p class="hfs-sub">
-                        Zweryfikowane ogłoszenia, historia VIN, inteligentna wycena AI i profesjonalni sprzedawcy w jednym miejscu.
+                        Zweryfikowane ogłoszenia, historia pojazdu, inteligentna wycena AI<br>
+                        i profesjonalni sprzedawcy <strong>w jednym miejscu.</strong>
                     </p>
                     <div class="hfs-links">
                         <NuxtLink to="/adverts" class="hfs-link hfs-link--primary">
@@ -105,45 +106,14 @@
                             <input v-model="searchPriceTo" type="number" class="hsp-input" placeholder="Do" min="0" />
                         </div>
                     </div>
-                    <div class="hsp-field hsp-loc">
-                        <label class="hsp-label">Lokalizacja</label>
-                        <input v-model="searchLocation" type="text" class="hsp-input hsp-input--full" placeholder="Miasto, region..." />
-                    </div>
                     <button class="hsp-search-btn" @click="doSearch">
                         <v-icon icon="mdi-magnify" size="18" />
                         Szukaj
                     </button>
                 </div>
 
-                <!-- Level 1b: keyword search + Więcej filtrów toggle -->
-                <div class="hs-meta">
-                    <div class="hs-text-wrap">
-                        <v-icon icon="mdi-magnify" size="16" class="hs-text-icon" />
-                        <input
-                            v-model="smartSearch"
-                            type="text"
-                            class="hs-text-input"
-                            placeholder="Szukaj po słowie kluczowym (np. BMW M3, klimatyzacja...)"
-                            autocomplete="off"
-                            @focus="ssDropOpen = true"
-                            @blur="onSmartBlur"
-                            @keyup.enter="doSearch"
-                        />
-                        <button v-if="smartSearch" class="hs-text-clear" @click="clearSmartSearch">
-                            <v-icon icon="mdi-close" size="14" />
-                        </button>
-                        <div v-if="ssDropOpen && ssResults.length" class="ss-suggestions">
-                            <div
-                                v-for="b in ssResults"
-                                :key="b.id"
-                                class="ss-item"
-                                @mousedown.prevent="selectSmartBrand(b)"
-                            >
-                                <v-icon icon="mdi-car-outline" size="14" class="ss-item-icon" />
-                                <span>{{ b.name }}</span>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Więcej filtrów toggle -->
+                <div class="hs-more-row">
                     <button class="hs-more-btn" @click="showMoreFilters = !showMoreFilters">
                         <v-icon icon="mdi-tune-variant" size="15" />
                         Więcej filtrów
@@ -157,7 +127,7 @@
                     <div v-if="showMoreFilters" class="hs-expanded">
                         <div class="hse-grid">
 
-                            <div v-if="currentSearchConfig.hasFuel" class="hse-field">
+                            <div v-if="fuelTypes.length" class="hse-field">
                                 <label class="hse-label">Paliwo</label>
                                 <select v-model="searchFuelId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
@@ -165,7 +135,7 @@
                                 </select>
                             </div>
 
-                            <div v-if="searchCat === 'auta-osobowe'" class="hse-field">
+                            <div v-if="gearboxes.length" class="hse-field">
                                 <label class="hse-label">Skrzynia biegów</label>
                                 <select v-model="searchGearboxId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
@@ -173,38 +143,23 @@
                                 </select>
                             </div>
 
-                            <div v-if="currentSearchConfig.hasBodyType" class="hse-field">
-                                <label class="hse-label">Typ nadwozia</label>
-                                <select v-model="searchBodyTypeId" class="hse-select">
-                                    <option :value="null">Wszystkie</option>
-                                    <option v-for="b in bodyTypes" :key="b.id" :value="b.id">{{ b.name }}</option>
+                            <div class="hse-field">
+                                <label class="hse-label">Napęd</label>
+                                <select v-model="searchDriveType" class="hse-select">
+                                    <option value="">Wszystkie</option>
+                                    <option value="FWD">Przedni (FWD)</option>
+                                    <option value="RWD">Tylny (RWD)</option>
+                                    <option value="AWD">4x4 / AWD</option>
                                 </select>
                             </div>
 
-                            <div v-if="currentSearchConfig.hasCondition" class="hse-field">
-                                <label class="hse-label">Stan pojazdu</label>
-                                <select v-model="searchCondition" class="hse-select">
-                                    <option value="">Wszystkie</option>
-                                    <option value="Nowe">Nowe</option>
-                                    <option value="Używane">Używane</option>
-                                    <option value="Uszkodzone">Uszkodzone</option>
-                                </select>
-                            </div>
-
-                            <div v-if="currentSearchConfig.subtypes?.length" class="hse-field">
-                                <label class="hse-label">{{ currentSearchConfig.subtypeLabel }}</label>
-                                <select v-model="searchSubtype" class="hse-select">
-                                    <option value="">Wszystkie</option>
-                                    <option v-for="t in currentSearchConfig.subtypes" :key="t" :value="t">{{ t }}</option>
-                                </select>
-                            </div>
-
-                            <div v-if="currentSearchConfig.hasPartCategory" class="hse-field">
-                                <label class="hse-label">Kategoria części</label>
-                                <select v-model="searchSubtype" class="hse-select">
-                                    <option value="">Wszystkie</option>
-                                    <option v-for="t in PART_CATEGORIES" :key="t.value" :value="t.value">{{ t.label }}</option>
-                                </select>
+                            <div class="hse-field hse-range">
+                                <label class="hse-label">Przebieg (km)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchMileageFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchMileageTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
                             </div>
 
                             <div class="hse-field hse-range">
@@ -216,55 +171,18 @@
                                 </div>
                             </div>
 
-                            <div v-if="currentSearchConfig.hasHours" class="hse-field hse-range">
-                                <label class="hse-label">Motogodziny</label>
-                                <div class="hse-range-row">
-                                    <input v-model="searchHoursFrom" type="number" class="hse-input" placeholder="Od" min="0" />
-                                    <span class="hse-sep">—</span>
-                                    <input v-model="searchHoursTo" type="number" class="hse-input" placeholder="Do" min="0" />
-                                </div>
-                            </div>
-                            <div v-else-if="currentSearchConfig.hasMileage" class="hse-field hse-range">
-                                <label class="hse-label">Przebieg (km)</label>
-                                <div class="hse-range-row">
-                                    <input v-model="searchMileageFrom" type="number" class="hse-input" placeholder="Od" min="0" />
-                                    <span class="hse-sep">—</span>
-                                    <input v-model="searchMileageTo" type="number" class="hse-input" placeholder="Do" min="0" />
-                                </div>
+                            <div class="hse-field">
+                                <label class="hse-label">Wyposażenie</label>
+                                <input v-model="searchEquipment" type="text" class="hse-input hse-input--full" placeholder="np. klimatyzacja, nawigacja..." />
                             </div>
 
-                            <div v-if="currentSearchConfig.hasPower" class="hse-field hse-range">
-                                <label class="hse-label">Moc (KM)</label>
-                                <div class="hse-range-row">
-                                    <input v-model="searchPowerFrom" type="number" class="hse-input" placeholder="Od" min="0" />
-                                    <span class="hse-sep">—</span>
-                                    <input v-model="searchPowerTo" type="number" class="hse-input" placeholder="Do" min="0" />
-                                </div>
-                            </div>
-
-                            <div v-if="currentSearchConfig.hasEngineSize" class="hse-field hse-range">
-                                <label class="hse-label">Pojemność (cm³)</label>
-                                <div class="hse-range-row">
-                                    <input v-model="searchEngineSizeFrom" type="number" class="hse-input" placeholder="Od" min="0" />
-                                    <span class="hse-sep">—</span>
-                                    <input v-model="searchEngineSizeTo" type="number" class="hse-input" placeholder="Do" min="0" />
-                                </div>
-                            </div>
-
-                            <div v-if="currentSearchConfig.hasPayload" class="hse-field hse-range">
-                                <label class="hse-label">Ładowność (kg)</label>
-                                <div class="hse-range-row">
-                                    <input v-model="searchPayloadFrom" type="number" class="hse-input" placeholder="Od" min="0" />
-                                    <span class="hse-sep">—</span>
-                                    <input v-model="searchPayloadTo" type="number" class="hse-input" placeholder="Do" min="0" />
-                                </div>
-                            </div>
-
-                            <div v-if="currentSearchConfig.hasModel && searchGenerations.length" class="hse-field">
-                                <label class="hse-label">Generacja</label>
-                                <select v-model="searchGenerationId" class="hse-select">
-                                    <option :value="null">Wszystkie generacje</option>
-                                    <option v-for="g in searchGenerations" :key="g.id" :value="g.id">{{ g.name }}</option>
+                            <div class="hse-field">
+                                <label class="hse-label">Stan pojazdu</label>
+                                <select v-model="searchCondition" class="hse-select">
+                                    <option value="">Wszystkie</option>
+                                    <option value="Nowe">Nowe</option>
+                                    <option value="Używane">Używane</option>
+                                    <option value="Uszkodzone">Uszkodzone</option>
                                 </select>
                             </div>
 
@@ -450,6 +368,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />do 84 miesięcy</span>
                                 <span><v-icon icon="mdi-check" size="13" />bez ukrytych kosztów</span>
                             </div>
+                            <a href="#" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -462,6 +381,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />brak prowizji</span>
                                 <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%*</span>
                             </div>
+                            <a href="#" class="ing-cta">Oblicz ratę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -474,6 +394,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />zarządzanie online</span>
                                 <span><v-icon icon="mdi-check" size="13" />dedykowany opiekun</span>
                             </div>
+                            <a href="#contact" class="ing-cta">Skontaktuj się <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card ing-card--calc">
                             <div class="ing-card-icon">
@@ -495,6 +416,7 @@
                                     od <strong>{{ ingMonthlyRate.toLocaleString('pl', { maximumFractionDigits: 0 }) }} zł</strong> / miesiąc
                                 </div>
                             </div>
+                            <a href="#" class="ing-cta">Złóż wniosek <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                     </div>
                     <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej. RRSO od 7,99% dotyczy oferty przykładowej zgodnie z Ustawą o kredycie konsumenckim; aktualna stawka może się różnić.</div>
@@ -863,6 +785,8 @@ const searchPayloadFrom = ref('')
 const searchPayloadTo = ref('')
 const searchCondition = ref('')
 const searchLocation = ref('')
+const searchDriveType = ref('')
+const searchEquipment = ref('')
 const showMoreFilters = ref(false)
 const searchModels = ref<TaxonomyItem[]>([])
 const searchGenerations = ref<any[]>([])
@@ -887,16 +811,11 @@ const homeAdvancedCount = computed(() => {
     let n = 0
     if (searchFuelId.value) n++
     if (searchGearboxId.value) n++
-    if (searchBodyTypeId.value) n++
-    if (searchCondition.value) n++
-    if (searchSubtype.value) n++
-    if (searchYearFrom.value || searchYearTo.value) n++
+    if (searchDriveType.value) n++
     if (searchMileageFrom.value || searchMileageTo.value) n++
-    if (searchHoursFrom.value || searchHoursTo.value) n++
-    if (searchPowerFrom.value || searchPowerTo.value) n++
-    if (searchEngineSizeFrom.value || searchEngineSizeTo.value) n++
-    if (searchPayloadFrom.value || searchPayloadTo.value) n++
-    if (searchGenerationId.value) n++
+    if (searchYearFrom.value || searchYearTo.value) n++
+    if (searchEquipment.value) n++
+    if (searchCondition.value) n++
     return n
 })
 
@@ -1000,7 +919,8 @@ function doSearch() {
     if (searchPowerFrom.value) query.powerFrom = searchPowerFrom.value
     if (searchPowerTo.value) query.powerTo = searchPowerTo.value
     if (searchCondition.value) query.condition = searchCondition.value
-    if (searchLocation.value.trim()) query.locationCity = searchLocation.value.trim()
+    if (searchDriveType.value) query.driveType = searchDriveType.value
+    if (searchEquipment.value.trim()) query.textSearch = searchEquipment.value.trim()
     const cat = homeCategories.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })
@@ -1786,6 +1706,12 @@ onMounted(async () => {
 
 .ss-item-icon { color: $text-dim; flex-shrink: 0; }
 
+.hs-more-row {
+    display: flex;
+    align-items: center;
+    margin-top: 2px;
+}
+
 .hs-more-btn {
     display: inline-flex;
     align-items: center;
@@ -1904,6 +1830,12 @@ onMounted(async () => {
     &:focus { border-color: rgba($red, 0.5); }
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    &--full {
+        width: 100%;
+        border-radius: 8px;
+        padding: 9px 10px;
+    }
 }
 
 // Category tabs
@@ -2327,6 +2259,22 @@ onMounted(async () => {
 
     &:hover { border-color: rgba(255,102,0,0.35); }
     &--calc { border-color: rgba(255,102,0,0.2); background: rgba(255,102,0,0.04); }
+}
+
+.ing-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #FF6200;
+    text-decoration: none;
+    margin-top: auto;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,102,0,0.15);
+    transition: opacity 0.2s;
+
+    &:hover { opacity: 0.75; }
 }
 
 .ing-card-icon {
