@@ -8,23 +8,24 @@
                 <div class="hfs-left-inner">
                     <div class="hfs-eyebrow">
                         <span class="eyebrow-dot" />
-                        Motoryzacja. Na poziomie premium.
+                        Platforma motoryzacyjna premium
                     </div>
                     <h1 class="hfs-title">
-                        Kupuj pewniej.<br>
-                        <span class="title-accent">Sprzedawaj&nbsp;szybciej.</span>
+                        Motoryzacja.<br>
+                        <span class="title-accent">Na&nbsp;poziomie&nbsp;premium.</span>
                     </h1>
                     <p class="hfs-sub">
-                        Zweryfikowane ogłoszenia, historia pojazdu, inteligentna wycena AI<br>
+                        Bezpieczniejsze kupowanie i skuteczniejsza sprzedaż pojazdów.
+                        Zweryfikowane ogłoszenia, historia pojazdu, inteligentne narzędzia AI
                         i profesjonalni sprzedawcy <strong>w jednym miejscu.</strong>
                     </p>
                     <div class="hfs-links">
                         <NuxtLink to="/adverts" class="hfs-link hfs-link--primary">
-                            <v-icon icon="mdi-magnify" size="15" />
+                            <v-icon icon="mdi-magnify" size="16" />
                             Znajdź samochód
                         </NuxtLink>
-                        <NuxtLink to="/add-advert" class="hfs-link">
-                            <v-icon icon="mdi-plus-circle-outline" size="15" />
+                        <NuxtLink to="/add-advert" class="hfs-link hfs-link--secondary">
+                            <v-icon icon="mdi-plus-circle-outline" size="16" />
                             Dodaj ogłoszenie
                         </NuxtLink>
                     </div>
@@ -1100,6 +1101,9 @@ onMounted(async () => {
         flex: 0 0 100%;
         padding: 40px 24px;
     }
+    @include respond-to(xs) {
+        padding: 32px 18px 28px;
+    }
 }
 
 .hfs-left-inner {
@@ -1166,7 +1170,8 @@ onMounted(async () => {
     margin-bottom: 24px;
 
     @include respond-to(md) { font-size: 52px; letter-spacing: -1.5px; }
-    @include respond-to(sm) { font-size: 38px; letter-spacing: -1px; }
+    @include respond-to(sm) { font-size: 40px; letter-spacing: -1px; }
+    @include respond-to(xs) { font-size: 32px; letter-spacing: -0.5px; line-height: 1.1; }
 }
 
 .title-accent {
@@ -1178,14 +1183,15 @@ onMounted(async () => {
 .hfs-sub {
     font-size: 15px;
     color: rgba(255,255,255,0.55);
-    line-height: 1.8;
-    margin-bottom: 28px;
-    max-width: 460px;
+    line-height: 1.75;
+    margin-bottom: 32px;
+    max-width: 480px;
     font-weight: 400;
 
     strong { color: rgba(255,255,255,0.8); font-weight: 600; }
 
-    @include respond-to(sm) { font-size: 14px; }
+    @include respond-to(sm) { font-size: 14px; line-height: 1.7; margin-bottom: 28px; }
+    @include respond-to(xs) { font-size: 13.5px; }
 }
 
 // ─── Category tiles ───────────────────────────────────────────────────────────
@@ -1368,26 +1374,58 @@ onMounted(async () => {
 
 .hfs-links {
     display: flex;
-    gap: 24px;
+    gap: 12px;
     flex-wrap: wrap;
+    align-items: center;
+
+    @include respond-to(xs) {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
 
 .hfs-link {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    color: rgba(255,255,255,0.5);
-    font-size: 13px;
-    font-weight: 500;
+    justify-content: center;
+    gap: 7px;
+    padding: 13px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
     text-decoration: none;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    white-space: nowrap;
+    min-height: 48px;
 
-    &:hover { color: rgba(255,255,255,0.85); }
+    @include respond-to(xs) {
+        width: 100%;
+        padding: 14px 20px;
+    }
 
     &--primary {
-        color: $red;
-        font-weight: 600;
-        &:hover { color: lighten(#8B0D1D, 20%); }
+        background: $red;
+        color: #fff;
+        border: 2px solid $red;
+        box-shadow: 0 4px 20px rgba($red, 0.35);
+
+        &:hover {
+            opacity: 0.88;
+            box-shadow: 0 6px 28px rgba($red, 0.45);
+        }
+    }
+
+    &--secondary {
+        background: transparent;
+        color: rgba(255,255,255,0.82);
+        border: 2px solid rgba(255,255,255,0.22);
+
+        &:hover {
+            border-color: rgba(255,255,255,0.5);
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
     }
 }
 
