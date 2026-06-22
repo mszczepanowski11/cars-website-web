@@ -46,6 +46,7 @@ useHead({ title: 'Wiadomości — CARIZO', meta: [{ name: 'robots', content: 'no
 
 const conversations = ref<Conversation[]>([])
 const loading = ref(false)
+let pollTimer: ReturnType<typeof setInterval> | null = null
 
 async function load() {
     loading.value = true
@@ -63,7 +64,14 @@ function formatDate(dateStr: string) {
     return d.toLocaleDateString('pl-PL')
 }
 
-onMounted(() => load())
+onMounted(() => {
+    load()
+    pollTimer = setInterval(load, 30_000)
+})
+
+onUnmounted(() => {
+    if (pollTimer) clearInterval(pollTimer)
+})
 </script>
 
 <style lang="scss" scoped>

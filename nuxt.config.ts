@@ -7,6 +7,18 @@ export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module'],
   compatibilityDate: '2025-07-15',
 
+  app: {
+    head: {
+      script: [
+        {
+          // Cookie Consent Mode v2 — must run BEFORE GTM/GA4 loads
+          children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',functionality_storage:'denied',personalization_storage:'denied'});`,
+          tagPriority: 'critical',
+        },
+      ],
+    },
+  },
+
   typescript: {
     typeCheck: false, // TODO: enable once all type errors are resolved
   },
@@ -21,6 +33,7 @@ export default defineNuxtConfig({
           'Referrer-Policy': 'strict-origin-when-cross-origin',
           'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
           'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+          'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://connect.facebook.net https://www.googletagmanager.com https://static.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-src https://www.openstreetmap.org https://accounts.google.com; object-src 'none'; base-uri 'self';",
         }
       }
     }

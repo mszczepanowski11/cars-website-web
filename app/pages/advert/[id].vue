@@ -1,5 +1,17 @@
 <template>
-    <div class="advert-page">
+    <!-- Not found / error state -->
+    <div v-if="!advert" class="advert-not-found">
+        <div class="anf-inner">
+            <v-icon icon="mdi-car-off" size="64" class="anf-icon" />
+            <h1 class="anf-title">Ogłoszenie nie istnieje</h1>
+            <p class="anf-desc">To ogłoszenie mogło zostać usunięte, wygasnąć lub link jest nieprawidłowy.</p>
+            <NuxtLink to="/adverts" class="anf-btn">
+                <v-icon icon="mdi-magnify" size="18" />
+                Przeglądaj ogłoszenia
+            </NuxtLink>
+        </div>
+    </div>
+    <div v-else class="advert-page">
 
         <!-- Sticky topbar -->
         <div class="advert-topbar">
@@ -225,7 +237,7 @@
                             <v-icon icon="mdi-phone-outline" size="17" />
                             {{ showPhone ? seller.phoneNumber : 'Pokaż numer telefonu' }}
                         </button>
-                        <button class="cta-message" :disabled="!!contactLoading" @click="contactSeller">
+                        <button class="cta-message" :disabled="contactLoading" @click="contactSeller">
                             <v-icon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
                             <v-icon v-else icon="mdi-message-text-outline" size="17" />
                             {{ contactLoading ? 'Otwieranie...' : 'Napisz wiadomość' }}
@@ -792,7 +804,7 @@
                 <v-icon :icon="showPhone ? 'mdi-phone' : 'mdi-phone-outline'" size="18" />
                 <span>{{ showPhone ? seller.phoneNumber : 'Zadzwoń' }}</span>
             </button>
-            <button class="mcb-message" :disabled="!!contactLoading" @click="contactSeller">
+            <button class="mcb-message" :disabled="contactLoading" @click="contactSeller">
                 <v-icon v-if="contactLoading" icon="mdi-loading" size="18" class="spin" />
                 <v-icon v-else icon="mdi-message-text-outline" size="18" />
                 <span>Napisz</span>
@@ -1274,59 +1286,59 @@ async function toggleFollowSeller() {
     }
 }
 
+// ── SEO / meta (computed at setup top-level so they work on SSR) ─────────────
 const seoTitle = computed(() => {
     const a = advert.value
     if (!a) return 'CARIZO'
-    const brandName = a.brand?.name ?? ''
-    const modelName = a.model?.name ?? ''
-    const year = a.year ?? ''
-    return [year, brandName, modelName].filter(Boolean).join(' ') + ' – CARIZO'
+    const parts = [a.year, a.brand?.name, a.model?.name].filter(Boolean)
+    return parts.join(' ') + ' – CARIZO'
 })
+
 const seoOgTitle = computed(() => {
     const a = advert.value
     if (!a) return 'CARIZO'
-    const brandName = a.brand?.name ?? ''
-    const modelName = a.model?.name ?? ''
-    const year = a.year ?? ''
-    return [year, brandName, modelName].filter(Boolean).join(' ')
+    return [a.year, a.brand?.name, a.model?.name].filter(Boolean).join(' ')
 })
-const seoDesc = computed(() => {
+
+const seoDescription = computed(() => {
     const a = advert.value
     if (!a) return ''
-    const brandName = a.brand?.name ?? ''
-    const modelName = a.model?.name ?? ''
-    const year = a.year ?? ''
     const rawDesc = a.description
         ? a.description.replace(/📋 Dane techniczne:[\s\S]*$/, '').replace(/🔍 Historia pojazdu:[\s\S]*$/, '').trim()
         : ''
-    return rawDesc.length > 0
-        ? rawDesc.slice(0, 160)
-        : [year, brandName, modelName, a.fuelType?.name, a.mileage ? `${Number(a.mileage).toLocaleString('pl')} km` : '', a.price ? `${Number(a.price).toLocaleString('pl')} zł` : ''].filter(Boolean).join(' · ').slice(0, 160)
+    if (rawDesc.length > 0) return rawDesc.slice(0, 160)
+    return [a.year, a.brand?.name, a.model?.name, a.fuelType?.name,
+        a.mileage ? `${Number(a.mileage).toLocaleString('pl')} km` : '',
+        a.price ? `${Number(a.price).toLocaleString('pl')} zł` : '',
+    ].filter(Boolean).join(' · ').slice(0, 160)
 })
-const seoImg = computed(() => {
+
+const seoImage = computed(() => {
     const a = advert.value
-    if (!a) return undefined
+    if (!a) return ''
     const imgUrl = a.images?.find(i => i.isMain)?.url ?? a.images?.[0]?.url ?? ''
     const imgPath = getImageUrl(imgUrl)
-    return imgPath && imgPath !== placeholder ? (imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`) : undefined
+    if (!imgPath || imgPath === placeholder) return ''
+    return imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`
 })
 const seoUrl = computed(() => currentUrl())
 
 useSeoMeta({
     title: seoTitle,
-    description: seoDesc,
+    description: seoDescription,
     ogType: 'website',
-    ogUrl: seoUrl,
+    ogUrl: seoCanonical,
     ogTitle: seoOgTitle,
-    ogDescription: seoDesc,
-    ogImage: seoImg,
+    ogDescription: seoDescription,
+    ogImage: seoImage,
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
     twitterTitle: seoOgTitle,
-    twitterDescription: seoDesc,
-    twitterImage: seoImg,
+    twitterDescription: seoDescription,
+    twitterImage: seoImage,
 })
-useHead({ link: [{ rel: 'canonical', href: seoUrl }] })
+
+useHead({ link: [{ rel: 'canonical', href: seoCanonical }] })
 
 watch(activeTab, async (tab) => {
     if (tab === 'Opinie' && sellerReviews.value.length === 0 && advert.value?.userId) {
@@ -4208,5 +4220,58 @@ onUnmounted(() => {
     transition: background 0.2s;
     &:hover { background: rgba(255,255,255,0.12); }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ── Not found state ────────────────────────────────────────────────────────────
+.advert-not-found {
+    min-height: 100vh;
+    background: $bg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    padding-top: calc(#{$nav-height} + 40px);
+}
+
+.anf-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+    max-width: 420px;
+}
+
+.anf-icon { color: $text-dark; opacity: 0.5; }
+
+.anf-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: $text;
+    margin: 0;
+}
+
+.anf-desc {
+    font-size: 15px;
+    color: $text-dim;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.anf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: $red;
+    color: white;
+    border-radius: $r-md;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 24px;
+    text-decoration: none;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.88; }
 }
 </style>

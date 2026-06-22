@@ -2998,7 +2998,7 @@ async function submit() {
                 const fd = new FormData()
                 fd.append('file', file)
                 try {
-                    await $fetch(`/api/advert/${id}/images`, { method: 'POST', body: fd })
+                    await $fetch(`/api/proxy/api/Advert/${id}/images`, { method: 'POST', body: fd })
                 } catch (imgErr: any) {
                     imageErrors++
                     console.error('[image upload error]', imgErr?.data ?? imgErr?.statusMessage ?? imgErr)
