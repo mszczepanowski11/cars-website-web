@@ -27,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ layout: false })
 useSeoMeta({ robots: 'noindex, nofollow' })
 useHead({ title: 'CARIZO – Już wkrótce' })
 
