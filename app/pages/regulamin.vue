@@ -169,7 +169,21 @@
                     <ol>
                         <li>CARIZO zastrzega sobie prawo do zmiany niniejszych warunków z ważnych przyczyn technicznych, prawnych lub organizacyjnych. O zmianach zarejestrowani Użytkownicy zostaną powiadomieni drogą mailową z zachowaniem 14-dniowego okresu wypowiedzenia.</li>
                         <li>W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego, ustawy o prawach konsumenta oraz ustawy z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej.</li>
+                        <li><strong>Prawo właściwe:</strong> Niniejszy Regulamin oraz wszelkie stosunki prawne wynikające z korzystania z Serwisu podlegają prawu Rzeczypospolitej Polskiej.</li>
+                        <li><strong>Jurysdykcja:</strong> Wszelkie spory wynikłe z niniejszego Regulaminu lub z korzystania z Serwisu będą rozstrzygane przez właściwy sąd powszechny Rzeczypospolitej Polskiej. W stosunkach z konsumentami właściwy miejscowo jest sąd według siedziby pozwanego lub sąd miejsca zamieszkania konsumenta, według wyboru powoda. Konsumenci mogą korzystać z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń, w tym z platformy ODR dostępnej pod adresem: <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">ec.europa.eu/consumers/odr</a>.</li>
                         <li>Treść niniejszych postanowień wchodzi w życie z dniem 23.06.2026.</li>
+                    </ol>
+                </section>
+
+                <section class="doc-section">
+                    <h2>§13 Warunki dla Użytkowników Biznesowych (Rozporządzenie P2B 2019/1150)</h2>
+                    <ol>
+                        <li>Niniejszy paragraf ma zastosowanie do Użytkowników Biznesowych w rozumieniu Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2019/1150 z dnia 20 czerwca 2019 r. w sprawie propagowania sprawiedliwości i przejrzystości dla użytkowników biznesowych korzystających z usług pośrednictwa internetowego (Rozporządzenie P2B).</li>
+                        <li><strong>Plasowanie ofert — przejrzystość:</strong> Parametry główne determinujące pozycjonowanie ogłoszeń opisane są w §5 niniejszego Regulaminu. CARIZO nie stosuje zróżnicowanego traktowania własnych usług lub produktów względem usług Użytkowników Biznesowych.</li>
+                        <li><strong>Ograniczenie dostępu lub zawieszenie Konta:</strong> W przypadku podjęcia decyzji o zawieszeniu lub ograniczeniu dostępu do Serwisu dla Użytkownika Biznesowego, CARIZO poinformuje go o tej decyzji i jej uzasadnieniu przed jej wejściem w życie lub — jeżeli nie jest to możliwe — niezwłocznie po jej wejściu w życie. Użytkownik Biznesowy ma prawo złożenia bezpłatnego odwołania w terminie 14 dni na adres e-mail: <strong>kontakt@carizo.eu</strong>.</li>
+                        <li><strong>Wewnętrzny system rozpatrywania skarg:</strong> CARIZO zapewnia Użytkownikom Biznesowym dostęp do wewnętrznego systemu rozpatrywania skarg za pośrednictwem adresu e-mail: <strong>kontakt@carizo.eu</strong>. CARIZO dąży do rozpatrzenia każdej skargi w terminie 14 dni roboczych.</li>
+                        <li><strong>Mediacja:</strong> W przypadku braku porozumienia w ramach wewnętrznego systemu rozpatrywania skarg, CARIZO jest gotowe do rozważenia mediacji prowadzonej przez neutralnego mediatora. Strony mogą zwrócić się do Centrum Mediacji przy Konfederacji Lewiatan lub innego uzgodnionego mediatora.</li>
+                        <li><strong>Dane Użytkowników Biznesowych:</strong> Zasady przetwarzania danych osobowych Użytkowników Biznesowych opisane są w Polityce Prywatności dostępnej w Serwisie.</li>
                     </ol>
                 </section>
 
