@@ -1850,6 +1850,12 @@ onMounted(async () => {
     &::-webkit-scrollbar { display: none; }
     -ms-overflow-style: none;
     scrollbar-width: none;
+
+    @include respond-to(xs) {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        overflow-x: unset;
+    }
 }
 
 .cat-tab {
@@ -1867,6 +1873,12 @@ onMounted(async () => {
     white-space: nowrap;
     font-family: 'Inter', sans-serif;
     transition: all 0.18s;
+
+    @include respond-to(xs) {
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+    }
 
     &:hover { border-color: rgba($red, 0.4); color: $text; }
 
