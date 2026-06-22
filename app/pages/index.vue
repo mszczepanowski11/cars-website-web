@@ -15,8 +15,8 @@
                         <span class="title-accent">Na&nbsp;poziomie&nbsp;premium.</span>
                     </h1>
                     <p class="hfs-sub">
-                        Bezpieczniejsze kupowanie i skuteczniejsza sprzedaż pojazdów.
-                        Zweryfikowane ogłoszenia, historia pojazdu, inteligentne narzędzia AI
+                        Kupuj pewniej. Sprzedawaj szybciej.
+                        Zweryfikowane ogłoszenia, historia pojazdu, inteligentna wycena AI
                         i profesjonalni sprzedawcy <strong>w jednym miejscu.</strong>
                     </p>
                     <div class="hfs-links">
@@ -1170,8 +1170,8 @@ onMounted(async () => {
     margin-bottom: 24px;
 
     @include respond-to(md) { font-size: 52px; letter-spacing: -1.5px; }
-    @include respond-to(sm) { font-size: 40px; letter-spacing: -1px; }
-    @include respond-to(xs) { font-size: 32px; letter-spacing: -0.5px; line-height: 1.1; }
+    @include respond-to(sm) { font-size: 36px; letter-spacing: -1px; }
+    @include respond-to(xs) { font-size: 28px; letter-spacing: -1px; line-height: 1.1; }
 }
 
 .title-accent {
