@@ -55,9 +55,13 @@
                                     class="ac-item"
                                     @mousedown.prevent="applyAutocomplete(item)"
                                 >
-                                    <v-icon :icon="item.type === 'brand' ? 'mdi-car-outline' : 'mdi-car-settings'" size="14" class="ac-icon" />
+                                    <v-icon
+                                        :icon="item.type === 'brand' ? 'mdi-car-outline' : item.type === 'feature' ? 'mdi-star-check-outline' : 'mdi-car-settings'"
+                                        size="14"
+                                        class="ac-icon"
+                                    />
                                     <span class="ac-name">{{ item.name }}</span>
-                                    <span class="ac-type">{{ item.type === 'brand' ? 'Marka' : 'Model' }}</span>
+                                    <span class="ac-type">{{ item.type === 'brand' ? 'Marka' : item.type === 'feature' ? 'Wyposażenie' : 'Model' }}</span>
                                 </button>
                             </div>
                         </div>
@@ -528,7 +532,7 @@
 
 <script setup lang="ts">
 import { useCategories } from '~/composables/useCategories'
-import type { TaxonomyItem, DriveType, CarColor, CarAdvert, PagedResult, CategoryWithCount } from '~/types'
+import type { TaxonomyItem, DriveType, CarColor, CarAdvert, Feature, PagedResult, CategoryWithCount } from '~/types'
 
 useSeoMeta({
     title: 'Ogłoszenia samochodowe — CARIZO',
@@ -540,7 +544,7 @@ useSeoMeta({
 
 const route = useRoute()
 const router = useRouter()
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors, fetchFeatures } = useTaxonomy()
 const { fetchCategories } = useCategories()
 const { fetchFavoriteIds } = useFavorites()
 
@@ -580,10 +584,12 @@ const f = reactive({
     catalogNumber: route.query.catalogNumber ? String(route.query.catalogNumber) : '' as string,
     hasRetarder: null as boolean | null,
     hasTachograph: null as boolean | null,
+    featureIds:  route.query.featureIds ? String(route.query.featureIds).split(',').map(Number).filter(Boolean) : [] as number[],
     sortBy:      route.query.sortBy ? String(route.query.sortBy) : '',
 })
 
 const models       = ref<TaxonomyItem[]>([])
+const allFeatures  = ref<Feature[]>([])
 const adverts      = ref<CarAdvert[]>([])
 const total        = ref(0)
 const page         = ref(route.query.page ? Number(route.query.page) : 1)
@@ -680,6 +686,7 @@ const hasActiveFilters = computed(() =>
        f.mileageFrom || f.mileageTo || f.powerFrom || f.powerTo ||
        f.engineSizeFrom || f.engineSizeTo ||
        f.payloadFrom || f.payloadTo || f.catalogNumber ||
+       f.featureIds.length > 0 ||
        f.sellerType || f.condition ||
        f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null)
 )
@@ -727,6 +734,7 @@ function clearFilters() {
     f.axleCount = null; f.payloadFrom = null; f.payloadTo = null
     f.grossWeightFrom = null; f.grossWeightTo = null; f.bodySubtype = ''
     f.hasRetarder = null; f.hasTachograph = null; f.catalogNumber = ''
+    f.featureIds = []
     f.sortBy = ''
     models.value = []
     load(1)
@@ -774,6 +782,7 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.hasRetarder !== null)    body.hasRetarder    = f.hasRetarder
     if (f.hasTachograph !== null)  body.hasTachograph  = f.hasTachograph
     if (f.catalogNumber)           body.catalogNumber  = f.catalogNumber
+    if (f.featureIds.length)       body.featureIds     = f.featureIds
     return body
 }
 
@@ -853,6 +862,7 @@ async function load(p: number = page.value) {
     if (f.payloadFrom)       query.payloadFrom  = String(f.payloadFrom)
     if (f.payloadTo)         query.payloadTo    = String(f.payloadTo)
     if (f.catalogNumber)     query.catalogNumber = f.catalogNumber
+    if (f.featureIds.length) query.featureIds   = f.featureIds.join(',')
     if (f.sortBy)      query.sortBy      = f.sortBy
     if (p > 1)         query.page        = String(p)
     router.replace({ query })
@@ -891,27 +901,36 @@ async function loadMore() {
 
 // ── Autocomplete ──────────────────────────────────────────────────────────────
 const showSuggestions = ref(false)
+type AcType = 'brand' | 'model' | 'feature'
 const autocompleteItems = computed(() => {
     const q = f.textSearch.trim().toLowerCase()
     if (q.length < 2) return []
     const brandMatches = brands.value
         .filter(b => b.name.toLowerCase().includes(q))
-        .slice(0, 4)
-        .map(b => ({ type: 'brand' as const, id: b.id, name: b.name }))
+        .slice(0, 3)
+        .map(b => ({ type: 'brand' as AcType, id: b.id, name: b.name, sub: '' }))
     const modelMatches = models.value
         .filter(m => m.name.toLowerCase().includes(q))
+        .slice(0, 2)
+        .map(m => ({ type: 'model' as AcType, id: m.id, name: m.name, sub: '' }))
+    const featureMatches = allFeatures.value
+        .filter(feat => feat.name.toLowerCase().includes(q) && !f.featureIds.includes(feat.id))
         .slice(0, 3)
-        .map(m => ({ type: 'model' as const, id: m.id, name: m.name }))
-    return [...brandMatches, ...modelMatches].slice(0, 6)
+        .map(feat => ({ type: 'feature' as AcType, id: feat.id, name: feat.name, sub: feat.category?.name ?? '' }))
+    return [...brandMatches, ...modelMatches, ...featureMatches].slice(0, 7)
 })
-function applyAutocomplete(item: { type: 'brand' | 'model'; id: number; name: string }) {
-    f.textSearch = ''
+function applyAutocomplete(item: { type: AcType; id: number; name: string }) {
     showSuggestions.value = false
     if (item.type === 'brand') {
+        f.textSearch = ''
         f.brandId = item.id
         onBrandChange()
-    } else {
+    } else if (item.type === 'model') {
+        f.textSearch = ''
         f.modelId = item.id
+    } else if (item.type === 'feature') {
+        f.textSearch = ''
+        if (!f.featureIds.includes(item.id)) f.featureIds.push(item.id)
     }
     load(1)
 }
@@ -922,6 +941,7 @@ onMounted(async () => {
     if (f.categoryId) {
         try { dynamicBrands.value = await fetchBrandsByCategory(f.categoryId) } catch { dynamicBrands.value = null }
     }
+    try { allFeatures.value = await fetchFeatures() } catch {}
 })
 </script>
 
