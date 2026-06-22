@@ -1573,34 +1573,6 @@ onMounted(async () => {
 
 // ─── Shared field token (used by both hsp and hse) ───────────────────────────
 
-// Unified label style
-%sf-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding-left: 2px;
-    white-space: nowrap;
-}
-
-// Unified control (select / standalone input)
-%sf-control {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    color: $text;
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    padding: 12px 14px;
-    min-height: 48px;
-    outline: none;
-    width: 100%;
-    transition: border-color 0.18s, background 0.18s;
-    &:focus  { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
-    &:hover  { border-color: rgba(255,255,255,0.2); }
-}
-
 // ─── Primary row ─────────────────────────────────────────────────────────────
 
 .hs-primary {
@@ -1624,12 +1596,33 @@ onMounted(async () => {
     @include respond-to(xs) { flex: 1 1 100%; }
 }
 
-.hsp-label { @extend %sf-label; }
+.hsp-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-left: 2px;
+    white-space: nowrap;
+}
 
 .hsp-select {
-    @extend %sf-control;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 14px;
+    min-height: 48px;
+    outline: none;
+    width: 100%;
     cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+
     option { background: #111; color: #fff; }
+    &:focus   { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
+    &:hover   { border-color: rgba(255,255,255,0.2); }
     &:disabled { opacity: 0.35; cursor: not-allowed; }
 }
 
@@ -1652,7 +1645,7 @@ onMounted(async () => {
     background: rgba(255,255,255,0.12);
     flex-shrink: 0;
     align-self: center;
-    font-size: 0; // hide the "—" text
+    font-size: 0;
 }
 
 .hsp-input {
@@ -1671,7 +1664,13 @@ onMounted(async () => {
     &::-webkit-inner-spin-button { -webkit-appearance: none; }
 
     &--full {
-        @extend %sf-control;
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        width: 100%;
+        padding: 12px 14px;
+        min-height: 48px;
+        transition: border-color 0.18s, background 0.18s;
         &:focus { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); outline: none; }
     }
 }
@@ -1773,12 +1772,33 @@ onMounted(async () => {
     &.hse-range { @include respond-to(sm) { grid-column: span 2; } }
 }
 
-.hse-label { @extend %sf-label; }
+.hse-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-left: 2px;
+    white-space: nowrap;
+}
 
 .hse-select {
-    @extend %sf-control;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 14px;
+    min-height: 48px;
+    outline: none;
+    width: 100%;
     cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+
     option { background: #111; color: #fff; }
+    &:focus { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
+    &:hover { border-color: rgba(255,255,255,0.2); }
 }
 
 .hse-range-row {
@@ -1818,7 +1838,13 @@ onMounted(async () => {
     &::-webkit-inner-spin-button { -webkit-appearance: none; }
 
     &--full {
-        @extend %sf-control;
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        width: 100%;
+        padding: 12px 14px;
+        min-height: 48px;
+        transition: border-color 0.18s, background 0.18s;
         &:focus { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); outline: none; }
     }
 }
