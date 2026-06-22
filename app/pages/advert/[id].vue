@@ -99,7 +99,7 @@
                             :class="{ 'thumb-active': i === activeImg }"
                             @click="activeImg = i"
                         >
-                            <img :src="img.url" alt="" loading="lazy" />
+                            <img :src="img.url" :alt="`Zdjęcie ${i + 1} – ${advert?.title ?? ''}`" loading="lazy" />
                             <div v-if="i === 5 && allImages.length > 6" class="thumb-more">+{{ allImages.length - 6 }}</div>
                         </button>
                     </div>
@@ -639,12 +639,12 @@
                     </div>
                     <div v-if="hasImages" class="gallery-grid">
                         <div class="gallery-main" @click="openLightbox(0)">
-                            <img :src="allImages[0]?.url ?? placeholder" alt="" />
-                            <button class="expand-btn" @click.stop="openLightbox(0)"><v-icon icon="mdi-arrow-expand" size="18" /></button>
+                            <img :src="allImages[0]?.url ?? placeholder" :alt="advert?.title ?? 'Zdjęcie główne'" />
+                            <button class="expand-btn" aria-label="Powiększ galerię" @click.stop="openLightbox(0)"><v-icon icon="mdi-arrow-expand" size="18" /></button>
                         </div>
                         <div class="gallery-thumbs">
                             <div v-for="(img, i) in allImages.slice(1, 4)" :key="i" class="gallery-thumb" @click="openLightbox(i + 1)">
-                                <img :src="img.url" alt="" />
+                                <img :src="img.url" :alt="`Zdjęcie ${i + 2} – ${advert?.title ?? ''}`" />
                                 <div v-if="i === 2 && allImages.length > 4" class="thumb-overlay" @click.stop="openLightbox(i + 1)">+{{ allImages.length - 4 }}</div>
                             </div>
                         </div>
@@ -771,13 +771,13 @@
     <Teleport to="body">
         <transition name="fade">
             <div v-if="lightboxOpen" class="lightbox-backdrop" @click.self="lightboxOpen = false">
-                <button class="lb-close" @click="lightboxOpen = false"><v-icon icon="mdi-close" size="22" /></button>
-                <button class="lb-arrow lb-prev" :disabled="lightboxIdx === 0" @click="lightboxIdx--"><v-icon icon="mdi-chevron-left" size="30" /></button>
-                <div class="lb-img-wrap"><img :src="allImages[lightboxIdx]?.url ?? placeholder" alt="" class="lb-img" /></div>
-                <button class="lb-arrow lb-next" :disabled="lightboxIdx === allImages.length - 1" @click="lightboxIdx++"><v-icon icon="mdi-chevron-right" size="30" /></button>
+                <button class="lb-close" aria-label="Zamknij galerię" @click="lightboxOpen = false"><v-icon icon="mdi-close" size="22" /></button>
+                <button class="lb-arrow lb-prev" aria-label="Poprzednie zdjęcie" :disabled="lightboxIdx === 0" @click="lightboxIdx--"><v-icon icon="mdi-chevron-left" size="30" /></button>
+                <div class="lb-img-wrap"><img :src="allImages[lightboxIdx]?.url ?? placeholder" :alt="`${advert?.title ?? 'Zdjęcie'} ${lightboxIdx + 1} / ${allImages.length}`" class="lb-img" /></div>
+                <button class="lb-arrow lb-next" aria-label="Następne zdjęcie" :disabled="lightboxIdx === allImages.length - 1" @click="lightboxIdx++"><v-icon icon="mdi-chevron-right" size="30" /></button>
                 <div class="lb-counter">{{ lightboxIdx + 1 }} / {{ allImages.length }}</div>
                 <div class="lb-thumbs">
-                    <div v-for="(img, i) in allImages" :key="i" class="lb-thumb" :class="{ 'lb-thumb-active': i === lightboxIdx }" @click="lightboxIdx = i"><img :src="img.url" alt="" /></div>
+                    <div v-for="(img, i) in allImages" :key="i" class="lb-thumb" :class="{ 'lb-thumb-active': i === lightboxIdx }" @click="lightboxIdx = i"><img :src="img.url" :alt="`Miniatura ${i + 1}`" /></div>
                 </div>
             </div>
         </transition>
@@ -1029,7 +1029,7 @@ async function initMap(city: string, region?: string) {
     try {
         const q = [city, region, 'Polska'].filter(Boolean).join(', ')
         const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`, {
-            headers: { 'Accept-Language': 'pl' }
+            headers: { 'Accept-Language': 'pl', 'User-Agent': 'Carizo/1.0 (carizo.pl)' }
         })
         const data = await res.json()
         if (data[0]) {
@@ -1274,39 +1274,59 @@ async function toggleFollowSeller() {
     }
 }
 
-watch(advert, (a) => {
-    if (!a) return
+const seoTitle = computed(() => {
+    const a = advert.value
+    if (!a) return 'CARIZO'
     const brandName = a.brand?.name ?? ''
     const modelName = a.model?.name ?? ''
     const year = a.year ?? ''
-    const pageTitle = [year, brandName, modelName].filter(Boolean).join(' ') + ' – CARIZO'
-    const ogTitle = [year, brandName, modelName].filter(Boolean).join(' ')
+    return [year, brandName, modelName].filter(Boolean).join(' ') + ' – CARIZO'
+})
+const seoOgTitle = computed(() => {
+    const a = advert.value
+    if (!a) return 'CARIZO'
+    const brandName = a.brand?.name ?? ''
+    const modelName = a.model?.name ?? ''
+    const year = a.year ?? ''
+    return [year, brandName, modelName].filter(Boolean).join(' ')
+})
+const seoDesc = computed(() => {
+    const a = advert.value
+    if (!a) return ''
+    const brandName = a.brand?.name ?? ''
+    const modelName = a.model?.name ?? ''
+    const year = a.year ?? ''
     const rawDesc = a.description
         ? a.description.replace(/📋 Dane techniczne:[\s\S]*$/, '').replace(/🔍 Historia pojazdu:[\s\S]*$/, '').trim()
         : ''
-    const desc = rawDesc.length > 0
+    return rawDesc.length > 0
         ? rawDesc.slice(0, 160)
         : [year, brandName, modelName, a.fuelType?.name, a.mileage ? `${Number(a.mileage).toLocaleString('pl')} km` : '', a.price ? `${Number(a.price).toLocaleString('pl')} zł` : ''].filter(Boolean).join(' · ').slice(0, 160)
+})
+const seoImg = computed(() => {
+    const a = advert.value
+    if (!a) return undefined
     const imgUrl = a.images?.find(i => i.isMain)?.url ?? a.images?.[0]?.url ?? ''
     const imgPath = getImageUrl(imgUrl)
-    const absImg = imgPath && imgPath !== placeholder ? (imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`) : ''
-    const url = currentUrl()
-    useSeoMeta({
-        title: pageTitle,
-        description: desc,
-        ogType: 'website',
-        ogUrl: url,
-        ogTitle: ogTitle,
-        ogDescription: desc,
-        ...(absImg ? { ogImage: absImg } : {}),
-        ogSiteName: 'CARIZO',
-        twitterCard: 'summary_large_image',
-        twitterTitle: ogTitle,
-        twitterDescription: desc,
-        ...(absImg ? { twitterImage: absImg } : {}),
-    })
-    useHead({ link: [{ rel: 'canonical', href: url }] })
+    return imgPath && imgPath !== placeholder ? (imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`) : undefined
 })
+const seoUrl = computed(() => currentUrl())
+
+useSeoMeta({
+    title: seoTitle,
+    description: seoDesc,
+    ogType: 'website',
+    ogUrl: seoUrl,
+    ogTitle: seoOgTitle,
+    ogDescription: seoDesc,
+    ogImage: seoImg,
+    ogSiteName: 'CARIZO',
+    twitterCard: 'summary_large_image',
+    twitterTitle: seoOgTitle,
+    twitterDescription: seoDesc,
+    twitterImage: seoImg,
+})
+useHead({ link: [{ rel: 'canonical', href: seoUrl }] })
 
 watch(activeTab, async (tab) => {
     if (tab === 'Opinie' && sellerReviews.value.length === 0 && advert.value?.userId) {

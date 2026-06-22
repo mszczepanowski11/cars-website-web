@@ -32,7 +32,7 @@
 
             <!-- RIGHT: image -->
             <div class="hfs-right">
-                <img src="/hero-car.jpg" alt="" class="hfs-img" />
+                <img src="/hero-car.jpg" alt="CARIZO – motoryzacja online" class="hfs-img" fetchpriority="high" />
                 <div class="hfs-fade" />
             </div>
 
@@ -417,7 +417,7 @@
                             <div class="ing-card-feat">
                                 <span><v-icon icon="mdi-check" size="13" />decyzja w 15 minut</span>
                                 <span><v-icon icon="mdi-check" size="13" />brak prowizji</span>
-                                <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%</span>
+                                <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%*</span>
                             </div>
                         </div>
                         <div class="ing-card">
@@ -454,7 +454,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej.</div>
+                    <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej. RRSO od 7,99% dotyczy oferty przykładowej zgodnie z Ustawą o kredycie konsumenckim; aktualna stawka może się różnić.</div>
                 </div>
             </div>
         </section>
@@ -737,7 +737,7 @@ const visibleStats = computed(() => [
     { key: 'activeAdverts', icon: 'mdi-shield-check-outline',  label: 'Zweryfikowanych ogłoszeń', value: homeStats.value.activeAdverts },
     { key: 'soldVehicles',  icon: 'mdi-car-outline',           label: 'Sprzedanych pojazdów',     value: homeStats.value.soldVehicles  },
     { key: 'totalUsers',    icon: 'mdi-account-group-outline', label: 'Użytkowników w Polsce',    value: homeStats.value.totalUsers    },
-    { key: 'events',        icon: 'mdi-domain',                label: 'Zweryfikowanych dealerów', value: homeStats.value.events        },
+    { key: 'events',        icon: 'mdi-calendar-star',         label: 'Wydarzeń motoryzacyjnych',  value: homeStats.value.events        },
 ])
 
 // ─── Search section ──────────────────────────────────────────────────────────

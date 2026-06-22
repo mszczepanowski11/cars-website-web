@@ -404,6 +404,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
+definePageMeta({ middleware: 'admin' })
+
 interface Advert {
   id: number
   title: string
