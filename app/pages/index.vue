@@ -83,6 +83,9 @@
                     </button>
                 </div>
 
+                <!-- Form panel -->
+                <div class="hs-panel">
+
                 <!-- Level 1: Primary row -->
                 <div class="hs-primary">
                     <div v-if="currentSearchConfig.hasBrand" class="hsp-field">
@@ -191,6 +194,7 @@
                     </div>
                 </Transition>
 
+                </div><!-- /hs-panel -->
             </div>
         </section>
 
@@ -1551,8 +1555,50 @@ onMounted(async () => {
 // ─── Search section ───────────────────────────────────────────────────────────
 
 .search-section {
-    padding: 36px 0 48px;
+    padding: 40px 0 56px;
     border-bottom: 1px solid $border;
+}
+
+// Glass card wrapping the entire form
+.hs-panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.28), 0 1px 0 rgba(255,255,255,0.06) inset;
+
+    @include respond-to(sm) { padding: 18px 16px; border-radius: 16px; }
+    @include respond-to(xs) { padding: 16px 14px; }
+}
+
+// ─── Shared field token (used by both hsp and hse) ───────────────────────────
+
+// Unified label style
+%sf-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-left: 2px;
+    white-space: nowrap;
+}
+
+// Unified control (select / standalone input)
+%sf-control {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 14px;
+    min-height: 48px;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.18s, background 0.18s;
+    &:focus  { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
+    &:hover  { border-color: rgba(255,255,255,0.2); }
 }
 
 // ─── Primary row ─────────────────────────────────────────────────────────────
@@ -1561,117 +1607,228 @@ onMounted(async () => {
     display: flex;
     align-items: flex-end;
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     flex-wrap: wrap;
 }
 
 .hsp-field {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
     flex: 1;
-    min-width: 120px;
+    min-width: 130px;
 
-    &.hsp-range { flex: 1.5; min-width: 190px; }
-    &.hsp-loc   { flex: 1.2; min-width: 150px; }
+    &.hsp-range { flex: 1.5; min-width: 200px; }
 
     @include respond-to(sm) { flex: 1 1 calc(50% - 5px); }
     @include respond-to(xs) { flex: 1 1 100%; }
 }
 
-.hsp-label {
-    font-size: 10px;
-    font-weight: 700;
-    color: $text-dim;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    white-space: nowrap;
-}
+.hsp-label { @extend %sf-label; }
 
 .hsp-select {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: 10px;
-    color: $text;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    padding: 10px 12px;
-    outline: none;
+    @extend %sf-control;
     cursor: pointer;
-    transition: border-color 0.18s;
-    min-height: 44px;
-    width: 100%;
-
     option { background: #111; color: #fff; }
-    &:focus { border-color: rgba($red, 0.5); }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &:disabled { opacity: 0.35; cursor: not-allowed; }
 }
 
+// Range: Od/Do share one bordered container
 .hsp-range-row {
     display: flex;
     align-items: center;
-    gap: 4px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    min-height: 48px;
+    overflow: hidden;
+    transition: border-color 0.18s, background 0.18s;
+    &:focus-within { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
 }
 
-.hsp-sep { color: $text-dark; flex-shrink: 0; font-size: 13px; }
+.hsp-sep {
+    width: 1px;
+    min-height: 20px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
+    align-self: center;
+    font-size: 0; // hide the "—" text
+}
 
 .hsp-input {
     flex: 1;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: 8px;
+    background: transparent;
+    border: none;
     color: $text;
-    font-size: 13px;
+    font-size: 14px;
     font-family: 'Inter', sans-serif;
-    padding: 10px 8px;
+    padding: 12px 14px;
     outline: none;
     min-width: 0;
-    min-height: 44px;
-    transition: border-color 0.2s;
 
-    &::placeholder { color: $text-dark; }
-    &:focus { border-color: rgba($red, 0.5); }
+    &::placeholder { color: rgba(255,255,255,0.25); }
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button { -webkit-appearance: none; }
 
     &--full {
-        width: 100%;
-        border-radius: 10px;
-        padding: 10px 12px;
+        @extend %sf-control;
+        &:focus { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); outline: none; }
     }
 }
 
 .hsp-search-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     background: $red;
     color: white;
     border: none;
-    padding: 0 28px;
-    height: 44px;
-    border-radius: 10px;
+    padding: 0 32px;
+    height: 48px;
+    border-radius: 12px;
     font-size: 14px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    transition: opacity 0.18s;
+    box-shadow: 0 4px 18px rgba($red, 0.38);
+    transition: opacity 0.18s, box-shadow 0.18s;
 
-    &:hover { opacity: 0.88; }
+    &:hover  { opacity: 0.88; box-shadow: 0 6px 22px rgba($red, 0.5); }
     &:active { opacity: 0.75; }
 
-    @include respond-to(sm) { width: 100%; justify-content: center; height: 48px; }
+    @include respond-to(sm) { width: 100%; height: 50px; font-size: 15px; }
 }
 
-// ─── Meta row (text search + Więcej filtrów) ──────────────────────────────────
+// ─── Więcej filtrów ───────────────────────────────────────────────────────────
+
+.hs-more-row {
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.hs-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: rgba(255,255,255,0.5);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: border-color 0.18s, color 0.18s, background 0.18s;
+
+    &:hover { border-color: rgba(255,255,255,0.25); color: $text; background: rgba(255,255,255,0.04); }
+}
+
+.hs-more-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: $red;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+// ─── Expanded advanced filters ────────────────────────────────────────────────
+
+.hs-expand-enter-active,
+.hs-expand-leave-active { transition: opacity 0.24s, transform 0.24s; }
+.hs-expand-enter-from,
+.hs-expand-leave-to     { opacity: 0; transform: translateY(-6px); }
+
+.hs-expanded {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.hse-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+
+    @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
+    @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(xs) { grid-template-columns: 1fr; }
+}
+
+.hse-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    &.hse-range { @include respond-to(sm) { grid-column: span 2; } }
+}
+
+.hse-label { @extend %sf-label; }
+
+.hse-select {
+    @extend %sf-control;
+    cursor: pointer;
+    option { background: #111; color: #fff; }
+}
+
+.hse-range-row {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    min-height: 48px;
+    overflow: hidden;
+    transition: border-color 0.18s, background 0.18s;
+    &:focus-within { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
+}
+
+.hse-sep {
+    width: 1px;
+    min-height: 20px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
+    align-self: center;
+    font-size: 0;
+}
+
+.hse-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 14px;
+    outline: none;
+    min-width: 0;
+
+    &::placeholder { color: rgba(255,255,255,0.25); }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    &--full {
+        @extend %sf-control;
+        &:focus { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); outline: none; }
+    }
+}
+
+// ─── Text search (meta row — kept for compatibility) ─────────────────────────
 
 .hs-meta {
     display: flex;
     align-items: center;
     gap: 12px;
-
     @include respond-to(sm) { flex-direction: column; align-items: stretch; }
 }
 
@@ -1680,18 +1837,17 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid $border;
-    border-radius: 10px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
     padding: 0 14px;
-    height: 40px;
+    height: 48px;
     position: relative;
     transition: border-color 0.18s;
-
-    &:focus-within { border-color: rgba($red, 0.4); }
+    &:focus-within { border-color: rgba($red, 0.5); background: rgba(255,255,255,0.1); }
 }
 
-.hs-text-icon { color: $text-dark; flex-shrink: 0; }
+.hs-text-icon { color: rgba(255,255,255,0.3); flex-shrink: 0; }
 
 .hs-text-input {
     flex: 1;
@@ -1699,16 +1855,15 @@ onMounted(async () => {
     border: none;
     outline: none;
     color: $text;
-    font-size: 13px;
+    font-size: 14px;
     font-family: 'Inter', sans-serif;
-
-    &::placeholder { color: $text-dark; }
+    &::placeholder { color: rgba(255,255,255,0.25); }
 }
 
 .hs-text-clear {
     background: transparent;
     border: none;
-    color: $text-dim;
+    color: rgba(255,255,255,0.3);
     cursor: pointer;
     padding: 2px;
     display: flex;
@@ -1738,143 +1893,10 @@ onMounted(async () => {
     font-size: 14px;
     color: $text-muted;
     transition: background 0.12s, color 0.12s;
-
     &:hover { background: rgba($red, 0.1); color: $text; }
 }
 
 .ss-item-icon { color: $text-dim; flex-shrink: 0; }
-
-.hs-more-row {
-    display: flex;
-    align-items: center;
-    margin-top: 2px;
-}
-
-.hs-more-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: 1px solid $border;
-    border-radius: 10px;
-    color: $text-muted;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    padding: 0 16px;
-    height: 40px;
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-    transition: border-color 0.18s, color 0.18s;
-
-    &:hover { border-color: rgba($red, 0.4); color: $text; }
-    .v-icon { color: $text-dim; }
-}
-
-.hs-more-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: $red;
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-}
-
-// ─── Expanded advanced filters ─────────────────────────────────────────────────
-
-.hs-expand-enter-active,
-.hs-expand-leave-active { transition: opacity 0.22s, transform 0.22s; }
-.hs-expand-enter-from,
-.hs-expand-leave-to     { opacity: 0; transform: translateY(-8px); }
-
-.hs-expanded {
-    margin-top: 16px;
-    padding: 20px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid $border;
-    border-radius: 14px;
-}
-
-.hse-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-
-    @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
-    @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
-    @include respond-to(xs) { grid-template-columns: 1fr; }
-}
-
-.hse-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    &.hse-range { @include respond-to(sm) { grid-column: span 2; } }
-}
-
-.hse-label {
-    font-size: 10px;
-    font-weight: 700;
-    color: $text-dim;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
-
-.hse-select {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: 8px;
-    color: $text;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    padding: 9px 10px;
-    outline: none;
-    cursor: pointer;
-    transition: border-color 0.18s;
-    min-height: 40px;
-
-    option { background: #111; color: #fff; }
-    &:focus { border-color: rgba($red, 0.5); }
-}
-
-.hse-range-row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.hse-sep { color: $text-dark; flex-shrink: 0; font-size: 12px; }
-
-.hse-input {
-    flex: 1;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: 8px;
-    color: $text;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    padding: 9px 6px;
-    outline: none;
-    min-width: 0;
-    min-height: 40px;
-
-    &::placeholder { color: $text-dark; }
-    &:focus { border-color: rgba($red, 0.5); }
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-    &--full {
-        width: 100%;
-        border-radius: 8px;
-        padding: 9px 10px;
-    }
-}
 
 // Category tabs
 .cat-tabs {
