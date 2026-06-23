@@ -1,7 +1,38 @@
 export interface TaxonomyItem { id: number; name: string }
 export interface SelectOption { value: number | string; label: string; icon?: string; meta?: string }
 export interface Generation extends TaxonomyItem { yearFrom: number; yearTo: number }
-export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number; fuelTypeId?: number; fuelTypeName?: string; fuelConsumptionCity?: number; fuelConsumptionHighway?: number; fuelConsumptionCombined?: number }
+export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number; fuelTypeId?: number; fuelTypeName?: string; fuelConsumptionCity?: number; fuelConsumptionHighway?: number; fuelConsumptionCombined?: number; trimId?: number; torqueNm?: number; co2EmissionGkm?: number; euroNorm?: string; avgConsumptionL?: number; acceleration0100?: number; topSpeedKmh?: number; driveType?: string; gearboxType?: string; cylinders?: number }
+
+export interface TrimItem {
+  id: number
+  generationId: number
+  name: string
+  description?: string
+}
+
+export interface VehicleSubtype {
+  id: number
+  vehicleCategoryId: number
+  name: string
+  namePl?: string
+  sortOrder: number
+}
+
+export interface PartCategory {
+  id: number
+  name: string
+  namePl?: string
+  sortOrder: number
+  subcategories: PartSubcategory[]
+}
+
+export interface PartSubcategory {
+  id: number
+  partCategoryId: number
+  name: string
+  namePl?: string
+  sortOrder: number
+}
 export interface AdvertImage { id: number; url: string; isMain: boolean }
 export interface Feature { id: number; name: string; category: { id: number; name: string; vehicleCategoryId?: number | null } }
 export interface DriveType { id: number; name: string; slug: string }
@@ -55,6 +86,15 @@ export interface CarAdvert {
 
     // Parts specific
     catalogNumber?: string; compatibility?: string
+
+    // New taxonomy fields
+    trimId?: number | null
+    vehicleSubtypeId?: number | null
+    partCategoryId?: number | null
+    partSubcategoryId?: number | null
+    oemNumber?: string
+    manufacturerPartNumber?: string
+    partManufacturer?: string
 }
 
 export interface PagedResult<T> { items: T[]; totalCount: number }

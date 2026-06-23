@@ -268,7 +268,23 @@
                             </div>
                         </div>
 
-                        <!-- Engine version (loaded after generation selection) -->
+                        <!-- Trim / Wariant — appears when trims exist for selected generation -->
+                        <div v-if="isFieldVisible('generation') && trims.length > 0" class="field">
+                            <label class="flabel">Wariant / Trim</label>
+                            <SmartSelect
+                                v-model="form.trimId"
+                                :options="trimOptions"
+                                placeholder="Wybierz wariant (opcjonalnie)"
+                                search-placeholder="wariantów"
+                                :disabled="!form.generationId"
+                                @change="onTrimChange(form.trimId)"
+                            />
+                            <div class="field-hint">
+                                <v-icon icon="mdi-information-outline" size="12" />{{ trims.length }} wariantów dostępnych
+                            </div>
+                        </div>
+
+                        <!-- Engine version (loaded after generation or trim selection) -->
                         <div v-if="isFieldVisible('generation') && engines.length" class="field">
                             <label class="flabel">Wersja silnika</label>
                             <SmartSelect
@@ -277,6 +293,7 @@
                                 placeholder="Wybierz wersję silnika (opcjonalnie)"
                                 prefix-icon="mdi-engine-outline"
                                 search-placeholder="wersji silnika"
+                                @change="onEngineVersionChange(form.engineVersionId)"
                             />
                             <div class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ engines.length }} wersji silnika dostępnych
@@ -292,11 +309,43 @@
                                     :key="e.id"
                                     type="button"
                                     class="ai-hint-chip"
-                                    @click="form.engineVersionId = e.id"
+                                    @click="form.engineVersionId = e.id; onEngineVersionChange(e.id)"
                                 >
                                     {{ e.name }}
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- Engine specs auto-fill preview -->
+                        <div v-if="engineSpecs" class="field full-width">
+                            <div class="engine-specs-preview">
+                                <div class="esp-title">
+                                    <v-icon icon="mdi-information-outline" size="13" />
+                                    Dane techniczne pobrane automatycznie
+                                </div>
+                                <div class="esp-chips">
+                                    <span v-if="engineSpecs.powerHP" class="esp-chip esp-chip--primary">{{ engineSpecs.powerHP }} KM</span>
+                                    <span v-if="engineSpecs.torqueNm" class="esp-chip esp-chip--primary">{{ engineSpecs.torqueNm }} Nm</span>
+                                    <span v-if="engineSpecs.displacement" class="esp-chip esp-chip--secondary">{{ engineSpecs.displacement }} cm³</span>
+                                    <span v-if="engineSpecs.acceleration0100" class="esp-chip esp-chip--secondary">0–100: {{ engineSpecs.acceleration0100 }}s</span>
+                                    <span v-if="engineSpecs.topSpeedKmh" class="esp-chip esp-chip--secondary">Vmax: {{ engineSpecs.topSpeedKmh }} km/h</span>
+                                    <span v-if="engineSpecs.co2EmissionGkm" class="esp-chip esp-chip--success">CO₂: {{ engineSpecs.co2EmissionGkm }} g/km</span>
+                                    <span v-if="engineSpecs.euroNorm" class="esp-chip esp-chip--success">{{ engineSpecs.euroNorm }}</span>
+                                    <span v-if="engineSpecs.avgConsumptionL" class="esp-chip esp-chip--success">{{ engineSpecs.avgConsumptionL }} l/100km</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vehicle subtype — shown when subtypes exist for selected category -->
+                        <div v-if="vehicleSubtypes.length > 0" class="field">
+                            <label class="flabel">Podtyp pojazdu</label>
+                            <SmartSelect
+                                v-model="form.vehicleSubtypeId"
+                                :options="vehicleSubtypeOptions"
+                                placeholder="Np. Ciągnik siodłowy, Wywrotka..."
+                                search-placeholder="podtypów"
+                                clearable
+                            />
                         </div>
 
                         <!-- Year -->
@@ -494,6 +543,68 @@
                                     </div>
 
                                 </template>
+                            </div>
+                        </div>
+                    </transition>
+
+                    <!-- ── Parts-specific fields — shown when category is "Części" ── -->
+                    <transition name="fade-err">
+                        <div v-if="isPartsCategorySelected" class="hist-section">
+                            <div class="hist-section-title"><v-icon icon="mdi-cog-outline" size="16" />Dane części</div>
+                            <div class="fields-grid">
+
+                                <div class="field">
+                                    <label class="flabel">Kategoria części</label>
+                                    <SmartSelect
+                                        v-model="form.partCategoryId"
+                                        :options="partCategoryOptions"
+                                        placeholder="Wybierz kategorię"
+                                        search-placeholder="kategorii"
+                                        @change="onPartCategoryChange(form.partCategoryId)"
+                                    />
+                                </div>
+
+                                <div v-if="partSubcategories.length > 0" class="field">
+                                    <label class="flabel">Podkategoria części</label>
+                                    <SmartSelect
+                                        v-model="form.partSubcategoryId"
+                                        :options="partSubcategoryOptions"
+                                        placeholder="Wybierz podkategorię"
+                                        search-placeholder="podkategorii"
+                                    />
+                                </div>
+
+                                <div class="field">
+                                    <label class="flabel">Numer OEM</label>
+                                    <input
+                                        v-model="form.oemNumber"
+                                        type="text"
+                                        class="finput"
+                                        placeholder="np. 1K0-615-301"
+                                    />
+                                    <div class="field-hint"><v-icon icon="mdi-information-outline" size="12" />Numer oryginalny części od producenta pojazdu</div>
+                                </div>
+
+                                <div class="field">
+                                    <label class="flabel">Nr katalogowy producenta</label>
+                                    <input
+                                        v-model="form.manufacturerPartNumber"
+                                        type="text"
+                                        class="finput"
+                                        placeholder="np. 0986494513"
+                                    />
+                                </div>
+
+                                <div class="field">
+                                    <label class="flabel">Producent części</label>
+                                    <input
+                                        v-model="form.partManufacturer"
+                                        type="text"
+                                        class="finput"
+                                        placeholder="np. Bosch, TRW, Valeo"
+                                    />
+                                </div>
+
                             </div>
                         </div>
                     </transition>
@@ -1510,7 +1621,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption } from '~/types'
+import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption, TrimItem, VehicleSubtype, PartCategory, PartSubcategory } from '~/types'
 import { useImageUrl } from '~/composables/useImageUrl'
 
 definePageMeta({ middleware: 'auth' })
@@ -1972,7 +2083,7 @@ const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
 
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext, fetchTrims, fetchEnginesByTrim, fetchEngineSpecs, fetchVehicleSubtypes, fetchPartCategories, fetchPartSubcategories } = useTaxonomy()
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { fetchCategories } = useCategories()
@@ -1988,6 +2099,11 @@ const driveTypes = ref<DriveType[]>([])
 const colors = ref<CarColor[]>([])
 const allFeatures = ref<Feature[]>([])
 const featuresLoaded = ref(false)
+const trims = ref<TrimItem[]>([])
+const vehicleSubtypes = ref<VehicleSubtype[]>([])
+const partCategories = ref<PartCategory[]>([])
+const partSubcategories = ref<PartSubcategory[]>([])
+const engineSpecs = ref<any>(null)
 const loading = ref(false)
 const error = ref('')
 const limitError = ref<'private_limit_active' | 'private_limit_yearly' | null>(null)
@@ -2173,11 +2289,18 @@ const form = reactive({
     region: null as string | null,
     isNegotiable: false,
     sellerType: 'private' as 'private' | 'dealer',
+    trimId: null as number | null,
+    vehicleSubtypeId: null as number | null,
+    partCategoryId: null as number | null,
+    partSubcategoryId: null as number | null,
+    oemNumber: '',
+    manufacturerPartNumber: '',
+    partManufacturer: '',
 })
 
 const extras = reactive<Record<string, any>>({})
 
-const engineLocked = reactive({ fuelType: false, power: false, capacity: false, consumptionCity: false, consumptionHwy: false, consumptionMix: false })
+const engineLocked = reactive({ fuelType: false, power: false, capacity: false, consumptionCity: false, consumptionHwy: false, consumptionMix: false, torque: false, co2Emission: false, euroNorm: false, acceleration: false, fuelConsumptionCombined: false })
 
 const EF_LOCK_MAP: Record<string, keyof typeof engineLocked> = {
     fuelConsumptionCity: 'consumptionCity',
@@ -2330,6 +2453,16 @@ const categoryConfig = computed<CatFieldConfig>(() => {
     return CATEGORY_CONFIGS[slug] ?? DEFAULT_CAT_CONFIG
 })
 
+const isPartsCategorySelected = computed(() => {
+    const partsCategory = advertCategories.value.find(c =>
+        c.slug?.toLowerCase() === 'czesci' ||
+        c.name?.toLowerCase().includes('część') ||
+        c.name?.toLowerCase().includes('czesci') ||
+        c.name?.toLowerCase().includes('parts')
+    )
+    return partsCategory ? form.categoryId === partsCategory.id : false
+})
+
 const featureGroups = computed(() => {
     const g: Record<string, Feature[]> = {}
     for (const f of allFeatures.value) {
@@ -2442,6 +2575,10 @@ const brandOptions = computed<SelectOption[]>(() => brands.value.map(b => ({ val
 const modelOptions = computed<SelectOption[]>(() => models.value.map(m => ({ value: m.id, label: m.name })))
 const generationOptions = computed<SelectOption[]>(() => generations.value.map(g => ({ value: g.id, label: g.name })))
 const engineOptions = computed<SelectOption[]>(() => engines.value.map(e => ({ value: e.id, label: `${e.name} (${e.powerHP ?? e.horsepower ?? '?'}KM)` })))
+const trimOptions = computed<SelectOption[]>(() => trims.value.map(t => ({ value: t.id, label: t.name })))
+const vehicleSubtypeOptions = computed<SelectOption[]>(() => vehicleSubtypes.value.map(s => ({ value: s.id, label: s.namePl ?? s.name })))
+const partCategoryOptions = computed<SelectOption[]>(() => partCategories.value.map(c => ({ value: c.id, label: c.namePl ?? c.name })))
+const partSubcategoryOptions = computed<SelectOption[]>(() => partSubcategories.value.map(s => ({ value: s.id, label: s.namePl ?? s.name })))
 
 const fuelTypeOptions = computed<SelectOption[]>(() => fuelTypes.value.map(f => ({ value: f.id, label: f.name })))
 const gearboxOptions = computed<SelectOption[]>(() => gearboxes.value.map(g => ({ value: g.id, label: g.name })))
@@ -2460,8 +2597,11 @@ async function onCategory(catId: number) {
     const changed = form.categoryId !== catId
     form.categoryId = catId
     if (changed) {
-        form.brandId = null; form.modelId = null; form.generationId = null; form.engineVersionId = null
-        models.value = []; generations.value = []; engines.value = []
+        form.brandId = null; form.modelId = null; form.generationId = null; form.engineVersionId = null; form.trimId = null
+        form.vehicleSubtypeId = null; form.partCategoryId = null; form.partSubcategoryId = null
+        models.value = []; generations.value = []; engines.value = []; trims.value = []
+        vehicleSubtypes.value = []; partSubcategories.value = []
+        engineSpecs.value = null
         for (const key of Object.keys(extras)) delete extras[key]
         brandTextInput.value = ''
         modelTextInput.value = ''
@@ -2477,6 +2617,8 @@ async function onCategory(catId: number) {
             brands.value = await fetchBrands()
         }
     }
+    // Load vehicle subtypes for the selected category
+    vehicleSubtypes.value = await fetchVehicleSubtypes(catId)
     // Reload features for the new category context
     if (changed) await loadContextFeatures()
     // Auto-advance to vehicle data step on first category selection
@@ -2618,23 +2760,84 @@ async function loadContextFeatures() {
 }
 
 async function onBrand() {
-    form.modelId = null; form.generationId = null; form.engineVersionId = null
-    models.value = []; generations.value = []; engines.value = []
+    form.modelId = null; form.generationId = null; form.engineVersionId = null; form.trimId = null
+    models.value = []; generations.value = []; engines.value = []; trims.value = []
+    engineSpecs.value = null
     if (form.brandId) models.value = await fetchModels(form.brandId)
     engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
     await loadContextFeatures()
 }
 async function onModel() {
-    form.generationId = null; form.engineVersionId = null
-    generations.value = []; engines.value = []
+    form.generationId = null; form.engineVersionId = null; form.trimId = null
+    generations.value = []; engines.value = []; trims.value = []
+    engineSpecs.value = null
     if (form.modelId) generations.value = await fetchGenerations(form.modelId)
     engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
     await loadContextFeatures()
 }
 async function onGen() {
-    form.engineVersionId = null; engines.value = []
-    if (form.generationId) engines.value = await fetchEngines(form.generationId)
+    form.trimId = null
+    form.engineVersionId = null
+    trims.value = []
+    engines.value = []
+    engineSpecs.value = null
     engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
+    if (form.generationId) {
+        const fetchedTrims = await fetchTrims(form.generationId)
+        trims.value = fetchedTrims
+        if (fetchedTrims.length === 0) {
+            // No trims: load engines directly by generation (backward compat)
+            engines.value = await fetchEngines(form.generationId)
+        }
+    }
+}
+
+async function onTrimChange(trimId: number | null) {
+    form.engineVersionId = null
+    engineSpecs.value = null
+    engines.value = []
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
+    if (trimId) {
+        engines.value = await fetchEnginesByTrim(trimId)
+    }
+}
+
+async function onEngineVersionChange(engineVersionId: number | null) {
+    engineSpecs.value = null
+    if (engineVersionId) {
+        const specs = await fetchEngineSpecs(engineVersionId)
+        if (specs) {
+            engineSpecs.value = specs
+            if (specs.powerHP) { form.power = specs.powerHP; engineLocked.power = true }
+            if (specs.displacement) { form.engineCapacity = specs.displacement; engineLocked.capacity = true }
+            if (specs.torqueNm) { extras.torque = specs.torqueNm; engineLocked.torque = true }
+            if (specs.co2EmissionGkm) { extras.co2 = specs.co2EmissionGkm; engineLocked.co2Emission = true }
+            if (specs.euroNorm) { extras.euroNorm = specs.euroNorm; engineLocked.euroNorm = true }
+            if (specs.acceleration0100) { engineLocked.acceleration = true }
+            if (specs.avgConsumptionL) { extras.fuelConsumptionMix = specs.avgConsumptionL; engineLocked.fuelConsumptionCombined = true }
+            if (specs.fuelTypeId) { form.fuelTypeId = specs.fuelTypeId; engineLocked.fuelType = true }
+        }
+    }
+}
+
+async function onVehicleCategoryChange(categoryId: number | null) {
+    form.vehicleSubtypeId = null
+    vehicleSubtypes.value = []
+    if (categoryId) {
+        vehicleSubtypes.value = await fetchVehicleSubtypes(categoryId)
+    }
+}
+
+async function onPartCategoryChange(categoryId: number | null) {
+    form.partSubcategoryId = null
+    partSubcategories.value = []
+    if (categoryId) {
+        partSubcategories.value = await fetchPartSubcategories(categoryId)
+    }
 }
 
 watch(() => form.engineVersionId, (newId) => {
@@ -2888,6 +3091,14 @@ async function submit() {
             if (extras.fuelConsumptionMix != null) cleanEdit.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
             if (extras.euroNorm) cleanEdit.euroNorm = extras.euroNorm
             if (extras.colorFinish) cleanEdit.colorFinish = extras.colorFinish
+            // New taxonomy fields
+            if (form.trimId) cleanEdit.trimId = form.trimId
+            if (form.vehicleSubtypeId) cleanEdit.vehicleSubtypeId = form.vehicleSubtypeId
+            if (form.partCategoryId) cleanEdit.partCategoryId = form.partCategoryId
+            if (form.partSubcategoryId) cleanEdit.partSubcategoryId = form.partSubcategoryId
+            if (form.oemNumber) cleanEdit.oemNumber = form.oemNumber
+            if (form.manufacturerPartNumber) cleanEdit.manufacturerPartNumber = form.manufacturerPartNumber
+            if (form.partManufacturer) cleanEdit.partManufacturer = form.partManufacturer
             // Vehicle history fields
             if (history.ownersCount !== null) cleanEdit.ownersCount = history.ownersCount
             cleanEdit.isImported = history.isImported
@@ -2920,6 +3131,8 @@ async function submit() {
                 'year', 'mileage', 'price', 'title', 'vin',
                 'city', 'region', 'isNegotiable', 'sellerType',
                 'doorCount', 'seatsCount',
+                'trimId', 'vehicleSubtypeId', 'partCategoryId', 'partSubcategoryId',
+                'oemNumber', 'manufacturerPartNumber', 'partManufacturer',
             ]
             const cleanBody: Record<string, unknown> = {}
             if (form.categoryId) cleanBody.vehicleCategoryId = form.categoryId
@@ -2971,6 +3184,14 @@ async function submit() {
             if (extras.fuelConsumptionMix != null) cleanBody.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
             if (extras.euroNorm) cleanBody.euroNorm = extras.euroNorm
             if (extras.colorFinish) cleanBody.colorFinish = extras.colorFinish
+            // New taxonomy fields
+            if (form.trimId) cleanBody.trimId = form.trimId
+            if (form.vehicleSubtypeId) cleanBody.vehicleSubtypeId = form.vehicleSubtypeId
+            if (form.partCategoryId) cleanBody.partCategoryId = form.partCategoryId
+            if (form.partSubcategoryId) cleanBody.partSubcategoryId = form.partSubcategoryId
+            if (form.oemNumber) cleanBody.oemNumber = form.oemNumber
+            if (form.manufacturerPartNumber) cleanBody.manufacturerPartNumber = form.manufacturerPartNumber
+            if (form.partManufacturer) cleanBody.partManufacturer = form.partManufacturer
             // Vehicle history fields
             if (history.ownersCount !== null) cleanBody.ownersCount = history.ownersCount
             cleanBody.isImported = history.isImported
@@ -3100,8 +3321,8 @@ function onBeforeUnload(e: BeforeUnloadEvent) {
 
 onMounted(async () => {
     window.addEventListener('beforeunload', onBeforeUnload)
-    ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value] = await Promise.all([
-        fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories()
+    ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value, partCategories.value] = await Promise.all([
+        fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories(), fetchPartCategories()
     ])
     await loadContextFeatures()
 
@@ -4701,6 +4922,58 @@ onBeforeUnmount(() => {
     color: $text-dark;
     margin-top: 5px;
     .v-icon { color: $text-dark; flex-shrink: 0; }
+}
+
+// ── Engine specs preview ───────────────────────────────────────────────────────
+.engine-specs-preview {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: $r-sm;
+    padding: 10px 14px;
+    margin-top: 4px;
+}
+
+.esp-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: $text-dark;
+    margin-bottom: 8px;
+    .v-icon { flex-shrink: 0; }
+}
+
+.esp-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.esp-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+
+    &--primary {
+        background: rgba($red, 0.12);
+        color: $red;
+        border: 1px solid rgba($red, 0.25);
+    }
+
+    &--secondary {
+        background: rgba(255,255,255,0.05);
+        color: $text-muted;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    &--success {
+        background: rgba(#4ade80, 0.1);
+        color: #4ade80;
+        border: 1px solid rgba(#4ade80, 0.2);
+    }
 }
 
 .ai-hints {

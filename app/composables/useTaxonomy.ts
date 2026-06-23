@@ -1,4 +1,4 @@
-import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor } from '~/types'
+import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, TrimItem, VehicleSubtype, PartCategory, PartSubcategory } from '~/types'
 
 export const useTaxonomy = () => {
   return {
@@ -23,5 +23,42 @@ export const useTaxonomy = () => {
         return $fetch<{ id: number; name: string; vehicleCategoryId?: number | null; brandId?: number | null; modelId?: number | null; features: { id: number; name: string }[] }[]>('/api/proxy/api/Taxonomy/feature-categories/by-context', { query: q })
     },
     fetchCategories: () => $fetch('/api/proxy/api/Taxonomy/categories'),
+
+    // New taxonomy endpoints
+    fetchTrims: async (generationId: number): Promise<TrimItem[]> => {
+      if (!generationId) return []
+      try {
+        return await $fetch<TrimItem[]>(`/api/taxonomy/trims/generation/${generationId}`)
+      } catch { return [] }
+    },
+    fetchEnginesByTrim: async (trimId: number): Promise<EngineVersion[]> => {
+      if (!trimId) return []
+      try {
+        return await $fetch<EngineVersion[]>(`/api/taxonomy/engines/trim/${trimId}`)
+      } catch { return [] }
+    },
+    fetchEngineSpecs: async (engineVersionId: number): Promise<any> => {
+      if (!engineVersionId) return null
+      try {
+        return await $fetch(`/api/taxonomy/engines/${engineVersionId}/specs`)
+      } catch { return null }
+    },
+    fetchVehicleSubtypes: async (vehicleCategoryId: number): Promise<VehicleSubtype[]> => {
+      if (!vehicleCategoryId) return []
+      try {
+        return await $fetch<VehicleSubtype[]>(`/api/taxonomy/vehicle-subtypes/category/${vehicleCategoryId}`)
+      } catch { return [] }
+    },
+    fetchPartCategories: async (): Promise<PartCategory[]> => {
+      try {
+        return await $fetch<PartCategory[]>('/api/taxonomy/part-categories')
+      } catch { return [] }
+    },
+    fetchPartSubcategories: async (partCategoryId: number): Promise<PartSubcategory[]> => {
+      if (!partCategoryId) return []
+      try {
+        return await $fetch<PartSubcategory[]>(`/api/taxonomy/part-subcategories/category/${partCategoryId}`)
+      } catch { return [] }
+    },
   }
 }
