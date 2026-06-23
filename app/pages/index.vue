@@ -2220,7 +2220,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    gap: 20px;
 }
 
 .why-eyebrow {
@@ -2232,7 +2232,6 @@ onMounted(async () => {
     color: $red;
     letter-spacing: 4px;
     text-transform: uppercase;
-    margin-bottom: 22px;
 
     &::before,
     &::after {
@@ -2246,11 +2245,10 @@ onMounted(async () => {
 }
 
 .why-logo {
-    height: 60px;
+    height: 72px;
     width: auto;
     display: block;
-    margin: 0 auto 20px;
-    filter: drop-shadow(0 0 28px rgba(139, 13, 29, 0.35));
+    filter: drop-shadow(0 0 32px rgba(139, 13, 29, 0.4));
 }
 
 .why-sub {
