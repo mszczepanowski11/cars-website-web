@@ -19,9 +19,10 @@ export default defineEventHandler(async (event) => {
         // No auth cookie — user must verify email before they can log in
         return { success: true, message: data.message ?? 'Sprawdź skrzynkę email, aby aktywować konto.' }
     } catch (err: any) {
+        const msg = typeof err.data === 'string' ? err.data : 'Użytkownik o podanym emailu już istnieje.'
         throw createError({
             statusCode: err.response?.status ?? 409,
-            statusMessage: err.data ?? 'Użytkownik o podanym emailu już istnieje.'
+            statusMessage: msg
         })
     }
 })
