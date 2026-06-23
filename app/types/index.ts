@@ -5,6 +5,7 @@ export interface EngineVersion { id: number; name: string; engineName: string; d
 export interface AdvertImage { id: number; url: string; isMain: boolean }
 export interface Feature { id: number; name: string; category: { id: number; name: string; vehicleCategoryId?: number | null } }
 export interface DriveType { id: number; name: string; slug: string }
+export interface VehicleSubtype { id: number; name: string; slug?: string | null }
 export interface CarColor { id: number; name: string; hexCode: string }
 export type AdvertBadge = 'PREMIUM' | 'VERIFIED' | 'DEALER' | 'FEATURED' | 'TOP'
 

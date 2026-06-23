@@ -170,6 +170,18 @@
                     </div>
                     <div class="fields-grid">
 
+                        <!-- Vehicle Subtype -->
+                        <div v-if="subtypes.length > 0" class="field full-width">
+                            <label class="flabel">
+                                Rodzaj pojazdu <span class="req">*</span>
+                            </label>
+                            <SmartSelect
+                                v-model="form.vehicleSubtypeId"
+                                :options="subtypes.map(s => ({ value: s.id, label: s.name }))"
+                                placeholder="Wybierz rodzaj pojazdu"
+                            />
+                        </div>
+
                         <!-- Brand: SmartSelect for known categories, text input for specialized machinery -->
                         <div v-if="isFieldVisible('brand')" class="field">
                             <label class="flabel">
@@ -525,6 +537,57 @@
                                             </span>
                                             {{ ef.label }}
                                         </label>
+                                    </div>
+
+                                </template>
+                            </div>
+                        </div>
+                    </transition>
+
+                    <!-- ── Subtype-specific extra fields ──────────────────────────────────── -->
+                    <transition name="fade-err">
+                        <div v-if="subtypeExtraFields.length > 0" class="extra-fields-wrap">
+                            <div class="extras-section-divider">
+                                <span>Specyfikacja {{ selectedSubtype?.name }}</span>
+                            </div>
+                            <div class="fields-grid">
+                                <template v-for="ef in subtypeExtraFields" :key="'sub-' + ef.key">
+
+                                    <!-- Radio -->
+                                    <div v-if="ef.type === 'radio'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="radio-group">
+                                            <label v-for="opt in ef.options" :key="opt.value" class="radio-opt"
+                                                :class="{ active: extras[ef.key] === opt.value }">
+                                                <input type="radio" :name="'sub-' + ef.key" :value="opt.value"
+                                                    v-model="extras[ef.key]" hidden />
+                                                {{ opt.label }}
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Select -->
+                                    <div v-else-if="ef.type === 'select'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <SmartSelect
+                                            :model-value="extras[ef.key]"
+                                            @update:model-value="extras[ef.key] = $event"
+                                            :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
+                                            :placeholder="`Wybierz ${ef.label.toLowerCase()}`"
+                                        />
+                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                    </div>
+
+                                    <!-- Number -->
+                                    <div v-else-if="ef.type === 'number'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="input-unit-wrap">
+                                            <input v-model.number="extras[ef.key]" type="number"
+                                                class="finput"
+                                                :placeholder="ef.placeholder ?? ''" />
+                                            <span v-if="ef.unit" class="input-unit-badge">{{ ef.unit }}</span>
+                                        </div>
+                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
 
                                 </template>
@@ -1544,7 +1607,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption } from '~/types'
+import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption, VehicleSubtype } from '~/types'
 import { useImageUrl } from '~/composables/useImageUrl'
 
 definePageMeta({ middleware: 'auth' })
@@ -2002,11 +2065,189 @@ const DEFAULT_CAT_CONFIG: CatFieldConfig = {
     mileageLabel: 'Przebieg (km)',
 }
 
+// ── Subtype-specific extra fields ──────────────────────────────────────────
+const SUBTYPE_EXTRA_FIELDS: Record<string, ExtraField[]> = {
+  // ── Trucks ──────────────────────────────────────────────────────────────
+  'ciagnik-siodlowy': [
+    { key: 'cabType', label: 'Typ kabiny', type: 'select', options: [
+      { value: 'dzienna', label: 'Kabina dzienna' },
+      { value: 'sypialnia', label: 'Kabina sypialnia' },
+      { value: 'maxi', label: 'Kabina Maxi' },
+    ]},
+    { key: 'suspension', label: 'Zawieszenie tylne', type: 'select', options: [
+      { value: 'resorowe', label: 'Resorowe' },
+      { value: 'powietrzne', label: 'Powietrzne' },
+    ]},
+    { key: 'axleConfig', label: 'Konfiguracja osi', type: 'select', options: [
+      { value: '4x2', label: '4x2' }, { value: '6x2', label: '6x2' },
+      { value: '6x4', label: '6x4' }, { value: '8x4', label: '8x4' },
+    ]},
+  ],
+  'wywrotka': [
+    { key: 'bodySubtype', label: 'Kierunek wysypu', type: 'select', options: [
+      { value: 'tylny', label: 'Tylny' },
+      { value: '3-stronny', label: '3-stronny' },
+      { value: 'boczny', label: 'Boczny' },
+    ]},
+    { key: 'dumpBodyMaterial', label: 'Materiał skrzyni', type: 'select', options: [
+      { value: 'stal', label: 'Stal' },
+      { value: 'aluminium', label: 'Aluminium' },
+      { value: 'polietylen', label: 'Polietylen' },
+    ]},
+    { key: 'volume', label: 'Pojemność skrzyni (m³)', type: 'number', unit: 'm³' },
+  ],
+  'chlodnia-ciezarowa': [
+    { key: 'tempMin', label: 'Min. temperatura (°C)', type: 'number', unit: '°C' },
+    { key: 'tempMax', label: 'Max. temperatura (°C)', type: 'number', unit: '°C' },
+    { key: 'tankCapacity', label: 'Objętość ładowni (m³)', type: 'number', unit: 'm³' },
+    { key: 'atpCert', label: 'Certyfikat ATP', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'firanka': [
+    { key: 'loadingHeight', label: 'Wysokość załadunku (m)', type: 'number', unit: 'm' },
+    { key: 'volume', label: 'Objętość ładowni (m³)', type: 'number', unit: 'm³' },
+    { key: 'hasLiftgate', label: 'Winda załadowcza', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'cysterna': [
+    { key: 'tankCapacity', label: 'Pojemność zbiornika (m³)', type: 'number', unit: 'm³' },
+    { key: 'tankMaterial', label: 'Materiał zbiornika', type: 'select', options: [
+      { value: 'stal', label: 'Stal nierdzewna' },
+      { value: 'aluminium', label: 'Aluminium' },
+      { value: 'tworzywo', label: 'Tworzywo sztuczne' },
+    ]},
+    { key: 'adrClass', label: 'Klasa ADR', type: 'select', options: [
+      { value: 'brak', label: 'Brak' }, { value: '1', label: 'Klasa 1 (mat. wybuchowe)' },
+      { value: '2', label: 'Klasa 2 (gazy)' }, { value: '3', label: 'Klasa 3 (ciecze łatwopal.)' },
+      { value: '8', label: 'Klasa 8 (substancje żrące)' },
+    ]},
+  ],
+
+  // ── Agricultural ────────────────────────────────────────────────────────
+  'ciagnik': [
+    { key: 'ptoRpm', label: 'WOM (rpm)', type: 'select', options: [
+      { value: '540', label: '540 rpm' }, { value: '1000', label: '1000 rpm' },
+      { value: '540/1000', label: '540/1000 rpm' }, { value: 'eco', label: 'ECO' },
+    ]},
+    { key: 'hasFrontLinkage', label: 'TUZ przedni', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+    { key: 'hydraulicOutputs', label: 'Wyjścia hydrauliczne', type: 'number', unit: 'szt.' },
+    { key: 'cabin', label: 'Kabina', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'kombajn': [
+    { key: 'bodySubtype', label: 'Typ uprawy', type: 'select', options: [
+      { value: 'zbozowy', label: 'Zbożowy' }, { value: 'kukurydza', label: 'Kukurydza' },
+      { value: 'rzepak', label: 'Rzepak' }, { value: 'uniwersalny', label: 'Uniwersalny' },
+    ]},
+    { key: 'workingWidth', label: 'Szerokość heder (cm)', type: 'number', unit: 'cm' },
+    { key: 'tankCapacity', label: 'Pojemność zbiornika ziarna (L)', type: 'number', unit: 'L' },
+    { key: 'hasStrawChopper', label: 'Rozdrabniacz słomy', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'opryskiwacz': [
+    { key: 'selfPropelled', label: 'Typ', type: 'radio', options: [
+      { value: 'samojezdny', label: 'Samojezdny' }, { value: 'zawieszany', label: 'Zawieszany' },
+      { value: 'przyczepiany', label: 'Przyczepiany' },
+    ]},
+    { key: 'workingWidth', label: 'Szerokość robocza (m)', type: 'number', unit: 'm' },
+    { key: 'tankCapacity', label: 'Pojemność zbiornika (L)', type: 'number', unit: 'L' },
+    { key: 'hasGps', label: 'Prowadzenie GPS', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'prasa': [
+    { key: 'bodySubtype', label: 'Typ bel', type: 'select', options: [
+      { value: 'okragle', label: 'Bele okrągłe' }, { value: 'prostokatne', label: 'Bele prostokątne' },
+    ]},
+    { key: 'workingWidth', label: 'Szerokość podbierania (cm)', type: 'number', unit: 'cm' },
+    { key: 'hasNetWrap', label: 'Owijarka siatką', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'siewnik': [
+    { key: 'workingWidth', label: 'Szerokość robocza (m)', type: 'number', unit: 'm' },
+    { key: 'tankCapacity', label: 'Pojemność skrzyni nasiennej (L)', type: 'number', unit: 'L' },
+    { key: 'rowSpacing', label: 'Rozstaw rzędów (cm)', type: 'number', unit: 'cm' },
+  ],
+
+  // ── Construction ─────────────────────────────────────────────────────────
+  'koparka': [
+    { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
+    { key: 'maxDiggingDepth', label: 'Max. głębokość kopania (m)', type: 'number', unit: 'm' },
+    { key: 'bucketCapacity', label: 'Pojemność łyżki (L)', type: 'number', unit: 'L' },
+    { key: 'undercarriage', label: 'Podwozie', type: 'select', options: [
+      { value: 'gabki-gumowe', label: 'Gąsienice gumowe' },
+      { value: 'gabki-stalowe', label: 'Gąsienice stalowe' },
+      { value: 'kolowe', label: 'Kołowe' },
+    ]},
+    { key: 'tailSwing', label: 'Tylni zwis', type: 'select', options: [
+      { value: 'standardowy', label: 'Standardowy' },
+      { value: 'ograniczony', label: 'Ograniczony' },
+      { value: 'zerowy', label: 'Zerowy' },
+    ]},
+  ],
+  'minikopiarka': [
+    { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
+    { key: 'maxDiggingDepth', label: 'Max. głębokość kopania (m)', type: 'number', unit: 'm' },
+    { key: 'bucketCapacity', label: 'Pojemność łyżki (L)', type: 'number', unit: 'L' },
+    { key: 'hasOffsetBoom', label: 'Offset ramię', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'ladowarka': [
+    { key: 'bucketCapacity', label: 'Pojemność łyżki (m³)', type: 'number', unit: 'm³' },
+    { key: 'liftHeight', label: 'Wysokość podnoszenia (m)', type: 'number', unit: 'm' },
+    { key: 'hasPalletForks', label: 'Widelce paletowe', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+    { key: 'hasTelescopicArm', label: 'Ramię teleskopowe', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'spycharka': [
+    { key: 'bodySubtype', label: 'Typ lemiesza', type: 'select', options: [
+      { value: 'prosty', label: 'Lemiesz prosty (S)' },
+      { value: 'u-blade', label: 'Lemiesz U' },
+      { value: 's-blade', label: 'Lemiesz S-blade' },
+    ]},
+    { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
+    { key: 'hasRipper', label: 'Spulchniacz', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'walec': [
+    { key: 'bodySubtype', label: 'Typ walca', type: 'select', options: [
+      { value: 'jednostkowy', label: 'Jednostkowy (wibracyjny)' },
+      { value: 'dwuwalcowy', label: 'Dwuwalcowy' },
+      { value: 'ogumiony', label: 'Ogumiony' },
+    ]},
+    { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
+    { key: 'workingWidth', label: 'Szerokość robocza (cm)', type: 'number', unit: 'cm' },
+    { key: 'hasVibration', label: 'Wibrator', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'zuraw': [
+    { key: 'bodySubtype', label: 'Typ żurawia', type: 'select', options: [
+      { value: 'wiezowy', label: 'Wieżowy' }, { value: 'mobilny', label: 'Mobilny' },
+      { value: 'samojezdny', label: 'Samojezdny' },
+    ]},
+    { key: 'maxLoad', label: 'Udźwig max (t)', type: 'number', unit: 't' },
+    { key: 'maxBoom', label: 'Długość wysięgnika (m)', type: 'number', unit: 'm' },
+  ],
+}
+
 const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
 
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchTrims, fetchEnginesByTrim, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchTrims, fetchEnginesByTrim, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext, fetchVehicleSubtypes } = useTaxonomy()
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { fetchCategories } = useCategories()
@@ -2016,6 +2257,7 @@ const models = ref<TaxonomyItem[]>([])
 const generations = ref<Generation[]>([])
 const trims = ref<TaxonomyItem[]>([])
 const engines = ref<EngineVersion[]>([])
+const subtypes = ref<VehicleSubtype[]>([])
 const fuelTypes = ref<TaxonomyItem[]>([])
 const gearboxes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
@@ -2195,6 +2437,7 @@ const form = reactive({
     modelId: null as number | null,
     generationId: null as number | null,
     trimId: null as number | null,
+    vehicleSubtypeId: null as number | null,
     engineVersionId: null as number | null,
     fuelTypeId: null as number | null,
     gearboxId: null as number | null,
@@ -2247,6 +2490,14 @@ const fieldErrors = computed(() => {
     if (form.power && form.power > 5000) e.power = 'Podana moc wydaje się nieprawidłowa (>5000 KM).'
     if (form.mileage !== null && form.mileage !== undefined && form.mileage < 0) e.mileage = 'Przebieg nie może być ujemny.'
     return e
+})
+
+const selectedSubtype = computed(() =>
+    subtypes.value.find(s => s.id === form.vehicleSubtypeId) ?? null
+)
+const subtypeExtraFields = computed<ExtraField[]>(() => {
+    const slug = selectedSubtype.value?.slug
+    return (slug && SUBTYPE_EXTRA_FIELDS[slug]) ? SUBTYPE_EXTRA_FIELDS[slug] : []
 })
 
 const brandTextInput = ref('')
@@ -2522,10 +2773,18 @@ async function onCategory(catId: number) {
     if (changed) {
         form.brandId = null; form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
         models.value = []; generations.value = []; trims.value = []; engines.value = []
+        form.vehicleSubtypeId = null
+        subtypes.value = []
         for (const key of Object.keys(extras)) delete extras[key]
         brandTextInput.value = ''
         modelTextInput.value = ''
         form.featureIds = []
+    }
+    // Load subtypes for this category
+    try {
+        subtypes.value = await fetchVehicleSubtypes(catId)
+    } catch {
+        subtypes.value = []
     }
     // Reload brands filtered by category (fall back to all brands if none returned)
     const cfg = categoryConfig.value
@@ -2954,6 +3213,13 @@ async function submit() {
             if (extras.fuelConsumptionMix != null) cleanEdit.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
             if (extras.euroNorm) cleanEdit.euroNorm = extras.euroNorm
             if (extras.colorFinish) cleanEdit.colorFinish = extras.colorFinish
+            // Subtype and subtype-specific fields
+            if (form.vehicleSubtypeId != null) cleanEdit.vehicleSubtypeId = form.vehicleSubtypeId
+            if (extras.operatingWeight != null) cleanEdit.operatingWeightKg = extras.operatingWeight
+            if (extras.workingWidth != null) cleanEdit.workingWidthCm = extras.workingWidth
+            if (extras.maxDiggingDepth != null) cleanEdit.maxDiggingDepthM = extras.maxDiggingDepth
+            if (extras.bucketCapacity != null) cleanEdit.bucketCapacityL = extras.bucketCapacity
+            if (extras.tankCapacity != null) cleanEdit.tankCapacityL = extras.tankCapacity
             // Vehicle history fields
             if (history.ownersCount !== null) cleanEdit.ownersCount = history.ownersCount
             cleanEdit.isImported = history.isImported
@@ -3037,6 +3303,13 @@ async function submit() {
             if (extras.fuelConsumptionMix != null) cleanBody.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
             if (extras.euroNorm) cleanBody.euroNorm = extras.euroNorm
             if (extras.colorFinish) cleanBody.colorFinish = extras.colorFinish
+            // Subtype and subtype-specific fields
+            if (form.vehicleSubtypeId != null) cleanBody.vehicleSubtypeId = form.vehicleSubtypeId
+            if (extras.operatingWeight != null) cleanBody.operatingWeightKg = extras.operatingWeight
+            if (extras.workingWidth != null) cleanBody.workingWidthCm = extras.workingWidth
+            if (extras.maxDiggingDepth != null) cleanBody.maxDiggingDepthM = extras.maxDiggingDepth
+            if (extras.bucketCapacity != null) cleanBody.bucketCapacityL = extras.bucketCapacity
+            if (extras.tankCapacity != null) cleanBody.tankCapacityL = extras.tankCapacity
             // Vehicle history fields
             if (history.ownersCount !== null) cleanBody.ownersCount = history.ownersCount
             cleanBody.isImported = history.isImported
@@ -3689,6 +3962,26 @@ onBeforeUnmount(() => {
 .finput--error {
     border-color: rgba($red, 0.6) !important;
     &:focus { border-color: $red !important; }
+}
+
+.extras-section-divider {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 4px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+
+    &::before, &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.08);
+    }
 }
 
 .field-error {
