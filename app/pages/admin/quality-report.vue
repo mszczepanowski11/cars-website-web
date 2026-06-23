@@ -213,7 +213,7 @@ const ReportSection = defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '../admin/shared-admin.scss';
+@import '../admin/shared-admin.scss';
 
 .admin-topbar {
     display: flex;
