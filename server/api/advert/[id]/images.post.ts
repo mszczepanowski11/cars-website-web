@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     }
     const MAX_SIZE = 10 * 1024 * 1024
     if (filePart.data.length > MAX_SIZE) {
-        throw createError({ statusCode: 400, statusMessage: 'Plik jest zbyt duży. Maksymalny rozmiar to 10 MB.' })
+        throw createError({ statusCode: 400, statusMessage: 'Payload Too Large', message: 'Plik jest zbyt duży. Maksymalny rozmiar to 10 MB.', data: { message: 'Plik jest zbyt duży. Maksymalny rozmiar to 10 MB.' } })
     }
 
     console.log(`[images.post] advertId=${id} file=${filePart.filename ?? 'blob'} type=${fileType} size=${filePart.data.length}B`)
@@ -66,17 +66,15 @@ export default defineEventHandler(async (event) => {
         })
     } catch (networkErr) {
         console.error('[images.post] network error calling backend:', networkErr)
-        throw createError({ statusCode: 502, statusMessage: 'Błąd sieci przy zapisywaniu zdjęcia.' })
+        throw createError({ statusCode: 502, statusMessage: 'Bad Gateway', message: 'Błąd sieci przy zapisywaniu zdjęcia.', data: { message: 'Błąd sieci przy zapisywaniu zdjęcia.' } })
     }
 
     const responseText = await response.text()
     console.log(`[images.post] backend response: status=${response.status} body=${responseText.slice(0, 200)}`)
 
     if (!response.ok) {
-        throw createError({
-            statusCode: response.status,
-            statusMessage: tryParseMessage(responseText) ?? `Błąd backendu: ${response.status}`,
-        })
+        const backendMsg = tryParseMessage(responseText) ?? `Blad backendu: ${response.status}`
+        throw createError({ statusCode: response.status, statusMessage: 'Error', message: backendMsg, data: { message: backendMsg } })
     }
 
     try {

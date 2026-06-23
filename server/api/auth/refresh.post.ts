@@ -1,7 +1,7 @@
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
     const refreshToken = getCookie(event, 'refresh_token')
-    if (!refreshToken) throw createError({ statusCode: 401, statusMessage: 'Brak refresh token.' })
+    if (!refreshToken) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
     try {
         const data = await $fetch<{ token: string; refreshToken: string }>(
@@ -16,6 +16,6 @@ export default defineEventHandler(async (event) => {
         deleteCookie(event, 'auth_token')
         deleteCookie(event, 'refresh_token')
         deleteCookie(event, 'auth_status')
-        throw createError({ statusCode: 401, statusMessage: 'Sesja wygasła. Zaloguj się ponownie.' })
+        throw createError({ statusCode: 401, statusMessage: 'Unauthorized', message: 'Sesja wygasła. Zaloguj się ponownie.', data: { message: 'Sesja wygasła. Zaloguj się ponownie.' } })
     }
 })

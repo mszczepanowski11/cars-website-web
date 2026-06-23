@@ -6,9 +6,10 @@ export default defineEventHandler(async (event) => {
     if (config.turnstileSecretKey) {
         const ip = getRequestHeader(event, 'cf-connecting-ip') ?? getRequestHeader(event, 'x-forwarded-for') ?? ''
         const valid = await verifyTurnstile(body.turnstileToken ?? '', config.turnstileSecretKey, ip)
-        if (!valid) throw createError({ statusCode: 400, statusMessage: 'Weryfikacja CAPTCHA nie powiodła się.' })
+        if (!valid) throw createError({ statusCode: 400, statusMessage: 'Captcha failed', message: 'Weryfikacja CAPTCHA nie powiodła się.', data: { message: 'Weryfikacja CAPTCHA nie powiodła się.' } })
     }
 
+    if (!body || typeof body !== 'object') return { success: true }
     const { turnstileToken: _t, ...requestBody } = body
 
     try {

@@ -15,10 +15,10 @@ export default defineEventHandler(async (event) => {
         if (part.filename) {
             const fileType = part.type ?? ''
             if (!allowedImageTypes.includes(fileType)) {
-                throw createError({ statusCode: 400, statusMessage: 'Niedozwolony typ pliku. Dozwolone: JPG, PNG, WebP, GIF.' })
+                throw createError({ statusCode: 400, statusMessage: 'Bad Request', message: 'Niedozwolony typ pliku. Dozwolone: JPG, PNG, WebP, GIF.', data: { message: 'Niedozwolony typ pliku. Dozwolone: JPG, PNG, WebP, GIF.' } })
             }
             if (part.data.length > MAX_SIZE) {
-                throw createError({ statusCode: 400, statusMessage: 'Plik jest zbyt duży. Maksymalny rozmiar to 10 MB.' })
+                throw createError({ statusCode: 400, statusMessage: 'Payload Too Large', message: 'Plik jest zbyt duży. Maksymalny rozmiar to 10 MB.', data: { message: 'Plik jest zbyt duży. Maksymalny rozmiar to 10 MB.' } })
             }
             const blob = new Blob([part.data], { type: fileType })
             formData.append(part.name, blob, part.filename)

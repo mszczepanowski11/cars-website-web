@@ -25,10 +25,16 @@ export function rateLimit(event: any, key: string, maxRequests: number, windowMs
     entry.count++
     if (entry.count > maxRequests) {
         const retryAfter = Math.ceil((entry.resetAt - now) / 1000)
+        const polishMsg = `Zbyt wiele prób. Spróbuj ponownie za ${retryAfter} sekund.`
         setResponseHeader(event, 'Retry-After', String(retryAfter))
+        // statusMessage MUST be ASCII-only — Web Response API (used by Nitro) throws
+        // TypeError on non-ASCII bytes in the status reason phrase, causing an unhandled
+        // exception that Nitro returns as generic 500 "Server Error" instead of 429.
         throw createError({
             statusCode: 429,
-            statusMessage: `Zbyt wiele prób. Spróbuj ponownie za ${retryAfter} sekund.`,
+            statusMessage: 'Too Many Requests',
+            message: polishMsg,
+            data: { message: polishMsg }
         })
     }
 }
