@@ -784,6 +784,87 @@
                         </div>
                     </div>
                     </template>
+
+                    <!-- ── "Inne" (Other) Category Custom Form ── -->
+                    <template v-if="isOtherCategorySelected">
+                        <v-divider class="my-4" />
+                        <div class="hist-section">
+                            <div class="hist-section-title"><v-icon icon="mdi-shape-plus-outline" size="16" />Kategoria niestandardowa</div>
+                            <p class="field-hint" style="margin-bottom:12px">
+                                <v-icon icon="mdi-information-outline" size="12" />
+                                Opisz rodzaj pojazdu/maszyny. Nasz admin zweryfikuje i zatwierdzi kategorię.
+                            </p>
+
+                            <template v-if="!otherCategorySubmitted">
+                                <div class="fields-grid">
+                                    <div class="field">
+                                        <label class="flabel">Nazwa kategorii <span class="req">*</span></label>
+                                        <input
+                                            v-model="otherCategoryForm.categoryName"
+                                            type="text"
+                                            class="finput"
+                                            placeholder="np. Skuter, Quad, Motorówka..."
+                                        />
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="flabel">Opis</label>
+                                        <input
+                                            v-model="otherCategoryForm.description"
+                                            type="text"
+                                            class="finput"
+                                            placeholder="Opisz krótko czego dotyczy ogłoszenie"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="field full-width" style="margin-top:12px">
+                                    <label class="flabel">Dodatkowe parametry (opcjonalne)</label>
+                                    <div v-for="(param, idx) in otherCategoryForm.parameters" :key="idx" class="other-param-row">
+                                        <input
+                                            v-model="param.key"
+                                            type="text"
+                                            class="finput"
+                                            placeholder="np. Pojemność"
+                                        />
+                                        <input
+                                            v-model="param.value"
+                                            type="text"
+                                            class="finput"
+                                            placeholder="np. 500cc"
+                                        />
+                                        <button type="button" class="other-param-remove" @click="removeOtherParameter(idx)">
+                                            <v-icon icon="mdi-delete-outline" size="16" />
+                                        </button>
+                                    </div>
+                                    <button type="button" class="other-param-add" @click="addOtherParameter">
+                                        <v-icon icon="mdi-plus" size="14" />
+                                        Dodaj parametr
+                                    </button>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    class="btn-next"
+                                    style="margin-top:16px"
+                                    :disabled="otherCategorySubmitting || !otherCategoryForm.categoryName.trim()"
+                                    @click="submitOtherCategory"
+                                >
+                                    <v-icon v-if="otherCategorySubmitting" icon="mdi-loading" size="15" class="spin" />
+                                    <v-icon v-else icon="mdi-send-outline" size="15" />
+                                    {{ otherCategorySubmitting ? 'Wysyłanie...' : 'Wyślij do weryfikacji' }}
+                                </button>
+                            </template>
+
+                            <div v-else class="other-cat-success">
+                                <v-icon icon="mdi-check-circle-outline" size="20" />
+                                <div>
+                                    <div class="hq-title">Wniosek wysłany!</div>
+                                    <div class="hq-sub">Nasz admin sprawdzi i zatwierdzi Twoją kategorię. Otrzymasz powiadomienie.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
 
                 <!-- Step 2: Zdjęcia -->
@@ -820,6 +901,58 @@
                             <span>{{ photoUploading ? 'Przetwarzanie...' : 'Dodaj zdjęcia' }}</span>
                         </label>
                     </div>
+
+                    <!-- AI Photo Quality Analysis -->
+                    <div v-if="previews.length > 0" class="photo-ai-section">
+                        <div class="photo-ai-title">
+                            <v-icon icon="mdi-robot-outline" size="14" />
+                            Analiza jakości zdjęć AI
+                        </div>
+                        <div v-for="(preview, index) in previews" :key="`ai-${index}`" class="photo-ai-item">
+                            <div class="photo-ai-thumb">
+                                <img :src="preview" />
+                                <span class="photo-ai-num">{{ index + 1 }}</span>
+                            </div>
+                            <div class="photo-ai-content">
+                                <div v-if="photoAnalysisResults[index]">
+                                    <div v-if="photoAnalysisResults[index].loading" class="photo-ai-loading">
+                                        <v-progress-circular indeterminate size="20" color="primary" />
+                                        <span>Analizuję...</span>
+                                    </div>
+                                    <template v-else>
+                                        <div class="photo-ai-score-row">
+                                            <span class="photo-ai-label">Jakość:</span>
+                                            <v-chip
+                                                size="x-small"
+                                                :color="photoAnalysisResults[index].score >= 7 ? 'success' : photoAnalysisResults[index].score >= 4 ? 'warning' : 'error'"
+                                                variant="tonal"
+                                            >
+                                                {{ photoAnalysisResults[index].score }}/10
+                                            </v-chip>
+                                        </div>
+                                        <p v-if="photoAnalysisResults[index].summary" class="photo-ai-summary">
+                                            {{ photoAnalysisResults[index].summary }}
+                                        </p>
+                                        <ul v-if="photoAnalysisResults[index].issues.length" class="photo-ai-issues">
+                                            <li v-for="issue in photoAnalysisResults[index].issues" :key="issue">{{ issue }}</li>
+                                        </ul>
+                                    </template>
+                                </div>
+                                <v-btn
+                                    size="x-small"
+                                    variant="text"
+                                    color="primary"
+                                    :loading="photoAnalysisResults[index]?.loading"
+                                    @click="analyzePhoto(index, preview)"
+                                    class="photo-ai-btn"
+                                >
+                                    <v-icon icon="mdi-robot-outline" size="14" class="mr-1" />
+                                    Analizuj jakość AI
+                                </v-btn>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Photo quality feedback -->
                     <div class="photo-hints">
                         <div class="photo-hint" :class="photoFeedback.mainOk ? 'ph-ok' : 'ph-warn'">
@@ -2133,6 +2266,70 @@ const vinError = ref('')
 const previewOpen = ref(false)
 const photoUploading = ref(false)
 const paying = ref(false)
+
+// ── AI Photo Quality Analysis ─────────────────────────────────────────────────
+const photoAnalysisResults = ref<Record<number, { score: number, issues: string[], suggestions: string[], summary: string, loading: boolean }>>({})
+
+async function analyzePhoto(index: number, imageUrl: string) {
+    photoAnalysisResults.value[index] = { score: 0, issues: [], suggestions: [], loading: true, summary: '' }
+    try {
+        const result = await $fetch<{ score: number, issues: string[], suggestions: string[], summary: string }>('/api/photos/analyze', {
+            method: 'POST',
+            body: { imageUrl }
+        })
+        photoAnalysisResults.value[index] = { ...result, loading: false }
+    } catch (e) {
+        photoAnalysisResults.value[index] = { score: 0, issues: ['Błąd analizy'], suggestions: [], summary: 'Nie udało się przeanalizować zdjęcia', loading: false }
+    }
+}
+
+// ── "Inne" (Other) Category Custom Form ──────────────────────────────────────
+const otherCategoryForm = reactive({
+    categoryName: '',
+    description: '',
+    parameters: [] as { key: string, value: string }[]
+})
+const otherCategorySubmitted = ref(false)
+const otherCategorySubmitting = ref(false)
+
+function addOtherParameter() {
+    otherCategoryForm.parameters.push({ key: '', value: '' })
+}
+
+function removeOtherParameter(index: number) {
+    otherCategoryForm.parameters.splice(index, 1)
+}
+
+async function submitOtherCategory() {
+    if (!otherCategoryForm.categoryName.trim()) return
+    otherCategorySubmitting.value = true
+    try {
+        const parametersJson = otherCategoryForm.parameters.length > 0
+            ? JSON.stringify(Object.fromEntries(otherCategoryForm.parameters.map(p => [p.key, p.value])))
+            : null
+
+        await $fetch('/api/custom-categories', {
+            method: 'POST',
+            body: {
+                categoryName: otherCategoryForm.categoryName,
+                description: otherCategoryForm.description || null,
+                parametersJson
+            }
+        })
+        otherCategorySubmitted.value = true
+    } catch (e) {
+        console.error('Failed to submit custom category', e)
+    } finally {
+        otherCategorySubmitting.value = false
+    }
+}
+
+const isOtherCategorySelected = computed(() => {
+    const selected = advertCategories.value.find((c: any) => c.id === form.categoryId)
+    return selected?.name?.toLowerCase().includes('inne') ||
+        selected?.slug?.toLowerCase().includes('inne') ||
+        selected?.name?.toLowerCase().includes('other')
+})
 
 // Promotion plan state
 const promoSelected = ref<string>('free')
@@ -6190,4 +6387,167 @@ onBeforeUnmount(() => {
     color: $text-dim;
     margin-top: 4px;
 }
-</style>
+
+// ── AI Photo Quality Analysis ─────────────────────────────────────────────────
+.photo-ai-section {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(var(--v-theme-surface-variant, 148, 163, 184), 0.12);
+    border-radius: 10px;
+    border: 1px solid rgba(var(--v-theme-primary, 99, 102, 241), 0.15);
+}
+
+.photo-ai-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-dim;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.photo-ai-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.photo-ai-thumb {
+    position: relative;
+    flex-shrink: 0;
+    width: 52px;
+    height: 40px;
+    border-radius: 6px;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.photo-ai-num {
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(0,0,0,0.55);
+    border-radius: 3px;
+    padding: 1px 3px;
+}
+
+.photo-ai-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.photo-ai-loading {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: $text-dim;
+    margin-bottom: 4px;
+}
+
+.photo-ai-score-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.photo-ai-label {
+    font-size: 11px;
+    color: $text-dim;
+}
+
+.photo-ai-summary {
+    font-size: 11px;
+    color: $text-dim;
+    margin: 0 0 4px;
+    line-height: 1.4;
+}
+
+.photo-ai-issues {
+    font-size: 11px;
+    color: #f87171;
+    padding-left: 14px;
+    margin: 0 0 4px;
+
+    li {
+        margin-bottom: 2px;
+    }
+}
+
+.photo-ai-btn {
+    margin-top: 4px;
+    font-size: 11px !important;
+}
+
+// ── "Inne" (Other) Category Custom Form ──────────────────────────────────────
+.other-param-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.other-param-remove {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #f87171;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+
+    &:hover {
+        background: rgba(248, 113, 113, 0.12);
+    }
+}
+
+.other-param-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    background: none;
+    border: 1px dashed rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: $text-dim;
+    transition: border-color 0.15s, color 0.15s;
+
+    &:hover {
+        border-color: rgba(99, 102, 241, 0.5);
+        color: $text;
+    }
+}
+
+.other-cat-success {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 8px;
+    color: #4ade80;
+}
+</style></style>
