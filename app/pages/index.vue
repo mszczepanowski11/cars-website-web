@@ -3,7 +3,12 @@
 
         <!-- ─── Hero ─────────────────────────────────────────────────── -->
         <section class="hero-fs">
-            <!-- LEFT: text -->
+            <!-- Full-bleed background image -->
+            <img src="/hero-car.jpg" alt="CARIZO – motoryzacja online" class="hfs-img" fetchpriority="high" />
+            <!-- Gradient overlay: dark from left, bottom vignette -->
+            <div class="hfs-fade" />
+
+            <!-- Text content -->
             <div class="hfs-left">
                 <div class="hfs-left-inner">
                     <div class="hfs-eyebrow">
@@ -31,12 +36,6 @@
                         </NuxtLink>
                     </div>
                 </div>
-            </div>
-
-            <!-- RIGHT: image -->
-            <div class="hfs-right">
-                <img src="/hero-car.jpg" alt="CARIZO – motoryzacja online" class="hfs-img" fetchpriority="high" />
-                <div class="hfs-fade" />
             </div>
 
             <!-- scroll indicator -->
@@ -1083,8 +1082,9 @@ onMounted(async () => {
 // ─── Hero split layout ────────────────────────────────────────────────────────
 
 .hero-fs {
+    position: relative;
     display: flex;
-    align-items: stretch;
+    align-items: center;
     min-height: 660px;
     height: 82vh;
     max-height: 920px;
@@ -1093,46 +1093,9 @@ onMounted(async () => {
     padding-top: $nav-height;
 }
 
-.hfs-left {
-    flex: 0 0 50%;
-    display: flex;
-    align-items: center;
-    padding-left: #{max(4vw, calc((100vw - 1450px) / 2))};
-    padding-right: 48px;
-    padding-top: 48px;
-    padding-bottom: 48px;
-    background: $bg;
-    position: relative;
-    z-index: 2;
-
-    @include respond-to(md) {
-        flex: 0 0 60%;
-        padding-left: 32px;
-        padding-right: 32px;
-    }
-    @include respond-to(sm) {
-        flex: 0 0 100%;
-        padding: 40px 24px;
-    }
-    @include respond-to(xs) {
-        padding: 32px 18px 28px;
-    }
-}
-
-.hfs-left-inner {
-    max-width: 540px;
-    width: 100%;
-}
-
-.hfs-right {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-
-    @include respond-to(sm) { display: none; }
-}
-
 .hfs-img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -1143,8 +1106,38 @@ onMounted(async () => {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(to right, $bg 0%, transparent 40%),
-        linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.35) 100%);
+        linear-gradient(to right, #{$bg} 0%, #{$bg} 22%, rgba(5,5,5,0.82) 42%, rgba(5,5,5,0.45) 60%, transparent 80%),
+        linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.55) 100%);
+}
+
+.hfs-left {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    width: 54%;
+    padding-left: #{max(4vw, calc((100vw - 1450px) / 2))};
+    padding-right: 48px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+
+    @include respond-to(md) {
+        width: 65%;
+        padding-left: 32px;
+        padding-right: 32px;
+    }
+    @include respond-to(sm) {
+        width: 100%;
+        padding: 40px 24px;
+    }
+    @include respond-to(xs) {
+        padding: 32px 18px 28px;
+    }
+}
+
+.hfs-left-inner {
+    max-width: 540px;
+    width: 100%;
 }
 
 // Eyebrow
