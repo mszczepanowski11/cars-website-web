@@ -323,10 +323,14 @@
                             </label>
                             <div class="input-icon-wrap">
                                 <v-icon icon="mdi-calendar-outline" class="input-prefix" size="16" />
-                                <input v-model.number="form.year" type="number" class="finput has-prefix"
-                                    placeholder="np. 2020" min="1900" :max="new Date().getFullYear()" />
+                                <input v-model.number="form.year" type="number"
+                                    :class="['finput has-prefix', fieldErrors.year ? 'finput--error' : '']"
+                                    placeholder="np. 2020" min="1900" :max="new Date().getFullYear() + 1" />
                             </div>
-                            <div v-if="categoryConfig.yearHint" class="field-hint">
+                            <div v-if="fieldErrors.year" class="field-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.year }}
+                            </div>
+                            <div v-else-if="categoryConfig.yearHint" class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.yearHint }}
                             </div>
                         </div>
@@ -373,10 +377,13 @@
                                     <v-icon icon="mdi-lock-outline" size="11" />z silnika
                                 </span>
                             </label>
-                            <input v-model.number="form.power" type="number" class="finput"
-                                :class="{ 'finput--locked': engineLocked.power }"
+                            <input v-model.number="form.power" type="number"
+                                :class="['finput', engineLocked.power ? 'finput--locked' : '', fieldErrors.power ? 'finput--error' : '']"
                                 placeholder="np. 150"
                                 :readonly="engineLocked.power" />
+                            <div v-if="fieldErrors.power" class="field-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.power }}
+                            </div>
                         </div>
 
                         <!-- Gearbox (not for machinery/trailers/parts/motorcycles) -->
@@ -400,10 +407,14 @@
                                 <v-icon
                                     :icon="categoryConfig.mileageLabel?.includes('mth') ? 'mdi-timer-outline' : 'mdi-speedometer'"
                                     class="input-prefix" size="16" />
-                                <input v-model.number="form.mileage" type="number" class="finput has-prefix"
+                                <input v-model.number="form.mileage" type="number"
+                                    :class="['finput has-prefix', fieldErrors.mileage ? 'finput--error' : '']"
                                     :placeholder="categoryConfig.mileageLabel?.includes('mth') ? 'np. 5 000' : 'np. 100 000'" />
                             </div>
-                            <div v-if="categoryConfig.mileageHint" class="field-hint">
+                            <div v-if="fieldErrors.mileage" class="field-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.mileage }}
+                            </div>
+                            <div v-else-if="categoryConfig.mileageHint" class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.mileageHint }}
                             </div>
                         </div>
@@ -432,12 +443,18 @@
 
                                     <!-- Select -->
                                     <div v-else-if="ef.type === 'select'" :class="['field', ef.fullWidth ? 'full-width' : '']">
-                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <label class="flabel">
+                                            {{ ef.label }} <span v-if="ef.required" class="req">*</span>
+                                            <span v-if="efIsLocked(ef.key)" class="field-locked-badge">
+                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika
+                                            </span>
+                                        </label>
                                         <SmartSelect
                                             :model-value="extras[ef.key]"
-                                            @update:model-value="extras[ef.key] = $event"
+                                            @update:model-value="if (!efIsLocked(ef.key)) extras[ef.key] = $event"
                                             :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
                                             :placeholder="`Wybierz ${ef.label.toLowerCase()}`"
+                                            :disabled="efIsLocked(ef.key)"
                                         />
                                         <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
@@ -2196,17 +2213,41 @@ const form = reactive({
 
 const extras = reactive<Record<string, any>>({})
 
-const engineLocked = reactive({ fuelType: false, power: false, capacity: false, consumptionCity: false, consumptionHwy: false, consumptionMix: false })
+const engineLocked = reactive({
+    fuelType: false, power: false, capacity: false,
+    consumptionCity: false, consumptionHwy: false, consumptionMix: false,
+    torque: false, co2: false, euroNorm: false,
+    acceleration: false, topSpeed: false, driveType: false,
+    gearboxType: false, cylinders: false,
+})
 
 const EF_LOCK_MAP: Record<string, keyof typeof engineLocked> = {
     fuelConsumptionCity: 'consumptionCity',
     fuelConsumptionHwy: 'consumptionHwy',
     fuelConsumptionMix: 'consumptionMix',
+    torque:       'torque',
+    co2:          'co2',
+    euroNorm:     'euroNorm',
+    acceleration: 'acceleration',
+    driveType:    'driveType',
 }
 function efIsLocked(key: string): boolean {
     const lockKey = EF_LOCK_MAP[key]
     return lockKey ? engineLocked[lockKey] : false
 }
+
+const currentYear = new Date().getFullYear()
+const fieldErrors = computed(() => {
+    const e: Record<string, string> = {}
+    if (form.year) {
+        if (form.year < 1900) e.year = 'Rok nie może być wcześniejszy niż 1900.'
+        else if (form.year > currentYear + 1) e.year = `Rok nie może być późniejszy niż ${currentYear + 1}.`
+    }
+    if (form.power && form.power < 1) e.power = 'Moc musi być większa niż 0 KM.'
+    if (form.power && form.power > 5000) e.power = 'Podana moc wydaje się nieprawidłowa (>5000 KM).'
+    if (form.mileage !== null && form.mileage !== undefined && form.mileage < 0) e.mileage = 'Przebieg nie może być ujemny.'
+    return e
+})
 
 const brandTextInput = ref('')
 const modelTextInput = ref('')
@@ -2636,18 +2677,23 @@ async function loadContextFeatures() {
     }
 }
 
+function resetEngineLocks() {
+    for (const k of Object.keys(engineLocked) as (keyof typeof engineLocked)[])
+        engineLocked[k] = false
+}
+
 async function onBrand() {
     form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
     models.value = []; generations.value = []; trims.value = []; engines.value = []
     if (form.brandId) models.value = await fetchModels(form.brandId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    resetEngineLocks()
     await loadContextFeatures()
 }
 async function onModel() {
     form.generationId = null; form.trimId = null; form.engineVersionId = null
     generations.value = []; trims.value = []; engines.value = []
     if (form.modelId) generations.value = await fetchGenerations(form.modelId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    resetEngineLocks()
     await loadContextFeatures()
 }
 async function onGen() {
@@ -2660,63 +2706,45 @@ async function onGen() {
         trims.value = loadedTrims
         engines.value = loadedEngines
     }
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    resetEngineLocks()
 }
 async function onTrim() {
     form.engineVersionId = null; engines.value = []
     if (!form.generationId) return
     if (form.trimId) {
-        // Load engines specific to this trim; fall back to all generation engines if none
         const trimEngines = await fetchEnginesByTrim(form.trimId)
         engines.value = trimEngines.length > 0 ? trimEngines : await fetchEngines(form.generationId)
     } else {
         engines.value = await fetchEngines(form.generationId)
     }
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    resetEngineLocks()
 }
 
 watch(() => form.engineVersionId, (newId) => {
-    if (!newId) {
-        engineLocked.fuelType = false
-        engineLocked.power = false
-        engineLocked.capacity = false
-        engineLocked.consumptionCity = false
-        engineLocked.consumptionHwy = false
-        engineLocked.consumptionMix = false
-        return
-    }
-    const engine = engines.value.find((e: any) => e.id === newId)
+    if (!newId) { resetEngineLocks(); return }
+    const engine = engines.value.find((e: any) => e.id === newId) as any
     if (!engine) return
 
-    // Auto-fill fuel type from engine spec
-    if ((engine as any).fuelTypeId) {
-        form.fuelTypeId = (engine as any).fuelTypeId
-        engineLocked.fuelType = true
-    }
-    // Auto-fill power
-    const hp = (engine as any).powerHP ?? (engine as any).horsepower
-    if (hp) {
-        form.power = hp
-        engineLocked.power = true
-    }
-    // Auto-fill displacement
-    if ((engine as any).displacement) {
-        form.engineCapacity = (engine as any).displacement
-        engineLocked.capacity = true
-    }
-    // Auto-fill fuel consumption
-    if ((engine as any).fuelConsumptionCity != null) {
-        extras.fuelConsumptionCity = (engine as any).fuelConsumptionCity
-        engineLocked.consumptionCity = true
-    }
-    if ((engine as any).fuelConsumptionHighway != null) {
-        extras.fuelConsumptionHwy = (engine as any).fuelConsumptionHighway
-        engineLocked.consumptionHwy = true
-    }
-    if ((engine as any).fuelConsumptionCombined != null) {
-        extras.fuelConsumptionMix = (engine as any).fuelConsumptionCombined
-        engineLocked.consumptionMix = true
-    }
+    // ── Core fields ──────────────────────────────────────────────────────────
+    if (engine.fuelTypeId) { form.fuelTypeId = engine.fuelTypeId; engineLocked.fuelType = true }
+    const hp = engine.powerHP ?? engine.horsepower
+    if (hp) { form.power = hp; engineLocked.power = true }
+    if (engine.displacement) { form.engineCapacity = engine.displacement; engineLocked.capacity = true }
+
+    // ── Fuel consumption ─────────────────────────────────────────────────────
+    if (engine.fuelConsumptionCity != null)     { extras.fuelConsumptionCity = engine.fuelConsumptionCity; engineLocked.consumptionCity = true }
+    if (engine.fuelConsumptionHighway != null)   { extras.fuelConsumptionHwy  = engine.fuelConsumptionHighway; engineLocked.consumptionHwy  = true }
+    if (engine.fuelConsumptionCombined != null)  { extras.fuelConsumptionMix  = engine.fuelConsumptionCombined; engineLocked.consumptionMix  = true }
+
+    // ── Extended factory specs ───────────────────────────────────────────────
+    if (engine.torqueNm != null)      { extras.torque      = engine.torqueNm;      engineLocked.torque      = true }
+    if (engine.co2EmissionGkm != null){ extras.co2         = engine.co2EmissionGkm; engineLocked.co2         = true }
+    if (engine.euroNorm)              { extras.euroNorm    = engine.euroNorm;       engineLocked.euroNorm    = true }
+    if (engine.acceleration0100 != null) { extras.acceleration = engine.acceleration0100; engineLocked.acceleration = true }
+    if (engine.topSpeedKmh != null)   { extras.topSpeed    = engine.topSpeedKmh;   engineLocked.topSpeed    = true }
+    if (engine.driveType)             { extras.driveType   = engine.driveType;      engineLocked.driveType   = true }
+    if (engine.gearboxType)           { extras.gearboxType = engine.gearboxType;    engineLocked.gearboxType = true }
+    if (engine.cylinders != null)     { extras.cylinders   = engine.cylinders;      engineLocked.cylinders   = true }
 })
 
 function generateAiDescription() {
@@ -3656,6 +3684,21 @@ onBeforeUnmount(() => {
     opacity: 0.75;
     cursor: not-allowed;
     background: rgba(255,255,255,0.03);
+}
+
+.finput--error {
+    border-color: rgba($red, 0.6) !important;
+    &:focus { border-color: $red !important; }
+}
+
+.field-error {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: $red;
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 500;
 }
 
 .desc-label-row {

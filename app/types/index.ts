@@ -1,7 +1,7 @@
 export interface TaxonomyItem { id: number; name: string }
 export interface SelectOption { value: number | string; label: string; icon?: string; meta?: string }
 export interface Generation extends TaxonomyItem { yearFrom: number; yearTo: number }
-export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number; fuelTypeId?: number; fuelTypeName?: string; fuelConsumptionCity?: number; fuelConsumptionHighway?: number; fuelConsumptionCombined?: number }
+export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number; fuelTypeId?: number; fuelTypeName?: string; fuelConsumptionCity?: number; fuelConsumptionHighway?: number; fuelConsumptionCombined?: number; trimId?: number | null; torqueNm?: number | null; co2EmissionGkm?: number | null; euroNorm?: string | null; acceleration0100?: number | null; topSpeedKmh?: number | null; driveType?: string | null; gearboxType?: string | null; cylinders?: number | null }
 export interface AdvertImage { id: number; url: string; isMain: boolean }
 export interface Feature { id: number; name: string; category: { id: number; name: string; vehicleCategoryId?: number | null } }
 export interface DriveType { id: number; name: string; slug: string }
