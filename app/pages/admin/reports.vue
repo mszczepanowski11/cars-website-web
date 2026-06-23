@@ -12,6 +12,7 @@
                 <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
                 <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
                 <NuxtLink to="/admin/taxonomy" class="nav-item"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item"><v-icon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
                 <div class="nav-divider" />
                 <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
@@ -43,7 +44,7 @@
             <template v-else>
                 <div class="search-bar">
                     <v-icon icon="mdi-magnify" size="18" class="sb-icon" />
-                    <input v-model="search" class="sb-input" placeholder="Szukaj zgłoszeń..." />
+                    <input v-model="search" class="sb-input" placeholder="Szukaj zgłoszeń..." @input="debouncedSearch" />
                 </div>
 
                 <div v-if="reports.length" class="reports-table">
@@ -144,15 +145,13 @@ const filters = [
     { key: 'all', label: 'Wszystkie' },
 ]
 
-const filteredReports = computed(() => {
-    if (!search.value) return reports.value
-    const q = search.value.toLowerCase()
-    return reports.value.filter(r =>
-        r.reason?.toLowerCase().includes(q) ||
-        r.reportedByName?.toLowerCase().includes(q) ||
-        String(r.id).includes(q)
-    )
-})
+const filteredReports = computed(() => reports.value)
+
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
+function debouncedSearch() {
+    if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
+    searchDebounceTimer = setTimeout(() => { page.value = 1; fetchReports() }, 400)
+}
 
 function statusLabel(s: string) {
     const map: Record<string, string> = { Pending: 'Oczekujące', Resolved: 'Rozwiązane', Rejected: 'Odrzucone' }
@@ -172,7 +171,8 @@ async function fetchReports() {
             query: {
                 page: page.value,
                 pageSize,
-                status: activeFilter.value === 'all' ? undefined : activeFilter.value
+                status: activeFilter.value === 'all' ? undefined : activeFilter.value,
+                search: search.value || undefined
             }
         })
         console.log('[Admin/Reports] raw response:', JSON.stringify(raw).slice(0, 600))

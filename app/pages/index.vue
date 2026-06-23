@@ -8,22 +8,24 @@
                 <div class="hfs-left-inner">
                     <div class="hfs-eyebrow">
                         <span class="eyebrow-dot" />
-                        Motoryzacja. Na poziomie premium.
+                        Platforma motoryzacyjna premium
                     </div>
                     <h1 class="hfs-title">
                         Motoryzacja.<br>
                         <span class="title-accent">Na&nbsp;poziomie&nbsp;premium.</span>
                     </h1>
                     <p class="hfs-sub">
-                        Zweryfikowane ogłoszenia, historia VIN, inteligentna wycena AI i profesjonalni sprzedawcy w jednym miejscu.
+                        Kupuj pewniej. Sprzedawaj szybciej.
+                        Zweryfikowane ogłoszenia, historia pojazdu, inteligentna wycena AI
+                        i profesjonalni sprzedawcy <strong>w jednym miejscu.</strong>
                     </p>
                     <div class="hfs-links">
                         <NuxtLink to="/adverts" class="hfs-link hfs-link--primary">
-                            <v-icon icon="mdi-magnify" size="15" />
+                            <v-icon icon="mdi-magnify" size="16" />
                             Znajdź samochód
                         </NuxtLink>
-                        <NuxtLink to="/add-advert" class="hfs-link">
-                            <v-icon icon="mdi-plus-circle-outline" size="15" />
+                        <NuxtLink to="/add-advert" class="hfs-link hfs-link--secondary">
+                            <v-icon icon="mdi-plus-circle-outline" size="16" />
                             Dodaj ogłoszenie
                         </NuxtLink>
                     </div>
@@ -67,41 +69,6 @@
         <section class="search-section">
             <div class="container">
 
-                <!-- Smart search bar with brand autocomplete -->
-                <div class="ss-bar">
-                    <div class="ss-input-wrap">
-                        <v-icon icon="mdi-magnify" size="20" class="ss-icon" />
-                        <input
-                            v-model="smartSearch"
-                            type="text"
-                            class="ss-input"
-                            placeholder="BMW M3, Audi RS6, szukaj ogłoszeń..."
-                            autocomplete="off"
-                            @focus="ssDropOpen = true"
-                            @blur="onSmartBlur"
-                            @keyup.enter="doSearch"
-                        />
-                        <button v-if="smartSearch" class="ss-clear" @click="clearSmartSearch">
-                            <v-icon icon="mdi-close" size="16" />
-                        </button>
-                        <div v-if="ssDropOpen && ssResults.length" class="ss-suggestions">
-                            <div
-                                v-for="b in ssResults"
-                                :key="b.id"
-                                class="ss-item"
-                                @mousedown.prevent="selectSmartBrand(b)"
-                            >
-                                <v-icon icon="mdi-car-outline" size="14" class="ss-item-icon" />
-                                <span>{{ b.name }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="ss-btn" @click="doSearch">
-                        <v-icon icon="mdi-magnify" size="18" />
-                        <span>Szukaj</span>
-                    </button>
-                </div>
-
                 <!-- Category tabs -->
                 <div class="cat-tabs">
                     <button
@@ -116,136 +83,118 @@
                     </button>
                 </div>
 
-                <!-- Dynamic filter grid -->
-                <div class="filter-grid">
-                    <template v-if="currentSearchConfig.hasBrand">
-                        <div class="fg-field">
-                            <label class="fg-label">Marka</label>
-                            <select v-model="searchBrandId" class="fg-select" @change="onBrandChange">
-                                <option :value="null">Wszystkie marki</option>
-                                <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
-                            </select>
-                        </div>
-                        <div v-if="currentSearchConfig.hasModel" class="fg-field">
-                            <label class="fg-label">Model</label>
-                            <select v-model="searchModelId" class="fg-select" :disabled="!searchBrandId" @change="onModelChange">
-                                <option :value="null">{{ searchBrandId ? 'Wszystkie modele' : 'Wybierz markę' }}</option>
-                                <option v-for="m in searchModels" :key="m.id" :value="m.id">{{ m.name }}</option>
-                            </select>
-                        </div>
-                        <div v-if="currentSearchConfig.hasModel && searchGenerations.length" class="fg-field">
-                            <label class="fg-label">Generacja</label>
-                            <select v-model="searchGenerationId" class="fg-select">
-                                <option :value="null">Wszystkie generacje</option>
-                                <option v-for="g in searchGenerations" :key="g.id" :value="g.id">{{ g.name }}</option>
-                            </select>
-                        </div>
-                    </template>
+                <!-- Form panel -->
+                <div class="hs-panel">
 
-                    <div v-if="currentSearchConfig.hasFuel" class="fg-field">
-                        <label class="fg-label">Paliwo</label>
-                        <select v-model="searchFuelId" class="fg-select">
-                            <option :value="null">Wszystkie</option>
-                            <option v-for="f in fuelTypes" :key="f.id" :value="f.id">{{ f.name }}</option>
+                <!-- Level 1: Primary row -->
+                <div class="hs-primary">
+                    <div v-if="currentSearchConfig.hasBrand" class="hsp-field">
+                        <label class="hsp-label">{{ currentSearchConfig.brandLabel ?? 'Marka' }}</label>
+                        <select v-model="searchBrandId" class="hsp-select" @change="onBrandChange">
+                            <option :value="null">Wszystkie marki</option>
+                            <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
                         </select>
                     </div>
-
-                    <div v-if="searchCat === 'auta-osobowe'" class="fg-field">
-                        <label class="fg-label">Skrzynia</label>
-                        <select v-model="searchGearboxId" class="fg-select">
-                            <option :value="null">Wszystkie</option>
-                            <option v-for="g in gearboxes" :key="g.id" :value="g.id">{{ g.name }}</option>
+                    <div v-if="currentSearchConfig.hasBrand && currentSearchConfig.hasModel" class="hsp-field">
+                        <label class="hsp-label">Model</label>
+                        <select v-model="searchModelId" class="hsp-select" :disabled="!searchBrandId" @change="onModelChange">
+                            <option :value="null">{{ searchBrandId ? 'Wszystkie modele' : 'Wybierz markę' }}</option>
+                            <option v-for="m in searchModels" :key="m.id" :value="m.id">{{ m.name }}</option>
                         </select>
                     </div>
-
-                    <div v-if="currentSearchConfig.hasBodyType" class="fg-field">
-                        <label class="fg-label">Nadwozie</label>
-                        <select v-model="searchBodyTypeId" class="fg-select">
-                            <option :value="null">Wszystkie</option>
-                            <option v-for="b in bodyTypes" :key="b.id" :value="b.id">{{ b.name }}</option>
-                        </select>
-                    </div>
-
-                    <div v-if="currentSearchConfig.hasCondition" class="fg-field">
-                        <label class="fg-label">Stan</label>
-                        <select v-model="searchCondition" class="fg-select">
-                            <option value="">Wszystkie</option>
-                            <option value="Nowe">Nowe</option>
-                            <option value="Używane">Używane</option>
-                            <option value="Uszkodzone">Uszkodzone</option>
-                        </select>
-                    </div>
-
-                    <div v-if="currentSearchConfig.subtypes?.length" class="fg-field">
-                        <label class="fg-label">{{ currentSearchConfig.subtypeLabel }}</label>
-                        <select v-model="searchSubtype" class="fg-select">
-                            <option value="">Wszystkie</option>
-                            <option v-for="t in currentSearchConfig.subtypes" :key="t" :value="t">{{ t }}</option>
-                        </select>
-                    </div>
-
-                    <div v-if="currentSearchConfig.hasPartCategory" class="fg-field">
-                        <label class="fg-label">Kategoria części</label>
-                        <select v-model="searchSubtype" class="fg-select">
-                            <option value="">Wszystkie</option>
-                            <option v-for="t in PART_CATEGORIES" :key="t.value" :value="t.value">{{ t.label }}</option>
-                        </select>
-                    </div>
-
-                    <div class="fg-field fg-range">
-                        <label class="fg-label">Cena (PLN)</label>
-                        <div class="fg-range-inputs">
-                            <input v-model="searchPriceFrom" type="number" class="fg-input" placeholder="Od" min="0" />
-                            <span class="fg-range-sep">—</span>
-                            <input v-model="searchPriceTo" type="number" class="fg-input" placeholder="Do" min="0" />
+                    <div class="hsp-field hsp-range">
+                        <label class="hsp-label">Cena (PLN)</label>
+                        <div class="hsp-range-row">
+                            <input v-model="searchPriceFrom" type="number" class="hsp-input" placeholder="Od" min="0" />
+                            <span class="hsp-sep">—</span>
+                            <input v-model="searchPriceTo" type="number" class="hsp-input" placeholder="Do" min="0" />
                         </div>
                     </div>
-
-                    <div class="fg-field fg-range">
-                        <label class="fg-label">Rok produkcji</label>
-                        <div class="fg-range-inputs">
-                            <input v-model="searchYearFrom" type="number" class="fg-input" placeholder="Od" min="1900" :max="currentYear" />
-                            <span class="fg-range-sep">—</span>
-                            <input v-model="searchYearTo" type="number" class="fg-input" placeholder="Do" min="1900" :max="currentYear" />
-                        </div>
-                    </div>
-
-                    <div v-if="currentSearchConfig.hasHours" class="fg-field fg-range">
-                        <label class="fg-label">Motogodziny</label>
-                        <div class="fg-range-inputs">
-                            <input v-model="searchHoursFrom" type="number" class="fg-input" placeholder="Od" min="0" />
-                            <span class="fg-range-sep">—</span>
-                            <input v-model="searchHoursTo" type="number" class="fg-input" placeholder="Do" min="0" />
-                        </div>
-                    </div>
-                    <div v-else-if="currentSearchConfig.hasMileage" class="fg-field fg-range">
-                        <label class="fg-label">Przebieg (km)</label>
-                        <div class="fg-range-inputs">
-                            <input v-model="searchMileageFrom" type="number" class="fg-input" placeholder="Od" min="0" />
-                            <span class="fg-range-sep">—</span>
-                            <input v-model="searchMileageTo" type="number" class="fg-input" placeholder="Do" min="0" />
-                        </div>
-                    </div>
-
-                    <div v-if="currentSearchConfig.hasEngineSize" class="fg-field fg-range">
-                        <label class="fg-label">Pojemność (cm³)</label>
-                        <div class="fg-range-inputs">
-                            <input v-model="searchEngineSizeFrom" type="number" class="fg-input" placeholder="Od" min="0" />
-                            <span class="fg-range-sep">—</span>
-                            <input v-model="searchEngineSizeTo" type="number" class="fg-input" placeholder="Do" min="0" />
-                        </div>
-                    </div>
-
-                    <div v-if="currentSearchConfig.hasPower" class="fg-field fg-range">
-                        <label class="fg-label">Moc (KM)</label>
-                        <div class="fg-range-inputs">
-                            <input v-model="searchPowerFrom" type="number" class="fg-input" placeholder="Od" min="0" />
-                            <span class="fg-range-sep">—</span>
-                            <input v-model="searchPowerTo" type="number" class="fg-input" placeholder="Do" min="0" />
-                        </div>
-                    </div>
+                    <button class="hsp-search-btn" @click="doSearch">
+                        <v-icon icon="mdi-magnify" size="18" />
+                        Szukaj
+                    </button>
                 </div>
 
+                <!-- Więcej filtrów toggle -->
+                <div class="hs-more-row">
+                    <button class="hs-more-btn" @click="showMoreFilters = !showMoreFilters">
+                        <v-icon icon="mdi-tune-variant" size="15" />
+                        Więcej filtrów
+                        <span v-if="homeAdvancedCount" class="hs-more-badge">{{ homeAdvancedCount }}</span>
+                        <v-icon :icon="showMoreFilters ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="15" />
+                    </button>
+                </div>
+
+                <!-- Level 2: Advanced filters (expandable) -->
+                <Transition name="hs-expand">
+                    <div v-if="showMoreFilters" class="hs-expanded">
+                        <div class="hse-grid">
+
+                            <div v-if="fuelTypes.length" class="hse-field">
+                                <label class="hse-label">Paliwo</label>
+                                <select v-model="searchFuelId" class="hse-select">
+                                    <option :value="null">Wszystkie</option>
+                                    <option v-for="f in fuelTypes" :key="f.id" :value="f.id">{{ f.name }}</option>
+                                </select>
+                            </div>
+
+                            <div v-if="gearboxes.length" class="hse-field">
+                                <label class="hse-label">Skrzynia biegów</label>
+                                <select v-model="searchGearboxId" class="hse-select">
+                                    <option :value="null">Wszystkie</option>
+                                    <option v-for="g in gearboxes" :key="g.id" :value="g.id">{{ g.name }}</option>
+                                </select>
+                            </div>
+
+                            <div class="hse-field">
+                                <label class="hse-label">Napęd</label>
+                                <select v-model="searchDriveType" class="hse-select">
+                                    <option value="">Wszystkie</option>
+                                    <option value="FWD">Przedni (FWD)</option>
+                                    <option value="RWD">Tylny (RWD)</option>
+                                    <option value="AWD">4x4 / AWD</option>
+                                </select>
+                            </div>
+
+                            <div class="hse-field hse-range">
+                                <label class="hse-label">Przebieg (km)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchMileageFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchMileageTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
+                            </div>
+
+                            <div class="hse-field hse-range">
+                                <label class="hse-label">Rok produkcji</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchYearFrom" type="number" class="hse-input" placeholder="Od" min="1900" :max="currentYear" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchYearTo" type="number" class="hse-input" placeholder="Do" min="1900" :max="currentYear" />
+                                </div>
+                            </div>
+
+                            <div class="hse-field">
+                                <label class="hse-label">Wyposażenie</label>
+                                <input v-model="searchEquipment" type="text" class="hse-input hse-input--full" placeholder="np. klimatyzacja, nawigacja..." />
+                            </div>
+
+                            <div class="hse-field">
+                                <label class="hse-label">Stan pojazdu</label>
+                                <select v-model="searchCondition" class="hse-select">
+                                    <option value="">Wszystkie</option>
+                                    <option value="Nowe">Nowe</option>
+                                    <option value="Używane">Używane</option>
+                                    <option value="Uszkodzone">Uszkodzone</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </Transition>
+
+                </div><!-- /hs-panel -->
             </div>
         </section>
 
@@ -383,15 +332,10 @@
                 <div class="why-grid">
                     <div v-for="f in feats" :key="f.title" class="why-card">
                         <div class="why-card-icon">
-                            <v-icon :icon="f.icon" size="28" />
+                            <v-icon :icon="f.icon" size="32" />
                         </div>
-                        <div class="why-card-body">
-                            <h3 class="why-card-title">{{ f.title }}</h3>
-                            <p class="why-card-desc">{{ f.desc }}</p>
-                        </div>
-                        <div class="why-card-arrow">
-                            <v-icon icon="mdi-arrow-right" size="16" />
-                        </div>
+                        <h3 class="why-card-title">{{ f.title }}</h3>
+                        <p class="why-card-desc">{{ f.desc }}</p>
                     </div>
                 </div>
             </div>
@@ -424,6 +368,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />do 84 miesięcy</span>
                                 <span><v-icon icon="mdi-check" size="13" />bez ukrytych kosztów</span>
                             </div>
+                            <a href="#" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -436,6 +381,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />brak prowizji</span>
                                 <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%*</span>
                             </div>
+                            <a href="#" class="ing-cta">Oblicz ratę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -448,6 +394,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />zarządzanie online</span>
                                 <span><v-icon icon="mdi-check" size="13" />dedykowany opiekun</span>
                             </div>
+                            <a href="#contact" class="ing-cta">Skontaktuj się <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card ing-card--calc">
                             <div class="ing-card-icon">
@@ -469,6 +416,7 @@
                                     od <strong>{{ ingMonthlyRate.toLocaleString('pl', { maximumFractionDigits: 0 }) }} zł</strong> / miesiąc
                                 </div>
                             </div>
+                            <a href="#" class="ing-cta">Złóż wniosek <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                     </div>
                     <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej. RRSO od 7,99% dotyczy oferty przykładowej zgodnie z Ustawą o kredycie konsumenckim; aktualna stawka może się różnić.</div>
@@ -778,6 +726,7 @@ interface SearchConfig {
     hasBrand: boolean; hasModel: boolean; hasFuel: boolean; hasBodyType: boolean
     hasMileage: boolean; hasHours: boolean; hasPartCategory?: boolean
     hasCondition?: boolean; hasEngineSize?: boolean; hasPower?: boolean
+    hasPayload?: boolean; brandLabel?: string
     subtypeLabel?: string; subtypes?: string[]
 }
 
@@ -786,8 +735,8 @@ const SEARCH_CONFIGS: Record<string, SearchConfig> = {
     'motocykle':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, hasEngineSize: true, subtypeLabel: 'Typ motocykla', subtypes: ['Naked', 'Sport', 'Turystyczny', 'Enduro', 'Skuter', 'Chopper', 'Cross'] },
     'dostawcze':    { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Zabudowa', subtypes: ['Furgon', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Platforma'] },
     'ciezarowe':    { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Typ', subtypes: ['Ciągnik siodłowy', 'Skrzyniowy', 'Wywrotka', 'Chłodnia', 'Cysterna', 'Śmieciarka'] },
-    'czesci':       { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, hasPartCategory: true },
-    'budowlane':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ maszyny', subtypes: ['Koparka gąsienicowa', 'Koparko-ładowarka', 'Minieksawator', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka'] },
+    'czesci':       { hasBrand: true,  hasModel: true,  hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, hasPartCategory: true, brandLabel: 'Marka pojazdu' },
+    'budowlane':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, hasPayload: true, subtypeLabel: 'Typ maszyny', subtypes: ['Koparka gąsienicowa', 'Koparko-ładowarka', 'Minieksawator', 'Ładowarka', 'Dźwig', 'Walec drogowy', 'Zagęszczarka'] },
     'rolnicze':     { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ maszyny', subtypes: ['Ciągnik', 'Kombajn', 'Siewnik', 'Pług', 'Prasa', 'Opryskiwacz', 'Rozsiewacz'] },
     'maszyny':      { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ', subtypes: ['Wózek widłowy', 'Dźwig/Żuraw', 'Platforma robocza', 'Agregat prądotwórczy', 'Sprężarka', 'Pompa'] },
     'przyczepy':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, subtypeLabel: 'Typ', subtypes: ['Naczepa plandeka', 'Laweta', 'Wywrotka', 'Kempingowa', 'Kontenerowa'] },
@@ -832,7 +781,13 @@ const searchEngineSizeFrom = ref('')
 const searchEngineSizeTo = ref('')
 const searchPowerFrom = ref('')
 const searchPowerTo = ref('')
+const searchPayloadFrom = ref('')
+const searchPayloadTo = ref('')
 const searchCondition = ref('')
+const searchLocation = ref('')
+const searchDriveType = ref('')
+const searchEquipment = ref('')
+const showMoreFilters = ref(false)
 const searchModels = ref<TaxonomyItem[]>([])
 const searchGenerations = ref<any[]>([])
 const searchGenerationId = ref<number | null>(null)
@@ -852,6 +807,18 @@ const ssResults = computed(() => {
 
 const currentSearchConfig = computed(() => SEARCH_CONFIGS[searchCat.value] ?? SEARCH_CONFIGS['auta-osobowe'])
 
+const homeAdvancedCount = computed(() => {
+    let n = 0
+    if (searchFuelId.value) n++
+    if (searchGearboxId.value) n++
+    if (searchDriveType.value) n++
+    if (searchMileageFrom.value || searchMileageTo.value) n++
+    if (searchYearFrom.value || searchYearTo.value) n++
+    if (searchEquipment.value) n++
+    if (searchCondition.value) n++
+    return n
+})
+
 function selectSearchCat(slug: string) {
     searchCat.value = slug
     searchBrandId.value = null
@@ -866,6 +833,9 @@ function selectSearchCat(slug: string) {
     searchEngineSizeTo.value = ''
     searchPowerFrom.value = ''
     searchPowerTo.value = ''
+    searchPayloadFrom.value = ''
+    searchPayloadTo.value = ''
+    searchLocation.value = ''
     searchModels.value = []
     searchGenerations.value = []
     const cat = homeCategories.find((c: any) => c.slug === slug)
@@ -940,13 +910,17 @@ function doSearch() {
     if (searchYearTo.value) query.yearTo = searchYearTo.value
     if (searchMileageFrom.value) query.mileageFrom = searchMileageFrom.value
     if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
-    if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
-    if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
+    if (searchHoursFrom.value) query.mileageFrom = searchHoursFrom.value
+    if (searchHoursTo.value) query.mileageTo = searchHoursTo.value
+    if (searchPayloadFrom.value) query.payloadFrom = searchPayloadFrom.value
+    if (searchPayloadTo.value) query.payloadTo = searchPayloadTo.value
     if (searchEngineSizeFrom.value) query.engineSizeFrom = searchEngineSizeFrom.value
     if (searchEngineSizeTo.value) query.engineSizeTo = searchEngineSizeTo.value
     if (searchPowerFrom.value) query.powerFrom = searchPowerFrom.value
     if (searchPowerTo.value) query.powerTo = searchPowerTo.value
     if (searchCondition.value) query.condition = searchCondition.value
+    if (searchDriveType.value) query.driveType = searchDriveType.value
+    if (searchEquipment.value.trim()) query.textSearch = searchEquipment.value.trim()
     const cat = homeCategories.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })
@@ -1126,6 +1100,9 @@ onMounted(async () => {
         flex: 0 0 100%;
         padding: 40px 24px;
     }
+    @include respond-to(xs) {
+        padding: 32px 18px 28px;
+    }
 }
 
 .hfs-left-inner {
@@ -1192,7 +1169,8 @@ onMounted(async () => {
     margin-bottom: 24px;
 
     @include respond-to(md) { font-size: 52px; letter-spacing: -1.5px; }
-    @include respond-to(sm) { font-size: 38px; letter-spacing: -1px; }
+    @include respond-to(sm) { font-size: 36px; letter-spacing: -1px; }
+    @include respond-to(xs) { font-size: 28px; letter-spacing: -1px; line-height: 1.1; }
 }
 
 .title-accent {
@@ -1204,14 +1182,15 @@ onMounted(async () => {
 .hfs-sub {
     font-size: 15px;
     color: rgba(255,255,255,0.55);
-    line-height: 1.8;
-    margin-bottom: 28px;
-    max-width: 460px;
+    line-height: 1.75;
+    margin-bottom: 32px;
+    max-width: 480px;
     font-weight: 400;
 
     strong { color: rgba(255,255,255,0.8); font-weight: 600; }
 
-    @include respond-to(sm) { font-size: 14px; }
+    @include respond-to(sm) { font-size: 14px; line-height: 1.7; margin-bottom: 28px; }
+    @include respond-to(xs) { font-size: 13.5px; }
 }
 
 // ─── Category tiles ───────────────────────────────────────────────────────────
@@ -1394,26 +1373,58 @@ onMounted(async () => {
 
 .hfs-links {
     display: flex;
-    gap: 24px;
+    gap: 12px;
     flex-wrap: wrap;
+    align-items: center;
+
+    @include respond-to(xs) {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
 
 .hfs-link {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    color: rgba(255,255,255,0.5);
-    font-size: 13px;
-    font-weight: 500;
+    justify-content: center;
+    gap: 7px;
+    padding: 13px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
     text-decoration: none;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    white-space: nowrap;
+    min-height: 48px;
 
-    &:hover { color: rgba(255,255,255,0.85); }
+    @include respond-to(xs) {
+        width: 100%;
+        padding: 14px 20px;
+    }
 
     &--primary {
-        color: $red;
-        font-weight: 600;
-        &:hover { color: lighten(#8B0D1D, 20%); }
+        background: $red;
+        color: #fff;
+        border: 2px solid $red;
+        box-shadow: 0 4px 20px rgba($red, 0.35);
+
+        &:hover {
+            opacity: 0.88;
+            box-shadow: 0 6px 28px rgba($red, 0.45);
+        }
+    }
+
+    &--secondary {
+        background: transparent;
+        color: rgba(255,255,255,0.82);
+        border: 2px solid rgba(255,255,255,0.22);
+
+        &:hover {
+            border-color: rgba(255,255,255,0.5);
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
     }
 }
 
@@ -1536,61 +1547,348 @@ onMounted(async () => {
     100% { background-position: -200% 0; }
 }
 
-// ── Search section ────────────────────────────────────────────────────────────
-// ─── Search section ──────────────────────────────────────────────────────────
+// ─── Search section ───────────────────────────────────────────────────────────
 
 .search-section {
-    padding: 40px 0 48px;
+    padding: 40px 0 56px;
     border-bottom: 1px solid $border;
 }
 
-// Smart search bar
-.ss-bar {
-    display: flex;
-    align-items: stretch;
+// Glass card wrapping the entire form
+.hs-panel {
     background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: 14px;
-    margin-bottom: 20px;
-    height: 58px;
-    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.28), 0 1px 0 rgba(255,255,255,0.06) inset;
 
-    &:focus-within { border-color: rgba($red, 0.5); box-shadow: 0 0 0 3px rgba($red, 0.07); }
+    @include respond-to(sm) { padding: 18px 16px; border-radius: 16px; }
+    @include respond-to(xs) { padding: 16px 14px; }
 }
 
-.ss-input-wrap {
+// ─── Shared field token (used by both hsp and hse) ───────────────────────────
+
+// ─── Primary row ─────────────────────────────────────────────────────────────
+
+.hs-primary {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.hsp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 130px;
+
+    &.hsp-range { flex: 1.5; min-width: 200px; }
+
+    @include respond-to(sm) { flex: 1 1 calc(50% - 5px); }
+    @include respond-to(xs) { flex: 1 1 100%; }
+}
+
+.hsp-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-left: 2px;
+    white-space: nowrap;
+}
+
+.hsp-select {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 14px;
+    min-height: 48px;
+    outline: none;
+    width: 100%;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+
+    option { background: #111; color: #fff; }
+    &:focus   { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
+    &:hover   { border-color: rgba(255,255,255,0.2); }
+    &:disabled { opacity: 0.35; cursor: not-allowed; }
+}
+
+// Range: Od/Do share one bordered container
+.hsp-range-row {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    min-height: 48px;
+    overflow: hidden;
+    transition: border-color 0.18s, background 0.18s;
+    &:focus-within { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
+}
+
+.hsp-sep {
+    width: 1px;
+    min-height: 20px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
+    align-self: center;
+    font-size: 0;
+}
+
+.hsp-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 14px;
+    outline: none;
+    min-width: 0;
+
+    &::placeholder { color: rgba(255,255,255,0.25); }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    &--full {
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        width: 100%;
+        padding: 12px 14px;
+        min-height: 48px;
+        transition: border-color 0.18s, background 0.18s;
+        &:focus { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); outline: none; }
+    }
+}
+
+.hsp-search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: $red;
+    color: white;
+    border: none;
+    padding: 0 32px;
+    height: 48px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: 0 4px 18px rgba($red, 0.38);
+    transition: opacity 0.18s, box-shadow 0.18s;
+
+    &:hover  { opacity: 0.88; box-shadow: 0 6px 22px rgba($red, 0.5); }
+    &:active { opacity: 0.75; }
+
+    @include respond-to(sm) { width: 100%; height: 50px; font-size: 15px; }
+}
+
+// ─── Więcej filtrów ───────────────────────────────────────────────────────────
+
+.hs-more-row {
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.hs-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: rgba(255,255,255,0.5);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: border-color 0.18s, color 0.18s, background 0.18s;
+
+    &:hover { border-color: rgba(255,255,255,0.25); color: $text; background: rgba(255,255,255,0.04); }
+}
+
+.hs-more-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: $red;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+// ─── Expanded advanced filters ────────────────────────────────────────────────
+
+.hs-expand-enter-active,
+.hs-expand-leave-active { transition: opacity 0.24s, transform 0.24s; }
+.hs-expand-enter-from,
+.hs-expand-leave-to     { opacity: 0; transform: translateY(-6px); }
+
+.hs-expanded {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.hse-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+
+    @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
+    @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(xs) { grid-template-columns: 1fr; }
+}
+
+.hse-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    &.hse-range { @include respond-to(sm) { grid-column: span 2; } }
+}
+
+.hse-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-left: 2px;
+    white-space: nowrap;
+}
+
+.hse-select {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 14px;
+    min-height: 48px;
+    outline: none;
+    width: 100%;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+
+    option { background: #111; color: #fff; }
+    &:focus { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
+    &:hover { border-color: rgba(255,255,255,0.2); }
+}
+
+.hse-range-row {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    min-height: 48px;
+    overflow: hidden;
+    transition: border-color 0.18s, background 0.18s;
+    &:focus-within { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
+}
+
+.hse-sep {
+    width: 1px;
+    min-height: 20px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
+    align-self: center;
+    font-size: 0;
+}
+
+.hse-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 14px;
+    outline: none;
+    min-width: 0;
+
+    &::placeholder { color: rgba(255,255,255,0.25); }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    &--full {
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        width: 100%;
+        padding: 12px 14px;
+        min-height: 48px;
+        transition: border-color 0.18s, background 0.18s;
+        &:focus { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); outline: none; }
+    }
+}
+
+// ─── Text search (meta row — kept for compatibility) ─────────────────────────
+
+.hs-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    @include respond-to(sm) { flex-direction: column; align-items: stretch; }
+}
+
+.hs-text-wrap {
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 18px;
-    min-width: 0;
+    gap: 8px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 0 14px;
+    height: 48px;
     position: relative;
+    transition: border-color 0.18s;
+    &:focus-within { border-color: rgba($red, 0.5); background: rgba(255,255,255,0.1); }
 }
 
-.ss-icon { color: $text-dim; flex-shrink: 0; }
+.hs-text-icon { color: rgba(255,255,255,0.3); flex-shrink: 0; }
 
-.ss-input {
+.hs-text-input {
     flex: 1;
     background: transparent;
     border: none;
     outline: none;
     color: $text;
-    font-size: 15px;
+    font-size: 14px;
     font-family: 'Inter', sans-serif;
-
-    &::placeholder { color: $text-dark; }
+    &::placeholder { color: rgba(255,255,255,0.25); }
 }
 
-.ss-clear {
+.hs-text-clear {
     background: transparent;
     border: none;
-    color: $text-dim;
+    color: rgba(255,255,255,0.3);
     cursor: pointer;
-    padding: 4px;
+    padding: 2px;
     display: flex;
     align-items: center;
-    transition: color 0.15s;
     &:hover { color: $text; }
 }
 
@@ -1616,32 +1914,10 @@ onMounted(async () => {
     font-size: 14px;
     color: $text-muted;
     transition: background 0.12s, color 0.12s;
-
     &:hover { background: rgba($red, 0.1); color: $text; }
 }
 
 .ss-item-icon { color: $text-dim; flex-shrink: 0; }
-
-.ss-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: $red;
-    color: white;
-    border: none;
-    padding: 0 32px;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    white-space: nowrap;
-    border-radius: 0 14px 14px 0;
-    transition: opacity 0.18s;
-    flex-shrink: 0;
-
-    &:hover { opacity: 0.88; }
-    @include respond-to(sm) { padding: 0 20px; }
-}
 
 // Category tabs
 .cat-tabs {
@@ -1655,6 +1931,12 @@ onMounted(async () => {
     &::-webkit-scrollbar { display: none; }
     -ms-overflow-style: none;
     scrollbar-width: none;
+
+    @include respond-to(xs) {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        overflow-x: unset;
+    }
 }
 
 .cat-tab {
@@ -1673,6 +1955,12 @@ onMounted(async () => {
     font-family: 'Inter', sans-serif;
     transition: all 0.18s;
 
+    @include respond-to(xs) {
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+    }
+
     &:hover { border-color: rgba($red, 0.4); color: $text; }
 
     &--active {
@@ -1683,82 +1971,6 @@ onMounted(async () => {
     }
 }
 
-// Filter grid
-.filter-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 12px;
-
-    @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
-    @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
-    @include respond-to(xs) { grid-template-columns: 1fr; }
-}
-
-.fg-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.fg-label {
-    font-size: 10px;
-    font-weight: 700;
-    color: $text-dim;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
-
-.fg-select {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: 10px;
-    color: $text;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    padding: 10px 12px;
-    outline: none;
-    cursor: pointer;
-    transition: border-color 0.18s, box-shadow 0.18s;
-    min-height: 44px;
-
-    option { background: #111; color: #fff; }
-    &:focus { border-color: rgba($red, 0.5); box-shadow: 0 0 0 2px rgba($red, 0.07); }
-    &:disabled { opacity: 0.35; cursor: not-allowed; }
-}
-
-.fg-range { @include respond-to(sm) { grid-column: span 2; } }
-
-.fg-range-inputs {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.fg-range-sep {
-    color: $text-dark;
-    flex-shrink: 0;
-    font-size: 13px;
-}
-
-.fg-input {
-    flex: 1;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid $border;
-    border-radius: 8px;
-    color: $text;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    padding: 9px 6px;
-    outline: none;
-    min-width: 0;
-    min-height: 42px;
-    transition: border-color 0.2s;
-
-    &::placeholder { color: $text-dark; }
-    &:focus { border-color: rgba($red, 0.5); }
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button { -webkit-appearance: none; }
-}
 
 // ─── Section commons ──────────────────────────────────────────────────────────
 
@@ -1945,7 +2157,16 @@ onMounted(async () => {
 
 // ─── Why CARIZO ───────────────────────────────────────────────────────────────
 
-.why-section { }
+.why-section {
+    position: relative;
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba($red, 0.05) 0%, transparent 70%);
+        pointer-events: none;
+    }
+}
 
 .why-header {
     text-align: center;
@@ -1979,11 +2200,11 @@ onMounted(async () => {
 }
 
 .why-logo {
-    height: 68px;
+    height: 60px;
     width: auto;
     display: block;
     margin: 0 auto 20px;
-    filter: drop-shadow(0 0 24px rgba(139, 13, 29, 0.25));
+    filter: drop-shadow(0 0 28px rgba(139, 13, 29, 0.35));
 }
 
 .why-sub {
@@ -1991,41 +2212,57 @@ onMounted(async () => {
     color: rgba(255, 255, 255, 0.38);
     margin: 0;
     letter-spacing: 0.4px;
-    max-width: 420px;
+    max-width: 440px;
     line-height: 1.6;
 }
 
 .why-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
 
-    @include respond-to(sm) { grid-template-columns: 1fr; }
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(xs) { grid-template-columns: 1fr; }
 }
 
 .why-card {
     display: flex;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
     background: rgba(255,255,255,0.02);
     border: 1px solid $border;
     border-radius: $r-xl;
-    padding: 24px 28px;
-    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    padding: 28px 24px;
+    transition: border-color 0.2s, background 0.2s, transform 0.22s;
     cursor: default;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, $red, rgba($red, 0.4));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s;
+    }
 
     &:hover {
-        border-color: rgba($red, 0.3);
+        border-color: rgba($red, 0.28);
         background: rgba(255,255,255,0.04);
-        transform: translateY(-2px);
+        transform: translateY(-3px);
 
+        &::after { transform: scaleX(1); }
         .why-card-icon { background: rgba($red, 0.15); border-color: rgba($red, 0.3); color: $red; }
-        .why-card-arrow { color: $red; opacity: 1; }
     }
 }
 
 .why-card-icon {
-    flex-shrink: 0;
     width: 56px;
     height: 56px;
     border-radius: 16px;
@@ -2036,29 +2273,23 @@ onMounted(async () => {
     justify-content: center;
     color: $text-dim;
     transition: background 0.2s, border-color 0.2s, color 0.2s;
+    flex-shrink: 0;
 }
 
-.why-card-body { flex: 1; min-width: 0; }
-
 .why-card-title {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     color: $text;
-    margin: 0 0 6px;
+    margin: 0;
+    line-height: 1.3;
 }
 
 .why-card-desc {
     font-size: 13px;
     color: $text-dim;
-    line-height: 1.6;
+    line-height: 1.7;
     margin: 0;
-}
-
-.why-card-arrow {
-    flex-shrink: 0;
-    color: $text-dark;
-    opacity: 0.5;
-    transition: color 0.2s, opacity 0.2s;
+    flex: 1;
 }
 
 // ─── ING Section ──────────────────────────────────────────────────────────────
@@ -2140,6 +2371,22 @@ onMounted(async () => {
 
     &:hover { border-color: rgba(255,102,0,0.35); }
     &--calc { border-color: rgba(255,102,0,0.2); background: rgba(255,102,0,0.04); }
+}
+
+.ing-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #FF6200;
+    text-decoration: none;
+    margin-top: auto;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,102,0,0.15);
+    transition: opacity 0.2s;
+
+    &:hover { opacity: 0.75; }
 }
 
 .ing-card-icon {

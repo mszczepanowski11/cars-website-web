@@ -192,7 +192,7 @@ import type { CarAdvert, PagedResult } from '~/types'
 import { useImageUrl } from '~/composables/useImageUrl'
 
 definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Moje ogłoszenia — CARIZO' })
+useHead({ title: 'Moje ogłoszenia — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getImageUrl } = useImageUrl()
 

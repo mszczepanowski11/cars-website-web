@@ -6,6 +6,7 @@ export default defineNuxtPlugin(() => {
     // won't send identifying data until the user accepts cookies.
     ;(window as any).dataLayer = (window as any).dataLayer || []
     function gtag(...args: unknown[]) { (window as any).dataLayer.push(args) }
+    ;(window as any).gtag = gtag
     gtag('consent', 'default', {
         analytics_storage: 'denied',
         ad_storage: 'denied',

@@ -60,6 +60,8 @@
                         <li>Serwis nie stosuje mechanizmów automatycznego odnawiania Ogłoszeń ani automatycznego pobierania opłat finansowych z kont bankowych lub kart Użytkownika bez jego wyraźnej, każdorazowej i uprzedniej zgody.</li>
                         <li>Ogłoszenie jest ściśle i nierozerwalnie przypisane do jednego, konkretnego pojazdu lub zestawu części zdefiniowanego w momencie jego utworzenia. Zabrania się zmiany przedmiotu Ogłoszenia w trakcie jego emisji (w tym poprzez edycję parametrów, opisu lub zdjęć w celu zaoferowania innego pojazdu w ramach tego samego ogłoszenia).</li>
                         <li>W przypadku intencjonalnego usunięcia Ogłoszenia przez Użytkownika przed zakończeniem standardowego lub przedłużonego okresu publikacji (np. w wyniku wcześniejszej sprzedaży pojazdu), wniesione opłaty za usługi promowania nie podlegają zwrotowi ani proporcjonalnemu rozliczeniu, z zastrzeżeniem praw konsumenckich opisanych w §6.</li>
+                        <li>Płatności za odpłatne usługi promowania realizowane są za pośrednictwem zewnętrznego systemu płatności <strong>imoje</strong>, obsługiwanego przez <strong>ING Bank Śląski S.A.</strong> z siedzibą w Katowicach. Koszty płatności określone są w aktualnym cenniku operatora. CARIZO nie przechowuje danych kart płatniczych — są one przetwarzane wyłącznie przez ING Bank Śląski S.A.</li>
+                        <li>Koszty dostawy towarów w transakcjach zawieranych pomiędzy Użytkownikami Serwisu są ustalane bezpośrednio między stronami transakcji (sprzedającym a kupującym). CARIZO, jako platforma pośrednicząca (marketplace C2C), nie jest stroną tych transakcji i nie pobiera opłat od kupujących z tytułu dostawy.</li>
                     </ol>
                 </section>
 

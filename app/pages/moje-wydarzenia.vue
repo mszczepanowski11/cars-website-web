@@ -174,7 +174,9 @@ async function doDelete() {
         events.value = events.value.filter(e => e.id !== deleteId.value)
         totalCount.value = Math.max(0, totalCount.value - 1)
         deleteId.value = null
-    } catch {} finally {
+    } catch (err: any) {
+        alert(err?.data?.message || 'Nie udało się usunąć wydarzenia.')
+    } finally {
         deleting.value = false
     }
 }

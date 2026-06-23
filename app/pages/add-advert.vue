@@ -306,6 +306,7 @@
                                 placeholder="Wybierz wersję silnika (opcjonalnie)"
                                 prefix-icon="mdi-engine-outline"
                                 search-placeholder="wersji silnika"
+                                @change="onEngineVersionChange(form.engineVersionId)"
                             />
                             <div class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ engines.length }} wersji silnika dostępnych
@@ -321,11 +322,43 @@
                                     :key="e.id"
                                     type="button"
                                     class="ai-hint-chip"
-                                    @click="form.engineVersionId = e.id"
+                                    @click="form.engineVersionId = e.id; onEngineVersionChange(e.id)"
                                 >
                                     {{ e.name }}
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- Engine specs auto-fill preview -->
+                        <div v-if="engineSpecs" class="field full-width">
+                            <div class="engine-specs-preview">
+                                <div class="esp-title">
+                                    <v-icon icon="mdi-information-outline" size="13" />
+                                    Dane techniczne pobrane automatycznie
+                                </div>
+                                <div class="esp-chips">
+                                    <span v-if="engineSpecs.powerHP" class="esp-chip esp-chip--primary">{{ engineSpecs.powerHP }} KM</span>
+                                    <span v-if="engineSpecs.torqueNm" class="esp-chip esp-chip--primary">{{ engineSpecs.torqueNm }} Nm</span>
+                                    <span v-if="engineSpecs.displacement" class="esp-chip esp-chip--secondary">{{ engineSpecs.displacement }} cm³</span>
+                                    <span v-if="engineSpecs.acceleration0100" class="esp-chip esp-chip--secondary">0–100: {{ engineSpecs.acceleration0100 }}s</span>
+                                    <span v-if="engineSpecs.topSpeedKmh" class="esp-chip esp-chip--secondary">Vmax: {{ engineSpecs.topSpeedKmh }} km/h</span>
+                                    <span v-if="engineSpecs.co2EmissionGkm" class="esp-chip esp-chip--success">CO₂: {{ engineSpecs.co2EmissionGkm }} g/km</span>
+                                    <span v-if="engineSpecs.euroNorm" class="esp-chip esp-chip--success">{{ engineSpecs.euroNorm }}</span>
+                                    <span v-if="engineSpecs.avgConsumptionL" class="esp-chip esp-chip--success">{{ engineSpecs.avgConsumptionL }} l/100km</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vehicle subtype — shown when subtypes exist for selected category -->
+                        <div v-if="vehicleSubtypes.length > 0" class="field">
+                            <label class="flabel">Podtyp pojazdu</label>
+                            <SmartSelect
+                                v-model="form.vehicleSubtypeId"
+                                :options="vehicleSubtypeOptions"
+                                placeholder="Np. Ciągnik siodłowy, Wywrotka..."
+                                search-placeholder="podtypów"
+                                clearable
+                            />
                         </div>
 
                         <!-- Year -->
@@ -770,6 +803,87 @@
                         </div>
                     </div>
                     </template>
+
+                    <!-- ── "Inne" (Other) Category Custom Form ── -->
+                    <template v-if="isOtherCategorySelected">
+                        <v-divider class="my-4" />
+                        <div class="hist-section">
+                            <div class="hist-section-title"><v-icon icon="mdi-shape-plus-outline" size="16" />Kategoria niestandardowa</div>
+                            <p class="field-hint" style="margin-bottom:12px">
+                                <v-icon icon="mdi-information-outline" size="12" />
+                                Opisz rodzaj pojazdu/maszyny. Nasz admin zweryfikuje i zatwierdzi kategorię.
+                            </p>
+
+                            <template v-if="!otherCategorySubmitted">
+                                <div class="fields-grid">
+                                    <div class="field">
+                                        <label class="flabel">Nazwa kategorii <span class="req">*</span></label>
+                                        <input
+                                            v-model="otherCategoryForm.categoryName"
+                                            type="text"
+                                            class="finput"
+                                            placeholder="np. Skuter, Quad, Motorówka..."
+                                        />
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="flabel">Opis</label>
+                                        <input
+                                            v-model="otherCategoryForm.description"
+                                            type="text"
+                                            class="finput"
+                                            placeholder="Opisz krótko czego dotyczy ogłoszenie"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="field full-width" style="margin-top:12px">
+                                    <label class="flabel">Dodatkowe parametry (opcjonalne)</label>
+                                    <div v-for="(param, idx) in otherCategoryForm.parameters" :key="idx" class="other-param-row">
+                                        <input
+                                            v-model="param.key"
+                                            type="text"
+                                            class="finput"
+                                            placeholder="np. Pojemność"
+                                        />
+                                        <input
+                                            v-model="param.value"
+                                            type="text"
+                                            class="finput"
+                                            placeholder="np. 500cc"
+                                        />
+                                        <button type="button" class="other-param-remove" @click="removeOtherParameter(idx)">
+                                            <v-icon icon="mdi-delete-outline" size="16" />
+                                        </button>
+                                    </div>
+                                    <button type="button" class="other-param-add" @click="addOtherParameter">
+                                        <v-icon icon="mdi-plus" size="14" />
+                                        Dodaj parametr
+                                    </button>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    class="btn-next"
+                                    style="margin-top:16px"
+                                    :disabled="otherCategorySubmitting || !otherCategoryForm.categoryName.trim()"
+                                    @click="submitOtherCategory"
+                                >
+                                    <v-icon v-if="otherCategorySubmitting" icon="mdi-loading" size="15" class="spin" />
+                                    <v-icon v-else icon="mdi-send-outline" size="15" />
+                                    {{ otherCategorySubmitting ? 'Wysyłanie...' : 'Wyślij do weryfikacji' }}
+                                </button>
+                            </template>
+
+                            <div v-else class="other-cat-success">
+                                <v-icon icon="mdi-check-circle-outline" size="20" />
+                                <div>
+                                    <div class="hq-title">Wniosek wysłany!</div>
+                                    <div class="hq-sub">Nasz admin sprawdzi i zatwierdzi Twoją kategorię. Otrzymasz powiadomienie.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
 
                 <!-- Step 2: Zdjęcia -->
@@ -806,6 +920,58 @@
                             <span>{{ photoUploading ? 'Przetwarzanie...' : 'Dodaj zdjęcia' }}</span>
                         </label>
                     </div>
+
+                    <!-- AI Photo Quality Analysis -->
+                    <div v-if="previews.length > 0" class="photo-ai-section">
+                        <div class="photo-ai-title">
+                            <v-icon icon="mdi-image-search-outline" size="14" />
+                            Analiza jakości zdjęć
+                        </div>
+                        <div v-for="(preview, index) in previews" :key="`ai-${index}`" class="photo-ai-item">
+                            <div class="photo-ai-thumb">
+                                <img :src="preview" />
+                                <span class="photo-ai-num">{{ index + 1 }}</span>
+                            </div>
+                            <div class="photo-ai-content">
+                                <div v-if="photoAnalysisResults[index]">
+                                    <div v-if="photoAnalysisResults[index].loading" class="photo-ai-loading">
+                                        <v-progress-circular indeterminate size="20" color="primary" />
+                                        <span>Analizuję...</span>
+                                    </div>
+                                    <template v-else>
+                                        <div class="photo-ai-score-row">
+                                            <span class="photo-ai-label">Jakość:</span>
+                                            <v-chip
+                                                size="x-small"
+                                                :color="photoAnalysisResults[index].score >= 7 ? 'success' : photoAnalysisResults[index].score >= 4 ? 'warning' : 'error'"
+                                                variant="tonal"
+                                            >
+                                                {{ photoAnalysisResults[index].score }}/10
+                                            </v-chip>
+                                        </div>
+                                        <p v-if="photoAnalysisResults[index].summary" class="photo-ai-summary">
+                                            {{ photoAnalysisResults[index].summary }}
+                                        </p>
+                                        <ul v-if="photoAnalysisResults[index].issues.length" class="photo-ai-issues">
+                                            <li v-for="issue in photoAnalysisResults[index].issues" :key="issue">{{ issue }}</li>
+                                        </ul>
+                                    </template>
+                                </div>
+                                <v-btn
+                                    size="x-small"
+                                    variant="text"
+                                    color="primary"
+                                    :loading="photoAnalysisResults[index]?.loading"
+                                    @click="analyzePhoto(index, selectedFiles[index])"
+                                    class="photo-ai-btn"
+                                >
+                                    <v-icon icon="mdi-magnify" size="14" class="mr-1" />
+                                    Analizuj jakość
+                                </v-btn>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Photo quality feedback -->
                     <div class="photo-hints">
                         <div class="photo-hint" :class="photoFeedback.mainOk ? 'ph-ok' : 'ph-warn'">
@@ -1609,11 +1775,13 @@
 <script setup lang="ts">
 import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption, VehicleSubtype } from '~/types'
 import { useImageUrl } from '~/composables/useImageUrl'
+import { usePhotoAnalysis } from '~/composables/usePhotoAnalysis'
 
 definePageMeta({ middleware: 'auth' })
 useHead({ title: 'Dodaj ogłoszenie — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getImageUrl } = useImageUrl()
+const { analyzePhoto: analyzePhotoLocal } = usePhotoAnalysis()
 
 // ── Category field configuration ──────────────────────────────────────────────
 interface ExtraField {
@@ -2265,6 +2433,11 @@ const driveTypes = ref<DriveType[]>([])
 const colors = ref<CarColor[]>([])
 const allFeatures = ref<Feature[]>([])
 const featuresLoaded = ref(false)
+const trims = ref<TrimItem[]>([])
+const vehicleSubtypes = ref<VehicleSubtype[]>([])
+const partCategories = ref<PartCategory[]>([])
+const partSubcategories = ref<PartSubcategory[]>([])
+const engineSpecs = ref<any>(null)
 const loading = ref(false)
 const error = ref('')
 const limitError = ref<'private_limit_active' | 'private_limit_yearly' | null>(null)
@@ -2294,6 +2467,73 @@ const vinError = ref('')
 const previewOpen = ref(false)
 const photoUploading = ref(false)
 const paying = ref(false)
+
+// ── AI Photo Quality Analysis ─────────────────────────────────────────────────
+const photoAnalysisResults = ref<Record<number, { score: number, issues: string[], suggestions: string[], summary: string, loading: boolean }>>({})
+
+async function analyzePhoto(index: number, file: File) {
+    photoAnalysisResults.value[index] = { score: 0, issues: [], suggestions: [], loading: true, summary: '' }
+    try {
+        const result = await analyzePhotoLocal(file)
+        photoAnalysisResults.value[index] = { ...result, loading: false }
+    } catch {
+        photoAnalysisResults.value[index] = {
+            score: 0,
+            issues: ['Błąd analizy zdjęcia'],
+            suggestions: [],
+            summary: 'Nie udało się przeanalizować zdjęcia',
+            loading: false
+        }
+    }
+}
+
+// ── "Inne" (Other) Category Custom Form ──────────────────────────────────────
+const otherCategoryForm = reactive({
+    categoryName: '',
+    description: '',
+    parameters: [] as { key: string, value: string }[]
+})
+const otherCategorySubmitted = ref(false)
+const otherCategorySubmitting = ref(false)
+
+function addOtherParameter() {
+    otherCategoryForm.parameters.push({ key: '', value: '' })
+}
+
+function removeOtherParameter(index: number) {
+    otherCategoryForm.parameters.splice(index, 1)
+}
+
+async function submitOtherCategory() {
+    if (!otherCategoryForm.categoryName.trim()) return
+    otherCategorySubmitting.value = true
+    try {
+        const parametersJson = otherCategoryForm.parameters.length > 0
+            ? JSON.stringify(Object.fromEntries(otherCategoryForm.parameters.map(p => [p.key, p.value])))
+            : null
+
+        await $fetch('/api/custom-categories', {
+            method: 'POST',
+            body: {
+                categoryName: otherCategoryForm.categoryName,
+                description: otherCategoryForm.description || null,
+                parametersJson
+            }
+        })
+        otherCategorySubmitted.value = true
+    } catch (e) {
+        console.error('Failed to submit custom category', e)
+    } finally {
+        otherCategorySubmitting.value = false
+    }
+}
+
+const isOtherCategorySelected = computed(() => {
+    const selected = advertCategories.value.find((c: any) => c.id === form.categoryId)
+    return selected?.name?.toLowerCase().includes('inne') ||
+        selected?.slug?.toLowerCase().includes('inne') ||
+        selected?.name?.toLowerCase().includes('other')
+})
 
 // Promotion plan state
 const promoSelected = ref<string>('free')
@@ -2452,6 +2692,13 @@ const form = reactive({
     region: null as string | null,
     isNegotiable: false,
     sellerType: 'private' as 'private' | 'dealer',
+    trimId: null as number | null,
+    vehicleSubtypeId: null as number | null,
+    partCategoryId: null as number | null,
+    partSubcategoryId: null as number | null,
+    oemNumber: '',
+    manufacturerPartNumber: '',
+    partManufacturer: '',
 })
 
 const extras = reactive<Record<string, any>>({})
@@ -2641,6 +2888,16 @@ const categoryConfig = computed<CatFieldConfig>(() => {
     return CATEGORY_CONFIGS[slug] ?? DEFAULT_CAT_CONFIG
 })
 
+const isPartsCategorySelected = computed(() => {
+    const partsCategory = advertCategories.value.find(c =>
+        c.slug?.toLowerCase() === 'czesci' ||
+        c.name?.toLowerCase().includes('część') ||
+        c.name?.toLowerCase().includes('czesci') ||
+        c.name?.toLowerCase().includes('parts')
+    )
+    return partsCategory ? form.categoryId === partsCategory.id : false
+})
+
 const featureGroups = computed(() => {
     const g: Record<string, Feature[]> = {}
     for (const f of allFeatures.value) {
@@ -2753,6 +3010,10 @@ const brandOptions = computed<SelectOption[]>(() => brands.value.map(b => ({ val
 const modelOptions = computed<SelectOption[]>(() => models.value.map(m => ({ value: m.id, label: m.name })))
 const generationOptions = computed<SelectOption[]>(() => generations.value.map(g => ({ value: g.id, label: g.name })))
 const engineOptions = computed<SelectOption[]>(() => engines.value.map(e => ({ value: e.id, label: `${e.name} (${e.powerHP ?? e.horsepower ?? '?'}KM)` })))
+const trimOptions = computed<SelectOption[]>(() => trims.value.map(t => ({ value: t.id, label: t.name })))
+const vehicleSubtypeOptions = computed<SelectOption[]>(() => vehicleSubtypes.value.map(s => ({ value: s.id, label: s.namePl ?? s.name })))
+const partCategoryOptions = computed<SelectOption[]>(() => partCategories.value.map(c => ({ value: c.id, label: c.namePl ?? c.name })))
+const partSubcategoryOptions = computed<SelectOption[]>(() => partSubcategories.value.map(s => ({ value: s.id, label: s.namePl ?? s.name })))
 
 const fuelTypeOptions = computed<SelectOption[]>(() => fuelTypes.value.map(f => ({ value: f.id, label: f.name })))
 const gearboxOptions = computed<SelectOption[]>(() => gearboxes.value.map(g => ({ value: g.id, label: g.name })))
@@ -2796,6 +3057,8 @@ async function onCategory(catId: number) {
             brands.value = await fetchBrands()
         }
     }
+    // Load vehicle subtypes for the selected category
+    vehicleSubtypes.value = await fetchVehicleSubtypes(catId)
     // Reload features for the new category context
     if (changed) await loadContextFeatures()
     // Auto-advance to vehicle data step on first category selection
@@ -3252,6 +3515,8 @@ async function submit() {
                 'year', 'mileage', 'price', 'title', 'vin',
                 'city', 'region', 'isNegotiable', 'sellerType',
                 'doorCount', 'seatsCount',
+                'trimId', 'vehicleSubtypeId', 'partCategoryId', 'partSubcategoryId',
+                'oemNumber', 'manufacturerPartNumber', 'partManufacturer',
             ]
             const cleanBody: Record<string, unknown> = {}
             if (form.categoryId) cleanBody.vehicleCategoryId = form.categoryId
@@ -3337,7 +3602,7 @@ async function submit() {
                 const fd = new FormData()
                 fd.append('file', file)
                 try {
-                    await $fetch(`/api/advert/${id}/images`, { method: 'POST', body: fd })
+                    await $fetch(`/api/proxy/api/Advert/${id}/images`, { method: 'POST', body: fd })
                 } catch (imgErr: any) {
                     imageErrors++
                     console.error('[image upload error]', imgErr?.data ?? imgErr?.statusMessage ?? imgErr)
@@ -3439,8 +3704,8 @@ function onBeforeUnload(e: BeforeUnloadEvent) {
 
 onMounted(async () => {
     window.addEventListener('beforeunload', onBeforeUnload)
-    ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value] = await Promise.all([
-        fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories()
+    ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value, partCategories.value] = await Promise.all([
+        fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories(), fetchPartCategories()
     ])
     await loadContextFeatures()
 
@@ -5085,6 +5350,58 @@ onBeforeUnmount(() => {
     .v-icon { color: $text-dark; flex-shrink: 0; }
 }
 
+// ── Engine specs preview ───────────────────────────────────────────────────────
+.engine-specs-preview {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: $r-sm;
+    padding: 10px 14px;
+    margin-top: 4px;
+}
+
+.esp-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: $text-dark;
+    margin-bottom: 8px;
+    .v-icon { flex-shrink: 0; }
+}
+
+.esp-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.esp-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+
+    &--primary {
+        background: rgba($red, 0.12);
+        color: $red;
+        border: 1px solid rgba($red, 0.25);
+    }
+
+    &--secondary {
+        background: rgba(255,255,255,0.05);
+        color: $text-muted;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    &--success {
+        background: rgba(#4ade80, 0.1);
+        color: #4ade80;
+        border: 1px solid rgba(#4ade80, 0.2);
+    }
+}
+
 .ai-hints {
     display: flex;
     align-items: center;
@@ -6299,4 +6616,167 @@ onBeforeUnmount(() => {
     color: $text-dim;
     margin-top: 4px;
 }
-</style>
+
+// ── AI Photo Quality Analysis ─────────────────────────────────────────────────
+.photo-ai-section {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(var(--v-theme-surface-variant, 148, 163, 184), 0.12);
+    border-radius: 10px;
+    border: 1px solid rgba(var(--v-theme-primary, 99, 102, 241), 0.15);
+}
+
+.photo-ai-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-dim;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.photo-ai-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.photo-ai-thumb {
+    position: relative;
+    flex-shrink: 0;
+    width: 52px;
+    height: 40px;
+    border-radius: 6px;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.photo-ai-num {
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(0,0,0,0.55);
+    border-radius: 3px;
+    padding: 1px 3px;
+}
+
+.photo-ai-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.photo-ai-loading {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: $text-dim;
+    margin-bottom: 4px;
+}
+
+.photo-ai-score-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.photo-ai-label {
+    font-size: 11px;
+    color: $text-dim;
+}
+
+.photo-ai-summary {
+    font-size: 11px;
+    color: $text-dim;
+    margin: 0 0 4px;
+    line-height: 1.4;
+}
+
+.photo-ai-issues {
+    font-size: 11px;
+    color: #f87171;
+    padding-left: 14px;
+    margin: 0 0 4px;
+
+    li {
+        margin-bottom: 2px;
+    }
+}
+
+.photo-ai-btn {
+    margin-top: 4px;
+    font-size: 11px !important;
+}
+
+// ── "Inne" (Other) Category Custom Form ──────────────────────────────────────
+.other-param-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.other-param-remove {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #f87171;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+
+    &:hover {
+        background: rgba(248, 113, 113, 0.12);
+    }
+}
+
+.other-param-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    background: none;
+    border: 1px dashed rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: $text-dim;
+    transition: border-color 0.15s, color 0.15s;
+
+    &:hover {
+        border-color: rgba(99, 102, 241, 0.5);
+        color: $text;
+    }
+}
+
+.other-cat-success {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 8px;
+    color: #4ade80;
+}
+</style></style>

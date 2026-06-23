@@ -14,7 +14,6 @@ export const useNotifications = () => {
             const r = await $fetch<PagedResult<Notification>>('/api/proxy/api/Notification', { query: { page, pageSize } })
             if (page === 1) notifications.value = r.items
             else notifications.value.push(...r.items)
-            unreadCount.value = r.items.filter(n => !n.isRead).length
             return r
         } finally {
             loading.value = false

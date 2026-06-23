@@ -190,7 +190,23 @@
                     <span class="age-check-box" :class="{ 'age-check-box--checked': ageConfirmed }">
                         <v-icon v-if="ageConfirmed" icon="mdi-check" size="13" />
                     </span>
-                    <span class="age-check-label">Mam ukończone 18 lat i akceptuję <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> oraz <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink> <span class="req">*</span></span>
+                    <span class="age-check-label">Mam ukończone 18 lat <span class="req">*</span></span>
+                </label>
+
+                <label class="age-check">
+                    <input v-model="termsConfirmed" type="checkbox" class="age-check-input" />
+                    <span class="age-check-box" :class="{ 'age-check-box--checked': termsConfirmed }">
+                        <v-icon v-if="termsConfirmed" icon="mdi-check" size="13" />
+                    </span>
+                    <span class="age-check-label">Akceptuję <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> oraz <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink> <span class="req">*</span></span>
+                </label>
+
+                <label class="age-check">
+                    <input v-model="gdprConfirmed" type="checkbox" class="age-check-input" />
+                    <span class="age-check-box" :class="{ 'age-check-box--checked': gdprConfirmed }">
+                        <v-icon v-if="gdprConfirmed" icon="mdi-check" size="13" />
+                    </span>
+                    <span class="age-check-label">Wyrażam zgodę na przetwarzanie moich danych osobowych przez CARIZO Wiktor Niezgoda w celu realizacji usług świadczonych drogą elektroniczną, zgodnie z <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Polityką prywatności</NuxtLink> <span class="req">*</span></span>
                 </label>
 
                 <div v-if="validationError || error" class="auth-error">
@@ -245,6 +261,8 @@ const nip              = ref('')
 const validationError  = ref('')
 const showPassword     = ref(false)
 const ageConfirmed     = ref(false)
+const termsConfirmed   = ref(false)
+const gdprConfirmed    = ref(false)
 const registrationSuccess = ref(false)
 const registeredEmail = ref('')
 const resending = ref(false)
@@ -287,6 +305,14 @@ async function submit() {
     validationError.value = ''
     if (!ageConfirmed.value) {
         validationError.value = 'Musisz potwierdzić, że masz ukończone 18 lat.'
+        return
+    }
+    if (!termsConfirmed.value) {
+        validationError.value = 'Musisz zaakceptować Regulamin oraz Politykę prywatności.'
+        return
+    }
+    if (!gdprConfirmed.value) {
+        validationError.value = 'Wymagana jest zgoda na przetwarzanie danych osobowych.'
         return
     }
     if (password.value !== passwordConfirm.value) {

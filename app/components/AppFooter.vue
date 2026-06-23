@@ -56,34 +56,27 @@ async function subscribeNewsletter() {
         </div>
 
         <div class="footer-col">
-          <h4>Nawigacja</h4>
-          <NuxtLink to="/">Strona główna</NuxtLink>
-          <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
+          <h4>Firma</h4>
           <NuxtLink to="/#about">O nas</NuxtLink>
           <NuxtLink to="/#contact">Kontakt</NuxtLink>
+          <NuxtLink to="/jak-to-dziala">Jak to działa</NuxtLink>
+          <NuxtLink to="/pomoc">Pomoc i FAQ</NuxtLink>
         </div>
 
         <div class="footer-col">
-          <h4>Informacje</h4>
-          <NuxtLink to="/jak-to-dziala">Jak to działa</NuxtLink>
+          <h4>Dla sprzedających</h4>
+          <NuxtLink to="/add-advert">Dodaj ogłoszenie</NuxtLink>
+          <NuxtLink to="/promote">Pakiety Premium</NuxtLink>
+          <NuxtLink to="/dashboard">Konto biznesowe</NuxtLink>
+          <NuxtLink to="/regulamin-b2b">Regulamin B2B</NuxtLink>
+        </div>
+
+        <div class="footer-col">
+          <h4>Bezpieczeństwo</h4>
           <NuxtLink to="/regulamin">Regulamin</NuxtLink>
           <NuxtLink to="/polityka-prywatnosci">Polityka prywatności</NuxtLink>
-          <NuxtLink to="/polityka-cookies">Polityka cookies</NuxtLink>
-          <NuxtLink to="/pomoc">Pomoc i FAQ</NuxtLink>
-          <button class="footer-cookie-btn" @click="openCookieSettings">Ustawienia plików cookies</button>
-        </div>
-
-        <div class="footer-col">
-          <h4>Dla użytkowników</h4>
-          <NuxtLink to="/dashboard">Moje konto</NuxtLink>
-          <NuxtLink to="/favorites">Ulubione</NuxtLink>
-          <NuxtLink to="/my-adverts">Moje ogłoszenia</NuxtLink>
-        </div>
-
-        <div class="footer-col">
-          <h4>Aplikacja</h4>
-          <span class="footer-soon">Pobierz na iOS <span class="soon-tag">Wkrótce</span></span>
-          <span class="footer-soon">Pobierz na Android <span class="soon-tag">Wkrótce</span></span>
+          <button class="footer-cookie-btn" @click="openCookieSettings">Polityka cookies</button>
+          <NuxtLink to="/#contact">Zgłoś naruszenie</NuxtLink>
         </div>
 
       </div>
@@ -142,7 +135,7 @@ async function subscribeNewsletter() {
 .footer-grid {
   @include container;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 40px;
 
   @include respond-to(md) { grid-template-columns: 1fr 1fr 1fr; }
