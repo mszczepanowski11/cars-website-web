@@ -905,8 +905,8 @@
                     <!-- AI Photo Quality Analysis -->
                     <div v-if="previews.length > 0" class="photo-ai-section">
                         <div class="photo-ai-title">
-                            <v-icon icon="mdi-robot-outline" size="14" />
-                            Analiza jakości zdjęć AI
+                            <v-icon icon="mdi-image-search-outline" size="14" />
+                            Analiza jakości zdjęć
                         </div>
                         <div v-for="(preview, index) in previews" :key="`ai-${index}`" class="photo-ai-item">
                             <div class="photo-ai-thumb">
@@ -943,11 +943,11 @@
                                     variant="text"
                                     color="primary"
                                     :loading="photoAnalysisResults[index]?.loading"
-                                    @click="analyzePhoto(index, preview)"
+                                    @click="analyzePhoto(index, selectedFiles[index])"
                                     class="photo-ai-btn"
                                 >
-                                    <v-icon icon="mdi-robot-outline" size="14" class="mr-1" />
-                                    Analizuj jakość AI
+                                    <v-icon icon="mdi-magnify" size="14" class="mr-1" />
+                                    Analizuj jakość
                                 </v-btn>
                             </div>
                         </div>
@@ -1756,11 +1756,13 @@
 <script setup lang="ts">
 import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption, TrimItem, VehicleSubtype, PartCategory, PartSubcategory } from '~/types'
 import { useImageUrl } from '~/composables/useImageUrl'
+import { usePhotoAnalysis } from '~/composables/usePhotoAnalysis'
 
 definePageMeta({ middleware: 'auth' })
 useHead({ title: 'Dodaj ogłoszenie — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getImageUrl } = useImageUrl()
+const { analyzePhoto: analyzePhotoLocal } = usePhotoAnalysis()
 
 // ── Category field configuration ──────────────────────────────────────────────
 interface ExtraField {
@@ -2270,16 +2272,19 @@ const paying = ref(false)
 // ── AI Photo Quality Analysis ─────────────────────────────────────────────────
 const photoAnalysisResults = ref<Record<number, { score: number, issues: string[], suggestions: string[], summary: string, loading: boolean }>>({})
 
-async function analyzePhoto(index: number, imageUrl: string) {
+async function analyzePhoto(index: number, file: File) {
     photoAnalysisResults.value[index] = { score: 0, issues: [], suggestions: [], loading: true, summary: '' }
     try {
-        const result = await $fetch<{ score: number, issues: string[], suggestions: string[], summary: string }>('/api/photos/analyze', {
-            method: 'POST',
-            body: { imageUrl }
-        })
+        const result = await analyzePhotoLocal(file)
         photoAnalysisResults.value[index] = { ...result, loading: false }
-    } catch (e) {
-        photoAnalysisResults.value[index] = { score: 0, issues: ['Błąd analizy'], suggestions: [], summary: 'Nie udało się przeanalizować zdjęcia', loading: false }
+    } catch {
+        photoAnalysisResults.value[index] = {
+            score: 0,
+            issues: ['Błąd analizy zdjęcia'],
+            suggestions: [],
+            summary: 'Nie udało się przeanalizować zdjęcia',
+            loading: false
+        }
     }
 }
 
