@@ -37,9 +37,10 @@ export default defineEventHandler(async (event) => {
         } catch { /* ignore */ }
         return { success: true }
     } catch (err: any) {
+        const msg = typeof err.data === 'string' ? err.data : 'Nieprawidłowy email lub hasło.'
         throw createError({
             statusCode: err.response?.status ?? 401,
-            statusMessage: err.data ?? 'Nieprawidłowy email lub hasło.'
+            statusMessage: msg
         })
     }
 })

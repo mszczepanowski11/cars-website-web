@@ -17,9 +17,10 @@ export default defineEventHandler(async (event) => {
         })
         return { success: true }
     } catch (err: any) {
+        const msg = typeof err.data === 'string' ? err.data : 'Logowanie przez Facebook nie powiodło się.'
         throw createError({
             statusCode: err.response?.status ?? 401,
-            statusMessage: err.data ?? 'Logowanie przez Facebook nie powiodło się.'
+            statusMessage: msg
         })
     }
 })
