@@ -2865,7 +2865,7 @@ function validateStep(step: number): string | null {
     }
     // Step 5: Opis i cena
     if (step === 5) {
-        if (!form.price) return 'Podaj cenę pojazdu.'
+        if (!form.price || form.price <= 0) return 'Podaj cenę pojazdu (musi być większa od 0).'
         if (!form.region) return 'Wybierz województwo.'
         if (!form.city?.trim()) return 'Podaj miasto.'
         if (!form.description?.trim()) return 'Dodaj opis ogłoszenia.'

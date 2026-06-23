@@ -517,10 +517,17 @@
                     </div>
                     <div class="news-form">
                         <input v-model="email" class="news-input" placeholder="Twój adres email" @keyup.enter="subscribeNewsletter" />
-                        <button class="btn-subscribe" :disabled="subscribeLoading" @click="subscribeNewsletter">
+                        <button class="btn-subscribe" :disabled="subscribeLoading || !newsletterConsent" @click="subscribeNewsletter">
                             {{ subscribeLoading ? 'Zapisywanie...' : 'Zapisz się' }}
                         </button>
                     </div>
+                    <label class="news-consent">
+                        <input v-model="newsletterConsent" type="checkbox" class="news-consent-input" />
+                        <span class="news-consent-box" :class="{ 'news-consent-box--checked': newsletterConsent }">
+                            <v-icon v-if="newsletterConsent" icon="mdi-check" size="11" />
+                        </span>
+                        <span class="news-consent-text">Wyrażam zgodę na otrzymywanie newslettera CARIZO z ofertami i nowościami motoryzacyjnymi. Możesz zrezygnować w każdej chwili klikając link w e-mailu. <NuxtLink to="/polityka-prywatnosci" class="news-pp-link">Polityka prywatności</NuxtLink></span>
+                    </label>
                     <p v-if="subscribeSuccess" class="subscribe-feedback subscribe-ok">{{ subscribeMessage }}</p>
                     <p v-if="subscribeError" class="subscribe-feedback subscribe-err">{{ subscribeError }}</p>
                 </div>
@@ -965,6 +972,7 @@ function formatEventDate(dateStr: string): string {
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
 const email = ref('')
+const newsletterConsent = ref(false)
 const subscribeLoading = ref(false)
 const subscribeSuccess = ref(false)
 const subscribeMessage = ref('')
@@ -976,6 +984,10 @@ async function subscribeNewsletter() {
         subscribeError.value = 'Podaj prawidłowy adres email.'
         return
     }
+    if (!newsletterConsent.value) {
+        subscribeError.value = 'Zaznacz zgodę na otrzymywanie newslettera.'
+        return
+    }
     subscribeLoading.value = true
     subscribeError.value = ''
     subscribeSuccess.value = false
@@ -985,6 +997,7 @@ async function subscribeNewsletter() {
         subscribeMessage.value = res?.message ?? 'Sprawdź swoją skrzynkę email i kliknij link potwierdzający.'
         subscribeSuccess.value = true
         email.value = ''
+        newsletterConsent.value = false
     } catch (e: any) {
         subscribeError.value = e?.data?.message ?? 'Wystąpił błąd. Spróbuj ponownie.'
     } finally {
@@ -2781,6 +2794,43 @@ onMounted(async () => {
 }
 .subscribe-ok  { background: rgba(45,122,58,0.1); border: 1px solid rgba(45,122,58,0.3); color: #4caf50; }
 .subscribe-err { background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.25); color: #e74c3c; }
+
+.news-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+    margin-top: 4px;
+
+    .news-consent-input { display: none; }
+
+    .news-consent-box {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 3px;
+        margin-top: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s, border-color 0.15s;
+
+        &--checked { background: $red; border-color: $red; }
+    }
+
+    .news-consent-text {
+        font-size: 11px;
+        color: rgba(255,255,255,0.5);
+        line-height: 1.5;
+        a { color: rgba(255,255,255,0.7); text-decoration: underline; }
+    }
+}
+
+.news-pp-link {
+    color: rgba(255,255,255,0.7);
+    text-decoration: underline;
+}
 
 // ─── Shared utilities ─────────────────────────────────────────────────────────
 
