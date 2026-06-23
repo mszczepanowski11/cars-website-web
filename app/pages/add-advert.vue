@@ -496,7 +496,7 @@
                                         </label>
                                         <SmartSelect
                                             :model-value="extras[ef.key]"
-                                            @update:model-value="if (!efIsLocked(ef.key)) extras[ef.key] = $event"
+                                            @update:model-value="v => !efIsLocked(ef.key) && (extras[ef.key] = v)"
                                             :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
                                             :placeholder="`Wybierz ${ef.label.toLowerCase()}`"
                                             :disabled="efIsLocked(ef.key)"
