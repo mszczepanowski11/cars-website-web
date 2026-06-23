@@ -7,6 +7,8 @@ export const useTaxonomy = () => {
     fetchModels: (brandId: number) => $fetch<TaxonomyItem[]>(`/api/proxy/api/Taxonomy/brands/${brandId}/models`),
     fetchGenerations: (modelId: number) => $fetch<Generation[]>(`/api/proxy/api/Taxonomy/models/${modelId}/generations`),
     fetchEngines: (generationId: number) => $fetch<EngineVersion[]>(`/api/proxy/api/Taxonomy/generations/${generationId}/engines`),
+    fetchTrims: (generationId: number) => $fetch<TaxonomyItem[]>(`/api/proxy/api/Taxonomy/trims/generation/${generationId}`),
+    fetchEnginesByTrim: (trimId: number) => $fetch<EngineVersion[]>(`/api/proxy/api/Taxonomy/engines/trim/${trimId}`),
     fetchFuelTypes: () => $fetch<TaxonomyItem[]>('/api/proxy/api/Taxonomy/fueltypes'),
     fetchGearboxes: () => $fetch<TaxonomyItem[]>('/api/proxy/api/Taxonomy/gearboxes'),
     fetchBodyTypes: () => $fetch<TaxonomyItem[]>('/api/proxy/api/Taxonomy/bodytypes'),

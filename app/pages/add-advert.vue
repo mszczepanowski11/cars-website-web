@@ -268,6 +268,23 @@
                             </div>
                         </div>
 
+                        <!-- Trim / Version (optional, shown when trims exist for generation) -->
+                        <div v-if="isFieldVisible('generation') && trims.length" class="field">
+                            <label class="flabel">Wersja wyposażenia</label>
+                            <SmartSelect
+                                v-model="form.trimId"
+                                :options="trims.map((t: any) => ({ value: t.id, label: t.name }))"
+                                placeholder="Wybierz wersję (opcjonalnie)"
+                                prefix-icon="mdi-car-cog"
+                                search-placeholder="wersji"
+                                :disabled="!form.generationId"
+                                @change="onTrim"
+                            />
+                            <div class="field-hint">
+                                <v-icon icon="mdi-information-outline" size="12" />{{ trims.length }} wersji dostępnych
+                            </div>
+                        </div>
+
                         <!-- Engine version (loaded after generation selection) -->
                         <div v-if="isFieldVisible('generation') && engines.length" class="field">
                             <label class="flabel">Wersja silnika</label>
@@ -1972,7 +1989,7 @@ const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
 
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchTrims, fetchEnginesByTrim, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext } = useTaxonomy()
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { fetchCategories } = useCategories()
@@ -1980,6 +1997,7 @@ const { fetchCategories } = useCategories()
 const brands = ref<TaxonomyItem[]>([])
 const models = ref<TaxonomyItem[]>([])
 const generations = ref<Generation[]>([])
+const trims = ref<TaxonomyItem[]>([])
 const engines = ref<EngineVersion[]>([])
 const fuelTypes = ref<TaxonomyItem[]>([])
 const gearboxes = ref<TaxonomyItem[]>([])
@@ -2159,6 +2177,7 @@ const form = reactive({
     brandId: null as number | null,
     modelId: null as number | null,
     generationId: null as number | null,
+    trimId: null as number | null,
     engineVersionId: null as number | null,
     fuelTypeId: null as number | null,
     gearboxId: null as number | null,
@@ -2460,8 +2479,8 @@ async function onCategory(catId: number) {
     const changed = form.categoryId !== catId
     form.categoryId = catId
     if (changed) {
-        form.brandId = null; form.modelId = null; form.generationId = null; form.engineVersionId = null
-        models.value = []; generations.value = []; engines.value = []
+        form.brandId = null; form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
+        models.value = []; generations.value = []; trims.value = []; engines.value = []
         for (const key of Object.keys(extras)) delete extras[key]
         brandTextInput.value = ''
         modelTextInput.value = ''
@@ -2618,22 +2637,41 @@ async function loadContextFeatures() {
 }
 
 async function onBrand() {
-    form.modelId = null; form.generationId = null; form.engineVersionId = null
-    models.value = []; generations.value = []; engines.value = []
+    form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
+    models.value = []; generations.value = []; trims.value = []; engines.value = []
     if (form.brandId) models.value = await fetchModels(form.brandId)
     engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
     await loadContextFeatures()
 }
 async function onModel() {
-    form.generationId = null; form.engineVersionId = null
-    generations.value = []; engines.value = []
+    form.generationId = null; form.trimId = null; form.engineVersionId = null
+    generations.value = []; trims.value = []; engines.value = []
     if (form.modelId) generations.value = await fetchGenerations(form.modelId)
     engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
     await loadContextFeatures()
 }
 async function onGen() {
+    form.trimId = null; form.engineVersionId = null; trims.value = []; engines.value = []
+    if (form.generationId) {
+        const [loadedTrims, loadedEngines] = await Promise.all([
+            fetchTrims(form.generationId),
+            fetchEngines(form.generationId),
+        ])
+        trims.value = loadedTrims
+        engines.value = loadedEngines
+    }
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+}
+async function onTrim() {
     form.engineVersionId = null; engines.value = []
-    if (form.generationId) engines.value = await fetchEngines(form.generationId)
+    if (!form.generationId) return
+    if (form.trimId) {
+        // Load engines specific to this trim; fall back to all generation engines if none
+        const trimEngines = await fetchEnginesByTrim(form.trimId)
+        engines.value = trimEngines.length > 0 ? trimEngines : await fetchEngines(form.generationId)
+    } else {
+        engines.value = await fetchEngines(form.generationId)
+    }
     engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
 }
 
@@ -2915,7 +2953,7 @@ async function submit() {
             // ── Create mode: new advert ──
             // Only include fields known by CreateCarAdvertDto
             const ADVERT_FIELDS = [
-                'brandId', 'modelId', 'generationId', 'engineVersionId',
+                'brandId', 'modelId', 'generationId', 'trimId', 'engineVersionId',
                 'fuelTypeId', 'gearboxId', 'bodyTypeId',
                 'year', 'mileage', 'price', 'title', 'vin',
                 'city', 'region', 'isNegotiable', 'sellerType',
@@ -3114,6 +3152,7 @@ onMounted(async () => {
             form.brandId = advert.brand?.id ?? null
             form.modelId = advert.model?.id ?? null
             form.generationId = advert.generation?.id ?? null
+            form.trimId = (advert as any).trimId ?? null
             form.engineVersionId = advert.engineVersion?.id ?? null
             form.fuelTypeId = advert.fuelType?.id ?? null
             form.gearboxId = advert.gearbox?.id ?? null
@@ -3154,7 +3193,14 @@ onMounted(async () => {
             existingImages.value = advert.images ?? []
             if (form.brandId) models.value = await fetchModels(form.brandId)
             if (form.modelId) generations.value = await fetchGenerations(form.modelId)
-            if (form.generationId) engines.value = await fetchEngines(form.generationId)
+            if (form.generationId) {
+                const [loadedTrims, loadedEngines] = await Promise.all([
+                    fetchTrims(form.generationId),
+                    fetchEngines(form.generationId),
+                ])
+                trims.value = loadedTrims
+                engines.value = loadedEngines
+            }
         } catch {
             error.value = 'Nie udało się załadować danych ogłoszenia.'
         }
