@@ -325,7 +325,6 @@
         <section class="section why-section">
             <div class="container">
                 <div class="why-header">
-                    <div class="why-eyebrow">DLACZEGO MY</div>
                     <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" />
                     <p class="why-sub">Łączymy najlepszą technologię z pasją do motoryzacji</p>
                 </div>
