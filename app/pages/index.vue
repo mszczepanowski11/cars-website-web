@@ -332,15 +332,10 @@
                 <div class="why-grid">
                     <div v-for="f in feats" :key="f.title" class="why-card">
                         <div class="why-card-icon">
-                            <v-icon :icon="f.icon" size="28" />
+                            <v-icon :icon="f.icon" size="32" />
                         </div>
-                        <div class="why-card-body">
-                            <h3 class="why-card-title">{{ f.title }}</h3>
-                            <p class="why-card-desc">{{ f.desc }}</p>
-                        </div>
-                        <div class="why-card-arrow">
-                            <v-icon icon="mdi-arrow-right" size="16" />
-                        </div>
+                        <h3 class="why-card-title">{{ f.title }}</h3>
+                        <p class="why-card-desc">{{ f.desc }}</p>
                     </div>
                 </div>
             </div>
@@ -2162,7 +2157,16 @@ onMounted(async () => {
 
 // ─── Why CARIZO ───────────────────────────────────────────────────────────────
 
-.why-section { }
+.why-section {
+    position: relative;
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba($red, 0.05) 0%, transparent 70%);
+        pointer-events: none;
+    }
+}
 
 .why-header {
     text-align: center;
@@ -2196,11 +2200,11 @@ onMounted(async () => {
 }
 
 .why-logo {
-    height: 68px;
+    height: 60px;
     width: auto;
     display: block;
     margin: 0 auto 20px;
-    filter: drop-shadow(0 0 24px rgba(139, 13, 29, 0.25));
+    filter: drop-shadow(0 0 28px rgba(139, 13, 29, 0.35));
 }
 
 .why-sub {
@@ -2208,41 +2212,57 @@ onMounted(async () => {
     color: rgba(255, 255, 255, 0.38);
     margin: 0;
     letter-spacing: 0.4px;
-    max-width: 420px;
+    max-width: 440px;
     line-height: 1.6;
 }
 
 .why-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
 
-    @include respond-to(sm) { grid-template-columns: 1fr; }
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(xs) { grid-template-columns: 1fr; }
 }
 
 .why-card {
     display: flex;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
     background: rgba(255,255,255,0.02);
     border: 1px solid $border;
     border-radius: $r-xl;
-    padding: 24px 28px;
-    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    padding: 28px 24px;
+    transition: border-color 0.2s, background 0.2s, transform 0.22s;
     cursor: default;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, $red, rgba($red, 0.4));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s;
+    }
 
     &:hover {
-        border-color: rgba($red, 0.3);
+        border-color: rgba($red, 0.28);
         background: rgba(255,255,255,0.04);
-        transform: translateY(-2px);
+        transform: translateY(-3px);
 
+        &::after { transform: scaleX(1); }
         .why-card-icon { background: rgba($red, 0.15); border-color: rgba($red, 0.3); color: $red; }
-        .why-card-arrow { color: $red; opacity: 1; }
     }
 }
 
 .why-card-icon {
-    flex-shrink: 0;
     width: 56px;
     height: 56px;
     border-radius: 16px;
@@ -2253,29 +2273,23 @@ onMounted(async () => {
     justify-content: center;
     color: $text-dim;
     transition: background 0.2s, border-color 0.2s, color 0.2s;
+    flex-shrink: 0;
 }
 
-.why-card-body { flex: 1; min-width: 0; }
-
 .why-card-title {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     color: $text;
-    margin: 0 0 6px;
+    margin: 0;
+    line-height: 1.3;
 }
 
 .why-card-desc {
     font-size: 13px;
     color: $text-dim;
-    line-height: 1.6;
+    line-height: 1.7;
     margin: 0;
-}
-
-.why-card-arrow {
-    flex-shrink: 0;
-    color: $text-dark;
-    opacity: 0.5;
-    transition: color 0.2s, opacity 0.2s;
+    flex: 1;
 }
 
 // ─── ING Section ──────────────────────────────────────────────────────────────
