@@ -3103,7 +3103,7 @@ function validateStep(step: number): string | null {
     }
     // Step 5: Opis i cena
     if (step === 5) {
-        if (!form.price) return 'Podaj cenę pojazdu.'
+        if (!form.price || form.price <= 0) return 'Podaj cenę pojazdu (musi być większa od 0).'
         if (!form.region) return 'Wybierz województwo.'
         if (!form.city?.trim()) return 'Podaj miasto.'
         if (!form.description?.trim()) return 'Dodaj opis ogłoszenia.'
@@ -3230,16 +3230,55 @@ async function onGen() {
     }
     resetEngineLocks()
 }
-async function onTrim() {
-    form.engineVersionId = null; engines.value = []
-    if (!form.generationId) return
-    if (form.trimId) {
-        const trimEngines = await fetchEnginesByTrim(form.trimId)
-        engines.value = trimEngines.length > 0 ? trimEngines : await fetchEngines(form.generationId)
-    } else {
-        engines.value = await fetchEngines(form.generationId)
+
+async function onTrimChange(trimId: number | null) {
+    form.engineVersionId = null
+    engineSpecs.value = null
+    engines.value = []
+    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
+    engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
+    if (trimId) {
+        const trimEngines = await fetchEnginesByTrim(trimId)
+        if (trimEngines.length > 0) {
+            engines.value = trimEngines
+        } else if (form.generationId) {
+            engines.value = await fetchEngines(form.generationId)
+        }
     }
-    resetEngineLocks()
+}
+
+async function onEngineVersionChange(engineVersionId: number | null) {
+    engineSpecs.value = null
+    if (engineVersionId) {
+        const specs = await fetchEngineSpecs(engineVersionId)
+        if (specs) {
+            engineSpecs.value = specs
+            if (specs.powerHP) { form.power = specs.powerHP; engineLocked.power = true }
+            if (specs.displacement) { form.engineCapacity = specs.displacement; engineLocked.capacity = true }
+            if (specs.torqueNm) { extras.torque = specs.torqueNm; engineLocked.torque = true }
+            if (specs.co2EmissionGkm) { extras.co2 = specs.co2EmissionGkm; engineLocked.co2Emission = true }
+            if (specs.euroNorm) { extras.euroNorm = specs.euroNorm; engineLocked.euroNorm = true }
+            if (specs.acceleration0100) { engineLocked.acceleration = true }
+            if (specs.avgConsumptionL) { extras.fuelConsumptionMix = specs.avgConsumptionL; engineLocked.fuelConsumptionCombined = true }
+            if (specs.fuelTypeId) { form.fuelTypeId = specs.fuelTypeId; engineLocked.fuelType = true }
+        }
+    }
+}
+
+async function onVehicleCategoryChange(categoryId: number | null) {
+    form.vehicleSubtypeId = null
+    vehicleSubtypes.value = []
+    if (categoryId) {
+        vehicleSubtypes.value = await fetchVehicleSubtypes(categoryId)
+    }
+}
+
+async function onPartCategoryChange(categoryId: number | null) {
+    form.partSubcategoryId = null
+    partSubcategories.value = []
+    if (categoryId) {
+        partSubcategories.value = await fetchPartSubcategories(categoryId)
+    }
 }
 
 watch(() => form.engineVersionId, (newId) => {

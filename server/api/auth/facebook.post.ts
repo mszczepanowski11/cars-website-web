@@ -17,9 +17,12 @@ export default defineEventHandler(async (event) => {
         })
         return { success: true }
     } catch (err: any) {
+        const displayMsg = 'Logowanie przez Facebook nie powiodło się.'
         throw createError({
-            statusCode: err.response?.status ?? 401,
-            statusMessage: err.data ?? 'Logowanie przez Facebook nie powiodło się.'
+            statusCode: err.response?.status ?? err.status ?? 401,
+            statusMessage: 'Unauthorized',
+            message: displayMsg,
+            data: { message: displayMsg }
         })
     }
 })

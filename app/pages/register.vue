@@ -209,6 +209,14 @@
                     <span class="age-check-label">Wyrażam zgodę na przetwarzanie moich danych osobowych przez CARIZO Wiktor Niezgoda w celu realizacji usług świadczonych drogą elektroniczną, zgodnie z <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Polityką prywatności</NuxtLink> <span class="req">*</span></span>
                 </label>
 
+                <label class="age-check">
+                    <input v-model="marketingConsent" type="checkbox" class="age-check-input" />
+                    <span class="age-check-box" :class="{ 'age-check-box--checked': marketingConsent }">
+                        <v-icon v-if="marketingConsent" icon="mdi-check" size="13" />
+                    </span>
+                    <span class="age-check-label age-check-label--optional">Wyrażam zgodę na otrzymywanie informacji handlowych i ofert specjalnych CARIZO drogą elektroniczną. Zgodę możesz wycofać w każdej chwili. <span class="opt-label">(opcjonalne)</span></span>
+                </label>
+
                 <div v-if="validationError || error" class="auth-error">
                     <v-icon icon="mdi-alert-circle-outline" size="15" />
                     {{ validationError || error }}
@@ -235,6 +243,7 @@
                 </svg>
                 <span>{{ fbLoading ? 'Logowanie...' : 'Kontynuuj z Facebook' }}</span>
             </button>
+            <p v-if="facebookAppId" class="fb-disclosure">Logując się przez Facebook, akceptujesz nasz <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> i <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink>. Pobieramy Twój adres email oraz imię i nazwisko z konta Facebook.</p>
 
             <p class="auth-link">Masz już konto? <NuxtLink to="/login">Zaloguj się</NuxtLink></p>
         </div>
@@ -263,6 +272,7 @@ const showPassword     = ref(false)
 const ageConfirmed     = ref(false)
 const termsConfirmed   = ref(false)
 const gdprConfirmed    = ref(false)
+const marketingConsent = ref(false)
 const registrationSuccess = ref(false)
 const registeredEmail = ref('')
 const resending = ref(false)
@@ -280,7 +290,7 @@ const businessTypes = [
 
 const redirectTo = computed(() => {
     const r = route.query.redirect
-    return typeof r === 'string' && r.startsWith('/') ? r : '/'
+    return typeof r === 'string' && /^\/[^/]/.test(r) ? r : '/'
 })
 
 const strengthLevel = computed(() => {
@@ -909,6 +919,23 @@ h2 {
     line-height: 1.5;
 
     a { color: $red; font-weight: 500; &:hover { text-decoration: underline; } }
+
+    &--optional { opacity: 0.8; }
+}
+
+.opt-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+}
+
+.fb-disclosure {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-top: -8px;
+    line-height: 1.5;
+    a { color: rgba(255,255,255,0.6); text-decoration: underline; }
 }
 
 .cookie-link {

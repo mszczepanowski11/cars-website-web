@@ -9,10 +9,13 @@ export const useAuth = () => {
             await $fetch('/api/auth/login', { method: 'POST', body: credentials })
             await navigateTo(redirectTo || '/')
         } catch (err: any) {
-            if (err?.status === 429 || err?.statusCode === 429) {
-                error.value = err?.data?.statusMessage || 'Zbyt wiele prób logowania. Poczekaj chwilę i spróbuj ponownie.'
+            const d = err?.data
+            // Nitro wraps: d.message contains the Polish display text; d.statusMessage is ASCII-only.
+            const msg = d?.message || d?.statusMessage || err?.message
+            if (err?.status === 429 || err?.statusCode === 429 || d?.statusCode === 429) {
+                error.value = msg || 'Zbyt wiele prób logowania. Poczekaj chwilę i spróbuj ponownie.'
             } else {
-                error.value = err?.data?.statusMessage || err?.message || 'Nieprawidłowy email lub hasło.'
+                error.value = msg || 'Nieprawidłowy email lub hasło.'
             }
         } finally {
             loading.value = false

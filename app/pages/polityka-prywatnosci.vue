@@ -90,9 +90,9 @@
                                     <td>Do momentu wycofania zgody lub wygaśnięcia plików cookies (maks. 24 miesiące).</td>
                                 </tr>
                                 <tr>
-                                    <td>Marketing bezpośredni i profilowanie (spersonalizowane rekomendacje).</td>
-                                    <td>Art. 6 ust. 1 lit. f – prawnie uzasadniony interes Administratora.</td>
-                                    <td>Do wniesienia skutecznego sprzeciwu.</td>
+                                    <td>Marketing bezpośredni (e-mail, SMS) i profilowanie (spersonalizowane rekomendacje).</td>
+                                    <td>Art. 6 ust. 1 lit. a – dobrowolna, odrębna zgoda Użytkownika (wymagana dla komunikacji e-mail/SMS zgodnie z art. 172 Prawa komunikacji elektronicznej); dla profilowania onsite na podstawie lit. f – prawnie uzasadniony interes.</td>
+                                    <td>Do momentu cofnięcia zgody lub wniesienia skutecznego sprzeciwu.</td>
                                 </tr>
                                 <tr>
                                     <td>Newsletter i powiadomienia Web-Push.</td>
