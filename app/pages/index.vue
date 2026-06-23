@@ -11,14 +11,15 @@
                         Platforma motoryzacyjna premium
                     </div>
                     <h1 class="hfs-title">
-                        Motoryzacja.<br>
-                        <span class="title-accent">Na&nbsp;poziomie&nbsp;premium.</span>
+                        Kupuj pewniej.<br>
+                        <span class="title-accent">Sprzedaj&nbsp;szybciej.</span>
                     </h1>
-                    <p class="hfs-sub">
-                        Kupuj pewniej. Sprzedawaj szybciej.
-                        Zweryfikowane ogłoszenia, historia pojazdu, inteligentna wycena AI
-                        i profesjonalni sprzedawcy <strong>w jednym miejscu.</strong>
-                    </p>
+                    <ul class="hfs-features">
+                        <li><v-icon icon="mdi-shield-check-outline" size="16" class="hfs-feat-icon" />Zweryfikowane ogłoszenia</li>
+                        <li><v-icon icon="mdi-file-document-outline" size="16" class="hfs-feat-icon" />Historia pojazdu</li>
+                        <li><v-icon icon="mdi-cpu-64-bit" size="16" class="hfs-feat-icon" />Inteligentna wycena AI</li>
+                        <li><v-icon icon="mdi-account-tie-outline" size="16" class="hfs-feat-icon" />Profesjonalni sprzedawcy w jednym miejscu</li>
+                    </ul>
                     <div class="hfs-links">
                         <NuxtLink to="/adverts" class="hfs-link hfs-link--primary">
                             <v-icon icon="mdi-magnify" size="16" />
@@ -1204,6 +1205,31 @@ onMounted(async () => {
 
     @include respond-to(sm) { font-size: 14px; line-height: 1.7; margin-bottom: 28px; }
     @include respond-to(xs) { font-size: 13.5px; }
+}
+
+.hfs-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: rgba(255,255,255,0.6);
+        font-weight: 400;
+    }
+
+    @include respond-to(sm) { margin-bottom: 28px; gap: 8px; li { font-size: 13.5px; } }
+}
+
+.hfs-feat-icon {
+    color: $red;
+    flex-shrink: 0;
 }
 
 // ─── Category tiles ───────────────────────────────────────────────────────────
