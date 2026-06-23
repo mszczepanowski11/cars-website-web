@@ -237,11 +237,16 @@
                             <v-icon icon="mdi-phone-outline" size="17" />
                             {{ showPhone ? seller.phoneNumber : 'Pokaż numer telefonu' }}
                         </button>
-                        <button class="cta-message" :disabled="contactLoading" @click="contactSeller">
+                        <button class="cta-message" :disabled="contactLoading || isOwnAdvert" :title="isOwnAdvert ? 'To Twoje ogłoszenie – nie możesz pisać do samego siebie' : undefined" @click="contactSeller">
                             <v-icon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
+                            <v-icon v-else-if="isOwnAdvert" icon="mdi-message-off-outline" size="17" />
                             <v-icon v-else icon="mdi-message-text-outline" size="17" />
-                            {{ contactLoading ? 'Otwieranie...' : 'Napisz wiadomość' }}
+                            {{ contactLoading ? 'Otwieranie...' : isOwnAdvert ? 'To Twoje ogłoszenie' : 'Napisz wiadomość' }}
                         </button>
+                        <p v-if="isOwnAdvert" class="own-advert-note">
+                            <v-icon icon="mdi-information-outline" size="13" />
+                            Nie możesz wysyłać wiadomości do samego siebie. To Twoje ogłoszenie.
+                        </p>
                         <div class="cta-row2">
                             <button class="cta-alt" :disabled="!!txLoading" @click="showViewingPicker = !showViewingPicker">
                                 <v-icon icon="mdi-calendar-check-outline" size="15" />Oględziny
@@ -848,6 +853,9 @@ const { startConversation } = useMessages()
 const { createTransaction } = useTransactions()
 const { followSeller, unfollowSeller, isFollowingSeller: checkFollowingSeller } = useFollow()
 const { getSellerReviews, canReview, submitReview } = useReviews()
+
+const currentUserId = ref<number | null>(null)
+const isOwnAdvert = computed(() => isLoggedIn.value && currentUserId.value !== null && currentUserId.value === advert.value?.userId)
 
 const contactLoading = ref(false)
 const contactError = ref('')
@@ -1479,6 +1487,12 @@ sellerStats.value = advertData.value?.sellerStats ?? null
 onMounted(async () => {
     window.addEventListener('keydown', onKeydown)
     await fetchFavoriteIds()
+    if (isLoggedIn.value) {
+        try {
+            const me = await $fetch<{ id: number }>('/api/proxy/api/User/me')
+            currentUserId.value = me.id
+        } catch {}
+    }
     if (advert.value) {
         trackRecentlyViewed(Number(id))
         // Track view
@@ -2198,6 +2212,16 @@ onUnmounted(() => {
     transition: background 0.2s, border-color 0.2s;
     &:hover { background: rgba(255,255,255,0.1); border-color: #333; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.own-advert-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin: 4px 0 0;
+    line-height: 1.4;
 }
 
 .cta-row2 {
