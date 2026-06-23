@@ -1106,8 +1106,16 @@ onMounted(async () => {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(to right, #{$bg} 0%, #{$bg} 22%, rgba(5,5,5,0.82) 42%, rgba(5,5,5,0.45) 60%, transparent 80%),
-        linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.55) 100%);
+        linear-gradient(to right,
+            #{$bg} 0%,
+            #{$bg} 18%,
+            rgba(5,5,5,0.96) 28%,
+            rgba(5,5,5,0.78) 40%,
+            rgba(5,5,5,0.48) 55%,
+            rgba(5,5,5,0.18) 68%,
+            transparent 82%
+        ),
+        linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 30%, transparent 60%, rgba(0,0,0,0.6) 100%);
 }
 
 .hfs-left {
@@ -1174,6 +1182,7 @@ onMounted(async () => {
     color: $text;
     letter-spacing: -2.5px;
     margin-bottom: 24px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
 
     @include respond-to(md) { font-size: 52px; letter-spacing: -1.5px; }
     @include respond-to(sm) { font-size: 36px; letter-spacing: -1px; }
@@ -1203,26 +1212,29 @@ onMounted(async () => {
 .hfs-features {
     list-style: none;
     padding: 0;
-    margin: 0 0 32px;
+    margin: 0 0 36px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 
     li {
         display: flex;
         align-items: center;
         gap: 10px;
-        font-size: 14px;
-        color: rgba(255,255,255,0.6);
+        font-size: 14.5px;
+        color: rgba(255,255,255,0.72);
         font-weight: 400;
+        letter-spacing: 0.1px;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.8);
     }
 
-    @include respond-to(sm) { margin-bottom: 28px; gap: 8px; li { font-size: 13.5px; } }
+    @include respond-to(sm) { margin-bottom: 28px; gap: 7px; li { font-size: 13.5px; } }
 }
 
 .hfs-feat-icon {
     color: $red;
     flex-shrink: 0;
+    filter: drop-shadow(0 0 4px rgba($red, 0.5));
 }
 
 // ─── Category tiles ───────────────────────────────────────────────────────────
@@ -1448,14 +1460,16 @@ onMounted(async () => {
     }
 
     &--secondary {
-        background: transparent;
-        color: rgba(255,255,255,0.82);
-        border: 2px solid rgba(255,255,255,0.22);
+        background: rgba(255,255,255,0.07);
+        color: rgba(255,255,255,0.88);
+        border: 2px solid rgba(255,255,255,0.25);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
 
         &:hover {
             border-color: rgba(255,255,255,0.5);
             color: #fff;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.12);
         }
     }
 }
