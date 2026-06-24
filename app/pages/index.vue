@@ -44,27 +44,6 @@
             </div>
         </section>
 
-        <!-- ─── Stats strip ──────────────────────────────────────────── -->
-        <div class="stats-strip">
-            <div class="container">
-                <div class="sstrip-inner">
-                    <template v-for="(stat, i) in visibleStats" :key="stat.key">
-                        <div v-if="i > 0" class="sstrip-sep" />
-                        <div class="sstrip-item">
-                            <div class="sstrip-icon-badge">
-                                <v-icon :icon="stat.icon" size="22" />
-                            </div>
-                            <div class="sstrip-text">
-                                <div v-if="statsLoading" class="sstrip-skeleton" />
-                                <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
-                                <span class="sstrip-label">{{ stat.label }}</span>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
-
         <!-- Search section -->
         <section class="search-section">
             <div class="container">
@@ -197,6 +176,27 @@
                 </div><!-- /hs-panel -->
             </div>
         </section>
+
+        <!-- ─── Stats strip ──────────────────────────────────────────── -->
+        <div class="stats-strip">
+            <div class="container">
+                <div class="sstrip-inner">
+                    <template v-for="(stat, i) in visibleStats" :key="stat.key">
+                        <div v-if="i > 0" class="sstrip-sep" />
+                        <div class="sstrip-item">
+                            <div class="sstrip-icon-badge">
+                                <v-icon :icon="stat.icon" size="22" />
+                            </div>
+                            <div class="sstrip-text">
+                                <div v-if="statsLoading" class="sstrip-skeleton" />
+                                <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
+                                <span class="sstrip-label">{{ stat.label }}</span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
 
         <!-- ─── Recently added ───────────────────────────────────────── -->
         <section v-if="recentlyAdded.length || featured.length" class="section">
@@ -527,7 +527,12 @@
                     </div>
                     <div class="news-form">
                         <input v-model="email" class="news-input" placeholder="Twój adres email" @keyup.enter="subscribeNewsletter" />
-                        <button class="btn-subscribe" :disabled="subscribeLoading || !newsletterConsent" @click="subscribeNewsletter">
+                        <button
+                            class="btn-subscribe"
+                            :disabled="subscribeLoading || !newsletterConsent"
+                            :title="!newsletterConsent ? 'Zaznacz zgodę na newsletter poniżej' : undefined"
+                            @click="subscribeNewsletter"
+                        >
                             {{ subscribeLoading ? 'Zapisywanie...' : 'Zapisz się' }}
                         </button>
                     </div>
