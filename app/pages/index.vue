@@ -71,7 +71,7 @@
                         <label class="hsp-label">{{ currentSearchConfig.brandLabel ?? 'Marka' }}</label>
                         <select v-model="searchBrandId" class="hsp-select" @change="onBrandChange">
                             <option :value="null">Wszystkie marki</option>
-                            <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                            <option v-for="b in filterBrands.filter(b => b.name && !/^\d+$/.test(b.name))" :key="b.id" :value="b.id">{{ b.name }}</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.hasBrand && currentSearchConfig.hasModel" class="hsp-field">

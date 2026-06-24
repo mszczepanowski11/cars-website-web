@@ -54,7 +54,7 @@
                                 <v-icon icon="mdi-car-outline" size="14" class="fp-field-icon" />
                                 <select v-model="f.brandId" class="fp-select" @change="onBrandChange">
                                     <option :value="null">Wszystkie marki</option>
-                                    <option v-for="b in brands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                                    <option v-for="b in brands.filter(b => b.name && !/^\d+$/.test(b.name))" :key="b.id" :value="b.id">{{ b.name }}</option>
                                 </select>
                             </div>
                         </div>
