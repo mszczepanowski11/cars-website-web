@@ -60,6 +60,14 @@
             </div>
         </div>
 
+        <!-- Mobile step progress (hidden on desktop where left sidebar shows) -->
+        <div class="mobile-step-bar">
+            <div class="mobile-step-label">Krok {{ currentStep + 1 }} z {{ steps.length }}: {{ steps[currentStep]?.name }}</div>
+            <div class="mobile-step-track">
+                <div class="mobile-step-fill" :style="{ width: `${((currentStep + 1) / steps.length) * 100}%` }" />
+            </div>
+        </div>
+
         <!-- Body -->
         <div class="page-body">
 
@@ -3845,6 +3853,12 @@ onBeforeUnmount(() => {
     color: $text;
     font-family: 'Inter', sans-serif;
     overflow: hidden;
+
+    @media (max-width: 768px) {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+    }
 }
 
 // ── Top bar ───────────────────────────────────────────────────────────────────
@@ -3933,11 +3947,50 @@ onBeforeUnmount(() => {
     &:hover { border-color: $text-dim; color: $text; }
 }
 
+// ── Mobile step progress bar ──────────────────────────────────────────────────
+.mobile-step-bar {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 16px;
+    border-bottom: 1px solid $border;
+    background: #070707;
+
+    @media (max-width: 768px) {
+        display: flex;
+    }
+}
+
+.mobile-step-label {
+    font-size: 12px;
+    color: $text-dim;
+    font-weight: 500;
+}
+
+.mobile-step-track {
+    height: 3px;
+    background: $border;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.mobile-step-fill {
+    height: 100%;
+    background: $red;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
 // ── Page body ─────────────────────────────────────────────────────────────────
 .page-body {
     flex: 1;
     display: flex;
     overflow: hidden;
+
+    @media (max-width: 768px) {
+        overflow: visible;
+        flex-direction: column;
+    }
 }
 
 // ── Left sidebar ──────────────────────────────────────────────────────────────
@@ -3949,6 +4002,10 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
 }
 
 .steps-nav {
@@ -4058,6 +4115,11 @@ onBeforeUnmount(() => {
     align-items: center;
     padding: 32px 40px;
     flex-shrink: 0;
+
+    @media (max-width: 768px) {
+        min-height: 100px;
+        padding: 20px 16px;
+    }
 }
 
 .form-hero-text {
@@ -4133,6 +4195,10 @@ onBeforeUnmount(() => {
 .form-content {
     padding: 32px 40px 24px;
     flex: 1;
+
+    @media (max-width: 768px) {
+        padding: 20px 16px 24px;
+    }
 }
 
 .form-section-head {
@@ -4595,6 +4661,10 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
     gap: 0;
+
+    @media (max-width: 960px) {
+        display: none;
+    }
 }
 
 .score-card {
