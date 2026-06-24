@@ -232,10 +232,15 @@ const monthlyRate = computed(() => {
         opacity: 1;
         transform: translateY(0);
     }
+
+    @media (hover: none) {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .card-action-btn {
-    width: 32px; height: 32px;
+    width: 44px; height: 44px;
     border-radius: 50%;
     background: rgba(0,0,0,0.72);
     backdrop-filter: blur(6px);
@@ -254,8 +259,8 @@ const monthlyRate = computed(() => {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(6px);

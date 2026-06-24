@@ -1574,6 +1574,12 @@ onMounted(async () => {
     outline: none;
     position: relative;
 
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -10px;
+    }
+
     &:hover { transform: scale(1.18); }
 
     &.active {
