@@ -68,15 +68,15 @@ export default defineEventHandler(async (event) => {
                     } catch (retryErr: any) {
                         const rc = retryErr?.response?.status ?? retryErr?.statusCode ?? 500
                         const raw = retryErr?.data ?? retryErr?.response?._data ?? retryErr?.message ?? 'Request failed'
-                        const msg = typeof raw === 'string' ? raw : JSON.stringify(raw)
-                        throw createError({ statusCode: rc, statusMessage: msg.slice(0, 500) })
+                        const msg = typeof raw === 'string' ? raw : (raw?.message ?? JSON.stringify(raw))
+                        throw createError({ statusCode: rc, statusMessage: msg.slice(0, 500), data: typeof raw === 'object' ? raw : undefined })
                     }
                 }
             }
             const raw = err?.data ?? err?.response?._data ?? err?.message ?? 'Proxy error'
-            const msg = typeof raw === 'string' ? raw : JSON.stringify(raw)
+            const msg = typeof raw === 'string' ? raw : (raw?.message ?? JSON.stringify(raw))
             console.error(`[proxy] ${method} ${path} → ${statusCode}: ${msg}`)
-            throw createError({ statusCode, statusMessage: msg.slice(0, 500) })
+            throw createError({ statusCode, statusMessage: msg.slice(0, 500), data: typeof raw === 'object' ? raw : undefined })
         }
     }
 
