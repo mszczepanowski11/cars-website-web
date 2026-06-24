@@ -222,7 +222,7 @@
         </section>
 
         <!-- ─── Most viewed ─────────────────────────────────────────────── -->
-        <section v-if="mostViewed.length" class="section">
+        <section v-if="clientDataLoading || mostViewed.length" class="section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
@@ -232,7 +232,12 @@
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
                 <div class="cars-grid">
-                    <AdvertCard v-for="a in mostViewed" :key="a.id" :advert="a" />
+                    <template v-if="clientDataLoading">
+                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
+                    </template>
+                    <template v-else>
+                        <AdvertCard v-for="a in mostViewed" :key="a.id" :advert="a" />
+                    </template>
                 </div>
             </div>
         </section>
@@ -248,7 +253,7 @@
         </section>
 
         <!-- ─── Premium Collection ───────────────────────────────────────── -->
-        <section v-if="premiumCollection.length" class="section">
+        <section v-if="clientDataLoading || premiumCollection.length" class="section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
@@ -258,7 +263,12 @@
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
                 <div class="cars-grid">
-                    <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
+                    <template v-if="clientDataLoading">
+                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
+                    </template>
+                    <template v-else>
+                        <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
+                    </template>
                 </div>
             </div>
         </section>
@@ -570,6 +580,7 @@ const premiumCollection = ref<CarAdvert[]>([])
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
+const clientDataLoading = ref(false)
 const statsLoading = ref(true)
 
 // ─── Hero search state ────────────────────────────────────────────────────────
@@ -1045,6 +1056,7 @@ statsLoading.value = false
 
 // most-viewed and premium-collection fetched client-side only to avoid SSR crashes
 if (import.meta.client) {
+    clientDataLoading.value = true
     Promise.allSettled([
         $fetch<CarAdvert[]>('/api/proxy/api/Advert/most-viewed', { query: { count: 8 } }).catch(() => [] as CarAdvert[]),
         $fetch<CarAdvert[]>('/api/proxy/api/Advert/premium-collection', { query: { count: 8 } }).catch(() => [] as CarAdvert[])
@@ -1058,6 +1070,7 @@ if (import.meta.client) {
             premiumCollection.value = Array.isArray(pc) ? pc : (pc as any).items ?? []
         }
         if (mostViewed.value.length > 0) carOfWeek.value = mostViewed.value[0]
+        clientDataLoading.value = false
     })
 }
 
