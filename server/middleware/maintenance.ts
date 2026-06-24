@@ -1,7 +1,10 @@
-import { defineEventHandler, getCookie, getRequestURL, sendRedirect } from 'h3'
+import { defineEventHandler, getCookie, getRequestHeader, getRequestURL, sendRedirect } from 'h3'
 
 const BYPASS_PREFIXES = ['/_nuxt/', '/api/', '/favicon', '/carizo-logo', '/fonts/', '/icons/']
 const BYPASS_PATHS = ['/coming-soon', '/site-access']
+
+// Social media and search engine crawlers should see real page content for proper OG previews
+const CRAWLER_UA = /facebookexternalhit|facebot|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|whatsapp|googlebot|bingbot|yandex/i
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig(event)
@@ -13,6 +16,9 @@ export default defineEventHandler(async (event) => {
     if (BYPASS_PATHS.some(p => path.startsWith(p))) return
     if (BYPASS_PREFIXES.some(p => path.startsWith(p))) return
     if (path.match(/\.(png|jpg|jpeg|svg|ico|webp|woff2?|css|js|map)$/)) return
+
+    const ua = getRequestHeader(event, 'user-agent') ?? ''
+    if (CRAWLER_UA.test(ua)) return // let crawlers through for proper OG previews
 
     const token = getCookie(event, 'site-access')
     if (token === config.sitePassword) return
