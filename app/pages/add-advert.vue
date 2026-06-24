@@ -1781,7 +1781,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption, VehicleSubtype } from '~/types'
+import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption, VehicleSubtype, PartCategory, PartSubcategory } from '~/types'
 import { useImageUrl } from '~/composables/useImageUrl'
 import { usePhotoAnalysis } from '~/composables/usePhotoAnalysis'
 

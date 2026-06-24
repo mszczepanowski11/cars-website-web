@@ -1,4 +1,4 @@
-import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, VehicleSubtype } from '~/types'
+import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, VehicleSubtype, PartCategory, PartSubcategory } from '~/types'
 
 export const useTaxonomy = () => {
   return {
@@ -26,5 +26,8 @@ export const useTaxonomy = () => {
     },
     fetchCategories: () => $fetch('/api/proxy/api/Taxonomy/categories'),
     fetchVehicleSubtypes: (categoryId: number) => $fetch<VehicleSubtype[]>(`/api/proxy/api/Taxonomy/vehicle-subtypes/category/${categoryId}`),
+    fetchPartCategories: () => $fetch<PartCategory[]>('/api/proxy/api/Taxonomy/part-categories'),
+    fetchPartSubcategories: (partCategoryId: number) => $fetch<PartSubcategory[]>(`/api/proxy/api/Taxonomy/part-subcategories/category/${partCategoryId}`),
+    fetchEngineSpecs: (engineVersionId: number) => $fetch<EngineVersion>(`/api/proxy/api/Taxonomy/engines/${engineVersionId}/specs`).catch(() => null),
   }
 }
