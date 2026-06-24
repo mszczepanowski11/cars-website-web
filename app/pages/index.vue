@@ -117,6 +117,31 @@
                     <div v-if="showMoreFilters" class="hs-expanded">
                         <div class="hse-grid">
 
+                            <div v-if="currentSearchConfig.hasBodyType && bodyTypes.length" class="hse-field">
+                                <label class="hse-label">Nadwozie</label>
+                                <select v-model="searchBodyTypeId" class="hse-select">
+                                    <option :value="null">Wszystkie</option>
+                                    <option v-for="bt in bodyTypes" :key="bt.id" :value="bt.id">{{ bt.name }}</option>
+                                </select>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasPartCategory" class="hse-field">
+                                <label class="hse-label">Kategoria części</label>
+                                <select v-model="searchPartCategory" class="hse-select">
+                                    <option value="">Wszystkie</option>
+                                    <option v-for="pc in PART_CATEGORIES" :key="pc.value" :value="pc.value">{{ pc.label }}</option>
+                                </select>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasEngineSize" class="hse-field hse-range">
+                                <label class="hse-label">Pojemność (cm³)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchEngineSizeFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchEngineSizeTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
+                            </div>
+
                             <div v-if="currentSearchConfig.hasFuel && fuelTypes.length" class="hse-field">
                                 <label class="hse-label">Paliwo</label>
                                 <select v-model="searchFuelId" class="hse-select">
@@ -827,6 +852,7 @@ const searchBrandId = ref<number | null>(null)
 const searchModelId = ref<number | null>(null)
 const searchFuelId = ref<number | null>(null)
 const searchBodyTypeId = ref<number | null>(null)
+const searchPartCategory = ref('')
 const searchSubtype = ref('')
 const searchPriceFrom = ref('')
 const searchPriceTo = ref('')
@@ -887,6 +913,7 @@ function selectSearchCat(slug: string) {
     searchBodyTypeId.value = null
     searchGearboxId.value = null
     searchSubtype.value = ''
+    searchPartCategory.value = ''
     searchCondition.value = ''
     searchEngineSizeFrom.value = ''
     searchEngineSizeTo.value = ''
@@ -963,6 +990,7 @@ function doSearch() {
     if (searchGearboxId.value) query.gearboxId = String(searchGearboxId.value)
     if (searchBodyTypeId.value) query.bodyTypeId = String(searchBodyTypeId.value)
     if (searchSubtype.value) query.bodySubtype = searchSubtype.value
+    if (searchPartCategory.value) query.partCategory = searchPartCategory.value
     if (searchPriceFrom.value) query.priceFrom = searchPriceFrom.value
     if (searchPriceTo.value) query.priceTo = searchPriceTo.value
     if (searchYearFrom.value) query.yearFrom = searchYearFrom.value
