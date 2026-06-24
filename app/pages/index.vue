@@ -44,27 +44,6 @@
             </div>
         </section>
 
-        <!-- ─── Stats strip ──────────────────────────────────────────── -->
-        <div class="stats-strip">
-            <div class="container">
-                <div class="sstrip-inner">
-                    <template v-for="(stat, i) in visibleStats" :key="stat.key">
-                        <div v-if="i > 0" class="sstrip-sep" />
-                        <div class="sstrip-item">
-                            <div class="sstrip-icon-badge">
-                                <v-icon :icon="stat.icon" size="22" />
-                            </div>
-                            <div class="sstrip-text">
-                                <div v-if="statsLoading" class="sstrip-skeleton" />
-                                <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
-                                <span class="sstrip-label">{{ stat.label }}</span>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
-
         <!-- Search section -->
         <section class="search-section">
             <div class="container">
@@ -198,6 +177,27 @@
             </div>
         </section>
 
+        <!-- ─── Stats strip ──────────────────────────────────────────── -->
+        <div class="stats-strip">
+            <div class="container">
+                <div class="sstrip-inner">
+                    <template v-for="(stat, i) in visibleStats" :key="stat.key">
+                        <div v-if="i > 0" class="sstrip-sep" />
+                        <div class="sstrip-item">
+                            <div class="sstrip-icon-badge">
+                                <v-icon :icon="stat.icon" size="22" />
+                            </div>
+                            <div class="sstrip-text">
+                                <div v-if="statsLoading" class="sstrip-skeleton" />
+                                <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
+                                <span class="sstrip-label">{{ stat.label }}</span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
         <!-- ─── Recently added ───────────────────────────────────────── -->
         <section v-if="recentlyAdded.length || featured.length" class="section">
             <div class="container">
@@ -222,7 +222,7 @@
         </section>
 
         <!-- ─── Most viewed ─────────────────────────────────────────────── -->
-        <section v-if="mostViewed.length" class="section">
+        <section v-if="clientDataLoading || mostViewed.length" class="section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
@@ -232,7 +232,12 @@
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
                 <div class="cars-grid">
-                    <AdvertCard v-for="a in mostViewed" :key="a.id" :advert="a" />
+                    <template v-if="clientDataLoading">
+                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
+                    </template>
+                    <template v-else>
+                        <AdvertCard v-for="a in mostViewed" :key="a.id" :advert="a" />
+                    </template>
                 </div>
             </div>
         </section>
@@ -248,7 +253,7 @@
         </section>
 
         <!-- ─── Premium Collection ───────────────────────────────────────── -->
-        <section v-if="premiumCollection.length" class="section">
+        <section v-if="clientDataLoading || premiumCollection.length" class="section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
@@ -258,7 +263,12 @@
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
                 <div class="cars-grid">
-                    <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
+                    <template v-if="clientDataLoading">
+                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
+                    </template>
+                    <template v-else>
+                        <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
+                    </template>
                 </div>
             </div>
         </section>
@@ -517,7 +527,12 @@
                     </div>
                     <div class="news-form">
                         <input v-model="email" class="news-input" placeholder="Twój adres email" @keyup.enter="subscribeNewsletter" />
-                        <button class="btn-subscribe" :disabled="subscribeLoading || !newsletterConsent" @click="subscribeNewsletter">
+                        <button
+                            class="btn-subscribe"
+                            :disabled="subscribeLoading || !newsletterConsent"
+                            :title="!newsletterConsent ? 'Zaznacz zgodę na newsletter poniżej' : undefined"
+                            @click="subscribeNewsletter"
+                        >
                             {{ subscribeLoading ? 'Zapisywanie...' : 'Zapisz się' }}
                         </button>
                     </div>
@@ -550,6 +565,8 @@ useHead({
         { property: 'og:title', content: 'CARIZO — Nowoczesna platforma motoryzacyjna' },
         { property: 'og:description', content: 'Kupuj i sprzedawaj auta na CARIZO — zweryfikowane ogłoszenia, inteligentne narzędzia, zaufani sprzedawcy.' },
         { property: 'og:image', content: `${config.public.siteUrl}/hero-car.jpg` },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
         { property: 'og:site_name', content: 'CARIZO' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'CARIZO — Nowoczesna platforma motoryzacyjna' },
@@ -568,6 +585,7 @@ const premiumCollection = ref<CarAdvert[]>([])
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
+const clientDataLoading = ref(false)
 const statsLoading = ref(true)
 
 // ─── Hero search state ────────────────────────────────────────────────────────
@@ -917,8 +935,8 @@ function doSearch() {
     if (searchYearTo.value) query.yearTo = searchYearTo.value
     if (searchMileageFrom.value) query.mileageFrom = searchMileageFrom.value
     if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
-    if (searchHoursFrom.value) query.mileageFrom = searchHoursFrom.value
-    if (searchHoursTo.value) query.mileageTo = searchHoursTo.value
+    if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
+    if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
     if (searchPayloadFrom.value) query.payloadFrom = searchPayloadFrom.value
     if (searchPayloadTo.value) query.payloadTo = searchPayloadTo.value
     if (searchEngineSizeFrom.value) query.engineSizeFrom = searchEngineSizeFrom.value
@@ -927,7 +945,7 @@ function doSearch() {
     if (searchPowerTo.value) query.powerTo = searchPowerTo.value
     if (searchCondition.value) query.condition = searchCondition.value
     if (searchDriveType.value) query.driveType = searchDriveType.value
-    if (searchEquipment.value.trim()) query.textSearch = searchEquipment.value.trim()
+    if (searchEquipment.value.trim()) query.equipment = searchEquipment.value.trim()
     const cat = homeCategories.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })
@@ -1043,6 +1061,7 @@ statsLoading.value = false
 
 // most-viewed and premium-collection fetched client-side only to avoid SSR crashes
 if (import.meta.client) {
+    clientDataLoading.value = true
     Promise.allSettled([
         $fetch<CarAdvert[]>('/api/proxy/api/Advert/most-viewed', { query: { count: 8 } }).catch(() => [] as CarAdvert[]),
         $fetch<CarAdvert[]>('/api/proxy/api/Advert/premium-collection', { query: { count: 8 } }).catch(() => [] as CarAdvert[])
@@ -1056,6 +1075,7 @@ if (import.meta.client) {
             premiumCollection.value = Array.isArray(pc) ? pc : (pc as any).items ?? []
         }
         if (mostViewed.value.length > 0) carOfWeek.value = mostViewed.value[0]
+        clientDataLoading.value = false
     })
 }
 
@@ -2220,6 +2240,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
     gap: 20px;
 }
 

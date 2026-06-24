@@ -59,6 +59,7 @@ export const useAuth = () => {
     async function register(dto: {
         name: string; surname: string; email: string
         phonenumber: string; password: string
+        dateOfBirth: string
         accountType: 'Personal' | 'Business'
         companyName?: string; nip?: string
         businessType?: 'Dealer' | 'Komis' | 'Firma'

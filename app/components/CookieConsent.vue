@@ -126,6 +126,7 @@ function persist(p: CookiePrefs) {
     showPanel.value = false
     applyConsent(p)
     window.dispatchEvent(new Event('cookieConsentAccepted'))
+    $fetch('/api/consent/log', { method: 'POST', body: withTimestamp }).catch(() => {})
 }
 
 function applyConsent(p: CookiePrefs) {

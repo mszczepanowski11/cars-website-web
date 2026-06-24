@@ -1335,10 +1335,12 @@ useSeoMeta({
     title: seoTitle,
     description: seoDescription,
     ogType: 'website',
-    ogUrl: seoCanonical,
+    ogUrl: seoUrl,
     ogTitle: seoOgTitle,
     ogDescription: seoDescription,
     ogImage: seoImage,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
     twitterTitle: seoOgTitle,
@@ -1346,7 +1348,36 @@ useSeoMeta({
     twitterImage: seoImage,
 })
 
-useHead({ link: [{ rel: 'canonical', href: seoCanonical }] })
+useHead({
+    link: [{ rel: 'canonical', href: seoUrl }],
+    script: [computed(() => {
+        const a = advert.value
+        if (!a) return { type: 'application/ld+json', innerHTML: '' }
+        const schema: Record<string, any> = {
+            '@context': 'https://schema.org',
+            '@type': 'Car',
+            name: a.title,
+            description: a.description?.slice(0, 500) ?? '',
+            url: seoUrl.value,
+            image: (a.images ?? []).map((i: any) => getImageUrl(i.url)).filter(Boolean),
+        }
+        if (a.brand?.name) schema.brand = { '@type': 'Brand', name: a.brand.name }
+        if (a.model?.name) schema.model = a.model.name
+        if (a.year) schema.vehicleModelDate = String(a.year)
+        if (a.mileage != null) schema.mileageFromOdometer = { '@type': 'QuantitativeValue', value: a.mileage, unitCode: 'KMT' }
+        if (a.fuelType?.name) schema.fuelType = a.fuelType.name
+        if (a.price != null) {
+            schema.offers = {
+                '@type': 'Offer',
+                price: a.price,
+                priceCurrency: 'PLN',
+                availability: 'https://schema.org/InStock',
+                url: seoUrl.value,
+            }
+        }
+        return { type: 'application/ld+json', innerHTML: JSON.stringify(schema) }
+    })]
+})
 
 watch(activeTab, async (tab) => {
     if (tab === 'Opinie' && sellerReviews.value.length === 0 && advert.value?.userId) {

@@ -412,8 +412,8 @@ onUnmounted(() => {
     justify-content: center;
     align-items: center;
     gap: 5px;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: $r-sm;
@@ -481,8 +481,8 @@ onUnmounted(() => {
 }
 
 .drawer-close {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid $border;
     border-radius: $r-sm;
