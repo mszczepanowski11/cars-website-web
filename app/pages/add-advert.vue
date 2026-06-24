@@ -3838,8 +3838,19 @@ onMounted(async () => {
     }
 })
 
+// Autosave draft every 60 seconds while the form is open (only for new adverts)
+let autosaveTimer: ReturnType<typeof setInterval> | null = null
+onMounted(() => {
+    if (!isEdit.value) {
+        autosaveTimer = setInterval(() => {
+            saveDraft()
+        }, 60_000)
+    }
+})
+
 onBeforeUnmount(() => {
     window.removeEventListener('beforeunload', onBeforeUnload)
+    if (autosaveTimer) clearInterval(autosaveTimer)
 })
 </script>
 
