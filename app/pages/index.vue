@@ -917,8 +917,8 @@ function doSearch() {
     if (searchYearTo.value) query.yearTo = searchYearTo.value
     if (searchMileageFrom.value) query.mileageFrom = searchMileageFrom.value
     if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
-    if (searchHoursFrom.value) query.mileageFrom = searchHoursFrom.value
-    if (searchHoursTo.value) query.mileageTo = searchHoursTo.value
+    if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
+    if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
     if (searchPayloadFrom.value) query.payloadFrom = searchPayloadFrom.value
     if (searchPayloadTo.value) query.payloadTo = searchPayloadTo.value
     if (searchEngineSizeFrom.value) query.engineSizeFrom = searchEngineSizeFrom.value
@@ -927,7 +927,7 @@ function doSearch() {
     if (searchPowerTo.value) query.powerTo = searchPowerTo.value
     if (searchCondition.value) query.condition = searchCondition.value
     if (searchDriveType.value) query.driveType = searchDriveType.value
-    if (searchEquipment.value.trim()) query.textSearch = searchEquipment.value.trim()
+    if (searchEquipment.value.trim()) query.equipment = searchEquipment.value.trim()
     const cat = homeCategories.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })

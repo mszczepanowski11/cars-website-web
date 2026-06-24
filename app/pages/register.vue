@@ -185,13 +185,16 @@
                     </div>
                 </div>
 
-                <label class="age-check">
-                    <input v-model="ageConfirmed" type="checkbox" class="age-check-input" />
-                    <span class="age-check-box" :class="{ 'age-check-box--checked': ageConfirmed }">
-                        <v-icon v-if="ageConfirmed" icon="mdi-check" size="13" />
-                    </span>
-                    <span class="age-check-label">Mam ukończone 18 lat <span class="req">*</span></span>
-                </label>
+                <div class="auth-field">
+                    <label class="auth-label">Data urodzenia <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <v-icon icon="mdi-calendar-outline" size="17" class="auth-field-icon" />
+                        <input v-model="dateOfBirth" type="date" class="auth-input" :max="maxDob" required />
+                    </div>
+                    <div v-if="dateOfBirth && !isAdult" class="auth-hint auth-hint--error">
+                        Musisz mieć ukończone 18 lat.
+                    </div>
+                </div>
 
                 <label class="age-check">
                     <input v-model="termsConfirmed" type="checkbox" class="age-check-input" />
@@ -269,7 +272,12 @@ const companyName      = ref('')
 const nip              = ref('')
 const validationError  = ref('')
 const showPassword     = ref(false)
-const ageConfirmed     = ref(false)
+const dateOfBirth      = ref('')
+const maxDob = new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]
+const isAdult = computed(() => {
+    if (!dateOfBirth.value) return false
+    return new Date(dateOfBirth.value) <= new Date(maxDob)
+})
 const termsConfirmed   = ref(false)
 const gdprConfirmed    = ref(false)
 const marketingConsent = ref(false)
@@ -313,8 +321,8 @@ const strengthLabel = computed(() => {
 
 async function submit() {
     validationError.value = ''
-    if (!ageConfirmed.value) {
-        validationError.value = 'Musisz potwierdzić, że masz ukończone 18 lat.'
+    if (!dateOfBirth.value || !isAdult.value) {
+        validationError.value = 'Musisz mieć ukończone 18 lat.'
         return
     }
     if (!termsConfirmed.value) {
@@ -359,6 +367,7 @@ async function submit() {
         email: email.value,
         phonenumber: phoneNumber.value,
         password: password.value,
+        dateOfBirth: dateOfBirth.value,
         accountType: accountType.value,
         businessType: accountType.value === 'Business' ? businessSubType.value : undefined,
         companyName: accountType.value === 'Business' ? companyName.value : undefined,

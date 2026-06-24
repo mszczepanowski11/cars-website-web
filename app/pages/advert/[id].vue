@@ -1327,7 +1327,7 @@ useSeoMeta({
     title: seoTitle,
     description: seoDescription,
     ogType: 'website',
-    ogUrl: seoCanonical,
+    ogUrl: seoUrl,
     ogTitle: seoOgTitle,
     ogDescription: seoDescription,
     ogImage: seoImage,
@@ -1338,7 +1338,7 @@ useSeoMeta({
     twitterImage: seoImage,
 })
 
-useHead({ link: [{ rel: 'canonical', href: seoCanonical }] })
+useHead({ link: [{ rel: 'canonical', href: seoUrl }] })
 
 watch(activeTab, async (tab) => {
     if (tab === 'Opinie' && sellerReviews.value.length === 0 && advert.value?.userId) {
