@@ -436,7 +436,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />do 84 miesięcy</span>
                                 <span><v-icon icon="mdi-check" size="13" />bez ukrytych kosztów</span>
                             </div>
-                            <a href="#" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
+                            <a href="https://www.ing.pl/dla-firm/leasing" target="_blank" rel="noopener noreferrer" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -449,7 +449,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />brak prowizji</span>
                                 <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%*</span>
                             </div>
-                            <a href="#" class="ing-cta">Oblicz ratę <v-icon icon="mdi-arrow-right" size="13" /></a>
+                            <a href="https://www.ing.pl/dla-klientow-indywidualnych/pozyczki-i-kredyty/kredyt-samochodowy" target="_blank" rel="noopener noreferrer" class="ing-cta">Oblicz ratę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -484,7 +484,7 @@
                                     od <strong>{{ ingMonthlyRate.toLocaleString('pl', { maximumFractionDigits: 0 }) }} zł</strong> / miesiąc
                                 </div>
                             </div>
-                            <a href="#" class="ing-cta">Złóż wniosek <v-icon icon="mdi-arrow-right" size="13" /></a>
+                            <a href="https://www.ing.pl/dla-klientow-indywidualnych/pozyczki-i-kredyty/kredyt-samochodowy" target="_blank" rel="noopener noreferrer" class="ing-cta">Złóż wniosek <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                     </div>
                     <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej. RRSO od 7,99% dotyczy oferty przykładowej zgodnie z Ustawą o kredycie konsumenckim; aktualna stawka może się różnić.</div>
