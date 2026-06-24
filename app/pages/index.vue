@@ -81,6 +81,13 @@
                             <option v-for="m in searchModels" :key="m.id" :value="m.id">{{ m.name }}</option>
                         </select>
                     </div>
+                    <div v-if="currentSearchConfig.subtypes?.length" class="hsp-field">
+                        <label class="hsp-label">{{ currentSearchConfig.subtypeLabel ?? 'Typ' }}</label>
+                        <select v-model="searchSubtype" class="hsp-select">
+                            <option value="">Wszystkie</option>
+                            <option v-for="s in currentSearchConfig.subtypes" :key="s" :value="s">{{ s }}</option>
+                        </select>
+                    </div>
                     <div class="hsp-field hsp-range">
                         <label class="hsp-label">Cena (PLN)</label>
                         <div class="hsp-range-row">
@@ -110,7 +117,7 @@
                     <div v-if="showMoreFilters" class="hs-expanded">
                         <div class="hse-grid">
 
-                            <div v-if="fuelTypes.length" class="hse-field">
+                            <div v-if="currentSearchConfig.hasFuel && fuelTypes.length" class="hse-field">
                                 <label class="hse-label">Paliwo</label>
                                 <select v-model="searchFuelId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
@@ -118,7 +125,7 @@
                                 </select>
                             </div>
 
-                            <div v-if="gearboxes.length" class="hse-field">
+                            <div v-if="currentSearchConfig.hasFuel && gearboxes.length" class="hse-field">
                                 <label class="hse-label">Skrzynia biegów</label>
                                 <select v-model="searchGearboxId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
@@ -126,7 +133,7 @@
                                 </select>
                             </div>
 
-                            <div class="hse-field">
+                            <div v-if="currentSearchConfig.hasFuel" class="hse-field">
                                 <label class="hse-label">Napęd</label>
                                 <select v-model="searchDriveType" class="hse-select">
                                     <option value="">Wszystkie</option>
@@ -136,12 +143,39 @@
                                 </select>
                             </div>
 
-                            <div class="hse-field hse-range">
+                            <div v-if="currentSearchConfig.hasMileage" class="hse-field hse-range">
                                 <label class="hse-label">Przebieg (km)</label>
                                 <div class="hse-range-row">
                                     <input v-model="searchMileageFrom" type="number" class="hse-input" placeholder="Od" min="0" />
                                     <span class="hse-sep">—</span>
                                     <input v-model="searchMileageTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasHours" class="hse-field hse-range">
+                                <label class="hse-label">Motogodziny (mth)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchHoursFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchHoursTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasPower" class="hse-field hse-range">
+                                <label class="hse-label">Moc (KM)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchPowerFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchPowerTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasPayload" class="hse-field hse-range">
+                                <label class="hse-label">Ładowność (kg)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchPayloadFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchPayloadTo" type="number" class="hse-input" placeholder="Do" min="0" />
                                 </div>
                             </div>
 
@@ -154,12 +188,12 @@
                                 </div>
                             </div>
 
-                            <div class="hse-field">
+                            <div v-if="currentSearchConfig.hasFuel" class="hse-field">
                                 <label class="hse-label">Wyposażenie</label>
                                 <input v-model="searchEquipment" type="text" class="hse-input hse-input--full" placeholder="np. klimatyzacja, nawigacja..." />
                             </div>
 
-                            <div class="hse-field">
+                            <div v-if="currentSearchConfig.hasCondition" class="hse-field">
                                 <label class="hse-label">Stan pojazdu</label>
                                 <select v-model="searchCondition" class="hse-select">
                                     <option value="">Wszystkie</option>
