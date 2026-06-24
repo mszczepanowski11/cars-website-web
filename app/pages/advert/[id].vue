@@ -833,6 +833,7 @@ const { shareNative, shareOnFacebook, shareOnX, shareOnWhatsApp, copyLink, copie
 const shareOpen = ref(false)
 
 function currentUrl(): string {
+    if (import.meta.client) return window.location.href
     return `${config.public.siteUrl}/advert/${id}`
 }
 function doShareNative() {
