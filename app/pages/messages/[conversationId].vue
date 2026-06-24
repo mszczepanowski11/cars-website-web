@@ -43,20 +43,29 @@
             </template>
         </div>
 
+        <div v-if="loadError" class="load-error">
+            <v-icon icon="mdi-wifi-off" size="20" />
+            Nie udało się załadować wiadomości.
+            <button class="retry-btn" @click="loadAll">Spróbuj ponownie</button>
+        </div>
+
         <div class="input-bar">
-            <textarea
-                v-model="draft"
-                class="msg-textarea"
-                placeholder="Napisz wiadomość..."
-                rows="1"
-                @keydown.enter.exact.prevent="send"
-                @input="autoResize"
-                ref="textareaRef"
-            />
-            <button class="send-btn" :disabled="sending || !draft.trim()" @click="send">
-                <v-icon v-if="sending" icon="mdi-loading" size="20" class="spin" />
-                <v-icon v-else icon="mdi-send" size="20" />
-            </button>
+            <div v-if="sendError" class="send-error">{{ sendError }}</div>
+            <div class="input-row">
+                <textarea
+                    v-model="draft"
+                    class="msg-textarea"
+                    placeholder="Napisz wiadomość..."
+                    rows="1"
+                    @keydown.enter.exact.prevent="send"
+                    @input="autoResize"
+                    ref="textareaRef"
+                />
+                <button class="send-btn" :disabled="sending || !draft.trim()" @click="send">
+                    <v-icon v-if="sending" icon="mdi-loading" size="20" class="spin" />
+                    <v-icon v-else icon="mdi-send" size="20" />
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -76,6 +85,8 @@ const sending = ref(false)
 const draft = ref('')
 const scrollEl = ref<HTMLElement | null>(null)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const loadError = ref(false)
+const sendError = ref('')
 
 function autoResize() {
     const el = textareaRef.value
@@ -86,6 +97,7 @@ function autoResize() {
 
 async function loadAll() {
     loading.value = true
+    loadError.value = false
     try {
         const [convs, msgs] = await Promise.all([
             $fetch<Conversation[]>('/api/proxy/api/Message/conversations'),
@@ -95,6 +107,8 @@ async function loadAll() {
         messages.value = msgs
         await nextTick()
         scrollToBottom()
+    } catch {
+        loadError.value = true
     } finally {
         loading.value = false
     }
@@ -108,6 +122,7 @@ async function send() {
     const content = draft.value.trim()
     if (!content || sending.value) return
     sending.value = true
+    sendError.value = ''
     try {
         const msg = await $fetch<MessageItem>(`/api/proxy/api/Message/conversation/${conversationId}`, {
             method: 'POST',
@@ -115,8 +130,12 @@ async function send() {
         })
         messages.value.push(msg)
         draft.value = ''
+        if (textareaRef.value) textareaRef.value.style.height = 'auto'
         await nextTick()
         scrollToBottom()
+    } catch (err: any) {
+        const msg = err?.data?.message ?? err?.data?.statusMessage ?? err?.message
+        sendError.value = msg || 'Nie udało się wysłać wiadomości. Spróbuj ponownie.'
     } finally {
         sending.value = false
     }
@@ -259,14 +278,47 @@ onUnmounted(() => {
 .spin { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.input-bar {
+.load-error {
     flex-shrink: 0;
     display: flex;
-    align-items: flex-end;
-    gap: 12px;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: rgba($red, 0.08);
+    border-top: 1px solid rgba($red, 0.3);
+    color: $text-dim;
+    font-size: 13px;
+}
+
+.retry-btn {
+    background: none;
+    border: none;
+    color: $red;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    &:hover { opacity: 0.8; }
+}
+
+.input-bar {
+    flex-shrink: 0;
     padding: 12px 24px;
     background: #080808;
     border-top: 1px solid $border;
+}
+
+.send-error {
+    font-size: 12px;
+    color: $red;
+    margin-bottom: 8px;
+}
+
+.input-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
 }
 
 .msg-textarea {
