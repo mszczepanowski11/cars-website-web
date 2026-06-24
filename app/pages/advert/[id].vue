@@ -1550,6 +1550,10 @@ onUnmounted(() => {
     background: $bg;
     min-height: 100vh;
     padding-top: $nav-height;
+
+    @include respond-to(md) {
+        padding-bottom: $mobile-cta-height;
+    }
 }
 
 // ── Topbar ────────────────────────────────────────────────────────────────────

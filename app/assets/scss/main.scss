@@ -230,4 +230,36 @@ img.reg-success-logo { height: 30px; }
   &:hover { border-color: rgba(255, 255, 255, 0.22); color: $text; }
 }
 
+// ── Dynamic bottom offset for fixed bars ──────────────────────────────────────
+// Applied via <body class="has-compare-panel"> when the compare panel is open.
+// Pages that already handle their own fixed-bottom bar (advert-page) stack on top.
+body.has-compare-panel {
+  .page-bg,
+  .page-content,
+  .add-page,
+  .add-event-page,
+  .events-page,
+  .event-detail-page,
+  .promote-page,
+  .dash-page,
+  .home,
+  .fav-page,
+  .chat-page,
+  .cats-page,
+  .seller-page,
+  .compare-page {
+    padding-bottom: $compare-panel-height !important;
+  }
+
+  // Advert detail has its own mobile-cta-bar; stack both offsets on mobile
+  .advert-page {
+    @media (max-width: $bp-md) {
+      padding-bottom: calc(#{$mobile-cta-height} + #{$compare-panel-height}) !important;
+    }
+    @media (min-width: calc(#{$bp-md} + 1px)) {
+      padding-bottom: $compare-panel-height !important;
+    }
+  }
+}
+
 

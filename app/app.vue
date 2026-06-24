@@ -1,4 +1,11 @@
 <script setup lang="ts">
+const { compared } = useCompare()
+
+useHead({
+  bodyAttrs: {
+    class: computed(() => compared.value.length > 0 ? 'has-compare-panel' : ''),
+  },
+})
 </script>
 
 <template>
