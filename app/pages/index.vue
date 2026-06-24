@@ -88,6 +88,13 @@
                             <option v-for="s in currentSearchConfig.subtypes" :key="s" :value="s">{{ s }}</option>
                         </select>
                     </div>
+                    <div v-if="currentSearchConfig.hasPartCategory" class="hsp-field">
+                        <label class="hsp-label">Kategoria części</label>
+                        <select v-model="searchPartCategory" class="hsp-select">
+                            <option value="">Wszystkie kategorie</option>
+                            <option v-for="pc in PART_CATEGORIES" :key="pc.value" :value="pc.value">{{ pc.label }}</option>
+                        </select>
+                    </div>
                     <div class="hsp-field hsp-range">
                         <label class="hsp-label">Cena (PLN)</label>
                         <div class="hsp-range-row">
@@ -122,14 +129,6 @@
                                 <select v-model="searchBodyTypeId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
                                     <option v-for="bt in bodyTypes" :key="bt.id" :value="bt.id">{{ bt.name }}</option>
-                                </select>
-                            </div>
-
-                            <div v-if="currentSearchConfig.hasPartCategory" class="hse-field">
-                                <label class="hse-label">Kategoria części</label>
-                                <select v-model="searchPartCategory" class="hse-select">
-                                    <option value="">Wszystkie</option>
-                                    <option v-for="pc in PART_CATEGORIES" :key="pc.value" :value="pc.value">{{ pc.label }}</option>
                                 </select>
                             </div>
 
