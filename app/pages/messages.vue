@@ -6,7 +6,12 @@
                 <v-icon icon="mdi-loading" size="36" class="spin" />
             </div>
             <template v-else>
-                <div v-if="!conversations.length" class="no-results">
+                <div v-if="loadError" class="no-results">
+                    <v-icon icon="mdi-wifi-off" size="64" class="no-results-icon" />
+                    <p>Nie udało się załadować wiadomości. Sprawdź połączenie.</p>
+                    <button class="browse-link" @click="load">Spróbuj ponownie</button>
+                </div>
+                <div v-else-if="!conversations.length" class="no-results">
                     <v-icon icon="mdi-message-outline" size="64" class="no-results-icon" />
                     <p>Nie masz jeszcze żadnych wiadomości.</p>
                     <NuxtLink to="/adverts" class="browse-link">Przeglądaj ogłoszenia</NuxtLink>
@@ -46,12 +51,16 @@ useHead({ title: 'Wiadomości — CARIZO', meta: [{ name: 'robots', content: 'no
 
 const conversations = ref<Conversation[]>([])
 const loading = ref(false)
+const loadError = ref(false)
 let pollTimer: ReturnType<typeof setInterval> | null = null
 
 async function load() {
     loading.value = true
+    loadError.value = false
     try {
         conversations.value = await $fetch<Conversation[]>('/api/proxy/api/Message/conversations')
+    } catch {
+        loadError.value = true
     } finally {
         loading.value = false
     }
