@@ -198,29 +198,6 @@
             </div>
         </div>
 
-        <!-- ─── Recently added ───────────────────────────────────────── -->
-        <section v-if="recentlyAdded.length || featured.length" class="section">
-            <div class="container">
-                <div class="sec-top">
-                    <div class="sec-top-left">
-                        <div class="sec-eyebrow">NOWE OGŁOSZENIA</div>
-                        <h2>Ostatnio dodane</h2>
-                    </div>
-                    <NuxtLink to="/adverts" class="see-all">
-                        Wszystkie ogłoszenia
-                        <v-icon icon="mdi-arrow-right" size="16" />
-                    </NuxtLink>
-                </div>
-                <div class="cars-grid">
-                    <AdvertCard
-                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured)"
-                        :key="a.id"
-                        :advert="a"
-                    />
-                </div>
-            </div>
-        </section>
-
         <!-- ─── Most viewed ─────────────────────────────────────────────── -->
         <section v-if="clientDataLoading || mostViewed.length" class="section">
             <div class="container">
@@ -510,6 +487,29 @@
                         <v-icon icon="mdi-calendar-multiple" size="18" />
                         Zobacz wszystkie wydarzenia
                     </NuxtLink>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Recently added ───────────────────────────────────────── -->
+        <section v-if="recentlyAdded.length || featured.length" class="section recently-added-section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">NOWE OGŁOSZENIA</div>
+                        <h2>Ostatnio dodane</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">
+                        Wszystkie ogłoszenia
+                        <v-icon icon="mdi-arrow-right" size="16" />
+                    </NuxtLink>
+                </div>
+                <div class="cars-grid cars-grid--small">
+                    <AdvertCard
+                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured)"
+                        :key="a.id"
+                        :advert="a"
+                    />
                 </div>
             </div>
         </section>
@@ -2047,6 +2047,11 @@ onMounted(async () => {
 
 .cars-grid {
     @include cars-grid;
+
+    &--small {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+    }
 }
 
 // ─── Premium showcase ─────────────────────────────────────────────────────────
