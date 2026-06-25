@@ -10,6 +10,8 @@ export default defineEventHandler(async (event) => {
         'api/Auth/resend-verification',
         'api/Auth/reset-password',
         'api/FinancingInquiry',
+        'api/Newsletter/subscribe',
+        'api/Newsletter/unsubscribe',
     ]
     const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/')) || /^api\/Advert\/\d+\/view$/.test(path)
 
