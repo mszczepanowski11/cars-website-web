@@ -9,6 +9,7 @@ export default defineEventHandler(async (event) => {
         'api/Payment/webhook',
         'api/Auth/resend-verification',
         'api/Auth/reset-password',
+        'api/FinancingInquiry',
     ]
     const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/')) || /^api\/Advert\/\d+\/view$/.test(path)
 

@@ -802,6 +802,50 @@
 
     <ReportModal v-model="reportOpen" target-type="Advert" :target-id="id" />
 
+    <!-- Compose message modal -->
+    <Teleport to="body">
+        <transition name="fade">
+            <div v-if="composeOpen" class="compose-backdrop" @click.self="composeOpen = false">
+                <div class="compose-modal">
+                    <div class="compose-header">
+                        <div class="compose-to">
+                            <v-icon icon="mdi-message-text-outline" size="18" />
+                            <span>Wiadomość do <strong>{{ seller?.name }} {{ seller?.surname }}</strong></span>
+                        </div>
+                        <button class="compose-close" @click="composeOpen = false">
+                            <v-icon icon="mdi-close" size="20" />
+                        </button>
+                    </div>
+                    <div class="compose-advert-ref">{{ advert?.title }}</div>
+                    <div class="compose-suggestions">
+                        <button
+                            v-for="s in messageSuggestions"
+                            :key="s"
+                            class="compose-chip"
+                            :class="{ active: composeDraft === s }"
+                            @click="composeDraft = s"
+                        >{{ s }}</button>
+                    </div>
+                    <textarea
+                        ref="composeRef"
+                        v-model="composeDraft"
+                        class="compose-textarea"
+                        placeholder="Napisz wiadomość..."
+                        rows="3"
+                    />
+                    <div v-if="contactError" class="compose-error">
+                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ contactError }}
+                    </div>
+                    <button class="compose-send" :disabled="contactLoading || !composeDraft.trim()" @click="sendComposeMessage">
+                        <v-icon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
+                        <v-icon v-else icon="mdi-send" size="17" />
+                        {{ contactLoading ? 'Wysyłanie...' : 'Wyślij wiadomość' }}
+                    </button>
+                </div>
+            </div>
+        </transition>
+    </Teleport>
+
     <!-- Mobile sticky contact bar -->
     <Teleport to="body">
         <div v-if="seller" class="mobile-cta-bar">
@@ -809,9 +853,8 @@
                 <v-icon :icon="showPhone ? 'mdi-phone' : 'mdi-phone-outline'" size="18" />
                 <span>{{ showPhone ? seller.phoneNumber : 'Zadzwoń' }}</span>
             </button>
-            <button class="mcb-message" :disabled="contactLoading" @click="contactSeller">
-                <v-icon v-if="contactLoading" icon="mdi-loading" size="18" class="spin" />
-                <v-icon v-else icon="mdi-message-text-outline" size="18" />
+            <button class="mcb-message" @click="contactSeller">
+                <v-icon icon="mdi-message-text-outline" size="18" />
                 <span>Napisz</span>
             </button>
         </div>
@@ -860,6 +903,16 @@ const isOwnAdvert = computed(() => isLoggedIn.value && currentUserId.value !== n
 
 const contactLoading = ref(false)
 const contactError = ref('')
+const composeOpen = ref(false)
+const composeDraft = ref('')
+const composeRef = ref<HTMLTextAreaElement | null>(null)
+const messageSuggestions = [
+    'Czy auto jest jeszcze dostępne?',
+    'Czy cena jest do negocjacji?',
+    'Kiedy można obejrzeć pojazd?',
+    'Czy auto ma pełną historię serwisową?',
+    'Czy możliwa jest zamiana?',
+]
 const followError = ref('')
 const advert = ref<CarAdvert | null>(null)
 const similar = ref<CarAdvert[]>([])
@@ -1193,17 +1246,25 @@ function handleReport() {
     reportOpen.value = true
 }
 
-async function contactSeller() {
-    if (!isLoggedIn.value) { await navigateTo('/login'); return }
+function contactSeller() {
+    if (!isLoggedIn.value) { navigateTo('/login'); return }
+    contactError.value = ''
+    composeDraft.value = ''
+    composeOpen.value = true
+    nextTick(() => composeRef.value?.focus())
+}
+
+async function sendComposeMessage() {
+    if (!composeDraft.value.trim() || contactLoading.value) return
     contactLoading.value = true
     contactError.value = ''
     try {
-        const conversationId = await startConversation(id)
+        const conversationId = await startConversation(id, composeDraft.value.trim())
         if (!conversationId) throw new Error('Brak ID rozmowy w odpowiedzi.')
+        composeOpen.value = false
         await navigateTo(`/messages/${conversationId}`)
     } catch (e: any) {
-        contactError.value = e?.data?.message ?? e?.message ?? 'Nie udało się otworzyć wiadomości.'
-        setTimeout(() => { contactError.value = '' }, 4000)
+        contactError.value = e?.data?.message ?? e?.message ?? 'Nie udało się wysłać wiadomości.'
     } finally {
         contactLoading.value = false
     }
@@ -1565,6 +1626,10 @@ onUnmounted(() => {
     background: $bg;
     min-height: 100vh;
     padding-top: $nav-height;
+
+    @include respond-to(md) {
+        padding-bottom: $mobile-cta-height;
+    }
 }
 
 // ── Topbar ────────────────────────────────────────────────────────────────────
@@ -4329,5 +4394,137 @@ onUnmounted(() => {
     margin-top: 8px;
     transition: opacity 0.2s;
     &:hover { opacity: 0.88; }
+}
+
+// ── Compose modal ─────────────────────────────────────────────────────────────
+.compose-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.compose-modal {
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: $r-xl;
+    padding: 28px;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.compose-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.compose-to {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $text-dim;
+    font-size: 14px;
+    strong { color: $text; }
+}
+
+.compose-close {
+    background: none;
+    border: none;
+    color: $text-dim;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    &:hover { color: $text; }
+}
+
+.compose-advert-ref {
+    font-size: 12px;
+    color: $text-dark;
+    background: rgba(255,255,255,0.04);
+    border-radius: $r-sm;
+    padding: 8px 12px;
+    border-left: 2px solid $red;
+}
+
+.compose-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.compose-chip {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid $border;
+    border-radius: 20px;
+    color: $text-dim;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    text-align: left;
+
+    &:hover, &.active {
+        border-color: rgba($red, 0.6);
+        color: $text;
+        background: rgba($red, 0.08);
+    }
+}
+
+.compose-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: $r-md;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    outline: none;
+    padding: 12px 14px;
+    resize: vertical;
+    min-height: 90px;
+    box-sizing: border-box;
+
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba($red, 0.4); }
+}
+
+.compose-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $red;
+}
+
+.compose-send {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: $red;
+    border: none;
+    border-radius: $r-md;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 13px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover:not(:disabled) { opacity: 0.88; }
+    &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 </style>

@@ -256,29 +256,6 @@
             </div>
         </div>
 
-        <!-- ─── Recently added ───────────────────────────────────────── -->
-        <section v-if="recentlyAdded.length || featured.length" class="section">
-            <div class="container">
-                <div class="sec-top">
-                    <div class="sec-top-left">
-                        <div class="sec-eyebrow">NOWE OGŁOSZENIA</div>
-                        <h2>Ostatnio dodane</h2>
-                    </div>
-                    <NuxtLink to="/adverts" class="see-all">
-                        Wszystkie ogłoszenia
-                        <v-icon icon="mdi-arrow-right" size="16" />
-                    </NuxtLink>
-                </div>
-                <div class="cars-grid">
-                    <AdvertCard
-                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured)"
-                        :key="a.id"
-                        :advert="a"
-                    />
-                </div>
-            </div>
-        </section>
-
         <!-- ─── Most viewed ─────────────────────────────────────────────── -->
         <section v-if="clientDataLoading || mostViewed.length" class="section">
             <div class="container">
@@ -436,7 +413,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />do 84 miesięcy</span>
                                 <span><v-icon icon="mdi-check" size="13" />bez ukrytych kosztów</span>
                             </div>
-                            <a href="https://www.ing.pl/dla-firm/leasing" target="_blank" rel="noopener noreferrer" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
+<a href="https://www.inglesing.pl" target="_blank" rel="noopener noreferrer" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -449,7 +426,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />brak prowizji</span>
                                 <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%*</span>
                             </div>
-                            <a href="https://www.ing.pl/dla-klientow-indywidualnych/pozyczki-i-kredyty/kredyt-samochodowy" target="_blank" rel="noopener noreferrer" class="ing-cta">Oblicz ratę <v-icon icon="mdi-arrow-right" size="13" /></a>
+<a href="https://www.ing.pl/dla-klientow-indywidualnych/pozyczki-i-kredyty" target="_blank" rel="noopener noreferrer" class="ing-cta">Oblicz ratę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -462,7 +439,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />zarządzanie online</span>
                                 <span><v-icon icon="mdi-check" size="13" />dedykowany opiekun</span>
                             </div>
-                            <a href="#contact" class="ing-cta">Skontaktuj się <v-icon icon="mdi-arrow-right" size="13" /></a>
+                            <a href="https://www.ing.pl/dla-firm" target="_blank" rel="noopener noreferrer" class="ing-cta">Skontaktuj się <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card ing-card--calc">
                             <div class="ing-card-icon">
@@ -484,7 +461,7 @@
                                     od <strong>{{ ingMonthlyRate.toLocaleString('pl', { maximumFractionDigits: 0 }) }} zł</strong> / miesiąc
                                 </div>
                             </div>
-                            <a href="https://www.ing.pl/dla-klientow-indywidualnych/pozyczki-i-kredyty/kredyt-samochodowy" target="_blank" rel="noopener noreferrer" class="ing-cta">Złóż wniosek <v-icon icon="mdi-arrow-right" size="13" /></a>
+<a href="https://www.ing.pl/dla-klientow-indywidualnych/pozyczki-i-kredyty" target="_blank" rel="noopener noreferrer" class="ing-cta">Złóż wniosek <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                     </div>
                     <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej. RRSO od 7,99% dotyczy oferty przykładowej zgodnie z Ustawą o kredycie konsumenckim; aktualna stawka może się różnić.</div>
@@ -568,6 +545,29 @@
                         <v-icon icon="mdi-calendar-multiple" size="18" />
                         Zobacz wszystkie wydarzenia
                     </NuxtLink>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Recently added ───────────────────────────────────────── -->
+        <section v-if="recentlyAdded.length || featured.length" class="section recently-added-section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">NOWE OGŁOSZENIA</div>
+                        <h2>Ostatnio dodane</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">
+                        Wszystkie ogłoszenia
+                        <v-icon icon="mdi-arrow-right" size="16" />
+                    </NuxtLink>
+                </div>
+                <div class="cars-grid cars-grid--small">
+                    <AdvertCard
+                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured).slice(0, 4)"
+                        :key="a.id"
+                        :advert="a"
+                    />
                 </div>
             </div>
         </section>
@@ -2141,6 +2141,11 @@ onMounted(async () => {
 
 .cars-grid {
     @include cars-grid;
+
+    &--small {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+    }
 }
 
 // ─── Premium showcase ─────────────────────────────────────────────────────────

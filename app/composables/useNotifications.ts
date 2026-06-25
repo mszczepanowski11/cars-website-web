@@ -1,9 +1,10 @@
 import type { Notification, NotificationPreference, UpdateNotificationPreferenceDto, PagedResult } from '~/types'
 
-export const useNotifications = () => {
-    let _pollTimer: ReturnType<typeof setInterval> | null = null
-    let _pollInterval = 30_000
+// Module-level singleton so multiple NavBar mounts never stack intervals
+let _pollTimer: ReturnType<typeof setInterval> | null = null
+let _pollInterval = 30_000
 
+export const useNotifications = () => {
     const notifications = useState<Notification[]>('notifications', () => [])
     const unreadCount = useState('notifications-unread', () => 0)
     const loading = ref(false)
@@ -42,7 +43,15 @@ export const useNotifications = () => {
             const r = await $fetch<{ count: number }>('/api/proxy/api/Notification/unread-count')
             unreadCount.value = r.count
             return r.count
-        } catch { return 0 }
+        } catch (err: any) {
+            const status = err?.status ?? err?.statusCode ?? err?.response?.status
+            if (status === 401) {
+                // Token expired or missing — stop polling to avoid log spam
+                stopPolling()
+                unreadCount.value = 0
+            }
+            return 0
+        }
     }
 
     async function getPreferences(): Promise<NotificationPreference[]> {
@@ -55,7 +64,6 @@ export const useNotifications = () => {
 
     function startPolling(intervalMs = 30_000): void {
         if (_pollTimer) {
-            // Already polling — restart only if interval changed
             if (intervalMs === _pollInterval) return
             clearInterval(_pollTimer)
             _pollTimer = null
