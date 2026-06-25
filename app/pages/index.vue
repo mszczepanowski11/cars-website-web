@@ -506,7 +506,7 @@
                 </div>
                 <div class="cars-grid cars-grid--small">
                     <AdvertCard
-                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured)"
+                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured).slice(0, 4)"
                         :key="a.id"
                         :advert="a"
                     />
