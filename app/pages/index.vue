@@ -256,27 +256,6 @@
             </div>
         </div>
 
-        <!-- ─── Most viewed ─────────────────────────────────────────────── -->
-        <section v-if="clientDataLoading || mostViewed.length" class="section">
-            <div class="container">
-                <div class="sec-top">
-                    <div class="sec-top-left">
-                        <div class="sec-eyebrow">NAJCZĘŚCIEJ OGLĄDANE</div>
-                        <h2>Popularne ogłoszenia</h2>
-                    </div>
-                    <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
-                </div>
-                <div class="cars-grid">
-                    <template v-if="clientDataLoading">
-                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
-                    </template>
-                    <template v-else>
-                        <AdvertCard v-for="a in mostViewed" :key="a.id" :advert="a" />
-                    </template>
-                </div>
-            </div>
-        </section>
-
         <!-- ─── Car of week ──────────────────────────────────────────────── -->
         <section v-if="carOfWeek" class="section cow-section">
             <div class="container">
@@ -362,6 +341,27 @@
                 </div>
                 <div class="cars-grid">
                     <AdvertCard v-for="a in topAdverts" :key="a.id" :advert="a" />
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Most viewed ─────────────────────────────────────────────── -->
+        <section v-if="clientDataLoading || mostViewed.length" class="section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">NAJCZĘŚCIEJ OGLĄDANE</div>
+                        <h2>Popularne ogłoszenia</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                </div>
+                <div class="cars-grid cars-grid--small">
+                    <template v-if="clientDataLoading">
+                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
+                    </template>
+                    <template v-else>
+                        <AdvertCard v-for="a in mostViewed.slice(0, 4)" :key="a.id" :advert="a" />
+                    </template>
                 </div>
             </div>
         </section>
