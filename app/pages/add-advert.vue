@@ -2528,8 +2528,8 @@ async function submitOtherCategory() {
             }
         })
         otherCategorySubmitted.value = true
-    } catch (e) {
-        console.error('Failed to submit custom category', e)
+    } catch {
+        // ignore
     } finally {
         otherCategorySubmitting.value = false
     }
@@ -3632,12 +3632,10 @@ async function submit() {
             if (history.damageDesc) cleanBody.damageDescription = history.damageDesc
             cleanBody.hasWarranty = history.hasWarranty
             if (history.warrantyUntil) cleanBody.warrantyUntil = history.warrantyUntil.length === 7 ? `${history.warrantyUntil}-01` : history.warrantyUntil
-            console.log('[submit] body →', JSON.stringify(cleanBody))
             const created = await $fetch<any>('/api/proxy/api/Advert', {
                 method: 'POST',
                 body: cleanBody,
             })
-            console.log('[create advert response]', JSON.stringify(created))
             const id: number = created?.id ?? created?.advertId ?? created
             if (!id) throw new Error('Brak ID ogłoszenia w odpowiedzi: ' + JSON.stringify(created))
 
@@ -3647,21 +3645,13 @@ async function submit() {
                 fd.append('file', file)
                 try {
                     await $fetch(`/api/proxy/api/Advert/${id}/images`, { method: 'POST', body: fd })
-                } catch (imgErr: any) {
+                } catch {
                     imageErrors++
-                    console.error('[image upload error]', imgErr?.data ?? imgErr?.statusMessage ?? imgErr)
                 }
-            }
-            if (imageErrors.length > 0) {
-                console.warn('[upload] image errors:', imageErrors)
             }
             localStorage.removeItem(draftKey.value)
 
-            await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch((e: any) => {
-                console.warn('[publish] failed (non-critical):', e?.message)
-            })
-
-            console.log('[submit] promoSelected=', promoSelected.value, '| advertId=', id, '| durationDays=', promoDays.value)
+            await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
 
             if (imageErrors > 0) {
                 loading.value = false
@@ -3683,16 +3673,13 @@ async function submit() {
                         durationDays: promoDays.value,
                     }
                     if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
-                    console.log('[payment/initiate] calling with body:', JSON.stringify(body))
                     const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string> }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-                    console.log('[payment/initiate] result:', JSON.stringify(result))
                     submitImojeForm(result)
                 } catch (payErr: any) {
                     paying.value = false
                     publishedAdvertId.value = id
                     showSuccess.value = true
                     const payMsg = (payErr?.data?.message ?? payErr?.statusMessage ?? payErr?.message ?? '') as string
-                    console.error('[payment/initiate] failed after advert created:', payMsg, payErr)
                     error.value = `Ogłoszenie zostało opublikowane! Nie udało się zainicjować płatności${payMsg ? ` (${payMsg})` : ''}. Możesz opłacić promocję z panelu „Moje ogłoszenia".`
                     if (imageErrors > 0) {
                         error.value += ` Ponadto ${imageErrors} zdjęcie(a) nie zostało przesłane.`
@@ -3718,7 +3705,6 @@ async function submit() {
             limitError.value = null
             error.value = msg || e?.message || 'Błąd podczas zapisywania ogłoszenia.'
         }
-        console.error('[submit] error response:', JSON.stringify(bd ?? e?.message))
     } finally {
         loading.value = false
         paying.value = false
