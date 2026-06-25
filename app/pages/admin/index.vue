@@ -387,8 +387,8 @@ onMounted(async () => {
             getLogs({ page: 1, pageSize: 30 })
         ])
         await loadPendingCount()
-    } catch (err: any) {
-        console.error(err)
+    } catch {
+        // ignore
     }
     finally { loading.value = false }
 })

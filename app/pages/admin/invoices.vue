@@ -307,7 +307,7 @@ async function resend(id: number) {
 async function downloadPdfAdmin(inv: MonthlyInvoice) {
     pdfLoadingId.value = inv.id
     try { await generatePdf(inv) }
-    catch (e) { console.error('PDF error:', e) }
+    catch { /* ignore */ }
     finally { pdfLoadingId.value = null }
 }
 

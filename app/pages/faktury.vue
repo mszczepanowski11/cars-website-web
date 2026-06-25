@@ -329,8 +329,8 @@ async function downloadPdf(inv: MonthlyInvoice) {
         doc.text('Dokument wygenerowany przez system CARIZO | carizo.pl | Nie wymaga podpisu ani pieczęci.', W / 2, 289, { align: 'center' })
 
         doc.save(`faktura-${inv.invoiceNumber.replace(/\//g, '-')}.pdf`)
-    } catch (e) {
-        console.error('PDF generation error:', e)
+    } catch {
+        // ignore
     } finally {
         pdfLoadingId.value = null
     }

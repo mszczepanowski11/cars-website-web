@@ -163,7 +163,7 @@ async function downloadInvoicePdf() {
     if (!latestInvoice.value) return
     pdfLoading.value = true
     try { await generatePdf(latestInvoice.value) }
-    catch (e) { console.error(e) }
+    catch { /* ignore */ }
     finally { pdfLoading.value = false }
 }
 

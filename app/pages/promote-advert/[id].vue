@@ -353,7 +353,7 @@ async function initiatePayment() {
 
     // Refresh publish state — non-critical, advert may already be active
     await $fetch(`/api/proxy/api/Advert/${advertId.value}/publish`, { method: 'POST', body: {} })
-        .catch((e: any) => console.warn('[promote] publish non-critical:', e?.data?.message ?? e?.message))
+        .catch(() => {})
 
     try {
         const body: Record<string, unknown> = {
@@ -366,9 +366,7 @@ async function initiatePayment() {
         }
         if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
 
-        console.log('[promote] Payment/initiate body:', JSON.stringify(body))
         const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-        console.log('[promote] Payment/initiate result:', JSON.stringify(result))
         if (result.paymentUrl) {
             window.location.href = result.paymentUrl
         }

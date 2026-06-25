@@ -267,7 +267,6 @@ async function doMarkSold() {
         if (a) a.soldAt = new Date().toISOString()
         confirmAdvert.value = null
     } catch (err: any) {
-        console.error(err)
         alert(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
     }
     finally { soldLoading.value = null }
@@ -286,7 +285,6 @@ async function reactivateAdvert(a: CarAdvert) {
             found.expiresAt = thirtyDays.toISOString()
         }
     } catch (err: any) {
-        console.error(err)
         alert(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
     }
     finally { reactivateLoading.value = null }
@@ -310,7 +308,6 @@ async function doDelete() {
         total.value = Math.max(0, total.value - 1)
         deleteAdvert.value = null
     } catch (err: any) {
-        console.error(err)
         alert(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
     }
     finally { deleteLoading.value = null }

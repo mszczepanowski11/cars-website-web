@@ -175,7 +175,6 @@ async function fetchReports() {
                 search: search.value || undefined
             }
         })
-        console.log('[Admin/Reports] raw response:', JSON.stringify(raw).slice(0, 600))
         let items: AdminReport[] = []
         let count = 0
         if (Array.isArray(raw)) {
@@ -196,7 +195,6 @@ async function fetchReports() {
         reports.value = items
         totalCount.value = count
     } catch (e: any) {
-        console.error('[Admin/Reports] fetch failed:', e)
         error.value = e?.data?.message ?? e?.data?.title ?? e?.message ?? 'Błąd podczas ładowania zgłoszeń.'
         reports.value = []
         totalCount.value = 0
@@ -209,8 +207,8 @@ async function resolveReport(id: number) {
         await resolveReportApi(id)
         const r = reports.value.find(x => x.id === id)
         if (r) r.status = 'Resolved'
-    } catch (e: any) {
-        console.error('[Admin/Reports] resolve failed:', e)
+    } catch {
+        // ignore
     } finally { actionLoading.value = null }
 }
 
@@ -220,8 +218,8 @@ async function rejectReport(id: number) {
         await rejectReportApi(id)
         const r = reports.value.find(x => x.id === id)
         if (r) r.status = 'Rejected'
-    } catch (e: any) {
-        console.error('[Admin/Reports] reject failed:', e)
+    } catch {
+        // ignore
     } finally { actionLoading.value = null }
 }
 
