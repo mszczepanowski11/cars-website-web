@@ -2143,8 +2143,12 @@ onMounted(async () => {
     @include cars-grid;
 
     &--small {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+
+        @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+        @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+        @include respond-to(xs) { grid-template-columns: 1fr; }
     }
 }
 
