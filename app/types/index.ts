@@ -151,8 +151,13 @@ export interface Conversation {
     buyerId: number; buyerName: string
     sellerId: number; sellerName: string
     advertId: number; advertTitle: string
+    advertThumbnail?: string | null
     lastMessageAt: string; lastMessageContent: string | null
+    lastMessageIsMine?: boolean
     unreadCount: number; otherUserId: number; otherUserName: string
+    otherUserAvatar?: string | null
+    isPinned?: boolean
+    isArchived?: boolean
 }
 
 export interface MessageItem {
