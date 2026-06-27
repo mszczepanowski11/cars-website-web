@@ -115,13 +115,13 @@
                     <div class="auth-field">
                         <label class="auth-label">{{ accountType === 'Business' ? 'Imię (kontakt)' : 'Imię' }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <input v-model="name" class="auth-input auth-input--solo" :placeholder="accountType === 'Business' ? 'Jan' : 'Jan'" required />
+                            <input v-model="name" class="auth-input auth-input--solo" :placeholder="accountType === 'Business' ? 'Jan' : 'Jan'" required autocomplete="given-name" />
                         </div>
                     </div>
                     <div class="auth-field">
                         <label class="auth-label">{{ accountType === 'Business' ? 'Nazwisko (kontakt)' : 'Nazwisko' }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <input v-model="surname" class="auth-input auth-input--solo" placeholder="Kowalski" required />
+                            <input v-model="surname" class="auth-input auth-input--solo" placeholder="Kowalski" required autocomplete="family-name" />
                         </div>
                     </div>
                 </div>
@@ -138,7 +138,7 @@
                     <label class="auth-label">Numer telefonu <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-phone-outline" size="17" class="auth-field-icon" />
-                        <input v-model="phoneNumber" type="tel" class="auth-input" placeholder="+48 600 123 456" required />
+                        <input v-model="phoneNumber" type="tel" class="auth-input" placeholder="+48 600 123 456" required autocomplete="tel" />
                     </div>
                 </div>
 
