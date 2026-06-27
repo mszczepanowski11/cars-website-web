@@ -60,7 +60,7 @@
         <!-- Advert card strip -->
         <div v-if="conversation" class="advert-strip">
             <NuxtLink :to="`/advert/${conversation.advertId}`" class="advert-strip-inner">
-                <img v-if="conversation.advertThumbnail" :src="conversation.advertThumbnail" class="strip-thumb" :alt="conversation.advertTitle" />
+                <img v-if="conversation.advertThumbnail" :src="conversation.advertThumbnail" class="strip-thumb" :alt="conversation.advertTitle" loading="lazy" />
                 <div v-else class="strip-thumb-placeholder"><v-icon icon="mdi-car" size="16" /></div>
                 <span class="strip-title">{{ conversation.advertTitle }}</span>
                 <v-icon icon="mdi-chevron-right" size="16" class="strip-arrow" />
@@ -92,7 +92,7 @@
                         <!-- Other user avatar (only first in group) -->
                         <div v-if="!msg.isMine" class="msg-avatar-col">
                             <div v-if="isFirstInGroup(idx)" class="msg-avatar">
-                                <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" class="bubble-avatar-img" />
+                                <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" class="bubble-avatar-img" loading="lazy" />
                                 <span v-else class="bubble-avatar-initials">{{ initials }}</span>
                             </div>
                             <div v-else class="msg-avatar-spacer" />
@@ -118,7 +118,7 @@
                 <div v-if="showTyping" class="msg-row row-other typing-row">
                     <div class="msg-avatar-col">
                         <div class="msg-avatar">
-                            <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" class="bubble-avatar-img" />
+                            <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" class="bubble-avatar-img" loading="lazy" />
                             <span v-else class="bubble-avatar-initials">{{ initials }}</span>
                         </div>
                     </div>

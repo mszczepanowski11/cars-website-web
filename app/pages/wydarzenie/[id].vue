@@ -230,16 +230,29 @@ async function copyLink() {
     setTimeout(() => { copied.value = false }, 2000)
 }
 
+const eventConfig = useRuntimeConfig()
 useHead(computed(() => {
     const e = event.value
     if (!e) return { title: 'Wydarzenie — CARIZO' }
+    const desc = e.description?.slice(0, 160) ?? `Wydarzenie motoryzacyjne: ${e.name}`
+    const img = mainImageUrl.value?.startsWith('http') ? mainImageUrl.value : `${eventConfig.public.siteUrl}${mainImageUrl.value}`
+    const pageUrl = `${eventConfig.public.siteUrl}/wydarzenie/${eventId}`
     return {
         title: `${e.name} — CARIZO`,
         meta: [
-            { name: 'description', content: e.description?.slice(0, 160) ?? `Wydarzenie motoryzacyjne: ${e.name}` },
-            { property: 'og:title', content: e.name },
-            { property: 'og:description', content: e.description?.slice(0, 160) ?? '' },
-        ]
+            { name: 'description', content: desc },
+            { property: 'og:type', content: 'event' },
+            { property: 'og:url', content: pageUrl },
+            { property: 'og:title', content: `${e.name} — CARIZO` },
+            { property: 'og:description', content: desc },
+            { property: 'og:image', content: img },
+            { property: 'og:site_name', content: 'CARIZO' },
+            { name: 'twitter:card', content: 'summary_large_image' },
+            { name: 'twitter:title', content: `${e.name} — CARIZO` },
+            { name: 'twitter:description', content: desc },
+            { name: 'twitter:image', content: img },
+        ],
+        link: [{ rel: 'canonical', href: pageUrl }]
     }
 }))
 

@@ -27,7 +27,7 @@
                 <div class="my-adverts-list">
                     <div v-for="a in adverts" :key="a.id" class="my-advert-row">
                         <NuxtLink :to="`/advert/${a.id}`" class="row-img-wrap">
-                            <img :src="mainImage(a)" :alt="a.title" class="row-img" />
+                            <img :src="mainImage(a)" :alt="a.title" class="row-img" loading="lazy" />
                             <span v-if="a.soldAt" class="overlay-badge sold-badge">SPRZEDANE</span>
                             <span v-else-if="a.badge" class="overlay-badge promo-badge">{{ a.badge }}</span>
                         </NuxtLink>
