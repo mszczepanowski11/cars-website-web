@@ -67,7 +67,14 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Pomoc — CARIZO' })
+useHead({
+    title: 'Pomoc — CARIZO',
+    meta: [
+        { name: 'description', content: 'Centrum pomocy CARIZO — znajdź odpowiedzi na najczęstsze pytania dotyczące sprzedaży, zakupu i bezpieczeństwa transakcji.' },
+        { property: 'og:title', content: 'Pomoc — CARIZO' },
+        { property: 'og:description', content: 'Centrum pomocy CARIZO — FAQ i wskazówki dla kupujących i sprzedających.' },
+    ]
+})
 
 const query = ref('')
 const openKey = ref<string | null>(null)

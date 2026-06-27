@@ -301,7 +301,22 @@ onMounted(async () => {
     }
 
     if (seller.value) {
-        useHead(computed(() => ({ title: seller.value ? `${seller.value.accountType === 'Business' && seller.value.companyName ? seller.value.companyName : [seller.value.name, seller.value.surname].filter(Boolean).join(' ') || 'Sprzedawca'} — CARIZO` : 'Sprzedawca — CARIZO' })))
+        useHead(computed(() => {
+            const s = seller.value
+            if (!s) return { title: 'Sprzedawca — CARIZO' }
+            const displayName = s.accountType === 'Business' && s.companyName
+                ? s.companyName
+                : [s.name, s.surname].filter(Boolean).join(' ') || 'Sprzedawca'
+            const desc = `Sprawdź ogłoszenia sprzedawcy ${displayName} na CARIZO — największej platformie motoryzacyjnej w Polsce.`
+            return {
+                title: `${displayName} — CARIZO`,
+                meta: [
+                    { name: 'description', content: desc },
+                    { property: 'og:title', content: `${displayName} — CARIZO` },
+                    { property: 'og:description', content: desc },
+                ]
+            }
+        }))
         await Promise.all([
             loadAdverts(true),
             loadReviews(true),

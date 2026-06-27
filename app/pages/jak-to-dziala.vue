@@ -59,7 +59,14 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Jak to działa — CARIZO' })
+useHead({
+    title: 'Jak to działa — CARIZO',
+    meta: [
+        { name: 'description', content: 'Dowiedz się jak sprzedawać i kupować samochody na CARIZO. Prosta rejestracja, bezpieczne ogłoszenia i bezpośredni kontakt ze sprzedającym.' },
+        { property: 'og:title', content: 'Jak to działa — CARIZO' },
+        { property: 'og:description', content: 'Sprzedaj lub kup samochód w kilku prostych krokach. Zarejestruj się za darmo na CARIZO.' },
+    ]
+})
 
 const openFaq = ref<number | null>(null)
 
