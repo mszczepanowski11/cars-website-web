@@ -135,6 +135,7 @@
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'admin' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const loading = ref(false)
 const report = ref<any>(null)

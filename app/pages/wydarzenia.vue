@@ -152,14 +152,23 @@
 <script setup lang="ts">
 import type { CarEvent, PagedResult } from '~/types'
 
-useHead({
+const wydarzeniaConfig = useRuntimeConfig()
+useSeoMeta({
     title: 'Wydarzenia motoryzacyjne — CARIZO',
-    meta: [
-        { name: 'description', content: 'Przeglądaj motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Znajdź najbliższe wydarzenie i zapisz się już dziś.' },
-        { property: 'og:title', content: 'Wydarzenia motoryzacyjne — CARIZO' },
-        { property: 'og:description', content: 'Przeglądaj motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Znajdź najbliższe wydarzenie i zapisz się już dziś.' },
-    ]
+    description: 'Przeglądaj motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Znajdź najbliższe wydarzenie i zapisz się już dziś.',
+    ogType: 'website',
+    ogUrl: `${wydarzeniaConfig.public.siteUrl}/wydarzenia`,
+    ogTitle: 'Wydarzenia motoryzacyjne — CARIZO',
+    ogDescription: 'Motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Bądź na bieżąco z CARIZO.',
+    ogImage: `${wydarzeniaConfig.public.siteUrl}/hero-car.jpg`,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
+    ogSiteName: 'CARIZO',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Wydarzenia motoryzacyjne — CARIZO',
+    twitterDescription: 'Zloty, targi i spotkania motoryzacyjne w Polsce — CARIZO.',
 })
+useHead({ link: [{ rel: 'canonical', href: `${wydarzeniaConfig.public.siteUrl}/wydarzenia` }] })
 
 const { getEvents, attendEvent, unattendEvent } = useEvents()
 const { getImageUrl } = useImageUrl()

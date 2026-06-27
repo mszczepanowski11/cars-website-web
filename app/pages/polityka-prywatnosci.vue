@@ -231,14 +231,17 @@
 </template>
 
 <script setup lang="ts">
-useHead({
+const ppConfig = useRuntimeConfig()
+useSeoMeta({
     title: 'Polityka prywatności — CARIZO',
-    meta: [
-        { name: 'description', content: 'Polityka prywatności i ochrony danych osobowych serwisu CARIZO zgodna z RODO.' },
-        { property: 'og:title', content: 'Polityka prywatności — CARIZO' },
-        { property: 'og:description', content: 'Polityka prywatności i ochrony danych osobowych serwisu CARIZO zgodna z RODO.' },
-    ]
+    description: 'Polityka prywatności i ochrony danych osobowych serwisu CARIZO zgodna z RODO.',
+    ogType: 'website',
+    ogUrl: `${ppConfig.public.siteUrl}/polityka-prywatnosci`,
+    ogTitle: 'Polityka prywatności — CARIZO',
+    ogDescription: 'Polityka prywatności i ochrony danych osobowych serwisu CARIZO zgodna z RODO.',
+    ogSiteName: 'CARIZO',
 })
+useHead({ link: [{ rel: 'canonical', href: `${ppConfig.public.siteUrl}/polityka-prywatnosci` }] })
 </script>
 
 <style lang="scss" scoped>

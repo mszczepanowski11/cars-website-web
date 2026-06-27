@@ -195,14 +195,17 @@
 </template>
 
 <script setup lang="ts">
-useHead({
+const regulaminConfig = useRuntimeConfig()
+useSeoMeta({
     title: 'Regulamin — CARIZO',
-    meta: [
-        { name: 'description', content: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.' },
-        { property: 'og:title', content: 'Regulamin — CARIZO' },
-        { property: 'og:description', content: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.' },
-    ]
+    description: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.',
+    ogType: 'website',
+    ogUrl: `${regulaminConfig.public.siteUrl}/regulamin`,
+    ogTitle: 'Regulamin — CARIZO',
+    ogDescription: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.',
+    ogSiteName: 'CARIZO',
 })
+useHead({ link: [{ rel: 'canonical', href: `${regulaminConfig.public.siteUrl}/regulamin` }] })
 </script>
 
 <style lang="scss" scoped>

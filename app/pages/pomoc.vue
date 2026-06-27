@@ -67,14 +67,23 @@
 </template>
 
 <script setup lang="ts">
-useHead({
+const pomocConfig = useRuntimeConfig()
+useSeoMeta({
     title: 'Pomoc — CARIZO',
-    meta: [
-        { name: 'description', content: 'Centrum pomocy CARIZO — znajdź odpowiedzi na najczęstsze pytania dotyczące sprzedaży, zakupu i bezpieczeństwa transakcji.' },
-        { property: 'og:title', content: 'Pomoc — CARIZO' },
-        { property: 'og:description', content: 'Centrum pomocy CARIZO — FAQ i wskazówki dla kupujących i sprzedających.' },
-    ]
+    description: 'Centrum pomocy CARIZO — znajdź odpowiedzi na najczęstsze pytania dotyczące sprzedaży, zakupu i bezpieczeństwa transakcji.',
+    ogType: 'website',
+    ogUrl: `${pomocConfig.public.siteUrl}/pomoc`,
+    ogTitle: 'Centrum pomocy — CARIZO',
+    ogDescription: 'FAQ i wskazówki dla kupujących i sprzedających na platformie CARIZO.',
+    ogImage: `${pomocConfig.public.siteUrl}/hero-car.jpg`,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
+    ogSiteName: 'CARIZO',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Centrum pomocy — CARIZO',
+    twitterDescription: 'FAQ i wskazówki dla kupujących i sprzedających na platformie CARIZO.',
 })
+useHead({ link: [{ rel: 'canonical', href: `${pomocConfig.public.siteUrl}/pomoc` }] })
 
 const query = ref('')
 const openKey = ref<string | null>(null)

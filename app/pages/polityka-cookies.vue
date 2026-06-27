@@ -154,14 +154,17 @@
 </template>
 
 <script setup lang="ts">
-useHead({
+const cookiesConfig = useRuntimeConfig()
+useSeoMeta({
     title: 'Polityka plików cookies — CARIZO',
-    meta: [
-        { name: 'description', content: 'Polityka plików cookies i technologii pokrewnych serwisu CARIZO zgodna z Prawem komunikacji elektronicznej i RODO.' },
-        { property: 'og:title', content: 'Polityka plików cookies — CARIZO' },
-        { property: 'og:description', content: 'Polityka plików cookies i technologii pokrewnych serwisu CARIZO zgodna z Prawem komunikacji elektronicznej i RODO.' },
-    ]
+    description: 'Polityka plików cookies i technologii pokrewnych serwisu CARIZO zgodna z Prawem komunikacji elektronicznej i RODO.',
+    ogType: 'website',
+    ogUrl: `${cookiesConfig.public.siteUrl}/polityka-cookies`,
+    ogTitle: 'Polityka plików cookies — CARIZO',
+    ogDescription: 'Polityka plików cookies serwisu CARIZO zgodna z Prawem komunikacji elektronicznej i RODO.',
+    ogSiteName: 'CARIZO',
 })
+useHead({ link: [{ rel: 'canonical', href: `${cookiesConfig.public.siteUrl}/polityka-cookies` }] })
 </script>
 
 <style lang="scss" scoped>

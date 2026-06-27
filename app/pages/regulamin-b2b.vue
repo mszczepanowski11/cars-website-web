@@ -154,12 +154,17 @@
 </template>
 
 <script setup lang="ts">
+const b2bConfig = useRuntimeConfig()
 useSeoMeta({
     title: 'Regulamin B2B — CARIZO',
     description: 'Regulamin serwisu CARIZO dla użytkowników biznesowych (dealerów i firm motoryzacyjnych). Zgodny z Rozporządzeniem P2B (UE) 2019/1150.',
+    ogType: 'website',
+    ogUrl: `${b2bConfig.public.siteUrl}/regulamin-b2b`,
     ogTitle: 'Regulamin B2B — CARIZO',
     ogDescription: 'Regulamin serwisu CARIZO dla użytkowników biznesowych (dealerów i firm motoryzacyjnych). Zgodny z Rozporządzeniem P2B (UE) 2019/1150.',
+    ogSiteName: 'CARIZO',
 })
+useHead({ link: [{ rel: 'canonical', href: `${b2bConfig.public.siteUrl}/regulamin-b2b` }] })
 </script>
 
 <style lang="scss" scoped>
