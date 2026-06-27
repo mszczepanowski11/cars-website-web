@@ -566,13 +566,24 @@
 import { useCategories } from '~/composables/useCategories'
 import type { TaxonomyItem, DriveType, CarColor, CarAdvert, Feature, PagedResult, CategoryWithCount } from '~/types'
 
+const advertsConfig = useRuntimeConfig()
 useSeoMeta({
     title: 'Ogłoszenia samochodowe — CARIZO',
     description: 'Przeglądaj tysiące ofert sprzedaży samochodów w Polsce. Filtruj po marce, modelu, cenie i przebiegu.',
+    ogType: 'website',
+    ogUrl: `${advertsConfig.public.siteUrl}/adverts`,
     ogTitle: 'Ogłoszenia samochodowe — CARIZO',
     ogDescription: 'Najlepsza platforma motoryzacyjna w Polsce — tysiące ogłoszeń.',
+    ogImage: `${advertsConfig.public.siteUrl}/hero-car.jpg`,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
+    ogSiteName: 'CARIZO',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Ogłoszenia samochodowe — CARIZO',
+    twitterDescription: 'Tysiące ofert samochodów i pojazdów na CARIZO.',
     robots: 'index, follow',
 })
+useHead({ link: [{ rel: 'canonical', href: `${advertsConfig.public.siteUrl}/adverts` }] })
 
 const route = useRoute()
 const router = useRouter()

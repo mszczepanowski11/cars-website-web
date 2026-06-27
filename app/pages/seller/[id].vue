@@ -308,13 +308,22 @@ onMounted(async () => {
                 ? s.companyName
                 : [s.name, s.surname].filter(Boolean).join(' ') || 'Sprzedawca'
             const desc = `Sprawdź ogłoszenia sprzedawcy ${displayName} na CARIZO — największej platformie motoryzacyjnej w Polsce.`
+            const sellerConfig = useRuntimeConfig()
+            const pageUrl = `${sellerConfig.public.siteUrl}/seller/${sellerId}`
             return {
                 title: `${displayName} — CARIZO`,
                 meta: [
                     { name: 'description', content: desc },
+                    { property: 'og:type', content: 'profile' },
+                    { property: 'og:url', content: pageUrl },
                     { property: 'og:title', content: `${displayName} — CARIZO` },
                     { property: 'og:description', content: desc },
-                ]
+                    { property: 'og:site_name', content: 'CARIZO' },
+                    { name: 'twitter:card', content: 'summary' },
+                    { name: 'twitter:title', content: `${displayName} — CARIZO` },
+                    { name: 'twitter:description', content: desc },
+                ],
+                link: [{ rel: 'canonical', href: pageUrl }]
             }
         }))
         await Promise.all([
