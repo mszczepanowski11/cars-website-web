@@ -152,7 +152,14 @@
 <script setup lang="ts">
 import type { CarEvent, PagedResult } from '~/types'
 
-useHead({ title: 'Wydarzenia motoryzacyjne — CARIZO' })
+useHead({
+    title: 'Wydarzenia motoryzacyjne — CARIZO',
+    meta: [
+        { name: 'description', content: 'Przeglądaj motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Znajdź najbliższe wydarzenie i zapisz się już dziś.' },
+        { property: 'og:title', content: 'Wydarzenia motoryzacyjne — CARIZO' },
+        { property: 'og:description', content: 'Przeglądaj motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Znajdź najbliższe wydarzenie i zapisz się już dziś.' },
+    ]
+})
 
 const { getEvents, attendEvent, unattendEvent } = useEvents()
 const { getImageUrl } = useImageUrl()

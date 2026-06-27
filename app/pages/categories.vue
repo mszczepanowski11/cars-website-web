@@ -20,6 +20,7 @@
                         src="/hero-car.jpg"
                         alt=""
                         class="hero-car-img"
+                        fetchpriority="high"
                     />
                     <div class="hero-img-fade" />
                 </div>
@@ -72,6 +73,7 @@
                             :src="catImages[cat.slug] ?? fallbackImg"
                             :alt="cat.name"
                             class="cat-bg-img"
+                            loading="lazy"
                         />
                         <div class="cat-gradient" />
                         <div class="cat-top">

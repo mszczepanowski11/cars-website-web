@@ -156,7 +156,11 @@
 <script setup lang="ts">
 useHead({
     title: 'Polityka plików cookies — CARIZO',
-    meta: [{ name: 'description', content: 'Polityka plików cookies i technologii pokrewnych serwisu CARIZO zgodna z Prawem komunikacji elektronicznej i RODO.' }]
+    meta: [
+        { name: 'description', content: 'Polityka plików cookies i technologii pokrewnych serwisu CARIZO zgodna z Prawem komunikacji elektronicznej i RODO.' },
+        { property: 'og:title', content: 'Polityka plików cookies — CARIZO' },
+        { property: 'og:description', content: 'Polityka plików cookies i technologii pokrewnych serwisu CARIZO zgodna z Prawem komunikacji elektronicznej i RODO.' },
+    ]
 })
 </script>
 

@@ -233,7 +233,11 @@
 <script setup lang="ts">
 useHead({
     title: 'Polityka prywatności — CARIZO',
-    meta: [{ name: 'description', content: 'Polityka prywatności i ochrony danych osobowych serwisu CARIZO zgodna z RODO.' }]
+    meta: [
+        { name: 'description', content: 'Polityka prywatności i ochrony danych osobowych serwisu CARIZO zgodna z RODO.' },
+        { property: 'og:title', content: 'Polityka prywatności — CARIZO' },
+        { property: 'og:description', content: 'Polityka prywatności i ochrony danych osobowych serwisu CARIZO zgodna z RODO.' },
+    ]
 })
 </script>
 

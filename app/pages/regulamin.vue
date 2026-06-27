@@ -197,7 +197,11 @@
 <script setup lang="ts">
 useHead({
     title: 'Regulamin — CARIZO',
-    meta: [{ name: 'description', content: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.' }]
+    meta: [
+        { name: 'description', content: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.' },
+        { property: 'og:title', content: 'Regulamin — CARIZO' },
+        { property: 'og:description', content: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.' },
+    ]
 })
 </script>
 

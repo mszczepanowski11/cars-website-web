@@ -157,6 +157,8 @@
 useSeoMeta({
     title: 'Regulamin B2B — CARIZO',
     description: 'Regulamin serwisu CARIZO dla użytkowników biznesowych (dealerów i firm motoryzacyjnych). Zgodny z Rozporządzeniem P2B (UE) 2019/1150.',
+    ogTitle: 'Regulamin B2B — CARIZO',
+    ogDescription: 'Regulamin serwisu CARIZO dla użytkowników biznesowych (dealerów i firm motoryzacyjnych). Zgodny z Rozporządzeniem P2B (UE) 2019/1150.',
 })
 </script>
 
