@@ -109,6 +109,7 @@
 import type { CarEvent, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Moje wydarzenia — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getMyEvents, deleteMyEvent } = useEvents()
 const { getImageUrl } = useImageUrl()

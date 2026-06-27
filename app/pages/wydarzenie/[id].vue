@@ -230,6 +230,19 @@ async function copyLink() {
     setTimeout(() => { copied.value = false }, 2000)
 }
 
+useHead(computed(() => {
+    const e = event.value
+    if (!e) return { title: 'Wydarzenie — CARIZO' }
+    return {
+        title: `${e.name} — CARIZO`,
+        meta: [
+            { name: 'description', content: e.description?.slice(0, 160) ?? `Wydarzenie motoryzacyjne: ${e.name}` },
+            { property: 'og:title', content: e.name },
+            { property: 'og:description', content: e.description?.slice(0, 160) ?? '' },
+        ]
+    }
+}))
+
 onMounted(async () => {
     try {
         event.value = await getEvent(eventId)

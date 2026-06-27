@@ -242,6 +242,7 @@
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Promuj ogłoszenie — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 import type { CarAdvert, CouponValidation } from '~/types'
 

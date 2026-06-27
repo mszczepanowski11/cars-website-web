@@ -89,7 +89,7 @@
                                 {{ advert.badge }}
                             </span>
                         </div>
-                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" />
+                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" fetchpriority="high" />
                         <div class="photo-bottom-bar">
                             <span v-if="hasImages" class="photo-count-pill">
                                 <v-icon icon="mdi-image-multiple-outline" size="13" />
@@ -656,12 +656,12 @@
                     </div>
                     <div v-if="hasImages" class="gallery-grid">
                         <div class="gallery-main" @click="openLightbox(0)">
-                            <img :src="allImages[0]?.url ?? placeholder" :alt="advert?.title ?? 'Zdjęcie główne'" />
+                            <img :src="allImages[0]?.url ?? placeholder" :alt="advert?.title ?? 'Zdjęcie główne'" fetchpriority="high" />
                             <button class="expand-btn" aria-label="Powiększ galerię" @click.stop="openLightbox(0)"><v-icon icon="mdi-arrow-expand" size="18" /></button>
                         </div>
                         <div class="gallery-thumbs">
                             <div v-for="(img, i) in allImages.slice(1, 4)" :key="i" class="gallery-thumb" @click="openLightbox(i + 1)">
-                                <img :src="img.url" :alt="`Zdjęcie ${i + 2} – ${advert?.title ?? ''}`" />
+                                <img :src="img.url" :alt="`Zdjęcie ${i + 2} – ${advert?.title ?? ''}`" loading="lazy" />
                                 <div v-if="i === 2 && allImages.length > 4" class="thumb-overlay" @click.stop="openLightbox(i + 1)">+{{ allImages.length - 4 }}</div>
                             </div>
                         </div>
@@ -679,7 +679,7 @@
                         <NuxtLink v-for="a in similar" :key="a.id" :to="`/advert/${a.id}`" class="sim-card">
                             <div class="sim-img-wrap">
                                 <span v-if="a.isVerified" class="sim-verified">VERIFIED</span>
-                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" />
+                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" loading="lazy" />
                                 <button class="sim-fav" @click.prevent="toggleFavorite(a.id)"><v-icon :icon="isFavorite(a.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="17" /></button>
                             </div>
                             <div class="sim-body">
