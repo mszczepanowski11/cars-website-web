@@ -1042,6 +1042,52 @@
                             {{ photoFeedback.lowQuality.length }} zdjęcie(-a) mają niską rozdzielczość (poniżej 800px)
                         </div>
                     </div>
+
+                    <!-- PDF Brochure Upload -->
+                    <div class="pdf-section">
+                        <div class="pdf-section-title">
+                            <v-icon icon="mdi-file-pdf-box" size="16" style="color:#e53e3e" />
+                            Broszura PDF
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </div>
+                        <div class="pdf-section-desc">Dodaj PDF z pełną specyfikacją, historią serwisową lub ofertą finansową.</div>
+
+                        <div v-if="form.pdfBrochureUrl && form.pdfBrochureUrl !== '__pending__'" class="pdf-uploaded">
+                            <v-icon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <div class="pdf-info">
+                                <div class="pdf-name">{{ pdfFileName || 'Broszura.pdf' }}</div>
+                                <a :href="form.pdfBrochureUrl" target="_blank" class="pdf-view-link">
+                                    <v-icon icon="mdi-open-in-new" size="12" />Podgląd
+                                </a>
+                            </div>
+                            <button type="button" class="pdf-remove-btn" @click="removePdf">
+                                <v-icon icon="mdi-close" size="15" />
+                            </button>
+                        </div>
+
+                        <div v-else-if="form.pdfBrochureUrl === '__pending__'" class="pdf-uploaded pdf-pending">
+                            <v-icon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <div class="pdf-info">
+                                <div class="pdf-name">{{ pdfFileName }}</div>
+                                <div class="pdf-pending-label">Zostanie przesłany po publikacji</div>
+                            </div>
+                            <button type="button" class="pdf-remove-btn" @click="removePdf">
+                                <v-icon icon="mdi-close" size="15" />
+                            </button>
+                        </div>
+
+                        <label v-else class="pdf-upload-btn" :class="{ 'pdf-upload-btn--loading': pdfUploading }">
+                            <input type="file" accept="application/pdf" @change="onPdfSelected" :disabled="pdfUploading" hidden />
+                            <v-icon :icon="pdfUploading ? 'mdi-loading' : 'mdi-upload'" size="16" :class="{ spin: pdfUploading }" />
+                            {{ pdfUploading ? 'Wysyłanie...' : 'Wybierz plik PDF (maks. 25 MB)' }}
+                        </label>
+
+                        <transition name="fade-err">
+                            <div v-if="pdfUploadError" class="pdf-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="13" />{{ pdfUploadError }}
+                            </div>
+                        </transition>
+                    </div>
                 </div>
 
                 <!-- Step 3: Wyposażenie -->
@@ -2692,6 +2738,10 @@ const paying = ref(false)
 const dragSrcIdx = ref<number | null>(null)
 const dragOverIdx = ref<number | null>(null)
 const gridDragOver = ref(false)
+const pdfUploading = ref(false)
+const pdfUploadError = ref('')
+const pdfFileName = ref('')
+const pdfPendingFile = ref<File | null>(null)
 
 // ── AI Photo Quality Analysis ─────────────────────────────────────────────────
 const photoAnalysisResults = ref<Record<number, { score: number, issues: string[], suggestions: string[], summary: string, loading: boolean }>>({})
@@ -2931,6 +2981,7 @@ const form = reactive({
     metallicPaint: false,
     maxTrailerWeight: null as number | null,
     youtubeUrl: '',
+    pdfBrochureUrl: '' as string,
 })
 
 const extras = reactive<Record<string, any>>({})
@@ -3471,6 +3522,42 @@ async function onGridDrop(e: DragEvent) {
     photoUploading.value = false
 }
 
+async function onPdfSelected(e: Event) {
+    const input = e.target as HTMLInputElement
+    const file = input.files?.[0]
+    input.value = ''
+    if (!file) return
+    if (file.type !== 'application/pdf') { pdfUploadError.value = 'Dozwolony tylko plik PDF.'; return }
+    if (file.size > 25 * 1024 * 1024) { pdfUploadError.value = 'Plik PDF przekracza limit 25 MB.'; return }
+    pdfUploadError.value = ''
+    pdfUploading.value = true
+    try {
+        if (isEdit.value && editId.value) {
+            const fd = new FormData()
+            fd.append('file', file)
+            const res = await $fetch<{ url: string }>(`/api/advert/${editId.value}/pdf`, { method: 'POST', body: fd })
+            form.pdfBrochureUrl = res.url
+        } else {
+            form.pdfBrochureUrl = '__pending__'
+        }
+        pdfFileName.value = file.name
+        pdfPendingFile.value = file
+    } catch (err: any) {
+        pdfUploadError.value = err?.data?.message ?? err?.message ?? 'Błąd uploadu PDF.'
+    } finally {
+        pdfUploading.value = false
+    }
+}
+
+async function removePdf() {
+    if (isEdit.value && editId.value && form.pdfBrochureUrl && form.pdfBrochureUrl !== '__pending__') {
+        await $fetch(`/api/advert/${editId.value}/pdf`, { method: 'DELETE' }).catch(() => {})
+    }
+    form.pdfBrochureUrl = ''
+    pdfFileName.value = ''
+    pdfPendingFile.value = null
+}
+
 async function loadContextFeatures() {
     featuresLoaded.value = false
     try {
@@ -3833,6 +3920,7 @@ async function submit() {
             if (form.gearCount) cleanEdit.gearCount = form.gearCount
             if (form.maxTrailerWeight) cleanEdit.maxTrailerWeight = form.maxTrailerWeight
             if (form.youtubeUrl) cleanEdit.youtubeUrl = form.youtubeUrl
+            if (form.pdfBrochureUrl) cleanEdit.pdfBrochureUrl = form.pdfBrochureUrl
             await $fetch(`/api/proxy/api/Advert/${editId.value}`, {
                 method: 'PUT',
                 body: cleanEdit,
@@ -3937,6 +4025,7 @@ async function submit() {
             if (form.gearCount) cleanBody.gearCount = form.gearCount
             if (form.maxTrailerWeight) cleanBody.maxTrailerWeight = form.maxTrailerWeight
             if (form.youtubeUrl) cleanBody.youtubeUrl = form.youtubeUrl
+            if (form.pdfBrochureUrl) cleanBody.pdfBrochureUrl = form.pdfBrochureUrl
             const created = await $fetch<any>('/api/proxy/api/Advert', {
                 method: 'POST',
                 body: cleanBody,
@@ -3954,6 +4043,15 @@ async function submit() {
                     imageErrors++
                 }
             }
+            // Upload pending PDF if selected
+            if (pdfPendingFile.value) {
+                try {
+                    const fd = new FormData()
+                    fd.append('file', pdfPendingFile.value)
+                    await $fetch(`/api/advert/${id}/pdf`, { method: 'POST', body: fd })
+                } catch { /* non-critical */ }
+            }
+
             localStorage.removeItem(draftKey.value)
 
             await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
@@ -4106,6 +4204,7 @@ onMounted(async () => {
             form.metallicPaint = (advert as any).metallicPaint ?? false
             form.maxTrailerWeight = (advert as any).maxTrailerWeight ?? null
             if ((advert as any).youtubeUrl) form.youtubeUrl = (advert as any).youtubeUrl
+            if ((advert as any).pdfBrochureUrl) form.pdfBrochureUrl = (advert as any).pdfBrochureUrl
             existingImages.value = advert.images ?? []
             if (form.brandId) models.value = await fetchModels(form.brandId)
             if (form.modelId) generations.value = await fetchGenerations(form.modelId)
@@ -7352,5 +7451,107 @@ onBeforeUnmount(() => {
     border-radius: 8px;
     color: #eab308;
     font-size: 12px;
+}
+
+// ── PDF Brochure ──────────────────────────────────────────────────────────────
+.pdf-section {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: 10px;
+}
+
+.pdf-section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text;
+    margin-bottom: 4px;
+}
+
+.pdf-section-desc {
+    font-size: 12px;
+    color: $text-muted;
+    margin-bottom: 12px;
+}
+
+.pdf-uploaded {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(229,62,62,0.06);
+    border: 1px solid rgba(229,62,62,0.2);
+    border-radius: 8px;
+}
+
+.pdf-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.pdf-name {
+    font-size: 13px;
+    color: $text;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pdf-view-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: $red;
+    text-decoration: none;
+    margin-top: 2px;
+    &:hover { text-decoration: underline; }
+}
+
+.pdf-pending-label {
+    font-size: 11px;
+    color: $text-muted;
+    margin-top: 2px;
+}
+
+.pdf-remove-btn {
+    background: none;
+    border: none;
+    color: $text-muted;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    &:hover { color: $text; background: rgba(255,255,255,0.06); }
+}
+
+.pdf-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border: 1.5px dashed $border;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: $text-muted;
+    transition: border-color 0.15s, color 0.15s;
+    &:hover { border-color: rgba($red, 0.4); color: $text; }
+    &--loading { opacity: 0.6; pointer-events: none; }
+}
+
+.pdf-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f87171;
 }
 </style>
