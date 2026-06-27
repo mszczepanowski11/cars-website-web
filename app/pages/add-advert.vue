@@ -1764,12 +1764,42 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Completeness checklist -->
+                    <div class="summary-checklist">
+                        <div class="summary-checklist-title">
+                            <v-icon icon="mdi-clipboard-check-outline" size="15" />
+                            Kompletność ogłoszenia
+                        </div>
+                        <div v-for="factor in scoreFactors" :key="factor.label" class="summary-factor">
+                            <v-icon
+                                :icon="factor.done ? 'mdi-check-circle' : 'mdi-circle-outline'"
+                                size="16"
+                                :style="{ color: factor.done ? '#4ade80' : '#6b7280' }"
+                            />
+                            <span :class="{ 'summary-factor--done': factor.done }">{{ factor.label }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Tips -->
+                    <div v-if="scoreTips.length" class="summary-tips">
+                        <div class="summary-tips-title">
+                            <v-icon icon="mdi-lightbulb-on-outline" size="14" />
+                            Wskazówki jak poprawić skuteczność
+                        </div>
+                        <div v-for="tip in scoreTips" :key="tip" class="summary-tip-item">
+                            <v-icon icon="mdi-arrow-right-thin" size="14" />{{ tip }}
+                        </div>
+                    </div>
+
                     <div class="preview-publish-row">
                         <div class="ppr-score">
                             <div class="ppr-score-ring" :style="{ '--score': adScore }">
                                 <span class="ppr-score-num">{{ adScore }}</span>
                             </div>
                             <div class="ppr-score-label">Jakość ogłoszenia</div>
+                            <div class="ppr-score-tier" :class="adScore >= 90 ? 'tier--gold' : adScore >= 70 ? 'tier--silver' : 'tier--bronze'">
+                                {{ adScore >= 90 ? 'PREMIUM VERIFIED' : adScore >= 70 ? 'DOBRA JAKOŚĆ' : 'DO UZUPEŁNIENIA' }}
+                            </div>
                         </div>
                         <div class="ppr-actions">
                             <button class="btn-cancel" @click="currentStep--">Wróć i edytuj</button>
@@ -7040,6 +7070,77 @@ onBeforeUnmount(() => {
     font-size: 12px;
     color: $text-dim;
     margin-top: 4px;
+}
+
+.ppr-score-tier {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+
+    &.tier--gold { background: rgba(234,179,8,0.15); color: #eab308; }
+    &.tier--silver { background: rgba(148,163,184,0.15); color: #94a3b8; }
+    &.tier--bronze { background: rgba(180,83,9,0.12); color: #b45309; }
+}
+
+.summary-checklist {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid $border;
+    border-radius: 10px;
+}
+
+.summary-checklist-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text;
+    margin-bottom: 12px;
+}
+
+.summary-factor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 13px;
+    color: $text-muted;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+
+    &:last-child { border-bottom: none; }
+    &--done { color: $text; }
+}
+
+.summary-tips {
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: rgba(234,179,8,0.06);
+    border: 1px solid rgba(234,179,8,0.15);
+    border-radius: 10px;
+}
+
+.summary-tips-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #eab308;
+    margin-bottom: 10px;
+}
+
+.summary-tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    color: $text-muted;
+    padding: 4px 0;
 }
 
 // ── AI Photo Quality Analysis ─────────────────────────────────────────────────
