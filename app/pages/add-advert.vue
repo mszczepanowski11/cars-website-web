@@ -1464,6 +1464,11 @@
                             </div>
                         </div>
                     </div>
+                    <transition name="fade-err">
+                        <div v-if="descPhoneWarning" class="desc-phone-warn">
+                            <v-icon icon="mdi-phone-alert-outline" size="14" />{{ descPhoneWarning }}
+                        </div>
+                    </transition>
                     <div class="writing-tips">
                         <div class="wt-title"><v-icon icon="mdi-lightbulb-outline" size="14" />Wskazówki dla dobrego opisu</div>
                         <div class="wt-grid">
@@ -1485,11 +1490,21 @@
                             <input v-model="form.youtubeUrl" type="url" class="finput has-prefix"
                                 placeholder="https://youtube.com/watch?v=..." maxlength="500" />
                         </div>
-                        <div v-if="form.youtubeUrl" class="field-hint" style="color:#4ade80">
+                        <div v-if="youtubeEmbedId" class="field-hint" style="color:#4ade80">
                             <v-icon icon="mdi-check-circle-outline" size="12" style="color:#4ade80" />Film będzie wyświetlany bezpośrednio w ogłoszeniu
                         </div>
                         <div v-else class="field-hint">
                             <v-icon icon="mdi-information-outline" size="12" />Ogłoszenia z filmem sprzedają się szybciej — nagraj krótką prezentację pojazdu
+                        </div>
+                        <div v-if="youtubeEmbedId" class="yt-preview">
+                            <iframe
+                                :src="`https://www.youtube-nocookie.com/embed/${youtubeEmbedId}`"
+                                class="yt-iframe"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen
+                                loading="lazy"
+                            />
                         </div>
                     </div>
 
@@ -3013,10 +3028,29 @@ const adScore = computed(() => {
     if (history.hasServiceBook) s += 2
     if (history.ownersCount !== null) s += 2
     if (history.nextInspection) s += 2
+    // Premium bonuses (capped at 100 total)
+    if (form.youtubeUrl) s += 3
+    if (history.isFirstOwner) s += 2
+    if (history.isGaraged) s += 2
+    if (form.hasVatInvoice || form.isLeasingPossible || form.isCreditPossible || form.isExchangePossible) s += 2
+    if (form.registrationPlate) s += 1
     return Math.min(s, 100)
 })
 
 const scoreArc = computed(() => (adScore.value / 100) * 326.7)
+
+const descPhoneWarning = computed(() => {
+    const text = form.description ?? ''
+    return /(?:\+48|48)?[\s-]?\d{3}[\s-]?\d{3}[\s-]?\d{3}/.test(text)
+        ? 'Wykryto numer telefonu w opisie — dodaj go w danych kontaktowych zamiast w treści.'
+        : ''
+})
+
+const youtubeEmbedId = computed(() => {
+    if (!form.youtubeUrl) return ''
+    const m = form.youtubeUrl.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/)
+    return m?.[1] ?? ''
+})
 
 const scoreFactors = computed(() => {
     const photos = selectedFiles.value.length + existingImages.value.length
@@ -3026,6 +3060,8 @@ const scoreFactors = computed(() => {
         { label: `Opis (${descCharCount.value} znaków)`, done: descCharCount.value >= 200 },
         { label: `Wyposażenie (${form.featureIds.length}/5)`, done: form.featureIds.length >= 5 },
         { label: 'Historia pojazdu', done: !!(form.vin || history.hasServiceBook || history.ownersCount !== null) },
+        { label: 'Film YouTube', done: !!form.youtubeUrl },
+        { label: 'Dane premium', done: !!(form.registrationPlate || form.hasVatInvoice || form.isLeasingPossible) },
     ]
 })
 
@@ -3038,7 +3074,9 @@ const scoreTips = computed(() => {
     if (form.featureIds.length < 3) tips.push('Zaznacz wyposażenie — filtry po wyposażeniu zwiększają wyświetlenia.')
     if (!form.vin) tips.push('Podaj numer VIN — buduje zaufanie i filtruje poważnych kupujących.')
     if (!history.hasServiceBook && !history.hasFullServiceHistory) tips.push('Zaznacz historię serwisową jeśli ją posiadasz.')
-    return tips.slice(0, 3)
+    if (!form.youtubeUrl) tips.push('Dodaj film YouTube — ogłoszenia z filmem wzbudzają 2× więcej zainteresowania.')
+    if (!form.registrationPlate) tips.push('Podaj numer rejestracyjny — ułatwia weryfikację historii pojazdu.')
+    return tips.slice(0, 4)
 })
 
 // ── Smart form: category-aware logic ─────────────────────────────────────────
@@ -7082,7 +7120,48 @@ onBeforeUnmount(() => {
 .bool-checks-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     margin-top: 8px;
+
+    .bool-check {
+        padding: 7px 14px;
+        border: 1.5px solid $border;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.03);
+        transition: border-color 0.15s, background 0.15s;
+
+        &.active {
+            border-color: rgba($red, 0.5);
+            background: rgba($red, 0.08);
+            color: $text;
+        }
+    }
+}
+
+.yt-preview {
+    margin-top: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: #000;
+
+    .yt-iframe {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+}
+
+.desc-phone-warn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    margin-top: 8px;
+    background: rgba(234, 179, 8, 0.08);
+    border: 1px solid rgba(234, 179, 8, 0.25);
+    border-radius: 8px;
+    color: #eab308;
+    font-size: 12px;
 }
 </style>
