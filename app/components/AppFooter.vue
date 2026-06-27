@@ -45,7 +45,7 @@ async function subscribeNewsletter() {
       <div class="footer-grid">
 
         <div class="footer-brand">
-          <img src="/carizo-logo.svg" alt="CARIZO" class="footer-logo" />
+          <img src="/carizo-logo.svg" alt="CARIZO" class="footer-logo" loading="lazy" />
           <p class="footer-desc">Nowoczesna platforma motoryzacyjna dla ludzi, którzy kochają samochody.</p>
           <div class="footer-social">
             <a v-if="social.tiktok" :href="social.tiktok" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na TikTok"><v-icon icon="mdi-music-note" size="18" /></a>

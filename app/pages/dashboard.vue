@@ -220,7 +220,7 @@
                         <div v-for="a in filteredAdverts" :key="a.id" class="advert-card">
                             <div class="adcard-img-wrap">
                                 <span class="adcard-badge" :class="advertBadgeClass(a)">{{ advertBadgeLabel(a) }}</span>
-                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" />
+                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" loading="lazy" />
                                 <button class="adcard-delete-btn" :disabled="deleteLoading === a.id" title="Usuń"
                                     @click.stop="confirmDelete(a.id)">
                                     <v-icon v-if="deleteLoading === a.id" icon="mdi-loading" size="14" class="spin" />
@@ -342,7 +342,7 @@
                             class="spin" /></div>
                     <div v-else-if="followedAdverts.length" class="advert-follow-list">
                         <div v-for="fa in followedAdverts" :key="fa.id" class="follow-advert-row">
-                            <img :src="getImageUrl(fa.mainImageUrl)" class="follow-advert-img" :alt="fa.advertTitle" />
+                            <img :src="getImageUrl(fa.mainImageUrl)" class="follow-advert-img" :alt="fa.advertTitle" loading="lazy" />
                             <div class="follow-advert-info">
                                 <div class="follow-advert-title">{{ fa.advertTitle }}</div>
                                 <div class="follow-advert-meta">

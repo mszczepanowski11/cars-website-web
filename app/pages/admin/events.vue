@@ -57,7 +57,7 @@
                                 <td class="td-id">#{{ e.id }}</td>
                                 <td>
                                     <div class="event-cell">
-                                        <img :src="getImageUrl(e.mainImageUrl)" class="event-thumb" :alt="e.name" />
+                                        <img :src="getImageUrl(e.mainImageUrl)" class="event-thumb" :alt="e.name" loading="lazy" />
                                         <div>
                                             <div class="event-name">{{ e.name }}</div>
                                             <div class="event-short">{{ e.reportCount ? `${e.reportCount} zgłoszeń` : 'Brak zgłoszeń' }}</div>
