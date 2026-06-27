@@ -450,6 +450,30 @@
                             />
                         </div>
 
+                        <!-- Gear count -->
+                        <div v-if="isFieldVisible('gearbox')" class="field">
+                            <label class="flabel">Liczba biegów</label>
+                            <select v-model="form.gearCount" class="finput">
+                                <option :value="null">Nie podaję</option>
+                                <option v-for="n in [4,5,6,7,8,9,10]" :key="n" :value="n">{{ n }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Metallic paint -->
+                        <div v-if="isFieldVisible('color')" class="field">
+                            <label class="flabel">Rodzaj lakieru</label>
+                            <div class="radio-group">
+                                <label class="radio-opt" :class="{ active: !form.metallicPaint }">
+                                    <input type="radio" name="metallicPaint" :value="false" v-model="form.metallicPaint" hidden />
+                                    Niemetalik
+                                </label>
+                                <label class="radio-opt" :class="{ active: form.metallicPaint }">
+                                    <input type="radio" name="metallicPaint" :value="true" v-model="form.metallicPaint" hidden />
+                                    Metalik
+                                </label>
+                            </div>
+                        </div>
+
                         <!-- Mileage / Motohours (not for parts/trailers) -->
                         <div v-if="isFieldVisible('mileage')" class="field">
                             <label class="flabel">
@@ -921,7 +945,7 @@
                             </button>
                             <span v-if="!existingImages.length && i === 0" class="img-main-badge">Główne</span>
                         </div>
-                        <label v-if="(existingImages.length + selectedFiles.length) < 20" class="img-add" :class="{ 'img-add--loading': photoUploading }">
+                        <label v-if="(existingImages.length + selectedFiles.length) < 50" class="img-add" :class="{ 'img-add--loading': photoUploading }">
                             <input type="file" multiple accept="image/jpeg,image/png,image/webp" @change="onFilesSelected" :disabled="photoUploading" hidden />
                             <v-icon v-if="photoUploading" icon="mdi-loading" size="28" class="spin" />
                             <v-icon v-else icon="mdi-plus" size="28" />
@@ -1223,6 +1247,62 @@
                         </div>
                     </div>
 
+                        <!-- Garaged -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.isGaraged }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.isGaraged }">
+                                    <v-icon :icon="history.isGaraged ? 'mdi-check' : 'mdi-garage-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Garażowany</div>
+                                    <div class="vi-desc">Pojazd przechowywany w garażu lub hali</div>
+                                </div>
+                                <div v-if="history.isGaraged" class="vi-badge">+1 pkt</div>
+                            </div>
+                            <label class="toggle-row" style="margin-top:12px">
+                                <span class="toggle-label">Pojazd jest garażowany</span>
+                                <div class="toggle-switch" :class="{ active: history.isGaraged }" @click="history.isGaraged = !history.isGaraged">
+                                    <div class="toggle-knob" />
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Key count -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.keyCount !== null }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.keyCount !== null }">
+                                    <v-icon :icon="history.keyCount !== null ? 'mdi-check' : 'mdi-key-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Liczba kluczyków</div>
+                                    <div class="vi-desc">Ile kluczyków / pilotów jest dostępnych do pojazdu</div>
+                                </div>
+                                <div v-if="history.keyCount !== null" class="vi-badge">+1 pkt</div>
+                            </div>
+                            <select v-model="history.keyCount" class="finput" style="margin-top:12px">
+                                <option :value="null">Nie podaję</option>
+                                <option :value="1">1 kluczyk</option>
+                                <option :value="2">2 kluczyki</option>
+                                <option :value="3">3 kluczyki</option>
+                                <option :value="4">4+ kluczyków</option>
+                            </select>
+                        </div>
+
+                        <!-- Insurance until -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.insuranceUntil }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.insuranceUntil }">
+                                    <v-icon :icon="history.insuranceUntil ? 'mdi-check' : 'mdi-shield-car'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">OC ważne do</div>
+                                    <div class="vi-desc">Data ważności ubezpieczenia odpowiedzialności cywilnej</div>
+                                </div>
+                                <div v-if="history.insuranceUntil" class="vi-badge">+1 pkt</div>
+                            </div>
+                            <input v-model="history.insuranceUntil" type="month" class="finput" style="margin-top:12px" />
+                        </div>
+
                     <!-- Carizo verified summary -->
                     <div class="cverified-summary">
                         <div class="cvs-icon">
@@ -1230,10 +1310,10 @@
                         </div>
                         <div>
                             <div class="cvs-title">CARIZO VERIFIED</div>
-                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null].filter(Boolean).length }} z 6 punktów potwierdzonych</div>
+                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length }} z 9 punktów potwierdzonych</div>
                         </div>
                         <div class="cvs-score">
-                            {{ Math.round([form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null].filter(Boolean).length / 6 * 100) }}%
+                            {{ Math.round([form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length / 9 * 100) }}%
                         </div>
                     </div>
                 </div>
@@ -1258,6 +1338,54 @@
                                 <input type="radio" name="sellerType" value="dealer" v-model="form.sellerType" hidden />
                                 <v-icon icon="mdi-store-outline" size="14" style="margin-right:5px" />
                                 Dealer / Firma
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Registration plate -->
+                    <div class="field full-width" style="margin-bottom:12px">
+                        <label class="flabel">
+                            Numer rejestracyjny
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </label>
+                        <div class="input-icon-wrap">
+                            <v-icon icon="mdi-card-account-details-outline" class="input-prefix" size="16" />
+                            <input v-model="form.registrationPlate" type="text" class="finput has-prefix"
+                                placeholder="np. WA 12345" maxlength="10" style="text-transform:uppercase"
+                                @input="(form.registrationPlate as string) = (form.registrationPlate as string).toUpperCase()" />
+                        </div>
+                        <div class="field-hint">
+                            <v-icon icon="mdi-information-outline" size="12" />Widoczny dla poważnych kupujących — pomaga w weryfikacji historii
+                        </div>
+                    </div>
+
+                    <!-- Financing & payment options -->
+                    <div class="field full-width" style="margin-bottom:16px">
+                        <label class="flabel">Opcje finansowania i wymiany</label>
+                        <div class="bool-checks-row">
+                            <label class="bool-check" :class="{ active: form.hasVatInvoice }">
+                                <input type="checkbox" v-model="form.hasVatInvoice" hidden />
+                                <span class="bool-box"><v-icon v-if="form.hasVatInvoice" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-receipt-text-outline" size="14" style="margin-right:4px" />
+                                Faktura VAT
+                            </label>
+                            <label class="bool-check" :class="{ active: form.isLeasingPossible }">
+                                <input type="checkbox" v-model="form.isLeasingPossible" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isLeasingPossible" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-handshake-outline" size="14" style="margin-right:4px" />
+                                Możliwość leasingu
+                            </label>
+                            <label class="bool-check" :class="{ active: form.isCreditPossible }">
+                                <input type="checkbox" v-model="form.isCreditPossible" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isCreditPossible" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-credit-card-outline" size="14" style="margin-right:4px" />
+                                Kredyt
+                            </label>
+                            <label class="bool-check" :class="{ active: form.isExchangePossible }">
+                                <input type="checkbox" v-model="form.isExchangePossible" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isExchangePossible" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-swap-horizontal" size="14" style="margin-right:4px" />
+                                Zamiana
                             </label>
                         </div>
                     </div>
@@ -1343,6 +1471,25 @@
                             <div class="wt-item"><v-icon icon="mdi-wrench-outline" size="13" />Co zostało wymienione</div>
                             <div class="wt-item"><v-icon icon="mdi-car-multiple" size="13" />Powód sprzedaży</div>
                             <div class="wt-item"><v-icon icon="mdi-package-variant-closed" size="13" />Dodatkowe akcesoria</div>
+                        </div>
+                    </div>
+
+                    <!-- YouTube video link -->
+                    <div class="field full-width" style="margin-top:16px;margin-bottom:16px">
+                        <label class="flabel">
+                            Film YouTube
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </label>
+                        <div class="input-icon-wrap">
+                            <v-icon icon="mdi-youtube" class="input-prefix" size="16" style="color:#ff0000" />
+                            <input v-model="form.youtubeUrl" type="url" class="finput has-prefix"
+                                placeholder="https://youtube.com/watch?v=..." maxlength="500" />
+                        </div>
+                        <div v-if="form.youtubeUrl" class="field-hint" style="color:#4ade80">
+                            <v-icon icon="mdi-check-circle-outline" size="12" style="color:#4ade80" />Film będzie wyświetlany bezpośrednio w ogłoszeniu
+                        </div>
+                        <div v-else class="field-hint">
+                            <v-icon icon="mdi-information-outline" size="12" />Ogłoszenia z filmem sprzedają się szybciej — nagraj krótką prezentację pojazdu
                         </div>
                     </div>
 
@@ -2704,6 +2851,15 @@ const form = reactive({
     oemNumber: '',
     manufacturerPartNumber: '',
     partManufacturer: '',
+    registrationPlate: '',
+    hasVatInvoice: false,
+    isLeasingPossible: false,
+    isCreditPossible: false,
+    isExchangePossible: false,
+    gearCount: null as number | null,
+    metallicPaint: false,
+    maxTrailerWeight: null as number | null,
+    youtubeUrl: '',
 })
 
 const extras = reactive<Record<string, any>>({})
@@ -2771,6 +2927,9 @@ const history = reactive({
     isFirstOwner: false,
     isAccidentFree: false,
     servicedAtASO: false,
+    isGaraged: false,
+    keyCount: null as number | null,
+    insuranceUntil: '',
 })
 
 const steps = [
@@ -3169,7 +3328,7 @@ async function compressImage(file: File, maxPx = 1920, quality = 0.85): Promise<
 async function onFilesSelected(e: Event) {
     const input = e.target as HTMLInputElement
     const files = Array.from(input.files ?? [])
-    const remaining = 20 - selectedFiles.value.length
+    const remaining = 50 - selectedFiles.value.length
     if (!files.length) return
     photoUploading.value = true
     for (const file of files.slice(0, remaining)) {
@@ -3540,6 +3699,16 @@ async function submit() {
             if (history.damageDesc) cleanEdit.damageDescription = history.damageDesc
             cleanEdit.hasWarranty = history.hasWarranty
             if (history.warrantyUntil) cleanEdit.warrantyUntil = history.warrantyUntil.length === 7 ? `${history.warrantyUntil}-01` : history.warrantyUntil
+            // Premium history fields
+            cleanEdit.isFirstOwner = history.isFirstOwner
+            cleanEdit.isServicedAtASO = history.servicedAtASO
+            cleanEdit.isGaraged = history.isGaraged
+            if (history.keyCount !== null) cleanEdit.keyCount = history.keyCount
+            if (history.insuranceUntil) cleanEdit.insuranceUntil = history.insuranceUntil.length === 7 ? `${history.insuranceUntil}-01` : history.insuranceUntil
+            // Premium form fields
+            if (form.gearCount) cleanEdit.gearCount = form.gearCount
+            if (form.maxTrailerWeight) cleanEdit.maxTrailerWeight = form.maxTrailerWeight
+            if (form.youtubeUrl) cleanEdit.youtubeUrl = form.youtubeUrl
             await $fetch(`/api/proxy/api/Advert/${editId.value}`, {
                 method: 'PUT',
                 body: cleanEdit,
@@ -3561,6 +3730,8 @@ async function submit() {
                 'doorCount', 'seatsCount',
                 'trimId', 'vehicleSubtypeId', 'partCategoryId', 'partSubcategoryId',
                 'oemNumber', 'manufacturerPartNumber', 'partManufacturer',
+                'registrationPlate', 'hasVatInvoice', 'isLeasingPossible',
+                'isCreditPossible', 'isExchangePossible', 'metallicPaint',
             ]
             const cleanBody: Record<string, unknown> = {}
             if (form.categoryId) cleanBody.vehicleCategoryId = form.categoryId
@@ -3632,6 +3803,16 @@ async function submit() {
             if (history.damageDesc) cleanBody.damageDescription = history.damageDesc
             cleanBody.hasWarranty = history.hasWarranty
             if (history.warrantyUntil) cleanBody.warrantyUntil = history.warrantyUntil.length === 7 ? `${history.warrantyUntil}-01` : history.warrantyUntil
+            // Premium history fields
+            cleanBody.isFirstOwner = history.isFirstOwner
+            cleanBody.isServicedAtASO = history.servicedAtASO
+            cleanBody.isGaraged = history.isGaraged
+            if (history.keyCount !== null) cleanBody.keyCount = history.keyCount
+            if (history.insuranceUntil) cleanBody.insuranceUntil = history.insuranceUntil.length === 7 ? `${history.insuranceUntil}-01` : history.insuranceUntil
+            // Premium form fields
+            if (form.gearCount) cleanBody.gearCount = form.gearCount
+            if (form.maxTrailerWeight) cleanBody.maxTrailerWeight = form.maxTrailerWeight
+            if (form.youtubeUrl) cleanBody.youtubeUrl = form.youtubeUrl
             const created = await $fetch<any>('/api/proxy/api/Advert', {
                 method: 'POST',
                 body: cleanBody,
@@ -3786,6 +3967,21 @@ onMounted(async () => {
             history.damageDesc = advert.damageDescription ?? ''
             history.hasWarranty = advert.hasWarranty ?? false
             history.warrantyUntil = advert.warrantyUntil ? String(advert.warrantyUntil).substring(0, 7) : ''
+            // Premium fields restore
+            history.isFirstOwner = (advert as any).isFirstOwner ?? false
+            history.servicedAtASO = (advert as any).isServicedAtASO ?? false
+            history.isGaraged = (advert as any).isGaraged ?? false
+            history.keyCount = (advert as any).keyCount ?? null
+            history.insuranceUntil = (advert as any).insuranceUntil ? String((advert as any).insuranceUntil).substring(0, 7) : ''
+            if ((advert as any).registrationPlate) form.registrationPlate = (advert as any).registrationPlate
+            form.hasVatInvoice = (advert as any).hasVatInvoice ?? false
+            form.isLeasingPossible = (advert as any).isLeasingPossible ?? false
+            form.isCreditPossible = (advert as any).isCreditPossible ?? false
+            form.isExchangePossible = (advert as any).isExchangePossible ?? false
+            form.gearCount = (advert as any).gearCount ?? null
+            form.metallicPaint = (advert as any).metallicPaint ?? false
+            form.maxTrailerWeight = (advert as any).maxTrailerWeight ?? null
+            if ((advert as any).youtubeUrl) form.youtubeUrl = (advert as any).youtubeUrl
             existingImages.value = advert.images ?? []
             if (form.brandId) models.value = await fetchModels(form.brandId)
             if (form.modelId) generations.value = await fetchGenerations(form.modelId)
@@ -6881,5 +7077,12 @@ onBeforeUnmount(() => {
     border: 1px solid rgba(74, 222, 128, 0.2);
     border-radius: 8px;
     color: #4ade80;
+}
+
+.bool-checks-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
 }
 </style>
