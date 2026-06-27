@@ -925,7 +925,13 @@
                         <p v-if="!isEdit">Dodaj minimum <strong>3 zdjęcia</strong> pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
                         <p v-else>Możesz usunąć istniejące zdjęcia lub dodać nowe.</p>
                     </div>
-                    <div class="img-grid">
+                    <div
+                        class="img-grid"
+                        :class="{ 'img-grid--dragover': gridDragOver }"
+                        @dragover.prevent="gridDragOver = true"
+                        @dragleave="gridDragOver = false"
+                        @drop.prevent="onGridDrop"
+                    >
                         <!-- Existing images (edit mode) -->
                         <div v-for="img in existingImages" :key="`ex-${img.id}`" class="img-thumb img-thumb--existing">
                             <img :src="getImageUrl(img.url)" />
@@ -937,13 +943,25 @@
                             </button>
                             <span v-if="img.isMain" class="img-main-badge">Główne</span>
                         </div>
-                        <!-- New images being added -->
-                        <div v-for="(preview, i) in previews" :key="`new-${i}`" class="img-thumb">
+                        <!-- New images being added (draggable for reorder) -->
+                        <div
+                            v-for="(preview, i) in previews"
+                            :key="`new-${i}`"
+                            class="img-thumb"
+                            :class="{ 'img-thumb--drag-src': dragSrcIdx === i, 'img-thumb--drag-over': dragOverIdx === i }"
+                            draggable="true"
+                            @dragstart="dragSrcIdx = i"
+                            @dragend="dragSrcIdx = null; dragOverIdx = null"
+                            @dragover.prevent="dragOverIdx = i"
+                            @dragleave="dragOverIdx = null"
+                            @drop.prevent="reorderPhoto(i)"
+                        >
                             <img :src="preview" />
                             <button type="button" class="img-remove" @click="removeImage(i)">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
                             <span v-if="!existingImages.length && i === 0" class="img-main-badge">Główne</span>
+                            <span class="img-drag-hint"><v-icon icon="mdi-drag" size="13" /></span>
                         </div>
                         <label v-if="(existingImages.length + selectedFiles.length) < 50" class="img-add" :class="{ 'img-add--loading': photoUploading }">
                             <input type="file" multiple accept="image/jpeg,image/png,image/webp" @change="onFilesSelected" :disabled="photoUploading" hidden />
@@ -951,6 +969,11 @@
                             <v-icon v-else icon="mdi-plus" size="28" />
                             <span>{{ photoUploading ? 'Przetwarzanie...' : 'Dodaj zdjęcia' }}</span>
                         </label>
+                        <!-- Drop zone hint when no files yet -->
+                        <div v-if="!previews.length && !existingImages.length" class="img-drop-hint">
+                            <v-icon icon="mdi-cloud-upload-outline" size="32" />
+                            <span>Przeciągnij zdjęcia tutaj lub kliknij „Dodaj zdjęcia"</span>
+                        </div>
                     </div>
 
                     <!-- AI Photo Quality Analysis -->
@@ -2636,6 +2659,9 @@ const vinError = ref('')
 const previewOpen = ref(false)
 const photoUploading = ref(false)
 const paying = ref(false)
+const dragSrcIdx = ref<number | null>(null)
+const dragOverIdx = ref<number | null>(null)
+const gridDragOver = ref(false)
 
 // ── AI Photo Quality Analysis ─────────────────────────────────────────────────
 const photoAnalysisResults = ref<Record<number, { score: number, issues: string[], suggestions: string[], summary: string, loading: boolean }>>({})
@@ -3383,6 +3409,36 @@ function removeImage(index: number) {
     if (url) URL.revokeObjectURL(url)
     selectedFiles.value.splice(index, 1)
     previews.value.splice(index, 1)
+}
+
+function reorderPhoto(toIdx: number) {
+    const from = dragSrcIdx.value
+    if (from === null || from === toIdx) return
+    const files = [...selectedFiles.value]
+    const prvs = [...previews.value]
+    const [f] = files.splice(from, 1)
+    const [p] = prvs.splice(from, 1)
+    files.splice(toIdx, 0, f)
+    prvs.splice(toIdx, 0, p)
+    selectedFiles.value = files
+    previews.value = prvs
+    dragSrcIdx.value = null
+    dragOverIdx.value = null
+}
+
+async function onGridDrop(e: DragEvent) {
+    gridDragOver.value = false
+    const files = Array.from(e.dataTransfer?.files ?? []).filter(f => f.type.startsWith('image/'))
+    if (!files.length) return
+    const remaining = 50 - selectedFiles.value.length - existingImages.value.length
+    if (remaining <= 0) return
+    photoUploading.value = true
+    for (const file of files.slice(0, remaining)) {
+        const compressed = await compressImage(file)
+        selectedFiles.value.push(compressed)
+        previews.value.push(URL.createObjectURL(compressed))
+    }
+    photoUploading.value = false
 }
 
 async function loadContextFeatures() {
@@ -5103,6 +5159,9 @@ onBeforeUnmount(() => {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 12px;
+    position: relative;
+
+    &--dragover { outline: 2px dashed $red; outline-offset: 4px; border-radius: $r-md; }
 }
 
 .img-thumb {
@@ -5111,7 +5170,36 @@ onBeforeUnmount(() => {
     border-radius: $r-md;
     overflow: hidden;
     border: 1px solid $border;
+    cursor: grab;
+    transition: opacity 0.15s, transform 0.15s;
     img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    &--drag-src { opacity: 0.4; }
+    &--drag-over { outline: 2px solid $red; outline-offset: 2px; transform: scale(1.03); }
+}
+
+.img-drag-hint {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.55);
+    border-radius: 4px;
+    padding: 2px 4px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1;
+    pointer-events: none;
+}
+
+.img-drop-hint {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px;
+    color: $text-muted;
+    font-size: 13px;
+    opacity: 0.6;
 }
 
 .img-remove {
