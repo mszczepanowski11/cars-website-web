@@ -13,7 +13,7 @@
 
                     <template v-else-if="advert">
                         <div class="qv-img-wrap">
-                            <img :src="mainImg" :alt="advert.title" class="qv-img" />
+                            <img :src="mainImg" :alt="advert.title" class="qv-img" loading="lazy" />
                             <span v-if="resolvedBadge" :class="['qv-badge', `qv-badge--${resolvedBadge.toLowerCase()}`]">
                                 <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" />
                                 {{ badgeLabel }}
@@ -96,11 +96,9 @@ watch(() => props.modelValue, (open) => {
     }
 })
 
-onMounted(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') emit('update:modelValue', false) }
-    window.addEventListener('keydown', onKey)
-    onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
-})
+const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') emit('update:modelValue', false) }
+onMounted(() => window.addEventListener('keydown', onKey))
+onUnmounted(() => window.removeEventListener('keydown', onKey))
 </script>
 
 <style lang="scss" scoped>

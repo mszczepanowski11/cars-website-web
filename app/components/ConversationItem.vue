@@ -11,7 +11,7 @@
         <!-- Avatar -->
         <div class="conv-avatar-wrap">
             <div class="conv-avatar">
-                <img v-if="conv.otherUserAvatar" :src="conv.otherUserAvatar" :alt="conv.otherUserName" class="avatar-img" />
+                <img v-if="conv.otherUserAvatar" :src="conv.otherUserAvatar" :alt="conv.otherUserName" class="avatar-img" loading="lazy" />
                 <span v-else class="avatar-initials">{{ initials }}</span>
             </div>
             <span v-if="conv.unreadCount > 0" class="unread-dot" />
@@ -24,7 +24,7 @@
                 <span class="conv-time">{{ timeLabel }}</span>
             </div>
             <div class="conv-advert">
-                <img v-if="conv.advertThumbnail" :src="conv.advertThumbnail" class="advert-thumb" :alt="conv.advertTitle" />
+                <img v-if="conv.advertThumbnail" :src="conv.advertThumbnail" class="advert-thumb" :alt="conv.advertTitle" loading="lazy" />
                 <span class="advert-title">{{ conv.advertTitle }}</span>
             </div>
             <div class="conv-preview">

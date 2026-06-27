@@ -1031,7 +1031,7 @@ function applyAutocomplete(item: { type: AcType; id: number; name: string }) {
 
 // Fetch favorites client-side only; also load category-specific brands if URL has categoryId
 onMounted(async () => {
-    fetchFavoriteIds()
+    fetchFavoriteIds().catch(() => {})
     if (f.categoryId) {
         try { dynamicBrands.value = await fetchBrandsByCategory(f.categoryId) } catch { dynamicBrands.value = null }
     }

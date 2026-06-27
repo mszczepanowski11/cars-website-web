@@ -3579,17 +3579,29 @@ function resetEngineLocks() {
         engineLocked[k] = false
 }
 
+let _brandSeq = 0
+let _modelSeq = 0
 async function onBrand() {
+    const seq = ++_brandSeq
     form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
     models.value = []; generations.value = []; trims.value = []; engines.value = []
-    if (form.brandId) models.value = await fetchModels(form.brandId)
+    if (form.brandId) {
+        const result = await fetchModels(form.brandId)
+        if (seq === _brandSeq) models.value = result
+    }
+    if (seq !== _brandSeq) return
     resetEngineLocks()
     await loadContextFeatures()
 }
 async function onModel() {
+    const seq = ++_modelSeq
     form.generationId = null; form.trimId = null; form.engineVersionId = null
     generations.value = []; trims.value = []; engines.value = []
-    if (form.modelId) generations.value = await fetchGenerations(form.modelId)
+    if (form.modelId) {
+        const result = await fetchGenerations(form.modelId)
+        if (seq === _modelSeq) generations.value = result
+    }
+    if (seq !== _modelSeq) return
     resetEngineLocks()
     await loadContextFeatures()
 }
