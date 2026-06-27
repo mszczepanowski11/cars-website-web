@@ -48,10 +48,10 @@ async function subscribeNewsletter() {
           <img src="/carizo-logo.svg" alt="CARIZO" class="footer-logo" />
           <p class="footer-desc">Nowoczesna platforma motoryzacyjna dla ludzi, którzy kochają samochody.</p>
           <div class="footer-social">
-            <a v-if="social.tiktok" :href="social.tiktok" target="_blank" rel="noopener noreferrer" class="social-link" title="TikTok"><v-icon icon="mdi-music-note" size="18" /></a>
-            <a v-if="social.instagram" :href="social.instagram" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram"><v-icon icon="mdi-instagram" size="18" /></a>
-            <a v-if="social.facebook" :href="social.facebook" target="_blank" rel="noopener noreferrer" class="social-link" title="Facebook"><v-icon icon="mdi-facebook" size="18" /></a>
-            <a v-if="social.youtube" :href="social.youtube" target="_blank" rel="noopener noreferrer" class="social-link" title="YouTube"><v-icon icon="mdi-youtube" size="18" /></a>
+            <a v-if="social.tiktok" :href="social.tiktok" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na TikTok"><v-icon icon="mdi-music-note" size="18" /></a>
+            <a v-if="social.instagram" :href="social.instagram" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na Instagram"><v-icon icon="mdi-instagram" size="18" /></a>
+            <a v-if="social.facebook" :href="social.facebook" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na Facebook"><v-icon icon="mdi-facebook" size="18" /></a>
+            <a v-if="social.youtube" :href="social.youtube" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na YouTube"><v-icon icon="mdi-youtube" size="18" /></a>
           </div>
         </div>
 

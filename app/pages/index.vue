@@ -371,7 +371,7 @@
             <div class="container">
                 <div class="why-header">
                     <div class="why-eyebrow">DLACZEGO</div>
-                    <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" />
+                    <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" loading="lazy" />
                     <p class="why-sub">Łączymy najlepszą technologię z pasją do motoryzacji</p>
                 </div>
                 <div class="why-grid">
@@ -482,7 +482,7 @@
 
                 <div v-if="featuredEvent" class="featured-banner" @click="navigateTo(`/wydarzenie/${featuredEvent.id}`)">
                     <div class="fb-img-wrap">
-                        <img :src="getEventImageUrl(featuredEvent)" :alt="featuredEvent.name" />
+                        <img :src="getEventImageUrl(featuredEvent)" :alt="featuredEvent.name" loading="lazy" />
                     </div>
                     <div class="fb-body">
                         <div class="fb-label">
@@ -503,7 +503,7 @@
                 <div class="events-grid">
                     <div v-for="ev in events" :key="ev.id" class="event-card" @click="navigateTo(`/wydarzenie/${ev.id}`)">
                         <div class="event-img-wrap">
-                            <img :src="getEventImageUrl(ev)" :alt="ev.name" />
+                            <img :src="getEventImageUrl(ev)" :alt="ev.name" loading="lazy" />
                             <span v-if="ev.isFeatured" class="event-badge event-badge--featured">
                                 <v-icon icon="mdi-crown" size="10" /> WYRÓŻNIONE
                             </span>
