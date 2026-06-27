@@ -93,18 +93,25 @@ onUnmounted(() => {
             <nav class="nav-links">
                 <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
                 <div class="nav-dropdown">
-                    <button class="nav-dropdown-trigger" @click="toggleCategories">
+                    <button
+                        class="nav-dropdown-trigger"
+                        aria-haspopup="true"
+                        :aria-expanded="categoriesOpen"
+                        aria-label="Kategorie pojazdów"
+                        @click="toggleCategories"
+                    >
                         Kategorie
                         <v-icon icon="mdi-chevron-down" size="16" :class="{ rotated: categoriesOpen }" />
                     </button>
-                    <div v-show="categoriesOpen" class="nav-dropdown-menu">
+                    <div v-show="categoriesOpen" class="nav-dropdown-menu" role="menu" aria-label="Kategorie pojazdów">
                         <NuxtLink v-for="c in categories" :key="c.id"
                             :to="`/adverts?categoryId=${c.id}`" class="dropdown-item"
+                            role="menuitem"
                             @click="closeCategories">
                             <v-icon :icon="c.icon" size="16" />
                             {{ c.label }}
                         </NuxtLink>
-                        <NuxtLink to="/adverts" class="dropdown-item dropdown-all" @click="closeCategories">
+                        <NuxtLink to="/adverts" class="dropdown-item dropdown-all" role="menuitem" @click="closeCategories">
                             Wszystkie kategorie
                             <v-icon icon="mdi-arrow-right" size="14" />
                         </NuxtLink>
