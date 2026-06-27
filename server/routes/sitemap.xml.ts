@@ -10,9 +10,10 @@ export default defineEventHandler(async (event) => {
         { loc: '/categories', priority: '0.7', changefreq: 'weekly' },
         { loc: '/jak-to-dziala', priority: '0.5', changefreq: 'monthly' },
         { loc: '/regulamin', priority: '0.3', changefreq: 'monthly' },
+        { loc: '/regulamin-b2b', priority: '0.3', changefreq: 'monthly' },
         { loc: '/polityka-prywatnosci', priority: '0.3', changefreq: 'monthly' },
+        { loc: '/polityka-cookies', priority: '0.3', changefreq: 'monthly' },
         { loc: '/pomoc', priority: '0.4', changefreq: 'weekly' },
-        { loc: '/promote', priority: '0.6', changefreq: 'weekly' },
     ]
 
     const dynamicUrls: Array<{ loc: string; lastmod?: string; priority: string; changefreq: string }> = []

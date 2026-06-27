@@ -19,6 +19,9 @@ Disallow: /reset-password
 Disallow: /forgot-password
 Disallow: /advert/redesign-reference
 Disallow: /coming-soon
+Disallow: /promote
+Disallow: /compare
+Disallow: /newsletter/
 Allow: /
 
 Sitemap: https://carizo.pl/sitemap.xml

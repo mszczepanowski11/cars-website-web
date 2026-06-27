@@ -172,7 +172,7 @@
 import type { MonthlyInvoice, PaymentRecord, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Faktury i płatności — CARIZO' })
+useHead({ title: 'Faktury i płatności — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const tab = ref<'invoices' | 'payments'>('invoices')
 

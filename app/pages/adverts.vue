@@ -113,21 +113,26 @@
                                 class="fp-keyword-input"
                                 placeholder="Słowo kluczowe, wyposażenie, opis..."
                                 autocomplete="off"
+                                aria-label="Szukaj po słowie kluczowym"
+                                role="combobox"
+                                :aria-expanded="showSuggestions && autocompleteItems.length > 0"
+                                aria-autocomplete="list"
                                 @keyup.enter="load(1); showSuggestions = false"
                                 @focus="showSuggestions = true"
                                 @blur="setTimeout(() => { showSuggestions = false }, 150)"
                                 @input="showSuggestions = true"
                             />
-                            <button v-if="f.textSearch" class="fp-kw-clear" @click="f.textSearch = ''; showSuggestions = false">
+                            <button v-if="f.textSearch" class="fp-kw-clear" aria-label="Wyczyść wyszukiwanie" @click="f.textSearch = ''; showSuggestions = false">
                                 <v-icon icon="mdi-close" size="13" />
                             </button>
                             <!-- Autocomplete dropdown -->
-                            <div v-if="showSuggestions && autocompleteItems.length" class="ac-dropdown">
+                            <div v-if="showSuggestions && autocompleteItems.length" class="ac-dropdown" role="listbox" aria-label="Podpowiedzi wyszukiwania">
                                 <button
                                     v-for="item in autocompleteItems"
                                     :key="item.type + item.id"
                                     type="button"
                                     class="ac-item"
+                                    role="option"
                                     @mousedown.prevent="applyAutocomplete(item)"
                                 >
                                     <v-icon
