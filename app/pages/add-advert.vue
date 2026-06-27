@@ -450,6 +450,30 @@
                             />
                         </div>
 
+                        <!-- Gear count -->
+                        <div v-if="isFieldVisible('gearbox')" class="field">
+                            <label class="flabel">Liczba biegów</label>
+                            <select v-model="form.gearCount" class="finput">
+                                <option :value="null">Nie podaję</option>
+                                <option v-for="n in [4,5,6,7,8,9,10]" :key="n" :value="n">{{ n }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Metallic paint -->
+                        <div v-if="isFieldVisible('color')" class="field">
+                            <label class="flabel">Rodzaj lakieru</label>
+                            <div class="radio-group">
+                                <label class="radio-opt" :class="{ active: !form.metallicPaint }">
+                                    <input type="radio" name="metallicPaint" :value="false" v-model="form.metallicPaint" hidden />
+                                    Niemetalik
+                                </label>
+                                <label class="radio-opt" :class="{ active: form.metallicPaint }">
+                                    <input type="radio" name="metallicPaint" :value="true" v-model="form.metallicPaint" hidden />
+                                    Metalik
+                                </label>
+                            </div>
+                        </div>
+
                         <!-- Mileage / Motohours (not for parts/trailers) -->
                         <div v-if="isFieldVisible('mileage')" class="field">
                             <label class="flabel">
@@ -901,7 +925,13 @@
                         <p v-if="!isEdit">Dodaj minimum <strong>3 zdjęcia</strong> pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
                         <p v-else>Możesz usunąć istniejące zdjęcia lub dodać nowe.</p>
                     </div>
-                    <div class="img-grid">
+                    <div
+                        class="img-grid"
+                        :class="{ 'img-grid--dragover': gridDragOver }"
+                        @dragover.prevent="gridDragOver = true"
+                        @dragleave="gridDragOver = false"
+                        @drop.prevent="onGridDrop"
+                    >
                         <!-- Existing images (edit mode) -->
                         <div v-for="img in existingImages" :key="`ex-${img.id}`" class="img-thumb img-thumb--existing">
                             <img :src="getImageUrl(img.url)" />
@@ -913,20 +943,37 @@
                             </button>
                             <span v-if="img.isMain" class="img-main-badge">Główne</span>
                         </div>
-                        <!-- New images being added -->
-                        <div v-for="(preview, i) in previews" :key="`new-${i}`" class="img-thumb">
+                        <!-- New images being added (draggable for reorder) -->
+                        <div
+                            v-for="(preview, i) in previews"
+                            :key="`new-${i}`"
+                            class="img-thumb"
+                            :class="{ 'img-thumb--drag-src': dragSrcIdx === i, 'img-thumb--drag-over': dragOverIdx === i }"
+                            draggable="true"
+                            @dragstart="dragSrcIdx = i"
+                            @dragend="dragSrcIdx = null; dragOverIdx = null"
+                            @dragover.prevent="dragOverIdx = i"
+                            @dragleave="dragOverIdx = null"
+                            @drop.prevent="reorderPhoto(i)"
+                        >
                             <img :src="preview" />
                             <button type="button" class="img-remove" @click="removeImage(i)">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
                             <span v-if="!existingImages.length && i === 0" class="img-main-badge">Główne</span>
+                            <span class="img-drag-hint"><v-icon icon="mdi-drag" size="13" /></span>
                         </div>
-                        <label v-if="(existingImages.length + selectedFiles.length) < 20" class="img-add" :class="{ 'img-add--loading': photoUploading }">
+                        <label v-if="(existingImages.length + selectedFiles.length) < 50" class="img-add" :class="{ 'img-add--loading': photoUploading }">
                             <input type="file" multiple accept="image/jpeg,image/png,image/webp" @change="onFilesSelected" :disabled="photoUploading" hidden />
                             <v-icon v-if="photoUploading" icon="mdi-loading" size="28" class="spin" />
                             <v-icon v-else icon="mdi-plus" size="28" />
                             <span>{{ photoUploading ? 'Przetwarzanie...' : 'Dodaj zdjęcia' }}</span>
                         </label>
+                        <!-- Drop zone hint when no files yet -->
+                        <div v-if="!previews.length && !existingImages.length" class="img-drop-hint">
+                            <v-icon icon="mdi-cloud-upload-outline" size="32" />
+                            <span>Przeciągnij zdjęcia tutaj lub kliknij „Dodaj zdjęcia"</span>
+                        </div>
                     </div>
 
                     <!-- AI Photo Quality Analysis -->
@@ -994,6 +1041,52 @@
                             <v-icon icon="mdi-image-size-select-large" size="14" />
                             {{ photoFeedback.lowQuality.length }} zdjęcie(-a) mają niską rozdzielczość (poniżej 800px)
                         </div>
+                    </div>
+
+                    <!-- PDF Brochure Upload -->
+                    <div class="pdf-section">
+                        <div class="pdf-section-title">
+                            <v-icon icon="mdi-file-pdf-box" size="16" style="color:#e53e3e" />
+                            Broszura PDF
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </div>
+                        <div class="pdf-section-desc">Dodaj PDF z pełną specyfikacją, historią serwisową lub ofertą finansową.</div>
+
+                        <div v-if="form.pdfBrochureUrl && form.pdfBrochureUrl !== '__pending__'" class="pdf-uploaded">
+                            <v-icon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <div class="pdf-info">
+                                <div class="pdf-name">{{ pdfFileName || 'Broszura.pdf' }}</div>
+                                <a :href="form.pdfBrochureUrl" target="_blank" class="pdf-view-link">
+                                    <v-icon icon="mdi-open-in-new" size="12" />Podgląd
+                                </a>
+                            </div>
+                            <button type="button" class="pdf-remove-btn" @click="removePdf">
+                                <v-icon icon="mdi-close" size="15" />
+                            </button>
+                        </div>
+
+                        <div v-else-if="form.pdfBrochureUrl === '__pending__'" class="pdf-uploaded pdf-pending">
+                            <v-icon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <div class="pdf-info">
+                                <div class="pdf-name">{{ pdfFileName }}</div>
+                                <div class="pdf-pending-label">Zostanie przesłany po publikacji</div>
+                            </div>
+                            <button type="button" class="pdf-remove-btn" @click="removePdf">
+                                <v-icon icon="mdi-close" size="15" />
+                            </button>
+                        </div>
+
+                        <label v-else class="pdf-upload-btn" :class="{ 'pdf-upload-btn--loading': pdfUploading }">
+                            <input type="file" accept="application/pdf" @change="onPdfSelected" :disabled="pdfUploading" hidden />
+                            <v-icon :icon="pdfUploading ? 'mdi-loading' : 'mdi-upload'" size="16" :class="{ spin: pdfUploading }" />
+                            {{ pdfUploading ? 'Wysyłanie...' : 'Wybierz plik PDF (maks. 25 MB)' }}
+                        </label>
+
+                        <transition name="fade-err">
+                            <div v-if="pdfUploadError" class="pdf-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="13" />{{ pdfUploadError }}
+                            </div>
+                        </transition>
                     </div>
                 </div>
 
@@ -1223,6 +1316,62 @@
                         </div>
                     </div>
 
+                        <!-- Garaged -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.isGaraged }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.isGaraged }">
+                                    <v-icon :icon="history.isGaraged ? 'mdi-check' : 'mdi-garage-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Garażowany</div>
+                                    <div class="vi-desc">Pojazd przechowywany w garażu lub hali</div>
+                                </div>
+                                <div v-if="history.isGaraged" class="vi-badge">+1 pkt</div>
+                            </div>
+                            <label class="toggle-row" style="margin-top:12px">
+                                <span class="toggle-label">Pojazd jest garażowany</span>
+                                <div class="toggle-switch" :class="{ active: history.isGaraged }" @click="history.isGaraged = !history.isGaraged">
+                                    <div class="toggle-knob" />
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Key count -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.keyCount !== null }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.keyCount !== null }">
+                                    <v-icon :icon="history.keyCount !== null ? 'mdi-check' : 'mdi-key-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Liczba kluczyków</div>
+                                    <div class="vi-desc">Ile kluczyków / pilotów jest dostępnych do pojazdu</div>
+                                </div>
+                                <div v-if="history.keyCount !== null" class="vi-badge">+1 pkt</div>
+                            </div>
+                            <select v-model="history.keyCount" class="finput" style="margin-top:12px">
+                                <option :value="null">Nie podaję</option>
+                                <option :value="1">1 kluczyk</option>
+                                <option :value="2">2 kluczyki</option>
+                                <option :value="3">3 kluczyki</option>
+                                <option :value="4">4+ kluczyków</option>
+                            </select>
+                        </div>
+
+                        <!-- Insurance until -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.insuranceUntil }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.insuranceUntil }">
+                                    <v-icon :icon="history.insuranceUntil ? 'mdi-check' : 'mdi-shield-car'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">OC ważne do</div>
+                                    <div class="vi-desc">Data ważności ubezpieczenia odpowiedzialności cywilnej</div>
+                                </div>
+                                <div v-if="history.insuranceUntil" class="vi-badge">+1 pkt</div>
+                            </div>
+                            <input v-model="history.insuranceUntil" type="month" class="finput" style="margin-top:12px" />
+                        </div>
+
                     <!-- Carizo verified summary -->
                     <div class="cverified-summary">
                         <div class="cvs-icon">
@@ -1230,10 +1379,10 @@
                         </div>
                         <div>
                             <div class="cvs-title">CARIZO VERIFIED</div>
-                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null].filter(Boolean).length }} z 6 punktów potwierdzonych</div>
+                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length }} z 9 punktów potwierdzonych</div>
                         </div>
                         <div class="cvs-score">
-                            {{ Math.round([form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null].filter(Boolean).length / 6 * 100) }}%
+                            {{ Math.round([form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length / 9 * 100) }}%
                         </div>
                     </div>
                 </div>
@@ -1258,6 +1407,54 @@
                                 <input type="radio" name="sellerType" value="dealer" v-model="form.sellerType" hidden />
                                 <v-icon icon="mdi-store-outline" size="14" style="margin-right:5px" />
                                 Dealer / Firma
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Registration plate -->
+                    <div class="field full-width" style="margin-bottom:12px">
+                        <label class="flabel">
+                            Numer rejestracyjny
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </label>
+                        <div class="input-icon-wrap">
+                            <v-icon icon="mdi-card-account-details-outline" class="input-prefix" size="16" />
+                            <input v-model="form.registrationPlate" type="text" class="finput has-prefix"
+                                placeholder="np. WA 12345" maxlength="10" style="text-transform:uppercase"
+                                @input="(form.registrationPlate as string) = (form.registrationPlate as string).toUpperCase()" />
+                        </div>
+                        <div class="field-hint">
+                            <v-icon icon="mdi-information-outline" size="12" />Widoczny dla poważnych kupujących — pomaga w weryfikacji historii
+                        </div>
+                    </div>
+
+                    <!-- Financing & payment options -->
+                    <div class="field full-width" style="margin-bottom:16px">
+                        <label class="flabel">Opcje finansowania i wymiany</label>
+                        <div class="bool-checks-row">
+                            <label class="bool-check" :class="{ active: form.hasVatInvoice }">
+                                <input type="checkbox" v-model="form.hasVatInvoice" hidden />
+                                <span class="bool-box"><v-icon v-if="form.hasVatInvoice" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-receipt-text-outline" size="14" style="margin-right:4px" />
+                                Faktura VAT
+                            </label>
+                            <label class="bool-check" :class="{ active: form.isLeasingPossible }">
+                                <input type="checkbox" v-model="form.isLeasingPossible" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isLeasingPossible" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-handshake-outline" size="14" style="margin-right:4px" />
+                                Możliwość leasingu
+                            </label>
+                            <label class="bool-check" :class="{ active: form.isCreditPossible }">
+                                <input type="checkbox" v-model="form.isCreditPossible" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isCreditPossible" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-credit-card-outline" size="14" style="margin-right:4px" />
+                                Kredyt
+                            </label>
+                            <label class="bool-check" :class="{ active: form.isExchangePossible }">
+                                <input type="checkbox" v-model="form.isExchangePossible" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isExchangePossible" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-swap-horizontal" size="14" style="margin-right:4px" />
+                                Zamiana
                             </label>
                         </div>
                     </div>
@@ -1336,6 +1533,11 @@
                             </div>
                         </div>
                     </div>
+                    <transition name="fade-err">
+                        <div v-if="descPhoneWarning" class="desc-phone-warn">
+                            <v-icon icon="mdi-phone-alert-outline" size="14" />{{ descPhoneWarning }}
+                        </div>
+                    </transition>
                     <div class="writing-tips">
                         <div class="wt-title"><v-icon icon="mdi-lightbulb-outline" size="14" />Wskazówki dla dobrego opisu</div>
                         <div class="wt-grid">
@@ -1343,6 +1545,35 @@
                             <div class="wt-item"><v-icon icon="mdi-wrench-outline" size="13" />Co zostało wymienione</div>
                             <div class="wt-item"><v-icon icon="mdi-car-multiple" size="13" />Powód sprzedaży</div>
                             <div class="wt-item"><v-icon icon="mdi-package-variant-closed" size="13" />Dodatkowe akcesoria</div>
+                        </div>
+                    </div>
+
+                    <!-- YouTube video link -->
+                    <div class="field full-width" style="margin-top:16px;margin-bottom:16px">
+                        <label class="flabel">
+                            Film YouTube
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </label>
+                        <div class="input-icon-wrap">
+                            <v-icon icon="mdi-youtube" class="input-prefix" size="16" style="color:#ff0000" />
+                            <input v-model="form.youtubeUrl" type="url" class="finput has-prefix"
+                                placeholder="https://youtube.com/watch?v=..." maxlength="500" />
+                        </div>
+                        <div v-if="youtubeEmbedId" class="field-hint" style="color:#4ade80">
+                            <v-icon icon="mdi-check-circle-outline" size="12" style="color:#4ade80" />Film będzie wyświetlany bezpośrednio w ogłoszeniu
+                        </div>
+                        <div v-else class="field-hint">
+                            <v-icon icon="mdi-information-outline" size="12" />Ogłoszenia z filmem sprzedają się szybciej — nagraj krótką prezentację pojazdu
+                        </div>
+                        <div v-if="youtubeEmbedId" class="yt-preview">
+                            <iframe
+                                :src="`https://www.youtube-nocookie.com/embed/${youtubeEmbedId}`"
+                                class="yt-iframe"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen
+                                loading="lazy"
+                            />
                         </div>
                     </div>
 
@@ -1579,12 +1810,42 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Completeness checklist -->
+                    <div class="summary-checklist">
+                        <div class="summary-checklist-title">
+                            <v-icon icon="mdi-clipboard-check-outline" size="15" />
+                            Kompletność ogłoszenia
+                        </div>
+                        <div v-for="factor in scoreFactors" :key="factor.label" class="summary-factor">
+                            <v-icon
+                                :icon="factor.done ? 'mdi-check-circle' : 'mdi-circle-outline'"
+                                size="16"
+                                :style="{ color: factor.done ? '#4ade80' : '#6b7280' }"
+                            />
+                            <span :class="{ 'summary-factor--done': factor.done }">{{ factor.label }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Tips -->
+                    <div v-if="scoreTips.length" class="summary-tips">
+                        <div class="summary-tips-title">
+                            <v-icon icon="mdi-lightbulb-on-outline" size="14" />
+                            Wskazówki jak poprawić skuteczność
+                        </div>
+                        <div v-for="tip in scoreTips" :key="tip" class="summary-tip-item">
+                            <v-icon icon="mdi-arrow-right-thin" size="14" />{{ tip }}
+                        </div>
+                    </div>
+
                     <div class="preview-publish-row">
                         <div class="ppr-score">
                             <div class="ppr-score-ring" :style="{ '--score': adScore }">
                                 <span class="ppr-score-num">{{ adScore }}</span>
                             </div>
                             <div class="ppr-score-label">Jakość ogłoszenia</div>
+                            <div class="ppr-score-tier" :class="adScore >= 90 ? 'tier--gold' : adScore >= 70 ? 'tier--silver' : 'tier--bronze'">
+                                {{ adScore >= 90 ? 'PREMIUM VERIFIED' : adScore >= 70 ? 'DOBRA JAKOŚĆ' : 'DO UZUPEŁNIENIA' }}
+                            </div>
                         </div>
                         <div class="ppr-actions">
                             <button class="btn-cancel" @click="currentStep--">Wróć i edytuj</button>
@@ -2474,6 +2735,13 @@ const vinError = ref('')
 const previewOpen = ref(false)
 const photoUploading = ref(false)
 const paying = ref(false)
+const dragSrcIdx = ref<number | null>(null)
+const dragOverIdx = ref<number | null>(null)
+const gridDragOver = ref(false)
+const pdfUploading = ref(false)
+const pdfUploadError = ref('')
+const pdfFileName = ref('')
+const pdfPendingFile = ref<File | null>(null)
 
 // ── AI Photo Quality Analysis ─────────────────────────────────────────────────
 const photoAnalysisResults = ref<Record<number, { score: number, issues: string[], suggestions: string[], summary: string, loading: boolean }>>({})
@@ -2704,6 +2972,16 @@ const form = reactive({
     oemNumber: '',
     manufacturerPartNumber: '',
     partManufacturer: '',
+    registrationPlate: '',
+    hasVatInvoice: false,
+    isLeasingPossible: false,
+    isCreditPossible: false,
+    isExchangePossible: false,
+    gearCount: null as number | null,
+    metallicPaint: false,
+    maxTrailerWeight: null as number | null,
+    youtubeUrl: '',
+    pdfBrochureUrl: '' as string,
 })
 
 const extras = reactive<Record<string, any>>({})
@@ -2771,6 +3049,9 @@ const history = reactive({
     isFirstOwner: false,
     isAccidentFree: false,
     servicedAtASO: false,
+    isGaraged: false,
+    keyCount: null as number | null,
+    insuranceUntil: '',
 })
 
 const steps = [
@@ -2854,10 +3135,29 @@ const adScore = computed(() => {
     if (history.hasServiceBook) s += 2
     if (history.ownersCount !== null) s += 2
     if (history.nextInspection) s += 2
+    // Premium bonuses (capped at 100 total)
+    if (form.youtubeUrl) s += 3
+    if (history.isFirstOwner) s += 2
+    if (history.isGaraged) s += 2
+    if (form.hasVatInvoice || form.isLeasingPossible || form.isCreditPossible || form.isExchangePossible) s += 2
+    if (form.registrationPlate) s += 1
     return Math.min(s, 100)
 })
 
 const scoreArc = computed(() => (adScore.value / 100) * 326.7)
+
+const descPhoneWarning = computed(() => {
+    const text = form.description ?? ''
+    return /(?:\+48|48)?[\s-]?\d{3}[\s-]?\d{3}[\s-]?\d{3}/.test(text)
+        ? 'Wykryto numer telefonu w opisie — dodaj go w danych kontaktowych zamiast w treści.'
+        : ''
+})
+
+const youtubeEmbedId = computed(() => {
+    if (!form.youtubeUrl) return ''
+    const m = form.youtubeUrl.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/)
+    return m?.[1] ?? ''
+})
 
 const scoreFactors = computed(() => {
     const photos = selectedFiles.value.length + existingImages.value.length
@@ -2867,6 +3167,8 @@ const scoreFactors = computed(() => {
         { label: `Opis (${descCharCount.value} znaków)`, done: descCharCount.value >= 200 },
         { label: `Wyposażenie (${form.featureIds.length}/5)`, done: form.featureIds.length >= 5 },
         { label: 'Historia pojazdu', done: !!(form.vin || history.hasServiceBook || history.ownersCount !== null) },
+        { label: 'Film YouTube', done: !!form.youtubeUrl },
+        { label: 'Dane premium', done: !!(form.registrationPlate || form.hasVatInvoice || form.isLeasingPossible) },
     ]
 })
 
@@ -2879,7 +3181,9 @@ const scoreTips = computed(() => {
     if (form.featureIds.length < 3) tips.push('Zaznacz wyposażenie — filtry po wyposażeniu zwiększają wyświetlenia.')
     if (!form.vin) tips.push('Podaj numer VIN — buduje zaufanie i filtruje poważnych kupujących.')
     if (!history.hasServiceBook && !history.hasFullServiceHistory) tips.push('Zaznacz historię serwisową jeśli ją posiadasz.')
-    return tips.slice(0, 3)
+    if (!form.youtubeUrl) tips.push('Dodaj film YouTube — ogłoszenia z filmem wzbudzają 2× więcej zainteresowania.')
+    if (!form.registrationPlate) tips.push('Podaj numer rejestracyjny — ułatwia weryfikację historii pojazdu.')
+    return tips.slice(0, 4)
 })
 
 // ── Smart form: category-aware logic ─────────────────────────────────────────
@@ -3169,7 +3473,7 @@ async function compressImage(file: File, maxPx = 1920, quality = 0.85): Promise<
 async function onFilesSelected(e: Event) {
     const input = e.target as HTMLInputElement
     const files = Array.from(input.files ?? [])
-    const remaining = 20 - selectedFiles.value.length
+    const remaining = 50 - selectedFiles.value.length
     if (!files.length) return
     photoUploading.value = true
     for (const file of files.slice(0, remaining)) {
@@ -3186,6 +3490,72 @@ function removeImage(index: number) {
     if (url) URL.revokeObjectURL(url)
     selectedFiles.value.splice(index, 1)
     previews.value.splice(index, 1)
+}
+
+function reorderPhoto(toIdx: number) {
+    const from = dragSrcIdx.value
+    if (from === null || from === toIdx) return
+    const files = [...selectedFiles.value]
+    const prvs = [...previews.value]
+    const [f] = files.splice(from, 1)
+    const [p] = prvs.splice(from, 1)
+    files.splice(toIdx, 0, f)
+    prvs.splice(toIdx, 0, p)
+    selectedFiles.value = files
+    previews.value = prvs
+    dragSrcIdx.value = null
+    dragOverIdx.value = null
+}
+
+async function onGridDrop(e: DragEvent) {
+    gridDragOver.value = false
+    const files = Array.from(e.dataTransfer?.files ?? []).filter(f => f.type.startsWith('image/'))
+    if (!files.length) return
+    const remaining = 50 - selectedFiles.value.length - existingImages.value.length
+    if (remaining <= 0) return
+    photoUploading.value = true
+    for (const file of files.slice(0, remaining)) {
+        const compressed = await compressImage(file)
+        selectedFiles.value.push(compressed)
+        previews.value.push(URL.createObjectURL(compressed))
+    }
+    photoUploading.value = false
+}
+
+async function onPdfSelected(e: Event) {
+    const input = e.target as HTMLInputElement
+    const file = input.files?.[0]
+    input.value = ''
+    if (!file) return
+    if (file.type !== 'application/pdf') { pdfUploadError.value = 'Dozwolony tylko plik PDF.'; return }
+    if (file.size > 25 * 1024 * 1024) { pdfUploadError.value = 'Plik PDF przekracza limit 25 MB.'; return }
+    pdfUploadError.value = ''
+    pdfUploading.value = true
+    try {
+        if (isEdit.value && editId.value) {
+            const fd = new FormData()
+            fd.append('file', file)
+            const res = await $fetch<{ url: string }>(`/api/advert/${editId.value}/pdf`, { method: 'POST', body: fd })
+            form.pdfBrochureUrl = res.url
+        } else {
+            form.pdfBrochureUrl = '__pending__'
+        }
+        pdfFileName.value = file.name
+        pdfPendingFile.value = file
+    } catch (err: any) {
+        pdfUploadError.value = err?.data?.message ?? err?.message ?? 'Błąd uploadu PDF.'
+    } finally {
+        pdfUploading.value = false
+    }
+}
+
+async function removePdf() {
+    if (isEdit.value && editId.value && form.pdfBrochureUrl && form.pdfBrochureUrl !== '__pending__') {
+        await $fetch(`/api/advert/${editId.value}/pdf`, { method: 'DELETE' }).catch(() => {})
+    }
+    form.pdfBrochureUrl = ''
+    pdfFileName.value = ''
+    pdfPendingFile.value = null
 }
 
 async function loadContextFeatures() {
@@ -3540,6 +3910,17 @@ async function submit() {
             if (history.damageDesc) cleanEdit.damageDescription = history.damageDesc
             cleanEdit.hasWarranty = history.hasWarranty
             if (history.warrantyUntil) cleanEdit.warrantyUntil = history.warrantyUntil.length === 7 ? `${history.warrantyUntil}-01` : history.warrantyUntil
+            // Premium history fields
+            cleanEdit.isFirstOwner = history.isFirstOwner
+            cleanEdit.isServicedAtASO = history.servicedAtASO
+            cleanEdit.isGaraged = history.isGaraged
+            if (history.keyCount !== null) cleanEdit.keyCount = history.keyCount
+            if (history.insuranceUntil) cleanEdit.insuranceUntil = history.insuranceUntil.length === 7 ? `${history.insuranceUntil}-01` : history.insuranceUntil
+            // Premium form fields
+            if (form.gearCount) cleanEdit.gearCount = form.gearCount
+            if (form.maxTrailerWeight) cleanEdit.maxTrailerWeight = form.maxTrailerWeight
+            if (form.youtubeUrl) cleanEdit.youtubeUrl = form.youtubeUrl
+            if (form.pdfBrochureUrl) cleanEdit.pdfBrochureUrl = form.pdfBrochureUrl
             await $fetch(`/api/proxy/api/Advert/${editId.value}`, {
                 method: 'PUT',
                 body: cleanEdit,
@@ -3561,6 +3942,8 @@ async function submit() {
                 'doorCount', 'seatsCount',
                 'trimId', 'vehicleSubtypeId', 'partCategoryId', 'partSubcategoryId',
                 'oemNumber', 'manufacturerPartNumber', 'partManufacturer',
+                'registrationPlate', 'hasVatInvoice', 'isLeasingPossible',
+                'isCreditPossible', 'isExchangePossible', 'metallicPaint',
             ]
             const cleanBody: Record<string, unknown> = {}
             if (form.categoryId) cleanBody.vehicleCategoryId = form.categoryId
@@ -3632,6 +4015,17 @@ async function submit() {
             if (history.damageDesc) cleanBody.damageDescription = history.damageDesc
             cleanBody.hasWarranty = history.hasWarranty
             if (history.warrantyUntil) cleanBody.warrantyUntil = history.warrantyUntil.length === 7 ? `${history.warrantyUntil}-01` : history.warrantyUntil
+            // Premium history fields
+            cleanBody.isFirstOwner = history.isFirstOwner
+            cleanBody.isServicedAtASO = history.servicedAtASO
+            cleanBody.isGaraged = history.isGaraged
+            if (history.keyCount !== null) cleanBody.keyCount = history.keyCount
+            if (history.insuranceUntil) cleanBody.insuranceUntil = history.insuranceUntil.length === 7 ? `${history.insuranceUntil}-01` : history.insuranceUntil
+            // Premium form fields
+            if (form.gearCount) cleanBody.gearCount = form.gearCount
+            if (form.maxTrailerWeight) cleanBody.maxTrailerWeight = form.maxTrailerWeight
+            if (form.youtubeUrl) cleanBody.youtubeUrl = form.youtubeUrl
+            if (form.pdfBrochureUrl) cleanBody.pdfBrochureUrl = form.pdfBrochureUrl
             const created = await $fetch<any>('/api/proxy/api/Advert', {
                 method: 'POST',
                 body: cleanBody,
@@ -3649,6 +4043,15 @@ async function submit() {
                     imageErrors++
                 }
             }
+            // Upload pending PDF if selected
+            if (pdfPendingFile.value) {
+                try {
+                    const fd = new FormData()
+                    fd.append('file', pdfPendingFile.value)
+                    await $fetch(`/api/advert/${id}/pdf`, { method: 'POST', body: fd })
+                } catch { /* non-critical */ }
+            }
+
             localStorage.removeItem(draftKey.value)
 
             await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
@@ -3786,6 +4189,22 @@ onMounted(async () => {
             history.damageDesc = advert.damageDescription ?? ''
             history.hasWarranty = advert.hasWarranty ?? false
             history.warrantyUntil = advert.warrantyUntil ? String(advert.warrantyUntil).substring(0, 7) : ''
+            // Premium fields restore
+            history.isFirstOwner = (advert as any).isFirstOwner ?? false
+            history.servicedAtASO = (advert as any).isServicedAtASO ?? false
+            history.isGaraged = (advert as any).isGaraged ?? false
+            history.keyCount = (advert as any).keyCount ?? null
+            history.insuranceUntil = (advert as any).insuranceUntil ? String((advert as any).insuranceUntil).substring(0, 7) : ''
+            if ((advert as any).registrationPlate) form.registrationPlate = (advert as any).registrationPlate
+            form.hasVatInvoice = (advert as any).hasVatInvoice ?? false
+            form.isLeasingPossible = (advert as any).isLeasingPossible ?? false
+            form.isCreditPossible = (advert as any).isCreditPossible ?? false
+            form.isExchangePossible = (advert as any).isExchangePossible ?? false
+            form.gearCount = (advert as any).gearCount ?? null
+            form.metallicPaint = (advert as any).metallicPaint ?? false
+            form.maxTrailerWeight = (advert as any).maxTrailerWeight ?? null
+            if ((advert as any).youtubeUrl) form.youtubeUrl = (advert as any).youtubeUrl
+            if ((advert as any).pdfBrochureUrl) form.pdfBrochureUrl = (advert as any).pdfBrochureUrl
             existingImages.value = advert.images ?? []
             if (form.brandId) models.value = await fetchModels(form.brandId)
             if (form.modelId) generations.value = await fetchGenerations(form.modelId)
@@ -4869,6 +5288,9 @@ onBeforeUnmount(() => {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 12px;
+    position: relative;
+
+    &--dragover { outline: 2px dashed $red; outline-offset: 4px; border-radius: $r-md; }
 }
 
 .img-thumb {
@@ -4877,7 +5299,36 @@ onBeforeUnmount(() => {
     border-radius: $r-md;
     overflow: hidden;
     border: 1px solid $border;
+    cursor: grab;
+    transition: opacity 0.15s, transform 0.15s;
     img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    &--drag-src { opacity: 0.4; }
+    &--drag-over { outline: 2px solid $red; outline-offset: 2px; transform: scale(1.03); }
+}
+
+.img-drag-hint {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.55);
+    border-radius: 4px;
+    padding: 2px 4px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1;
+    pointer-events: none;
+}
+
+.img-drop-hint {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px;
+    color: $text-muted;
+    font-size: 13px;
+    opacity: 0.6;
 }
 
 .img-remove {
@@ -6720,6 +7171,77 @@ onBeforeUnmount(() => {
     margin-top: 4px;
 }
 
+.ppr-score-tier {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+
+    &.tier--gold { background: rgba(234,179,8,0.15); color: #eab308; }
+    &.tier--silver { background: rgba(148,163,184,0.15); color: #94a3b8; }
+    &.tier--bronze { background: rgba(180,83,9,0.12); color: #b45309; }
+}
+
+.summary-checklist {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid $border;
+    border-radius: 10px;
+}
+
+.summary-checklist-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text;
+    margin-bottom: 12px;
+}
+
+.summary-factor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 13px;
+    color: $text-muted;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+
+    &:last-child { border-bottom: none; }
+    &--done { color: $text; }
+}
+
+.summary-tips {
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: rgba(234,179,8,0.06);
+    border: 1px solid rgba(234,179,8,0.15);
+    border-radius: 10px;
+}
+
+.summary-tips-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #eab308;
+    margin-bottom: 10px;
+}
+
+.summary-tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    color: $text-muted;
+    padding: 4px 0;
+}
+
 // ── AI Photo Quality Analysis ─────────────────────────────────────────────────
 .photo-ai-section {
     margin-top: 16px;
@@ -6881,5 +7403,155 @@ onBeforeUnmount(() => {
     border: 1px solid rgba(74, 222, 128, 0.2);
     border-radius: 8px;
     color: #4ade80;
+}
+
+.bool-checks-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+
+    .bool-check {
+        padding: 7px 14px;
+        border: 1.5px solid $border;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.03);
+        transition: border-color 0.15s, background 0.15s;
+
+        &.active {
+            border-color: rgba($red, 0.5);
+            background: rgba($red, 0.08);
+            color: $text;
+        }
+    }
+}
+
+.yt-preview {
+    margin-top: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: #000;
+
+    .yt-iframe {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+}
+
+.desc-phone-warn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    margin-top: 8px;
+    background: rgba(234, 179, 8, 0.08);
+    border: 1px solid rgba(234, 179, 8, 0.25);
+    border-radius: 8px;
+    color: #eab308;
+    font-size: 12px;
+}
+
+// ── PDF Brochure ──────────────────────────────────────────────────────────────
+.pdf-section {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: 10px;
+}
+
+.pdf-section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text;
+    margin-bottom: 4px;
+}
+
+.pdf-section-desc {
+    font-size: 12px;
+    color: $text-muted;
+    margin-bottom: 12px;
+}
+
+.pdf-uploaded {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(229,62,62,0.06);
+    border: 1px solid rgba(229,62,62,0.2);
+    border-radius: 8px;
+}
+
+.pdf-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.pdf-name {
+    font-size: 13px;
+    color: $text;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pdf-view-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: $red;
+    text-decoration: none;
+    margin-top: 2px;
+    &:hover { text-decoration: underline; }
+}
+
+.pdf-pending-label {
+    font-size: 11px;
+    color: $text-muted;
+    margin-top: 2px;
+}
+
+.pdf-remove-btn {
+    background: none;
+    border: none;
+    color: $text-muted;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    &:hover { color: $text; background: rgba(255,255,255,0.06); }
+}
+
+.pdf-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border: 1.5px dashed $border;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: $text-muted;
+    transition: border-color 0.15s, color 0.15s;
+    &:hover { border-color: rgba($red, 0.4); color: $text; }
+    &--loading { opacity: 0.6; pointer-events: none; }
+}
+
+.pdf-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f87171;
 }
 </style>

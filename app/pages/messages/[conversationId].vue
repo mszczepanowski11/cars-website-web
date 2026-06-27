@@ -1,67 +1,161 @@
 <template>
-    <div class="chat-page">
+    <div class="chat-wrap">
+        <!-- Chat header -->
         <div class="chat-header">
-            <div class="chat-header-inner">
-                <NuxtLink to="/messages" class="back-btn">
-                    <v-icon icon="mdi-arrow-left" size="20" />
-                </NuxtLink>
+            <NuxtLink to="/messages" class="back-btn" aria-label="Wróć">
+                <v-icon icon="mdi-arrow-left" size="20" />
+            </NuxtLink>
+
+            <div class="header-user" v-if="conversation">
+                <div class="header-avatar">
+                    <img v-if="conversation.otherUserAvatar" :src="conversation.otherUserAvatar" class="hdr-avatar-img" :alt="conversation.otherUserName" />
+                    <span v-else class="hdr-avatar-initials">{{ initials }}</span>
+                </div>
                 <div class="header-info">
-                    <v-icon icon="mdi-account-circle" size="36" class="header-avatar" />
-                    <div>
-                        <div class="header-name">{{ conversation?.otherUserName ?? '...' }}</div>
-                        <NuxtLink
-                            v-if="conversation"
-                            :to="`/advert/${conversation.advertId}`"
-                            class="header-advert"
-                        >
-                            {{ conversation.advertTitle }}
-                        </NuxtLink>
+                    <div class="hdr-name">{{ conversation.otherUserName }}</div>
+                    <NuxtLink :to="`/advert/${conversation.advertId}`" class="hdr-advert">
+                        <v-icon icon="mdi-car" size="12" />
+                        {{ conversation.advertTitle }}
+                    </NuxtLink>
+                </div>
+            </div>
+            <div v-else class="header-user">
+                <div class="header-avatar"><span class="hdr-avatar-initials">?</span></div>
+                <div class="header-info">
+                    <div class="hdr-name hdr-name-loading" />
+                    <div class="hdr-advert-loading" />
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="header-actions">
+                <NuxtLink v-if="conversation" :to="`/advert/${conversation.advertId}`" class="hdr-action-btn" title="Zobacz ogłoszenie">
+                    <v-icon icon="mdi-open-in-new" size="18" />
+                </NuxtLink>
+                <button class="hdr-action-btn" title="Więcej opcji" @click="showActions = !showActions">
+                    <v-icon icon="mdi-dots-vertical" size="18" />
+                </button>
+
+                <!-- Dropdown actions -->
+                <div v-if="showActions" class="actions-dropdown">
+                    <div class="act-backdrop" @click="showActions = false" />
+                    <div class="act-menu">
+                        <button class="act-item" @click="togglePin">
+                            <v-icon :icon="conversation?.isPinned ? 'mdi-pin-off' : 'mdi-pin'" size="16" />
+                            {{ conversation?.isPinned ? 'Odepnij' : 'Przypnij' }}
+                        </button>
+                        <button class="act-item" @click="doMarkUnread">
+                            <v-icon icon="mdi-email-mark-as-unread" size="16" />
+                            Oznacz jako nieprzeczytane
+                        </button>
+                        <button class="act-item" @click="toggleArchive">
+                            <v-icon :icon="conversation?.isArchived ? 'mdi-archive-arrow-up' : 'mdi-archive-arrow-down'" size="16" />
+                            {{ conversation?.isArchived ? 'Przywróć z archiwum' : 'Archiwizuj' }}
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Advert card strip -->
+        <div v-if="conversation" class="advert-strip">
+            <NuxtLink :to="`/advert/${conversation.advertId}`" class="advert-strip-inner">
+                <img v-if="conversation.advertThumbnail" :src="conversation.advertThumbnail" class="strip-thumb" :alt="conversation.advertTitle" />
+                <div v-else class="strip-thumb-placeholder"><v-icon icon="mdi-car" size="16" /></div>
+                <span class="strip-title">{{ conversation.advertTitle }}</span>
+                <v-icon icon="mdi-chevron-right" size="16" class="strip-arrow" />
+            </NuxtLink>
+        </div>
+
+        <!-- Messages area -->
         <div ref="scrollEl" class="messages-area">
             <div v-if="loading" class="msgs-loading">
-                <v-icon icon="mdi-loading" size="28" class="spin" />
+                <div v-for="i in 5" :key="i" class="msg-skel" :class="i % 2 === 0 ? 'skel-right' : 'skel-left'">
+                    <div class="skel-bubble" />
+                </div>
             </div>
+
             <template v-else>
                 <div v-if="!messages.length" class="no-messages">
-                    Napisz pierwszą wiadomość
+                    <v-icon icon="mdi-message-outline" size="40" class="no-msg-icon" />
+                    <p>Napisz pierwszą wiadomość</p>
                 </div>
-                <div
-                    v-for="msg in messages"
-                    :key="msg.id"
-                    class="msg-row"
-                    :class="msg.isMine ? 'msg-mine' : 'msg-other'"
-                >
-                    <div class="msg-bubble" :class="msg.isMine ? 'bubble-mine' : 'bubble-other'">
-                        <p class="msg-text">{{ msg.content }}</p>
-                        <span class="msg-time">{{ formatTime(msg.sentAt) }}</span>
+
+                <template v-for="(msg, idx) in messages" :key="msg.id">
+                    <!-- Date separator -->
+                    <div v-if="showDateSep(idx)" class="date-sep">
+                        <span>{{ formatDate(msg.sentAt) }}</span>
+                    </div>
+
+                    <!-- Message bubble -->
+                    <div class="msg-row" :class="msg.isMine ? 'row-mine' : 'row-other'">
+                        <!-- Other user avatar (only first in group) -->
+                        <div v-if="!msg.isMine" class="msg-avatar-col">
+                            <div v-if="isFirstInGroup(idx)" class="msg-avatar">
+                                <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" class="bubble-avatar-img" />
+                                <span v-else class="bubble-avatar-initials">{{ initials }}</span>
+                            </div>
+                            <div v-else class="msg-avatar-spacer" />
+                        </div>
+
+                        <div class="msg-bubble" :class="msg.isMine ? 'bubble-mine' : 'bubble-other'">
+                            <p class="msg-text">{{ msg.content }}</p>
+                            <div class="msg-footer">
+                                <span class="msg-time">{{ formatTime(msg.sentAt) }}</span>
+                                <span v-if="msg.isMine" class="msg-status">
+                                    <v-icon
+                                        :icon="msg.isRead ? 'mdi-check-all' : 'mdi-check'"
+                                        size="14"
+                                        :class="msg.isRead ? 'status-read' : 'status-sent'"
+                                    />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Typing indicator (polling-based: show for 3s after other user's last activity) -->
+                <div v-if="showTyping" class="msg-row row-other typing-row">
+                    <div class="msg-avatar-col">
+                        <div class="msg-avatar">
+                            <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" class="bubble-avatar-img" />
+                            <span v-else class="bubble-avatar-initials">{{ initials }}</span>
+                        </div>
+                    </div>
+                    <div class="msg-bubble bubble-other typing-bubble">
+                        <span class="typing-dot" /><span class="typing-dot" /><span class="typing-dot" />
                     </div>
                 </div>
             </template>
         </div>
 
+        <!-- Load error -->
         <div v-if="loadError" class="load-error">
-            <v-icon icon="mdi-wifi-off" size="20" />
-            Nie udało się załadować wiadomości.
-            <button class="retry-btn" @click="loadAll">Spróbuj ponownie</button>
+            <v-icon icon="mdi-wifi-off" size="16" />
+            Błąd ładowania.
+            <button class="retry-btn" @click="loadAll">Spróbuj</button>
         </div>
 
+        <!-- Input bar -->
         <div class="input-bar">
             <div v-if="sendError" class="send-error">{{ sendError }}</div>
             <div class="input-row">
                 <textarea
                     v-model="draft"
+                    ref="textareaRef"
                     class="msg-textarea"
                     placeholder="Napisz wiadomość..."
                     rows="1"
+                    :disabled="sending"
                     @keydown.enter.exact.prevent="send"
                     @input="autoResize"
-                    ref="textareaRef"
                 />
-                <button class="send-btn" :disabled="sending || !draft.trim()" @click="send">
+                <button
+                    class="send-btn"
+                    :disabled="sending || !draft.trim()"
+                    :title="sending ? 'Wysyłanie...' : 'Wyślij (Enter)'"
+                    @click="send"
+                >
                     <v-icon v-if="sending" icon="mdi-loading" size="20" class="spin" />
                     <v-icon v-else icon="mdi-send" size="20" />
                 </button>
@@ -76,6 +170,7 @@ definePageMeta({ middleware: 'auth' })
 useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
+const emit = defineEmits<{ (e: 'conversation-updated'): void }>()
 const conversationId = Number(route.params.conversationId)
 
 const conversation = ref<Conversation | null>(null)
@@ -87,6 +182,15 @@ const scrollEl = ref<HTMLElement | null>(null)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 const loadError = ref(false)
 const sendError = ref('')
+const showActions = ref(false)
+const showTyping = ref(false)
+let prevMessageCount = 0
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
+const initials = computed(() => {
+    const name = conversation.value?.otherUserName ?? ''
+    return name.split(' ').map(p => p[0] ?? '').join('').slice(0, 2).toUpperCase()
+})
 
 function autoResize() {
     const el = textareaRef.value
@@ -105,6 +209,7 @@ async function loadAll() {
         ])
         conversation.value = convs.find(c => c.id === conversationId) ?? null
         messages.value = msgs
+        prevMessageCount = msgs.length
         await nextTick()
         scrollToBottom()
     } catch {
@@ -114,8 +219,9 @@ async function loadAll() {
     }
 }
 
-function scrollToBottom() {
-    if (scrollEl.value) scrollEl.value.scrollTop = scrollEl.value.scrollHeight
+function scrollToBottom(smooth = false) {
+    if (!scrollEl.value) return
+    scrollEl.value.scrollTo({ top: scrollEl.value.scrollHeight, behavior: smooth ? 'smooth' : 'auto' })
 }
 
 async function send() {
@@ -132,17 +238,14 @@ async function send() {
         draft.value = ''
         if (textareaRef.value) textareaRef.value.style.height = 'auto'
         await nextTick()
-        scrollToBottom()
+        scrollToBottom(true)
+        emit('conversation-updated')
     } catch (err: any) {
         const msg = err?.data?.message ?? err?.data?.statusMessage ?? err?.message
-        sendError.value = msg || 'Nie udało się wysłać wiadomości. Spróbuj ponownie.'
+        sendError.value = msg || 'Nie udało się wysłać. Spróbuj ponownie.'
     } finally {
         sending.value = false
     }
-}
-
-function formatTime(d: string) {
-    return new Date(d).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })
 }
 
 async function pollMessages() {
@@ -150,22 +253,90 @@ async function pollMessages() {
     try {
         const msgs = await $fetch<MessageItem[]>(`/api/proxy/api/Message/conversation/${conversationId}/messages`)
         if (msgs.length > messages.value.length) {
-            const lastId = messages.value[messages.value.length - 1]?.id ?? 0
-            const newMsgs = msgs.filter(m => m.id > lastId)
+            const lastKnownId = messages.value[messages.value.length - 1]?.id ?? 0
+            const newMsgs = msgs.filter(m => m.id > lastKnownId)
             if (newMsgs.length) {
+                // Show typing before adding new messages from other user
+                const hasOtherMsg = newMsgs.some(m => !m.isMine)
+                if (hasOtherMsg) {
+                    showTyping.value = true
+                    await new Promise(r => setTimeout(r, 600))
+                    showTyping.value = false
+                }
                 messages.value.push(...newMsgs)
+                prevMessageCount = msgs.length
                 await nextTick()
-                scrollToBottom()
+                scrollToBottom(true)
+                emit('conversation-updated')
             }
+        }
+        // Update read statuses on existing messages
+        for (const msg of messages.value) {
+            const fresh = msgs.find(m => m.id === msg.id)
+            if (fresh && fresh.isRead !== msg.isRead) msg.isRead = fresh.isRead
         }
     } catch {}
 }
 
-let pollTimer: ReturnType<typeof setInterval> | null = null
+// Date separator: show if this is the first message or date differs from prev
+function showDateSep(idx: number): boolean {
+    if (idx === 0) return true
+    const prev = new Date(messages.value[idx - 1].sentAt)
+    const cur = new Date(messages.value[idx].sentAt)
+    return prev.toDateString() !== cur.toDateString()
+}
+
+// First in group: show avatar if sender changed or first message
+function isFirstInGroup(idx: number): boolean {
+    if (idx === 0) return true
+    return messages.value[idx - 1].isMine !== messages.value[idx].isMine
+}
+
+function formatDate(d: string) {
+    const date = new Date(d)
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    if (diff < 86_400_000 && date.toDateString() === now.toDateString()) return 'Dzisiaj'
+    const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1)
+    if (date.toDateString() === yesterday.toDateString()) return 'Wczoraj'
+    return date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+function formatTime(d: string) {
+    return new Date(d).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })
+}
+
+async function togglePin() {
+    showActions.value = false
+    if (!conversation.value) return
+    try {
+        const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conversationId}/pin`, { method: 'PUT' })
+        conversation.value = updated
+        emit('conversation-updated')
+    } catch {}
+}
+
+async function toggleArchive() {
+    showActions.value = false
+    if (!conversation.value) return
+    try {
+        const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conversationId}/archive`, { method: 'PUT' })
+        conversation.value = updated
+        emit('conversation-updated')
+    } catch {}
+}
+
+async function doMarkUnread() {
+    showActions.value = false
+    try {
+        await $fetch(`/api/proxy/api/Message/conversation/${conversationId}/mark-unread`, { method: 'PUT' })
+        emit('conversation-updated')
+    } catch {}
+}
 
 onMounted(() => {
     loadAll()
-    pollTimer = setInterval(pollMessages, 15_000)
+    pollTimer = setInterval(pollMessages, 8_000)
 })
 
 onUnmounted(() => {
@@ -174,71 +345,300 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.chat-page {
+.chat-wrap {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
     background: $bg;
-    padding-top: $nav-height;
+    overflow: hidden;
 }
 
+// ── Header ──────────────────────────────────────────────────────────────────
 .chat-header {
-    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    height: 60px;
+    background: rgba(0,0,0,0.9);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid $border;
     flex-shrink: 0;
-}
-
-.chat-header-inner {
-    @include container;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    position: relative;
 }
 
 .back-btn {
     color: $text-dim;
     display: flex;
     align-items: center;
+    flex-shrink: 0;
     transition: color 0.2s;
     &:hover { color: $text; }
 }
 
-.header-info { display: flex; align-items: center; gap: 12px; }
-.header-avatar { color: $text-dim; }
-.header-name { font-size: 16px; font-weight: 700; color: $text; }
-.header-advert {
-    font-size: 12px;
-    color: $red;
-    display: block;
-    &:hover { opacity: 0.8; }
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
 }
 
+.header-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.hdr-avatar-img { width: 100%; height: 100%; object-fit: cover; }
+.hdr-avatar-initials { font-size: 14px; font-weight: 700; color: $red; }
+
+.header-info { min-width: 0; flex: 1; }
+.hdr-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hdr-name-loading {
+    height: 14px;
+    width: 120px;
+    background: #1a1a1a;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    animation: shimmer 1.4s infinite;
+}
+.hdr-advert {
+    font-size: 11px;
+    color: $red;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    &:hover { opacity: 0.8; }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hdr-advert-loading {
+    height: 10px;
+    width: 180px;
+    background: #1a1a1a;
+    border-radius: 5px;
+    animation: shimmer 1.4s infinite;
+}
+
+// Header actions
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.hdr-action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: none;
+    border: none;
+    color: $text-dim;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    &:hover { background: #1a1a1a; color: $text; }
+}
+
+.act-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+}
+
+.act-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 101;
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: $r-md;
+    padding: 4px;
+    min-width: 220px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+}
+
+.act-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background: none;
+    border: none;
+    color: $text-dim;
+    font-size: 13px;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, color 0.15s;
+    &:hover { background: #1a1a1a; color: $text; }
+}
+
+// ── Advert strip ──────────────────────────────────────────────────────────────
+.advert-strip {
+    flex-shrink: 0;
+    border-bottom: 1px solid $border;
+}
+
+.advert-strip-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: #050505;
+    transition: background 0.15s;
+    text-decoration: none;
+    &:hover { background: #0a0a0a; }
+}
+
+.strip-thumb {
+    width: 36px;
+    height: 28px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.strip-thumb-placeholder {
+    width: 36px;
+    height: 28px;
+    background: #1a1a1a;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-dark;
+    flex-shrink: 0;
+}
+
+.strip-title {
+    flex: 1;
+    font-size: 12px;
+    color: $text-dim;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.strip-arrow { color: $text-dark; flex-shrink: 0; }
+
+// ── Messages area ──────────────────────────────────────────────────────────────
 .messages-area {
     flex: 1;
     overflow-y: auto;
-    padding: 24px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: #1e1e1e; border-radius: 2px; }
 }
 
-.no-messages {
-    text-align: center;
-    color: $text-dim;
-    font-size: 14px;
-    margin: auto;
+// Skeletons
+.msg-skel {
+    display: flex;
+    margin-bottom: 8px;
+    &.skel-right { justify-content: flex-end; }
+    &.skel-left { justify-content: flex-start; padding-left: 48px; }
 }
-
-.msg-row { display: flex; }
-.msg-mine { justify-content: flex-end; }
-.msg-other { justify-content: flex-start; }
-
-.msg-bubble {
-    max-width: 65%;
-    padding: 10px 14px;
+.skel-bubble {
+    height: 36px;
+    width: 180px;
+    background: #1a1a1a;
     border-radius: 16px;
+    animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+// No messages
+.no-messages {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: $text-dark;
+    font-size: 14px;
+}
+.no-msg-icon { color: #1a1a1a; }
+
+// Date separator
+.date-sep {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px 0 8px;
+
+    span {
+        font-size: 11px;
+        color: $text-dark;
+        background: #0a0a0a;
+        padding: 3px 10px;
+        border-radius: 20px;
+        border: 1px solid $border;
+    }
+}
+
+// Message rows
+.msg-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin-bottom: 2px;
+
+    &.row-mine { justify-content: flex-end; }
+    &.row-other { justify-content: flex-start; }
+}
+
+// Avatar column (other user)
+.msg-avatar-col { width: 32px; flex-shrink: 0; }
+.msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.bubble-avatar-img { width: 100%; height: 100%; object-fit: cover; }
+.bubble-avatar-initials { font-size: 11px; font-weight: 700; color: $red; }
+.msg-avatar-spacer { width: 32px; }
+
+// Bubble
+.msg-bubble {
+    max-width: min(68%, 480px);
+    padding: 9px 13px;
+    border-radius: 18px;
+    word-break: break-word;
+    white-space: pre-wrap;
 }
 
 .bubble-mine {
@@ -247,8 +647,8 @@ onUnmounted(() => {
 }
 
 .bubble-other {
-    background: #1a1a1a;
-    border: 1px solid $border;
+    background: #141414;
+    border: 1px solid #1e1e1e;
     border-bottom-left-radius: 4px;
 }
 
@@ -257,81 +657,102 @@ onUnmounted(() => {
     line-height: 1.5;
     color: $text;
     margin: 0 0 4px 0;
-    white-space: pre-wrap;
-    word-break: break-word;
+}
+
+.msg-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
 }
 
 .msg-time {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.5);
-    display: block;
-    text-align: right;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
 }
 
-.msgs-loading {
+.msg-status { display: flex; align-items: center; }
+.status-read { color: rgba(255,255,255,0.7); }
+.status-sent { color: rgba(255,255,255,0.35); }
+
+// Typing indicator
+.typing-row { margin-top: 4px; }
+.typing-bubble {
     display: flex;
-    justify-content: center;
-    padding: 40px 0;
-    color: $red;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+}
+.typing-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: $text-dark;
+    animation: typing-pulse 1.2s ease-in-out infinite;
+
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+}
+@keyframes typing-pulse {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
 }
 
-.spin { animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
+// ── Load error ──────────────────────────────────────────────────────────────────
 .load-error {
     flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 24px;
-    background: rgba($red, 0.08);
-    border-top: 1px solid rgba($red, 0.3);
+    padding: 8px 16px;
+    background: rgba($red, 0.07);
+    border-top: 1px solid rgba($red, 0.25);
     color: $text-dim;
-    font-size: 13px;
+    font-size: 12px;
 }
-
 .retry-btn {
     background: none;
     border: none;
     color: $red;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     padding: 0;
-    margin-left: 4px;
     &:hover { opacity: 0.8; }
 }
 
+// ── Input bar ──────────────────────────────────────────────────────────────────
 .input-bar {
     flex-shrink: 0;
-    padding: 12px 24px;
-    background: #080808;
+    padding: 10px 16px;
+    background: #050505;
     border-top: 1px solid $border;
 }
 
 .send-error {
     font-size: 12px;
     color: $red;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .input-row {
     display: flex;
     align-items: flex-end;
-    gap: 12px;
+    gap: 10px;
 }
 
 .msg-textarea {
     flex: 1;
     background: #0d0d0d;
     border: 1px solid $border;
-    border-radius: $r-lg;
+    border-radius: 22px;
     color: $text;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
     line-height: 1.5;
     outline: none;
-    padding: 10px 14px;
+    padding: 10px 16px;
     resize: none;
     min-height: 42px;
     max-height: 120px;
@@ -340,6 +761,7 @@ onUnmounted(() => {
 
     &::placeholder { color: $text-dark; }
     &:focus { border-color: rgba($red, 0.4); }
+    &:disabled { opacity: 0.6; }
 }
 
 .send-btn {
@@ -354,9 +776,23 @@ onUnmounted(() => {
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.1s;
 
-    &:hover:not(:disabled) { opacity: 0.88; }
-    &:disabled { opacity: 0.45; cursor: not-allowed; }
+    &:hover:not(:disabled) { opacity: 0.88; transform: scale(1.04); }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Mobile ──────────────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+    .chat-wrap {
+        height: calc(100vh - $nav-height);
+        position: fixed;
+        inset: $nav-height 0 0 0;
+        z-index: 10;
+    }
+    .back-btn { display: flex !important; }
 }
 </style>
