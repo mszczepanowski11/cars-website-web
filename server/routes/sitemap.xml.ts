@@ -19,12 +19,16 @@ export default defineEventHandler(async (event) => {
     const dynamicUrls: Array<{ loc: string; lastmod?: string; priority: string; changefreq: string }> = []
 
     try {
-        const advertsRes = await $fetch<{ items: Array<{ id: number; updatedAt?: string; createdAt?: string }> }>(
-            `${apiBase}/api/Advert/search`,
-            { method: 'POST', body: { page: 1, pageSize: 1000, isActive: true } }
-        ).catch(() => null)
+        let page = 1
+        const PAGE_SIZE = 100
+        while (true) {
+            const advertsRes = await $fetch<{ items: Array<{ id: number; updatedAt?: string; createdAt?: string }>; totalCount: number }>(
+                `${apiBase}/api/Advert/search`,
+                { method: 'POST', body: { page, pageSize: PAGE_SIZE } }
+            ).catch(() => null)
 
-        if (advertsRes?.items) {
+            if (!advertsRes?.items?.length) break
+
             for (const ad of advertsRes.items) {
                 dynamicUrls.push({
                     loc: `/advert/${ad.id}`,
@@ -33,6 +37,9 @@ export default defineEventHandler(async (event) => {
                     changefreq: 'weekly',
                 })
             }
+
+            if (advertsRes.items.length < PAGE_SIZE || dynamicUrls.length >= 45000) break
+            page++
         }
     } catch { /* skip if API unavailable */ }
 
