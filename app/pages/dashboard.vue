@@ -186,6 +186,7 @@
                                 :src="getImageUrl(a.images?.find(i => i.isMain)?.url)"
                                 class="recent-mini-img"
                                 :alt="a.title"
+                                loading="lazy"
                             />
                             <div class="recent-mini-body">
                                 <div class="recent-mini-name">{{ a.brand?.name }} {{ a.model?.name }}</div>
