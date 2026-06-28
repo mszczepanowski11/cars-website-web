@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     }
 
     setCookie(event, 'site-access', config.sitePassword, {
-        httpOnly: false,
+        httpOnly: true,
         maxAge: 60 * 60 * 24 * 7,
         sameSite: 'lax',
         path: '/',
