@@ -5,7 +5,7 @@
                 <div class="cp-items">
                     <div v-for="id in compared" :key="id" class="cp-item">
                         <span class="cp-id">#{{ id }}</span>
-                        <button class="cp-remove" @click="toggle(id)">
+                        <button class="cp-remove" :aria-label="`Usuń #${id} z porównania`" @click="toggle(id)">
                             <v-icon icon="mdi-close" size="14" />
                         </button>
                     </div>

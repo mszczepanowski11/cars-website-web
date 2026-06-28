@@ -99,10 +99,10 @@ const monthlyRate = computed(() => {
             </span>
             <span v-if="isNew && !resolvedBadge" class="card-badge card-badge--new">NOWE</span>
             <div class="card-hover-actions">
-                <button class="card-action-btn" title="Szybki podgląd" @click="onQuickView">
+                <button class="card-action-btn" aria-label="Szybki podgląd" @click="onQuickView">
                     <v-icon icon="mdi-eye-outline" size="16" />
                 </button>
-                <button v-if="!hideCompare" class="card-action-btn" :class="{ active: isCompared(advert.id) }" title="Porównaj" @click="onCompare">
+                <button v-if="!hideCompare" class="card-action-btn" :class="{ active: isCompared(advert.id) }" :aria-label="isCompared(advert.id) ? 'Usuń z porównania' : 'Dodaj do porównania'" @click="onCompare">
                     <v-icon icon="mdi-compare" size="16" />
                 </button>
             </div>
