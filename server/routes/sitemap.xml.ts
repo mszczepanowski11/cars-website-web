@@ -18,11 +18,13 @@ export default defineEventHandler(async (event) => {
 
     const dynamicUrls: Array<{ loc: string; lastmod?: string; priority: string; changefreq: string }> = []
 
+    const sellerIds = new Set<number>()
+
     try {
         let page = 1
         const PAGE_SIZE = 100
         while (true) {
-            const advertsRes = await $fetch<{ items: Array<{ id: number; updatedAt?: string; createdAt?: string }>; totalCount: number }>(
+            const advertsRes = await $fetch<{ items: Array<{ id: number; userId?: number; updatedAt?: string; createdAt?: string }>; totalCount: number }>(
                 `${apiBase}/api/Advert/search`,
                 { method: 'POST', body: { page, pageSize: PAGE_SIZE } }
             ).catch(() => null)
@@ -36,12 +38,21 @@ export default defineEventHandler(async (event) => {
                     priority: '0.8',
                     changefreq: 'weekly',
                 })
+                if (ad.userId) sellerIds.add(ad.userId)
             }
 
             if (advertsRes.items.length < PAGE_SIZE || dynamicUrls.length >= 45000) break
             page++
         }
     } catch { /* skip if API unavailable */ }
+
+    for (const sellerId of sellerIds) {
+        dynamicUrls.push({
+            loc: `/seller/${sellerId}`,
+            priority: '0.6',
+            changefreq: 'weekly',
+        })
+    }
 
     try {
         const eventsRes = await $fetch<Array<{ id: number; updatedAt?: string; createdAt?: string }>>(
