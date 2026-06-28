@@ -2,12 +2,12 @@
     <Teleport to="body">
         <Transition name="qv-fade">
             <div v-if="modelValue" class="qv-overlay" @click.self="$emit('update:modelValue', false)">
-                <div class="qv-modal">
-                    <button class="qv-close" @click="$emit('update:modelValue', false)">
+                <div class="qv-modal" role="dialog" aria-modal="true" aria-label="Szybki podgląd ogłoszenia">
+                    <button class="qv-close" aria-label="Zamknij podgląd" @click="$emit('update:modelValue', false)">
                         <v-icon icon="mdi-close" size="20" />
                     </button>
 
-                    <div v-if="loading" class="qv-loading">
+                    <div v-if="loading" class="qv-loading" role="status" aria-label="Ładowanie ogłoszenia">
                         <v-icon icon="mdi-loading" size="32" class="spin" />
                     </div>
 

@@ -590,6 +590,7 @@ const router = useRouter()
 const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors, fetchFeatures } = useTaxonomy()
 const { fetchCategories } = useCategories()
 const { fetchFavoriteIds } = useFavorites()
+const { error: toastError } = useToast()
 
 // Initialize filter state from URL query params at setup time (SSR-safe — no onMounted)
 const f = reactive({
@@ -986,6 +987,7 @@ async function load(p: number = page.value) {
         total.value   = r?.totalCount ?? 0
     } catch {
         adverts.value = []
+        toastError('Nie udało się załadować ogłoszeń. Sprawdź połączenie i spróbuj ponownie.')
     } finally {
         loading.value = false
     }
@@ -1004,6 +1006,7 @@ async function loadMore() {
         total.value   = r?.totalCount ?? 0
         page.value    = nextPage
     } catch {
+        toastError('Nie udało się załadować kolejnych ogłoszeń.')
     } finally {
         loadingMore.value = false
     }

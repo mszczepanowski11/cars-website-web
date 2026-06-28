@@ -73,7 +73,7 @@
                     <div class="form-group full">
                         <label class="form-label">Zdjęcie główne</label>
                         <div class="upload-area" :class="{ 'has-img': previewUrl }" @click="triggerUpload">
-                            <img v-if="previewUrl" :src="previewUrl" class="img-preview" />
+                            <img v-if="previewUrl" :src="previewUrl" class="img-preview" alt="Podgląd zdjęcia głównego wydarzenia" />
                             <div v-else class="upload-placeholder">
                                 <v-icon icon="mdi-image-plus-outline" size="40" class="upload-icon" />
                                 <span>Kliknij, aby dodać zdjęcie</span>

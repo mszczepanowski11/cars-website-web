@@ -934,7 +934,7 @@
                     >
                         <!-- Existing images (edit mode) -->
                         <div v-for="img in existingImages" :key="`ex-${img.id}`" class="img-thumb img-thumb--existing">
-                            <img :src="getImageUrl(img.url)" loading="lazy" />
+                            <img :src="getImageUrl(img.url)" :alt="`Zdjęcie pojazdu ${img.id}`" loading="lazy" />
                             <button type="button" class="img-remove"
                                 :disabled="deletingImageId === img.id"
                                 @click="deleteExistingImage(img.id)">
@@ -956,8 +956,8 @@
                             @dragleave="dragOverIdx = null"
                             @drop.prevent="reorderPhoto(i)"
                         >
-                            <img :src="preview" />
-                            <button type="button" class="img-remove" @click="removeImage(i)">
+                            <img :src="preview" :alt="`Zdjęcie ${i + 1}`" />
+                            <button type="button" class="img-remove" :aria-label="`Usuń zdjęcie ${i + 1}`" @click="removeImage(i)">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
                             <span v-if="!existingImages.length && i === 0" class="img-main-badge">Główne</span>
@@ -984,7 +984,7 @@
                         </div>
                         <div v-for="(preview, index) in previews" :key="`ai-${index}`" class="photo-ai-item">
                             <div class="photo-ai-thumb">
-                                <img :src="preview" />
+                                <img :src="preview" :alt="`Podgląd zdjęcia ${index + 1} do analizy AI`" />
                                 <span class="photo-ai-num">{{ index + 1 }}</span>
                             </div>
                             <div class="photo-ai-content">
