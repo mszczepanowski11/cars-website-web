@@ -41,12 +41,17 @@ const shaking = ref(false)
 const needsPassword = ref(true)
 const inputRef = ref<HTMLInputElement | null>(null)
 
+function safeFrom(): string {
+    const raw = (route.query.from as string) || '/'
+    const decoded = decodeURIComponent(raw)
+    return /^\/(?!\/)/.test(decoded) ? decoded : '/'
+}
+
 onMounted(async () => {
     try {
         const { hasAccess } = await $fetch<{ hasAccess: boolean }>('/api/site-access')
         if (hasAccess) {
-            const from = (route.query.from as string) || '/'
-            router.replace(decodeURIComponent(from))
+            router.replace(safeFrom())
             return
         }
     } catch { /* continue to show form */ }
@@ -65,8 +70,7 @@ async function submit() {
         })
 
         if (res.ok) {
-            const from = (route.query.from as string) || '/'
-            await router.replace(decodeURIComponent(from))
+            await router.replace(safeFrom())
         } else {
             error.value = true
             password.value = ''
