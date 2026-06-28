@@ -4,6 +4,11 @@ export default defineEventHandler(async (event) => {
     const method = getMethod(event)
     const path = event.context.params?.path ?? ''
 
+    // Reject path traversal attempts (e.g., ../../../etc/passwd)
+    if (path.includes('..') || path.includes('//') || !path.startsWith('api/')) {
+        throw createError({ statusCode: 400, statusMessage: 'Invalid path' })
+    }
+
     const PUBLIC_POST_PATHS = [
         'api/Advert/search',
         'api/Payment/webhook',
