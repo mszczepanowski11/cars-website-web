@@ -58,11 +58,11 @@
                 </div>
 
                 <div v-if="totalPages > 1" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" @click="load(page - 1)">
+                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="load(page - 1)">
                         <v-icon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                    <button class="page-btn" :disabled="page >= totalPages" @click="load(page + 1)">
+                    <button class="page-btn" :disabled="page >= totalPages" aria-label="Następna strona" @click="load(page + 1)">
                         <v-icon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>

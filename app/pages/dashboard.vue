@@ -392,7 +392,7 @@
                             <div class="notif-time">{{ formatDate(n.createdAt) }}</div>
                         </div>
                         <div v-if="!n.isRead" class="notif-dot" />
-                        <button class="notif-del" @click.stop="deleteNotif(n.id)">
+                        <button class="notif-del" aria-label="Usuń powiadomienie" @click.stop="deleteNotif(n.id)">
                             <v-icon icon="mdi-close" size="14" />
                         </button>
                     </div>
@@ -469,7 +469,7 @@
                             <NuxtLink :to="searchUrl(s.criteria)" class="btn-search-run">
                                 <v-icon icon="mdi-magnify" size="14" />Szukaj
                             </NuxtLink>
-                            <button class="btn-icon-danger" @click="deleteSearch(s.id)"><v-icon icon="mdi-delete-outline" size="16" /></button>
+                            <button class="btn-icon-danger" aria-label="Usuń wyszukiwanie" @click="deleteSearch(s.id)"><v-icon icon="mdi-delete-outline" size="16" /></button>
                         </div>
                     </div>
                 </div>
@@ -929,7 +929,7 @@ async function goReviews() {
         try {
             const r = await getMyReceivedReviews()
             receivedReviews.value = r.items
-        } catch { } finally { reviewsLoading.value = false }
+        } catch { toastError('Nie udało się załadować opinii.') } finally { reviewsLoading.value = false }
     }
 }
 
@@ -999,11 +999,11 @@ async function loadMoreAdverts() {
     try {
         const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>(`/api/proxy/api/Advert/user?page=${advertPage.value}&pageSize=8`)
         myAdverts.value.push(...r.items)
-    } catch { } finally { loadingMore.value = false }
+    } catch { toastError('Nie udało się załadować kolejnych ogłoszeń.') } finally { loadingMore.value = false }
 }
 
 async function markAllRead() {
-    try { await markAllAsRead() } catch { }
+    try { await markAllAsRead() } catch { /* non-critical — notifications still visible */ }
 }
 
 async function onNotifClick(n: Notification) {
@@ -1161,21 +1161,21 @@ watch(activeTab, async (tab) => {
         try {
             const r = await getMyReceivedReviews()
             receivedReviews.value = r.items
-        } catch { } finally { reviewsLoading.value = false }
+        } catch { toastError('Nie udało się załadować opinii.') } finally { reviewsLoading.value = false }
     }
     if (tab === 'followers' && followers.value.length === 0) {
         followersLoading.value = true
         try {
             const r = await getFollowers()
             followers.value = r.items
-        } catch { } finally { followersLoading.value = false }
+        } catch { toastError('Nie udało się załadować obserwujących.') } finally { followersLoading.value = false }
     }
     if (tab === 'following' && followedAdverts.value.length === 0) {
         followingLoading.value = true
         try {
             const r = await getFollowedAdverts()
             followedAdverts.value = r.items
-        } catch { } finally { followingLoading.value = false }
+        } catch { toastError('Nie udało się załadować obserwowanych ogłoszeń.') } finally { followingLoading.value = false }
     }
 })
 
@@ -1185,7 +1185,7 @@ watch(section, async (s) => {
         try {
             const r = await getSavedSearches()
             savedSearches.value = r.items
-        } catch { } finally { searchesLoading.value = false }
+        } catch { toastError('Nie udało się załadować zapisanych wyszukiwań.') } finally { searchesLoading.value = false }
     }
 })
 
@@ -1197,7 +1197,7 @@ onMounted(async () => {
         advertTotal.value = r.totalCount
         // Lazy load notifications count
         fetchNotifications().catch(() => { })
-    } catch { } finally { loading.value = false }
+    } catch { toastError('Nie udało się załadować danych profilu.') } finally { loading.value = false }
 
     // Recently viewed (from localStorage — fire after loading so it doesn't block)
     const ids = getRecentIds().slice(0, 5)

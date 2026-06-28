@@ -109,11 +109,11 @@
                 </div>
 
                 <div v-if="invoicesTotalPages > 1" class="pagination">
-                    <button class="page-btn" :disabled="invoicesPage === 1" @click="invoicesPage--; loadInvoices()">
+                    <button class="page-btn" :disabled="invoicesPage === 1" aria-label="Poprzednia strona" @click="invoicesPage--; loadInvoices()">
                         <v-icon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ invoicesPage }} / {{ invoicesTotalPages }}</span>
-                    <button class="page-btn" :disabled="invoicesPage === invoicesTotalPages" @click="invoicesPage++; loadInvoices()">
+                    <button class="page-btn" :disabled="invoicesPage === invoicesTotalPages" aria-label="Następna strona" @click="invoicesPage++; loadInvoices()">
                         <v-icon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
@@ -155,11 +155,11 @@
                 </div>
 
                 <div v-if="paymentsTotalPages > 1" class="pagination">
-                    <button class="page-btn" :disabled="paymentsPage === 1" @click="paymentsPage--; loadPayments()">
+                    <button class="page-btn" :disabled="paymentsPage === 1" aria-label="Poprzednia strona" @click="paymentsPage--; loadPayments()">
                         <v-icon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ paymentsPage }} / {{ paymentsTotalPages }}</span>
-                    <button class="page-btn" :disabled="paymentsPage === paymentsTotalPages" @click="paymentsPage++; loadPayments()">
+                    <button class="page-btn" :disabled="paymentsPage === paymentsTotalPages" aria-label="Następna strona" @click="paymentsPage++; loadPayments()">
                         <v-icon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
@@ -191,6 +191,7 @@ const paymentsPage = ref(1)
 const paymentsTotalPages = computed(() => Math.max(1, Math.ceil(paymentsTotal.value / 20)))
 
 const { getMyInvoices } = useInvoices()
+const { error: toastError } = useToast()
 
 async function loadInvoices() {
     invoicesLoading.value = true
@@ -198,8 +199,10 @@ async function loadInvoices() {
         const r = await getMyInvoices(invoicesPage.value, 20)
         invoices.value = r.items
         invoicesTotal.value = r.totalCount
-    } catch { invoices.value = [] }
-    finally { invoicesLoading.value = false }
+    } catch (e: any) {
+        invoices.value = []
+        toastError(e?.data?.message ?? 'Nie udało się załadować faktur.')
+    } finally { invoicesLoading.value = false }
 }
 
 async function loadPayments() {
@@ -210,8 +213,10 @@ async function loadPayments() {
         })
         payments.value = r.items
         paymentsTotal.value = r.totalCount
-    } catch { payments.value = [] }
-    finally { paymentsLoading.value = false }
+    } catch (e: any) {
+        payments.value = []
+        toastError(e?.data?.message ?? 'Nie udało się załadować płatności.')
+    } finally { paymentsLoading.value = false }
 }
 
 onMounted(() => { loadInvoices(); loadPayments() })
@@ -330,7 +335,7 @@ async function downloadPdf(inv: MonthlyInvoice) {
 
         doc.save(`faktura-${inv.invoiceNumber.replace(/\//g, '-')}.pdf`)
     } catch {
-        // ignore
+        toastError('Nie udało się wygenerować PDF. Spróbuj ponownie.')
     } finally {
         pdfLoadingId.value = null
     }
