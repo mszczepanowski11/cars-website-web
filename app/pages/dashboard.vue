@@ -779,6 +779,7 @@ const { getFollowedAdverts, getFollowers } = useFollow()
 const { getSavedSearches, deleteSearch: deleteSavedSearch, saveSearch } = useSavedSearches()
 const { logout: authLogout } = useAuth()
 const { getImageUrl } = useImageUrl()
+const { success: toastSuccess, error: toastError } = useToast()
 const { observe: observeCount } = useCountUp()
 const { getIds: getRecentIds } = useRecentlyViewed()
 
@@ -986,7 +987,10 @@ async function doDelete() {
         deleteConfirmId.value = null
         advertTotal.value = Math.max(0, advertTotal.value - 1)
         if (stats.value) stats.value.totalAdverts = Math.max(0, stats.value.totalAdverts - 1)
-    } catch { } finally { deleteLoading.value = null }
+        toastSuccess('Ogłoszenie zostało usunięte.')
+    } catch (e: any) {
+        toastError(e?.data?.message || e?.message || 'Nie udało się usunąć ogłoszenia.')
+    } finally { deleteLoading.value = null }
 }
 
 async function loadMoreAdverts() {
@@ -1008,14 +1012,14 @@ async function onNotifClick(n: Notification) {
 }
 
 async function deleteNotif(id: number) {
-    try { await deleteNotification(id) } catch { }
+    try { await deleteNotification(id) } catch { toastError('Nie udało się usunąć powiadomienia.') }
 }
 
 async function deleteSearch(id: number) {
     try {
         await deleteSavedSearch(id)
         savedSearches.value = savedSearches.value.filter(s => s.id !== id)
-    } catch { }
+    } catch { toastError('Nie udało się usunąć wyszukiwania.') }
 }
 
 async function createSearch() {
@@ -1145,7 +1149,9 @@ async function doDeleteAccount() {
     try {
         await deleteAccount()
         await authLogout()
-    } catch { }
+    } catch (e: any) {
+        toastError(e?.data?.message || 'Nie udało się usunąć konta. Spróbuj ponownie lub skontaktuj się z pomocą.')
+    }
 }
 
 // Load overview tab data lazily
