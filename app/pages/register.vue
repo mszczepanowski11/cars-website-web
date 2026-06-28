@@ -260,6 +260,7 @@
 useHead({ title: 'Zarejestruj się — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 const { register, loginWithFacebook, loading, error } = useAuth()
+const { success: toastSuccess, error: toastError } = useToast()
 const runtimeConfig = useRuntimeConfig()
 
 const accountType      = ref<'Personal' | 'Business'>('Personal')
@@ -427,8 +428,10 @@ async function resendVerification() {
             method: 'POST',
             body: { email: registeredEmail.value }
         })
-    } catch {}
-    finally { resending.value = false }
+        toastSuccess('Link weryfikacyjny został wysłany ponownie.')
+    } catch {
+        toastError('Nie udało się wysłać linku. Spróbuj ponownie.')
+    } finally { resending.value = false }
 }
 </script>
 

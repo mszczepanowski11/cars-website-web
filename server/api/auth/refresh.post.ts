@@ -1,4 +1,5 @@
 export default defineEventHandler(async (event) => {
+    rateLimit(event, 'refresh', 30, 60_000) // 30 per minute per IP
     const config = useRuntimeConfig()
     const refreshToken = getCookie(event, 'refresh_token')
     if (!refreshToken) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
