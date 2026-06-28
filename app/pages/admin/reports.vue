@@ -125,6 +125,7 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 import type { AdminReport } from '~/types'
 
 const { getReports, resolveReport: resolveReportApi, rejectReport: rejectReportApi } = useAdmin()
+const { error: toastError, success: toastSuccess } = useToast()
 
 const reports = ref<AdminReport[]>([])
 const loading = ref(true)
@@ -207,8 +208,9 @@ async function resolveReport(id: number) {
         await resolveReportApi(id)
         const r = reports.value.find(x => x.id === id)
         if (r) r.status = 'Resolved'
-    } catch {
-        // ignore
+        toastSuccess('Zgłoszenie zostało rozwiązane.')
+    } catch (e: any) {
+        toastError(e?.data?.message || 'Nie udało się rozwiązać zgłoszenia.')
     } finally { actionLoading.value = null }
 }
 
@@ -218,8 +220,9 @@ async function rejectReport(id: number) {
         await rejectReportApi(id)
         const r = reports.value.find(x => x.id === id)
         if (r) r.status = 'Rejected'
-    } catch {
-        // ignore
+        toastSuccess('Zgłoszenie zostało odrzucone.')
+    } catch (e: any) {
+        toastError(e?.data?.message || 'Nie udało się odrzucić zgłoszenia.')
     } finally { actionLoading.value = null }
 }
 

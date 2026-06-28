@@ -39,7 +39,7 @@
                                 {{ isInterested ? 'Biorę udział' : 'Wezmę udział' }}
                                 <span v-if="localInterestedCount" class="attend-count">{{ localInterestedCount }}</span>
                             </button>
-                            <button class="btn-fav" :class="{ active: isFavorite }" @click="toggleFavorite" title="Dodaj do ulubionych">
+                            <button class="btn-fav" :class="{ active: isFavorite }" :aria-label="isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'" @click="toggleFavorite">
                                 <v-icon :icon="isFavorite ? 'mdi-heart' : 'mdi-heart-outline'" size="17" />
                             </button>
                             <a v-if="event.ticketsUrl" :href="event.ticketsUrl" target="_blank" rel="noopener noreferrer" class="btn-ticket">

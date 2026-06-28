@@ -12,7 +12,7 @@
                         placeholder="Szukaj konwersacji..."
                         type="text"
                     />
-                    <button v-if="search" class="search-clear" @click="search = ''">
+                    <button v-if="search" class="search-clear" aria-label="Wyczyść wyszukiwanie" @click="search = ''">
                         <v-icon icon="mdi-close" size="14" />
                     </button>
                 </div>
@@ -120,6 +120,7 @@ const conversations = ref<Conversation[]>([])
 const loading = ref(false)
 const loadError = ref(false)
 const search = ref('')
+const { error: toastError } = useToast()
 const activeTab = ref<'all' | 'unread' | 'archived'>('all')
 let pollTimer: ReturnType<typeof setInterval> | null = null
 
@@ -183,7 +184,7 @@ async function togglePin(conv: Conversation) {
         const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conv.id}/pin`, { method: 'PUT' })
         const idx = conversations.value.findIndex(c => c.id === conv.id)
         if (idx !== -1) conversations.value[idx] = updated
-    } catch {}
+    } catch { toastError('Nie udało się przypiąć konwersacji.') }
 }
 
 async function toggleArchive(conv: Conversation) {
@@ -191,7 +192,7 @@ async function toggleArchive(conv: Conversation) {
         const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conv.id}/archive`, { method: 'PUT' })
         const idx = conversations.value.findIndex(c => c.id === conv.id)
         if (idx !== -1) conversations.value[idx] = updated
-    } catch {}
+    } catch { toastError('Nie udało się zarchiwizować konwersacji.') }
 }
 
 async function markUnread(conv: Conversation) {
@@ -199,7 +200,7 @@ async function markUnread(conv: Conversation) {
         await $fetch(`/api/proxy/api/Message/conversation/${conv.id}/mark-unread`, { method: 'PUT' })
         const idx = conversations.value.findIndex(c => c.id === conv.id)
         if (idx !== -1) conversations.value[idx] = { ...conversations.value[idx], unreadCount: 1 }
-    } catch {}
+    } catch { toastError('Nie udało się oznaczyć jako nieprzeczytane.') }
 }
 
 function handleConvUpdate() {

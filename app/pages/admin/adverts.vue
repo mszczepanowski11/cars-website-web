@@ -138,6 +138,7 @@ definePageMeta({ middleware: 'admin' })
 useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { getImageUrl, placeholder } = useImageUrl()
+const { error: toastError, success: toastSuccess } = useToast()
 
 const adverts = ref<AdminAdvert[]>([])
 const loading = ref(true)
@@ -199,7 +200,7 @@ async function toggleHide(a: AdminAdvert) {
         const endpoint = a.isHidden ? 'unhide' : 'hide'
         await $fetch(`/api/proxy/api/Admin/adverts/${a.id}/${endpoint}`, { method: 'POST', body: {} })
         a.isHidden = !a.isHidden
-    } catch {} finally { actionLoading.value = null }
+    } catch { toastError('Nie udało się zmienić widoczności ogłoszenia.') } finally { actionLoading.value = null }
 }
 
 function confirmDelete(id: number) { deleteId.value = id }
@@ -212,7 +213,8 @@ async function doDelete() {
         adverts.value = adverts.value.filter(a => a.id !== deleteId.value)
         totalCount.value--
         deleteId.value = null
-    } catch {} finally { actionLoading.value = null }
+        toastSuccess('Ogłoszenie zostało usunięte.')
+    } catch (e: any) { toastError(e?.data?.message || 'Nie udało się usunąć ogłoszenia.') } finally { actionLoading.value = null }
 }
 
 onMounted(fetchAdverts)
