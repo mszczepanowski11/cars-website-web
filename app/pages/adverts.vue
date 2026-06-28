@@ -1042,7 +1042,8 @@ function applyAutocomplete(item: { type: AcType; id: number; name: string }) {
     if (item.type === 'brand') {
         f.textSearch = ''
         f.brandId = item.id
-        onBrandChange()
+        onBrandChange()  // handles model fetch then load(1) internally
+        return
     } else if (item.type === 'model') {
         f.textSearch = ''
         f.modelId = item.id
