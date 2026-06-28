@@ -109,8 +109,8 @@ async function subscribeNewsletter() {
           <p v-if="newsletterErr" class="fn-err">{{ newsletterErr }}</p>
         </template>
         <div v-else class="fn-ok">
-          <v-icon icon="mdi-check-circle-outline" size="18" />
-          Zapisano! Dziękujemy.
+          <v-icon icon="mdi-email-check-outline" size="18" />
+          Sprawdź skrzynkę email i potwierdź zapis — link ważny 24h.
         </div>
       </div>
     </div>

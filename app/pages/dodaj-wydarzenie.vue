@@ -16,7 +16,7 @@
                     <!-- Name -->
                     <div class="form-group full">
                         <label class="form-label">Nazwa wydarzenia *</label>
-                        <input v-model="form.name" class="form-input" required placeholder="np. Zlot klasyków – Kraków 2025" />
+                        <input v-model="form.name" class="form-input" required maxlength="200" placeholder="np. Zlot klasyków – Kraków 2025" />
                     </div>
 
                     <!-- Description -->
@@ -143,9 +143,20 @@ function triggerUpload() {
     fileInput.value?.click()
 }
 
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_IMAGE_SIZE_MB = 10
+
 function onFileChange(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0]
     if (!file) return
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        error.value = 'Dozwolone formaty zdjęcia: JPEG, PNG, WebP.'
+        return
+    }
+    if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+        error.value = `Zdjęcie nie może przekraczać ${MAX_IMAGE_SIZE_MB} MB.`
+        return
+    }
     selectedFile.value = file
     previewUrl.value = URL.createObjectURL(file)
 }
@@ -164,16 +175,28 @@ function validateDates(): string | null {
     if (isNaN(end.getTime())) return 'Nieprawidłowa data zakończenia.'
     if (start.getFullYear() < 2020 || start.getFullYear() > 2100) return 'Rok daty rozpoczęcia jest nieprawidłowy.'
     if (end.getFullYear() < 2020 || end.getFullYear() > 2100) return 'Rok daty zakończenia jest nieprawidłowy.'
+    if (!isEdit.value && start < new Date()) return 'Data rozpoczęcia nie może być w przeszłości.'
     if (end < start) return 'Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.'
     return null
+}
+
+function validateForm(): string | null {
+    if (!form.name?.trim()) return 'Podaj nazwę wydarzenia.'
+    if (form.name.trim().length < 5) return 'Nazwa wydarzenia jest za krótka (minimum 5 znaków).'
+    if (form.name.trim().length > 200) return 'Nazwa wydarzenia jest za długa (maksimum 200 znaków).'
+    if (!form.description?.trim()) return 'Dodaj opis wydarzenia.'
+    if (form.description.trim().length < 20) return 'Opis jest za krótki (minimum 20 znaków).'
+    if (!form.city?.trim()) return 'Podaj miasto.'
+    if (!form.address?.trim()) return 'Podaj adres.'
+    return validateDates()
 }
 
 async function submit() {
     loading.value = true
     error.value = ''
-    const dateErr = validateDates()
-    if (dateErr) {
-        error.value = dateErr
+    const formErr = validateForm()
+    if (formErr) {
+        error.value = formErr
         loading.value = false
         return
     }

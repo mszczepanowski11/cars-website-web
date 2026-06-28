@@ -93,7 +93,7 @@
                     <div>
                         <div class="help-title">Potrzebujesz pomocy?</div>
                         <p class="help-sub">Sprawdź poradnik jak dodać najlepsze ogłoszenie</p>
-                        <NuxtLink to="/jak-to-dziala" target="_blank" class="help-link">Zobacz poradnik →</NuxtLink>
+                        <NuxtLink to="/jak-to-dziala" target="_blank" rel="noopener noreferrer" class="help-link">Zobacz poradnik →</NuxtLink>
                     </div>
                 </div>
             </aside>
@@ -1056,7 +1056,7 @@
                             <v-icon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
                             <div class="pdf-info">
                                 <div class="pdf-name">{{ pdfFileName || 'Broszura.pdf' }}</div>
-                                <a :href="form.pdfBrochureUrl" target="_blank" class="pdf-view-link">
+                                <a :href="form.pdfBrochureUrl" target="_blank" rel="noopener noreferrer" class="pdf-view-link">
                                     <v-icon icon="mdi-open-in-new" size="12" />Podgląd
                                 </a>
                             </div>
@@ -3487,13 +3487,23 @@ async function compressImage(file: File, maxPx = 1920, quality = 0.85): Promise<
     })
 }
 
+const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_PHOTO_SIZE_MB = 20
+
 async function onFilesSelected(e: Event) {
     const input = e.target as HTMLInputElement
     const files = Array.from(input.files ?? [])
     const remaining = 50 - selectedFiles.value.length
     if (!files.length) return
+    const rejected = files.filter(f => !ALLOWED_PHOTO_TYPES.includes(f.type) || f.size > MAX_PHOTO_SIZE_MB * 1024 * 1024)
+    if (rejected.length) {
+        const { warning } = useToast()
+        warning(`${rejected.length} plik(ów) odrzucono — dozwolone: JPEG, PNG, WebP do ${MAX_PHOTO_SIZE_MB} MB.`)
+    }
+    const valid = files.filter(f => ALLOWED_PHOTO_TYPES.includes(f.type) && f.size <= MAX_PHOTO_SIZE_MB * 1024 * 1024)
+    if (!valid.length) { input.value = ''; return }
     photoUploading.value = true
-    for (const file of files.slice(0, remaining)) {
+    for (const file of valid.slice(0, remaining)) {
         const compressed = await compressImage(file)
         selectedFiles.value.push(compressed)
         previews.value.push(URL.createObjectURL(compressed))
@@ -3526,12 +3536,18 @@ function reorderPhoto(toIdx: number) {
 
 async function onGridDrop(e: DragEvent) {
     gridDragOver.value = false
-    const files = Array.from(e.dataTransfer?.files ?? []).filter(f => f.type.startsWith('image/'))
-    if (!files.length) return
+    const allDropped = Array.from(e.dataTransfer?.files ?? [])
+    const valid = allDropped.filter(f => ALLOWED_PHOTO_TYPES.includes(f.type) && f.size <= MAX_PHOTO_SIZE_MB * 1024 * 1024)
+    const rejected = allDropped.length - valid.length
+    if (rejected > 0) {
+        const { warning } = useToast()
+        warning(`${rejected} plik(ów) odrzucono — dozwolone: JPEG, PNG, WebP do ${MAX_PHOTO_SIZE_MB} MB.`)
+    }
+    if (!valid.length) return
     const remaining = 50 - selectedFiles.value.length - existingImages.value.length
     if (remaining <= 0) return
     photoUploading.value = true
-    for (const file of files.slice(0, remaining)) {
+    for (const file of valid.slice(0, remaining)) {
         const compressed = await compressImage(file)
         selectedFiles.value.push(compressed)
         previews.value.push(URL.createObjectURL(compressed))
