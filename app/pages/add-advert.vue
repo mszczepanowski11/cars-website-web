@@ -484,7 +484,7 @@
                                 <v-icon
                                     :icon="categoryConfig.mileageLabel?.includes('mth') ? 'mdi-timer-outline' : 'mdi-speedometer'"
                                     class="input-prefix" size="16" />
-                                <input v-model.number="form.mileage" type="number"
+                                <input v-model.number="form.mileage" type="number" min="0" max="2000000"
                                     :class="['finput has-prefix', fieldErrors.mileage ? 'finput--error' : '']"
                                     :placeholder="categoryConfig.mileageLabel?.includes('mth') ? 'np. 5 000' : 'np. 100 000'" />
                             </div>
@@ -678,8 +678,8 @@
                                     </button>
                                 </div>
                                 <transition name="fade-err">
-                                    <span v-if="vinError" class="vin-error">
-                                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ vinError }}
+                                    <span v-if="fieldErrors.vin || vinError" class="vin-error">
+                                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ fieldErrors.vin || vinError }}
                                     </span>
                                 </transition>
                                 <p class="field-hint"><v-icon icon="mdi-information-outline" size="12" />VIN pozwala automatycznie uzupełnić dane i buduje zaufanie kupujących</p>
@@ -1463,7 +1463,10 @@
                     <div class="fields-grid" style="margin-bottom:12px">
                         <div class="field">
                             <label class="flabel">{{ categoryConfig.priceLabel ?? 'Cena (zł)' }} <span class="req">*</span></label>
-                            <input v-model.number="form.price" type="number" class="finput finput-price" placeholder="np. 50 000" />
+                            <input v-model.number="form.price" type="number" min="0" max="10000000" class="finput finput-price" :class="{ 'finput--error': fieldErrors.price }" placeholder="np. 50 000" />
+                            <div v-if="fieldErrors.price" class="field-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.price }}
+                            </div>
                             <div v-if="categoryConfig.priceHint" class="field-hint">
                                 <v-icon icon="mdi-trending-up" size="12" />{{ categoryConfig.priceHint }}
                             </div>
@@ -1533,6 +1536,11 @@
                             </div>
                         </div>
                     </div>
+                    <transition name="fade-err">
+                        <div v-if="fieldErrors.description" class="field-error" style="margin-bottom:8px">
+                            <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.description }}
+                        </div>
+                    </transition>
                     <transition name="fade-err">
                         <div v-if="descPhoneWarning" class="desc-phone-warn">
                             <v-icon icon="mdi-phone-alert-outline" size="14" />{{ descPhoneWarning }}
@@ -3010,6 +3018,8 @@ function efIsLocked(key: string): boolean {
 }
 
 const currentYear = new Date().getFullYear()
+const VIN_REGEX = /^[A-HJ-NPR-Z0-9]{17}$/
+
 const fieldErrors = computed(() => {
     const e: Record<string, string> = {}
     if (form.year) {
@@ -3019,6 +3029,10 @@ const fieldErrors = computed(() => {
     if (form.power && form.power < 1) e.power = 'Moc musi być większa niż 0 KM.'
     if (form.power && form.power > 5000) e.power = 'Podana moc wydaje się nieprawidłowa (>5000 KM).'
     if (form.mileage !== null && form.mileage !== undefined && form.mileage < 0) e.mileage = 'Przebieg nie może być ujemny.'
+    if (form.mileage !== null && form.mileage !== undefined && form.mileage > 2_000_000) e.mileage = 'Przebieg nie może przekraczać 2 000 000 km.'
+    if (form.price && form.price > 10_000_000) e.price = 'Cena nie może przekraczać 10 000 000 zł.'
+    if (form.vin && form.vin.length === 17 && !VIN_REGEX.test(form.vin)) e.vin = 'Numer VIN zawiera niedozwolone znaki (I, O, Q są zakazane w VIN).'
+    if (form.description && form.description.trim().length > 0 && form.description.trim().length < 30) e.description = 'Opis jest za krótki — napisz przynajmniej kilka zdań.'
     return e
 })
 
@@ -3408,14 +3422,17 @@ function validateStep(step: number): string | null {
     if (step === 4) {
         if (categoryConfig.value.showVinSection !== false) {
             if (!form.vin || form.vin.length !== 17) return 'Podaj prawidłowy numer VIN (17 znaków). Numer VIN jest obowiązkowy.'
+            if (!VIN_REGEX.test(form.vin)) return 'Numer VIN zawiera niedozwolone znaki. VIN składa się z cyfr i liter A-H, J-N, P-Z.'
         }
     }
     // Step 5: Opis i cena
     if (step === 5) {
         if (!form.price || form.price <= 0) return 'Podaj cenę pojazdu (musi być większa od 0).'
+        if (form.price > 10_000_000) return 'Cena wydaje się nieprawidłowa (>10 000 000 zł).'
         if (!form.region) return 'Wybierz województwo.'
         if (!form.city?.trim()) return 'Podaj miasto.'
         if (!form.description?.trim()) return 'Dodaj opis ogłoszenia.'
+        if (form.description.trim().length < 30) return 'Opis jest za krótki — opisz pojazd dokładniej (minimum 30 znaków).'
     }
     return null
 }
