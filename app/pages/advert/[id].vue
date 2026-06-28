@@ -898,6 +898,7 @@ const { startConversation } = useMessages()
 const { createTransaction } = useTransactions()
 const { followSeller, unfollowSeller, isFollowingSeller: checkFollowingSeller } = useFollow()
 const { getSellerReviews, canReview, submitReview } = useReviews()
+const { error: toastError } = useToast()
 
 const currentUserId = ref<number | null>(null)
 const isOwnAdvert = computed(() => isLoggedIn.value && currentUserId.value !== null && currentUserId.value === advert.value?.userId)
@@ -1452,7 +1453,7 @@ watch(activeTab, async (tab) => {
             ])
             sellerReviews.value = r.items
             canLeaveReview.value = ok
-        } catch { sellerReviews.value = [] } finally { reviewsLoading.value = false }
+        } catch { sellerReviews.value = []; toastError('Nie udało się załadować opinii.') } finally { reviewsLoading.value = false }
     }
 })
 
