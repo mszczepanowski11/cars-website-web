@@ -54,7 +54,7 @@
                     <v-icon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="16" />
                     {{ draftSaved ? 'Zapisano!' : 'Zapisz szkic' }}
                 </button>
-                <button class="btn-close" @click="navigateTo('/my-adverts')">
+                <button class="btn-close" aria-label="Zamknij i wróć do ogłoszeń" @click="navigateTo('/my-adverts')">
                     <v-icon icon="mdi-close" size="18" />
                 </button>
             </div>

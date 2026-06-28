@@ -10,9 +10,10 @@ useHead({
 
 <template>
   <v-app>
+    <a href="#main-content" class="skip-to-main">Przejdź do treści</a>
     <AppAnnouncementBar />
     <NavBar />
-    <v-main>
+    <v-main id="main-content">
       <NuxtErrorBoundary>
         <NuxtPage :transition="{ name: 'page-fade' }" />
         <template #error="{ error, clearError }">
