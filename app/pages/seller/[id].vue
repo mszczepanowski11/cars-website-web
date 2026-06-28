@@ -181,6 +181,49 @@ const seller = ref<UserProfile | null>(null)
 const stats = ref<UserStats | null>(null)
 const currentUserId = ref<number | null>(null)
 
+// SSR-compatible fetch so crawlers receive SEO meta tags in the initial HTML
+const { data: ssrSellerData } = await useAsyncData(`seller-${sellerId}`, () =>
+    Promise.allSettled([
+        $fetch<UserProfile>(`/api/proxy/api/User/${sellerId}/public`),
+        $fetch<UserStats>(`/api/proxy/api/User/${sellerId}/stats`),
+    ])
+)
+if (ssrSellerData.value) {
+    const [profileRes, statsRes] = ssrSellerData.value
+    if (profileRes.status === 'fulfilled') seller.value = profileRes.value
+    if (statsRes.status === 'fulfilled') stats.value = statsRes.value
+    pageLoading.value = !seller.value
+}
+
+const sellerConfig = useRuntimeConfig()
+useHead(computed(() => {
+    const s = seller.value
+    if (!s) return { title: 'Sprzedawca — CARIZO' }
+    const displayName = s.accountType === 'Business' && s.companyName
+        ? s.companyName
+        : [s.name, s.surname].filter(Boolean).join(' ') || 'Sprzedawca'
+    const desc = `Sprawdź ogłoszenia sprzedawcy ${displayName} na CARIZO — największej platformie motoryzacyjnej w Polsce.`
+    const pageUrl = `${sellerConfig.public.siteUrl}/seller/${sellerId}`
+    const ogImage = s.avatarUrl ?? `${sellerConfig.public.siteUrl}/hero-car.jpg`
+    return {
+        title: `${displayName} — CARIZO`,
+        meta: [
+            { name: 'description', content: desc },
+            { property: 'og:type', content: 'profile' },
+            { property: 'og:url', content: pageUrl },
+            { property: 'og:title', content: `${displayName} — CARIZO` },
+            { property: 'og:description', content: desc },
+            { property: 'og:image', content: ogImage },
+            { property: 'og:site_name', content: 'CARIZO' },
+            { name: 'twitter:card', content: 'summary' },
+            { name: 'twitter:title', content: `${displayName} — CARIZO` },
+            { name: 'twitter:description', content: desc },
+            { name: 'twitter:image', content: ogImage },
+        ],
+        link: [{ rel: 'canonical', href: pageUrl }]
+    }
+}))
+
 const adverts = ref<CarAdvert[]>([])
 const advertsTotalCount = ref(0)
 const advertsPage = ref(1)
@@ -289,46 +332,8 @@ onMounted(async () => {
         } catch {}
     }
 
-    try {
-        const [profileRes, statsRes] = await Promise.allSettled([
-            $fetch<UserProfile>(`/api/proxy/api/User/${sellerId}/public`),
-            $fetch<UserStats>(`/api/proxy/api/User/${sellerId}/stats`),
-        ])
-        if (profileRes.status === 'fulfilled') seller.value = profileRes.value
-        if (statsRes.status === 'fulfilled') stats.value = statsRes.value
-    } finally {
-        pageLoading.value = false
-    }
-
+    // Client-only secondary data loads (auth-dependent or pagination)
     if (seller.value) {
-        const sellerConfig = useRuntimeConfig()
-        useHead(computed(() => {
-            const s = seller.value
-            if (!s) return { title: 'Sprzedawca — CARIZO' }
-            const displayName = s.accountType === 'Business' && s.companyName
-                ? s.companyName
-                : [s.name, s.surname].filter(Boolean).join(' ') || 'Sprzedawca'
-            const desc = `Sprawdź ogłoszenia sprzedawcy ${displayName} na CARIZO — największej platformie motoryzacyjnej w Polsce.`
-            const pageUrl = `${sellerConfig.public.siteUrl}/seller/${sellerId}`
-            const ogImage = s.avatarUrl ?? `${sellerConfig.public.siteUrl}/hero-car.jpg`
-            return {
-                title: `${displayName} — CARIZO`,
-                meta: [
-                    { name: 'description', content: desc },
-                    { property: 'og:type', content: 'profile' },
-                    { property: 'og:url', content: pageUrl },
-                    { property: 'og:title', content: `${displayName} — CARIZO` },
-                    { property: 'og:description', content: desc },
-                    { property: 'og:image', content: ogImage },
-                    { property: 'og:site_name', content: 'CARIZO' },
-                    { name: 'twitter:card', content: 'summary' },
-                    { name: 'twitter:title', content: `${displayName} — CARIZO` },
-                    { name: 'twitter:description', content: desc },
-                    { name: 'twitter:image', content: ogImage },
-                ],
-                link: [{ rel: 'canonical', href: pageUrl }]
-            }
-        }))
         await Promise.all([
             loadAdverts(true),
             loadReviews(true),
@@ -337,6 +342,7 @@ onMounted(async () => {
             isFollowing.value = await isFollowingSeller(sellerId)
         }
     }
+    pageLoading.value = false
 })
 </script>
 
