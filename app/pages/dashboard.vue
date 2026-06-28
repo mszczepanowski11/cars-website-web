@@ -530,25 +530,25 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>Imię *</label>
-                            <input v-model="profileForm.name" class="form-input" required />
+                            <input v-model="profileForm.name" class="form-input" autocomplete="given-name" required />
                         </div>
                         <div class="form-group">
                             <label>Nazwisko *</label>
-                            <input v-model="profileForm.surname" class="form-input" required />
+                            <input v-model="profileForm.surname" class="form-input" autocomplete="family-name" required />
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Numer telefonu</label>
-                        <input v-model="profileForm.phoneNumber" class="form-input" />
+                        <input v-model="profileForm.phoneNumber" class="form-input" type="tel" inputmode="tel" autocomplete="tel" />
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Miasto</label>
-                            <input v-model="profileForm.city" class="form-input" placeholder="np. Warszawa" />
+                            <input v-model="profileForm.city" class="form-input" autocomplete="address-level2" placeholder="np. Warszawa" />
                         </div>
                         <div class="form-group">
                             <label>Województwo</label>
-                            <input v-model="profileForm.region" class="form-input" placeholder="np. mazowieckie" />
+                            <input v-model="profileForm.region" class="form-input" autocomplete="address-level1" placeholder="np. mazowieckie" />
                         </div>
                     </div>
                     <div class="form-group">

@@ -92,7 +92,7 @@
                         <!-- Other user avatar (only first in group) -->
                         <div v-if="!msg.isMine" class="msg-avatar-col">
                             <div v-if="isFirstInGroup(idx)" class="msg-avatar">
-                                <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" class="bubble-avatar-img" loading="lazy" />
+                                <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" :alt="conversation.otherUserName" class="bubble-avatar-img" loading="lazy" />
                                 <span v-else class="bubble-avatar-initials">{{ initials }}</span>
                             </div>
                             <div v-else class="msg-avatar-spacer" />
@@ -118,7 +118,7 @@
                 <div v-if="showTyping" class="msg-row row-other typing-row">
                     <div class="msg-avatar-col">
                         <div class="msg-avatar">
-                            <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" class="bubble-avatar-img" loading="lazy" />
+                            <img v-if="conversation?.otherUserAvatar" :src="conversation.otherUserAvatar" :alt="conversation.otherUserName" class="bubble-avatar-img" loading="lazy" />
                             <span v-else class="bubble-avatar-initials">{{ initials }}</span>
                         </div>
                     </div>
