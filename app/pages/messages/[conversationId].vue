@@ -76,7 +76,12 @@
             </div>
 
             <template v-else>
-                <div v-if="!messages.length" class="no-messages">
+                <div v-if="loadError" class="no-messages">
+                    <v-icon icon="mdi-alert-circle-outline" size="40" class="no-msg-icon" />
+                    <p>Nie udało się załadować wiadomości. <button class="retry-link" @click="loadAll">Spróbuj ponownie</button></p>
+                </div>
+
+                <div v-else-if="!messages.length" class="no-messages">
                     <v-icon icon="mdi-message-outline" size="40" class="no-msg-icon" />
                     <p>Napisz pierwszą wiadomość</p>
                 </div>
@@ -171,6 +176,7 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const emit = defineEmits<{ (e: 'conversation-updated'): void }>()
+const { error: toastError } = useToast()
 const conversationId = Number(route.params.conversationId)
 
 const conversation = ref<Conversation | null>(null)
@@ -313,7 +319,7 @@ async function togglePin() {
         const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conversationId}/pin`, { method: 'PUT' })
         conversation.value = updated
         emit('conversation-updated')
-    } catch {}
+    } catch { toastError('Nie udało się przypiąć rozmowy.') }
 }
 
 async function toggleArchive() {
@@ -323,7 +329,7 @@ async function toggleArchive() {
         const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conversationId}/archive`, { method: 'PUT' })
         conversation.value = updated
         emit('conversation-updated')
-    } catch {}
+    } catch { toastError('Nie udało się zarchiwizować rozmowy.') }
 }
 
 async function doMarkUnread() {
@@ -331,7 +337,7 @@ async function doMarkUnread() {
     try {
         await $fetch(`/api/proxy/api/Message/conversation/${conversationId}/mark-unread`, { method: 'PUT' })
         emit('conversation-updated')
-    } catch {}
+    } catch { toastError('Nie udało się oznaczyć jako nieprzeczytane.') }
 }
 
 onMounted(() => {

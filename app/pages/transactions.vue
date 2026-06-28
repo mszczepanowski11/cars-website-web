@@ -78,6 +78,7 @@ definePageMeta({ middleware: 'auth' })
 useHead({ title: 'Transakcje — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getMyTransactions, cancelTransaction } = useTransactions()
+const { error: toastError } = useToast()
 
 const transactions = ref<Transaction[]>([])
 const total = ref(0)
@@ -115,8 +116,10 @@ async function load(p: number = page.value) {
         const r = await getMyTransactions(p, pageSize)
         transactions.value = r.items
         total.value = r.totalCount
-    } catch { transactions.value = [] }
-    finally { loading.value = false }
+    } catch (e: any) {
+        transactions.value = []
+        toastError(e?.data?.message ?? 'Nie udało się załadować transakcji.')
+    } finally { loading.value = false }
 }
 
 async function doCancel(tx: Transaction) {
@@ -125,8 +128,9 @@ async function doCancel(tx: Transaction) {
     try {
         await cancelTransaction(tx.id)
         tx.status = 'Cancelled'
-    } catch {}
-    finally { cancelLoading.value = null }
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się anulować transakcji.')
+    } finally { cancelLoading.value = null }
 }
 
 onMounted(() => load(1))
