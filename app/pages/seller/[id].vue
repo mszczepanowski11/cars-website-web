@@ -172,6 +172,7 @@ const sellerId = Number(route.params.id)
 
 const { getSellerReviews } = useReviews()
 const { isFollowingSeller, followSeller, unfollowSeller } = useFollow()
+const { error: toastError } = useToast()
 
 const authCookie = useCookie('auth_status')
 const isLoggedIn = computed(() => authCookie.value === '1')
@@ -269,8 +270,9 @@ async function loadAdverts(reset = false) {
         })
         adverts.value.push(...res.items)
         advertsTotalCount.value = res.totalCount
-    } catch {}
-    finally { advertsLoading.value = false }
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować ogłoszeń sprzedawcy.')
+    } finally { advertsLoading.value = false }
 }
 
 async function loadMoreAdverts() {
@@ -286,8 +288,9 @@ async function loadReviews(reset = false) {
         reviews.value.push(...res.items)
         reviewsTotalCount.value = res.totalCount
         reviewsAvg.value = res.averageRating
-    } catch {}
-    finally { reviewsLoading.value = false }
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować opinii.')
+    } finally { reviewsLoading.value = false }
 }
 
 async function loadMoreReviews() {
