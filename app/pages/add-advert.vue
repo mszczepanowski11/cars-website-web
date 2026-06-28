@@ -4164,7 +4164,10 @@ async function deleteExistingImage(imageId: number) {
     try {
         await $fetch(`/api/proxy/api/Advert/${editId.value}/images/${imageId}`, { method: 'DELETE' })
         existingImages.value = existingImages.value.filter(img => img.id !== imageId)
-    } catch {}
+    } catch {
+        const { error: toastError } = useToast()
+        toastError('Nie udało się usunąć zdjęcia. Spróbuj ponownie.')
+    }
     finally { deletingImageId.value = null }
 }
 

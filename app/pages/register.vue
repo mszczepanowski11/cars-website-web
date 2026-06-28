@@ -102,7 +102,7 @@
                         <label for="reg-nip" class="auth-label">NIP <span class="req">*</span></label>
                         <div class="auth-input-wrap">
                             <v-icon icon="mdi-card-account-details-outline" size="17" class="auth-field-icon" />
-                            <input id="reg-nip" v-model="nip" class="auth-input" placeholder="0000000000" maxlength="13" required />
+                            <input id="reg-nip" v-model="nip" class="auth-input" inputmode="numeric" pattern="[0-9\-]*" placeholder="123-456-78-90" maxlength="13" required />
                         </div>
                         <div v-if="nip && nip.replace(/\D/g,'').length !== 10" class="auth-hint">
                             Wymagane 10 cyfr
@@ -138,7 +138,7 @@
                     <label for="reg-phone" class="auth-label">Numer telefonu <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-phone-outline" size="17" class="auth-field-icon" />
-                        <input id="reg-phone" v-model="phoneNumber" type="tel" class="auth-input" placeholder="+48 600 123 456" required autocomplete="tel" />
+                        <input id="reg-phone" v-model="phoneNumber" type="tel" inputmode="tel" pattern="[+0-9\s\-()]*" maxlength="20" class="auth-input" placeholder="+48 600 123 456" required autocomplete="tel" />
                     </div>
                 </div>
 
