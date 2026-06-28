@@ -19,6 +19,15 @@ export default defineEventHandler(async (event) => {
         path: '/',
         secure: process.env.NODE_ENV === 'production',
     })
+    // Non-httpOnly companion flag so the client-side maintenance middleware can
+    // detect authenticated sessions without reading the actual password value.
+    setCookie(event, 'site-access-ok', '1', {
+        httpOnly: false,
+        maxAge: 60 * 60 * 24 * 7,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+    })
 
     return { ok: true }
 })
