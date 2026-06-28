@@ -100,7 +100,10 @@ export default defineEventHandler(async (event) => {
             }
             const raw = err?.data ?? err?.response?._data ?? err?.message ?? 'Proxy error'
             const msg = typeof raw === 'string' ? raw : (raw?.message ?? JSON.stringify(raw))
-            console.error(`[proxy] ${method} ${resolvedPath} → ${statusCode}: ${msg}`)
+            // 401 is expected for unauthenticated requests — don't pollute error logs
+            if (statusCode !== 401) {
+                console.error(`[proxy] ${method} ${resolvedPath} → ${statusCode}: ${msg}`)
+            }
             throw createError({ statusCode, statusMessage: msg.slice(0, 500), data: typeof raw === 'object' ? raw : undefined })
         }
     }

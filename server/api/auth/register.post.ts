@@ -22,10 +22,19 @@ export default defineEventHandler(async (event) => {
         // No auth cookie — user must verify email before they can log in
         return { success: true, message: data.message ?? 'Sprawdź skrzynkę email, aby aktywować konto.' }
     } catch (err: any) {
-        const displayMsg = 'Użytkownik o podanym emailu już istnieje.'
+        const status: number = err.response?.status ?? err.status ?? 500
+        const raw: string = err?.data?.message ?? err?.data?.statusMessage ?? err?.message ?? ''
+        let displayMsg: string
+        if (status === 409) {
+            displayMsg = 'Konto z tym adresem e-mail już istnieje. Zaloguj się lub zresetuj hasło.'
+        } else if (raw && raw.length < 200 && !raw.trim().startsWith('<') && !raw.trim().startsWith('{')) {
+            displayMsg = raw
+        } else {
+            displayMsg = 'Błąd rejestracji. Sprawdź dane i spróbuj ponownie.'
+        }
         throw createError({
-            statusCode: err.response?.status ?? err.status ?? 409,
-            statusMessage: 'Conflict',
+            statusCode: status,
+            statusMessage: status === 409 ? 'Conflict' : 'Bad Request',
             message: displayMsg,
             data: { message: displayMsg }
         })
