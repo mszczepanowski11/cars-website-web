@@ -2805,7 +2805,8 @@ async function submitOtherCategory() {
         })
         otherCategorySubmitted.value = true
     } catch {
-        // ignore
+        const { error: toastError } = useToast()
+        toastError('Nie udało się wysłać propozycji kategorii. Spróbuj ponownie.')
     } finally {
         otherCategorySubmitting.value = false
     }
@@ -3847,11 +3848,27 @@ function buildDescription(): string {
     return sections.filter(Boolean).join('\n\n')
 }
 
+const ALLOWED_PAYMENT_HOSTS = ['secure.imoje.pl', 'imoje.ing.pl', 'imoje.pl']
+
+function validatePaymentUrl(url: string): URL {
+    let parsed: URL
+    try { parsed = new URL(url) } catch { throw new Error('Invalid payment URL') }
+    if (parsed.protocol !== 'https:') throw new Error('Payment URL must use HTTPS')
+    if (!ALLOWED_PAYMENT_HOSTS.includes(parsed.hostname)) throw new Error(`Untrusted payment host: ${parsed.hostname}`)
+    return parsed
+}
+
 function submitImojeForm(result: { paymentUrl: string, formFields?: Record<string, string> }) {
-    if (result.formFields && Object.keys(result.formFields).length && result.paymentUrl) {
+    let parsed: URL
+    try { parsed = validatePaymentUrl(result.paymentUrl) } catch (e) {
+        console.error('[payment] Rejected unsafe redirect:', e)
+        useToast().error('Wystąpił błąd płatności. Skontaktuj się z pomocą techniczną.')
+        return
+    }
+    if (result.formFields && Object.keys(result.formFields).length) {
         const form = document.createElement('form')
         form.method = 'POST'
-        form.action = result.paymentUrl
+        form.action = parsed.toString()
         for (const [key, value] of Object.entries(result.formFields)) {
             const input = document.createElement('input')
             input.type = 'hidden'
@@ -3861,8 +3878,8 @@ function submitImojeForm(result: { paymentUrl: string, formFields?: Record<strin
         }
         document.body.appendChild(form)
         form.submit()
-    } else if (result.paymentUrl) {
-        window.location.href = result.paymentUrl
+    } else {
+        window.location.href = parsed.toString()
     }
 }
 

@@ -203,6 +203,18 @@ const userProfile = ref<UserProfile | null>(null)
 
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
+const { error: toastError } = useToast()
+
+const ALLOWED_PAYMENT_HOSTS = ['secure.imoje.pl', 'imoje.ing.pl', 'imoje.pl']
+function safePaymentRedirect(url: string) {
+    try {
+        const parsed = new URL(url)
+        if (parsed.protocol !== 'https:' || !ALLOWED_PAYMENT_HOSTS.includes(parsed.hostname)) throw new Error('Untrusted host')
+        window.location.href = parsed.toString()
+    } catch {
+        toastError('Błąd płatności: nieprawidłowy adres przekierowania.')
+    }
+}
 
 const plans = [
     {
@@ -368,7 +380,7 @@ async function initiatePayment() {
 
         const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
         if (result.paymentUrl) {
-            window.location.href = result.paymentUrl
+            safePaymentRedirect(result.paymentUrl)
         }
     } catch (e: any) {
         actionError.value = e?.data?.message ?? 'Błąd podczas inicjowania płatności.'
