@@ -109,9 +109,9 @@
                 </div>
 
                 <div v-if="totalCount > pageSize" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" @click="goPage(page - 1)"><v-icon icon="mdi-chevron-left" size="18" /></button>
+                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)"><v-icon icon="mdi-chevron-left" size="18" /></button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                    <button class="page-btn" :disabled="page === totalPages" @click="goPage(page + 1)"><v-icon icon="mdi-chevron-right" size="18" /></button>
+                    <button class="page-btn" :disabled="page === totalPages" aria-label="Następna strona" @click="goPage(page + 1)"><v-icon icon="mdi-chevron-right" size="18" /></button>
                 </div>
             </template>
         </main>
@@ -123,6 +123,8 @@ import type { AdminUser } from '~/types'
 
 definePageMeta({ middleware: 'admin' })
 useSeoMeta({ robots: 'noindex, nofollow' })
+
+const { error: toastError, success: toastSuccess } = useToast()
 
 const users = ref<AdminUser[]>([])
 const loading = ref(true)
@@ -173,7 +175,10 @@ async function fetchUsers() {
         const r = await $fetch<{ items: AdminUser[]; totalCount: number }>('/api/proxy/api/Admin/users', { query })
         users.value = r.items
         totalCount.value = r.totalCount
-    } catch { users.value = [] } finally { loading.value = false }
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować użytkowników.')
+        users.value = []
+    } finally { loading.value = false }
 }
 
 async function toggleBlock(u: AdminUser) {
@@ -182,11 +187,15 @@ async function toggleBlock(u: AdminUser) {
         if (u.isBlocked) {
             await $fetch(`/api/proxy/api/Admin/users/${u.id}/unblock`, { method: 'POST', body: {} })
             u.isBlocked = false
+            toastSuccess('Konto zostało odblokowane.')
         } else {
             await $fetch(`/api/proxy/api/Admin/users/${u.id}/block`, { method: 'POST', body: {} })
             u.isBlocked = true
+            toastSuccess('Konto zostało zablokowane.')
         }
-    } catch {} finally { actionLoading.value = null }
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się zmienić statusu konta.')
+    } finally { actionLoading.value = null }
 }
 
 async function deleteUser(u: AdminUser) {
@@ -196,7 +205,10 @@ async function deleteUser(u: AdminUser) {
         await $fetch(`/api/proxy/api/Admin/users/${u.id}`, { method: 'DELETE', body: { note: 'Usunięte przez administratora' } })
         users.value = users.value.filter(x => x.id !== u.id)
         totalCount.value--
-    } catch {} finally { actionLoading.value = null }
+        toastSuccess('Konto użytkownika zostało usunięte.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się usunąć konta.')
+    } finally { actionLoading.value = null }
 }
 
 onMounted(fetchUsers)
