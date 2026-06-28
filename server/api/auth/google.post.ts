@@ -3,6 +3,13 @@ export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
     const body = await readBody(event)
 
+    if (!body || typeof body !== 'object') {
+        throw createError({ statusCode: 400, statusMessage: 'Invalid body' })
+    }
+    if (typeof body.credential !== 'string' || body.credential.length < 10 || body.credential.length > 4096) {
+        throw createError({ statusCode: 400, statusMessage: 'Invalid credential' })
+    }
+
     try {
         const data = await $fetch<{ token: string; refreshToken?: string }>(
             `${config.public.apiBase}api/Auth/google`,
