@@ -4,6 +4,7 @@ export default defineEventHandler(async (event) => {
     if (!token) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
     const id = getRouterParam(event, 'id')
+    if (!id || !/^\d+$/.test(id)) throw createError({ statusCode: 400, statusMessage: 'Invalid event ID' })
     const parts = await readMultipartFormData(event)
     if (!parts) throw createError({ statusCode: 400, statusMessage: 'No form data' })
 

@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
     if (!token) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
     const id = getRouterParam(event, 'id')
-    if (!id) throw createError({ statusCode: 400, statusMessage: 'Missing advert ID' })
+    if (!id || !/^\d+$/.test(id)) throw createError({ statusCode: 400, statusMessage: 'Invalid advert ID' })
 
     const apiBase = config.public.apiBase as string
     const backendUrl = `${apiBase.replace(/\/$/, '')}/api/Advert/${id}/pdf`

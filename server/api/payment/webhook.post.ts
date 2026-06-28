@@ -59,10 +59,7 @@ export default defineEventHandler(async (event) => {
         const sigValid = receivedSig.length === expectedSig.length &&
             timingSafeEqual(Buffer.from(receivedSig), Buffer.from(expectedSig))
         if (!sigValid) {
-            console.warn('[webhook] IMOJE signature mismatch — possible spoofed request', {
-                orderId: notification.orderId,
-                received: receivedSig?.slice(0, 16) + '...'
-            })
+            console.warn('[webhook] IMOJE signature mismatch — possible spoofed request', { orderId: notification.orderId })
             throw createError({ statusCode: 401, statusMessage: 'Invalid signature' })
         }
     }
