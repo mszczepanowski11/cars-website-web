@@ -38,6 +38,17 @@
                 <v-icon icon="mdi-loading" size="28" class="spin" />
             </div>
 
+            <!-- Error -->
+            <div v-else-if="fetchError" class="empty-state">
+                <v-icon icon="mdi-alert-circle-outline" size="52" class="empty-icon" color="#c0392b" />
+                <div class="empty-title">Błąd połączenia</div>
+                <div class="empty-sub">Nie udało się załadować wydarzeń. Spróbuj ponownie.</div>
+                <button class="btn-retry" @click="fetchEvents">
+                    <v-icon icon="mdi-refresh" size="16" />
+                    Odśwież
+                </button>
+            </div>
+
             <!-- Empty -->
             <div v-else-if="!events.length" class="empty-state">
                 <v-icon icon="mdi-calendar-remove-outline" size="52" class="empty-icon" />
@@ -177,6 +188,7 @@ const { isLoggedIn } = useAuth()
 
 const events = ref<CarEvent[]>([])
 const loading = ref(true)
+const fetchError = ref(false)
 const search = ref('')
 const page = ref(1)
 const pageSize = 12
@@ -258,6 +270,7 @@ function onSearch() {
 
 async function fetchEvents() {
     loading.value = true
+    fetchError.value = false
     const filterQuery: Record<string, string | number | undefined> = {
         search: search.value || undefined,
         page: page.value,
@@ -275,6 +288,7 @@ async function fetchEvents() {
     } catch {
         events.value = []
         totalCount.value = 0
+        fetchError.value = true
     } finally {
         loading.value = false
     }
@@ -442,6 +456,13 @@ onMounted(fetchEvents)
 .empty-icon { color: $text-dark; }
 .empty-title { font-size: 20px; font-weight: 700; color: $text-muted; }
 .empty-sub { font-size: 14px; color: $text-dim; }
+.btn-retry {
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 4px;
+    background: rgba($red, 0.1); border: 1px solid rgba($red, 0.3); border-radius: $r-sm;
+    color: $red; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif;
+    padding: 9px 20px; cursor: pointer; transition: opacity 0.2s;
+    &:hover { opacity: 0.8; }
+}
 
 // Grid
 .events-grid {

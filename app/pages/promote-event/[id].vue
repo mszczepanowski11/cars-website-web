@@ -18,7 +18,7 @@
                     <v-icon icon="mdi-check-circle-outline" size="14" />Płatność
                 </span>
             </div>
-            <NuxtLink :to="`/events/${eventId}`" class="skip-link">
+            <NuxtLink :to="`/wydarzenie/${eventId}`" class="skip-link">
                 Pomiń wyróżnienie
                 <v-icon icon="mdi-arrow-right" size="15" />
             </NuxtLink>
@@ -94,7 +94,7 @@
                     <div v-if="couponError" class="coupon-error">{{ couponError }}</div>
                 </div>
                 <div class="footer-actions">
-                    <NuxtLink :to="`/events/${eventId}`" class="btn-skip">
+                    <NuxtLink :to="`/wydarzenie/${eventId}`" class="btn-skip">
                         <v-icon icon="mdi-arrow-left" size="15" />Wróć
                     </NuxtLink>
                     <button class="btn-pay" @click="goToBilling">
