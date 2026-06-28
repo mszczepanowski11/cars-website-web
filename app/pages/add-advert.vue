@@ -3987,10 +3987,18 @@ async function submit() {
                 method: 'PUT',
                 body: cleanEdit,
             })
+            let imgEditErrors = 0
             for (const file of selectedFiles.value) {
                 const fd = new FormData()
                 fd.append('file', file)
-                await $fetch(`/api/proxy/api/listings/${editId.value}/images`, { method: 'POST', body: fd })
+                try {
+                    await $fetch(`/api/proxy/api/listings/${editId.value}/images`, { method: 'POST', body: fd })
+                } catch {
+                    imgEditErrors++
+                }
+            }
+            if (imgEditErrors > 0) {
+                error.value = `${imgEditErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych. Możesz je dodać w edycji ogłoszenia.`
             }
             await navigateTo('/my-adverts')
         } else {
@@ -4118,16 +4126,16 @@ async function submit() {
 
             await $fetch(`/api/proxy/api/listings/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
 
-            if (imageErrors > 0) {
+            if (promoSelected.value === 'free') {
+                publishedAdvertId.value = id
+                showSuccess.value = true
+                if (imageErrors > 0) {
+                    error.value = `${imageErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych. Możesz je dodać w edycji ogłoszenia.`
+                }
+            } else if (imageErrors > 0) {
                 loading.value = false
                 publishedAdvertId.value = id
                 error.value = `Ogłoszenie zostało zapisane (ID ${id}), ale ${imageErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych — błąd serwera. Możesz dodać zdjęcia później w panelu edycji.`
-            } else if (promoSelected.value === 'free') {
-                publishedAdvertId.value = id
-                showSuccess.value = true
-                if (imageErrors.length > 0) {
-                    error.value = `${imageErrors.length} zdjęcie(a) nie zostało przesłane: ${imageErrors.join('; ')}. Możesz je dodać w edycji ogłoszenia.`
-                }
             } else {
                 try {
                     loading.value = false
