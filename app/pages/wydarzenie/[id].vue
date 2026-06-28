@@ -9,7 +9,7 @@
             <!-- Hero -->
             <div class="event-hero">
                 <div class="hero-img-wrap">
-                    <img :src="mainImageUrl" :alt="event.name" class="hero-img" />
+                    <img :src="mainImageUrl" :alt="event.name" class="hero-img" fetchpriority="high" />
                     <div class="hero-gradient" />
                 </div>
                 <div class="hero-content container">

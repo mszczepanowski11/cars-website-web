@@ -8,7 +8,7 @@
 
             <div class="header-user" v-if="conversation">
                 <div class="header-avatar">
-                    <img v-if="conversation.otherUserAvatar" :src="conversation.otherUserAvatar" class="hdr-avatar-img" :alt="conversation.otherUserName" />
+                    <img v-if="conversation.otherUserAvatar" :src="conversation.otherUserAvatar" class="hdr-avatar-img" :alt="conversation.otherUserName" loading="lazy" />
                     <span v-else class="hdr-avatar-initials">{{ initials }}</span>
                 </div>
                 <div class="header-info">

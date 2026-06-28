@@ -71,7 +71,7 @@
                         :class="{ selected: selectedAdvertId === a.id }"
                         @click="selectedAdvertId = a.id"
                     >
-                        <img :src="getPickerImage(a)" class="picker-img" :alt="a.title" />
+                        <img :src="getPickerImage(a)" class="picker-img" :alt="a.title" loading="lazy" />
                         <div class="picker-info">
                             <div class="picker-name">{{ a.brand?.name }} {{ a.model?.name }}</div>
                             <div class="picker-meta">{{ a.year }} • {{ Number(a.price).toLocaleString('pl') }} zł</div>

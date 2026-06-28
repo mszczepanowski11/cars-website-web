@@ -934,7 +934,7 @@
                     >
                         <!-- Existing images (edit mode) -->
                         <div v-for="img in existingImages" :key="`ex-${img.id}`" class="img-thumb img-thumb--existing">
-                            <img :src="getImageUrl(img.url)" />
+                            <img :src="getImageUrl(img.url)" loading="lazy" />
                             <button type="button" class="img-remove"
                                 :disabled="deletingImageId === img.id"
                                 @click="deleteExistingImage(img.id)">
