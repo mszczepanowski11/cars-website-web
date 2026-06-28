@@ -81,6 +81,42 @@ onUnmounted(() => {
         _clickOutsideHandler = null
     }
 })
+
+// ── Mobile drawer focus trap (WCAG 2.1 SC 2.1.2) ────────────────────────────
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+function trapFocus(e: KeyboardEvent) {
+    if (!mobileOpen.value) return
+    const drawer = document.querySelector('.mobile-drawer') as HTMLElement | null
+    if (!drawer) return
+    const focusable = Array.from(drawer.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+        el => !el.closest('[hidden]') && el.offsetParent !== null
+    )
+    if (!focusable.length) return
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    if (e.key === 'Tab') {
+        if (e.shiftKey) {
+            if (document.activeElement === first) { e.preventDefault(); last.focus() }
+        } else {
+            if (document.activeElement === last) { e.preventDefault(); first.focus() }
+        }
+    }
+    if (e.key === 'Escape') { closeMobile(); (document.querySelector('.hamburger') as HTMLElement | null)?.focus() }
+}
+
+watch(mobileOpen, (open) => {
+    if (open) {
+        document.addEventListener('keydown', trapFocus)
+        nextTick(() => {
+            const drawer = document.querySelector('.mobile-drawer') as HTMLElement | null
+            const first = drawer?.querySelector<HTMLElement>(FOCUSABLE)
+            first?.focus()
+        })
+    } else {
+        document.removeEventListener('keydown', trapFocus)
+    }
+})
 </script>
 
 <template>
