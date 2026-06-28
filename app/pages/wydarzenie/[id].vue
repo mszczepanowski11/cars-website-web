@@ -176,8 +176,20 @@ const event = ref<CarEvent | null>(null)
 const loading = ref(true)
 const isInterested = ref(false)
 const isFavorite = ref(false)
-const copied = ref(false)
 const localInterestedCount = ref(0)
+const copied = ref(false)
+
+// SSR-compatible fetch so search engine crawlers receive full meta tags
+const { data: ssrEvent } = await useAsyncData(`event-${eventId}`, () =>
+    $fetch<CarEvent>(`/api/proxy/api/Event/${eventId}`).catch(() => null)
+)
+if (ssrEvent.value) {
+    event.value = ssrEvent.value
+    isInterested.value = ssrEvent.value.isUserInterested ?? false
+    isFavorite.value = ssrEvent.value.isUserFavorite ?? false
+    localInterestedCount.value = ssrEvent.value.interestedCount ?? 0
+    loading.value = false
+}
 
 const mainImageUrl = computed(() => {
     if (!event.value) return '/car-placeholder.svg'
@@ -257,6 +269,7 @@ useHead(computed(() => {
 }))
 
 onMounted(async () => {
+    if (event.value) { loading.value = false; return }
     try {
         event.value = await getEvent(eventId)
         isInterested.value = event.value.isUserInterested ?? false
