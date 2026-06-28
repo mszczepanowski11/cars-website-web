@@ -647,6 +647,7 @@ const models       = ref<TaxonomyItem[]>([])
 const allFeatures  = ref<Feature[]>([])
 const adverts      = ref<CarAdvert[]>([])
 const total        = ref(0)
+const frozenTotal  = ref(0) // snapshot of total at last fresh search; used for loadMore to avoid offset shifts
 const page         = ref(route.query.page ? Number(route.query.page) : 1)
 const loading      = ref(false)
 const loadingMore  = ref(false)
@@ -698,7 +699,7 @@ const quickViewOpen = ref(false)
 const quickViewId   = ref<number | null>(null)
 function openQuickView(id: number) { quickViewId.value = id; quickViewOpen.value = true }
 
-const totalPages = computed(() => Math.ceil(total.value / pageSize))
+const totalPages = computed(() => Math.ceil(frozenTotal.value / pageSize))
 
 const sortOptions = [
     { label: 'Najnowsze',       value: '' },
@@ -985,6 +986,7 @@ async function load(p: number = page.value) {
         })
         adverts.value = r?.items ?? []
         total.value   = r?.totalCount ?? 0
+        frozenTotal.value = r?.totalCount ?? 0 // freeze for stable loadMore pagination
     } catch {
         adverts.value = []
         toastError('Nie udało się załadować ogłoszeń. Sprawdź połączenie i spróbuj ponownie.')
@@ -1004,6 +1006,7 @@ async function loadMore() {
         })
         adverts.value = [...adverts.value, ...(r?.items ?? [])]
         total.value   = r?.totalCount ?? 0
+        // frozenTotal intentionally NOT updated here to keep page count stable
         page.value    = nextPage
     } catch {
         toastError('Nie udało się załadować kolejnych ogłoszeń.')
