@@ -1359,14 +1359,14 @@ async function toggleFollowSeller() {
 // ── SEO / meta (computed at setup top-level so they work on SSR) ─────────────
 const seoTitle = computed(() => {
     const a = advert.value
-    if (!a) return 'CARIZO'
+    if (!a) return 'Ogłoszenie nie istnieje — CARIZO'
     const parts = [a.year, a.brand?.name, a.model?.name].filter(Boolean)
     return parts.join(' ') + ' – CARIZO'
 })
 
 const seoOgTitle = computed(() => {
     const a = advert.value
-    if (!a) return 'CARIZO'
+    if (!a) return 'Ogłoszenie nie istnieje — CARIZO'
     return [a.year, a.brand?.name, a.model?.name].filter(Boolean).join(' ')
 })
 
@@ -1588,8 +1588,10 @@ onMounted(async () => {
     }
     if (advert.value) {
         trackRecentlyViewed(Number(id))
-        // Track view
-        $fetch(`/api/proxy/api/Advert/${id}/view`, { method: 'POST' }).catch(() => {})
+        // Skip view tracking if the viewer is the advert owner — avoids self-inflating view counts
+        if (!currentUserId.value || currentUserId.value !== advert.value.userId) {
+            $fetch(`/api/proxy/api/Advert/${id}/view`, { method: 'POST' }).catch(() => {})
+        }
         isFav.value = isFavorite(id)
         if (advert.value.city) initMap(advert.value.city, advert.value.region ?? undefined)
     }
