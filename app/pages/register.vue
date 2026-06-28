@@ -92,17 +92,17 @@
                 <!-- Business fields -->
                 <template v-if="accountType === 'Business'">
                     <div class="auth-field">
-                        <label class="auth-label">Nazwa firmy <span class="req">*</span></label>
+                        <label for="reg-company" class="auth-label">Nazwa firmy <span class="req">*</span></label>
                         <div class="auth-input-wrap">
                             <v-icon icon="mdi-domain" size="17" class="auth-field-icon" />
-                            <input v-model="companyName" class="auth-input" placeholder="np. Auto Salon Kowalski" required />
+                            <input id="reg-company" v-model="companyName" class="auth-input" placeholder="np. Auto Salon Kowalski" required />
                         </div>
                     </div>
                     <div class="auth-field">
-                        <label class="auth-label">NIP <span class="req">*</span></label>
+                        <label for="reg-nip" class="auth-label">NIP <span class="req">*</span></label>
                         <div class="auth-input-wrap">
                             <v-icon icon="mdi-card-account-details-outline" size="17" class="auth-field-icon" />
-                            <input v-model="nip" class="auth-input" placeholder="0000000000" maxlength="13" required />
+                            <input id="reg-nip" v-model="nip" class="auth-input" placeholder="0000000000" maxlength="13" required />
                         </div>
                         <div v-if="nip && nip.replace(/\D/g,'').length !== 10" class="auth-hint">
                             Wymagane 10 cyfr
@@ -113,40 +113,41 @@
                 <!-- Name row -->
                 <div class="auth-row">
                     <div class="auth-field">
-                        <label class="auth-label">{{ accountType === 'Business' ? 'Imię (kontakt)' : 'Imię' }} <span class="req">*</span></label>
+                        <label for="reg-name" class="auth-label">{{ accountType === 'Business' ? 'Imię (kontakt)' : 'Imię' }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <input v-model="name" class="auth-input auth-input--solo" :placeholder="accountType === 'Business' ? 'Jan' : 'Jan'" required autocomplete="given-name" />
+                            <input id="reg-name" v-model="name" class="auth-input auth-input--solo" :placeholder="accountType === 'Business' ? 'Jan' : 'Jan'" required autocomplete="given-name" />
                         </div>
                     </div>
                     <div class="auth-field">
-                        <label class="auth-label">{{ accountType === 'Business' ? 'Nazwisko (kontakt)' : 'Nazwisko' }} <span class="req">*</span></label>
+                        <label for="reg-surname" class="auth-label">{{ accountType === 'Business' ? 'Nazwisko (kontakt)' : 'Nazwisko' }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <input v-model="surname" class="auth-input auth-input--solo" placeholder="Kowalski" required autocomplete="family-name" />
+                            <input id="reg-surname" v-model="surname" class="auth-input auth-input--solo" placeholder="Kowalski" required autocomplete="family-name" />
                         </div>
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label class="auth-label">Adres email <span class="req">*</span></label>
+                    <label for="reg-email" class="auth-label">Adres email <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-email-outline" size="17" class="auth-field-icon" />
-                        <input v-model="email" type="email" class="auth-input" placeholder="np. jan@kowalski.pl" required autocomplete="email" />
+                        <input id="reg-email" v-model="email" type="email" class="auth-input" placeholder="np. jan@kowalski.pl" required autocomplete="email" />
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label class="auth-label">Numer telefonu <span class="req">*</span></label>
+                    <label for="reg-phone" class="auth-label">Numer telefonu <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-phone-outline" size="17" class="auth-field-icon" />
-                        <input v-model="phoneNumber" type="tel" class="auth-input" placeholder="+48 600 123 456" required autocomplete="tel" />
+                        <input id="reg-phone" v-model="phoneNumber" type="tel" class="auth-input" placeholder="+48 600 123 456" required autocomplete="tel" />
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label class="auth-label">Hasło <span class="req">*</span></label>
+                    <label for="reg-password" class="auth-label">Hasło <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
                         <input
+                            id="reg-password"
                             v-model="password"
                             :type="showPassword ? 'text' : 'password'"
                             class="auth-input"
@@ -154,7 +155,7 @@
                             required
                             autocomplete="new-password"
                         />
-                        <button type="button" class="auth-eye" @click="showPassword = !showPassword">
+                        <button type="button" class="auth-eye" :aria-label="showPassword ? 'Ukryj hasło' : 'Pokaż hasło'" @click="showPassword = !showPassword">
                             <v-icon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
                         </button>
                     </div>
@@ -168,10 +169,11 @@
                 </div>
 
                 <div class="auth-field">
-                    <label class="auth-label">Powtórz hasło <span class="req">*</span></label>
+                    <label for="reg-password-confirm" class="auth-label">Powtórz hasło <span class="req">*</span></label>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--error': passwordConfirm && password !== passwordConfirm }">
                         <v-icon icon="mdi-lock-check-outline" size="17" class="auth-field-icon" />
                         <input
+                            id="reg-password-confirm"
                             v-model="passwordConfirm"
                             type="password"
                             class="auth-input"
@@ -186,10 +188,10 @@
                 </div>
 
                 <div class="auth-field">
-                    <label class="auth-label">Data urodzenia <span class="req">*</span></label>
+                    <label for="reg-dob" class="auth-label">Data urodzenia <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-calendar-outline" size="17" class="auth-field-icon" />
-                        <input v-model="dateOfBirth" type="date" class="auth-input" :max="maxDob" required />
+                        <input id="reg-dob" v-model="dateOfBirth" type="date" class="auth-input" :max="maxDob" required />
                     </div>
                     <div v-if="dateOfBirth && !isAdult" class="auth-hint auth-hint--error">
                         Musisz mieć ukończone 18 lat.
@@ -220,7 +222,7 @@
                     <span class="age-check-label age-check-label--optional">Wyrażam zgodę na otrzymywanie informacji handlowych i ofert specjalnych CARIZO drogą elektroniczną. Zgodę możesz wycofać w każdej chwili. <span class="opt-label">(opcjonalne)</span></span>
                 </label>
 
-                <div v-if="validationError || error" class="auth-error">
+                <div v-if="validationError || error" role="alert" class="auth-error">
                     <v-icon icon="mdi-alert-circle-outline" size="15" />
                     {{ validationError || error }}
                 </div>
