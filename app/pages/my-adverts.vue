@@ -195,6 +195,7 @@ definePageMeta({ middleware: 'auth' })
 useHead({ title: 'Moje ogłoszenia — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getImageUrl } = useImageUrl()
+const { success: toastSuccess, error: toastError } = useToast()
 
 const adverts = ref<CarAdvert[]>([])
 const total = ref(0)
@@ -266,8 +267,9 @@ async function doMarkSold() {
         const a = adverts.value.find(x => x.id === confirmAdvert.value?.id)
         if (a) a.soldAt = new Date().toISOString()
         confirmAdvert.value = null
+        toastSuccess('Ogłoszenie zostało oznaczone jako sprzedane.')
     } catch (err: any) {
-        alert(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
+        toastError(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
     }
     finally { soldLoading.value = null }
 }
@@ -284,8 +286,9 @@ async function reactivateAdvert(a: CarAdvert) {
             thirtyDays.setDate(thirtyDays.getDate() + 30)
             found.expiresAt = thirtyDays.toISOString()
         }
+        toastSuccess('Ogłoszenie zostało opublikowane.')
     } catch (err: any) {
-        alert(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
+        toastError(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
     }
     finally { reactivateLoading.value = null }
 }
@@ -307,8 +310,9 @@ async function doDelete() {
         adverts.value = adverts.value.filter(x => x.id !== a.id)
         total.value = Math.max(0, total.value - 1)
         deleteAdvert.value = null
+        toastSuccess('Ogłoszenie zostało usunięte.')
     } catch (err: any) {
-        alert(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
+        toastError(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
     }
     finally { deleteLoading.value = null }
 }

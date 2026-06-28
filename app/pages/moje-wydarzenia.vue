@@ -113,6 +113,7 @@ useHead({ title: 'Moje wydarzenia — CARIZO', meta: [{ name: 'robots', content:
 
 const { getMyEvents, deleteMyEvent } = useEvents()
 const { getImageUrl } = useImageUrl()
+const { success: toastSuccess, error: toastError } = useToast()
 
 const events = ref<CarEvent[]>([])
 const loading = ref(true)
@@ -175,8 +176,9 @@ async function doDelete() {
         events.value = events.value.filter(e => e.id !== deleteId.value)
         totalCount.value = Math.max(0, totalCount.value - 1)
         deleteId.value = null
+        toastSuccess('Wydarzenie zostało usunięte.')
     } catch (err: any) {
-        alert(err?.data?.message || 'Nie udało się usunąć wydarzenia.')
+        toastError(err?.data?.message || 'Nie udało się usunąć wydarzenia. Spróbuj ponownie.')
     } finally {
         deleting.value = false
     }
