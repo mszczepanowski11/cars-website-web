@@ -301,6 +301,7 @@ onMounted(async () => {
     }
 
     if (seller.value) {
+        const sellerConfig = useRuntimeConfig()
         useHead(computed(() => {
             const s = seller.value
             if (!s) return { title: 'Sprzedawca — CARIZO' }
@@ -308,8 +309,8 @@ onMounted(async () => {
                 ? s.companyName
                 : [s.name, s.surname].filter(Boolean).join(' ') || 'Sprzedawca'
             const desc = `Sprawdź ogłoszenia sprzedawcy ${displayName} na CARIZO — największej platformie motoryzacyjnej w Polsce.`
-            const sellerConfig = useRuntimeConfig()
             const pageUrl = `${sellerConfig.public.siteUrl}/seller/${sellerId}`
+            const ogImage = s.avatarUrl ?? `${sellerConfig.public.siteUrl}/hero-car.jpg`
             return {
                 title: `${displayName} — CARIZO`,
                 meta: [
@@ -318,10 +319,12 @@ onMounted(async () => {
                     { property: 'og:url', content: pageUrl },
                     { property: 'og:title', content: `${displayName} — CARIZO` },
                     { property: 'og:description', content: desc },
+                    { property: 'og:image', content: ogImage },
                     { property: 'og:site_name', content: 'CARIZO' },
                     { name: 'twitter:card', content: 'summary' },
                     { name: 'twitter:title', content: `${displayName} — CARIZO` },
                     { name: 'twitter:description', content: desc },
+                    { name: 'twitter:image', content: ogImage },
                 ],
                 link: [{ rel: 'canonical', href: pageUrl }]
             }
