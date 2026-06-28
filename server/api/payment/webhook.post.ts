@@ -8,7 +8,7 @@
  * ING IMOJE docs: https://imoje.ing.pl/dokumentacja/powiadomienia
  */
 
-import { createHmac } from 'crypto'
+import { createHmac, timingSafeEqual } from 'crypto'
 
 interface ImojeNotification {
     serviceId: string
@@ -56,7 +56,9 @@ export default defineEventHandler(async (event) => {
             .update(rawBody)
             .digest('hex')
 
-        if (receivedSig !== expectedSig) {
+        const sigValid = receivedSig.length === expectedSig.length &&
+            timingSafeEqual(Buffer.from(receivedSig), Buffer.from(expectedSig))
+        if (!sigValid) {
             console.warn('[webhook] IMOJE signature mismatch — possible spoofed request', {
                 orderId: notification.orderId,
                 received: receivedSig?.slice(0, 16) + '...'
