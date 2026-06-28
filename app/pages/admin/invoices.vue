@@ -131,11 +131,11 @@
                     </div>
 
                     <div v-if="invoicesTotalCount > invoicesPageSize" class="pagination">
-                        <button class="page-btn" :disabled="invoicesPage === 1" @click="loadInvoices(invoicesPage - 1)">
+                        <button class="page-btn" :disabled="invoicesPage === 1" aria-label="Poprzednia strona" @click="loadInvoices(invoicesPage - 1)">
                             <v-icon icon="mdi-chevron-left" size="18" />
                         </button>
                         <span class="page-info">{{ invoicesPage }} / {{ Math.ceil(invoicesTotalCount / invoicesPageSize) }}</span>
-                        <button class="page-btn" :disabled="invoicesPage >= Math.ceil(invoicesTotalCount / invoicesPageSize)" @click="loadInvoices(invoicesPage + 1)">
+                        <button class="page-btn" :disabled="invoicesPage >= Math.ceil(invoicesTotalCount / invoicesPageSize)" aria-label="Następna strona" @click="loadInvoices(invoicesPage + 1)">
                             <v-icon icon="mdi-chevron-right" size="18" />
                         </button>
                     </div>
@@ -204,11 +204,11 @@
                     </div>
 
                     <div v-if="paymentsTotalCount > paymentsPageSize" class="pagination">
-                        <button class="page-btn" :disabled="paymentsPage === 1" @click="loadPayments(paymentsPage - 1)">
+                        <button class="page-btn" :disabled="paymentsPage === 1" aria-label="Poprzednia strona" @click="loadPayments(paymentsPage - 1)">
                             <v-icon icon="mdi-chevron-left" size="18" />
                         </button>
                         <span class="page-info">{{ paymentsPage }} / {{ Math.ceil(paymentsTotalCount / paymentsPageSize) }}</span>
-                        <button class="page-btn" :disabled="paymentsPage >= Math.ceil(paymentsTotalCount / paymentsPageSize)" @click="loadPayments(paymentsPage + 1)">
+                        <button class="page-btn" :disabled="paymentsPage >= Math.ceil(paymentsTotalCount / paymentsPageSize)" aria-label="Następna strona" @click="loadPayments(paymentsPage + 1)">
                             <v-icon icon="mdi-chevron-right" size="18" />
                         </button>
                     </div>
@@ -307,7 +307,10 @@ async function resend(id: number) {
 async function downloadPdfAdmin(inv: MonthlyInvoice) {
     pdfLoadingId.value = inv.id
     try { await generatePdf(inv) }
-    catch { /* ignore */ }
+    catch (e: any) {
+        genError.value = e?.data?.message ?? 'Nie udało się pobrać faktury PDF.'
+        setTimeout(() => { genError.value = '' }, 4000)
+    }
     finally { pdfLoadingId.value = null }
 }
 
