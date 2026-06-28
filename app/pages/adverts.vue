@@ -804,6 +804,7 @@ function toggleFeature(id: number) {
     const idx = f.featureIds.indexOf(id)
     if (idx === -1) f.featureIds.push(id)
     else f.featureIds.splice(idx, 1)
+    load(1)
 }
 
 function clearFilters() {
@@ -835,6 +836,7 @@ async function onBrandChange() {
     f.modelId = null
     models.value = []
     if (f.brandId) models.value = await fetchModels(f.brandId)
+    load(1)
 }
 
 function buildSearchBody(p: number): Record<string, unknown> {
