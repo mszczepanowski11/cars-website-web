@@ -132,7 +132,7 @@ async function fetchAdverts() {
     loading.value = true
     adverts.value = await Promise.all(
         compared.value.map(id =>
-            $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`).catch(() => null)
+            $fetch<CarAdvert>(`/api/proxy/api/listings/${id}`).catch(() => null)
         )
     )
     loading.value = false

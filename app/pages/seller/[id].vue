@@ -264,7 +264,7 @@ async function loadAdverts(reset = false) {
     advertsLoading.value = true
     if (reset) { adverts.value = []; advertsPage.value = 1 }
     try {
-        const res = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        const res = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
             body: { userId: sellerId, page: advertsPage.value, pageSize: 12 } as any
         })

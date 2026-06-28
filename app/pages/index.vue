@@ -1131,11 +1131,11 @@ async function subscribeNewsletter() {
 
 const { data: homeData } = await useAsyncData('home-data', async () => {
     const [featuredResult, recentResult, evts, stats, brands] = await Promise.allSettled([
-        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
             body: { page: 1, pageSize: 50, sortBy: 'featured' }
         }),
-        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
             body: { page: 1, pageSize: 8, sortBy: '' }
         }),
@@ -1167,8 +1167,8 @@ statsLoading.value = false
 if (import.meta.client) {
     clientDataLoading.value = true
     Promise.allSettled([
-        $fetch<CarAdvert[]>('/api/proxy/api/Advert/most-viewed', { query: { count: 8 } }).catch(() => [] as CarAdvert[]),
-        $fetch<CarAdvert[]>('/api/proxy/api/Advert/premium-collection', { query: { count: 8 } }).catch(() => [] as CarAdvert[])
+        $fetch<CarAdvert[]>('/api/proxy/api/listings/most-viewed', { query: { count: 8 } }).catch(() => [] as CarAdvert[]),
+        $fetch<CarAdvert[]>('/api/proxy/api/listings/premium-collection', { query: { count: 8 } }).catch(() => [] as CarAdvert[])
     ]).then(([mvRes, pcRes]) => {
         if (mvRes.status === 'fulfilled') {
             const mv = mvRes.value

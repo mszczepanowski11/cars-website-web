@@ -84,7 +84,7 @@ watch(() => props.advertId, async (id) => {
     loading.value = true
     advert.value = null
     try {
-        advert.value = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`)
+        advert.value = await $fetch<CarAdvert>(`/api/proxy/api/listings/${id}`)
     } finally {
         loading.value = false
     }

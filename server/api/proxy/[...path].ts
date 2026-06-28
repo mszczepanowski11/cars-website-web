@@ -9,8 +9,13 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: 'Invalid path' })
     }
 
+    // Alias: api/listings/* → api/Advert/* so ad-blocker rules that match "advert" in the URL
+    // do not block the public listing search and detail endpoints.
+    const resolvedPath = path.startsWith('api/listings') ? path.replace('api/listings', 'api/Advert') : path
+
     const PUBLIC_POST_PATHS = [
         'api/Advert/search',
+        'api/listings/search',
         'api/Payment/webhook',
         'api/Auth/resend-verification',
         'api/Auth/reset-password',
@@ -39,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
     const query = getQuery(event)
 
-    const targetUrl = new URL(`${config.public.apiBase}${path}`)
+    const targetUrl = new URL(`${config.public.apiBase}${resolvedPath}`)
     for (const [k, v] of Object.entries(query)) {
         targetUrl.searchParams.set(k, String(v))
     }
@@ -95,7 +100,7 @@ export default defineEventHandler(async (event) => {
             }
             const raw = err?.data ?? err?.response?._data ?? err?.message ?? 'Proxy error'
             const msg = typeof raw === 'string' ? raw : (raw?.message ?? JSON.stringify(raw))
-            console.error(`[proxy] ${method} ${path} → ${statusCode}: ${msg}`)
+            console.error(`[proxy] ${method} ${resolvedPath} → ${statusCode}: ${msg}`)
             throw createError({ statusCode, statusMessage: msg.slice(0, 500), data: typeof raw === 'object' ? raw : undefined })
         }
     }

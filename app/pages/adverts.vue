@@ -920,7 +920,7 @@ if (taxoData.value?.initialModels?.length) {
 // ── SSR-safe initial advert search ────────────────────────────────────────────────
 const searchKey = computed(() => `adverts-search-${JSON.stringify(buildSearchBody(page.value))}`)
 const { data: searchData } = await useAsyncData(searchKey, () =>
-    $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+    $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
         method: 'POST',
         body: buildSearchBody(page.value),
     }).catch(() => ({ items: [] as CarAdvert[], totalCount: 0 }))
@@ -980,7 +980,7 @@ async function load(p: number = page.value) {
     router.replace({ query })
 
     try {
-        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
             body: buildSearchBody(p),
         })
@@ -1000,7 +1000,7 @@ async function loadMore() {
     loadingMore.value = true
     const nextPage = page.value + 1
     try {
-        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
             body: buildSearchBody(nextPage),
         })

@@ -1558,7 +1558,7 @@ async function downloadPDF() {
 // SSR-safe data fetching
 const { data: advertData } = await useAsyncData(`advert-${id}`, async () => {
     try {
-        const a = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`)
+        const a = await $fetch<CarAdvert>(`/api/proxy/api/listings/${id}`)
         if (!a) return null
         const uid = a.userId
         let s: UserProfile | null = null
@@ -1614,7 +1614,7 @@ onMounted(async () => {
                 body.priceFrom = Math.round(p * 0.4)
                 body.priceTo   = Math.round(p * 2.5)
             }
-            const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', { method: 'POST', body })
+            const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', { method: 'POST', body })
             similar.value = (r?.items ?? []).filter(x => x.id !== id).slice(0, 6)
         }
     } catch { }
