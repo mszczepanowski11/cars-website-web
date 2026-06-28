@@ -2,6 +2,8 @@ export default defineEventHandler(async (event) => {
     const token = getCookie(event, 'auth_token')
     if (!token) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
+    rateLimit(event, 'ai-description', 10, 60 * 60_000) // 10 per hour per IP
+
     const body = await readBody(event)
     const { brand, model, year, fuel, mileage, power, features, history } = body
 
