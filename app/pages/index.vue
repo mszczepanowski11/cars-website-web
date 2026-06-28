@@ -631,7 +631,10 @@ useHead({
         { name: 'twitter:description', content: 'Kupuj i sprzedawaj auta na CARIZO.' },
         { name: 'twitter:image', content: `${config.public.siteUrl}/hero-car.jpg` },
     ],
-    link: [{ rel: 'canonical', href: config.public.siteUrl as string }]
+    link: [
+        { rel: 'canonical', href: config.public.siteUrl as string },
+        { rel: 'preload', as: 'image', href: '/hero-car.jpg', fetchpriority: 'high' },
+    ]
 })
 
 const featured = ref<CarAdvert[]>([])
