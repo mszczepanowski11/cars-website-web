@@ -281,7 +281,12 @@ async function pollMessages() {
             const fresh = msgs.find(m => m.id === msg.id)
             if (fresh && fresh.isRead !== msg.isRead) msg.isRead = fresh.isRead
         }
-    } catch {}
+    } catch (err: any) {
+        const status = err?.response?.status ?? err?.statusCode
+        if (status === 401) {
+            if (pollTimer) { clearInterval(pollTimer); pollTimer = null }
+        }
+    }
 }
 
 // Date separator: show if this is the first message or date differs from prev
