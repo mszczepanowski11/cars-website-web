@@ -39,7 +39,10 @@ export const useFavorites = () => {
                 await $fetch(`/api/proxy/api/Favorite/${id}`, { method: 'POST' })
                 favoriteIds.value.push(id)
             }
-        } catch {}
+        } catch {
+            const { error } = useToast()
+            error('Nie udało się zmienić ulubionych. Spróbuj ponownie.')
+        }
     }
 
     return { fetchFavoriteIds, isFavorite, toggleFavorite, isLoggedIn }

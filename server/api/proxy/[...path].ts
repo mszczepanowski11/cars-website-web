@@ -19,6 +19,14 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
 
+    // Blanket rate limit: prevents authenticated API abuse via the proxy.
+    // Public reads (GET/HEAD) get a generous limit; writes get a tighter cap.
+    if (['GET', 'HEAD'].includes(method)) {
+        rateLimit(event, 'proxy-read', 600, 60_000) // 600 reads / min per IP
+    } else {
+        rateLimit(event, 'proxy-write', 120, 60_000) // 120 writes / min per IP
+    }
+
     const contentLength = parseInt(getRequestHeader(event, 'content-length') ?? '0', 10)
     if (contentLength > 25 * 1024 * 1024) {
         throw createError({ statusCode: 413, statusMessage: 'Request body too large (max 25 MB)' })
