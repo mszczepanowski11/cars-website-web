@@ -99,7 +99,7 @@
                                 <v-icon icon="mdi-fullscreen" size="15" /> Galeria
                             </button>
                         </div>
-                        <button class="photo-fav-btn" :class="{ active: isFav }" @click.stop="toggleFav">
+                        <button class="photo-fav-btn" :class="{ active: isFav }" :aria-label="isFav ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'" @click.stop="toggleFav">
                             <v-icon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
                         </button>
                     </div>
@@ -587,10 +587,10 @@
                                 </div>
                                 <div v-else class="fin-inquiry-form">
                                     <div class="fin-form-row">
-                                        <input v-model="finName" class="fin-input" placeholder="Imię i nazwisko" />
-                                        <input v-model="finPhone" class="fin-input" placeholder="Numer telefonu" type="tel" />
+                                        <input v-model="finName" class="fin-input" placeholder="Imię i nazwisko" autocomplete="name" aria-label="Imię i nazwisko" />
+                                        <input v-model="finPhone" class="fin-input" placeholder="Numer telefonu" type="tel" inputmode="tel" autocomplete="tel" aria-label="Numer telefonu" />
                                     </div>
-                                    <input v-model="finEmail" class="fin-input" placeholder="Adres e-mail" type="email" />
+                                    <input v-model="finEmail" class="fin-input" placeholder="Adres e-mail" type="email" autocomplete="email" aria-label="Adres e-mail" />
                                     <div class="fin-type-btns">
                                         <button :class="['fin-type-btn', { active: finType === 'leasing' }]" @click="finType = 'leasing'">
                                             <v-icon icon="mdi-car-key" size="14" /> Leasing
@@ -630,12 +630,12 @@
                             <div v-if="canLeaveReview && !reviewSuccess" class="review-form">
                                 <div class="review-form-title">Wystaw opinię sprzedawcy</div>
                                 <div class="rev-rating-row">
-                                    <button v-for="n in 5" :key="n" class="rev-star-btn" @click="reviewRating = n">
+                                    <button v-for="n in 5" :key="n" class="rev-star-btn" :aria-label="`Ocena ${n} z 5`" :aria-pressed="reviewRating === n" @click="reviewRating = n">
                                         <v-icon :icon="n <= reviewRating ? 'mdi-star' : 'mdi-star-outline'" size="22" :class="n <= reviewRating ? 'star-active' : 'star-empty'" />
                                     </button>
                                     <span class="rev-rating-label">{{ reviewRating }}/5</span>
                                 </div>
-                                <textarea v-model="reviewContent" class="rev-textarea" placeholder="Opisz swoje doświadczenia ze sprzedawcą..." rows="4" />
+                                <textarea v-model="reviewContent" class="rev-textarea" placeholder="Opisz swoje doświadczenia ze sprzedawcą..." rows="4" aria-label="Treść opinii" />
                                 <div v-if="reviewError" class="rev-error">{{ reviewError }}</div>
                                 <button class="rev-submit-btn" :disabled="reviewSubmitting || !reviewContent.trim()" @click="doSubmitReview">
                                     <v-icon v-if="reviewSubmitting" icon="mdi-loading" size="15" class="spin" />
@@ -832,6 +832,7 @@
                         class="compose-textarea"
                         placeholder="Napisz wiadomość..."
                         rows="3"
+                        aria-label="Treść wiadomości"
                     />
                     <div v-if="contactError" class="compose-error">
                         <v-icon icon="mdi-alert-circle-outline" size="14" />{{ contactError }}
@@ -1451,7 +1452,7 @@ watch(activeTab, async (tab) => {
             ])
             sellerReviews.value = r.items
             canLeaveReview.value = ok
-        } catch {} finally { reviewsLoading.value = false }
+        } catch { sellerReviews.value = [] } finally { reviewsLoading.value = false }
     }
 })
 
