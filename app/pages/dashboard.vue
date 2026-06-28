@@ -982,7 +982,7 @@ async function doDelete() {
     const id = deleteConfirmId.value
     deleteLoading.value = id
     try {
-        await $fetch(`/api/proxy/api/Advert/${id}`, { method: 'DELETE' })
+        await $fetch(`/api/proxy/api/listings/${id}`, { method: 'DELETE' })
         myAdverts.value = myAdverts.value.filter(a => a.id !== id)
         deleteConfirmId.value = null
         advertTotal.value = Math.max(0, advertTotal.value - 1)
@@ -997,7 +997,7 @@ async function loadMoreAdverts() {
     loadingMore.value = true
     advertPage.value++
     try {
-        const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>(`/api/proxy/api/Advert/user?page=${advertPage.value}&pageSize=8`)
+        const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>(`/api/proxy/api/listings/user?page=${advertPage.value}&pageSize=8`)
         myAdverts.value.push(...r.items)
     } catch { toastError('Nie udało się załadować kolejnych ogłoszeń.') } finally { loadingMore.value = false }
 }
@@ -1192,7 +1192,7 @@ watch(section, async (s) => {
 onMounted(async () => {
     try {
         ;[profile.value, stats.value] = await Promise.all([fetchProfile(), fetchStats()])
-        const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/Advert/user?page=1&pageSize=8')
+        const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/listings/user?page=1&pageSize=8')
         myAdverts.value = r.items
         advertTotal.value = r.totalCount
         // Lazy load notifications count
@@ -1203,7 +1203,7 @@ onMounted(async () => {
     const ids = getRecentIds().slice(0, 5)
     if (ids.length) {
         const fetched = await Promise.all(
-            ids.map(id => $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`).catch(() => null))
+            ids.map(id => $fetch<CarAdvert>(`/api/proxy/api/listings/${id}`).catch(() => null))
         )
         const ordered = ids.map(id => fetched.find(a => a?.id === id)).filter(Boolean) as CarAdvert[]
         recentAdverts.value = ordered

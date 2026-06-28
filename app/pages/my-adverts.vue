@@ -246,7 +246,7 @@ async function load(p: number = page.value) {
     loading.value = true
     try {
         const r = await $fetch<PagedResult<CarAdvert>>(
-            `/api/proxy/api/Advert/user?page=${p}&pageSize=${pageSize}`
+            `/api/proxy/api/listings/user?page=${p}&pageSize=${pageSize}`
         )
         adverts.value = r.items
         total.value = r.totalCount
@@ -265,7 +265,7 @@ async function doMarkSold() {
     if (!confirmAdvert.value) return
     soldLoading.value = confirmAdvert.value.id
     try {
-        await $fetch(`/api/proxy/api/Advert/${confirmAdvert.value.id}/sold`, { method: 'POST', body: {} })
+        await $fetch(`/api/proxy/api/listings/${confirmAdvert.value.id}/sold`, { method: 'POST', body: {} })
         const a = adverts.value.find(x => x.id === confirmAdvert.value?.id)
         if (a) a.soldAt = new Date().toISOString()
         confirmAdvert.value = null
@@ -279,7 +279,7 @@ async function doMarkSold() {
 async function reactivateAdvert(a: CarAdvert) {
     reactivateLoading.value = a.id
     try {
-        await $fetch(`/api/proxy/api/Advert/${a.id}/publish`, { method: 'POST', body: {} })
+        await $fetch(`/api/proxy/api/listings/${a.id}/publish`, { method: 'POST', body: {} })
         const found = adverts.value.find(x => x.id === a.id)
         if (found) {
             found.isActive = true
@@ -306,9 +306,9 @@ async function doDelete() {
     deleteLoading.value = a.id
     try {
         if (markSoldOnDelete.value && !a.soldAt) {
-            await $fetch(`/api/proxy/api/Advert/${a.id}/sold`, { method: 'POST', body: {} }).catch(() => {})
+            await $fetch(`/api/proxy/api/listings/${a.id}/sold`, { method: 'POST', body: {} }).catch(() => {})
         }
-        await $fetch(`/api/proxy/api/Advert/${a.id}`, { method: 'DELETE' })
+        await $fetch(`/api/proxy/api/listings/${a.id}`, { method: 'DELETE' })
         adverts.value = adverts.value.filter(x => x.id !== a.id)
         total.value = Math.max(0, total.value - 1)
         deleteAdvert.value = null

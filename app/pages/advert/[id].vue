@@ -1592,7 +1592,7 @@ onMounted(async () => {
         trackRecentlyViewed(Number(id))
         // Skip view tracking if the viewer is the advert owner — avoids self-inflating view counts
         if (!currentUserId.value || currentUserId.value !== advert.value.userId) {
-            $fetch(`/api/proxy/api/Advert/${id}/view`, { method: 'POST' }).catch(() => {})
+            $fetch(`/api/proxy/api/listings/${id}/view`, { method: 'POST' }).catch(() => {})
         }
         isFav.value = isFavorite(id)
         if (advert.value.city) initMap(advert.value.city, advert.value.region ?? undefined)

@@ -2934,7 +2934,7 @@ async function lookupVin() {
     vinLoading.value = true
     vinError.value = ''
     try {
-        const data = await $fetch<Partial<typeof form>>(`/api/proxy/api/Advert/vin/${form.vin}`)
+        const data = await $fetch<Partial<typeof form>>(`/api/proxy/api/listings/vin/${form.vin}`)
         if (data.brandId) form.brandId = data.brandId
         if (form.brandId) await onBrand()
         if (data.modelId) form.modelId = data.modelId
@@ -3983,14 +3983,14 @@ async function submit() {
             if (form.maxTrailerWeight) cleanEdit.maxTrailerWeight = form.maxTrailerWeight
             if (form.youtubeUrl) cleanEdit.youtubeUrl = form.youtubeUrl
             if (form.pdfBrochureUrl) cleanEdit.pdfBrochureUrl = form.pdfBrochureUrl
-            await $fetch(`/api/proxy/api/Advert/${editId.value}`, {
+            await $fetch(`/api/proxy/api/listings/${editId.value}`, {
                 method: 'PUT',
                 body: cleanEdit,
             })
             for (const file of selectedFiles.value) {
                 const fd = new FormData()
                 fd.append('file', file)
-                await $fetch(`/api/proxy/api/Advert/${editId.value}/images`, { method: 'POST', body: fd })
+                await $fetch(`/api/proxy/api/listings/${editId.value}/images`, { method: 'POST', body: fd })
             }
             await navigateTo('/my-adverts')
         } else {
@@ -4088,7 +4088,7 @@ async function submit() {
             if (form.maxTrailerWeight) cleanBody.maxTrailerWeight = form.maxTrailerWeight
             if (form.youtubeUrl) cleanBody.youtubeUrl = form.youtubeUrl
             if (form.pdfBrochureUrl) cleanBody.pdfBrochureUrl = form.pdfBrochureUrl
-            const created = await $fetch<any>('/api/proxy/api/Advert', {
+            const created = await $fetch<any>('/api/proxy/api/listings', {
                 method: 'POST',
                 body: cleanBody,
             })
@@ -4100,7 +4100,7 @@ async function submit() {
                 const fd = new FormData()
                 fd.append('file', file)
                 try {
-                    await $fetch(`/api/proxy/api/Advert/${id}/images`, { method: 'POST', body: fd })
+                    await $fetch(`/api/proxy/api/listings/${id}/images`, { method: 'POST', body: fd })
                 } catch {
                     imageErrors++
                 }
@@ -4116,7 +4116,7 @@ async function submit() {
 
             localStorage.removeItem(draftKey.value)
 
-            await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
+            await $fetch(`/api/proxy/api/listings/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
 
             if (imageErrors > 0) {
                 loading.value = false
@@ -4179,7 +4179,7 @@ async function submit() {
 async function deleteExistingImage(imageId: number) {
     deletingImageId.value = imageId
     try {
-        await $fetch(`/api/proxy/api/Advert/${editId.value}/images/${imageId}`, { method: 'DELETE' })
+        await $fetch(`/api/proxy/api/listings/${editId.value}/images/${imageId}`, { method: 'DELETE' })
         existingImages.value = existingImages.value.filter(img => img.id !== imageId)
     } catch {
         const { error: toastError } = useToast()
@@ -4209,7 +4209,7 @@ onMounted(async () => {
 
     if (isEdit.value && editId.value) {
         try {
-            const advert = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${editId.value}`)
+            const advert = await $fetch<CarAdvert>(`/api/proxy/api/listings/${editId.value}`)
             form.title = advert.title ?? ''
             form.description = advert.description ?? ''
             form.price = advert.price ?? null

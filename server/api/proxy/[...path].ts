@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
         'api/Newsletter/subscribe',
         'api/Newsletter/unsubscribe',
     ]
-    const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/')) || /^api\/Advert\/\d+\/view$/.test(path)
+    const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/')) || /^api\/(Advert|listings)\/\d+\/view$/.test(path)
 
     if (!token && !['GET', 'HEAD'].includes(method) && !isPublicPost) {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })

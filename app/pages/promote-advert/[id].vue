@@ -273,7 +273,7 @@ onMounted(async () => {
     // Verify ownership before showing promotion options
     try {
         const [advert, me] = await Promise.all([
-            $fetch<{ userId: number }>(`/api/proxy/api/Advert/${advertId.value}`),
+            $fetch<{ userId: number }>(`/api/proxy/api/listings/${advertId.value}`),
             $fetch<{ id: number }>('/api/proxy/api/User/me'),
         ])
         if (advert.userId !== me.id) {
@@ -339,7 +339,7 @@ async function publishFree() {
     publishing.value = true
     actionError.value = ''
     try {
-        await $fetch(`/api/proxy/api/Advert/${advertId.value}/publish`, { method: 'POST', body: {} })
+        await $fetch(`/api/proxy/api/listings/${advertId.value}/publish`, { method: 'POST', body: {} })
         await navigateTo('/my-adverts')
     } catch (e: any) {
         actionError.value = e?.data?.message ?? 'Nie udało się opublikować ogłoszenia.'
@@ -364,7 +364,7 @@ async function initiatePayment() {
     actionError.value = ''
 
     // Refresh publish state — non-critical, advert may already be active
-    await $fetch(`/api/proxy/api/Advert/${advertId.value}/publish`, { method: 'POST', body: {} })
+    await $fetch(`/api/proxy/api/listings/${advertId.value}/publish`, { method: 'POST', body: {} })
         .catch(() => {})
 
     try {

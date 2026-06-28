@@ -435,7 +435,7 @@ async function doPurchase() {
             selectedPlan.value = null
         } else {
             // Ensure advert is published before payment redirect
-            await $fetch(`/api/proxy/api/Advert/${selectedAdvertId.value}/publish`, { method: 'POST', body: {} }).catch(() => {})
+            await $fetch(`/api/proxy/api/listings/${selectedAdvertId.value}/publish`, { method: 'POST', body: {} }).catch(() => {})
 
             const siteUrl = config.public.siteUrl
             const body: Record<string, unknown> = {
@@ -480,7 +480,7 @@ onMounted(async () => {
         { type: 'Premium', days: 7 }, { type: 'Premium', days: 14 }, { type: 'Premium', days: 30 },
     ]
     await Promise.allSettled([
-        $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/Advert/user?page=1&pageSize=20')
+        $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/listings/user?page=1&pageSize=20')
             .then(r => { myAdverts.value = r.items.filter(a => a.isActive !== false) })
             .catch(() => { toastError('Nie udało się załadować Twoich ogłoszeń.') })
             .finally(() => { advertsLoading.value = false }),
