@@ -168,6 +168,7 @@ const eventId = Number(route.params.id)
 
 const { getEvent, attendEvent, unattendEvent, addEventFavourite, removeEventFavourite } = useEvents()
 const { getImageUrl } = useImageUrl()
+const { error: toastError } = useToast()
 
 const authStatus = useCookie('auth_status')
 const isLoggedIn = computed(() => authStatus.value === '1')
@@ -221,6 +222,7 @@ async function toggleAttend() {
         localInterestedCount.value = was
             ? localInterestedCount.value + 1
             : Math.max(0, localInterestedCount.value - 1)
+        toastError('Nie udało się zaktualizować obecności.')
     }
 }
 
@@ -233,13 +235,18 @@ async function toggleFavorite() {
         else await addEventFavourite(eventId)
     } catch {
         isFavorite.value = was
+        toastError('Nie udało się zaktualizować ulubionych.')
     }
 }
 
 async function copyLink() {
-    await navigator.clipboard.writeText(shareUrl.value)
-    copied.value = true
-    setTimeout(() => { copied.value = false }, 2000)
+    try {
+        await navigator.clipboard.writeText(shareUrl.value)
+        copied.value = true
+        setTimeout(() => { copied.value = false }, 2000)
+    } catch {
+        toastError('Nie udało się skopiować linku.')
+    }
 }
 
 const eventConfig = useRuntimeConfig()
@@ -277,6 +284,7 @@ onMounted(async () => {
         localInterestedCount.value = event.value.interestedCount ?? 0
     } catch {
         event.value = null
+        toastError('Nie udało się załadować wydarzenia.')
     } finally {
         loading.value = false
     }

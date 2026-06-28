@@ -190,7 +190,7 @@
                                 <v-icon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
                                 <span v-else>Zastosuj</span>
                             </button>
-                            <button v-if="couponValid" class="coupon-clear-btn" @click="clearCoupon">
+                            <button v-if="couponValid" class="coupon-clear-btn" aria-label="Usuń kod promocyjny" @click="clearCoupon">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
                         </div>
@@ -251,6 +251,7 @@ const { purchasePromotion } = usePromotions()
 const { validateCoupon } = useCoupons()
 const { getImageUrl, placeholder } = useImageUrl()
 const { getPrice: getPriceApi } = usePayment()
+const { error: toastError } = useToast()
 const config = useRuntimeConfig()
 
 type MultiPlanKey = 'highlight' | 'top' | 'premium'
@@ -481,7 +482,7 @@ onMounted(async () => {
     await Promise.allSettled([
         $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/Advert/user?page=1&pageSize=20')
             .then(r => { myAdverts.value = r.items.filter(a => a.isActive !== false) })
-            .catch(() => {})
+            .catch(() => { toastError('Nie udało się załadować Twoich ogłoszeń.') })
             .finally(() => { advertsLoading.value = false }),
         ...priceQueries.map(async ({ type, days }) => {
             try {
