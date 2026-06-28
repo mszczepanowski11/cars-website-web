@@ -614,27 +614,67 @@
 import type { CarAdvert, CarEvent, PagedResult, TaxonomyItem } from '~/types'
 
 const config = useRuntimeConfig()
+const siteUrl = config.public.siteUrl as string
 useHead({
     title: 'CARIZO — Nowoczesna platforma motoryzacyjna',
     meta: [
         { name: 'description', content: 'Kupuj i sprzedawaj auta na CARIZO — zweryfikowane ogłoszenia, inteligentne narzędzia, zaufani sprzedawcy.' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: config.public.siteUrl as string },
+        { property: 'og:url', content: siteUrl },
         { property: 'og:title', content: 'CARIZO — Nowoczesna platforma motoryzacyjna' },
         { property: 'og:description', content: 'Kupuj i sprzedawaj auta na CARIZO — zweryfikowane ogłoszenia, inteligentne narzędzia, zaufani sprzedawcy.' },
-        { property: 'og:image', content: `${config.public.siteUrl}/hero-car.jpg` },
+        { property: 'og:image', content: `${siteUrl}/hero-car.jpg` },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
         { property: 'og:site_name', content: 'CARIZO' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'CARIZO — Nowoczesna platforma motoryzacyjna' },
         { name: 'twitter:description', content: 'Kupuj i sprzedawaj auta na CARIZO.' },
-        { name: 'twitter:image', content: `${config.public.siteUrl}/hero-car.jpg` },
+        { name: 'twitter:image', content: `${siteUrl}/hero-car.jpg` },
     ],
     link: [
-        { rel: 'canonical', href: config.public.siteUrl as string },
+        { rel: 'canonical', href: siteUrl },
         { rel: 'preload', as: 'image', href: '/hero-car.jpg', fetchpriority: 'high' },
-    ]
+    ],
+    script: [
+        {
+            type: 'application/ld+json',
+            innerHTML: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@graph': [
+                    {
+                        '@type': 'Organization',
+                        '@id': `${siteUrl}/#organization`,
+                        name: 'CARIZO',
+                        url: siteUrl,
+                        logo: {
+                            '@type': 'ImageObject',
+                            url: `${siteUrl}/carizo-logo.svg`,
+                        },
+                        sameAs: [
+                            config.public.socialFacebook,
+                            config.public.socialInstagram,
+                        ].filter(Boolean),
+                    },
+                    {
+                        '@type': 'WebSite',
+                        '@id': `${siteUrl}/#website`,
+                        url: siteUrl,
+                        name: 'CARIZO',
+                        publisher: { '@id': `${siteUrl}/#organization` },
+                        potentialAction: {
+                            '@type': 'SearchAction',
+                            target: {
+                                '@type': 'EntryPoint',
+                                urlTemplate: `${siteUrl}/adverts?search={search_term_string}`,
+                            },
+                            'query-input': 'required name=search_term_string',
+                        },
+                    },
+                ],
+            }),
+        },
+    ],
 })
 
 const featured = ref<CarAdvert[]>([])
