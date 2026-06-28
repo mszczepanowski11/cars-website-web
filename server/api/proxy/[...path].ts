@@ -19,6 +19,10 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
 
+    const contentLength = parseInt(getRequestHeader(event, 'content-length') ?? '0', 10)
+    if (contentLength > 25 * 1024 * 1024) {
+        throw createError({ statusCode: 413, statusMessage: 'Request body too large (max 25 MB)' })
+    }
 
     const query = getQuery(event)
 
