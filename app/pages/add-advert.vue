@@ -2196,7 +2196,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     },
 
     'ciezarowe': {
-        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
+        fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
         required: ['brand', 'model', 'year', 'mileage', 'price'],
         mileageLabel: 'Przebieg (km)',
         engineHint: 'np. 12 900 cm³',
@@ -2289,7 +2289,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     },
 
     'motocykle': {
-        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
+        fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
         required: ['brand', 'model', 'year', 'mileage', 'price'],
         mileageLabel: 'Przebieg (km)',
         engineHint: 'np. 649 cm³, 1000 cm³',
