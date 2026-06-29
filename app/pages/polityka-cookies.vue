@@ -19,7 +19,7 @@
                     <h2>Słownik pojęć</h2>
                     <ol>
                         <li><strong>Administrator</strong> – Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej pod numerem NIP: 9452331007, REGON: 544870688.</li>
-                        <li><strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.pl wraz ze wszystkimi jej podstronami i subdomenami.</li>
+                        <li><strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.eu wraz ze wszystkimi jej podstronami i subdomenami.</li>
                         <li><strong>Urządzenie Końcowe</strong> – telekomunikacyjne urządzenie końcowe (np. komputer, tablet, smartfon), za pośrednictwem którego Użytkownik uzyskuje dostęp do Serwisu.</li>
                         <li><strong>Użytkownik</strong> – każda osoba fizyczna, osoba prawna lub jednostka organizacyjna nieposiadająca osobowości prawnej, korzystająca z zasobów Serwisu.</li>
                         <li><strong>Pliki Cookies oraz technologie pokrewne</strong> – dane informatyczne, w tym unikalne pakiety tekstowo-numeryczne, unikalne identyfikatory alfanumeryczne urządzeń, skrypty programistyczne, znaczniki nawigacyjne (piksele śledzące i konwersji) oraz zasoby pamięci podręcznej przeglądarki (w tym technologie Local Storage oraz Session Storage), które są zapisywane, odczytywane i przechowywane na Urządzeniu Końcowym Użytkownika podczas interakcji z Serwisem.</li>
@@ -63,16 +63,10 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><strong>Niezbędne</strong><br>(Techniczne i Bezpieczeństwa)</td>
-                                    <td>Umożliwiają prawidłowe wyświetlanie struktury Serwisu, obsługę logowania i utrzymanie sesji Użytkownika. Obejmują skrypty do wykrywania botów, zapobiegania fałszywym rejestracjom oraz ochrony przed scrapingiem danych.</td>
-                                    <td>Sesja: do 30 dni.<br>Zapamiętanie logowania: do 30 dni.<br>Zapis zgód CMP: do 12 miesięcy.</td>
-                                    <td>Art. 398 ust. 2 pkt 2 Prawa komunikacji elektronicznej (techniczna niezbędność).</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Funkcjonalne</strong></td>
-                                    <td>Pozwalają na zapamiętanie konfiguracji wybranej przez Użytkownika, ustawień językowych i regionalnych. Odpowiadają za utrzymanie sekcji „Ulubione ogłoszenia" oraz filtrów i zapisanych wyszukiwań pojazdów dla użytkowników niezalogowanych przy użyciu technologii Local Storage.</td>
-                                    <td>Ustawienia i preferencje: do 12 miesięcy.<br>Zapisane wyszukiwania: do 12 miesięcy.<br>Local Storage: do 12 miesięcy lub do usunięcia przez Użytkownika.</td>
-                                    <td>Art. 6 ust. 1 lit. a RODO w zw. z art. 398 ust. 1 Prawa komunikacji elektronicznej.</td>
+                                    <td><strong>Niezbędne</strong><br>(Techniczne, Bezpieczeństwa i Funkcjonalne)</td>
+                                    <td>Umożliwiają prawidłowe wyświetlanie struktury Serwisu, obsługę logowania i utrzymanie sesji Użytkownika. Obejmują skrypty do wykrywania botów, zapobiegania fałszywym rejestracjom oraz ochrony przed scrapingiem danych. Zaliczają się tu również dane funkcjonalne niezbędne do świadczenia funkcji wyraźnie żądanych przez Użytkownika: zapamiętanie konfiguracji wybranej przez Użytkownika, sekcja „Ulubione ogłoszenia" oraz filtry i zapisane wyszukiwania pojazdów dla użytkowników niezalogowanych (Local Storage).</td>
+                                    <td>Sesja: do 30 dni.<br>Zapamiętanie logowania: do 30 dni.<br>Preferencje i ulubione: do 12 miesięcy lub do usunięcia przez Użytkownika.<br>Zapis zgód CMP: do 12 miesięcy.</td>
+                                    <td>Art. 398 ust. 2 pkt 2 Prawa komunikacji elektronicznej (techniczna niezbędność oraz niezbędność do świadczenia usługi wyraźnie żądanej przez Użytkownika).</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Analityczne i Wydajnościowe</strong></td>

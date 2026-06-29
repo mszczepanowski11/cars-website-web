@@ -665,7 +665,7 @@
                         <div class="hist-section-title"><v-icon icon="mdi-barcode-scan" size="16" />Identyfikacja pojazdu</div>
                         <div class="fields-grid">
                             <div class="field full-width">
-                                <label class="flabel">Numer VIN</label>
+                                <label class="flabel">Numer VIN <span class="req">*</span></label>
                                 <div class="vin-row">
                                     <input v-model="form.vin" class="finput vin-input" placeholder="Wpisz 17-znakowy numer VIN" maxlength="17"
                                         :class="{ 'input-ok': form.vin.length === 17 }" />

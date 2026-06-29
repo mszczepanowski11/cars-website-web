@@ -19,7 +19,7 @@
                     <h2>SŁOWNIK POJĘĆ</h2>
                     <ol>
                         <li><strong>Administrator</strong> – Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej pod numerem NIP: 9452331007, REGON: 544870688.</li>
-                        <li><strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.pl wraz ze wszystkimi jej podstronami i subdomenami.</li>
+                        <li><strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.eu wraz ze wszystkimi jej podstronami i subdomenami.</li>
                         <li><strong>Użytkownik Indywidualny (Użytkownik)</strong> – osoba fizyczna posiadająca pełną zdolność do czynności prawnych, będąca konsumentem w rozumieniu art. 22¹ Kodeksu cywilnego, korzystająca z zasobów Serwisu w celach niezwiązanych bezpośrednio z jej działalnością gospodarczą lub zawodową.</li>
                         <li><strong>Konto</strong> – przydzielona danemu Użytkownikowi część Serwisu, zabezpieczona hasłem, umożliwiająca zarządzanie ogłoszeniami, usługami promowania oraz komunikacją wewnętrzną.</li>
                         <li><strong>Ogłoszenie</strong> – sporządzone przez Użytkownika i publikowane w Serwisie zaproszenie do zawarcia umowy sprzedaży pojazdu mechanicznego lub części motoryzacyjnych, stanowiące informację handlową w rozumieniu przepisów prawa.</li>

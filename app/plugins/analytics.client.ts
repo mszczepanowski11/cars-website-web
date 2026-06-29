@@ -73,20 +73,30 @@ export default defineNuxtPlugin(() => {
         )
     }
 
-    function initAll() {
-        loadGTM(config.public.gtmId as string)
-        loadGA4(config.public.ga4Id as string)
-        loadMetaPixel(config.public.metaPixelId as string)
-        loadClarity(config.public.clarityId as string)
+    function parsePrefs(stored: string | null): { analytics: boolean; marketing: boolean } {
+        if (!stored) return { analytics: false, marketing: false }
+        if (stored === 'all') return { analytics: true, marketing: true }
+        if (stored === 'essential') return { analytics: false, marketing: false }
+        try { return { analytics: false, marketing: false, ...JSON.parse(stored) } }
+        catch { return { analytics: false, marketing: false } }
+    }
+
+    function initByPrefs(p: { analytics: boolean; marketing: boolean }) {
+        if (p.analytics) {
+            loadGTM(config.public.gtmId as string)
+            loadGA4(config.public.ga4Id as string)
+            loadClarity(config.public.clarityId as string)
+        }
+        if (p.marketing) {
+            loadMetaPixel(config.public.metaPixelId as string)
+        }
     }
 
     const consent = localStorage.getItem('cookieConsent')
-    if (consent === 'all') {
-        initAll()
-    }
+    initByPrefs(parsePrefs(consent))
 
     window.addEventListener('cookieConsentAccepted', () => {
-        initAll()
+        initByPrefs(parsePrefs(localStorage.getItem('cookieConsent')))
     })
 
     // Push route changes to GTM dataLayer

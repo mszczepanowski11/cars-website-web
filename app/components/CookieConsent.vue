@@ -84,9 +84,19 @@ function onOpenCookieSettings() {
     showPanel.value = true
 }
 
+function isConsentExpired(stored: string): boolean {
+    try {
+        const parsed = JSON.parse(stored)
+        if (!parsed.timestamp) return false
+        const ageMs = Date.now() - new Date(parsed.timestamp).getTime()
+        return ageMs > 365 * 24 * 60 * 60 * 1000 // 12 months per Polityka Cookies §3
+    } catch { return false }
+}
+
 onMounted(() => {
     const stored = localStorage.getItem('cookieConsent')
-    if (!stored) {
+    if (!stored || isConsentExpired(stored)) {
+        if (stored) localStorage.removeItem('cookieConsent')
         visible.value = true
     } else {
         applyConsent(parseStored(stored))
