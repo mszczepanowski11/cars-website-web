@@ -2155,8 +2155,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     },
 
     'dostawcze': {
-        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
-        required: ['brand', 'model', 'year', 'mileage', 'price'],
+        fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
+        required: ['brand', 'model', 'year', 'fuelType', 'mileage', 'price'],
         mileageLabel: 'Przebieg (km)',
         priceHint: 'Rynek: 5 000 – 200 000 zł',
         categoryNote: 'Dostawcze i busy do 3,5t. Parametry ładunkowe wpisz poniżej.',
@@ -2197,7 +2197,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
 
     'ciezarowe': {
         fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
-        required: ['brand', 'model', 'year', 'mileage', 'price'],
+        required: ['brand', 'model', 'year', 'fuelType', 'mileage', 'price'],
         mileageLabel: 'Przebieg (km)',
         engineHint: 'np. 12 900 cm³',
         priceHint: 'Rynek: 10 000 – 1 000 000 zł',
@@ -2290,7 +2290,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
 
     'motocykle': {
         fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
-        required: ['brand', 'model', 'year', 'mileage', 'price'],
+        required: ['brand', 'model', 'year', 'fuelType', 'mileage', 'price'],
         mileageLabel: 'Przebieg (km)',
         engineHint: 'np. 649 cm³, 1000 cm³',
         priceHint: 'Rynek: 1 000 – 150 000 zł',
@@ -3951,7 +3951,10 @@ async function submit() {
             if (extras.fuelConsumptionHwy != null) cleanEdit.fuelConsumptionHighway = Number(extras.fuelConsumptionHwy)
             if (extras.fuelConsumptionMix != null) cleanEdit.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
             if (extras.euroNorm) cleanEdit.euroNorm = extras.euroNorm
-            if (extras.colorFinish) cleanEdit.colorFinish = extras.colorFinish
+            if (extras.colorFinish) {
+                cleanEdit.colorFinish = extras.colorFinish
+                cleanEdit.metallicPaint = extras.colorFinish === 'metallic' || extras.colorFinish === 'pearl'
+            }
             // Subtype and subtype-specific fields
             if (form.vehicleSubtypeId != null) cleanEdit.vehicleSubtypeId = form.vehicleSubtypeId
             if (extras.operatingWeight != null) cleanEdit.operatingWeightKg = extras.operatingWeight
@@ -4013,7 +4016,7 @@ async function submit() {
                 'trimId', 'vehicleSubtypeId', 'partCategoryId', 'partSubcategoryId',
                 'oemNumber', 'manufacturerPartNumber', 'partManufacturer',
                 'registrationPlate', 'hasVatInvoice', 'isLeasingPossible',
-                'isCreditPossible', 'isExchangePossible', 'metallicPaint',
+                'isCreditPossible', 'isExchangePossible',
             ]
             const cleanBody: Record<string, unknown> = {}
             if (form.categoryId) cleanBody.vehicleCategoryId = form.categoryId
@@ -4064,7 +4067,10 @@ async function submit() {
             if (extras.fuelConsumptionHwy != null) cleanBody.fuelConsumptionHighway = Number(extras.fuelConsumptionHwy)
             if (extras.fuelConsumptionMix != null) cleanBody.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
             if (extras.euroNorm) cleanBody.euroNorm = extras.euroNorm
-            if (extras.colorFinish) cleanBody.colorFinish = extras.colorFinish
+            if (extras.colorFinish) {
+                cleanBody.colorFinish = extras.colorFinish
+                cleanBody.metallicPaint = extras.colorFinish === 'metallic' || extras.colorFinish === 'pearl'
+            }
             // Subtype and subtype-specific fields
             if (form.vehicleSubtypeId != null) cleanBody.vehicleSubtypeId = form.vehicleSubtypeId
             if (extras.operatingWeight != null) cleanBody.operatingWeightKg = extras.operatingWeight
