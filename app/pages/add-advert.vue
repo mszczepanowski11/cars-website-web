@@ -4596,6 +4596,7 @@ onBeforeUnmount(() => {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    @media (max-width: 768px) { overflow: visible; }
 }
 
 .form-hero {
@@ -4635,6 +4636,7 @@ onBeforeUnmount(() => {
     border-bottom: 1px solid $border;
     background: #070707;
     flex-shrink: 0;
+    @media (max-width: 768px) { display: none; }
 }
 
 .progress-node {
@@ -4714,6 +4716,7 @@ onBeforeUnmount(() => {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 24px;
+    @media (max-width: 600px) { grid-template-columns: 1fr; gap: 12px; }
 }
 
 .field {
@@ -5066,6 +5069,7 @@ onBeforeUnmount(() => {
     border-top: 1px solid $border;
     background: $bg;
     flex-shrink: 0;
+    @media (max-width: 600px) { padding: 14px 16px; gap: 10px; }
 }
 
 .form-actions-left { display: flex; align-items: center; gap: 14px; }
@@ -5116,6 +5120,8 @@ onBeforeUnmount(() => {
     gap: 0;
     border-top: 1px solid $border;
     flex-shrink: 0;
+    @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 480px) { display: none; }
 }
 
 .strip-feat {
