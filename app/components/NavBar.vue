@@ -111,6 +111,7 @@ onUnmounted(() => {
                     </div>
                 </div>
                 <NuxtLink to="/wydarzenia">Wydarzenia</NuxtLink>
+                <NuxtLink to="/pakiety">Dla dealerów</NuxtLink>
                 <NuxtLink to="/#about">O nas</NuxtLink>
                 <NuxtLink to="/#contact">Kontakt</NuxtLink>
             </nav>
@@ -200,6 +201,10 @@ onUnmounted(() => {
                     <NuxtLink to="/wydarzenia" class="drawer-link" @click="closeMobile">
                         <v-icon icon="mdi-calendar-star" size="18" />
                         Wydarzenia
+                    </NuxtLink>
+                    <NuxtLink to="/pakiety" class="drawer-link" @click="closeMobile">
+                        <v-icon icon="mdi-briefcase-outline" size="18" />
+                        Dla dealerów
                     </NuxtLink>
                     <NuxtLink to="/#about" class="drawer-link" @click="closeMobile">
                         <v-icon icon="mdi-information-outline" size="18" />
