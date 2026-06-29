@@ -1223,7 +1223,7 @@ onMounted(async () => {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 35%;
+    object-position: 65% 35%;
 }
 
 .hfs-fade {
