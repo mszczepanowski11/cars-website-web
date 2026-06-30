@@ -236,7 +236,10 @@ async function buyPlan(plan: SubscriptionPlan) {
     buyLoading.value = plan.tier
     try {
         const result: any = await buySubscription(plan.tier)
-        if (result?.paymentUrl && result?.formFields) {
+        if (result?.adminActivated) {
+            showToast('Pakiet aktywowany!', 'success')
+            subscription.value = await getMySubscription()
+        } else if (result?.paymentUrl && result?.formFields) {
             // Create and submit iMoje form
             const form = document.createElement('form')
             form.method = 'POST'
