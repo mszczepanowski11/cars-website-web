@@ -1,4 +1,6 @@
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
+    rateLimit(event, 'stats-home', 60, 60_000) // 60 per minute per IP
+
     const base = useRuntimeConfig().public.apiBase.replace(/\/$/, '')
 
     const [advertsR, eventsR, adminR] = await Promise.allSettled([

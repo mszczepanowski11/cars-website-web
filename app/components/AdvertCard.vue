@@ -99,10 +99,10 @@ const monthlyRate = computed(() => {
             </span>
             <span v-if="isNew && !resolvedBadge" class="card-badge card-badge--new">NOWE</span>
             <div class="card-hover-actions">
-                <button class="card-action-btn" title="Szybki podgląd" @click="onQuickView">
+                <button class="card-action-btn" aria-label="Szybki podgląd" @click="onQuickView">
                     <v-icon icon="mdi-eye-outline" size="16" />
                 </button>
-                <button v-if="!hideCompare" class="card-action-btn" :class="{ active: isCompared(advert.id) }" title="Porównaj" @click="onCompare">
+                <button v-if="!hideCompare" class="card-action-btn" :class="{ active: isCompared(advert.id) }" :aria-label="isCompared(advert.id) ? 'Usuń z porównania' : 'Dodaj do porównania'" @click="onCompare">
                     <v-icon icon="mdi-compare" size="16" />
                 </button>
             </div>
@@ -232,10 +232,15 @@ const monthlyRate = computed(() => {
         opacity: 1;
         transform: translateY(0);
     }
+
+    @media (hover: none) {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .card-action-btn {
-    width: 32px; height: 32px;
+    width: 44px; height: 44px;
     border-radius: 50%;
     background: rgba(0,0,0,0.72);
     backdrop-filter: blur(6px);
@@ -254,8 +259,8 @@ const monthlyRate = computed(() => {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(6px);

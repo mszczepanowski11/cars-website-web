@@ -3,6 +3,13 @@ export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
     const body = await readBody(event)
 
+    if (!body || typeof body !== 'object') {
+        throw createError({ statusCode: 400, statusMessage: 'Invalid body' })
+    }
+    if (typeof body.credential !== 'string' || body.credential.length < 10 || body.credential.length > 4096) {
+        throw createError({ statusCode: 400, statusMessage: 'Invalid credential' })
+    }
+
     try {
         const data = await $fetch<{ token: string; refreshToken?: string }>(
             `${config.public.apiBase}api/Auth/google`,
@@ -29,9 +36,12 @@ export default defineEventHandler(async (event) => {
         } catch { /* ignore */ }
         return { success: true }
     } catch (err: any) {
+        const displayMsg = 'Logowanie przez Google nie powiodło się.'
         throw createError({
-            statusCode: err.response?.status ?? 401,
-            statusMessage: err.data ?? 'Logowanie przez Google nie powiodło się.'
+            statusCode: err.response?.status ?? err.status ?? 401,
+            statusMessage: 'Unauthorized',
+            message: displayMsg,
+            data: { message: displayMsg }
         })
     }
 })

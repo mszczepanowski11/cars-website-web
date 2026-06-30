@@ -45,13 +45,13 @@ async function subscribeNewsletter() {
       <div class="footer-grid">
 
         <div class="footer-brand">
-          <img src="/carizo-logo.svg" alt="CARIZO" class="footer-logo" />
+          <img src="/carizo-logo.svg" alt="CARIZO" class="footer-logo" loading="lazy" />
           <p class="footer-desc">Nowoczesna platforma motoryzacyjna dla ludzi, którzy kochają samochody.</p>
           <div class="footer-social">
-            <a v-if="social.tiktok" :href="social.tiktok" target="_blank" rel="noopener noreferrer" class="social-link" title="TikTok"><v-icon icon="mdi-music-note" size="18" /></a>
-            <a v-if="social.instagram" :href="social.instagram" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram"><v-icon icon="mdi-instagram" size="18" /></a>
-            <a v-if="social.facebook" :href="social.facebook" target="_blank" rel="noopener noreferrer" class="social-link" title="Facebook"><v-icon icon="mdi-facebook" size="18" /></a>
-            <a v-if="social.youtube" :href="social.youtube" target="_blank" rel="noopener noreferrer" class="social-link" title="YouTube"><v-icon icon="mdi-youtube" size="18" /></a>
+            <a v-if="social.tiktok" :href="social.tiktok" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na TikTok"><v-icon icon="mdi-music-note" size="18" /></a>
+            <a v-if="social.instagram" :href="social.instagram" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na Instagram"><v-icon icon="mdi-instagram" size="18" /></a>
+            <a v-if="social.facebook" :href="social.facebook" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na Facebook"><v-icon icon="mdi-facebook" size="18" /></a>
+            <a v-if="social.youtube" :href="social.youtube" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na YouTube"><v-icon icon="mdi-youtube" size="18" /></a>
           </div>
         </div>
 
@@ -109,8 +109,8 @@ async function subscribeNewsletter() {
           <p v-if="newsletterErr" class="fn-err">{{ newsletterErr }}</p>
         </template>
         <div v-else class="fn-ok">
-          <v-icon icon="mdi-check-circle-outline" size="18" />
-          Zapisano! Dziękujemy.
+          <v-icon icon="mdi-email-check-outline" size="18" />
+          Sprawdź skrzynkę email i potwierdź zapis — link ważny 24h.
         </div>
       </div>
     </div>

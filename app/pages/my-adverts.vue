@@ -27,7 +27,7 @@
                 <div class="my-adverts-list">
                     <div v-for="a in adverts" :key="a.id" class="my-advert-row">
                         <NuxtLink :to="`/advert/${a.id}`" class="row-img-wrap">
-                            <img :src="mainImage(a)" :alt="a.title" class="row-img" />
+                            <img :src="mainImage(a)" :alt="a.title" class="row-img" loading="lazy" />
                             <span v-if="a.soldAt" class="overlay-badge sold-badge">SPRZEDANE</span>
                             <span v-else-if="a.badge" class="overlay-badge promo-badge">{{ a.badge }}</span>
                         </NuxtLink>
@@ -61,17 +61,17 @@
                             </div>
 
                             <div class="row-actions">
-                                <NuxtLink :to="`/advert/${a.id}`" class="act-btn">
+                                <NuxtLink :to="`/advert/${a.id}`" class="act-btn" :aria-label="`Podgląd: ${a.title}`">
                                     <v-icon icon="mdi-eye-outline" size="15" />
                                 </NuxtLink>
-                                <NuxtLink :to="`/add-advert?edit=${a.id}`" class="act-btn">
+                                <NuxtLink :to="`/add-advert?edit=${a.id}`" class="act-btn" :aria-label="`Edytuj: ${a.title}`">
                                     <v-icon icon="mdi-pencil-outline" size="15" />
                                 </NuxtLink>
                                 <NuxtLink
                                     v-if="!a.soldAt && a.isActive"
                                     :to="`/promote-advert/${a.id}`"
                                     class="act-btn act-promote"
-                                    title="Wyróżnij ogłoszenie"
+                                    :aria-label="`Wyróżnij: ${a.title}`"
                                 >
                                     <v-icon icon="mdi-star-outline" size="15" />
                                 </NuxtLink>
@@ -79,7 +79,7 @@
                                     v-if="!a.soldAt && !a.isActive"
                                     class="act-btn act-reactivate"
                                     :disabled="reactivateLoading === a.id"
-                                    title="Reaktywuj ogłoszenie"
+                                    :aria-label="`Reaktywuj: ${a.title}`"
                                     @click="reactivateAdvert(a)"
                                 >
                                     <v-icon v-if="reactivateLoading === a.id" icon="mdi-loading" size="15" class="spin" />
@@ -89,7 +89,7 @@
                                     v-if="!a.soldAt && (a.isActive || a.isHidden)"
                                     class="act-btn act-sold"
                                     :disabled="soldLoading === a.id"
-                                    title="Oznacz jako sprzedane"
+                                    :aria-label="`Oznacz jako sprzedane: ${a.title}`"
                                     @click="markAsSold(a)"
                                 >
                                     <v-icon v-if="soldLoading === a.id" icon="mdi-loading" size="15" class="spin" />
@@ -98,7 +98,7 @@
                                 <button
                                     class="act-btn act-delete"
                                     :disabled="deleteLoading === a.id"
-                                    title="Usuń ogłoszenie"
+                                    :aria-label="`Usuń: ${a.title}`"
                                     @click="openDeleteModal(a)"
                                 >
                                     <v-icon v-if="deleteLoading === a.id" icon="mdi-loading" size="15" class="spin" />
@@ -109,11 +109,11 @@
                     </div>
                 </div>
                 <div v-if="totalPages > 1" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" @click="load(page - 1)">
+                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="load(page - 1)">
                         <v-icon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                    <button class="page-btn" :disabled="page >= totalPages" @click="load(page + 1)">
+                    <button class="page-btn" :disabled="page >= totalPages" aria-label="Następna strona" @click="load(page + 1)">
                         <v-icon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
@@ -195,6 +195,7 @@ definePageMeta({ middleware: 'auth' })
 useHead({ title: 'Moje ogłoszenia — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getImageUrl } = useImageUrl()
+const { success: toastSuccess, error: toastError } = useToast()
 
 const adverts = ref<CarAdvert[]>([])
 const total = ref(0)
@@ -245,10 +246,12 @@ async function load(p: number = page.value) {
     loading.value = true
     try {
         const r = await $fetch<PagedResult<CarAdvert>>(
-            `/api/proxy/api/Advert/user?page=${p}&pageSize=${pageSize}`
+            `/api/proxy/api/listings/user?page=${p}&pageSize=${pageSize}`
         )
         adverts.value = r.items
         total.value = r.totalCount
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować ogłoszeń.')
     } finally {
         loading.value = false
     }
@@ -262,13 +265,13 @@ async function doMarkSold() {
     if (!confirmAdvert.value) return
     soldLoading.value = confirmAdvert.value.id
     try {
-        await $fetch(`/api/proxy/api/Advert/${confirmAdvert.value.id}/sold`, { method: 'POST', body: {} })
+        await $fetch(`/api/proxy/api/listings/${confirmAdvert.value.id}/sold`, { method: 'POST', body: {} })
         const a = adverts.value.find(x => x.id === confirmAdvert.value?.id)
         if (a) a.soldAt = new Date().toISOString()
         confirmAdvert.value = null
+        toastSuccess('Ogłoszenie zostało oznaczone jako sprzedane.')
     } catch (err: any) {
-        console.error(err)
-        alert(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
+        toastError(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
     }
     finally { soldLoading.value = null }
 }
@@ -276,7 +279,7 @@ async function doMarkSold() {
 async function reactivateAdvert(a: CarAdvert) {
     reactivateLoading.value = a.id
     try {
-        await $fetch(`/api/proxy/api/Advert/${a.id}/publish`, { method: 'POST', body: {} })
+        await $fetch(`/api/proxy/api/listings/${a.id}/publish`, { method: 'POST', body: {} })
         const found = adverts.value.find(x => x.id === a.id)
         if (found) {
             found.isActive = true
@@ -285,9 +288,9 @@ async function reactivateAdvert(a: CarAdvert) {
             thirtyDays.setDate(thirtyDays.getDate() + 30)
             found.expiresAt = thirtyDays.toISOString()
         }
+        toastSuccess('Ogłoszenie zostało opublikowane.')
     } catch (err: any) {
-        console.error(err)
-        alert(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
+        toastError(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
     }
     finally { reactivateLoading.value = null }
 }
@@ -303,15 +306,15 @@ async function doDelete() {
     deleteLoading.value = a.id
     try {
         if (markSoldOnDelete.value && !a.soldAt) {
-            await $fetch(`/api/proxy/api/Advert/${a.id}/sold`, { method: 'POST', body: {} }).catch(() => {})
+            await $fetch(`/api/proxy/api/listings/${a.id}/sold`, { method: 'POST', body: {} }).catch(() => {})
         }
-        await $fetch(`/api/proxy/api/Advert/${a.id}`, { method: 'DELETE' })
+        await $fetch(`/api/proxy/api/listings/${a.id}`, { method: 'DELETE' })
         adverts.value = adverts.value.filter(x => x.id !== a.id)
         total.value = Math.max(0, total.value - 1)
         deleteAdvert.value = null
+        toastSuccess('Ogłoszenie zostało usunięte.')
     } catch (err: any) {
-        console.error(err)
-        alert(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
+        toastError(err?.data?.message || err?.message || 'Wystąpił błąd. Spróbuj ponownie.')
     }
     finally { deleteLoading.value = null }
 }

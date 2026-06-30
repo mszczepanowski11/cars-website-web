@@ -1,12 +1,12 @@
 <template>
     <div v-if="modelValue" class="modal-backdrop" @click.self="$emit('update:modelValue', false)">
-        <div class="report-modal">
+        <div class="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
             <div class="modal-header">
-                <div class="modal-title">
+                <div id="report-modal-title" class="modal-title">
                     <v-icon icon="mdi-flag-outline" size="18" class="modal-icon" />
                     Zgłoś {{ targetType === 'Advert' ? 'ogłoszenie' : 'użytkownika' }}
                 </div>
-                <button class="modal-close" @click="$emit('update:modelValue', false)">
+                <button class="modal-close" aria-label="Zamknij" @click="$emit('update:modelValue', false)">
                     <v-icon icon="mdi-close" size="18" />
                 </button>
             </div>

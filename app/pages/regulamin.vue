@@ -19,7 +19,7 @@
                     <h2>SŁOWNIK POJĘĆ</h2>
                     <ol>
                         <li><strong>Administrator</strong> – Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej pod numerem NIP: 9452331007, REGON: 544870688.</li>
-                        <li><strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.pl wraz ze wszystkimi jej podstronami i subdomenami.</li>
+                        <li><strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.eu wraz ze wszystkimi jej podstronami i subdomenami.</li>
                         <li><strong>Użytkownik Indywidualny (Użytkownik)</strong> – osoba fizyczna posiadająca pełną zdolność do czynności prawnych, będąca konsumentem w rozumieniu art. 22¹ Kodeksu cywilnego, korzystająca z zasobów Serwisu w celach niezwiązanych bezpośrednio z jej działalnością gospodarczą lub zawodową.</li>
                         <li><strong>Konto</strong> – przydzielona danemu Użytkownikowi część Serwisu, zabezpieczona hasłem, umożliwiająca zarządzanie ogłoszeniami, usługami promowania oraz komunikacją wewnętrzną.</li>
                         <li><strong>Ogłoszenie</strong> – sporządzone przez Użytkownika i publikowane w Serwisie zaproszenie do zawarcia umowy sprzedaży pojazdu mechanicznego lub części motoryzacyjnych, stanowiące informację handlową w rozumieniu przepisów prawa.</li>
@@ -60,6 +60,8 @@
                         <li>Serwis nie stosuje mechanizmów automatycznego odnawiania Ogłoszeń ani automatycznego pobierania opłat finansowych z kont bankowych lub kart Użytkownika bez jego wyraźnej, każdorazowej i uprzedniej zgody.</li>
                         <li>Ogłoszenie jest ściśle i nierozerwalnie przypisane do jednego, konkretnego pojazdu lub zestawu części zdefiniowanego w momencie jego utworzenia. Zabrania się zmiany przedmiotu Ogłoszenia w trakcie jego emisji (w tym poprzez edycję parametrów, opisu lub zdjęć w celu zaoferowania innego pojazdu w ramach tego samego ogłoszenia).</li>
                         <li>W przypadku intencjonalnego usunięcia Ogłoszenia przez Użytkownika przed zakończeniem standardowego lub przedłużonego okresu publikacji (np. w wyniku wcześniejszej sprzedaży pojazdu), wniesione opłaty za usługi promowania nie podlegają zwrotowi ani proporcjonalnemu rozliczeniu, z zastrzeżeniem praw konsumenckich opisanych w §6.</li>
+                        <li>Płatności za odpłatne usługi promowania realizowane są za pośrednictwem zewnętrznego systemu płatności <strong>imoje</strong>, obsługiwanego przez <strong>ING Bank Śląski S.A.</strong> z siedzibą w Katowicach. Koszty płatności określone są w aktualnym cenniku operatora. CARIZO nie przechowuje danych kart płatniczych — są one przetwarzane wyłącznie przez ING Bank Śląski S.A.</li>
+                        <li>Koszty dostawy towarów w transakcjach zawieranych pomiędzy Użytkownikami Serwisu są ustalane bezpośrednio między stronami transakcji (sprzedającym a kupującym). CARIZO, jako platforma pośrednicząca (marketplace C2C), nie jest stroną tych transakcji i nie pobiera opłat od kupujących z tytułu dostawy.</li>
                     </ol>
                 </section>
 
@@ -170,7 +172,7 @@
                         <li>CARIZO zastrzega sobie prawo do zmiany niniejszych warunków z ważnych przyczyn technicznych, prawnych lub organizacyjnych. O zmianach zarejestrowani Użytkownicy zostaną powiadomieni drogą mailową z zachowaniem 14-dniowego okresu wypowiedzenia.</li>
                         <li>W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego, ustawy o prawach konsumenta oraz ustawy z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej.</li>
                         <li><strong>Prawo właściwe:</strong> Niniejszy Regulamin oraz wszelkie stosunki prawne wynikające z korzystania z Serwisu podlegają prawu Rzeczypospolitej Polskiej.</li>
-                        <li><strong>Jurysdykcja:</strong> Wszelkie spory wynikłe z niniejszego Regulaminu lub z korzystania z Serwisu będą rozstrzygane przez właściwy sąd powszechny Rzeczypospolitej Polskiej. W stosunkach z konsumentami właściwy miejscowo jest sąd według siedziby pozwanego lub sąd miejsca zamieszkania konsumenta, według wyboru powoda. Konsumenci mogą korzystać z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń, w tym z platformy ODR dostępnej pod adresem: <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">ec.europa.eu/consumers/odr</a>.</li>
+                        <li><strong>Jurysdykcja:</strong> Wszelkie spory wynikłe z niniejszego Regulaminu lub z korzystania z Serwisu będą rozstrzygane przez właściwy sąd powszechny Rzeczypospolitej Polskiej. W stosunkach z konsumentami właściwy miejscowo jest sąd według siedziby pozwanego lub sąd miejsca zamieszkania konsumenta, według wyboru powoda. Konsumenci mogą korzystać z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń, w tym z platformy ODR dostępnej pod adresem: <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">ec.europa.eu/consumers/odr</a>. CARIZO informuje, że nie przystąpił do żadnego systemu pozasądowego rozwiązywania sporów konsumenckich w rozumieniu ustawy z dnia 23 września 2016 r. o pozasądowym rozwiązywaniu sporów konsumenckich (Dz. U. poz. 1823) — udział CARIZO w takim postępowaniu nie jest obowiązkowy. Konsument ma jednak prawo skorzystać z bezpłatnej pomocy powiatowych lub miejskich rzeczników praw konsumentów oraz Inspekcji Handlowej.</li>
                         <li>Treść niniejszych postanowień wchodzi w życie z dniem 23.06.2026.</li>
                     </ol>
                 </section>
@@ -193,10 +195,17 @@
 </template>
 
 <script setup lang="ts">
-useHead({
+const regulaminConfig = useRuntimeConfig()
+useSeoMeta({
     title: 'Regulamin — CARIZO',
-    meta: [{ name: 'description', content: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.' }]
+    description: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.',
+    ogType: 'website',
+    ogUrl: `${regulaminConfig.public.siteUrl}/regulamin`,
+    ogTitle: 'Regulamin — CARIZO',
+    ogDescription: 'Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.',
+    ogSiteName: 'CARIZO',
 })
+useHead({ link: [{ rel: 'canonical', href: `${regulaminConfig.public.siteUrl}/regulamin` }] })
 </script>
 
 <style lang="scss" scoped>

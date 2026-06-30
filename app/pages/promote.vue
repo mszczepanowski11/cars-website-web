@@ -71,7 +71,7 @@
                         :class="{ selected: selectedAdvertId === a.id }"
                         @click="selectedAdvertId = a.id"
                     >
-                        <img :src="getPickerImage(a)" class="picker-img" :alt="a.title" />
+                        <img :src="getPickerImage(a)" class="picker-img" :alt="a.title" loading="lazy" />
                         <div class="picker-info">
                             <div class="picker-name">{{ a.brand?.name }} {{ a.model?.name }}</div>
                             <div class="picker-meta">{{ a.year }} • {{ Number(a.price).toLocaleString('pl') }} zł</div>
@@ -212,7 +212,7 @@
                                 <v-icon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
                                 <span v-else>Zastosuj</span>
                             </button>
-                            <button v-if="couponValid" class="coupon-clear-btn" @click="clearCoupon">
+                            <button v-if="couponValid" class="coupon-clear-btn" aria-label="Usuń kod promocyjny" @click="clearCoupon">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
                         </div>
@@ -264,6 +264,7 @@
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Promuj ogłoszenie — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 import type { CarAdvert, CouponValidation } from '~/types'
 
@@ -273,6 +274,7 @@ const { validateCoupon } = useCoupons()
 const { getImageUrl, placeholder } = useImageUrl()
 const { getPrice: getPriceApi } = usePayment()
 const { fetchProfile } = useUser()
+const { error: toastError } = useToast()
 const config = useRuntimeConfig()
 
 type MultiPlanKey = 'highlight' | 'top' | 'premium'
@@ -474,7 +476,7 @@ async function doPurchase() {
             selectedPlan.value = null
         } else {
             // Ensure advert is published before payment redirect
-            await $fetch(`/api/proxy/api/Advert/${selectedAdvertId.value}/publish`, { method: 'POST', body: {} }).catch(() => {})
+            await $fetch(`/api/proxy/api/listings/${selectedAdvertId.value}/publish`, { method: 'POST', body: {} }).catch(() => {})
 
             const siteUrl = config.public.siteUrl
             const body: Record<string, unknown> = {
@@ -520,9 +522,9 @@ onMounted(async () => {
         { type: 'Premium', days: 7 }, { type: 'Premium', days: 14 }, { type: 'Premium', days: 30 },
     ]
     await Promise.allSettled([
-        $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/Advert/user?page=1&pageSize=20')
+        $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/listings/user?page=1&pageSize=20')
             .then(r => { myAdverts.value = r.items.filter(a => a.isActive !== false) })
-            .catch(() => {})
+            .catch(() => { toastError('Nie udało się załadować Twoich ogłoszeń.') })
             .finally(() => { advertsLoading.value = false }),
         ...priceQueries.map(async ({ type, days }) => {
             try {

@@ -20,6 +20,7 @@
                         src="/hero-car.jpg"
                         alt=""
                         class="hero-car-img"
+                        fetchpriority="high"
                     />
                     <div class="hero-img-fade" />
                 </div>
@@ -72,6 +73,7 @@
                             :src="catImages[cat.slug] ?? fallbackImg"
                             :alt="cat.name"
                             class="cat-bg-img"
+                            loading="lazy"
                         />
                         <div class="cat-gradient" />
                         <div class="cat-top">
@@ -115,6 +117,8 @@ useHead({
         { property: 'og:title', content: 'Kategorie — CARIZO' },
         { property: 'og:description', content: 'Przeglądaj ogłoszenia motoryzacyjne na CARIZO według kategorii.' },
         { property: 'og:image', content: `${config.public.siteUrl}/hero-car.jpg` },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
         { property: 'og:site_name', content: 'CARIZO' },
         { name: 'twitter:card', content: 'summary_large_image' },
     ],

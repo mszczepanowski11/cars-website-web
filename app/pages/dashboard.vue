@@ -202,6 +202,7 @@
                                 :src="getImageUrl(a.images?.find(i => i.isMain)?.url)"
                                 class="recent-mini-img"
                                 :alt="a.title"
+                                loading="lazy"
                             />
                             <div class="recent-mini-body">
                                 <div class="recent-mini-name">{{ a.brand?.name }} {{ a.model?.name }}</div>
@@ -236,7 +237,7 @@
                         <div v-for="a in filteredAdverts" :key="a.id" class="advert-card">
                             <div class="adcard-img-wrap">
                                 <span class="adcard-badge" :class="advertBadgeClass(a)">{{ advertBadgeLabel(a) }}</span>
-                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" />
+                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" loading="lazy" />
                                 <button class="adcard-delete-btn" :disabled="deleteLoading === a.id" title="Usuń"
                                     @click.stop="confirmDelete(a.id)">
                                     <v-icon v-if="deleteLoading === a.id" icon="mdi-loading" size="14" class="spin" />
@@ -358,7 +359,7 @@
                             class="spin" /></div>
                     <div v-else-if="followedAdverts.length" class="advert-follow-list">
                         <div v-for="fa in followedAdverts" :key="fa.id" class="follow-advert-row">
-                            <img :src="getImageUrl(fa.mainImageUrl)" class="follow-advert-img" :alt="fa.advertTitle" />
+                            <img :src="getImageUrl(fa.mainImageUrl)" class="follow-advert-img" :alt="fa.advertTitle" loading="lazy" />
                             <div class="follow-advert-info">
                                 <div class="follow-advert-title">{{ fa.advertTitle }}</div>
                                 <div class="follow-advert-meta">
@@ -407,7 +408,7 @@
                             <div class="notif-time">{{ formatDate(n.createdAt) }}</div>
                         </div>
                         <div v-if="!n.isRead" class="notif-dot" />
-                        <button class="notif-del" @click.stop="deleteNotif(n.id)">
+                        <button class="notif-del" aria-label="Usuń powiadomienie" @click.stop="deleteNotif(n.id)">
                             <v-icon icon="mdi-close" size="14" />
                         </button>
                     </div>
@@ -484,7 +485,7 @@
                             <NuxtLink :to="searchUrl(s.criteria)" class="btn-search-run">
                                 <v-icon icon="mdi-magnify" size="14" />Szukaj
                             </NuxtLink>
-                            <button class="btn-icon-danger" @click="deleteSearch(s.id)"><v-icon icon="mdi-delete-outline" size="16" /></button>
+                            <button class="btn-icon-danger" aria-label="Usuń wyszukiwanie" @click="deleteSearch(s.id)"><v-icon icon="mdi-delete-outline" size="16" /></button>
                         </div>
                     </div>
                 </div>
@@ -545,25 +546,25 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>Imię *</label>
-                            <input v-model="profileForm.name" class="form-input" required />
+                            <input v-model="profileForm.name" class="form-input" autocomplete="given-name" required />
                         </div>
                         <div class="form-group">
                             <label>Nazwisko *</label>
-                            <input v-model="profileForm.surname" class="form-input" required />
+                            <input v-model="profileForm.surname" class="form-input" autocomplete="family-name" required />
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Numer telefonu</label>
-                        <input v-model="profileForm.phoneNumber" class="form-input" />
+                        <input v-model="profileForm.phoneNumber" class="form-input" type="tel" inputmode="tel" autocomplete="tel" />
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Miasto</label>
-                            <input v-model="profileForm.city" class="form-input" placeholder="np. Warszawa" />
+                            <input v-model="profileForm.city" class="form-input" autocomplete="address-level2" placeholder="np. Warszawa" />
                         </div>
                         <div class="form-group">
                             <label>Województwo</label>
-                            <input v-model="profileForm.region" class="form-input" placeholder="np. mazowieckie" />
+                            <input v-model="profileForm.region" class="form-input" autocomplete="address-level1" placeholder="np. mazowieckie" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -796,6 +797,7 @@ const { getFollowedAdverts, getFollowers } = useFollow()
 const { getSavedSearches, deleteSearch: deleteSavedSearch, saveSearch } = useSavedSearches()
 const { logout: authLogout } = useAuth()
 const { getImageUrl } = useImageUrl()
+const { success: toastSuccess, error: toastError } = useToast()
 const { observe: observeCount } = useCountUp()
 const { getIds: getRecentIds } = useRecentlyViewed()
 
@@ -945,7 +947,7 @@ async function goReviews() {
         try {
             const r = await getMyReceivedReviews()
             receivedReviews.value = r.items
-        } catch { } finally { reviewsLoading.value = false }
+        } catch { toastError('Nie udało się załadować opinii.') } finally { reviewsLoading.value = false }
     }
 }
 
@@ -998,25 +1000,28 @@ async function doDelete() {
     const id = deleteConfirmId.value
     deleteLoading.value = id
     try {
-        await $fetch(`/api/proxy/api/Advert/${id}`, { method: 'DELETE' })
+        await $fetch(`/api/proxy/api/listings/${id}`, { method: 'DELETE' })
         myAdverts.value = myAdverts.value.filter(a => a.id !== id)
         deleteConfirmId.value = null
         advertTotal.value = Math.max(0, advertTotal.value - 1)
         if (stats.value) stats.value.totalAdverts = Math.max(0, stats.value.totalAdverts - 1)
-    } catch { } finally { deleteLoading.value = null }
+        toastSuccess('Ogłoszenie zostało usunięte.')
+    } catch (e: any) {
+        toastError(e?.data?.message || e?.message || 'Nie udało się usunąć ogłoszenia.')
+    } finally { deleteLoading.value = null }
 }
 
 async function loadMoreAdverts() {
     loadingMore.value = true
     advertPage.value++
     try {
-        const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>(`/api/proxy/api/Advert/user?page=${advertPage.value}&pageSize=8`)
+        const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>(`/api/proxy/api/listings/user?page=${advertPage.value}&pageSize=8`)
         myAdverts.value.push(...r.items)
-    } catch { } finally { loadingMore.value = false }
+    } catch { toastError('Nie udało się załadować kolejnych ogłoszeń.') } finally { loadingMore.value = false }
 }
 
 async function markAllRead() {
-    try { await markAllAsRead() } catch { }
+    try { await markAllAsRead() } catch { /* non-critical — notifications still visible */ }
 }
 
 async function onNotifClick(n: Notification) {
@@ -1025,14 +1030,14 @@ async function onNotifClick(n: Notification) {
 }
 
 async function deleteNotif(id: number) {
-    try { await deleteNotification(id) } catch { }
+    try { await deleteNotification(id) } catch { toastError('Nie udało się usunąć powiadomienia.') }
 }
 
 async function deleteSearch(id: number) {
     try {
         await deleteSavedSearch(id)
         savedSearches.value = savedSearches.value.filter(s => s.id !== id)
-    } catch { }
+    } catch { toastError('Nie udało się usunąć wyszukiwania.') }
 }
 
 async function createSearch() {
@@ -1162,7 +1167,9 @@ async function doDeleteAccount() {
     try {
         await deleteAccount()
         await authLogout()
-    } catch { }
+    } catch (e: any) {
+        toastError(e?.data?.message || 'Nie udało się usunąć konta. Spróbuj ponownie lub skontaktuj się z pomocą.')
+    }
 }
 
 // Load overview tab data lazily
@@ -1172,21 +1179,21 @@ watch(activeTab, async (tab) => {
         try {
             const r = await getMyReceivedReviews()
             receivedReviews.value = r.items
-        } catch { } finally { reviewsLoading.value = false }
+        } catch { toastError('Nie udało się załadować opinii.') } finally { reviewsLoading.value = false }
     }
     if (tab === 'followers' && followers.value.length === 0) {
         followersLoading.value = true
         try {
             const r = await getFollowers()
             followers.value = r.items
-        } catch { } finally { followersLoading.value = false }
+        } catch { toastError('Nie udało się załadować obserwujących.') } finally { followersLoading.value = false }
     }
     if (tab === 'following' && followedAdverts.value.length === 0) {
         followingLoading.value = true
         try {
             const r = await getFollowedAdverts()
             followedAdverts.value = r.items
-        } catch { } finally { followingLoading.value = false }
+        } catch { toastError('Nie udało się załadować obserwowanych ogłoszeń.') } finally { followingLoading.value = false }
     }
 })
 
@@ -1196,14 +1203,14 @@ watch(section, async (s) => {
         try {
             const r = await getSavedSearches()
             savedSearches.value = r.items
-        } catch { } finally { searchesLoading.value = false }
+        } catch { toastError('Nie udało się załadować zapisanych wyszukiwań.') } finally { searchesLoading.value = false }
     }
 })
 
 onMounted(async () => {
     try {
         ;[profile.value, stats.value] = await Promise.all([fetchProfile(), fetchStats()])
-        const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/Advert/user?page=1&pageSize=8')
+        const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/listings/user?page=1&pageSize=8')
         myAdverts.value = r.items
         advertTotal.value = r.totalCount
         // Lazy load notifications count
@@ -1212,13 +1219,13 @@ onMounted(async () => {
         if (profile.value?.accountType === 'Business') {
             getMySubscription().then(s => { subscription.value = s }).catch(() => { })
         }
-    } catch { } finally { loading.value = false }
+    } catch { toastError('Nie udało się załadować danych profilu.') } finally { loading.value = false }
 
     // Recently viewed (from localStorage — fire after loading so it doesn't block)
     const ids = getRecentIds().slice(0, 5)
     if (ids.length) {
         const fetched = await Promise.all(
-            ids.map(id => $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`).catch(() => null))
+            ids.map(id => $fetch<CarAdvert>(`/api/proxy/api/listings/${id}`).catch(() => null))
         )
         const ordered = ids.map(id => fetched.find(a => a?.id === id)).filter(Boolean) as CarAdvert[]
         recentAdverts.value = ordered

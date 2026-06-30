@@ -105,11 +105,11 @@
                 </div>
 
                 <div v-if="totalCount > pageSize" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" @click="goPage(page - 1)">
+                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)">
                         <v-icon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                    <button class="page-btn" :disabled="page === totalPages" @click="goPage(page + 1)">
+                    <button class="page-btn" :disabled="page === totalPages" aria-label="Następna strona" @click="goPage(page + 1)">
                         <v-icon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
@@ -125,6 +125,7 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 import type { AdminReport } from '~/types'
 
 const { getReports, resolveReport: resolveReportApi, rejectReport: rejectReportApi } = useAdmin()
+const { error: toastError, success: toastSuccess } = useToast()
 
 const reports = ref<AdminReport[]>([])
 const loading = ref(true)
@@ -175,7 +176,6 @@ async function fetchReports() {
                 search: search.value || undefined
             }
         })
-        console.log('[Admin/Reports] raw response:', JSON.stringify(raw).slice(0, 600))
         let items: AdminReport[] = []
         let count = 0
         if (Array.isArray(raw)) {
@@ -196,7 +196,6 @@ async function fetchReports() {
         reports.value = items
         totalCount.value = count
     } catch (e: any) {
-        console.error('[Admin/Reports] fetch failed:', e)
         error.value = e?.data?.message ?? e?.data?.title ?? e?.message ?? 'Błąd podczas ładowania zgłoszeń.'
         reports.value = []
         totalCount.value = 0
@@ -209,8 +208,9 @@ async function resolveReport(id: number) {
         await resolveReportApi(id)
         const r = reports.value.find(x => x.id === id)
         if (r) r.status = 'Resolved'
+        toastSuccess('Zgłoszenie zostało rozwiązane.')
     } catch (e: any) {
-        console.error('[Admin/Reports] resolve failed:', e)
+        toastError(e?.data?.message || 'Nie udało się rozwiązać zgłoszenia.')
     } finally { actionLoading.value = null }
 }
 
@@ -220,8 +220,9 @@ async function rejectReport(id: number) {
         await rejectReportApi(id)
         const r = reports.value.find(x => x.id === id)
         if (r) r.status = 'Rejected'
+        toastSuccess('Zgłoszenie zostało odrzucone.')
     } catch (e: any) {
-        console.error('[Admin/Reports] reject failed:', e)
+        toastError(e?.data?.message || 'Nie udało się odrzucić zgłoszenia.')
     } finally { actionLoading.value = null }
 }
 

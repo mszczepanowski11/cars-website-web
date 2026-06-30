@@ -146,6 +146,8 @@
 definePageMeta({ middleware: 'admin' })
 useSeoMeta({ robots: 'noindex, nofollow' })
 
+const { error: toastError, success: toastSuccess } = useToast()
+
 const view = ref<'features' | 'categories'>('features')
 const featureSearch = ref('')
 const featureCatFilter = ref<number | ''>('')
@@ -179,7 +181,10 @@ async function loadFeatures() {
         if (featureSearch.value) q.search = featureSearch.value
         if (featureCatFilter.value) q.categoryId = featureCatFilter.value
         features.value = await $fetch('/api/proxy/api/Admin/features', { query: q })
-    } catch { features.value = [] } finally { featuresLoading.value = false }
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować wyposażenia.')
+        features.value = []
+    } finally { featuresLoading.value = false }
 }
 
 async function loadCategories() {
@@ -203,18 +208,26 @@ async function addFeature() {
     if (!newFeatureName.value || !newFeatureCatId.value) return
     addingFeature.value = true
     try {
-        const f = await $fetch('/api/proxy/api/Admin/features', { method: 'POST', body: { name: newFeatureName.value, categoryId: newFeatureCatId.value } })
+        await $fetch('/api/proxy/api/Admin/features', { method: 'POST', body: { name: newFeatureName.value, categoryId: newFeatureCatId.value } })
         await loadFeatures()
         showAddFeature.value = false
         newFeatureName.value = ''
         newFeatureCatId.value = ''
-    } catch {} finally { addingFeature.value = false }
+        toastSuccess('Cecha została dodana.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się dodać cechy.')
+    } finally { addingFeature.value = false }
 }
 
 async function deleteFeature(id: number, name: string) {
     if (!confirm(`Usuń cechę "${name}"?`)) return
-    await $fetch(`/api/proxy/api/Admin/features/${id}`, { method: 'DELETE' }).catch(() => {})
-    features.value = features.value.filter(f => f.id !== id)
+    try {
+        await $fetch(`/api/proxy/api/Admin/features/${id}`, { method: 'DELETE' })
+        features.value = features.value.filter(f => f.id !== id)
+        toastSuccess('Cecha została usunięta.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się usunąć cechy.')
+    }
 }
 
 async function addCategory() {
@@ -237,13 +250,21 @@ async function addCategory() {
         newCatBrandId.value = ''
         newCatModelId.value = ''
         newCatModels.value = []
-    } catch {} finally { addingCat.value = false }
+        toastSuccess('Kategoria została dodana.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się dodać kategorii.')
+    } finally { addingCat.value = false }
 }
 
 async function deleteCategory(id: number, name: string) {
     if (!confirm(`Usuń kategorię "${name}"? Wszystkie cechy tej kategorii też zostaną usunięte.`)) return
-    await $fetch(`/api/proxy/api/Admin/feature-categories/${id}`, { method: 'DELETE' }).catch(() => {})
-    featureCategories.value = featureCategories.value.filter(c => c.id !== id)
+    try {
+        await $fetch(`/api/proxy/api/Admin/feature-categories/${id}`, { method: 'DELETE' })
+        featureCategories.value = featureCategories.value.filter(c => c.id !== id)
+        toastSuccess('Kategoria została usunięta.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się usunąć kategorii.')
+    }
 }
 
 onMounted(async () => {

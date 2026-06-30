@@ -9,7 +9,7 @@
             <!-- Hero -->
             <div class="event-hero">
                 <div class="hero-img-wrap">
-                    <img :src="mainImageUrl" :alt="event.name" class="hero-img" />
+                    <img :src="mainImageUrl" :alt="event.name" class="hero-img" fetchpriority="high" />
                     <div class="hero-gradient" />
                 </div>
                 <div class="hero-content container">
@@ -39,7 +39,7 @@
                                 {{ isInterested ? 'Biorę udział' : 'Wezmę udział' }}
                                 <span v-if="localInterestedCount" class="attend-count">{{ localInterestedCount }}</span>
                             </button>
-                            <button class="btn-fav" :class="{ active: isFavorite }" @click="toggleFavorite" title="Dodaj do ulubionych">
+                            <button class="btn-fav" :class="{ active: isFavorite }" :aria-label="isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'" @click="toggleFavorite">
                                 <v-icon :icon="isFavorite ? 'mdi-heart' : 'mdi-heart-outline'" size="17" />
                             </button>
                             <a v-if="event.ticketsUrl" :href="event.ticketsUrl" target="_blank" rel="noopener noreferrer" class="btn-ticket">
@@ -168,6 +168,7 @@ const eventId = Number(route.params.id)
 
 const { getEvent, attendEvent, unattendEvent, addEventFavourite, removeEventFavourite } = useEvents()
 const { getImageUrl } = useImageUrl()
+const { error: toastError } = useToast()
 
 const authStatus = useCookie('auth_status')
 const isLoggedIn = computed(() => authStatus.value === '1')
@@ -176,8 +177,20 @@ const event = ref<CarEvent | null>(null)
 const loading = ref(true)
 const isInterested = ref(false)
 const isFavorite = ref(false)
-const copied = ref(false)
 const localInterestedCount = ref(0)
+const copied = ref(false)
+
+// SSR-compatible fetch so search engine crawlers receive full meta tags
+const { data: ssrEvent } = await useAsyncData(`event-${eventId}`, () =>
+    $fetch<CarEvent>(`/api/proxy/api/Event/${eventId}`).catch(() => null)
+)
+if (ssrEvent.value) {
+    event.value = ssrEvent.value
+    isInterested.value = ssrEvent.value.isUserInterested ?? false
+    isFavorite.value = ssrEvent.value.isUserFavorite ?? false
+    localInterestedCount.value = ssrEvent.value.interestedCount ?? 0
+    loading.value = false
+}
 
 const mainImageUrl = computed(() => {
     if (!event.value) return '/car-placeholder.svg'
@@ -209,6 +222,7 @@ async function toggleAttend() {
         localInterestedCount.value = was
             ? localInterestedCount.value + 1
             : Math.max(0, localInterestedCount.value - 1)
+        toastError('Nie udało się zaktualizować obecności.')
     }
 }
 
@@ -221,16 +235,48 @@ async function toggleFavorite() {
         else await addEventFavourite(eventId)
     } catch {
         isFavorite.value = was
+        toastError('Nie udało się zaktualizować ulubionych.')
     }
 }
 
 async function copyLink() {
-    await navigator.clipboard.writeText(shareUrl.value)
-    copied.value = true
-    setTimeout(() => { copied.value = false }, 2000)
+    try {
+        await navigator.clipboard.writeText(shareUrl.value)
+        copied.value = true
+        setTimeout(() => { copied.value = false }, 2000)
+    } catch {
+        toastError('Nie udało się skopiować linku.')
+    }
 }
 
+const eventConfig = useRuntimeConfig()
+useHead(computed(() => {
+    const e = event.value
+    if (!e) return { title: 'Wydarzenie — CARIZO' }
+    const desc = e.description?.slice(0, 160) ?? `Wydarzenie motoryzacyjne: ${e.name}`
+    const img = mainImageUrl.value?.startsWith('http') ? mainImageUrl.value : `${eventConfig.public.siteUrl}${mainImageUrl.value}`
+    const pageUrl = `${eventConfig.public.siteUrl}/wydarzenie/${eventId}`
+    return {
+        title: `${e.name} — CARIZO`,
+        meta: [
+            { name: 'description', content: desc },
+            { property: 'og:type', content: 'event' },
+            { property: 'og:url', content: pageUrl },
+            { property: 'og:title', content: `${e.name} — CARIZO` },
+            { property: 'og:description', content: desc },
+            { property: 'og:image', content: img },
+            { property: 'og:site_name', content: 'CARIZO' },
+            { name: 'twitter:card', content: 'summary_large_image' },
+            { name: 'twitter:title', content: `${e.name} — CARIZO` },
+            { name: 'twitter:description', content: desc },
+            { name: 'twitter:image', content: img },
+        ],
+        link: [{ rel: 'canonical', href: pageUrl }]
+    }
+}))
+
 onMounted(async () => {
+    if (event.value) { loading.value = false; return }
     try {
         event.value = await getEvent(eventId)
         isInterested.value = event.value.isUserInterested ?? false
@@ -238,6 +284,7 @@ onMounted(async () => {
         localInterestedCount.value = event.value.interestedCount ?? 0
     } catch {
         event.value = null
+        toastError('Nie udało się załadować wydarzenia.')
     } finally {
         loading.value = false
     }

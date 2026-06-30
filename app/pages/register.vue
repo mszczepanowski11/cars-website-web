@@ -92,17 +92,17 @@
                 <!-- Business fields -->
                 <template v-if="accountType === 'Business'">
                     <div class="auth-field">
-                        <label class="auth-label">Nazwa firmy <span class="req">*</span></label>
+                        <label for="reg-company" class="auth-label">Nazwa firmy <span class="req">*</span></label>
                         <div class="auth-input-wrap">
                             <v-icon icon="mdi-domain" size="17" class="auth-field-icon" />
-                            <input v-model="companyName" class="auth-input" placeholder="np. Auto Salon Kowalski" required />
+                            <input id="reg-company" v-model="companyName" class="auth-input" placeholder="np. Auto Salon Kowalski" required />
                         </div>
                     </div>
                     <div class="auth-field">
-                        <label class="auth-label">NIP <span class="req">*</span></label>
+                        <label for="reg-nip" class="auth-label">NIP <span class="req">*</span></label>
                         <div class="auth-input-wrap">
                             <v-icon icon="mdi-card-account-details-outline" size="17" class="auth-field-icon" />
-                            <input v-model="nip" class="auth-input" placeholder="0000000000" maxlength="13" required />
+                            <input id="reg-nip" v-model="nip" class="auth-input" inputmode="numeric" pattern="[0-9\-]*" placeholder="123-456-78-90" maxlength="13" required />
                         </div>
                         <div v-if="nip && nip.replace(/\D/g,'').length !== 10" class="auth-hint">
                             Wymagane 10 cyfr
@@ -113,40 +113,41 @@
                 <!-- Name row -->
                 <div class="auth-row">
                     <div class="auth-field">
-                        <label class="auth-label">{{ accountType === 'Business' ? 'Imię (kontakt)' : 'Imię' }} <span class="req">*</span></label>
+                        <label for="reg-name" class="auth-label">{{ accountType === 'Business' ? 'Imię (kontakt)' : 'Imię' }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <input v-model="name" class="auth-input auth-input--solo" :placeholder="accountType === 'Business' ? 'Jan' : 'Jan'" required />
+                            <input id="reg-name" v-model="name" class="auth-input auth-input--solo" :placeholder="accountType === 'Business' ? 'Jan' : 'Jan'" required autocomplete="given-name" />
                         </div>
                     </div>
                     <div class="auth-field">
-                        <label class="auth-label">{{ accountType === 'Business' ? 'Nazwisko (kontakt)' : 'Nazwisko' }} <span class="req">*</span></label>
+                        <label for="reg-surname" class="auth-label">{{ accountType === 'Business' ? 'Nazwisko (kontakt)' : 'Nazwisko' }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <input v-model="surname" class="auth-input auth-input--solo" placeholder="Kowalski" required />
+                            <input id="reg-surname" v-model="surname" class="auth-input auth-input--solo" placeholder="Kowalski" required autocomplete="family-name" />
                         </div>
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label class="auth-label">Adres email <span class="req">*</span></label>
+                    <label for="reg-email" class="auth-label">Adres email <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-email-outline" size="17" class="auth-field-icon" />
-                        <input v-model="email" type="email" class="auth-input" placeholder="np. jan@kowalski.pl" required autocomplete="email" />
+                        <input id="reg-email" v-model="email" type="email" class="auth-input" placeholder="np. jan@kowalski.pl" required autocomplete="email" />
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label class="auth-label">Numer telefonu <span class="req">*</span></label>
+                    <label for="reg-phone" class="auth-label">Numer telefonu <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-phone-outline" size="17" class="auth-field-icon" />
-                        <input v-model="phoneNumber" type="tel" class="auth-input" placeholder="+48 600 123 456" required />
+                        <input id="reg-phone" v-model="phoneNumber" type="tel" inputmode="tel" pattern="[+0-9\s\-()]*" maxlength="20" class="auth-input" placeholder="+48 600 123 456" required autocomplete="tel" />
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label class="auth-label">Hasło <span class="req">*</span></label>
+                    <label for="reg-password" class="auth-label">Hasło <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
                         <input
+                            id="reg-password"
                             v-model="password"
                             :type="showPassword ? 'text' : 'password'"
                             class="auth-input"
@@ -154,7 +155,7 @@
                             required
                             autocomplete="new-password"
                         />
-                        <button type="button" class="auth-eye" @click="showPassword = !showPassword">
+                        <button type="button" class="auth-eye" :aria-label="showPassword ? 'Ukryj hasło' : 'Pokaż hasło'" @click="showPassword = !showPassword">
                             <v-icon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
                         </button>
                     </div>
@@ -168,10 +169,11 @@
                 </div>
 
                 <div class="auth-field">
-                    <label class="auth-label">Powtórz hasło <span class="req">*</span></label>
+                    <label for="reg-password-confirm" class="auth-label">Powtórz hasło <span class="req">*</span></label>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--error': passwordConfirm && password !== passwordConfirm }">
                         <v-icon icon="mdi-lock-check-outline" size="17" class="auth-field-icon" />
                         <input
+                            id="reg-password-confirm"
                             v-model="passwordConfirm"
                             type="password"
                             class="auth-input"
@@ -185,15 +187,42 @@
                     </div>
                 </div>
 
+                <div class="auth-field">
+                    <label for="reg-dob" class="auth-label">Data urodzenia <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <v-icon icon="mdi-calendar-outline" size="17" class="auth-field-icon" />
+                        <input id="reg-dob" v-model="dateOfBirth" type="date" class="auth-input" :max="maxDob" required />
+                    </div>
+                    <div v-if="dateOfBirth && !isAdult" class="auth-hint auth-hint--error">
+                        Musisz mieć ukończone 18 lat.
+                    </div>
+                </div>
+
                 <label class="age-check">
-                    <input v-model="ageConfirmed" type="checkbox" class="age-check-input" />
-                    <span class="age-check-box" :class="{ 'age-check-box--checked': ageConfirmed }">
-                        <v-icon v-if="ageConfirmed" icon="mdi-check" size="13" />
+                    <input v-model="termsConfirmed" type="checkbox" class="age-check-input" />
+                    <span class="age-check-box" :class="{ 'age-check-box--checked': termsConfirmed }">
+                        <v-icon v-if="termsConfirmed" icon="mdi-check" size="13" />
                     </span>
-                    <span class="age-check-label">Mam ukończone 18 lat i akceptuję <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> oraz <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink> <span class="req">*</span></span>
+                    <span class="age-check-label">Akceptuję <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> oraz <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink> <span class="req">*</span></span>
                 </label>
 
-                <div v-if="validationError || error" class="auth-error">
+                <label class="age-check">
+                    <input v-model="gdprConfirmed" type="checkbox" class="age-check-input" />
+                    <span class="age-check-box" :class="{ 'age-check-box--checked': gdprConfirmed }">
+                        <v-icon v-if="gdprConfirmed" icon="mdi-check" size="13" />
+                    </span>
+                    <span class="age-check-label">Wyrażam zgodę na przetwarzanie moich danych osobowych przez CARIZO Wiktor Niezgoda w celu realizacji usług świadczonych drogą elektroniczną, zgodnie z <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Polityką prywatności</NuxtLink> <span class="req">*</span></span>
+                </label>
+
+                <label class="age-check">
+                    <input v-model="marketingConsent" type="checkbox" class="age-check-input" />
+                    <span class="age-check-box" :class="{ 'age-check-box--checked': marketingConsent }">
+                        <v-icon v-if="marketingConsent" icon="mdi-check" size="13" />
+                    </span>
+                    <span class="age-check-label age-check-label--optional">Wyrażam zgodę na otrzymywanie informacji handlowych i ofert specjalnych CARIZO drogą elektroniczną. Zgodę możesz wycofać w każdej chwili. <span class="opt-label">(opcjonalne)</span></span>
+                </label>
+
+                <div v-if="validationError || error" role="alert" class="auth-error">
                     <v-icon icon="mdi-alert-circle-outline" size="15" />
                     {{ validationError || error }}
                 </div>
@@ -219,6 +248,7 @@
                 </svg>
                 <span>{{ fbLoading ? 'Logowanie...' : 'Kontynuuj z Facebook' }}</span>
             </button>
+            <p v-if="facebookAppId" class="fb-disclosure">Logując się przez Facebook, akceptujesz nasz <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> i <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink>. Pobieramy Twój adres email oraz imię i nazwisko z konta Facebook.</p>
 
             <p class="auth-link">Masz już konto? <NuxtLink to="/login">Zaloguj się</NuxtLink></p>
         </div>
@@ -230,6 +260,7 @@
 useHead({ title: 'Zarejestruj się — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 const { register, loginWithFacebook, loading, error } = useAuth()
+const { success: toastSuccess, error: toastError } = useToast()
 const runtimeConfig = useRuntimeConfig()
 
 const accountType      = ref<'Personal' | 'Business'>('Personal')
@@ -244,7 +275,15 @@ const companyName      = ref('')
 const nip              = ref('')
 const validationError  = ref('')
 const showPassword     = ref(false)
-const ageConfirmed     = ref(false)
+const dateOfBirth      = ref('')
+const maxDob = new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]
+const isAdult = computed(() => {
+    if (!dateOfBirth.value) return false
+    return new Date(dateOfBirth.value) <= new Date(maxDob)
+})
+const termsConfirmed   = ref(false)
+const gdprConfirmed    = ref(false)
+const marketingConsent = ref(false)
 const registrationSuccess = ref(false)
 const registeredEmail = ref('')
 const resending = ref(false)
@@ -262,7 +301,7 @@ const businessTypes = [
 
 const redirectTo = computed(() => {
     const r = route.query.redirect
-    return typeof r === 'string' && r.startsWith('/') ? r : '/'
+    return typeof r === 'string' && /^\/[^/]/.test(r) ? r : '/'
 })
 
 const strengthLevel = computed(() => {
@@ -285,8 +324,16 @@ const strengthLabel = computed(() => {
 
 async function submit() {
     validationError.value = ''
-    if (!ageConfirmed.value) {
-        validationError.value = 'Musisz potwierdzić, że masz ukończone 18 lat.'
+    if (!dateOfBirth.value || !isAdult.value) {
+        validationError.value = 'Musisz mieć ukończone 18 lat.'
+        return
+    }
+    if (!termsConfirmed.value) {
+        validationError.value = 'Musisz zaakceptować Regulamin oraz Politykę prywatności.'
+        return
+    }
+    if (!gdprConfirmed.value) {
+        validationError.value = 'Wymagana jest zgoda na przetwarzanie danych osobowych.'
         return
     }
     if (password.value !== passwordConfirm.value) {
@@ -323,6 +370,7 @@ async function submit() {
         email: email.value,
         phonenumber: phoneNumber.value,
         password: password.value,
+        dateOfBirth: dateOfBirth.value,
         accountType: accountType.value,
         businessType: accountType.value === 'Business' ? businessSubType.value : undefined,
         companyName: accountType.value === 'Business' ? companyName.value : undefined,
@@ -380,8 +428,10 @@ async function resendVerification() {
             method: 'POST',
             body: { email: registeredEmail.value }
         })
-    } catch {}
-    finally { resending.value = false }
+        toastSuccess('Link weryfikacyjny został wysłany ponownie.')
+    } catch {
+        toastError('Nie udało się wysłać linku. Spróbuj ponownie.')
+    } finally { resending.value = false }
 }
 </script>
 
@@ -883,6 +933,23 @@ h2 {
     line-height: 1.5;
 
     a { color: $red; font-weight: 500; &:hover { text-decoration: underline; } }
+
+    &--optional { opacity: 0.8; }
+}
+
+.opt-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+}
+
+.fb-disclosure {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-top: -8px;
+    line-height: 1.5;
+    a { color: rgba(255,255,255,0.6); text-decoration: underline; }
 }
 
 .cookie-link {

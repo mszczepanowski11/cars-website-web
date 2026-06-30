@@ -9,10 +9,13 @@ export const useAuth = () => {
             await $fetch('/api/auth/login', { method: 'POST', body: credentials })
             await navigateTo(redirectTo || '/')
         } catch (err: any) {
-            if (err?.status === 429 || err?.statusCode === 429) {
-                error.value = err?.data?.statusMessage || 'Zbyt wiele prób logowania. Poczekaj chwilę i spróbuj ponownie.'
+            const d = err?.data
+            // Nitro wraps: d.message contains the Polish display text; d.statusMessage is ASCII-only.
+            const msg = d?.message || d?.statusMessage || err?.message
+            if (err?.status === 429 || err?.statusCode === 429 || d?.statusCode === 429) {
+                error.value = msg || 'Zbyt wiele prób logowania. Poczekaj chwilę i spróbuj ponownie.'
             } else {
-                error.value = err?.data?.statusMessage || err?.message || 'Nieprawidłowy email lub hasło.'
+                error.value = msg || 'Nieprawidłowy email lub hasło.'
             }
         } finally {
             loading.value = false
@@ -56,6 +59,7 @@ export const useAuth = () => {
     async function register(dto: {
         name: string; surname: string; email: string
         phonenumber: string; password: string
+        dateOfBirth: string
         accountType: 'Personal' | 'Business'
         companyName?: string; nip?: string
         businessType?: 'Dealer' | 'Komis' | 'Firma'
@@ -67,10 +71,14 @@ export const useAuth = () => {
             await $fetch('/api/auth/register', { method: 'POST', body: dto })
             return true
         } catch (err: any) {
-            if (err?.status === 429 || err?.statusCode === 429) {
-                error.value = err?.data?.statusMessage || 'Zbyt wiele prób rejestracji. Poczekaj chwilę i spróbuj ponownie.'
+            const status = err?.status ?? err?.statusCode ?? err?.response?.status
+            if (status === 429) {
+                error.value = 'Zbyt wiele prób rejestracji. Poczekaj chwilę i spróbuj ponownie.'
+            } else if (status === 409) {
+                error.value = 'Konto z tym adresem e-mail już istnieje. Zaloguj się lub zresetuj hasło.'
             } else {
-                error.value = err?.data?.statusMessage || err?.message || 'Błąd rejestracji. Sprawdź dane i spróbuj ponownie.'
+                const msg = err?.data?.message ?? err?.data?.statusMessage ?? err?.message
+                error.value = msg || 'Błąd rejestracji. Sprawdź dane i spróbuj ponownie.'
             }
             return false
         } finally {

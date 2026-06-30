@@ -14,6 +14,7 @@ const emit = defineEmits<{
 
 const containerRef = ref<HTMLElement | null>(null)
 let widgetId: string | undefined
+let pollTimer: ReturnType<typeof setInterval> | undefined
 
 onMounted(() => {
     if (!props.siteKey) return
@@ -23,8 +24,8 @@ onMounted(() => {
 function loadScript() {
     if ((window as any).turnstile) { renderWidget(); return }
     if (document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]')) {
-        const timer = setInterval(() => {
-            if ((window as any).turnstile) { clearInterval(timer); renderWidget() }
+        pollTimer = setInterval(() => {
+            if ((window as any).turnstile) { clearInterval(pollTimer); pollTimer = undefined; renderWidget() }
         }, 50)
         return
     }
@@ -59,6 +60,7 @@ function reset() {
 defineExpose({ reset })
 
 onUnmounted(() => {
+    if (pollTimer !== undefined) { clearInterval(pollTimer); pollTimer = undefined }
     if (widgetId !== undefined && (window as any).turnstile) {
         (window as any).turnstile.remove(widgetId)
     }

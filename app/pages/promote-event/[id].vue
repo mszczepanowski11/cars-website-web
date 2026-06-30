@@ -18,7 +18,7 @@
                     <v-icon icon="mdi-check-circle-outline" size="14" />Płatność
                 </span>
             </div>
-            <NuxtLink :to="`/events/${eventId}`" class="skip-link">
+            <NuxtLink :to="`/wydarzenie/${eventId}`" class="skip-link">
                 Pomiń wyróżnienie
                 <v-icon icon="mdi-arrow-right" size="15" />
             </NuxtLink>
@@ -94,7 +94,7 @@
                     <div v-if="couponError" class="coupon-error">{{ couponError }}</div>
                 </div>
                 <div class="footer-actions">
-                    <NuxtLink :to="`/events/${eventId}`" class="btn-skip">
+                    <NuxtLink :to="`/wydarzenie/${eventId}`" class="btn-skip">
                         <v-icon icon="mdi-arrow-left" size="15" />Wróć
                     </NuxtLink>
                     <button class="btn-pay" @click="goToBilling">
@@ -186,6 +186,18 @@ const event = ref<{ id: number; name: string; startDate: string; city: string; i
 
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
+const { error: toastError } = useToast()
+
+const ALLOWED_PAYMENT_HOSTS = ['secure.imoje.pl', 'imoje.ing.pl', 'imoje.pl']
+function safePaymentRedirect(url: string) {
+    try {
+        const parsed = new URL(url)
+        if (parsed.protocol !== 'https:' || !ALLOWED_PAYMENT_HOSTS.includes(parsed.hostname)) throw new Error('Untrusted host')
+        window.location.href = parsed.toString()
+    } catch {
+        toastError('Błąd płatności: nieprawidłowy adres przekierowania.')
+    }
+}
 
 const plans = [
     {
@@ -293,7 +305,7 @@ async function initiatePayment() {
 
         const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
         if (result.paymentUrl) {
-            window.location.href = result.paymentUrl
+            safePaymentRedirect(result.paymentUrl)
         }
     } catch (e: any) {
         actionError.value = e?.data?.message ?? 'Błąd podczas inicjowania płatności.'

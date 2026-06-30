@@ -3,7 +3,12 @@
 
         <!-- ─── Hero ─────────────────────────────────────────────────── -->
         <section class="hero-fs">
-            <!-- LEFT: text -->
+            <!-- Full-bleed background image -->
+            <img src="/hero-car.jpg" alt="CARIZO – motoryzacja online" class="hfs-img" fetchpriority="high" />
+            <!-- Gradient overlay: dark from left, bottom vignette -->
+            <div class="hfs-fade" />
+
+            <!-- Text content -->
             <div class="hfs-left">
                 <div class="hfs-left-inner">
                     <div class="hfs-eyebrow">
@@ -11,14 +16,15 @@
                         Platforma motoryzacyjna premium
                     </div>
                     <h1 class="hfs-title">
-                        Motoryzacja.<br>
-                        <span class="title-accent">Na&nbsp;poziomie&nbsp;premium.</span>
+                        Kupuj pewniej.<br>
+                        <span class="title-accent">Sprzedaj&nbsp;szybciej.</span>
                     </h1>
-                    <p class="hfs-sub">
-                        Kupuj pewniej. Sprzedawaj szybciej.
-                        Zweryfikowane ogłoszenia, historia pojazdu, inteligentna wycena AI
-                        i profesjonalni sprzedawcy <strong>w jednym miejscu.</strong>
-                    </p>
+                    <ul class="hfs-features">
+                        <li><v-icon icon="mdi-shield-check-outline" size="16" class="hfs-feat-icon" />Zweryfikowane ogłoszenia</li>
+                        <li><v-icon icon="mdi-file-document-outline" size="16" class="hfs-feat-icon" />Historia pojazdu</li>
+                        <li><v-icon icon="mdi-cpu-64-bit" size="16" class="hfs-feat-icon" />Inteligentna wycena AI</li>
+                        <li><v-icon icon="mdi-account-tie-outline" size="16" class="hfs-feat-icon" />Profesjonalni sprzedawcy w jednym miejscu</li>
+                    </ul>
                     <div class="hfs-links">
                         <NuxtLink to="/adverts" class="hfs-link hfs-link--primary">
                             <v-icon icon="mdi-magnify" size="16" />
@@ -32,38 +38,11 @@
                 </div>
             </div>
 
-            <!-- RIGHT: image -->
-            <div class="hfs-right">
-                <img src="/hero-car.jpg" alt="CARIZO – motoryzacja online" class="hfs-img" fetchpriority="high" />
-                <div class="hfs-fade" />
-            </div>
-
             <!-- scroll indicator -->
             <div class="hfs-scroll">
                 <v-icon icon="mdi-chevron-down" size="26" />
             </div>
         </section>
-
-        <!-- ─── Stats strip ──────────────────────────────────────────── -->
-        <div class="stats-strip">
-            <div class="container">
-                <div class="sstrip-inner">
-                    <template v-for="(stat, i) in visibleStats" :key="stat.key">
-                        <div v-if="i > 0" class="sstrip-sep" />
-                        <div class="sstrip-item">
-                            <div class="sstrip-icon-badge">
-                                <v-icon :icon="stat.icon" size="22" />
-                            </div>
-                            <div class="sstrip-text">
-                                <div v-if="statsLoading" class="sstrip-skeleton" />
-                                <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
-                                <span class="sstrip-label">{{ stat.label }}</span>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
 
         <!-- Search section -->
         <section class="search-section">
@@ -92,7 +71,7 @@
                         <label class="hsp-label">{{ currentSearchConfig.brandLabel ?? 'Marka' }}</label>
                         <select v-model="searchBrandId" class="hsp-select" @change="onBrandChange">
                             <option :value="null">Wszystkie marki</option>
-                            <option v-for="b in filterBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                            <option v-for="b in filterBrands.filter(b => b.name && !/^\d+$/.test(b.name))" :key="b.id" :value="b.id">{{ b.name }}</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.hasBrand && currentSearchConfig.hasModel" class="hsp-field">
@@ -100,6 +79,20 @@
                         <select v-model="searchModelId" class="hsp-select" :disabled="!searchBrandId" @change="onModelChange">
                             <option :value="null">{{ searchBrandId ? 'Wszystkie modele' : 'Wybierz markę' }}</option>
                             <option v-for="m in searchModels" :key="m.id" :value="m.id">{{ m.name }}</option>
+                        </select>
+                    </div>
+                    <div v-if="currentSearchConfig.subtypes?.length" class="hsp-field">
+                        <label class="hsp-label">{{ currentSearchConfig.subtypeLabel ?? 'Typ' }}</label>
+                        <select v-model="searchSubtype" class="hsp-select">
+                            <option value="">Wszystkie</option>
+                            <option v-for="s in currentSearchConfig.subtypes" :key="s" :value="s">{{ s }}</option>
+                        </select>
+                    </div>
+                    <div v-if="currentSearchConfig.hasPartCategory" class="hsp-field">
+                        <label class="hsp-label">Kategoria części</label>
+                        <select v-model="searchPartCategory" class="hsp-select">
+                            <option value="">Wszystkie kategorie</option>
+                            <option v-for="pc in PART_CATEGORIES" :key="pc.value" :value="pc.value">{{ pc.label }}</option>
                         </select>
                     </div>
                     <div class="hsp-field hsp-range">
@@ -131,7 +124,24 @@
                     <div v-if="showMoreFilters" class="hs-expanded">
                         <div class="hse-grid">
 
-                            <div v-if="fuelTypes.length" class="hse-field">
+                            <div v-if="currentSearchConfig.hasBodyType && bodyTypes.length" class="hse-field">
+                                <label class="hse-label">Nadwozie</label>
+                                <select v-model="searchBodyTypeId" class="hse-select">
+                                    <option :value="null">Wszystkie</option>
+                                    <option v-for="bt in bodyTypes" :key="bt.id" :value="bt.id">{{ bt.name }}</option>
+                                </select>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasEngineSize" class="hse-field hse-range">
+                                <label class="hse-label">Pojemność (cm³)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchEngineSizeFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchEngineSizeTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasFuel && fuelTypes.length" class="hse-field">
                                 <label class="hse-label">Paliwo</label>
                                 <select v-model="searchFuelId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
@@ -139,7 +149,7 @@
                                 </select>
                             </div>
 
-                            <div v-if="gearboxes.length" class="hse-field">
+                            <div v-if="currentSearchConfig.hasFuel && gearboxes.length" class="hse-field">
                                 <label class="hse-label">Skrzynia biegów</label>
                                 <select v-model="searchGearboxId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
@@ -147,7 +157,7 @@
                                 </select>
                             </div>
 
-                            <div class="hse-field">
+                            <div v-if="currentSearchConfig.hasFuel" class="hse-field">
                                 <label class="hse-label">Napęd</label>
                                 <select v-model="searchDriveType" class="hse-select">
                                     <option value="">Wszystkie</option>
@@ -157,12 +167,39 @@
                                 </select>
                             </div>
 
-                            <div class="hse-field hse-range">
+                            <div v-if="currentSearchConfig.hasMileage" class="hse-field hse-range">
                                 <label class="hse-label">Przebieg (km)</label>
                                 <div class="hse-range-row">
                                     <input v-model="searchMileageFrom" type="number" class="hse-input" placeholder="Od" min="0" />
                                     <span class="hse-sep">—</span>
                                     <input v-model="searchMileageTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasHours" class="hse-field hse-range">
+                                <label class="hse-label">Motogodziny (mth)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchHoursFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchHoursTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasPower" class="hse-field hse-range">
+                                <label class="hse-label">Moc (KM)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchPowerFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchPowerTo" type="number" class="hse-input" placeholder="Do" min="0" />
+                                </div>
+                            </div>
+
+                            <div v-if="currentSearchConfig.hasPayload" class="hse-field hse-range">
+                                <label class="hse-label">Ładowność (kg)</label>
+                                <div class="hse-range-row">
+                                    <input v-model="searchPayloadFrom" type="number" class="hse-input" placeholder="Od" min="0" />
+                                    <span class="hse-sep">—</span>
+                                    <input v-model="searchPayloadTo" type="number" class="hse-input" placeholder="Do" min="0" />
                                 </div>
                             </div>
 
@@ -175,12 +212,12 @@
                                 </div>
                             </div>
 
-                            <div class="hse-field">
+                            <div v-if="currentSearchConfig.hasFuel" class="hse-field">
                                 <label class="hse-label">Wyposażenie</label>
                                 <input v-model="searchEquipment" type="text" class="hse-input hse-input--full" placeholder="np. klimatyzacja, nawigacja..." />
                             </div>
 
-                            <div class="hse-field">
+                            <div v-if="currentSearchConfig.hasCondition" class="hse-field">
                                 <label class="hse-label">Stan pojazdu</label>
                                 <select v-model="searchCondition" class="hse-select">
                                     <option value="">Wszystkie</option>
@@ -198,44 +235,26 @@
             </div>
         </section>
 
-        <!-- ─── Recently added ───────────────────────────────────────── -->
-        <section v-if="recentlyAdded.length || featured.length" class="section">
+        <!-- ─── Stats strip ──────────────────────────────────────────── -->
+        <div class="stats-strip">
             <div class="container">
-                <div class="sec-top">
-                    <div class="sec-top-left">
-                        <div class="sec-eyebrow">NOWE OGŁOSZENIA</div>
-                        <h2>Ostatnio dodane</h2>
-                    </div>
-                    <NuxtLink to="/adverts" class="see-all">
-                        Wszystkie ogłoszenia
-                        <v-icon icon="mdi-arrow-right" size="16" />
-                    </NuxtLink>
-                </div>
-                <div class="cars-grid">
-                    <AdvertCard
-                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured)"
-                        :key="a.id"
-                        :advert="a"
-                    />
+                <div class="sstrip-inner">
+                    <template v-for="(stat, i) in visibleStats" :key="stat.key">
+                        <div v-if="i > 0" class="sstrip-sep" />
+                        <div class="sstrip-item">
+                            <div class="sstrip-icon-badge">
+                                <v-icon :icon="stat.icon" size="22" />
+                            </div>
+                            <div class="sstrip-text">
+                                <div v-if="statsLoading" class="sstrip-skeleton" />
+                                <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
+                                <span class="sstrip-label">{{ stat.label }}</span>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
-        </section>
-
-        <!-- ─── Most viewed ─────────────────────────────────────────────── -->
-        <section v-if="mostViewed.length" class="section">
-            <div class="container">
-                <div class="sec-top">
-                    <div class="sec-top-left">
-                        <div class="sec-eyebrow">NAJCZĘŚCIEJ OGLĄDANE</div>
-                        <h2>Popularne ogłoszenia</h2>
-                    </div>
-                    <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
-                </div>
-                <div class="cars-grid">
-                    <AdvertCard v-for="a in mostViewed" :key="a.id" :advert="a" />
-                </div>
-            </div>
-        </section>
+        </div>
 
         <!-- ─── Car of week ──────────────────────────────────────────────── -->
         <section v-if="carOfWeek" class="section cow-section">
@@ -248,7 +267,7 @@
         </section>
 
         <!-- ─── Premium Collection ───────────────────────────────────────── -->
-        <section v-if="premiumCollection.length" class="section">
+        <section v-if="clientDataLoading || premiumCollection.length" class="section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
@@ -258,7 +277,12 @@
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
                 <div class="cars-grid">
-                    <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
+                    <template v-if="clientDataLoading">
+                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
+                    </template>
+                    <template v-else>
+                        <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
+                    </template>
                 </div>
             </div>
         </section>
@@ -321,12 +345,33 @@
             </div>
         </section>
 
+        <!-- ─── Most viewed ─────────────────────────────────────────────── -->
+        <section v-if="clientDataLoading || mostViewed.length" class="section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">NAJCZĘŚCIEJ OGLĄDANE</div>
+                        <h2>Popularne ogłoszenia</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                </div>
+                <div class="cars-grid cars-grid--small">
+                    <template v-if="clientDataLoading">
+                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
+                    </template>
+                    <template v-else>
+                        <AdvertCard v-for="a in mostViewed.slice(0, 4)" :key="a.id" :advert="a" />
+                    </template>
+                </div>
+            </div>
+        </section>
+
         <!-- ─── Why CARIZO ───────────────────────────────────────────── -->
         <section class="section why-section">
             <div class="container">
                 <div class="why-header">
-                    <div class="why-eyebrow">DLACZEGO MY</div>
-                    <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" />
+                    <div class="why-eyebrow">DLACZEGO</div>
+                    <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" loading="lazy" />
                     <p class="why-sub">Łączymy najlepszą technologię z pasją do motoryzacji</p>
                 </div>
                 <div class="why-grid">
@@ -368,7 +413,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />do 84 miesięcy</span>
                                 <span><v-icon icon="mdi-check" size="13" />bez ukrytych kosztów</span>
                             </div>
-                            <a href="#" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
+<a href="https://www.inglesing.pl" target="_blank" rel="noopener noreferrer" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -381,7 +426,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />brak prowizji</span>
                                 <span><v-icon icon="mdi-check" size="13" />RRSO od 7,99%*</span>
                             </div>
-                            <a href="#" class="ing-cta">Oblicz ratę <v-icon icon="mdi-arrow-right" size="13" /></a>
+<a href="https://www.ing.pl/dla-klientow-indywidualnych/pozyczki-i-kredyty" target="_blank" rel="noopener noreferrer" class="ing-cta">Oblicz ratę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
@@ -394,7 +439,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />zarządzanie online</span>
                                 <span><v-icon icon="mdi-check" size="13" />dedykowany opiekun</span>
                             </div>
-                            <a href="#contact" class="ing-cta">Skontaktuj się <v-icon icon="mdi-arrow-right" size="13" /></a>
+                            <a href="https://www.ing.pl/dla-firm" target="_blank" rel="noopener noreferrer" class="ing-cta">Skontaktuj się <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card ing-card--calc">
                             <div class="ing-card-icon">
@@ -416,7 +461,7 @@
                                     od <strong>{{ ingMonthlyRate.toLocaleString('pl', { maximumFractionDigits: 0 }) }} zł</strong> / miesiąc
                                 </div>
                             </div>
-                            <a href="#" class="ing-cta">Złóż wniosek <v-icon icon="mdi-arrow-right" size="13" /></a>
+<a href="https://www.ing.pl/dla-klientow-indywidualnych/pozyczki-i-kredyty" target="_blank" rel="noopener noreferrer" class="ing-cta">Złóż wniosek <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                     </div>
                     <div class="ing-disclaimer">* Wyniki kalkulatora są orientacyjne. Rzeczywiste warunki zależą od oceny kredytowej. RRSO od 7,99% dotyczy oferty przykładowej zgodnie z Ustawą o kredycie konsumenckim; aktualna stawka może się różnić.</div>
@@ -437,7 +482,7 @@
 
                 <div v-if="featuredEvent" class="featured-banner" @click="navigateTo(`/wydarzenie/${featuredEvent.id}`)">
                     <div class="fb-img-wrap">
-                        <img :src="getEventImageUrl(featuredEvent)" :alt="featuredEvent.name" />
+                        <img :src="getEventImageUrl(featuredEvent)" :alt="featuredEvent.name" loading="lazy" />
                     </div>
                     <div class="fb-body">
                         <div class="fb-label">
@@ -458,7 +503,7 @@
                 <div class="events-grid">
                     <div v-for="ev in events" :key="ev.id" class="event-card" @click="navigateTo(`/wydarzenie/${ev.id}`)">
                         <div class="event-img-wrap">
-                            <img :src="getEventImageUrl(ev)" :alt="ev.name" />
+                            <img :src="getEventImageUrl(ev)" :alt="ev.name" loading="lazy" />
                             <span v-if="ev.isFeatured" class="event-badge event-badge--featured">
                                 <v-icon icon="mdi-crown" size="10" /> WYRÓŻNIONE
                             </span>
@@ -504,6 +549,29 @@
             </div>
         </section>
 
+        <!-- ─── Recently added ───────────────────────────────────────── -->
+        <section v-if="recentlyAdded.length || featured.length" class="section recently-added-section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">NOWE OGŁOSZENIA</div>
+                        <h2>Ostatnio dodane</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">
+                        Wszystkie ogłoszenia
+                        <v-icon icon="mdi-arrow-right" size="16" />
+                    </NuxtLink>
+                </div>
+                <div class="cars-grid cars-grid--small">
+                    <AdvertCard
+                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured).slice(0, 4)"
+                        :key="a.id"
+                        :advert="a"
+                    />
+                </div>
+            </div>
+        </section>
+
         <!-- ─── Newsletter ───────────────────────────────────────────── -->
         <section id="contact" class="section">
             <div class="container">
@@ -517,10 +585,22 @@
                     </div>
                     <div class="news-form">
                         <input v-model="email" class="news-input" placeholder="Twój adres email" @keyup.enter="subscribeNewsletter" />
-                        <button class="btn-subscribe" :disabled="subscribeLoading" @click="subscribeNewsletter">
+                        <button
+                            class="btn-subscribe"
+                            :disabled="subscribeLoading || !newsletterConsent"
+                            :title="!newsletterConsent ? 'Zaznacz zgodę na newsletter poniżej' : undefined"
+                            @click="subscribeNewsletter"
+                        >
                             {{ subscribeLoading ? 'Zapisywanie...' : 'Zapisz się' }}
                         </button>
                     </div>
+                    <label class="news-consent">
+                        <input v-model="newsletterConsent" type="checkbox" class="news-consent-input" />
+                        <span class="news-consent-box" :class="{ 'news-consent-box--checked': newsletterConsent }">
+                            <v-icon v-if="newsletterConsent" icon="mdi-check" size="11" />
+                        </span>
+                        <span class="news-consent-text">Wyrażam zgodę na otrzymywanie newslettera CARIZO z ofertami i nowościami motoryzacyjnymi. Możesz zrezygnować w każdej chwili klikając link w e-mailu. <NuxtLink to="/polityka-prywatnosci" class="news-pp-link">Polityka prywatności</NuxtLink></span>
+                    </label>
                     <p v-if="subscribeSuccess" class="subscribe-feedback subscribe-ok">{{ subscribeMessage }}</p>
                     <p v-if="subscribeError" class="subscribe-feedback subscribe-err">{{ subscribeError }}</p>
                 </div>
@@ -534,22 +614,67 @@
 import type { CarAdvert, CarEvent, PagedResult, TaxonomyItem } from '~/types'
 
 const config = useRuntimeConfig()
+const siteUrl = config.public.siteUrl as string
 useHead({
     title: 'CARIZO — Nowoczesna platforma motoryzacyjna',
     meta: [
         { name: 'description', content: 'Kupuj i sprzedawaj auta na CARIZO — zweryfikowane ogłoszenia, inteligentne narzędzia, zaufani sprzedawcy.' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: config.public.siteUrl as string },
+        { property: 'og:url', content: siteUrl },
         { property: 'og:title', content: 'CARIZO — Nowoczesna platforma motoryzacyjna' },
         { property: 'og:description', content: 'Kupuj i sprzedawaj auta na CARIZO — zweryfikowane ogłoszenia, inteligentne narzędzia, zaufani sprzedawcy.' },
-        { property: 'og:image', content: `${config.public.siteUrl}/hero-car.jpg` },
+        { property: 'og:image', content: `${siteUrl}/hero-car.jpg` },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
         { property: 'og:site_name', content: 'CARIZO' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'CARIZO — Nowoczesna platforma motoryzacyjna' },
         { name: 'twitter:description', content: 'Kupuj i sprzedawaj auta na CARIZO.' },
-        { name: 'twitter:image', content: `${config.public.siteUrl}/hero-car.jpg` },
+        { name: 'twitter:image', content: `${siteUrl}/hero-car.jpg` },
     ],
-    link: [{ rel: 'canonical', href: config.public.siteUrl as string }]
+    link: [
+        { rel: 'canonical', href: siteUrl },
+        { rel: 'preload', as: 'image', href: '/hero-car.jpg', fetchpriority: 'high' },
+    ],
+    script: [
+        {
+            type: 'application/ld+json',
+            innerHTML: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@graph': [
+                    {
+                        '@type': 'Organization',
+                        '@id': `${siteUrl}/#organization`,
+                        name: 'CARIZO',
+                        url: siteUrl,
+                        logo: {
+                            '@type': 'ImageObject',
+                            url: `${siteUrl}/carizo-logo.svg`,
+                        },
+                        sameAs: [
+                            config.public.socialFacebook,
+                            config.public.socialInstagram,
+                        ].filter(Boolean),
+                    },
+                    {
+                        '@type': 'WebSite',
+                        '@id': `${siteUrl}/#website`,
+                        url: siteUrl,
+                        name: 'CARIZO',
+                        publisher: { '@id': `${siteUrl}/#organization` },
+                        potentialAction: {
+                            '@type': 'SearchAction',
+                            target: {
+                                '@type': 'EntryPoint',
+                                urlTemplate: `${siteUrl}/adverts?search={search_term_string}`,
+                            },
+                            'query-input': 'required name=search_term_string',
+                        },
+                    },
+                ],
+            }),
+        },
+    ],
 })
 
 const featured = ref<CarAdvert[]>([])
@@ -561,6 +686,7 @@ const premiumCollection = ref<CarAdvert[]>([])
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
+const clientDataLoading = ref(false)
 const statsLoading = ref(true)
 
 // ─── Hero search state ────────────────────────────────────────────────────────
@@ -768,6 +894,7 @@ const searchBrandId = ref<number | null>(null)
 const searchModelId = ref<number | null>(null)
 const searchFuelId = ref<number | null>(null)
 const searchBodyTypeId = ref<number | null>(null)
+const searchPartCategory = ref('')
 const searchSubtype = ref('')
 const searchPriceFrom = ref('')
 const searchPriceTo = ref('')
@@ -828,6 +955,7 @@ function selectSearchCat(slug: string) {
     searchBodyTypeId.value = null
     searchGearboxId.value = null
     searchSubtype.value = ''
+    searchPartCategory.value = ''
     searchCondition.value = ''
     searchEngineSizeFrom.value = ''
     searchEngineSizeTo.value = ''
@@ -904,14 +1032,15 @@ function doSearch() {
     if (searchGearboxId.value) query.gearboxId = String(searchGearboxId.value)
     if (searchBodyTypeId.value) query.bodyTypeId = String(searchBodyTypeId.value)
     if (searchSubtype.value) query.bodySubtype = searchSubtype.value
+    if (searchPartCategory.value) query.partCategory = searchPartCategory.value
     if (searchPriceFrom.value) query.priceFrom = searchPriceFrom.value
     if (searchPriceTo.value) query.priceTo = searchPriceTo.value
     if (searchYearFrom.value) query.yearFrom = searchYearFrom.value
     if (searchYearTo.value) query.yearTo = searchYearTo.value
     if (searchMileageFrom.value) query.mileageFrom = searchMileageFrom.value
     if (searchMileageTo.value) query.mileageTo = searchMileageTo.value
-    if (searchHoursFrom.value) query.mileageFrom = searchHoursFrom.value
-    if (searchHoursTo.value) query.mileageTo = searchHoursTo.value
+    if (searchHoursFrom.value) query.hoursFrom = searchHoursFrom.value
+    if (searchHoursTo.value) query.hoursTo = searchHoursTo.value
     if (searchPayloadFrom.value) query.payloadFrom = searchPayloadFrom.value
     if (searchPayloadTo.value) query.payloadTo = searchPayloadTo.value
     if (searchEngineSizeFrom.value) query.engineSizeFrom = searchEngineSizeFrom.value
@@ -920,7 +1049,7 @@ function doSearch() {
     if (searchPowerTo.value) query.powerTo = searchPowerTo.value
     if (searchCondition.value) query.condition = searchCondition.value
     if (searchDriveType.value) query.driveType = searchDriveType.value
-    if (searchEquipment.value.trim()) query.textSearch = searchEquipment.value.trim()
+    if (searchEquipment.value.trim()) query.equipment = searchEquipment.value.trim()
     const cat = homeCategories.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })
@@ -965,6 +1094,7 @@ function formatEventDate(dateStr: string): string {
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
 const email = ref('')
+const newsletterConsent = ref(false)
 const subscribeLoading = ref(false)
 const subscribeSuccess = ref(false)
 const subscribeMessage = ref('')
@@ -976,6 +1106,10 @@ async function subscribeNewsletter() {
         subscribeError.value = 'Podaj prawidłowy adres email.'
         return
     }
+    if (!newsletterConsent.value) {
+        subscribeError.value = 'Zaznacz zgodę na otrzymywanie newslettera.'
+        return
+    }
     subscribeLoading.value = true
     subscribeError.value = ''
     subscribeSuccess.value = false
@@ -985,6 +1119,7 @@ async function subscribeNewsletter() {
         subscribeMessage.value = res?.message ?? 'Sprawdź swoją skrzynkę email i kliknij link potwierdzający.'
         subscribeSuccess.value = true
         email.value = ''
+        newsletterConsent.value = false
     } catch (e: any) {
         subscribeError.value = e?.data?.message ?? 'Wystąpił błąd. Spróbuj ponownie.'
     } finally {
@@ -996,11 +1131,11 @@ async function subscribeNewsletter() {
 
 const { data: homeData } = await useAsyncData('home-data', async () => {
     const [featuredResult, recentResult, evts, stats, brands] = await Promise.allSettled([
-        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
             body: { page: 1, pageSize: 50, sortBy: 'featured' }
         }),
-        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
             body: { page: 1, pageSize: 8, sortBy: '' }
         }),
@@ -1030,9 +1165,10 @@ statsLoading.value = false
 
 // most-viewed and premium-collection fetched client-side only to avoid SSR crashes
 if (import.meta.client) {
+    clientDataLoading.value = true
     Promise.allSettled([
-        $fetch<CarAdvert[]>('/api/proxy/api/Advert/most-viewed', { query: { count: 8 } }).catch(() => [] as CarAdvert[]),
-        $fetch<CarAdvert[]>('/api/proxy/api/Advert/premium-collection', { query: { count: 8 } }).catch(() => [] as CarAdvert[])
+        $fetch<CarAdvert[]>('/api/proxy/api/listings/most-viewed', { query: { count: 8 } }).catch(() => [] as CarAdvert[]),
+        $fetch<CarAdvert[]>('/api/proxy/api/listings/premium-collection', { query: { count: 8 } }).catch(() => [] as CarAdvert[])
     ]).then(([mvRes, pcRes]) => {
         if (mvRes.status === 'fulfilled') {
             const mv = mvRes.value
@@ -1043,6 +1179,7 @@ if (import.meta.client) {
             premiumCollection.value = Array.isArray(pc) ? pc : (pc as any).items ?? []
         }
         if (mostViewed.value.length > 0) carOfWeek.value = mostViewed.value[0]
+        clientDataLoading.value = false
     })
 }
 
@@ -1069,8 +1206,9 @@ onMounted(async () => {
 // ─── Hero split layout ────────────────────────────────────────────────────────
 
 .hero-fs {
+    position: relative;
     display: flex;
-    align-items: stretch;
+    align-items: center;
     min-height: 660px;
     height: 82vh;
     max-height: 920px;
@@ -1079,25 +1217,49 @@ onMounted(async () => {
     padding-top: $nav-height;
 }
 
+.hfs-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 65% 35%;
+}
+
+.hfs-fade {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to right,
+            #{$bg} 0%,
+            #{$bg} 18%,
+            rgba(5,5,5,0.96) 28%,
+            rgba(5,5,5,0.78) 40%,
+            rgba(5,5,5,0.48) 55%,
+            rgba(5,5,5,0.18) 68%,
+            transparent 82%
+        ),
+        linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 30%, transparent 60%, rgba(0,0,0,0.6) 100%);
+}
+
 .hfs-left {
-    flex: 0 0 50%;
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
+    width: 54%;
     padding-left: #{max(4vw, calc((100vw - 1450px) / 2))};
     padding-right: 48px;
     padding-top: 48px;
     padding-bottom: 48px;
-    background: $bg;
-    position: relative;
-    z-index: 2;
 
     @include respond-to(md) {
-        flex: 0 0 60%;
+        width: 65%;
         padding-left: 32px;
         padding-right: 32px;
     }
     @include respond-to(sm) {
-        flex: 0 0 100%;
+        width: 100%;
         padding: 40px 24px;
     }
     @include respond-to(xs) {
@@ -1108,29 +1270,6 @@ onMounted(async () => {
 .hfs-left-inner {
     max-width: 540px;
     width: 100%;
-}
-
-.hfs-right {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-
-    @include respond-to(sm) { display: none; }
-}
-
-.hfs-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 35%;
-}
-
-.hfs-fade {
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(to right, $bg 0%, transparent 40%),
-        linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.35) 100%);
 }
 
 // Eyebrow
@@ -1167,6 +1306,7 @@ onMounted(async () => {
     color: $text;
     letter-spacing: -2.5px;
     margin-bottom: 24px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
 
     @include respond-to(md) { font-size: 52px; letter-spacing: -1.5px; }
     @include respond-to(sm) { font-size: 36px; letter-spacing: -1px; }
@@ -1191,6 +1331,34 @@ onMounted(async () => {
 
     @include respond-to(sm) { font-size: 14px; line-height: 1.7; margin-bottom: 28px; }
     @include respond-to(xs) { font-size: 13.5px; }
+}
+
+.hfs-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14.5px;
+        color: rgba(255,255,255,0.72);
+        font-weight: 400;
+        letter-spacing: 0.1px;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+    }
+
+    @include respond-to(sm) { margin-bottom: 28px; gap: 7px; li { font-size: 13.5px; } }
+}
+
+.hfs-feat-icon {
+    color: $red;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 4px rgba($red, 0.5));
 }
 
 // ─── Category tiles ───────────────────────────────────────────────────────────
@@ -1416,14 +1584,16 @@ onMounted(async () => {
     }
 
     &--secondary {
-        background: transparent;
-        color: rgba(255,255,255,0.82);
-        border: 2px solid rgba(255,255,255,0.22);
+        background: rgba(255,255,255,0.07);
+        color: rgba(255,255,255,0.88);
+        border: 2px solid rgba(255,255,255,0.25);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
 
         &:hover {
             border-color: rgba(255,255,255,0.5);
             color: #fff;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.12);
         }
     }
 }
@@ -2014,6 +2184,15 @@ onMounted(async () => {
 
 .cars-grid {
     @include cars-grid;
+
+    &--small {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+
+        @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+        @include respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+        @include respond-to(xs) { grid-template-columns: 1fr; }
+    }
 }
 
 // ─── Premium showcase ─────────────────────────────────────────────────────────
@@ -2174,7 +2353,8 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    width: 100%;
+    gap: 20px;
 }
 
 .why-eyebrow {
@@ -2186,7 +2366,6 @@ onMounted(async () => {
     color: $red;
     letter-spacing: 4px;
     text-transform: uppercase;
-    margin-bottom: 22px;
 
     &::before,
     &::after {
@@ -2200,11 +2379,10 @@ onMounted(async () => {
 }
 
 .why-logo {
-    height: 60px;
+    height: 72px;
     width: auto;
     display: block;
-    margin: 0 auto 20px;
-    filter: drop-shadow(0 0 28px rgba(139, 13, 29, 0.35));
+    filter: drop-shadow(0 0 32px rgba(139, 13, 29, 0.4));
 }
 
 .why-sub {
@@ -2781,6 +2959,43 @@ onMounted(async () => {
 }
 .subscribe-ok  { background: rgba(45,122,58,0.1); border: 1px solid rgba(45,122,58,0.3); color: #4caf50; }
 .subscribe-err { background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.25); color: #e74c3c; }
+
+.news-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+    margin-top: 4px;
+
+    .news-consent-input { display: none; }
+
+    .news-consent-box {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 3px;
+        margin-top: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s, border-color 0.15s;
+
+        &--checked { background: $red; border-color: $red; }
+    }
+
+    .news-consent-text {
+        font-size: 11px;
+        color: rgba(255,255,255,0.5);
+        line-height: 1.5;
+        a { color: rgba(255,255,255,0.7); text-decoration: underline; }
+    }
+}
+
+.news-pp-link {
+    color: rgba(255,255,255,0.7);
+    text-decoration: underline;
+}
 
 // ─── Shared utilities ─────────────────────────────────────────────────────────
 

@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Potwierdzenie zapisu — CARIZO' })
+useHead({ title: 'Potwierdzenie zapisu — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const route = useRoute()
 const status = ref<'loading' | 'success' | 'error'>('loading')

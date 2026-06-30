@@ -58,7 +58,7 @@
                                 <td class="td-id">#{{ a.id }}</td>
                                 <td>
                                     <div class="advert-cell">
-                                        <img :src="getImageUrl(a.mainImageUrl)" class="advert-thumb" :alt="a.title" />
+                                        <img :src="getImageUrl(a.mainImageUrl)" class="advert-thumb" :alt="a.title" loading="lazy" />
                                         <div>
                                             <div class="advert-title">{{ a.title }}</div>
                                             <div class="advert-meta">{{ a.brand ?? '' }} {{ a.model ?? '' }} {{ a.year ?? '' }}</div>
@@ -77,7 +77,7 @@
                                 </td>
                                 <td>
                                     <div class="action-row">
-                                        <NuxtLink :to="`/advert/${a.id}`" class="btn-action btn-view" target="_blank">
+                                        <NuxtLink :to="`/advert/${a.id}`" class="btn-action btn-view" target="_blank" :aria-label="`Podgląd: ${a.title}`">
                                             <v-icon icon="mdi-eye-outline" size="13" />
                                         </NuxtLink>
                                         <button class="btn-action" :class="a.isHidden ? 'btn-show' : 'btn-hide'"
@@ -87,7 +87,7 @@
                                             <v-icon v-else :icon="a.isHidden ? 'mdi-eye-outline' : 'mdi-eye-off-outline'" size="12" />
                                             {{ a.isHidden ? 'Pokaż' : 'Ukryj' }}
                                         </button>
-                                        <button class="btn-action btn-delete" :disabled="actionLoading === a.id" @click="confirmDelete(a.id)">
+                                        <button class="btn-action btn-delete" :disabled="actionLoading === a.id" :aria-label="`Usuń: ${a.title}`" @click="confirmDelete(a.id)">
                                             <v-icon icon="mdi-delete-outline" size="12" />
                                         </button>
                                     </div>
@@ -102,9 +102,9 @@
                 </div>
 
                 <div v-if="totalCount > pageSize" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" @click="goPage(page - 1)"><v-icon icon="mdi-chevron-left" size="18" /></button>
+                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)"><v-icon icon="mdi-chevron-left" size="18" /></button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                    <button class="page-btn" :disabled="page === totalPages" @click="goPage(page + 1)"><v-icon icon="mdi-chevron-right" size="18" /></button>
+                    <button class="page-btn" :disabled="page === totalPages" aria-label="Następna strona" @click="goPage(page + 1)"><v-icon icon="mdi-chevron-right" size="18" /></button>
                 </div>
             </template>
         </main>
@@ -138,6 +138,7 @@ definePageMeta({ middleware: 'admin' })
 useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { getImageUrl, placeholder } = useImageUrl()
+const { error: toastError, success: toastSuccess } = useToast()
 
 const adverts = ref<AdminAdvert[]>([])
 const loading = ref(true)
@@ -199,7 +200,7 @@ async function toggleHide(a: AdminAdvert) {
         const endpoint = a.isHidden ? 'unhide' : 'hide'
         await $fetch(`/api/proxy/api/Admin/adverts/${a.id}/${endpoint}`, { method: 'POST', body: {} })
         a.isHidden = !a.isHidden
-    } catch {} finally { actionLoading.value = null }
+    } catch { toastError('Nie udało się zmienić widoczności ogłoszenia.') } finally { actionLoading.value = null }
 }
 
 function confirmDelete(id: number) { deleteId.value = id }
@@ -212,7 +213,8 @@ async function doDelete() {
         adverts.value = adverts.value.filter(a => a.id !== deleteId.value)
         totalCount.value--
         deleteId.value = null
-    } catch {} finally { actionLoading.value = null }
+        toastSuccess('Ogłoszenie zostało usunięte.')
+    } catch (e: any) { toastError(e?.data?.message || 'Nie udało się usunąć ogłoszenia.') } finally { actionLoading.value = null }
 }
 
 onMounted(fetchAdverts)

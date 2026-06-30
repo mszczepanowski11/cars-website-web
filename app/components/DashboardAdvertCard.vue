@@ -17,6 +17,7 @@ const statusColor = computed(() => {
             <img
                 :src="mainImageUrl"
                 :alt="advert.title"
+                loading="lazy"
             />
             <span v-if="status" class="status-badge" :style="{ background: statusColor }">{{ status }}</span>
         </div>

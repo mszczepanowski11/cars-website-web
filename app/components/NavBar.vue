@@ -81,6 +81,42 @@ onUnmounted(() => {
         _clickOutsideHandler = null
     }
 })
+
+// ── Mobile drawer focus trap (WCAG 2.1 SC 2.1.2) ────────────────────────────
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+function trapFocus(e: KeyboardEvent) {
+    if (!mobileOpen.value) return
+    const drawer = document.querySelector('.mobile-drawer') as HTMLElement | null
+    if (!drawer) return
+    const focusable = Array.from(drawer.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+        el => !el.closest('[hidden]') && el.offsetParent !== null
+    )
+    if (!focusable.length) return
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    if (e.key === 'Tab') {
+        if (e.shiftKey) {
+            if (document.activeElement === first) { e.preventDefault(); last.focus() }
+        } else {
+            if (document.activeElement === last) { e.preventDefault(); first.focus() }
+        }
+    }
+    if (e.key === 'Escape') { closeMobile(); (document.querySelector('.hamburger') as HTMLElement | null)?.focus() }
+}
+
+watch(mobileOpen, (open) => {
+    if (open) {
+        document.addEventListener('keydown', trapFocus)
+        nextTick(() => {
+            const drawer = document.querySelector('.mobile-drawer') as HTMLElement | null
+            const first = drawer?.querySelector<HTMLElement>(FOCUSABLE)
+            first?.focus()
+        })
+    } else {
+        document.removeEventListener('keydown', trapFocus)
+    }
+})
 </script>
 
 <template>
@@ -93,18 +129,25 @@ onUnmounted(() => {
             <nav class="nav-links">
                 <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
                 <div class="nav-dropdown">
-                    <button class="nav-dropdown-trigger" @click="toggleCategories">
+                    <button
+                        class="nav-dropdown-trigger"
+                        aria-haspopup="true"
+                        :aria-expanded="categoriesOpen"
+                        aria-label="Kategorie pojazdów"
+                        @click="toggleCategories"
+                    >
                         Kategorie
                         <v-icon icon="mdi-chevron-down" size="16" :class="{ rotated: categoriesOpen }" />
                     </button>
-                    <div v-show="categoriesOpen" class="nav-dropdown-menu">
+                    <div v-show="categoriesOpen" class="nav-dropdown-menu" role="menu" aria-label="Kategorie pojazdów">
                         <NuxtLink v-for="c in categories" :key="c.id"
                             :to="`/adverts?categoryId=${c.id}`" class="dropdown-item"
+                            role="menuitem"
                             @click="closeCategories">
                             <v-icon :icon="c.icon" size="16" />
                             {{ c.label }}
                         </NuxtLink>
-                        <NuxtLink to="/adverts" class="dropdown-item dropdown-all" @click="closeCategories">
+                        <NuxtLink to="/adverts" class="dropdown-item dropdown-all" role="menuitem" @click="closeCategories">
                             Wszystkie kategorie
                             <v-icon icon="mdi-arrow-right" size="14" />
                         </NuxtLink>
@@ -422,8 +465,8 @@ onUnmounted(() => {
     justify-content: center;
     align-items: center;
     gap: 5px;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: $r-sm;
@@ -491,8 +534,8 @@ onUnmounted(() => {
 }
 
 .drawer-close {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid $border;
     border-radius: $r-sm;

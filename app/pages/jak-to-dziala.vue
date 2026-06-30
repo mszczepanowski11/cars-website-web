@@ -59,7 +59,23 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Jak to działa — CARIZO' })
+const jakConfig = useRuntimeConfig()
+useSeoMeta({
+    title: 'Jak to działa — CARIZO',
+    description: 'Dowiedz się jak sprzedawać i kupować samochody na CARIZO. Prosta rejestracja, bezpieczne ogłoszenia i bezpośredni kontakt ze sprzedającym.',
+    ogType: 'website',
+    ogUrl: `${jakConfig.public.siteUrl}/jak-to-dziala`,
+    ogTitle: 'Jak to działa — CARIZO',
+    ogDescription: 'Sprzedaj lub kup samochód w kilku prostych krokach. Zarejestruj się za darmo na CARIZO.',
+    ogImage: `${jakConfig.public.siteUrl}/hero-car.jpg`,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
+    ogSiteName: 'CARIZO',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Jak to działa — CARIZO',
+    twitterDescription: 'Sprzedaj lub kup samochód w kilku prostych krokach na CARIZO.',
+})
+useHead({ link: [{ rel: 'canonical', href: `${jakConfig.public.siteUrl}/jak-to-dziala` }] })
 
 const openFaq = ref<number | null>(null)
 

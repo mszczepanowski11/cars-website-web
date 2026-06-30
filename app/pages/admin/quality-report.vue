@@ -26,7 +26,12 @@
                 </button>
             </div>
 
-            <div v-if="!report && !loading" class="empty-state">
+            <div v-if="error && !loading" class="error-banner">
+                <v-icon icon="mdi-alert-circle-outline" size="16" />
+                {{ error }}
+            </div>
+
+            <div v-if="!report && !loading && !error" class="empty-state">
                 <v-icon icon="mdi-database-search-outline" size="56" class="es-icon" />
                 <div class="es-title">Analiza jakości danych</div>
                 <div class="es-sub">Kliknij "Uruchom analizę" aby sprawdzić spójność bazy danych.</div>
@@ -135,6 +140,7 @@
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'admin' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 const loading = ref(false)
 const report = ref<any>(null)
@@ -213,7 +219,7 @@ const ReportSection = defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '../admin/shared-admin.scss';
+@import '../admin/shared-admin.scss';
 
 .admin-topbar {
     display: flex;
@@ -240,6 +246,19 @@ const ReportSection = defineComponent({
 
     &:hover:not(:disabled) { opacity: 0.85; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.error-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba($red, 0.1);
+    border: 1px solid rgba($red, 0.3);
+    border-radius: $r-md;
+    color: $red;
+    font-size: 13px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
 }
 
 .empty-state {

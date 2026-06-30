@@ -1,41 +1,110 @@
 <template>
-    <div class="page-bg">
-        <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
-            <h1 class="page-title">Wiadomości</h1>
-            <div v-if="loading" class="loading-row">
-                <v-icon icon="mdi-loading" size="36" class="spin" />
-            </div>
-            <template v-else>
-                <div v-if="!conversations.length" class="no-results">
-                    <v-icon icon="mdi-message-outline" size="64" class="no-results-icon" />
-                    <p>Nie masz jeszcze żadnych wiadomości.</p>
-                    <NuxtLink to="/adverts" class="browse-link">Przeglądaj ogłoszenia</NuxtLink>
+    <div class="msg-shell">
+        <!-- Sidebar -->
+        <aside class="msg-sidebar" :class="{ 'sidebar-hidden': activeConvId }">
+            <div class="sidebar-head">
+                <h1 class="sidebar-title">Wiadomości</h1>
+                <div class="search-wrap">
+                    <v-icon icon="mdi-magnify" size="18" class="search-icon" />
+                    <input
+                        v-model="search"
+                        class="search-input"
+                        placeholder="Szukaj konwersacji..."
+                        type="text"
+                    />
+                    <button v-if="search" class="search-clear" aria-label="Wyczyść wyszukiwanie" @click="search = ''">
+                        <v-icon icon="mdi-close" size="14" />
+                    </button>
                 </div>
-                <div v-else class="conversations-list">
-                    <NuxtLink
-                        v-for="conv in conversations"
-                        :key="conv.id"
-                        :to="`/messages/${conv.id}`"
-                        class="conversation-item"
+                <div class="filter-tabs">
+                    <button
+                        v-for="tab in tabs"
+                        :key="tab.key"
+                        class="filter-tab"
+                        :class="{ active: activeTab === tab.key }"
+                        @click="activeTab = tab.key"
                     >
-                        <div class="conv-avatar">
-                            <v-icon icon="mdi-account-circle" size="48" />
-                        </div>
-                        <div class="conv-body">
-                            <div class="conv-header">
-                                <span class="conv-name">{{ conv.otherUserName }}</span>
-                                <span class="conv-time">{{ formatDate(conv.lastMessageAt) }}</span>
-                            </div>
-                            <div class="conv-advert">{{ conv.advertTitle }}</div>
-                            <div class="conv-preview">{{ conv.lastMessageContent || 'Brak wiadomości' }}</div>
-                        </div>
-                        <div v-if="conv.unreadCount > 0" class="conv-badge">
-                            {{ conv.unreadCount }}
-                        </div>
-                    </NuxtLink>
+                        {{ tab.label }}
+                        <span v-if="tab.key === 'all' && totalUnread > 0" class="tab-badge">{{ totalUnread }}</span>
+                    </button>
                 </div>
-            </template>
-        </div>
+            </div>
+
+            <div class="conv-list-wrap">
+                <div v-if="loading && !conversations.length" class="list-loading">
+                    <div v-for="i in 4" :key="i" class="skel-item">
+                        <div class="skel-avatar" />
+                        <div class="skel-lines">
+                            <div class="skel-line skel-name" />
+                            <div class="skel-line skel-preview" />
+                        </div>
+                    </div>
+                </div>
+
+                <div v-else-if="loadError" class="list-empty">
+                    <v-icon icon="mdi-wifi-off" size="40" class="empty-icon" />
+                    <p>Błąd połączenia</p>
+                    <button class="retry-link" @click="load">Spróbuj ponownie</button>
+                </div>
+
+                <template v-else>
+                    <!-- Pinned -->
+                    <template v-if="pinnedList.length && activeTab !== 'archived'">
+                        <div class="section-label">
+                            <v-icon icon="mdi-pin" size="12" />
+                            Przypięte
+                        </div>
+                        <ConversationItem
+                            v-for="conv in pinnedList"
+                            :key="conv.id"
+                            :conv="conv"
+                            :active="conv.id === activeConvId"
+                            @click="openConv(conv.id)"
+                            @pin="togglePin(conv)"
+                            @archive="toggleArchive(conv)"
+                            @mark-unread="markUnread(conv)"
+                        />
+                    </template>
+
+                    <!-- Main list -->
+                    <template v-if="filteredList.length">
+                        <div v-if="pinnedList.length && activeTab !== 'archived'" class="section-label">
+                            Wszystkie
+                        </div>
+                        <ConversationItem
+                            v-for="conv in filteredList"
+                            :key="conv.id"
+                            :conv="conv"
+                            :active="conv.id === activeConvId"
+                            @click="openConv(conv.id)"
+                            @pin="togglePin(conv)"
+                            @archive="toggleArchive(conv)"
+                            @mark-unread="markUnread(conv)"
+                        />
+                    </template>
+
+                    <div v-else-if="!pinnedList.length" class="list-empty">
+                        <v-icon icon="mdi-message-outline" size="40" class="empty-icon" />
+                        <p v-if="search">Brak wyników dla „{{ search }}"</p>
+                        <p v-else-if="activeTab === 'unread'">Brak nieprzeczytanych</p>
+                        <p v-else-if="activeTab === 'archived'">Brak zarchiwizowanych</p>
+                        <p v-else>Brak wiadomości</p>
+                        <NuxtLink v-if="!search && activeTab === 'all'" to="/adverts" class="retry-link">
+                            Przeglądaj ogłoszenia
+                        </NuxtLink>
+                    </div>
+                </template>
+            </div>
+        </aside>
+
+        <!-- Chat panel (desktop split, mobile full) -->
+        <main class="msg-main">
+            <NuxtPage @conversation-updated="handleConvUpdate" />
+            <div v-if="!activeConvId" class="no-chat-placeholder">
+                <v-icon icon="mdi-message-text-outline" size="64" class="placeholder-icon" />
+                <p class="placeholder-text">Wybierz konwersację</p>
+            </div>
+        </main>
     </div>
 </template>
 
@@ -44,29 +113,103 @@ import type { Conversation } from '~/types'
 definePageMeta({ middleware: 'auth' })
 useHead({ title: 'Wiadomości — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
+const route = useRoute()
+const router = useRouter()
+
 const conversations = ref<Conversation[]>([])
 const loading = ref(false)
+const loadError = ref(false)
+const search = ref('')
+const { error: toastError } = useToast()
+const activeTab = ref<'all' | 'unread' | 'archived'>('all')
 let pollTimer: ReturnType<typeof setInterval> | null = null
+
+const tabs = [
+    { key: 'all', label: 'Wszystkie' },
+    { key: 'unread', label: 'Nieprzeczytane' },
+    { key: 'archived', label: 'Archiwum' },
+]
+
+const activeConvId = computed(() => {
+    const id = Number(route.params.conversationId)
+    return isNaN(id) ? null : id
+})
+
+const totalUnread = computed(() =>
+    conversations.value.filter(c => !c.isArchived).reduce((s, c) => s + c.unreadCount, 0)
+)
+
+const pinnedList = computed(() => {
+    if (activeTab.value === 'archived') return []
+    return conversations.value.filter(c => c.isPinned && !c.isArchived && matchesSearch(c))
+})
+
+const filteredList = computed(() => {
+    return conversations.value.filter(c => {
+        if (c.isPinned && activeTab.value !== 'archived') return false
+        if (activeTab.value === 'unread') return c.unreadCount > 0 && !c.isArchived
+        if (activeTab.value === 'archived') return c.isArchived
+        return !c.isArchived
+    }).filter(c => matchesSearch(c))
+})
+
+function matchesSearch(c: Conversation) {
+    if (!search.value) return true
+    const q = search.value.toLowerCase()
+    return (
+        c.otherUserName.toLowerCase().includes(q) ||
+        c.advertTitle.toLowerCase().includes(q) ||
+        (c.lastMessageContent ?? '').toLowerCase().includes(q)
+    )
+}
 
 async function load() {
     loading.value = true
+    loadError.value = false
     try {
         conversations.value = await $fetch<Conversation[]>('/api/proxy/api/Message/conversations')
+    } catch {
+        loadError.value = true
     } finally {
         loading.value = false
     }
 }
 
-function formatDate(dateStr: string) {
-    const d = new Date(dateStr)
-    const diff = Date.now() - d.getTime()
-    if (diff < 86400000) return d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })
-    return d.toLocaleDateString('pl-PL')
+function openConv(id: number) {
+    router.push(`/messages/${id}`)
+}
+
+async function togglePin(conv: Conversation) {
+    try {
+        const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conv.id}/pin`, { method: 'PUT' })
+        const idx = conversations.value.findIndex(c => c.id === conv.id)
+        if (idx !== -1) conversations.value[idx] = updated
+    } catch { toastError('Nie udało się przypiąć konwersacji.') }
+}
+
+async function toggleArchive(conv: Conversation) {
+    try {
+        const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conv.id}/archive`, { method: 'PUT' })
+        const idx = conversations.value.findIndex(c => c.id === conv.id)
+        if (idx !== -1) conversations.value[idx] = updated
+    } catch { toastError('Nie udało się zarchiwizować konwersacji.') }
+}
+
+async function markUnread(conv: Conversation) {
+    try {
+        await $fetch(`/api/proxy/api/Message/conversation/${conv.id}/mark-unread`, { method: 'PUT' })
+        const idx = conversations.value.findIndex(c => c.id === conv.id)
+        if (idx !== -1) conversations.value[idx] = { ...conversations.value[idx], unreadCount: 1 }
+    } catch { toastError('Nie udało się oznaczyć jako nieprzeczytane.') }
+}
+
+function handleConvUpdate() {
+    load()
 }
 
 onMounted(() => {
     load()
-    pollTimer = setInterval(load, 30_000)
+    pollTimer = setInterval(load, 20_000)
 })
 
 onUnmounted(() => {
@@ -75,92 +218,242 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.page-bg { background: $bg; min-height: 100vh; }
-.container { @include container; }
-.page-title { font-size: 40px; font-weight: 900; color: $text; margin-bottom: 32px; }
-
-.loading-row { display: flex; justify-content: center; padding: 80px 0; color: $red; }
-.spin { animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.no-results {
-    text-align: center;
-    padding: 60px 20px;
-    color: $text-dim;
-    p { margin-top: 12px; font-size: 16px; }
+.msg-shell {
+    display: flex;
+    height: 100vh;
+    background: $bg;
+    padding-top: $nav-height;
+    box-sizing: border-box;
+    overflow: hidden;
 }
-.no-results-icon { color: $text-dark; display: block; margin: 0 auto; }
-.browse-link {
-    display: inline-block;
-    margin-top: 16px;
-    color: $red;
+
+// ── Sidebar ──────────────────────────────────────────────────────────────────
+.msg-sidebar {
+    width: 360px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: #050505;
+    border-right: 1px solid $border;
+    overflow: hidden;
+}
+
+.sidebar-head {
+    padding: 20px 16px 0;
+    flex-shrink: 0;
+}
+
+.sidebar-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: $text;
+    margin-bottom: 14px;
+    letter-spacing: -0.5px;
+}
+
+// Search
+.search-wrap {
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-dark;
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: $r-lg;
+    color: $text;
+    font-size: 13px;
+    padding: 9px 32px 9px 34px;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba($red, 0.4); }
+}
+
+.search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: $text-dim;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    &:hover { color: $text; }
+}
+
+// Filter tabs
+.filter-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid $border;
+    margin: 0 -16px;
+    padding: 0 16px;
+}
+
+.filter-tab {
+    position: relative;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: $text-dim;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: -1px;
+
+    &.active {
+        color: $text;
+        border-bottom-color: $red;
+    }
+
+    &:hover:not(.active) { color: $text; }
+}
+
+.tab-badge {
+    background: $red;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 1px 5px;
+    line-height: 1.4;
+}
+
+// Conversation list
+.conv-list-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: #1e1e1e; border-radius: 2px; }
+}
+
+// Section label
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
     font-weight: 600;
-    font-size: 14px;
+    color: $text-dark;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 8px 16px 4px;
+}
+
+// Loading skeleton
+.list-loading { padding: 8px 0; }
+.skel-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+}
+.skel-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    flex-shrink: 0;
+    animation: shimmer 1.4s infinite;
+}
+.skel-lines { flex: 1; }
+.skel-line {
+    height: 10px;
+    background: #1a1a1a;
+    border-radius: 5px;
+    animation: shimmer 1.4s infinite;
+    margin-bottom: 8px;
+}
+.skel-name { width: 60%; }
+.skel-preview { width: 85%; opacity: 0.6; }
+
+@keyframes shimmer {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+// Empty state
+.list-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    color: $text-dim;
+    text-align: center;
+
+    p { margin-top: 10px; font-size: 14px; }
+}
+
+.empty-icon { color: #222; display: block; }
+.retry-link {
+    margin-top: 12px;
+    color: $red;
+    font-size: 13px;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
     &:hover { opacity: 0.8; }
 }
 
-.conversations-list {
+// ── Main area ──────────────────────────────────────────────────────────────────
+.msg-main {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    max-width: 720px;
-}
-
-.conversation-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
-    background: #080808;
-    border: 1px solid $border;
-    border-radius: $r-md;
-    text-decoration: none;
-    transition: border-color 0.15s, background 0.15s;
-    &:hover { background: #0d0d0d; border-color: rgba($red, 0.3); }
-}
-
-.conv-avatar { flex-shrink: 0; color: $text-dim; }
-.conv-body { flex: 1; min-width: 0; }
-
-.conv-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
-}
-
-.conv-name { font-weight: 700; color: $text; font-size: 15px; }
-.conv-time { font-size: 12px; color: $text-dim; flex-shrink: 0; margin-left: 8px; }
-
-.conv-advert {
-    font-size: 12px;
-    color: $red;
-    margin-bottom: 4px;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-.conv-preview {
-    font-size: 13px;
-    color: $text-dim;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.conv-badge {
-    background: $red;
-    color: white;
-    border-radius: 50%;
-    min-width: 22px;
-    height: 22px;
+.no-chat-placeholder {
+    flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    flex-shrink: 0;
-    padding: 0 4px;
+    color: $text-dark;
+    gap: 12px;
+}
+
+.placeholder-icon { color: #1a1a1a; }
+.placeholder-text { font-size: 15px; color: $text-dark; }
+
+// ── Mobile ──────────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+    .msg-shell { display: block; overflow-y: auto; height: auto; min-height: 100vh; }
+    .msg-sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+
+        &.sidebar-hidden { display: none; }
+    }
+    .msg-main {
+        display: block;
+    }
+    .no-chat-placeholder { display: none; }
 }
 </style>

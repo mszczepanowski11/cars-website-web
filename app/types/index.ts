@@ -1,41 +1,13 @@
 export interface TaxonomyItem { id: number; name: string }
 export interface SelectOption { value: number | string; label: string; icon?: string; meta?: string }
 export interface Generation extends TaxonomyItem { yearFrom: number; yearTo: number }
-export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number; fuelTypeId?: number; fuelTypeName?: string; fuelConsumptionCity?: number; fuelConsumptionHighway?: number; fuelConsumptionCombined?: number; trimId?: number; torqueNm?: number; co2EmissionGkm?: number; euroNorm?: string; avgConsumptionL?: number; acceleration0100?: number; topSpeedKmh?: number; driveType?: string; gearboxType?: string; cylinders?: number }
-
-export interface TrimItem {
-  id: number
-  generationId: number
-  name: string
-  description?: string
-}
-
-export interface VehicleSubtype {
-  id: number
-  vehicleCategoryId: number
-  name: string
-  namePl?: string
-  sortOrder: number
-}
-
-export interface PartCategory {
-  id: number
-  name: string
-  namePl?: string
-  sortOrder: number
-  subcategories: PartSubcategory[]
-}
-
-export interface PartSubcategory {
-  id: number
-  partCategoryId: number
-  name: string
-  namePl?: string
-  sortOrder: number
-}
+export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number; fuelTypeId?: number; fuelTypeName?: string; fuelConsumptionCity?: number; fuelConsumptionHighway?: number; fuelConsumptionCombined?: number; trimId?: number | null; torqueNm?: number | null; co2EmissionGkm?: number | null; euroNorm?: string | null; acceleration0100?: number | null; topSpeedKmh?: number | null; driveType?: string | null; gearboxType?: string | null; cylinders?: number | null }
 export interface AdvertImage { id: number; url: string; isMain: boolean }
 export interface Feature { id: number; name: string; category: { id: number; name: string; vehicleCategoryId?: number | null } }
 export interface DriveType { id: number; name: string; slug: string }
+export interface VehicleSubtype { id: number; name: string; slug?: string | null }
+export interface PartCategory { id: number; name: string; namePl?: string | null; sortOrder?: number }
+export interface PartSubcategory { id: number; name: string; partCategoryId: number; sortOrder?: number }
 export interface CarColor { id: number; name: string; hexCode: string }
 export type AdvertBadge = 'PREMIUM' | 'VERIFIED' | 'DEALER' | 'FEATURED' | 'TOP'
 
@@ -179,8 +151,13 @@ export interface Conversation {
     buyerId: number; buyerName: string
     sellerId: number; sellerName: string
     advertId: number; advertTitle: string
+    advertThumbnail?: string | null
     lastMessageAt: string; lastMessageContent: string | null
+    lastMessageIsMine?: boolean
     unreadCount: number; otherUserId: number; otherUserName: string
+    otherUserAvatar?: string | null
+    isPinned?: boolean
+    isArchived?: boolean
 }
 
 export interface MessageItem {

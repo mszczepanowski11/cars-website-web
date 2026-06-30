@@ -7,10 +7,11 @@
 
             <form class="auth-form" @submit.prevent="submit">
                 <div class="auth-field">
-                    <label class="auth-label">Adres email</label>
+                    <label for="login-email" class="auth-label">Adres email</label>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--focus': emailFocused }">
                         <v-icon icon="mdi-email-outline" size="17" class="auth-field-icon" />
                         <input
+                            id="login-email"
                             v-model="email"
                             type="email"
                             class="auth-input"
@@ -25,12 +26,13 @@
 
                 <div class="auth-field">
                     <div class="auth-label-row">
-                        <label class="auth-label">Hasło</label>
+                        <label for="login-password" class="auth-label">Hasło</label>
                         <NuxtLink to="/forgot-password" class="auth-forgot">Zapomniałem hasła</NuxtLink>
                     </div>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--focus': passwordFocused }">
                         <v-icon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
                         <input
+                            id="login-password"
                             v-model="password"
                             :type="showPassword ? 'text' : 'password'"
                             class="auth-input"
@@ -40,13 +42,13 @@
                             @focus="passwordFocused = true"
                             @blur="passwordFocused = false"
                         />
-                        <button type="button" class="auth-eye" @click="showPassword = !showPassword">
+                        <button type="button" class="auth-eye" :aria-label="showPassword ? 'Ukryj hasło' : 'Pokaż hasło'" @click="showPassword = !showPassword">
                             <v-icon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
                         </button>
                     </div>
                 </div>
 
-                <div v-if="error" class="auth-error">
+                <div v-if="error" role="alert" class="auth-error">
                     <v-icon icon="mdi-alert-circle-outline" size="15" />
                     {{ error }}
                     <NuxtLink v-if="unverifiedEmail" :to="`/register`" class="verify-hint">

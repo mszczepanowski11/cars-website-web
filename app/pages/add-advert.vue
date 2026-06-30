@@ -54,9 +54,17 @@
                     <v-icon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="16" />
                     {{ draftSaved ? 'Zapisano!' : 'Zapisz szkic' }}
                 </button>
-                <button class="btn-close" @click="navigateTo('/my-adverts')">
+                <button class="btn-close" aria-label="Zamknij i wróć do ogłoszeń" @click="navigateTo('/my-adverts')">
                     <v-icon icon="mdi-close" size="18" />
                 </button>
+            </div>
+        </div>
+
+        <!-- Mobile step progress (hidden on desktop where left sidebar shows) -->
+        <div class="mobile-step-bar">
+            <div class="mobile-step-label">Krok {{ currentStep + 1 }} z {{ steps.length }}: {{ steps[currentStep]?.name }}</div>
+            <div class="mobile-step-track">
+                <div class="mobile-step-fill" :style="{ width: `${((currentStep + 1) / steps.length) * 100}%` }" />
             </div>
         </div>
 
@@ -85,7 +93,7 @@
                     <div>
                         <div class="help-title">Potrzebujesz pomocy?</div>
                         <p class="help-sub">Sprawdź poradnik jak dodać najlepsze ogłoszenie</p>
-                        <NuxtLink to="/jak-to-dziala" target="_blank" class="help-link">Zobacz poradnik →</NuxtLink>
+                        <NuxtLink to="/jak-to-dziala" target="_blank" rel="noopener noreferrer" class="help-link">Zobacz poradnik →</NuxtLink>
                     </div>
                 </div>
             </aside>
@@ -169,6 +177,18 @@
                         <p>Podaj dane techniczne i identyfikacyjne pojazdu.</p>
                     </div>
                     <div class="fields-grid">
+
+                        <!-- Vehicle Subtype -->
+                        <div v-if="subtypes.length > 0" class="field full-width">
+                            <label class="flabel">
+                                Rodzaj pojazdu <span class="req">*</span>
+                            </label>
+                            <SmartSelect
+                                v-model="form.vehicleSubtypeId"
+                                :options="subtypes.map(s => ({ value: s.id, label: s.name }))"
+                                placeholder="Wybierz rodzaj pojazdu"
+                            />
+                        </div>
 
                         <!-- Brand: SmartSelect for known categories, text input for specialized machinery -->
                         <div v-if="isFieldVisible('brand')" class="field">
@@ -268,23 +288,24 @@
                             </div>
                         </div>
 
-                        <!-- Trim / Wariant — appears when trims exist for selected generation -->
-                        <div v-if="isFieldVisible('generation') && trims.length > 0" class="field">
-                            <label class="flabel">Wariant / Trim</label>
+                        <!-- Trim / Version (optional, shown when trims exist for generation) -->
+                        <div v-if="isFieldVisible('generation') && trims.length" class="field">
+                            <label class="flabel">Wersja wyposażenia</label>
                             <SmartSelect
                                 v-model="form.trimId"
-                                :options="trimOptions"
-                                placeholder="Wybierz wariant (opcjonalnie)"
-                                search-placeholder="wariantów"
+                                :options="trims.map((t: any) => ({ value: t.id, label: t.name }))"
+                                placeholder="Wybierz wersję (opcjonalnie)"
+                                prefix-icon="mdi-car-cog"
+                                search-placeholder="wersji"
                                 :disabled="!form.generationId"
-                                @change="onTrimChange(form.trimId)"
+                                @change="onTrim"
                             />
                             <div class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ trims.length }} wariantów dostępnych
+                                <v-icon icon="mdi-information-outline" size="12" />{{ trims.length }} wersji dostępnych
                             </div>
                         </div>
 
-                        <!-- Engine version (loaded after generation or trim selection) -->
+                        <!-- Engine version (loaded after generation selection) -->
                         <div v-if="isFieldVisible('generation') && engines.length" class="field">
                             <label class="flabel">Wersja silnika</label>
                             <SmartSelect
@@ -355,10 +376,14 @@
                             </label>
                             <div class="input-icon-wrap">
                                 <v-icon icon="mdi-calendar-outline" class="input-prefix" size="16" />
-                                <input v-model.number="form.year" type="number" class="finput has-prefix"
-                                    placeholder="np. 2020" min="1900" :max="new Date().getFullYear()" />
+                                <input v-model.number="form.year" type="number"
+                                    :class="['finput has-prefix', fieldErrors.year ? 'finput--error' : '']"
+                                    placeholder="np. 2020" min="1900" :max="new Date().getFullYear() + 1" />
                             </div>
-                            <div v-if="categoryConfig.yearHint" class="field-hint">
+                            <div v-if="fieldErrors.year" class="field-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.year }}
+                            </div>
+                            <div v-else-if="categoryConfig.yearHint" class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.yearHint }}
                             </div>
                         </div>
@@ -405,10 +430,13 @@
                                     <v-icon icon="mdi-lock-outline" size="11" />z silnika
                                 </span>
                             </label>
-                            <input v-model.number="form.power" type="number" class="finput"
-                                :class="{ 'finput--locked': engineLocked.power }"
+                            <input v-model.number="form.power" type="number"
+                                :class="['finput', engineLocked.power ? 'finput--locked' : '', fieldErrors.power ? 'finput--error' : '']"
                                 placeholder="np. 150"
                                 :readonly="engineLocked.power" />
+                            <div v-if="fieldErrors.power" class="field-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.power }}
+                            </div>
                         </div>
 
                         <!-- Gearbox (not for machinery/trailers/parts/motorcycles) -->
@@ -422,6 +450,30 @@
                             />
                         </div>
 
+                        <!-- Gear count -->
+                        <div v-if="isFieldVisible('gearbox')" class="field">
+                            <label class="flabel">Liczba biegów</label>
+                            <select v-model="form.gearCount" class="finput">
+                                <option :value="null">Nie podaję</option>
+                                <option v-for="n in [4,5,6,7,8,9,10]" :key="n" :value="n">{{ n }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Metallic paint -->
+                        <div v-if="isFieldVisible('color')" class="field">
+                            <label class="flabel">Rodzaj lakieru</label>
+                            <div class="radio-group">
+                                <label class="radio-opt" :class="{ active: !form.metallicPaint }">
+                                    <input type="radio" name="metallicPaint" :value="false" v-model="form.metallicPaint" hidden />
+                                    Niemetalik
+                                </label>
+                                <label class="radio-opt" :class="{ active: form.metallicPaint }">
+                                    <input type="radio" name="metallicPaint" :value="true" v-model="form.metallicPaint" hidden />
+                                    Metalik
+                                </label>
+                            </div>
+                        </div>
+
                         <!-- Mileage / Motohours (not for parts/trailers) -->
                         <div v-if="isFieldVisible('mileage')" class="field">
                             <label class="flabel">
@@ -432,10 +484,14 @@
                                 <v-icon
                                     :icon="categoryConfig.mileageLabel?.includes('mth') ? 'mdi-timer-outline' : 'mdi-speedometer'"
                                     class="input-prefix" size="16" />
-                                <input v-model.number="form.mileage" type="number" class="finput has-prefix"
+                                <input v-model.number="form.mileage" type="number" min="0" max="2000000"
+                                    :class="['finput has-prefix', fieldErrors.mileage ? 'finput--error' : '']"
                                     :placeholder="categoryConfig.mileageLabel?.includes('mth') ? 'np. 5 000' : 'np. 100 000'" />
                             </div>
-                            <div v-if="categoryConfig.mileageHint" class="field-hint">
+                            <div v-if="fieldErrors.mileage" class="field-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.mileage }}
+                            </div>
+                            <div v-else-if="categoryConfig.mileageHint" class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.mileageHint }}
                             </div>
                         </div>
@@ -464,12 +520,18 @@
 
                                     <!-- Select -->
                                     <div v-else-if="ef.type === 'select'" :class="['field', ef.fullWidth ? 'full-width' : '']">
-                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <label class="flabel">
+                                            {{ ef.label }} <span v-if="ef.required" class="req">*</span>
+                                            <span v-if="efIsLocked(ef.key)" class="field-locked-badge">
+                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika
+                                            </span>
+                                        </label>
                                         <SmartSelect
                                             :model-value="extras[ef.key]"
-                                            @update:model-value="extras[ef.key] = $event"
+                                            @update:model-value="v => !efIsLocked(ef.key) && (extras[ef.key] = v)"
                                             :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
                                             :placeholder="`Wybierz ${ef.label.toLowerCase()}`"
+                                            :disabled="efIsLocked(ef.key)"
                                         />
                                         <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
@@ -547,64 +609,53 @@
                         </div>
                     </transition>
 
-                    <!-- ── Parts-specific fields — shown when category is "Części" ── -->
+                    <!-- ── Subtype-specific extra fields ──────────────────────────────────── -->
                     <transition name="fade-err">
-                        <div v-if="isPartsCategorySelected" class="hist-section">
-                            <div class="hist-section-title"><v-icon icon="mdi-cog-outline" size="16" />Dane części</div>
+                        <div v-if="subtypeExtraFields.length > 0" class="extra-fields-wrap">
+                            <div class="extras-section-divider">
+                                <span>Specyfikacja {{ selectedSubtype?.name }}</span>
+                            </div>
                             <div class="fields-grid">
+                                <template v-for="ef in subtypeExtraFields" :key="'sub-' + ef.key">
 
-                                <div class="field">
-                                    <label class="flabel">Kategoria części</label>
-                                    <SmartSelect
-                                        v-model="form.partCategoryId"
-                                        :options="partCategoryOptions"
-                                        placeholder="Wybierz kategorię"
-                                        search-placeholder="kategorii"
-                                        @change="onPartCategoryChange(form.partCategoryId)"
-                                    />
-                                </div>
+                                    <!-- Radio -->
+                                    <div v-if="ef.type === 'radio'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="radio-group">
+                                            <label v-for="opt in ef.options" :key="opt.value" class="radio-opt"
+                                                :class="{ active: extras[ef.key] === opt.value }">
+                                                <input type="radio" :name="'sub-' + ef.key" :value="opt.value"
+                                                    v-model="extras[ef.key]" hidden />
+                                                {{ opt.label }}
+                                            </label>
+                                        </div>
+                                    </div>
 
-                                <div v-if="partSubcategories.length > 0" class="field">
-                                    <label class="flabel">Podkategoria części</label>
-                                    <SmartSelect
-                                        v-model="form.partSubcategoryId"
-                                        :options="partSubcategoryOptions"
-                                        placeholder="Wybierz podkategorię"
-                                        search-placeholder="podkategorii"
-                                    />
-                                </div>
+                                    <!-- Select -->
+                                    <div v-else-if="ef.type === 'select'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <SmartSelect
+                                            :model-value="extras[ef.key]"
+                                            @update:model-value="extras[ef.key] = $event"
+                                            :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
+                                            :placeholder="`Wybierz ${ef.label.toLowerCase()}`"
+                                        />
+                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                    </div>
 
-                                <div class="field">
-                                    <label class="flabel">Numer OEM</label>
-                                    <input
-                                        v-model="form.oemNumber"
-                                        type="text"
-                                        class="finput"
-                                        placeholder="np. 1K0-615-301"
-                                    />
-                                    <div class="field-hint"><v-icon icon="mdi-information-outline" size="12" />Numer oryginalny części od producenta pojazdu</div>
-                                </div>
+                                    <!-- Number -->
+                                    <div v-else-if="ef.type === 'number'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="input-unit-wrap">
+                                            <input v-model.number="extras[ef.key]" type="number"
+                                                class="finput"
+                                                :placeholder="ef.placeholder ?? ''" />
+                                            <span v-if="ef.unit" class="input-unit-badge">{{ ef.unit }}</span>
+                                        </div>
+                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                    </div>
 
-                                <div class="field">
-                                    <label class="flabel">Nr katalogowy producenta</label>
-                                    <input
-                                        v-model="form.manufacturerPartNumber"
-                                        type="text"
-                                        class="finput"
-                                        placeholder="np. 0986494513"
-                                    />
-                                </div>
-
-                                <div class="field">
-                                    <label class="flabel">Producent części</label>
-                                    <input
-                                        v-model="form.partManufacturer"
-                                        type="text"
-                                        class="finput"
-                                        placeholder="np. Bosch, TRW, Valeo"
-                                    />
-                                </div>
-
+                                </template>
                             </div>
                         </div>
                     </transition>
@@ -614,7 +665,7 @@
                         <div class="hist-section-title"><v-icon icon="mdi-barcode-scan" size="16" />Identyfikacja pojazdu</div>
                         <div class="fields-grid">
                             <div class="field full-width">
-                                <label class="flabel">Numer VIN</label>
+                                <label class="flabel">Numer VIN <span class="req">*</span></label>
                                 <div class="vin-row">
                                     <input v-model="form.vin" class="finput vin-input" placeholder="Wpisz 17-znakowy numer VIN" maxlength="17"
                                         :class="{ 'input-ok': form.vin.length === 17 }" />
@@ -627,8 +678,8 @@
                                     </button>
                                 </div>
                                 <transition name="fade-err">
-                                    <span v-if="vinError" class="vin-error">
-                                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ vinError }}
+                                    <span v-if="fieldErrors.vin || vinError" class="vin-error">
+                                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ fieldErrors.vin || vinError }}
                                     </span>
                                 </transition>
                                 <p class="field-hint"><v-icon icon="mdi-information-outline" size="12" />VIN pozwala automatycznie uzupełnić dane i buduje zaufanie kupujących</p>
@@ -874,10 +925,16 @@
                         <p v-if="!isEdit">Dodaj minimum <strong>3 zdjęcia</strong> pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
                         <p v-else>Możesz usunąć istniejące zdjęcia lub dodać nowe.</p>
                     </div>
-                    <div class="img-grid">
+                    <div
+                        class="img-grid"
+                        :class="{ 'img-grid--dragover': gridDragOver }"
+                        @dragover.prevent="gridDragOver = true"
+                        @dragleave="gridDragOver = false"
+                        @drop.prevent="onGridDrop"
+                    >
                         <!-- Existing images (edit mode) -->
                         <div v-for="img in existingImages" :key="`ex-${img.id}`" class="img-thumb img-thumb--existing">
-                            <img :src="getImageUrl(img.url)" />
+                            <img :src="getImageUrl(img.url)" :alt="`Zdjęcie pojazdu ${img.id}`" loading="lazy" />
                             <button type="button" class="img-remove"
                                 :disabled="deletingImageId === img.id"
                                 @click="deleteExistingImage(img.id)">
@@ -886,20 +943,37 @@
                             </button>
                             <span v-if="img.isMain" class="img-main-badge">Główne</span>
                         </div>
-                        <!-- New images being added -->
-                        <div v-for="(preview, i) in previews" :key="`new-${i}`" class="img-thumb">
-                            <img :src="preview" />
-                            <button type="button" class="img-remove" @click="removeImage(i)">
+                        <!-- New images being added (draggable for reorder) -->
+                        <div
+                            v-for="(preview, i) in previews"
+                            :key="`new-${i}`"
+                            class="img-thumb"
+                            :class="{ 'img-thumb--drag-src': dragSrcIdx === i, 'img-thumb--drag-over': dragOverIdx === i }"
+                            draggable="true"
+                            @dragstart="dragSrcIdx = i"
+                            @dragend="dragSrcIdx = null; dragOverIdx = null"
+                            @dragover.prevent="dragOverIdx = i"
+                            @dragleave="dragOverIdx = null"
+                            @drop.prevent="reorderPhoto(i)"
+                        >
+                            <img :src="preview" :alt="`Zdjęcie ${i + 1}`" />
+                            <button type="button" class="img-remove" :aria-label="`Usuń zdjęcie ${i + 1}`" @click="removeImage(i)">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
                             <span v-if="!existingImages.length && i === 0" class="img-main-badge">Główne</span>
+                            <span class="img-drag-hint"><v-icon icon="mdi-drag" size="13" /></span>
                         </div>
-                        <label v-if="(existingImages.length + selectedFiles.length) < 20" class="img-add" :class="{ 'img-add--loading': photoUploading }">
+                        <label v-if="(existingImages.length + selectedFiles.length) < 50" class="img-add" :class="{ 'img-add--loading': photoUploading }">
                             <input type="file" multiple accept="image/jpeg,image/png,image/webp" @change="onFilesSelected" :disabled="photoUploading" hidden />
                             <v-icon v-if="photoUploading" icon="mdi-loading" size="28" class="spin" />
                             <v-icon v-else icon="mdi-plus" size="28" />
                             <span>{{ photoUploading ? 'Przetwarzanie...' : 'Dodaj zdjęcia' }}</span>
                         </label>
+                        <!-- Drop zone hint when no files yet -->
+                        <div v-if="!previews.length && !existingImages.length" class="img-drop-hint">
+                            <v-icon icon="mdi-cloud-upload-outline" size="32" />
+                            <span>Przeciągnij zdjęcia tutaj lub kliknij „Dodaj zdjęcia"</span>
+                        </div>
                     </div>
 
                     <!-- AI Photo Quality Analysis -->
@@ -910,7 +984,7 @@
                         </div>
                         <div v-for="(preview, index) in previews" :key="`ai-${index}`" class="photo-ai-item">
                             <div class="photo-ai-thumb">
-                                <img :src="preview" />
+                                <img :src="preview" :alt="`Podgląd zdjęcia ${index + 1} do analizy AI`" />
                                 <span class="photo-ai-num">{{ index + 1 }}</span>
                             </div>
                             <div class="photo-ai-content">
@@ -967,6 +1041,52 @@
                             <v-icon icon="mdi-image-size-select-large" size="14" />
                             {{ photoFeedback.lowQuality.length }} zdjęcie(-a) mają niską rozdzielczość (poniżej 800px)
                         </div>
+                    </div>
+
+                    <!-- PDF Brochure Upload -->
+                    <div class="pdf-section">
+                        <div class="pdf-section-title">
+                            <v-icon icon="mdi-file-pdf-box" size="16" style="color:#e53e3e" />
+                            Broszura PDF
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </div>
+                        <div class="pdf-section-desc">Dodaj PDF z pełną specyfikacją, historią serwisową lub ofertą finansową.</div>
+
+                        <div v-if="form.pdfBrochureUrl && form.pdfBrochureUrl !== '__pending__'" class="pdf-uploaded">
+                            <v-icon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <div class="pdf-info">
+                                <div class="pdf-name">{{ pdfFileName || 'Broszura.pdf' }}</div>
+                                <a :href="form.pdfBrochureUrl" target="_blank" rel="noopener noreferrer" class="pdf-view-link">
+                                    <v-icon icon="mdi-open-in-new" size="12" />Podgląd
+                                </a>
+                            </div>
+                            <button type="button" class="pdf-remove-btn" @click="removePdf">
+                                <v-icon icon="mdi-close" size="15" />
+                            </button>
+                        </div>
+
+                        <div v-else-if="form.pdfBrochureUrl === '__pending__'" class="pdf-uploaded pdf-pending">
+                            <v-icon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <div class="pdf-info">
+                                <div class="pdf-name">{{ pdfFileName }}</div>
+                                <div class="pdf-pending-label">Zostanie przesłany po publikacji</div>
+                            </div>
+                            <button type="button" class="pdf-remove-btn" @click="removePdf">
+                                <v-icon icon="mdi-close" size="15" />
+                            </button>
+                        </div>
+
+                        <label v-else class="pdf-upload-btn" :class="{ 'pdf-upload-btn--loading': pdfUploading }">
+                            <input type="file" accept="application/pdf" @change="onPdfSelected" :disabled="pdfUploading" hidden />
+                            <v-icon :icon="pdfUploading ? 'mdi-loading' : 'mdi-upload'" size="16" :class="{ spin: pdfUploading }" />
+                            {{ pdfUploading ? 'Wysyłanie...' : 'Wybierz plik PDF (maks. 25 MB)' }}
+                        </label>
+
+                        <transition name="fade-err">
+                            <div v-if="pdfUploadError" class="pdf-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="13" />{{ pdfUploadError }}
+                            </div>
+                        </transition>
                     </div>
                 </div>
 
@@ -1196,6 +1316,62 @@
                         </div>
                     </div>
 
+                        <!-- Garaged -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.isGaraged }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.isGaraged }">
+                                    <v-icon :icon="history.isGaraged ? 'mdi-check' : 'mdi-garage-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Garażowany</div>
+                                    <div class="vi-desc">Pojazd przechowywany w garażu lub hali</div>
+                                </div>
+                                <div v-if="history.isGaraged" class="vi-badge">+1 pkt</div>
+                            </div>
+                            <label class="toggle-row" style="margin-top:12px">
+                                <span class="toggle-label">Pojazd jest garażowany</span>
+                                <div class="toggle-switch" :class="{ active: history.isGaraged }" @click="history.isGaraged = !history.isGaraged">
+                                    <div class="toggle-knob" />
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Key count -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.keyCount !== null }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.keyCount !== null }">
+                                    <v-icon :icon="history.keyCount !== null ? 'mdi-check' : 'mdi-key-outline'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">Liczba kluczyków</div>
+                                    <div class="vi-desc">Ile kluczyków / pilotów jest dostępnych do pojazdu</div>
+                                </div>
+                                <div v-if="history.keyCount !== null" class="vi-badge">+1 pkt</div>
+                            </div>
+                            <select v-model="history.keyCount" class="finput" style="margin-top:12px">
+                                <option :value="null">Nie podaję</option>
+                                <option :value="1">1 kluczyk</option>
+                                <option :value="2">2 kluczyki</option>
+                                <option :value="3">3 kluczyki</option>
+                                <option :value="4">4+ kluczyków</option>
+                            </select>
+                        </div>
+
+                        <!-- Insurance until -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': history.insuranceUntil }">
+                            <div class="vi-header">
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.insuranceUntil }">
+                                    <v-icon :icon="history.insuranceUntil ? 'mdi-check' : 'mdi-shield-car'" size="18" />
+                                </div>
+                                <div class="vi-texts">
+                                    <div class="vi-title">OC ważne do</div>
+                                    <div class="vi-desc">Data ważności ubezpieczenia odpowiedzialności cywilnej</div>
+                                </div>
+                                <div v-if="history.insuranceUntil" class="vi-badge">+1 pkt</div>
+                            </div>
+                            <input v-model="history.insuranceUntil" type="month" class="finput" style="margin-top:12px" />
+                        </div>
+
                     <!-- Carizo verified summary -->
                     <div class="cverified-summary">
                         <div class="cvs-icon">
@@ -1203,10 +1379,10 @@
                         </div>
                         <div>
                             <div class="cvs-title">CARIZO VERIFIED</div>
-                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null].filter(Boolean).length }} z 6 punktów potwierdzonych</div>
+                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length }} z 9 punktów potwierdzonych</div>
                         </div>
                         <div class="cvs-score">
-                            {{ Math.round([form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null].filter(Boolean).length / 6 * 100) }}%
+                            {{ Math.round([form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length / 9 * 100) }}%
                         </div>
                     </div>
                 </div>
@@ -1235,11 +1411,62 @@
                         </div>
                     </div>
 
+                    <!-- Registration plate -->
+                    <div class="field full-width" style="margin-bottom:12px">
+                        <label class="flabel">
+                            Numer rejestracyjny
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </label>
+                        <div class="input-icon-wrap">
+                            <v-icon icon="mdi-card-account-details-outline" class="input-prefix" size="16" />
+                            <input v-model="form.registrationPlate" type="text" class="finput has-prefix"
+                                placeholder="np. WA 12345" maxlength="10" style="text-transform:uppercase"
+                                @input="(form.registrationPlate as string) = (form.registrationPlate as string).toUpperCase()" />
+                        </div>
+                        <div class="field-hint">
+                            <v-icon icon="mdi-information-outline" size="12" />Widoczny dla poważnych kupujących — pomaga w weryfikacji historii
+                        </div>
+                    </div>
+
+                    <!-- Financing & payment options -->
+                    <div class="field full-width" style="margin-bottom:16px">
+                        <label class="flabel">Opcje finansowania i wymiany</label>
+                        <div class="bool-checks-row">
+                            <label class="bool-check" :class="{ active: form.hasVatInvoice }">
+                                <input type="checkbox" v-model="form.hasVatInvoice" hidden />
+                                <span class="bool-box"><v-icon v-if="form.hasVatInvoice" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-receipt-text-outline" size="14" style="margin-right:4px" />
+                                Faktura VAT
+                            </label>
+                            <label class="bool-check" :class="{ active: form.isLeasingPossible }">
+                                <input type="checkbox" v-model="form.isLeasingPossible" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isLeasingPossible" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-handshake-outline" size="14" style="margin-right:4px" />
+                                Możliwość leasingu
+                            </label>
+                            <label class="bool-check" :class="{ active: form.isCreditPossible }">
+                                <input type="checkbox" v-model="form.isCreditPossible" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isCreditPossible" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-credit-card-outline" size="14" style="margin-right:4px" />
+                                Kredyt
+                            </label>
+                            <label class="bool-check" :class="{ active: form.isExchangePossible }">
+                                <input type="checkbox" v-model="form.isExchangePossible" hidden />
+                                <span class="bool-box"><v-icon v-if="form.isExchangePossible" icon="mdi-check" size="12" /></span>
+                                <v-icon icon="mdi-swap-horizontal" size="14" style="margin-right:4px" />
+                                Zamiana
+                            </label>
+                        </div>
+                    </div>
+
                     <!-- Price + negotiable -->
                     <div class="fields-grid" style="margin-bottom:12px">
                         <div class="field">
                             <label class="flabel">{{ categoryConfig.priceLabel ?? 'Cena (zł)' }} <span class="req">*</span></label>
-                            <input v-model.number="form.price" type="number" class="finput finput-price" placeholder="np. 50 000" />
+                            <input v-model.number="form.price" type="number" min="0" max="10000000" class="finput finput-price" :class="{ 'finput--error': fieldErrors.price }" placeholder="np. 50 000" />
+                            <div v-if="fieldErrors.price" class="field-error">
+                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.price }}
+                            </div>
                             <div v-if="categoryConfig.priceHint" class="field-hint">
                                 <v-icon icon="mdi-trending-up" size="12" />{{ categoryConfig.priceHint }}
                             </div>
@@ -1309,6 +1536,16 @@
                             </div>
                         </div>
                     </div>
+                    <transition name="fade-err">
+                        <div v-if="fieldErrors.description" class="field-error" style="margin-bottom:8px">
+                            <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.description }}
+                        </div>
+                    </transition>
+                    <transition name="fade-err">
+                        <div v-if="descPhoneWarning" class="desc-phone-warn">
+                            <v-icon icon="mdi-phone-alert-outline" size="14" />{{ descPhoneWarning }}
+                        </div>
+                    </transition>
                     <div class="writing-tips">
                         <div class="wt-title"><v-icon icon="mdi-lightbulb-outline" size="14" />Wskazówki dla dobrego opisu</div>
                         <div class="wt-grid">
@@ -1316,6 +1553,35 @@
                             <div class="wt-item"><v-icon icon="mdi-wrench-outline" size="13" />Co zostało wymienione</div>
                             <div class="wt-item"><v-icon icon="mdi-car-multiple" size="13" />Powód sprzedaży</div>
                             <div class="wt-item"><v-icon icon="mdi-package-variant-closed" size="13" />Dodatkowe akcesoria</div>
+                        </div>
+                    </div>
+
+                    <!-- YouTube video link -->
+                    <div class="field full-width" style="margin-top:16px;margin-bottom:16px">
+                        <label class="flabel">
+                            Film YouTube
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </label>
+                        <div class="input-icon-wrap">
+                            <v-icon icon="mdi-youtube" class="input-prefix" size="16" style="color:#ff0000" />
+                            <input v-model="form.youtubeUrl" type="url" class="finput has-prefix"
+                                placeholder="https://youtube.com/watch?v=..." maxlength="500" />
+                        </div>
+                        <div v-if="youtubeEmbedId" class="field-hint" style="color:#4ade80">
+                            <v-icon icon="mdi-check-circle-outline" size="12" style="color:#4ade80" />Film będzie wyświetlany bezpośrednio w ogłoszeniu
+                        </div>
+                        <div v-else class="field-hint">
+                            <v-icon icon="mdi-information-outline" size="12" />Ogłoszenia z filmem sprzedają się szybciej — nagraj krótką prezentację pojazdu
+                        </div>
+                        <div v-if="youtubeEmbedId" class="yt-preview">
+                            <iframe
+                                :src="`https://www.youtube-nocookie.com/embed/${youtubeEmbedId}`"
+                                class="yt-iframe"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen
+                                loading="lazy"
+                            />
                         </div>
                     </div>
 
@@ -1552,12 +1818,42 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Completeness checklist -->
+                    <div class="summary-checklist">
+                        <div class="summary-checklist-title">
+                            <v-icon icon="mdi-clipboard-check-outline" size="15" />
+                            Kompletność ogłoszenia
+                        </div>
+                        <div v-for="factor in scoreFactors" :key="factor.label" class="summary-factor">
+                            <v-icon
+                                :icon="factor.done ? 'mdi-check-circle' : 'mdi-circle-outline'"
+                                size="16"
+                                :style="{ color: factor.done ? '#4ade80' : '#6b7280' }"
+                            />
+                            <span :class="{ 'summary-factor--done': factor.done }">{{ factor.label }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Tips -->
+                    <div v-if="scoreTips.length" class="summary-tips">
+                        <div class="summary-tips-title">
+                            <v-icon icon="mdi-lightbulb-on-outline" size="14" />
+                            Wskazówki jak poprawić skuteczność
+                        </div>
+                        <div v-for="tip in scoreTips" :key="tip" class="summary-tip-item">
+                            <v-icon icon="mdi-arrow-right-thin" size="14" />{{ tip }}
+                        </div>
+                    </div>
+
                     <div class="preview-publish-row">
                         <div class="ppr-score">
                             <div class="ppr-score-ring" :style="{ '--score': adScore }">
                                 <span class="ppr-score-num">{{ adScore }}</span>
                             </div>
                             <div class="ppr-score-label">Jakość ogłoszenia</div>
+                            <div class="ppr-score-tier" :class="adScore >= 90 ? 'tier--gold' : adScore >= 70 ? 'tier--silver' : 'tier--bronze'">
+                                {{ adScore >= 90 ? 'PREMIUM VERIFIED' : adScore >= 70 ? 'DOBRA JAKOŚĆ' : 'DO UZUPEŁNIENIA' }}
+                            </div>
                         </div>
                         <div class="ppr-actions">
                             <button class="btn-cancel" @click="currentStep--">Wróć i edytuj</button>
@@ -1754,7 +2050,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption, TrimItem, VehicleSubtype, PartCategory, PartSubcategory } from '~/types'
+import type { TaxonomyItem, Generation, EngineVersion, Feature, DriveType, CarColor, CouponValidation, CarAdvert, AdvertImage, CategoryWithCount, SelectOption, VehicleSubtype, PartCategory, PartSubcategory } from '~/types'
 import { useImageUrl } from '~/composables/useImageUrl'
 import { usePhotoAnalysis } from '~/composables/usePhotoAnalysis'
 
@@ -1859,8 +2155,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     },
 
     'dostawcze': {
-        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
-        required: ['brand', 'model', 'year', 'mileage', 'price'],
+        fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
+        required: ['brand', 'model', 'year', 'fuelType', 'mileage', 'price'],
         mileageLabel: 'Przebieg (km)',
         priceHint: 'Rynek: 5 000 – 200 000 zł',
         categoryNote: 'Dostawcze i busy do 3,5t. Parametry ładunkowe wpisz poniżej.',
@@ -1900,8 +2196,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     },
 
     'ciezarowe': {
-        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
-        required: ['brand', 'model', 'year', 'mileage', 'price'],
+        fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
+        required: ['brand', 'model', 'year', 'fuelType', 'mileage', 'price'],
         mileageLabel: 'Przebieg (km)',
         engineHint: 'np. 12 900 cm³',
         priceHint: 'Rynek: 10 000 – 1 000 000 zł',
@@ -1993,8 +2289,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     },
 
     'motocykle': {
-        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
-        required: ['brand', 'model', 'year', 'mileage', 'price'],
+        fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
+        required: ['brand', 'model', 'year', 'fuelType', 'mileage', 'price'],
         mileageLabel: 'Przebieg (km)',
         engineHint: 'np. 649 cm³, 1000 cm³',
         priceHint: 'Rynek: 1 000 – 150 000 zł',
@@ -2214,11 +2510,189 @@ const DEFAULT_CAT_CONFIG: CatFieldConfig = {
     mileageLabel: 'Przebieg (km)',
 }
 
+// ── Subtype-specific extra fields ──────────────────────────────────────────
+const SUBTYPE_EXTRA_FIELDS: Record<string, ExtraField[]> = {
+  // ── Trucks ──────────────────────────────────────────────────────────────
+  'ciagnik-siodlowy': [
+    { key: 'cabType', label: 'Typ kabiny', type: 'select', options: [
+      { value: 'dzienna', label: 'Kabina dzienna' },
+      { value: 'sypialnia', label: 'Kabina sypialnia' },
+      { value: 'maxi', label: 'Kabina Maxi' },
+    ]},
+    { key: 'suspension', label: 'Zawieszenie tylne', type: 'select', options: [
+      { value: 'resorowe', label: 'Resorowe' },
+      { value: 'powietrzne', label: 'Powietrzne' },
+    ]},
+    { key: 'axleConfig', label: 'Konfiguracja osi', type: 'select', options: [
+      { value: '4x2', label: '4x2' }, { value: '6x2', label: '6x2' },
+      { value: '6x4', label: '6x4' }, { value: '8x4', label: '8x4' },
+    ]},
+  ],
+  'wywrotka': [
+    { key: 'bodySubtype', label: 'Kierunek wysypu', type: 'select', options: [
+      { value: 'tylny', label: 'Tylny' },
+      { value: '3-stronny', label: '3-stronny' },
+      { value: 'boczny', label: 'Boczny' },
+    ]},
+    { key: 'dumpBodyMaterial', label: 'Materiał skrzyni', type: 'select', options: [
+      { value: 'stal', label: 'Stal' },
+      { value: 'aluminium', label: 'Aluminium' },
+      { value: 'polietylen', label: 'Polietylen' },
+    ]},
+    { key: 'volume', label: 'Pojemność skrzyni (m³)', type: 'number', unit: 'm³' },
+  ],
+  'chlodnia-ciezarowa': [
+    { key: 'tempMin', label: 'Min. temperatura (°C)', type: 'number', unit: '°C' },
+    { key: 'tempMax', label: 'Max. temperatura (°C)', type: 'number', unit: '°C' },
+    { key: 'tankCapacity', label: 'Objętość ładowni (m³)', type: 'number', unit: 'm³' },
+    { key: 'atpCert', label: 'Certyfikat ATP', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'firanka': [
+    { key: 'loadingHeight', label: 'Wysokość załadunku (m)', type: 'number', unit: 'm' },
+    { key: 'volume', label: 'Objętość ładowni (m³)', type: 'number', unit: 'm³' },
+    { key: 'hasLiftgate', label: 'Winda załadowcza', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'cysterna': [
+    { key: 'tankCapacity', label: 'Pojemność zbiornika (m³)', type: 'number', unit: 'm³' },
+    { key: 'tankMaterial', label: 'Materiał zbiornika', type: 'select', options: [
+      { value: 'stal', label: 'Stal nierdzewna' },
+      { value: 'aluminium', label: 'Aluminium' },
+      { value: 'tworzywo', label: 'Tworzywo sztuczne' },
+    ]},
+    { key: 'adrClass', label: 'Klasa ADR', type: 'select', options: [
+      { value: 'brak', label: 'Brak' }, { value: '1', label: 'Klasa 1 (mat. wybuchowe)' },
+      { value: '2', label: 'Klasa 2 (gazy)' }, { value: '3', label: 'Klasa 3 (ciecze łatwopal.)' },
+      { value: '8', label: 'Klasa 8 (substancje żrące)' },
+    ]},
+  ],
+
+  // ── Agricultural ────────────────────────────────────────────────────────
+  'ciagnik': [
+    { key: 'ptoRpm', label: 'WOM (rpm)', type: 'select', options: [
+      { value: '540', label: '540 rpm' }, { value: '1000', label: '1000 rpm' },
+      { value: '540/1000', label: '540/1000 rpm' }, { value: 'eco', label: 'ECO' },
+    ]},
+    { key: 'hasFrontLinkage', label: 'TUZ przedni', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+    { key: 'hydraulicOutputs', label: 'Wyjścia hydrauliczne', type: 'number', unit: 'szt.' },
+    { key: 'cabin', label: 'Kabina', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'kombajn': [
+    { key: 'bodySubtype', label: 'Typ uprawy', type: 'select', options: [
+      { value: 'zbozowy', label: 'Zbożowy' }, { value: 'kukurydza', label: 'Kukurydza' },
+      { value: 'rzepak', label: 'Rzepak' }, { value: 'uniwersalny', label: 'Uniwersalny' },
+    ]},
+    { key: 'workingWidth', label: 'Szerokość heder (cm)', type: 'number', unit: 'cm' },
+    { key: 'tankCapacity', label: 'Pojemność zbiornika ziarna (L)', type: 'number', unit: 'L' },
+    { key: 'hasStrawChopper', label: 'Rozdrabniacz słomy', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'opryskiwacz': [
+    { key: 'selfPropelled', label: 'Typ', type: 'radio', options: [
+      { value: 'samojezdny', label: 'Samojezdny' }, { value: 'zawieszany', label: 'Zawieszany' },
+      { value: 'przyczepiany', label: 'Przyczepiany' },
+    ]},
+    { key: 'workingWidth', label: 'Szerokość robocza (m)', type: 'number', unit: 'm' },
+    { key: 'tankCapacity', label: 'Pojemność zbiornika (L)', type: 'number', unit: 'L' },
+    { key: 'hasGps', label: 'Prowadzenie GPS', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'prasa': [
+    { key: 'bodySubtype', label: 'Typ bel', type: 'select', options: [
+      { value: 'okragle', label: 'Bele okrągłe' }, { value: 'prostokatne', label: 'Bele prostokątne' },
+    ]},
+    { key: 'workingWidth', label: 'Szerokość podbierania (cm)', type: 'number', unit: 'cm' },
+    { key: 'hasNetWrap', label: 'Owijarka siatką', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'siewnik': [
+    { key: 'workingWidth', label: 'Szerokość robocza (m)', type: 'number', unit: 'm' },
+    { key: 'tankCapacity', label: 'Pojemność skrzyni nasiennej (L)', type: 'number', unit: 'L' },
+    { key: 'rowSpacing', label: 'Rozstaw rzędów (cm)', type: 'number', unit: 'cm' },
+  ],
+
+  // ── Construction ─────────────────────────────────────────────────────────
+  'koparka': [
+    { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
+    { key: 'maxDiggingDepth', label: 'Max. głębokość kopania (m)', type: 'number', unit: 'm' },
+    { key: 'bucketCapacity', label: 'Pojemność łyżki (L)', type: 'number', unit: 'L' },
+    { key: 'undercarriage', label: 'Podwozie', type: 'select', options: [
+      { value: 'gabki-gumowe', label: 'Gąsienice gumowe' },
+      { value: 'gabki-stalowe', label: 'Gąsienice stalowe' },
+      { value: 'kolowe', label: 'Kołowe' },
+    ]},
+    { key: 'tailSwing', label: 'Tylni zwis', type: 'select', options: [
+      { value: 'standardowy', label: 'Standardowy' },
+      { value: 'ograniczony', label: 'Ograniczony' },
+      { value: 'zerowy', label: 'Zerowy' },
+    ]},
+  ],
+  'minikopiarka': [
+    { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
+    { key: 'maxDiggingDepth', label: 'Max. głębokość kopania (m)', type: 'number', unit: 'm' },
+    { key: 'bucketCapacity', label: 'Pojemność łyżki (L)', type: 'number', unit: 'L' },
+    { key: 'hasOffsetBoom', label: 'Offset ramię', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'ladowarka': [
+    { key: 'bucketCapacity', label: 'Pojemność łyżki (m³)', type: 'number', unit: 'm³' },
+    { key: 'liftHeight', label: 'Wysokość podnoszenia (m)', type: 'number', unit: 'm' },
+    { key: 'hasPalletForks', label: 'Widelce paletowe', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+    { key: 'hasTelescopicArm', label: 'Ramię teleskopowe', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'spycharka': [
+    { key: 'bodySubtype', label: 'Typ lemiesza', type: 'select', options: [
+      { value: 'prosty', label: 'Lemiesz prosty (S)' },
+      { value: 'u-blade', label: 'Lemiesz U' },
+      { value: 's-blade', label: 'Lemiesz S-blade' },
+    ]},
+    { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
+    { key: 'hasRipper', label: 'Spulchniacz', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'walec': [
+    { key: 'bodySubtype', label: 'Typ walca', type: 'select', options: [
+      { value: 'jednostkowy', label: 'Jednostkowy (wibracyjny)' },
+      { value: 'dwuwalcowy', label: 'Dwuwalcowy' },
+      { value: 'ogumiony', label: 'Ogumiony' },
+    ]},
+    { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
+    { key: 'workingWidth', label: 'Szerokość robocza (cm)', type: 'number', unit: 'cm' },
+    { key: 'hasVibration', label: 'Wibrator', type: 'radio', options: [
+      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
+    ]},
+  ],
+  'zuraw': [
+    { key: 'bodySubtype', label: 'Typ żurawia', type: 'select', options: [
+      { value: 'wiezowy', label: 'Wieżowy' }, { value: 'mobilny', label: 'Mobilny' },
+      { value: 'samojezdny', label: 'Samojezdny' },
+    ]},
+    { key: 'maxLoad', label: 'Udźwig max (t)', type: 'number', unit: 't' },
+    { key: 'maxBoom', label: 'Długość wysięgnika (m)', type: 'number', unit: 'm' },
+  ],
+}
+
 const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
 
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext, fetchTrims, fetchEnginesByTrim, fetchEngineSpecs, fetchVehicleSubtypes, fetchPartCategories, fetchPartSubcategories } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchTrims, fetchEnginesByTrim, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext, fetchVehicleSubtypes, fetchPartCategories, fetchPartSubcategories, fetchEngineSpecs } = useTaxonomy()
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { fetchCategories } = useCategories()
@@ -2226,7 +2700,9 @@ const { fetchCategories } = useCategories()
 const brands = ref<TaxonomyItem[]>([])
 const models = ref<TaxonomyItem[]>([])
 const generations = ref<Generation[]>([])
+const trims = ref<TaxonomyItem[]>([])
 const engines = ref<EngineVersion[]>([])
+const subtypes = ref<VehicleSubtype[]>([])
 const fuelTypes = ref<TaxonomyItem[]>([])
 const gearboxes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
@@ -2234,7 +2710,6 @@ const driveTypes = ref<DriveType[]>([])
 const colors = ref<CarColor[]>([])
 const allFeatures = ref<Feature[]>([])
 const featuresLoaded = ref(false)
-const trims = ref<TrimItem[]>([])
 const vehicleSubtypes = ref<VehicleSubtype[]>([])
 const partCategories = ref<PartCategory[]>([])
 const partSubcategories = ref<PartSubcategory[]>([])
@@ -2268,6 +2743,13 @@ const vinError = ref('')
 const previewOpen = ref(false)
 const photoUploading = ref(false)
 const paying = ref(false)
+const dragSrcIdx = ref<number | null>(null)
+const dragOverIdx = ref<number | null>(null)
+const gridDragOver = ref(false)
+const pdfUploading = ref(false)
+const pdfUploadError = ref('')
+const pdfFileName = ref('')
+const pdfPendingFile = ref<File | null>(null)
 
 // ── AI Photo Quality Analysis ─────────────────────────────────────────────────
 const photoAnalysisResults = ref<Record<number, { score: number, issues: string[], suggestions: string[], summary: string, loading: boolean }>>({})
@@ -2322,8 +2804,9 @@ async function submitOtherCategory() {
             }
         })
         otherCategorySubmitted.value = true
-    } catch (e) {
-        console.error('Failed to submit custom category', e)
+    } catch {
+        const { error: toastError } = useToast()
+        toastError('Nie udało się wysłać propozycji kategorii. Spróbuj ponownie.')
     } finally {
         otherCategorySubmitting.value = false
     }
@@ -2451,7 +2934,7 @@ async function lookupVin() {
     vinLoading.value = true
     vinError.value = ''
     try {
-        const data = await $fetch<Partial<typeof form>>(`/api/proxy/api/Advert/vin/${form.vin}`)
+        const data = await $fetch<Partial<typeof form>>(`/api/proxy/api/listings/vin/${form.vin}`)
         if (data.brandId) form.brandId = data.brandId
         if (form.brandId) await onBrand()
         if (data.modelId) form.modelId = data.modelId
@@ -2477,6 +2960,8 @@ const form = reactive({
     brandId: null as number | null,
     modelId: null as number | null,
     generationId: null as number | null,
+    trimId: null as number | null,
+    vehicleSubtypeId: null as number | null,
     engineVersionId: null as number | null,
     fuelTypeId: null as number | null,
     gearboxId: null as number | null,
@@ -2491,28 +2976,74 @@ const form = reactive({
     region: null as string | null,
     isNegotiable: false,
     sellerType: 'private' as 'private' | 'dealer',
-    trimId: null as number | null,
-    vehicleSubtypeId: null as number | null,
     partCategoryId: null as number | null,
     partSubcategoryId: null as number | null,
     oemNumber: '',
     manufacturerPartNumber: '',
     partManufacturer: '',
+    registrationPlate: '',
+    hasVatInvoice: false,
+    isLeasingPossible: false,
+    isCreditPossible: false,
+    isExchangePossible: false,
+    gearCount: null as number | null,
+    metallicPaint: false,
+    maxTrailerWeight: null as number | null,
+    youtubeUrl: '',
+    pdfBrochureUrl: '' as string,
 })
 
 const extras = reactive<Record<string, any>>({})
 
-const engineLocked = reactive({ fuelType: false, power: false, capacity: false, consumptionCity: false, consumptionHwy: false, consumptionMix: false, torque: false, co2Emission: false, euroNorm: false, acceleration: false, fuelConsumptionCombined: false })
+const engineLocked = reactive({
+    fuelType: false, power: false, capacity: false,
+    consumptionCity: false, consumptionHwy: false, consumptionMix: false,
+    torque: false, co2: false, euroNorm: false,
+    acceleration: false, topSpeed: false, driveType: false,
+    gearboxType: false, cylinders: false,
+})
 
 const EF_LOCK_MAP: Record<string, keyof typeof engineLocked> = {
     fuelConsumptionCity: 'consumptionCity',
     fuelConsumptionHwy: 'consumptionHwy',
     fuelConsumptionMix: 'consumptionMix',
+    torque:       'torque',
+    co2:          'co2',
+    euroNorm:     'euroNorm',
+    acceleration: 'acceleration',
+    driveType:    'driveType',
 }
 function efIsLocked(key: string): boolean {
     const lockKey = EF_LOCK_MAP[key]
     return lockKey ? engineLocked[lockKey] : false
 }
+
+const currentYear = new Date().getFullYear()
+const VIN_REGEX = /^[A-HJ-NPR-Z0-9]{17}$/
+
+const fieldErrors = computed(() => {
+    const e: Record<string, string> = {}
+    if (form.year) {
+        if (form.year < 1900) e.year = 'Rok nie może być wcześniejszy niż 1900.'
+        else if (form.year > currentYear + 1) e.year = `Rok nie może być późniejszy niż ${currentYear + 1}.`
+    }
+    if (form.power && form.power < 1) e.power = 'Moc musi być większa niż 0 KM.'
+    if (form.power && form.power > 5000) e.power = 'Podana moc wydaje się nieprawidłowa (>5000 KM).'
+    if (form.mileage !== null && form.mileage !== undefined && form.mileage < 0) e.mileage = 'Przebieg nie może być ujemny.'
+    if (form.mileage !== null && form.mileage !== undefined && form.mileage > 2_000_000) e.mileage = 'Przebieg nie może przekraczać 2 000 000 km.'
+    if (form.price && form.price > 10_000_000) e.price = 'Cena nie może przekraczać 10 000 000 zł.'
+    if (form.vin && form.vin.length === 17 && !VIN_REGEX.test(form.vin)) e.vin = 'Numer VIN zawiera niedozwolone znaki (I, O, Q są zakazane w VIN).'
+    if (form.description && form.description.trim().length > 0 && form.description.trim().length < 30) e.description = 'Opis jest za krótki — napisz przynajmniej kilka zdań.'
+    return e
+})
+
+const selectedSubtype = computed(() =>
+    subtypes.value.find(s => s.id === form.vehicleSubtypeId) ?? null
+)
+const subtypeExtraFields = computed<ExtraField[]>(() => {
+    const slug = selectedSubtype.value?.slug
+    return (slug && SUBTYPE_EXTRA_FIELDS[slug]) ? SUBTYPE_EXTRA_FIELDS[slug] : []
+})
 
 const brandTextInput = ref('')
 const modelTextInput = ref('')
@@ -2533,6 +3064,9 @@ const history = reactive({
     isFirstOwner: false,
     isAccidentFree: false,
     servicedAtASO: false,
+    isGaraged: false,
+    keyCount: null as number | null,
+    insuranceUntil: '',
 })
 
 const steps = [
@@ -2616,10 +3150,29 @@ const adScore = computed(() => {
     if (history.hasServiceBook) s += 2
     if (history.ownersCount !== null) s += 2
     if (history.nextInspection) s += 2
+    // Premium bonuses (capped at 100 total)
+    if (form.youtubeUrl) s += 3
+    if (history.isFirstOwner) s += 2
+    if (history.isGaraged) s += 2
+    if (form.hasVatInvoice || form.isLeasingPossible || form.isCreditPossible || form.isExchangePossible) s += 2
+    if (form.registrationPlate) s += 1
     return Math.min(s, 100)
 })
 
 const scoreArc = computed(() => (adScore.value / 100) * 326.7)
+
+const descPhoneWarning = computed(() => {
+    const text = form.description ?? ''
+    return /(?:\+48|48)?[\s-]?\d{3}[\s-]?\d{3}[\s-]?\d{3}/.test(text)
+        ? 'Wykryto numer telefonu w opisie — dodaj go w danych kontaktowych zamiast w treści.'
+        : ''
+})
+
+const youtubeEmbedId = computed(() => {
+    if (!form.youtubeUrl) return ''
+    const m = form.youtubeUrl.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/)
+    return m?.[1] ?? ''
+})
 
 const scoreFactors = computed(() => {
     const photos = selectedFiles.value.length + existingImages.value.length
@@ -2629,6 +3182,8 @@ const scoreFactors = computed(() => {
         { label: `Opis (${descCharCount.value} znaków)`, done: descCharCount.value >= 200 },
         { label: `Wyposażenie (${form.featureIds.length}/5)`, done: form.featureIds.length >= 5 },
         { label: 'Historia pojazdu', done: !!(form.vin || history.hasServiceBook || history.ownersCount !== null) },
+        { label: 'Film YouTube', done: !!form.youtubeUrl },
+        { label: 'Dane premium', done: !!(form.registrationPlate || form.hasVatInvoice || form.isLeasingPossible) },
     ]
 })
 
@@ -2641,7 +3196,9 @@ const scoreTips = computed(() => {
     if (form.featureIds.length < 3) tips.push('Zaznacz wyposażenie — filtry po wyposażeniu zwiększają wyświetlenia.')
     if (!form.vin) tips.push('Podaj numer VIN — buduje zaufanie i filtruje poważnych kupujących.')
     if (!history.hasServiceBook && !history.hasFullServiceHistory) tips.push('Zaznacz historię serwisową jeśli ją posiadasz.')
-    return tips.slice(0, 3)
+    if (!form.youtubeUrl) tips.push('Dodaj film YouTube — ogłoszenia z filmem wzbudzają 2× więcej zainteresowania.')
+    if (!form.registrationPlate) tips.push('Podaj numer rejestracyjny — ułatwia weryfikację historii pojazdu.')
+    return tips.slice(0, 4)
 })
 
 // ── Smart form: category-aware logic ─────────────────────────────────────────
@@ -2799,15 +3356,20 @@ async function onCategory(catId: number) {
     const changed = form.categoryId !== catId
     form.categoryId = catId
     if (changed) {
-        form.brandId = null; form.modelId = null; form.generationId = null; form.engineVersionId = null; form.trimId = null
-        form.vehicleSubtypeId = null; form.partCategoryId = null; form.partSubcategoryId = null
-        models.value = []; generations.value = []; engines.value = []; trims.value = []
-        vehicleSubtypes.value = []; partSubcategories.value = []
-        engineSpecs.value = null
+        form.brandId = null; form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
+        models.value = []; generations.value = []; trims.value = []; engines.value = []
+        form.vehicleSubtypeId = null
+        subtypes.value = []
         for (const key of Object.keys(extras)) delete extras[key]
         brandTextInput.value = ''
         modelTextInput.value = ''
         form.featureIds = []
+    }
+    // Load subtypes for this category
+    try {
+        subtypes.value = await fetchVehicleSubtypes(catId)
+    } catch {
+        subtypes.value = []
     }
     // Reload brands filtered by category (fall back to all brands if none returned)
     const cfg = categoryConfig.value
@@ -2861,14 +3423,17 @@ function validateStep(step: number): string | null {
     if (step === 4) {
         if (categoryConfig.value.showVinSection !== false) {
             if (!form.vin || form.vin.length !== 17) return 'Podaj prawidłowy numer VIN (17 znaków). Numer VIN jest obowiązkowy.'
+            if (!VIN_REGEX.test(form.vin)) return 'Numer VIN zawiera niedozwolone znaki. VIN składa się z cyfr i liter A-H, J-N, P-Z.'
         }
     }
     // Step 5: Opis i cena
     if (step === 5) {
-        if (!form.price) return 'Podaj cenę pojazdu.'
+        if (!form.price || form.price <= 0) return 'Podaj cenę pojazdu (musi być większa od 0).'
+        if (form.price > 10_000_000) return 'Cena wydaje się nieprawidłowa (>10 000 000 zł).'
         if (!form.region) return 'Wybierz województwo.'
         if (!form.city?.trim()) return 'Podaj miasto.'
         if (!form.description?.trim()) return 'Dodaj opis ogłoszenia.'
+        if (form.description.trim().length < 30) return 'Opis jest za krótki — opisz pojazd dokładniej (minimum 30 znaków).'
     }
     return null
 }
@@ -2923,13 +3488,23 @@ async function compressImage(file: File, maxPx = 1920, quality = 0.85): Promise<
     })
 }
 
+const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_PHOTO_SIZE_MB = 20
+
 async function onFilesSelected(e: Event) {
     const input = e.target as HTMLInputElement
     const files = Array.from(input.files ?? [])
-    const remaining = 20 - selectedFiles.value.length
+    const remaining = 50 - selectedFiles.value.length
     if (!files.length) return
+    const rejected = files.filter(f => !ALLOWED_PHOTO_TYPES.includes(f.type) || f.size > MAX_PHOTO_SIZE_MB * 1024 * 1024)
+    if (rejected.length) {
+        const { warning } = useToast()
+        warning(`${rejected.length} plik(ów) odrzucono — dozwolone: JPEG, PNG, WebP do ${MAX_PHOTO_SIZE_MB} MB.`)
+    }
+    const valid = files.filter(f => ALLOWED_PHOTO_TYPES.includes(f.type) && f.size <= MAX_PHOTO_SIZE_MB * 1024 * 1024)
+    if (!valid.length) { input.value = ''; return }
     photoUploading.value = true
-    for (const file of files.slice(0, remaining)) {
+    for (const file of valid.slice(0, remaining)) {
         const compressed = await compressImage(file)
         selectedFiles.value.push(compressed)
         previews.value.push(URL.createObjectURL(compressed))
@@ -2943,6 +3518,78 @@ function removeImage(index: number) {
     if (url) URL.revokeObjectURL(url)
     selectedFiles.value.splice(index, 1)
     previews.value.splice(index, 1)
+}
+
+function reorderPhoto(toIdx: number) {
+    const from = dragSrcIdx.value
+    if (from === null || from === toIdx) return
+    const files = [...selectedFiles.value]
+    const prvs = [...previews.value]
+    const [f] = files.splice(from, 1)
+    const [p] = prvs.splice(from, 1)
+    files.splice(toIdx, 0, f)
+    prvs.splice(toIdx, 0, p)
+    selectedFiles.value = files
+    previews.value = prvs
+    dragSrcIdx.value = null
+    dragOverIdx.value = null
+}
+
+async function onGridDrop(e: DragEvent) {
+    gridDragOver.value = false
+    const allDropped = Array.from(e.dataTransfer?.files ?? [])
+    const valid = allDropped.filter(f => ALLOWED_PHOTO_TYPES.includes(f.type) && f.size <= MAX_PHOTO_SIZE_MB * 1024 * 1024)
+    const rejected = allDropped.length - valid.length
+    if (rejected > 0) {
+        const { warning } = useToast()
+        warning(`${rejected} plik(ów) odrzucono — dozwolone: JPEG, PNG, WebP do ${MAX_PHOTO_SIZE_MB} MB.`)
+    }
+    if (!valid.length) return
+    const remaining = 50 - selectedFiles.value.length - existingImages.value.length
+    if (remaining <= 0) return
+    photoUploading.value = true
+    for (const file of valid.slice(0, remaining)) {
+        const compressed = await compressImage(file)
+        selectedFiles.value.push(compressed)
+        previews.value.push(URL.createObjectURL(compressed))
+    }
+    photoUploading.value = false
+}
+
+async function onPdfSelected(e: Event) {
+    const input = e.target as HTMLInputElement
+    const file = input.files?.[0]
+    input.value = ''
+    if (!file) return
+    if (file.type !== 'application/pdf') { pdfUploadError.value = 'Dozwolony tylko plik PDF.'; return }
+    if (file.size > 25 * 1024 * 1024) { pdfUploadError.value = 'Plik PDF przekracza limit 25 MB.'; return }
+    pdfUploadError.value = ''
+    pdfUploading.value = true
+    try {
+        if (isEdit.value && editId.value) {
+            const fd = new FormData()
+            fd.append('file', file)
+            const res = await $fetch<{ url: string }>(`/api/advert/${editId.value}/pdf`, { method: 'POST', body: fd })
+            form.pdfBrochureUrl = res.url
+        } else {
+            form.pdfBrochureUrl = '__pending__'
+        }
+        pdfFileName.value = file.name
+        pdfPendingFile.value = file
+    } catch (err: any) {
+        pdfUploadError.value = err?.data?.message ?? err?.message ?? 'Błąd uploadu PDF.'
+    } finally {
+        pdfUploading.value = false
+    }
+}
+
+async function removePdf() {
+    if (isEdit.value && editId.value && form.pdfBrochureUrl && form.pdfBrochureUrl !== '__pending__') {
+        await $fetch(`/api/advert/${editId.value}/pdf`, { method: 'DELETE' }).catch(() => {})
+    }
+    form.pdfBrochureUrl = ''
+    pdfFileName.value = ''
+    pdfPendingFile.value = null
 }
 
 async function loadContextFeatures() {
@@ -2961,40 +3608,48 @@ async function loadContextFeatures() {
     }
 }
 
+function resetEngineLocks() {
+    for (const k of Object.keys(engineLocked) as (keyof typeof engineLocked)[])
+        engineLocked[k] = false
+}
+
+let _brandSeq = 0
+let _modelSeq = 0
 async function onBrand() {
-    form.modelId = null; form.generationId = null; form.engineVersionId = null; form.trimId = null
-    models.value = []; generations.value = []; engines.value = []; trims.value = []
-    engineSpecs.value = null
-    if (form.brandId) models.value = await fetchModels(form.brandId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
-    engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
+    const seq = ++_brandSeq
+    form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
+    models.value = []; generations.value = []; trims.value = []; engines.value = []
+    if (form.brandId) {
+        const result = await fetchModels(form.brandId)
+        if (seq === _brandSeq) models.value = result
+    }
+    if (seq !== _brandSeq) return
+    resetEngineLocks()
     await loadContextFeatures()
 }
 async function onModel() {
-    form.generationId = null; form.engineVersionId = null; form.trimId = null
-    generations.value = []; engines.value = []; trims.value = []
-    engineSpecs.value = null
-    if (form.modelId) generations.value = await fetchGenerations(form.modelId)
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
-    engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
+    const seq = ++_modelSeq
+    form.generationId = null; form.trimId = null; form.engineVersionId = null
+    generations.value = []; trims.value = []; engines.value = []
+    if (form.modelId) {
+        const result = await fetchGenerations(form.modelId)
+        if (seq === _modelSeq) generations.value = result
+    }
+    if (seq !== _modelSeq) return
+    resetEngineLocks()
     await loadContextFeatures()
 }
 async function onGen() {
-    form.trimId = null
-    form.engineVersionId = null
-    trims.value = []
-    engines.value = []
-    engineSpecs.value = null
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
-    engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
+    form.trimId = null; form.engineVersionId = null; trims.value = []; engines.value = []
     if (form.generationId) {
-        const fetchedTrims = await fetchTrims(form.generationId)
-        trims.value = fetchedTrims
-        if (fetchedTrims.length === 0) {
-            // No trims: load engines directly by generation (backward compat)
-            engines.value = await fetchEngines(form.generationId)
-        }
+        const [loadedTrims, loadedEngines] = await Promise.all([
+            fetchTrims(form.generationId),
+            fetchEngines(form.generationId),
+        ])
+        trims.value = loadedTrims
+        engines.value = loadedEngines
     }
+    resetEngineLocks()
 }
 
 async function onTrimChange(trimId: number | null) {
@@ -3004,7 +3659,12 @@ async function onTrimChange(trimId: number | null) {
     engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
     engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
     if (trimId) {
-        engines.value = await fetchEnginesByTrim(trimId)
+        const trimEngines = await fetchEnginesByTrim(trimId)
+        if (trimEngines.length > 0) {
+            engines.value = trimEngines
+        } else if (form.generationId) {
+            engines.value = await fetchEngines(form.generationId)
+        }
     }
 }
 
@@ -3043,47 +3703,30 @@ async function onPartCategoryChange(categoryId: number | null) {
 }
 
 watch(() => form.engineVersionId, (newId) => {
-    if (!newId) {
-        engineLocked.fuelType = false
-        engineLocked.power = false
-        engineLocked.capacity = false
-        engineLocked.consumptionCity = false
-        engineLocked.consumptionHwy = false
-        engineLocked.consumptionMix = false
-        return
-    }
-    const engine = engines.value.find((e: any) => e.id === newId)
+    if (!newId) { resetEngineLocks(); return }
+    const engine = engines.value.find((e: any) => e.id === newId) as any
     if (!engine) return
 
-    // Auto-fill fuel type from engine spec
-    if ((engine as any).fuelTypeId) {
-        form.fuelTypeId = (engine as any).fuelTypeId
-        engineLocked.fuelType = true
-    }
-    // Auto-fill power
-    const hp = (engine as any).powerHP ?? (engine as any).horsepower
-    if (hp) {
-        form.power = hp
-        engineLocked.power = true
-    }
-    // Auto-fill displacement
-    if ((engine as any).displacement) {
-        form.engineCapacity = (engine as any).displacement
-        engineLocked.capacity = true
-    }
-    // Auto-fill fuel consumption
-    if ((engine as any).fuelConsumptionCity != null) {
-        extras.fuelConsumptionCity = (engine as any).fuelConsumptionCity
-        engineLocked.consumptionCity = true
-    }
-    if ((engine as any).fuelConsumptionHighway != null) {
-        extras.fuelConsumptionHwy = (engine as any).fuelConsumptionHighway
-        engineLocked.consumptionHwy = true
-    }
-    if ((engine as any).fuelConsumptionCombined != null) {
-        extras.fuelConsumptionMix = (engine as any).fuelConsumptionCombined
-        engineLocked.consumptionMix = true
-    }
+    // ── Core fields ──────────────────────────────────────────────────────────
+    if (engine.fuelTypeId) { form.fuelTypeId = engine.fuelTypeId; engineLocked.fuelType = true }
+    const hp = engine.powerHP ?? engine.horsepower
+    if (hp) { form.power = hp; engineLocked.power = true }
+    if (engine.displacement) { form.engineCapacity = engine.displacement; engineLocked.capacity = true }
+
+    // ── Fuel consumption ─────────────────────────────────────────────────────
+    if (engine.fuelConsumptionCity != null)     { extras.fuelConsumptionCity = engine.fuelConsumptionCity; engineLocked.consumptionCity = true }
+    if (engine.fuelConsumptionHighway != null)   { extras.fuelConsumptionHwy  = engine.fuelConsumptionHighway; engineLocked.consumptionHwy  = true }
+    if (engine.fuelConsumptionCombined != null)  { extras.fuelConsumptionMix  = engine.fuelConsumptionCombined; engineLocked.consumptionMix  = true }
+
+    // ── Extended factory specs ───────────────────────────────────────────────
+    if (engine.torqueNm != null)      { extras.torque      = engine.torqueNm;      engineLocked.torque      = true }
+    if (engine.co2EmissionGkm != null){ extras.co2         = engine.co2EmissionGkm; engineLocked.co2         = true }
+    if (engine.euroNorm)              { extras.euroNorm    = engine.euroNorm;       engineLocked.euroNorm    = true }
+    if (engine.acceleration0100 != null) { extras.acceleration = engine.acceleration0100; engineLocked.acceleration = true }
+    if (engine.topSpeedKmh != null)   { extras.topSpeed    = engine.topSpeedKmh;   engineLocked.topSpeed    = true }
+    if (engine.driveType)             { extras.driveType   = engine.driveType;      engineLocked.driveType   = true }
+    if (engine.gearboxType)           { extras.gearboxType = engine.gearboxType;    engineLocked.gearboxType = true }
+    if (engine.cylinders != null)     { extras.cylinders   = engine.cylinders;      engineLocked.cylinders   = true }
 })
 
 function generateAiDescription() {
@@ -3205,11 +3848,27 @@ function buildDescription(): string {
     return sections.filter(Boolean).join('\n\n')
 }
 
+const ALLOWED_PAYMENT_HOSTS = ['secure.imoje.pl', 'imoje.ing.pl', 'imoje.pl']
+
+function validatePaymentUrl(url: string): URL {
+    let parsed: URL
+    try { parsed = new URL(url) } catch { throw new Error('Invalid payment URL') }
+    if (parsed.protocol !== 'https:') throw new Error('Payment URL must use HTTPS')
+    if (!ALLOWED_PAYMENT_HOSTS.includes(parsed.hostname)) throw new Error(`Untrusted payment host: ${parsed.hostname}`)
+    return parsed
+}
+
 function submitImojeForm(result: { paymentUrl: string, formFields?: Record<string, string> }) {
-    if (result.formFields && Object.keys(result.formFields).length && result.paymentUrl) {
+    let parsed: URL
+    try { parsed = validatePaymentUrl(result.paymentUrl) } catch (e) {
+        console.error('[payment] Rejected unsafe redirect:', e)
+        useToast().error('Wystąpił błąd płatności. Skontaktuj się z pomocą techniczną.')
+        return
+    }
+    if (result.formFields && Object.keys(result.formFields).length) {
         const form = document.createElement('form')
         form.method = 'POST'
-        form.action = result.paymentUrl
+        form.action = parsed.toString()
         for (const [key, value] of Object.entries(result.formFields)) {
             const input = document.createElement('input')
             input.type = 'hidden'
@@ -3219,8 +3878,8 @@ function submitImojeForm(result: { paymentUrl: string, formFields?: Record<strin
         }
         document.body.appendChild(form)
         form.submit()
-    } else if (result.paymentUrl) {
-        window.location.href = result.paymentUrl
+    } else {
+        window.location.href = parsed.toString()
     }
 }
 
@@ -3292,15 +3951,17 @@ async function submit() {
             if (extras.fuelConsumptionHwy != null) cleanEdit.fuelConsumptionHighway = Number(extras.fuelConsumptionHwy)
             if (extras.fuelConsumptionMix != null) cleanEdit.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
             if (extras.euroNorm) cleanEdit.euroNorm = extras.euroNorm
-            if (extras.colorFinish) cleanEdit.colorFinish = extras.colorFinish
-            // New taxonomy fields
-            if (form.trimId) cleanEdit.trimId = form.trimId
-            if (form.vehicleSubtypeId) cleanEdit.vehicleSubtypeId = form.vehicleSubtypeId
-            if (form.partCategoryId) cleanEdit.partCategoryId = form.partCategoryId
-            if (form.partSubcategoryId) cleanEdit.partSubcategoryId = form.partSubcategoryId
-            if (form.oemNumber) cleanEdit.oemNumber = form.oemNumber
-            if (form.manufacturerPartNumber) cleanEdit.manufacturerPartNumber = form.manufacturerPartNumber
-            if (form.partManufacturer) cleanEdit.partManufacturer = form.partManufacturer
+            if (extras.colorFinish) {
+                cleanEdit.colorFinish = extras.colorFinish
+                cleanEdit.metallicPaint = extras.colorFinish === 'metallic' || extras.colorFinish === 'pearl'
+            }
+            // Subtype and subtype-specific fields
+            if (form.vehicleSubtypeId != null) cleanEdit.vehicleSubtypeId = form.vehicleSubtypeId
+            if (extras.operatingWeight != null) cleanEdit.operatingWeightKg = extras.operatingWeight
+            if (extras.workingWidth != null) cleanEdit.workingWidthCm = extras.workingWidth
+            if (extras.maxDiggingDepth != null) cleanEdit.maxDiggingDepthM = extras.maxDiggingDepth
+            if (extras.bucketCapacity != null) cleanEdit.bucketCapacityL = extras.bucketCapacity
+            if (extras.tankCapacity != null) cleanEdit.tankCapacityL = extras.tankCapacity
             // Vehicle history fields
             if (history.ownersCount !== null) cleanEdit.ownersCount = history.ownersCount
             cleanEdit.isImported = history.isImported
@@ -3314,27 +3975,48 @@ async function submit() {
             if (history.damageDesc) cleanEdit.damageDescription = history.damageDesc
             cleanEdit.hasWarranty = history.hasWarranty
             if (history.warrantyUntil) cleanEdit.warrantyUntil = history.warrantyUntil.length === 7 ? `${history.warrantyUntil}-01` : history.warrantyUntil
-            await $fetch(`/api/proxy/api/Advert/${editId.value}`, {
+            // Premium history fields
+            cleanEdit.isFirstOwner = history.isFirstOwner
+            cleanEdit.isServicedAtASO = history.servicedAtASO
+            cleanEdit.isGaraged = history.isGaraged
+            if (history.keyCount !== null) cleanEdit.keyCount = history.keyCount
+            if (history.insuranceUntil) cleanEdit.insuranceUntil = history.insuranceUntil.length === 7 ? `${history.insuranceUntil}-01` : history.insuranceUntil
+            // Premium form fields
+            if (form.gearCount) cleanEdit.gearCount = form.gearCount
+            if (form.maxTrailerWeight) cleanEdit.maxTrailerWeight = form.maxTrailerWeight
+            if (form.youtubeUrl) cleanEdit.youtubeUrl = form.youtubeUrl
+            if (form.pdfBrochureUrl) cleanEdit.pdfBrochureUrl = form.pdfBrochureUrl
+            await $fetch(`/api/proxy/api/listings/${editId.value}`, {
                 method: 'PUT',
                 body: cleanEdit,
             })
+            let imgEditErrors = 0
             for (const file of selectedFiles.value) {
                 const fd = new FormData()
                 fd.append('file', file)
-                await $fetch(`/api/proxy/api/Advert/${editId.value}/images`, { method: 'POST', body: fd })
+                try {
+                    await $fetch(`/api/proxy/api/listings/${editId.value}/images`, { method: 'POST', body: fd })
+                } catch {
+                    imgEditErrors++
+                }
+            }
+            if (imgEditErrors > 0) {
+                error.value = `${imgEditErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych. Możesz je dodać w edycji ogłoszenia.`
             }
             await navigateTo('/my-adverts')
         } else {
             // ── Create mode: new advert ──
             // Only include fields known by CreateCarAdvertDto
             const ADVERT_FIELDS = [
-                'brandId', 'modelId', 'generationId', 'engineVersionId',
+                'brandId', 'modelId', 'generationId', 'trimId', 'engineVersionId',
                 'fuelTypeId', 'gearboxId', 'bodyTypeId',
                 'year', 'mileage', 'price', 'title', 'vin',
                 'city', 'region', 'isNegotiable', 'sellerType',
                 'doorCount', 'seatsCount',
                 'trimId', 'vehicleSubtypeId', 'partCategoryId', 'partSubcategoryId',
                 'oemNumber', 'manufacturerPartNumber', 'partManufacturer',
+                'registrationPlate', 'hasVatInvoice', 'isLeasingPossible',
+                'isCreditPossible', 'isExchangePossible',
             ]
             const cleanBody: Record<string, unknown> = {}
             if (form.categoryId) cleanBody.vehicleCategoryId = form.categoryId
@@ -3385,15 +4067,17 @@ async function submit() {
             if (extras.fuelConsumptionHwy != null) cleanBody.fuelConsumptionHighway = Number(extras.fuelConsumptionHwy)
             if (extras.fuelConsumptionMix != null) cleanBody.fuelConsumptionCombined = Number(extras.fuelConsumptionMix)
             if (extras.euroNorm) cleanBody.euroNorm = extras.euroNorm
-            if (extras.colorFinish) cleanBody.colorFinish = extras.colorFinish
-            // New taxonomy fields
-            if (form.trimId) cleanBody.trimId = form.trimId
-            if (form.vehicleSubtypeId) cleanBody.vehicleSubtypeId = form.vehicleSubtypeId
-            if (form.partCategoryId) cleanBody.partCategoryId = form.partCategoryId
-            if (form.partSubcategoryId) cleanBody.partSubcategoryId = form.partSubcategoryId
-            if (form.oemNumber) cleanBody.oemNumber = form.oemNumber
-            if (form.manufacturerPartNumber) cleanBody.manufacturerPartNumber = form.manufacturerPartNumber
-            if (form.partManufacturer) cleanBody.partManufacturer = form.partManufacturer
+            if (extras.colorFinish) {
+                cleanBody.colorFinish = extras.colorFinish
+                cleanBody.metallicPaint = extras.colorFinish === 'metallic' || extras.colorFinish === 'pearl'
+            }
+            // Subtype and subtype-specific fields
+            if (form.vehicleSubtypeId != null) cleanBody.vehicleSubtypeId = form.vehicleSubtypeId
+            if (extras.operatingWeight != null) cleanBody.operatingWeightKg = extras.operatingWeight
+            if (extras.workingWidth != null) cleanBody.workingWidthCm = extras.workingWidth
+            if (extras.maxDiggingDepth != null) cleanBody.maxDiggingDepthM = extras.maxDiggingDepth
+            if (extras.bucketCapacity != null) cleanBody.bucketCapacityL = extras.bucketCapacity
+            if (extras.tankCapacity != null) cleanBody.tankCapacityL = extras.tankCapacity
             // Vehicle history fields
             if (history.ownersCount !== null) cleanBody.ownersCount = history.ownersCount
             cleanBody.isImported = history.isImported
@@ -3407,12 +4091,21 @@ async function submit() {
             if (history.damageDesc) cleanBody.damageDescription = history.damageDesc
             cleanBody.hasWarranty = history.hasWarranty
             if (history.warrantyUntil) cleanBody.warrantyUntil = history.warrantyUntil.length === 7 ? `${history.warrantyUntil}-01` : history.warrantyUntil
-            console.log('[submit] body →', JSON.stringify(cleanBody))
-            const created = await $fetch<any>('/api/proxy/api/Advert', {
+            // Premium history fields
+            cleanBody.isFirstOwner = history.isFirstOwner
+            cleanBody.isServicedAtASO = history.servicedAtASO
+            cleanBody.isGaraged = history.isGaraged
+            if (history.keyCount !== null) cleanBody.keyCount = history.keyCount
+            if (history.insuranceUntil) cleanBody.insuranceUntil = history.insuranceUntil.length === 7 ? `${history.insuranceUntil}-01` : history.insuranceUntil
+            // Premium form fields
+            if (form.gearCount) cleanBody.gearCount = form.gearCount
+            if (form.maxTrailerWeight) cleanBody.maxTrailerWeight = form.maxTrailerWeight
+            if (form.youtubeUrl) cleanBody.youtubeUrl = form.youtubeUrl
+            if (form.pdfBrochureUrl) cleanBody.pdfBrochureUrl = form.pdfBrochureUrl
+            const created = await $fetch<any>('/api/proxy/api/listings', {
                 method: 'POST',
                 body: cleanBody,
             })
-            console.log('[create advert response]', JSON.stringify(created))
             const id: number = created?.id ?? created?.advertId ?? created
             if (!id) throw new Error('Brak ID ogłoszenia w odpowiedzi: ' + JSON.stringify(created))
 
@@ -3421,33 +4114,34 @@ async function submit() {
                 const fd = new FormData()
                 fd.append('file', file)
                 try {
-                    await $fetch(`/api/proxy/api/Advert/${id}/images`, { method: 'POST', body: fd })
-                } catch (imgErr: any) {
+                    await $fetch(`/api/proxy/api/listings/${id}/images`, { method: 'POST', body: fd })
+                } catch {
                     imageErrors++
-                    console.error('[image upload error]', imgErr?.data ?? imgErr?.statusMessage ?? imgErr)
                 }
             }
-            if (imageErrors.length > 0) {
-                console.warn('[upload] image errors:', imageErrors)
+            // Upload pending PDF if selected
+            if (pdfPendingFile.value) {
+                try {
+                    const fd = new FormData()
+                    fd.append('file', pdfPendingFile.value)
+                    await $fetch(`/api/advert/${id}/pdf`, { method: 'POST', body: fd })
+                } catch { /* non-critical */ }
             }
+
             localStorage.removeItem(draftKey.value)
 
-            await $fetch(`/api/proxy/api/Advert/${id}/publish`, { method: 'POST', body: {} }).catch((e: any) => {
-                console.warn('[publish] failed (non-critical):', e?.message)
-            })
+            await $fetch(`/api/proxy/api/listings/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
 
-            console.log('[submit] promoSelected=', promoSelected.value, '| advertId=', id, '| durationDays=', promoDays.value)
-
-            if (imageErrors > 0) {
+            if (promoSelected.value === 'free') {
+                publishedAdvertId.value = id
+                showSuccess.value = true
+                if (imageErrors > 0) {
+                    error.value = `${imageErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych. Możesz je dodać w edycji ogłoszenia.`
+                }
+            } else if (imageErrors > 0) {
                 loading.value = false
                 publishedAdvertId.value = id
                 error.value = `Ogłoszenie zostało zapisane (ID ${id}), ale ${imageErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych — błąd serwera. Możesz dodać zdjęcia później w panelu edycji.`
-            } else if (promoSelected.value === 'free') {
-                publishedAdvertId.value = id
-                showSuccess.value = true
-                if (imageErrors.length > 0) {
-                    error.value = `${imageErrors.length} zdjęcie(a) nie zostało przesłane: ${imageErrors.join('; ')}. Możesz je dodać w edycji ogłoszenia.`
-                }
             } else {
                 try {
                     loading.value = false
@@ -3458,16 +4152,13 @@ async function submit() {
                         durationDays: promoDays.value,
                     }
                     if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
-                    console.log('[payment/initiate] calling with body:', JSON.stringify(body))
                     const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string> }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-                    console.log('[payment/initiate] result:', JSON.stringify(result))
                     submitImojeForm(result)
                 } catch (payErr: any) {
                     paying.value = false
                     publishedAdvertId.value = id
                     showSuccess.value = true
                     const payMsg = (payErr?.data?.message ?? payErr?.statusMessage ?? payErr?.message ?? '') as string
-                    console.error('[payment/initiate] failed after advert created:', payMsg, payErr)
                     error.value = `Ogłoszenie zostało opublikowane! Nie udało się zainicjować płatności${payMsg ? ` (${payMsg})` : ''}. Możesz opłacić promocję z panelu „Moje ogłoszenia".`
                     if (imageErrors > 0) {
                         error.value += ` Ponadto ${imageErrors} zdjęcie(a) nie zostało przesłane.`
@@ -3493,7 +4184,6 @@ async function submit() {
             limitError.value = null
             error.value = msg || e?.message || 'Błąd podczas zapisywania ogłoszenia.'
         }
-        console.error('[submit] error response:', JSON.stringify(bd ?? e?.message))
     } finally {
         loading.value = false
         paying.value = false
@@ -3503,9 +4193,12 @@ async function submit() {
 async function deleteExistingImage(imageId: number) {
     deletingImageId.value = imageId
     try {
-        await $fetch(`/api/proxy/api/Advert/${editId.value}/images/${imageId}`, { method: 'DELETE' })
+        await $fetch(`/api/proxy/api/listings/${editId.value}/images/${imageId}`, { method: 'DELETE' })
         existingImages.value = existingImages.value.filter(img => img.id !== imageId)
-    } catch {}
+    } catch {
+        const { error: toastError } = useToast()
+        toastError('Nie udało się usunąć zdjęcia. Spróbuj ponownie.')
+    }
     finally { deletingImageId.value = null }
 }
 
@@ -3530,13 +4223,14 @@ onMounted(async () => {
 
     if (isEdit.value && editId.value) {
         try {
-            const advert = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${editId.value}`)
+            const advert = await $fetch<CarAdvert>(`/api/proxy/api/listings/${editId.value}`)
             form.title = advert.title ?? ''
             form.description = advert.description ?? ''
             form.price = advert.price ?? null
             form.brandId = advert.brand?.id ?? null
             form.modelId = advert.model?.id ?? null
             form.generationId = advert.generation?.id ?? null
+            form.trimId = (advert as any).trimId ?? null
             form.engineVersionId = advert.engineVersion?.id ?? null
             form.fuelTypeId = advert.fuelType?.id ?? null
             form.gearboxId = advert.gearbox?.id ?? null
@@ -3574,10 +4268,33 @@ onMounted(async () => {
             history.damageDesc = advert.damageDescription ?? ''
             history.hasWarranty = advert.hasWarranty ?? false
             history.warrantyUntil = advert.warrantyUntil ? String(advert.warrantyUntil).substring(0, 7) : ''
+            // Premium fields restore
+            history.isFirstOwner = (advert as any).isFirstOwner ?? false
+            history.servicedAtASO = (advert as any).isServicedAtASO ?? false
+            history.isGaraged = (advert as any).isGaraged ?? false
+            history.keyCount = (advert as any).keyCount ?? null
+            history.insuranceUntil = (advert as any).insuranceUntil ? String((advert as any).insuranceUntil).substring(0, 7) : ''
+            if ((advert as any).registrationPlate) form.registrationPlate = (advert as any).registrationPlate
+            form.hasVatInvoice = (advert as any).hasVatInvoice ?? false
+            form.isLeasingPossible = (advert as any).isLeasingPossible ?? false
+            form.isCreditPossible = (advert as any).isCreditPossible ?? false
+            form.isExchangePossible = (advert as any).isExchangePossible ?? false
+            form.gearCount = (advert as any).gearCount ?? null
+            form.metallicPaint = (advert as any).metallicPaint ?? false
+            form.maxTrailerWeight = (advert as any).maxTrailerWeight ?? null
+            if ((advert as any).youtubeUrl) form.youtubeUrl = (advert as any).youtubeUrl
+            if ((advert as any).pdfBrochureUrl) form.pdfBrochureUrl = (advert as any).pdfBrochureUrl
             existingImages.value = advert.images ?? []
             if (form.brandId) models.value = await fetchModels(form.brandId)
             if (form.modelId) generations.value = await fetchGenerations(form.modelId)
-            if (form.generationId) engines.value = await fetchEngines(form.generationId)
+            if (form.generationId) {
+                const [loadedTrims, loadedEngines] = await Promise.all([
+                    fetchTrims(form.generationId),
+                    fetchEngines(form.generationId),
+                ])
+                trims.value = loadedTrims
+                engines.value = loadedEngines
+            }
         } catch {
             error.value = 'Nie udało się załadować danych ogłoszenia.'
         }
@@ -3602,8 +4319,19 @@ onMounted(async () => {
     }
 })
 
+// Autosave draft every 60 seconds while the form is open (only for new adverts)
+let autosaveTimer: ReturnType<typeof setInterval> | null = null
+onMounted(() => {
+    if (!isEdit.value) {
+        autosaveTimer = setInterval(() => {
+            saveDraft()
+        }, 60_000)
+    }
+})
+
 onBeforeUnmount(() => {
     window.removeEventListener('beforeunload', onBeforeUnload)
+    if (autosaveTimer) clearInterval(autosaveTimer)
 })
 </script>
 
@@ -3617,6 +4345,12 @@ onBeforeUnmount(() => {
     color: $text;
     font-family: 'Inter', sans-serif;
     overflow: hidden;
+
+    @media (max-width: 768px) {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+    }
 }
 
 // ── Top bar ───────────────────────────────────────────────────────────────────
@@ -3705,11 +4439,50 @@ onBeforeUnmount(() => {
     &:hover { border-color: $text-dim; color: $text; }
 }
 
+// ── Mobile step progress bar ──────────────────────────────────────────────────
+.mobile-step-bar {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 16px;
+    border-bottom: 1px solid $border;
+    background: #070707;
+
+    @media (max-width: 768px) {
+        display: flex;
+    }
+}
+
+.mobile-step-label {
+    font-size: 12px;
+    color: $text-dim;
+    font-weight: 500;
+}
+
+.mobile-step-track {
+    height: 3px;
+    background: $border;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.mobile-step-fill {
+    height: 100%;
+    background: $red;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
 // ── Page body ─────────────────────────────────────────────────────────────────
 .page-body {
     flex: 1;
     display: flex;
     overflow: hidden;
+
+    @media (max-width: 768px) {
+        overflow: visible;
+        flex-direction: column;
+    }
 }
 
 // ── Left sidebar ──────────────────────────────────────────────────────────────
@@ -3721,6 +4494,10 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
 }
 
 .steps-nav {
@@ -3819,6 +4596,7 @@ onBeforeUnmount(() => {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    @media (max-width: 768px) { overflow: visible; }
 }
 
 .form-hero {
@@ -3830,6 +4608,11 @@ onBeforeUnmount(() => {
     align-items: center;
     padding: 32px 40px;
     flex-shrink: 0;
+
+    @media (max-width: 768px) {
+        min-height: 100px;
+        padding: 20px 16px;
+    }
 }
 
 .form-hero-text {
@@ -3853,6 +4636,7 @@ onBeforeUnmount(() => {
     border-bottom: 1px solid $border;
     background: #070707;
     flex-shrink: 0;
+    @media (max-width: 768px) { display: none; }
 }
 
 .progress-node {
@@ -3905,6 +4689,10 @@ onBeforeUnmount(() => {
 .form-content {
     padding: 32px 40px 24px;
     flex: 1;
+
+    @media (max-width: 768px) {
+        padding: 20px 16px 24px;
+    }
 }
 
 .form-section-head {
@@ -3928,6 +4716,7 @@ onBeforeUnmount(() => {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 24px;
+    @media (max-width: 600px) { grid-template-columns: 1fr; gap: 12px; }
 }
 
 .field {
@@ -4033,6 +4822,41 @@ onBeforeUnmount(() => {
     opacity: 0.75;
     cursor: not-allowed;
     background: rgba(255,255,255,0.03);
+}
+
+.finput--error {
+    border-color: rgba($red, 0.6) !important;
+    &:focus { border-color: $red !important; }
+}
+
+.extras-section-divider {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 4px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+
+    &::before, &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.08);
+    }
+}
+
+.field-error {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: $red;
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 500;
 }
 
 .desc-label-row {
@@ -4245,6 +5069,7 @@ onBeforeUnmount(() => {
     border-top: 1px solid $border;
     background: $bg;
     flex-shrink: 0;
+    @media (max-width: 600px) { padding: 14px 16px; gap: 10px; }
 }
 
 .form-actions-left { display: flex; align-items: center; gap: 14px; }
@@ -4295,6 +5120,8 @@ onBeforeUnmount(() => {
     gap: 0;
     border-top: 1px solid $border;
     flex-shrink: 0;
+    @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 480px) { display: none; }
 }
 
 .strip-feat {
@@ -4332,6 +5159,10 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
     gap: 0;
+
+    @media (max-width: 960px) {
+        display: none;
+    }
 }
 
 .score-card {
@@ -4542,6 +5373,9 @@ onBeforeUnmount(() => {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 12px;
+    position: relative;
+
+    &--dragover { outline: 2px dashed $red; outline-offset: 4px; border-radius: $r-md; }
 }
 
 .img-thumb {
@@ -4550,7 +5384,36 @@ onBeforeUnmount(() => {
     border-radius: $r-md;
     overflow: hidden;
     border: 1px solid $border;
+    cursor: grab;
+    transition: opacity 0.15s, transform 0.15s;
     img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    &--drag-src { opacity: 0.4; }
+    &--drag-over { outline: 2px solid $red; outline-offset: 2px; transform: scale(1.03); }
+}
+
+.img-drag-hint {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.55);
+    border-radius: 4px;
+    padding: 2px 4px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1;
+    pointer-events: none;
+}
+
+.img-drop-hint {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px;
+    color: $text-muted;
+    font-size: 13px;
+    opacity: 0.6;
 }
 
 .img-remove {
@@ -6393,6 +7256,77 @@ onBeforeUnmount(() => {
     margin-top: 4px;
 }
 
+.ppr-score-tier {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+
+    &.tier--gold { background: rgba(234,179,8,0.15); color: #eab308; }
+    &.tier--silver { background: rgba(148,163,184,0.15); color: #94a3b8; }
+    &.tier--bronze { background: rgba(180,83,9,0.12); color: #b45309; }
+}
+
+.summary-checklist {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid $border;
+    border-radius: 10px;
+}
+
+.summary-checklist-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text;
+    margin-bottom: 12px;
+}
+
+.summary-factor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 13px;
+    color: $text-muted;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+
+    &:last-child { border-bottom: none; }
+    &--done { color: $text; }
+}
+
+.summary-tips {
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: rgba(234,179,8,0.06);
+    border: 1px solid rgba(234,179,8,0.15);
+    border-radius: 10px;
+}
+
+.summary-tips-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #eab308;
+    margin-bottom: 10px;
+}
+
+.summary-tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    color: $text-muted;
+    padding: 4px 0;
+}
+
 // ── AI Photo Quality Analysis ─────────────────────────────────────────────────
 .photo-ai-section {
     margin-top: 16px;
@@ -6555,4 +7489,154 @@ onBeforeUnmount(() => {
     border-radius: 8px;
     color: #4ade80;
 }
-</style></style>
+
+.bool-checks-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+
+    .bool-check {
+        padding: 7px 14px;
+        border: 1.5px solid $border;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.03);
+        transition: border-color 0.15s, background 0.15s;
+
+        &.active {
+            border-color: rgba($red, 0.5);
+            background: rgba($red, 0.08);
+            color: $text;
+        }
+    }
+}
+
+.yt-preview {
+    margin-top: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: #000;
+
+    .yt-iframe {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+}
+
+.desc-phone-warn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    margin-top: 8px;
+    background: rgba(234, 179, 8, 0.08);
+    border: 1px solid rgba(234, 179, 8, 0.25);
+    border-radius: 8px;
+    color: #eab308;
+    font-size: 12px;
+}
+
+// ── PDF Brochure ──────────────────────────────────────────────────────────────
+.pdf-section {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: 10px;
+}
+
+.pdf-section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text;
+    margin-bottom: 4px;
+}
+
+.pdf-section-desc {
+    font-size: 12px;
+    color: $text-muted;
+    margin-bottom: 12px;
+}
+
+.pdf-uploaded {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(229,62,62,0.06);
+    border: 1px solid rgba(229,62,62,0.2);
+    border-radius: 8px;
+}
+
+.pdf-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.pdf-name {
+    font-size: 13px;
+    color: $text;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pdf-view-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: $red;
+    text-decoration: none;
+    margin-top: 2px;
+    &:hover { text-decoration: underline; }
+}
+
+.pdf-pending-label {
+    font-size: 11px;
+    color: $text-muted;
+    margin-top: 2px;
+}
+
+.pdf-remove-btn {
+    background: none;
+    border: none;
+    color: $text-muted;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    &:hover { color: $text; background: rgba(255,255,255,0.06); }
+}
+
+.pdf-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border: 1.5px dashed $border;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: $text-muted;
+    transition: border-color 0.15s, color 0.15s;
+    &:hover { border-color: rgba($red, 0.4); color: $text; }
+    &--loading { opacity: 0.6; pointer-events: none; }
+}
+
+.pdf-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f87171;
+}
+</style>

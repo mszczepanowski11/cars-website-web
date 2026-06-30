@@ -57,7 +57,7 @@
                                 <td class="td-id">#{{ e.id }}</td>
                                 <td>
                                     <div class="event-cell">
-                                        <img :src="getImageUrl(e.mainImageUrl)" class="event-thumb" :alt="e.name" />
+                                        <img :src="getImageUrl(e.mainImageUrl)" class="event-thumb" :alt="e.name" loading="lazy" />
                                         <div>
                                             <div class="event-name">{{ e.name }}</div>
                                             <div class="event-short">{{ e.reportCount ? `${e.reportCount} zgłoszeń` : 'Brak zgłoszeń' }}</div>
@@ -91,7 +91,7 @@
                                         <button v-if="e.status === 'Published' && e.isFeatured" class="btn-action btn-unfeature" :disabled="actionLoading === e.id" @click="toggleFeature(e, false)">
                                             <v-icon icon="mdi-crown-off-outline" size="13" />Usuń wyróżn.
                                         </button>
-                                        <button class="btn-action btn-delete" :disabled="actionLoading === e.id" @click="confirmDelete(e.id)">
+                                        <button class="btn-action btn-delete" :disabled="actionLoading === e.id" aria-label="Usuń wydarzenie" @click="confirmDelete(e.id)">
                                             <v-icon icon="mdi-delete-outline" size="13" />
                                         </button>
                                     </div>
@@ -106,9 +106,9 @@
                 </div>
 
                 <div v-if="totalCount > pageSize" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" @click="goPage(page - 1)"><v-icon icon="mdi-chevron-left" size="18" /></button>
+                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)"><v-icon icon="mdi-chevron-left" size="18" /></button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                    <button class="page-btn" :disabled="page === totalPages" @click="goPage(page + 1)"><v-icon icon="mdi-chevron-right" size="18" /></button>
+                    <button class="page-btn" :disabled="page === totalPages" aria-label="Następna strona" @click="goPage(page + 1)"><v-icon icon="mdi-chevron-right" size="18" /></button>
                 </div>
             </template>
         </main>
@@ -141,6 +141,7 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { getImageUrl, placeholder } = useImageUrl()
 const { adminGetEvents, publishEvent, rejectEvent, archiveEvent, featureEvent, unfeatureEvent, deleteEvent } = useEvents()
+const { error: toastError, success: toastSuccess } = useToast()
 
 const events = ref<AdminEvent[]>([])
 const loading = ref(true)
@@ -197,7 +198,10 @@ async function fetchEvents() {
         const r = await adminGetEvents(params)
         events.value = r.items
         totalCount.value = r.totalCount
-    } catch { events.value = [] } finally { loading.value = false }
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować wydarzeń.')
+        events.value = []
+    } finally { loading.value = false }
 }
 
 async function changeStatus(e: AdminEvent, status: string) {
@@ -207,7 +211,11 @@ async function changeStatus(e: AdminEvent, status: string) {
         else if (status === 'Rejected') await rejectEvent(e.id)
         else if (status === 'Archived') await archiveEvent(e.id)
         e.status = status
-    } catch {} finally { actionLoading.value = null }
+        const label = status === 'Published' ? 'Wydarzenie zostało opublikowane.' : status === 'Rejected' ? 'Wydarzenie zostało odrzucone.' : 'Wydarzenie zostało zarchiwizowane.'
+        toastSuccess(label)
+    } catch (ex: any) {
+        toastError(ex?.data?.message ?? 'Nie udało się zmienić statusu wydarzenia.')
+    } finally { actionLoading.value = null }
 }
 
 async function toggleFeature(e: AdminEvent, feature: boolean) {
@@ -216,7 +224,10 @@ async function toggleFeature(e: AdminEvent, feature: boolean) {
         if (feature) await featureEvent(e.id)
         else await unfeatureEvent(e.id)
         e.isFeatured = feature
-    } catch {} finally { actionLoading.value = null }
+        toastSuccess(feature ? 'Wydarzenie zostało wyróżnione.' : 'Wyróżnienie zostało usunięte.')
+    } catch (ex: any) {
+        toastError(ex?.data?.message ?? 'Nie udało się zmienić wyróżnienia.')
+    } finally { actionLoading.value = null }
 }
 
 function confirmDelete(id: number) { deleteId.value = id }
@@ -229,7 +240,10 @@ async function doDelete() {
         events.value = events.value.filter(e => e.id !== deleteId.value)
         totalCount.value--
         deleteId.value = null
-    } catch {} finally { actionLoading.value = null }
+        toastSuccess('Wydarzenie zostało usunięte.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się usunąć wydarzenia.')
+    } finally { actionLoading.value = null }
 }
 
 onMounted(fetchEvents)

@@ -4,17 +4,47 @@ export default defineEventHandler(async (event) => {
     const method = getMethod(event)
     const path = event.context.params?.path ?? ''
 
-    const PUBLIC_POST_PATHS = ['api/Advert/search', 'api/Payment/webhook']
-    const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/')) || /^api\/Advert\/\d+\/view$/.test(path)
+    // Reject path traversal attempts (e.g., ../../../etc/passwd)
+    if (path.includes('..') || path.includes('//') || !path.startsWith('api/')) {
+        throw createError({ statusCode: 400, statusMessage: 'Invalid path' })
+    }
+
+    // Alias: api/listings/* → api/Advert/* so ad-blocker rules that match "advert" in the URL
+    // do not block the public listing search and detail endpoints.
+    const resolvedPath = path.startsWith('api/listings') ? path.replace('api/listings', 'api/Advert') : path
+
+    const PUBLIC_POST_PATHS = [
+        'api/Advert/search',
+        'api/listings/search',
+        'api/Payment/webhook',
+        'api/Auth/resend-verification',
+        'api/Auth/reset-password',
+        'api/FinancingInquiry',
+        'api/Newsletter/subscribe',
+        'api/Newsletter/unsubscribe',
+    ]
+    const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/')) || /^api\/(Advert|listings)\/\d+\/view$/.test(path)
 
     if (!token && !['GET', 'HEAD'].includes(method) && !isPublicPost) {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
 
+    // Blanket rate limit: prevents authenticated API abuse via the proxy.
+    // Public reads (GET/HEAD) get a generous limit; writes get a tighter cap.
+    if (['GET', 'HEAD'].includes(method)) {
+        rateLimit(event, 'proxy-read', 600, 60_000) // 600 reads / min per IP
+    } else {
+        rateLimit(event, 'proxy-write', 120, 60_000) // 120 writes / min per IP
+    }
+
+    const contentLength = parseInt(getRequestHeader(event, 'content-length') ?? '0', 10)
+    if (contentLength > 25 * 1024 * 1024) {
+        throw createError({ statusCode: 413, statusMessage: 'Request body too large (max 25 MB)' })
+    }
 
     const query = getQuery(event)
 
-    const targetUrl = new URL(`${config.public.apiBase}${path}`)
+    const targetUrl = new URL(`${config.public.apiBase}${resolvedPath}`)
     for (const [k, v] of Object.entries(query)) {
         targetUrl.searchParams.set(k, String(v))
     }
@@ -63,15 +93,18 @@ export default defineEventHandler(async (event) => {
                     } catch (retryErr: any) {
                         const rc = retryErr?.response?.status ?? retryErr?.statusCode ?? 500
                         const raw = retryErr?.data ?? retryErr?.response?._data ?? retryErr?.message ?? 'Request failed'
-                        const msg = typeof raw === 'string' ? raw : JSON.stringify(raw)
-                        throw createError({ statusCode: rc, statusMessage: msg.slice(0, 500) })
+                        const msg = typeof raw === 'string' ? raw : (raw?.message ?? JSON.stringify(raw))
+                        throw createError({ statusCode: rc, statusMessage: msg.slice(0, 500), data: typeof raw === 'object' ? raw : undefined })
                     }
                 }
             }
             const raw = err?.data ?? err?.response?._data ?? err?.message ?? 'Proxy error'
-            const msg = typeof raw === 'string' ? raw : JSON.stringify(raw)
-            console.error(`[proxy] ${method} ${path} → ${statusCode}: ${msg}`)
-            throw createError({ statusCode, statusMessage: msg.slice(0, 500) })
+            const msg = typeof raw === 'string' ? raw : (raw?.message ?? JSON.stringify(raw))
+            // 401 is expected for unauthenticated requests — don't pollute error logs
+            if (statusCode !== 401) {
+                console.error(`[proxy] ${method} ${resolvedPath} → ${statusCode}: ${msg}`)
+            }
+            throw createError({ statusCode, statusMessage: msg.slice(0, 500), data: typeof raw === 'object' ? raw : undefined })
         }
     }
 

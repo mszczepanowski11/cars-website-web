@@ -155,7 +155,7 @@ async function pollForInvoice(attempts = 0) {
             invoicePolling.value = false
             return
         }
-    } catch { }
+    } catch { /* polling failure — retry silently; max 6 attempts */ }
     pollTimerRef.value = setTimeout(() => pollForInvoice(attempts + 1), 3000)
 }
 
@@ -163,7 +163,7 @@ async function downloadInvoicePdf() {
     if (!latestInvoice.value) return
     pdfLoading.value = true
     try { await generatePdf(latestInvoice.value) }
-    catch (e) { console.error(e) }
+    catch { useToast().error('Nie udało się pobrać faktury PDF. Spróbuj ponownie.') }
     finally { pdfLoading.value = false }
 }
 

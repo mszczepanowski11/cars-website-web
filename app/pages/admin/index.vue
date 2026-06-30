@@ -291,6 +291,7 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const { getStats, getLogs } = useAdmin()
+const { error: toastError, success: toastSuccess } = useToast()
 
 const stats = ref<AdminStats | null>(null)
 const logs = ref<AdminActionLog[]>([])
@@ -317,10 +318,11 @@ async function loadCustomCategories() {
     loadingCategories.value = true
     try {
         const url = categoryStatusFilter.value
-            ? `/api/admin/custom-categories?status=${categoryStatusFilter.value}`
-            : '/api/admin/custom-categories'
+            ? `/api/proxy/api/Admin/custom-categories?status=${categoryStatusFilter.value}`
+            : '/api/proxy/api/Admin/custom-categories'
         customCategories.value = await $fetch<any[]>(url)
-    } catch (e) {
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować kategorii.')
         customCategories.value = []
     } finally {
         loadingCategories.value = false
@@ -329,17 +331,20 @@ async function loadCustomCategories() {
 
 async function loadPendingCount() {
     try {
-        const pending = await $fetch<any[]>('/api/admin/custom-categories?status=Pending')
-        pendingCategoriesCount.value = pending.length
-    } catch {}
+        const pending = await $fetch<any[]>('/api/proxy/api/Admin/custom-categories?status=Pending')
+        pendingCategoriesCount.value = Array.isArray(pending) ? pending.length : 0
+    } catch { /* silent — badge is non-critical */ }
 }
 
 async function approveCategory(id: number) {
     categoryActionLoading.value = `${id}_approve`
     try {
-        await $fetch(`/api/admin/custom-categories/${id}/approve`, { method: 'PUT', body: { notes: null } })
+        await $fetch(`/api/proxy/api/Admin/custom-categories/${id}/approve`, { method: 'PUT', body: { notes: null } })
+        toastSuccess('Kategoria została zatwierdzona.')
         await loadCustomCategories()
         await loadPendingCount()
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się zatwierdzić kategorii.')
     } finally {
         categoryActionLoading.value = null
     }
@@ -348,9 +353,12 @@ async function approveCategory(id: number) {
 async function rejectCategory(id: number) {
     categoryActionLoading.value = `${id}_reject`
     try {
-        await $fetch(`/api/admin/custom-categories/${id}/reject`, { method: 'PUT', body: { notes: null } })
+        await $fetch(`/api/proxy/api/Admin/custom-categories/${id}/reject`, { method: 'PUT', body: { notes: null } })
+        toastSuccess('Kategoria została odrzucona.')
         await loadCustomCategories()
         await loadPendingCount()
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się odrzucić kategorii.')
     } finally {
         categoryActionLoading.value = null
     }
@@ -368,16 +376,23 @@ const suspiciousRecordsLoaded = ref(false)
 async function loadSuspiciousRecords() {
     loadingCleanup.value = true
     try {
-        suspiciousRecords.value = await $fetch<any[]>('/api/admin/suspicious-records')
+        suspiciousRecords.value = await $fetch<any[]>('/api/proxy/api/Admin/suspicious-records')
         suspiciousRecordsLoaded.value = true
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować podejrzanych rekordów.')
     } finally {
         loadingCleanup.value = false
     }
 }
 
 async function deleteSuspiciousRecord(id: number) {
-    await $fetch(`/api/admin/suspicious-records/${id}`, { method: 'DELETE' })
-    suspiciousRecords.value = suspiciousRecords.value.filter(r => r.id !== id)
+    try {
+        await $fetch(`/api/proxy/api/Admin/suspicious-records/${id}`, { method: 'DELETE' })
+        suspiciousRecords.value = suspiciousRecords.value.filter(r => r.id !== id)
+        toastSuccess('Rekord został usunięty.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się usunąć rekordu.')
+    }
 }
 
 onMounted(async () => {
@@ -387,10 +402,11 @@ onMounted(async () => {
             getLogs({ page: 1, pageSize: 30 })
         ])
         await loadPendingCount()
-    } catch (err: any) {
-        console.error(err)
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować danych panelu admina.')
+    } finally {
+        loading.value = false
     }
-    finally { loading.value = false }
 })
 
 function formatDate(d: string) {

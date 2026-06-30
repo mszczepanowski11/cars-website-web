@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
     if (!token) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
     const id = getRouterParam(event, 'id')
-    if (!id) throw createError({ statusCode: 400, statusMessage: 'Missing advert ID' })
+    if (!id || !/^\d+$/.test(id)) throw createError({ statusCode: 400, statusMessage: 'Invalid advert ID' })
 
     const parts = await readMultipartFormData(event)
     const filePart = parts?.find(p => p.name === 'file')
@@ -17,19 +17,15 @@ export default defineEventHandler(async (event) => {
     }
     const MAX_SIZE = 10 * 1024 * 1024
     if (filePart.data.length > MAX_SIZE) {
-        throw createError({ statusCode: 400, statusMessage: 'Plik jest zbyt duży. Maksymalny rozmiar to 10 MB.' })
+        throw createError({ statusCode: 400, statusMessage: 'Payload Too Large', message: 'Plik jest zbyt duży. Maksymalny rozmiar to 10 MB.', data: { message: 'Plik jest zbyt duży. Maksymalny rozmiar to 10 MB.' } })
     }
-
-    console.log(`[images.post] advertId=${id} file=${filePart.filename ?? 'blob'} type=${fileType} size=${filePart.data.length}B`)
 
     // Apply CARIZO watermark server-side; if sharp is unavailable, send original
     let outputBuffer: Buffer
     let outputMime = fileType === 'image/gif' ? 'image/gif' : 'image/jpeg'
     try {
         outputBuffer = await applyWatermark(filePart.data)
-        console.log(`[images.post] watermark applied, output size=${outputBuffer.length}B`)
-    } catch (sharpErr) {
-        console.error('[images.post] watermark failed, using original:', sharpErr)
+    } catch {
         try {
             const sharp = (await import('sharp')).default
             outputBuffer = await sharp(filePart.data)
@@ -37,8 +33,7 @@ export default defineEventHandler(async (event) => {
                 .jpeg({ quality: 85 })
                 .toBuffer()
             outputMime = 'image/jpeg'
-        } catch (err2) {
-            console.error('[images.post] fallback resize failed, using raw buffer:', err2)
+        } catch {
             outputBuffer = filePart.data
             outputMime = fileType
         }
@@ -55,7 +50,6 @@ export default defineEventHandler(async (event) => {
 
     const apiBase = config.public.apiBase as string
     const backendUrl = `${apiBase.replace(/\/$/, '')}/api/Advert/${id}/images`
-    console.log(`[images.post] forwarding to backend: ${backendUrl}`)
 
     let response: Response
     try {
@@ -64,19 +58,15 @@ export default defineEventHandler(async (event) => {
             headers: { Authorization: `Bearer ${token}` },
             body: formData,
         })
-    } catch (networkErr) {
-        console.error('[images.post] network error calling backend:', networkErr)
-        throw createError({ statusCode: 502, statusMessage: 'Błąd sieci przy zapisywaniu zdjęcia.' })
+    } catch {
+        throw createError({ statusCode: 502, statusMessage: 'Bad Gateway', message: 'Błąd sieci przy zapisywaniu zdjęcia.', data: { message: 'Błąd sieci przy zapisywaniu zdjęcia.' } })
     }
 
     const responseText = await response.text()
-    console.log(`[images.post] backend response: status=${response.status} body=${responseText.slice(0, 200)}`)
 
     if (!response.ok) {
-        throw createError({
-            statusCode: response.status,
-            statusMessage: tryParseMessage(responseText) ?? `Błąd backendu: ${response.status}`,
-        })
+        const backendMsg = tryParseMessage(responseText) ?? `Blad backendu: ${response.status}`
+        throw createError({ statusCode: response.status, statusMessage: 'Error', message: backendMsg, data: { message: backendMsg } })
     }
 
     try {

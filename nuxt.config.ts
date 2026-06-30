@@ -10,6 +10,10 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        { rel: 'preconnect', href: 'https://res.cloudinary.com' },
+        { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' },
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/favicon.svg' },
@@ -38,7 +42,7 @@ export default defineNuxtConfig({
           'Referrer-Policy': 'strict-origin-when-cross-origin',
           'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
           'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-          'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://connect.facebook.net https://www.googletagmanager.com https://static.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-src https://www.openstreetmap.org https://accounts.google.com; object-src 'none'; base-uri 'self';",
+          'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://connect.facebook.net https://www.googletagmanager.com https://static.clarity.ms https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-src https://www.openstreetmap.org https://accounts.google.com https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self';",
         }
       }
     }
@@ -114,7 +118,7 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_PUBLIC_API_BASE ?? 'http://localhost:5105/',
       premiereStart: process.env.NUXT_PUBLIC_PREMIERE_START ?? '2026-06-12T00:00:00+02:00',
       premiereEnd: process.env.NUXT_PUBLIC_PREMIERE_END ?? '2026-06-15T00:00:00+02:00',
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? 'https://carizo.pl',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? 'https://carizo.eu',
       // Analytics — set in .env to activate
       gtmId:       process.env.NUXT_PUBLIC_GTM_ID       ?? '',
       ga4Id:       process.env.NUXT_PUBLIC_GA4_ID       ?? '',

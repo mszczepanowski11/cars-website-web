@@ -1,4 +1,5 @@
 export default defineEventHandler(async (event) => {
+    rateLimit(event, 'logout', 20, 60_000) // 20 per minute per IP
     const config = useRuntimeConfig()
     const refreshToken = getCookie(event, 'refresh_token')
     if (refreshToken) {

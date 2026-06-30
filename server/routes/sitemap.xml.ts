@@ -10,20 +10,27 @@ export default defineEventHandler(async (event) => {
         { loc: '/categories', priority: '0.7', changefreq: 'weekly' },
         { loc: '/jak-to-dziala', priority: '0.5', changefreq: 'monthly' },
         { loc: '/regulamin', priority: '0.3', changefreq: 'monthly' },
+        { loc: '/regulamin-b2b', priority: '0.3', changefreq: 'monthly' },
         { loc: '/polityka-prywatnosci', priority: '0.3', changefreq: 'monthly' },
+        { loc: '/polityka-cookies', priority: '0.3', changefreq: 'monthly' },
         { loc: '/pomoc', priority: '0.4', changefreq: 'weekly' },
-        { loc: '/promote', priority: '0.6', changefreq: 'weekly' },
     ]
 
     const dynamicUrls: Array<{ loc: string; lastmod?: string; priority: string; changefreq: string }> = []
 
-    try {
-        const advertsRes = await $fetch<{ items: Array<{ id: number; updatedAt?: string; createdAt?: string }> }>(
-            `${apiBase}/api/Advert/search`,
-            { method: 'POST', body: { page: 1, pageSize: 1000, isActive: true } }
-        ).catch(() => null)
+    const sellerIds = new Set<number>()
 
-        if (advertsRes?.items) {
+    try {
+        let page = 1
+        const PAGE_SIZE = 100
+        while (true) {
+            const advertsRes = await $fetch<{ items: Array<{ id: number; userId?: number; updatedAt?: string; createdAt?: string }>; totalCount: number }>(
+                `${apiBase}/api/Advert/search`,
+                { method: 'POST', body: { page, pageSize: PAGE_SIZE } }
+            ).catch(() => null)
+
+            if (!advertsRes?.items?.length) break
+
             for (const ad of advertsRes.items) {
                 dynamicUrls.push({
                     loc: `/advert/${ad.id}`,
@@ -31,9 +38,21 @@ export default defineEventHandler(async (event) => {
                     priority: '0.8',
                     changefreq: 'weekly',
                 })
+                if (ad.userId) sellerIds.add(ad.userId)
             }
+
+            if (advertsRes.items.length < PAGE_SIZE || dynamicUrls.length >= 45000) break
+            page++
         }
     } catch { /* skip if API unavailable */ }
+
+    for (const sellerId of sellerIds) {
+        dynamicUrls.push({
+            loc: `/seller/${sellerId}`,
+            priority: '0.6',
+            changefreq: 'weekly',
+        })
+    }
 
     try {
         const eventsRes = await $fetch<Array<{ id: number; updatedAt?: string; createdAt?: string }>>(

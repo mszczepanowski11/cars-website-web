@@ -171,10 +171,6 @@
                                 <span class="pab-sub">{{ priceAnalysis.sub }}</span>
                             </span>
                         </div>
-                        <div v-if="advert?.price" class="finance-hint">
-                            od ok. <strong>{{ Math.round(Number(advert.price) * 0.8 * 0.065 / 12 / (1 - Math.pow(1 + 0.065/12, -48))).toLocaleString('pl') }} zł/mies.</strong>
-                            <button class="finance-hint-link" @click="activeTab = 'Finansowanie'; scrollToTabs()">Oblicz finansowanie ›</button>
-                        </div>
                     </div>
 
                     <div v-if="advert?.city" class="info-location-row">
@@ -237,11 +233,16 @@
                             <v-icon icon="mdi-phone-outline" size="17" />
                             {{ showPhone ? seller.phoneNumber : 'Pokaż numer telefonu' }}
                         </button>
-                        <button class="cta-message" :disabled="contactLoading" @click="contactSeller">
+                        <button class="cta-message" :disabled="contactLoading || isOwnAdvert" :title="isOwnAdvert ? 'To Twoje ogłoszenie – nie możesz pisać do samego siebie' : undefined" @click="contactSeller">
                             <v-icon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
+                            <v-icon v-else-if="isOwnAdvert" icon="mdi-message-off-outline" size="17" />
                             <v-icon v-else icon="mdi-message-text-outline" size="17" />
-                            {{ contactLoading ? 'Otwieranie...' : 'Napisz wiadomość' }}
+                            {{ contactLoading ? 'Otwieranie...' : isOwnAdvert ? 'To Twoje ogłoszenie' : 'Napisz wiadomość' }}
                         </button>
+                        <p v-if="isOwnAdvert" class="own-advert-note">
+                            <v-icon icon="mdi-information-outline" size="13" />
+                            Nie możesz wysyłać wiadomości do samego siebie. To Twoje ogłoszenie.
+                        </p>
                         <div class="cta-row2">
                             <button class="cta-alt" :disabled="!!txLoading" @click="showViewingPicker = !showViewingPicker">
                                 <v-icon icon="mdi-calendar-check-outline" size="15" />Oględziny
@@ -448,28 +449,17 @@
 
                 <!-- SECTION 3: Wyposażenie -->
                 <section v-if="Object.keys(featureGroups).length" class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-check-all" size="17" />Wyposażenie</h2>
-                    <div class="eq-summary" style="padding: 10px 20px 0;">
-                        <v-icon icon="mdi-check-all" size="16" class="eq-sum-icon" />
-                        Łącznie <strong>{{ advert?.features?.length ?? 0 }}</strong> elementów wyposażenia
-                        w <strong>{{ Object.keys(featureGroups).length }}</strong> kategoriach
-                    </div>
+                    <h2 class="pg-section-title"><v-icon icon="mdi-check-all" size="17" />Wyposażenie <span class="eq-total-badge">{{ advert?.features?.length ?? 0 }}</span></h2>
                     <div v-for="(group, cat) in featureGroups" :key="cat" class="eq-group">
-                        <button class="eq-group-header" @click="toggleEquipGroup(String(cat))">
-                            <div class="eq-group-header-left">
-                                <v-icon :icon="featureGroupIcon(String(cat))" size="15" class="eq-cat-icon" />
-                                {{ cat }}
-                                <span class="eq-count">{{ group.length }}</span>
-                            </div>
-                            <v-icon :icon="openEquipGroups.has(String(cat)) ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" />
-                        </button>
-                        <transition name="eq-collapse">
-                            <div v-if="openEquipGroups.has(String(cat))" class="eq-grid">
-                                <div v-for="f in group" :key="f.id" class="eq-item">
-                                    <v-icon icon="mdi-check-circle-outline" size="15" class="feat-icon" />{{ f.name }}
-                                </div>
-                            </div>
-                        </transition>
+                        <div class="eq-cat-label">
+                            <v-icon :icon="featureGroupIcon(String(cat))" size="13" class="eq-cat-icon" />
+                            {{ cat }}
+                        </div>
+                        <div class="eq-chip-grid">
+                            <span v-for="f in group" :key="f.id" class="eq-chip">
+                                <v-icon icon="mdi-check" size="11" class="eq-chip-icon" />{{ f.name }}
+                            </span>
+                        </div>
                     </div>
                 </section>
 
@@ -546,69 +536,10 @@
                     </div>
                 </section>
 
-                <!-- SECTION 6: Secondary tabs (Finansowanie, Opinie) -->
-                <div class="tabs-wrap" id="tabs-section">
-                    <div class="tabs-nav">
-                        <button v-for="tab in tabs" :key="tab" class="tab-btn" :class="{ 'tab-active': activeTab === tab }" @click="activeTab = tab">{{ tab }}</button>
-                    </div>
-
-                    <!-- Finansowanie -->
-                    <div v-if="activeTab === 'Finansowanie'" class="tab-content">
-                        <div v-if="advert?.price" class="financing-tab">
-                            <div class="fin-header">
-                                <div class="fin-price-display">
-                                    <div class="fin-price-big">{{ Number(advert.price).toLocaleString('pl') }} zł</div>
-                                    <div class="fin-price-sub">Cena pojazdu</div>
-                                </div>
-                                <div class="calc-tabs" style="margin-bottom: 0">
-                                    <button :class="['calc-tab', { active: calcMode === 'leasing' }]" @click="calcMode = 'leasing'">Leasing</button>
-                                    <button :class="['calc-tab', { active: calcMode === 'credit' }]" @click="calcMode = 'credit'">Kredyt</button>
-                                </div>
-                            </div>
-                            <div class="fin-calc-body">
-                                <div class="calc-row"><label>Wpłata własna ({{ calcDownPct }}%)</label><input v-model.number="calcDownPct" type="range" min="5" max="50" step="5" class="calc-range" /></div>
-                                <div class="calc-row"><label>Okres ({{ calcMonths }} mies.)</label><input v-model.number="calcMonths" type="range" min="12" max="84" step="12" class="calc-range" /></div>
-                                <div class="calc-row" v-if="calcMode === 'leasing'"><label>Wykup ({{ calcResidual }}%)</label><input v-model.number="calcResidual" type="range" min="1" max="30" step="1" class="calc-range" /></div>
-                                <div class="calc-result-big">
-                                    <div><span class="crb-label">Szacunkowa rata miesięczna</span><strong class="crb-val">{{ calcMonthlyPayment }} zł</strong></div>
-                                    <div><span class="crb-label">Wpłata własna</span><strong class="crb-val crb-val--sm">{{ Math.round(Number(advert.price) * calcDownPct / 100).toLocaleString('pl') }} zł</strong></div>
-                                </div>
-                            </div>
-                            <div class="fin-inquiry-section">
-                                <div class="fin-inquiry-title">Zapytaj o finansowanie CARIZO</div>
-                                <p class="fin-inquiry-desc">Wypełnij formularz, a nasz doradca skontaktuje się z Tobą w ciągu 24h.</p>
-                                <div v-if="finInquirySuccess" class="tx-success" style="margin-bottom: 12px">
-                                    <v-icon icon="mdi-check-circle-outline" size="14" />Dziękujemy! Skontaktujemy się z Tobą wkrótce.
-                                </div>
-                                <div v-else class="fin-inquiry-form">
-                                    <div class="fin-form-row">
-                                        <input v-model="finName" class="fin-input" placeholder="Imię i nazwisko" />
-                                        <input v-model="finPhone" class="fin-input" placeholder="Numer telefonu" type="tel" />
-                                    </div>
-                                    <input v-model="finEmail" class="fin-input" placeholder="Adres e-mail" type="email" />
-                                    <div class="fin-type-btns">
-                                        <button :class="['fin-type-btn', { active: finType === 'leasing' }]" @click="finType = 'leasing'">
-                                            <v-icon icon="mdi-car-key" size="14" /> Leasing
-                                        </button>
-                                        <button :class="['fin-type-btn', { active: finType === 'credit' }]" @click="finType = 'credit'">
-                                            <v-icon icon="mdi-bank-outline" size="14" /> Kredyt
-                                        </button>
-                                    </div>
-                                    <button class="fin-submit-btn" :disabled="finSubmitting || !finName || !finPhone" @click="submitFinancingInquiry">
-                                        <v-icon v-if="finSubmitting" icon="mdi-loading" size="15" class="spin" />
-                                        <v-icon v-else icon="mdi-send-outline" size="15" />
-                                        Wyślij zapytanie
-                                    </button>
-                                    <div v-if="finError" class="tx-error" style="margin-top: 8px"><v-icon icon="mdi-alert-circle-outline" size="13" />{{ finError }}</div>
-                                </div>
-                            </div>
-                            <p class="calc-disclaimer" style="margin-top: 8px">Wyniki są orientacyjne. Rzeczywiste warunki finansowania mogą się różnić.</p>
-                        </div>
-                        <p v-else class="empty-tab"><v-icon icon="mdi-calculator-off" size="28" />Brak danych o cenie pojazdu.</p>
-                    </div>
-
-                    <!-- Opinie -->
-                    <div v-else-if="activeTab === 'Opinie'" class="tab-content">
+                <!-- SECTION 6: Opinie o sprzedawcy -->
+                <section class="pg-section" id="reviews-section">
+                    <h2 class="pg-section-title"><v-icon icon="mdi-star-outline" size="17" />Opinie o sprzedawcy</h2>
+                    <div class="tab-content">
                         <div v-if="reviewsLoading" class="loading-center"><v-icon icon="mdi-loading" size="26" class="spin" /></div>
                         <template v-else>
                             <div v-if="sellerReviews.length" class="reviews-list">
@@ -641,28 +572,8 @@
                             <div v-else-if="reviewSuccess" class="review-success"><v-icon icon="mdi-check-circle-outline" size="18" />Dziękujemy za opinię!</div>
                         </template>
                     </div>
-                </div>
+                </section>
 
-                <!-- Full gallery grid -->
-                <div class="gallery-section">
-                    <div class="section-head">
-                        <h2 class="section-heading">Zdjęcia ({{ hasImages ? allImages.length : 0 }})</h2>
-                        <button v-if="hasImages" class="see-all-link" @click="openLightbox(0)">Zobacz wszystkie</button>
-                    </div>
-                    <div v-if="hasImages" class="gallery-grid">
-                        <div class="gallery-main" @click="openLightbox(0)">
-                            <img :src="allImages[0]?.url ?? placeholder" :alt="advert?.title ?? 'Zdjęcie główne'" />
-                            <button class="expand-btn" aria-label="Powiększ galerię" @click.stop="openLightbox(0)"><v-icon icon="mdi-arrow-expand" size="18" /></button>
-                        </div>
-                        <div class="gallery-thumbs">
-                            <div v-for="(img, i) in allImages.slice(1, 4)" :key="i" class="gallery-thumb" @click="openLightbox(i + 1)">
-                                <img :src="img.url" :alt="`Zdjęcie ${i + 2} – ${advert?.title ?? ''}`" />
-                                <div v-if="i === 2 && allImages.length > 4" class="thumb-overlay" @click.stop="openLightbox(i + 1)">+{{ allImages.length - 4 }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div v-else class="no-images-info"><v-icon icon="mdi-image-off-outline" size="22" />Sprzedający nie dodał zdjęć.</div>
-                </div>
 
                 <!-- Similar section -->
                 <div class="similar-section">
@@ -751,24 +662,6 @@
                     </a>
                 </div>
 
-                <div v-if="advert?.price" class="sidebar-card calc-card">
-                    <div class="card-title"><v-icon icon="mdi-calculator-variant-outline" size="15" class="card-title-icon" />Kalkulator rat</div>
-                    <div class="calc-tabs">
-                        <button :class="['calc-tab', { active: calcMode === 'leasing' }]" @click="calcMode = 'leasing'">Leasing</button>
-                        <button :class="['calc-tab', { active: calcMode === 'credit' }]" @click="calcMode = 'credit'">Kredyt</button>
-                    </div>
-                    <div class="calc-body">
-                        <div class="calc-row"><label>Cena pojazdu</label><span class="calc-val">{{ Number(advert.price).toLocaleString('pl') }} zł</span></div>
-                        <div class="calc-row"><label>Wpłata własna ({{ calcDownPct }}%)</label><input v-model.number="calcDownPct" type="range" min="5" max="50" step="5" class="calc-range" /></div>
-                        <div class="calc-row"><label>Okres ({{ calcMonths }} mies.)</label><input v-model.number="calcMonths" type="range" min="12" max="84" step="12" class="calc-range" /></div>
-                        <div v-if="calcMode === 'leasing'" class="calc-row"><label>Wykup ({{ calcResidual }}%)</label><input v-model.number="calcResidual" type="range" min="1" max="30" step="1" class="calc-range" /></div>
-                        <div class="calc-result"><span>Szacunkowa rata</span><strong>{{ calcMonthlyPayment }} zł / mies.</strong></div>
-                        <button class="calc-fin-btn" @click="activeTab = 'Finansowanie'; scrollToTabs()">
-                            <v-icon icon="mdi-file-document-outline" size="15" />Zapytaj o finansowanie
-                        </button>
-                        <p class="calc-disclaimer">Wynik orientacyjny.</p>
-                    </div>
-                </div>
 
                 <div class="sidebar-report-row">
                     <button class="report-advert-btn" @click="handleReport"><v-icon icon="mdi-flag-outline" size="13" />Zgłoś ogłoszenie</button>
@@ -797,6 +690,50 @@
 
     <ReportModal v-model="reportOpen" target-type="Advert" :target-id="id" />
 
+    <!-- Compose message modal -->
+    <Teleport to="body">
+        <transition name="fade">
+            <div v-if="composeOpen" class="compose-backdrop" @click.self="composeOpen = false">
+                <div class="compose-modal">
+                    <div class="compose-header">
+                        <div class="compose-to">
+                            <v-icon icon="mdi-message-text-outline" size="18" />
+                            <span>Wiadomość do <strong>{{ seller?.name }} {{ seller?.surname }}</strong></span>
+                        </div>
+                        <button class="compose-close" @click="composeOpen = false">
+                            <v-icon icon="mdi-close" size="20" />
+                        </button>
+                    </div>
+                    <div class="compose-advert-ref">{{ advert?.title }}</div>
+                    <div class="compose-suggestions">
+                        <button
+                            v-for="s in messageSuggestions"
+                            :key="s"
+                            class="compose-chip"
+                            :class="{ active: composeDraft === s }"
+                            @click="composeDraft = s"
+                        >{{ s }}</button>
+                    </div>
+                    <textarea
+                        ref="composeRef"
+                        v-model="composeDraft"
+                        class="compose-textarea"
+                        placeholder="Napisz wiadomość..."
+                        rows="3"
+                    />
+                    <div v-if="contactError" class="compose-error">
+                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ contactError }}
+                    </div>
+                    <button class="compose-send" :disabled="contactLoading || !composeDraft.trim()" @click="sendComposeMessage">
+                        <v-icon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
+                        <v-icon v-else icon="mdi-send" size="17" />
+                        {{ contactLoading ? 'Wysyłanie...' : 'Wyślij wiadomość' }}
+                    </button>
+                </div>
+            </div>
+        </transition>
+    </Teleport>
+
     <!-- Mobile sticky contact bar -->
     <Teleport to="body">
         <div v-if="seller" class="mobile-cta-bar">
@@ -804,9 +741,8 @@
                 <v-icon :icon="showPhone ? 'mdi-phone' : 'mdi-phone-outline'" size="18" />
                 <span>{{ showPhone ? seller.phoneNumber : 'Zadzwoń' }}</span>
             </button>
-            <button class="mcb-message" :disabled="contactLoading" @click="contactSeller">
-                <v-icon v-if="contactLoading" icon="mdi-loading" size="18" class="spin" />
-                <v-icon v-else icon="mdi-message-text-outline" size="18" />
+            <button class="mcb-message" @click="contactSeller">
+                <v-icon icon="mdi-message-text-outline" size="18" />
                 <span>Napisz</span>
             </button>
         </div>
@@ -828,6 +764,7 @@ const { shareNative, shareOnFacebook, shareOnX, shareOnWhatsApp, copyLink, copie
 const shareOpen = ref(false)
 
 function currentUrl(): string {
+    if (import.meta.client) return window.location.href
     return `${config.public.siteUrl}/advert/${id}`
 }
 function doShareNative() {
@@ -849,8 +786,21 @@ const { createTransaction } = useTransactions()
 const { followSeller, unfollowSeller, isFollowingSeller: checkFollowingSeller } = useFollow()
 const { getSellerReviews, canReview, submitReview } = useReviews()
 
+const currentUserId = ref<number | null>(null)
+const isOwnAdvert = computed(() => isLoggedIn.value && currentUserId.value !== null && currentUserId.value === advert.value?.userId)
+
 const contactLoading = ref(false)
 const contactError = ref('')
+const composeOpen = ref(false)
+const composeDraft = ref('')
+const composeRef = ref<HTMLTextAreaElement | null>(null)
+const messageSuggestions = [
+    'Czy auto jest jeszcze dostępne?',
+    'Czy cena jest do negocjacji?',
+    'Kiedy można obejrzeć pojazd?',
+    'Czy auto ma pełną historię serwisową?',
+    'Czy możliwa jest zamiana?',
+]
 const followError = ref('')
 const advert = ref<CarAdvert | null>(null)
 const similar = ref<CarAdvert[]>([])
@@ -880,42 +830,12 @@ const reservationDate = ref('')
 const reservationTime = ref('10:00')
 const reservationNote = ref('')
 
-// Financing inquiry form
-const finName = ref('')
-const finPhone = ref('')
-const finEmail = ref('')
-const finType = ref<'leasing' | 'credit'>('leasing')
-const finSubmitting = ref(false)
-const finError = ref('')
-const finInquirySuccess = ref(false)
-
 const mainLayoutRef = ref<HTMLElement | null>(null)
 
 const activeImg = ref(0)
-const activeTab = ref('Finansowanie')
 const showFullDesc = ref(false)
-const openEquipGroups = ref(new Set<string>())
 const isFav = ref(false)
 const reportOpen = ref(false)
-
-// Leasing / credit calculator
-const calcMode = ref<'leasing' | 'credit'>('leasing')
-const calcDownPct = ref(20)
-const calcMonths = ref(48)
-const calcResidual = ref(10)
-
-const calcMonthlyPayment = computed(() => {
-    const price = Number(advert.value?.price ?? 0)
-    if (!price) return '—'
-    const down = price * (calcDownPct.value / 100)
-    const residual = calcMode.value === 'leasing' ? price * (calcResidual.value / 100) : 0
-    const principal = price - down - residual
-    const annualRate = calcMode.value === 'leasing' ? 0.065 : 0.089
-    const r = annualRate / 12
-    const n = calcMonths.value
-    const monthly = r === 0 ? principal / n : (principal * r) / (1 - Math.pow(1 + r, -n))
-    return Math.round(monthly).toLocaleString('pl')
-})
 
 const todayStr = computed(() => new Date().toISOString().slice(0, 10))
 
@@ -945,15 +865,6 @@ function onKeydown(e: KeyboardEvent) {
     if (e.key === 'ArrowLeft' && lightboxIdx.value > 0) lightboxIdx.value--
     if (e.key === 'ArrowRight' && lightboxIdx.value < allImages.value.length - 1) lightboxIdx.value++
 }
-
-function scrollToTabs() {
-    nextTick(() => {
-        const el = document.getElementById('tabs-section')
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
-}
-
-const tabs = ['Finansowanie', 'Opinie']
 
 // ── Parse structured description sections ─────────────────────────────────────
 const parsedTechData = computed(() => {
@@ -1099,13 +1010,6 @@ function featureGroupIcon(cat: string): string {
     return 'mdi-star-outline'
 }
 
-function toggleEquipGroup(cat: string) {
-    if (openEquipGroups.value.has(cat)) openEquipGroups.value.delete(cat)
-    else openEquipGroups.value.add(cat)
-    // trigger reactivity
-    openEquipGroups.value = new Set(openEquipGroups.value)
-}
-
 const advertPublishedDate = computed(() => {
     if (!advert.value?.createdAt) return '—'
     return new Date(advert.value.createdAt).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -1184,17 +1088,25 @@ function handleReport() {
     reportOpen.value = true
 }
 
-async function contactSeller() {
-    if (!isLoggedIn.value) { await navigateTo('/login'); return }
+function contactSeller() {
+    if (!isLoggedIn.value) { navigateTo('/login'); return }
+    contactError.value = ''
+    composeDraft.value = ''
+    composeOpen.value = true
+    nextTick(() => composeRef.value?.focus())
+}
+
+async function sendComposeMessage() {
+    if (!composeDraft.value.trim() || contactLoading.value) return
     contactLoading.value = true
     contactError.value = ''
     try {
-        const conversationId = await startConversation(id)
+        const conversationId = await startConversation(id, composeDraft.value.trim())
         if (!conversationId) throw new Error('Brak ID rozmowy w odpowiedzi.')
+        composeOpen.value = false
         await navigateTo(`/messages/${conversationId}`)
     } catch (e: any) {
-        contactError.value = e?.data?.message ?? e?.message ?? 'Nie udało się otworzyć wiadomości.'
-        setTimeout(() => { contactError.value = '' }, 4000)
+        contactError.value = e?.data?.message ?? e?.message ?? 'Nie udało się wysłać wiadomości.'
     } finally {
         contactLoading.value = false
     }
@@ -1240,32 +1152,6 @@ async function scheduleViewing() {
         txError.value = e?.data?.message ?? 'Nie udało się wysłać prośby o oględziny.'
         setTimeout(() => txError.value = null, 4000)
     } finally { txLoading.value = null }
-}
-
-async function submitFinancingInquiry() {
-    if (!finName.value.trim() || !finPhone.value.trim()) return
-    finSubmitting.value = true
-    finError.value = ''
-    try {
-        await $fetch('/api/proxy/api/FinancingInquiry', {
-            method: 'POST',
-            body: {
-                advertId: id,
-                name: finName.value.trim(),
-                phone: finPhone.value.trim(),
-                email: finEmail.value.trim() || null,
-                type: finType.value,
-                price: advert.value?.price,
-                downPaymentPct: calcDownPct.value,
-                months: calcMonths.value,
-            }
-        })
-        finInquirySuccess.value = true
-    } catch (e: any) {
-        finError.value = e?.data?.message ?? 'Nie udało się wysłać zapytania. Spróbuj ponownie.'
-    } finally {
-        finSubmitting.value = false
-    }
 }
 
 async function toggleFollowSeller() {
@@ -1327,10 +1213,12 @@ useSeoMeta({
     title: seoTitle,
     description: seoDescription,
     ogType: 'website',
-    ogUrl: seoCanonical,
+    ogUrl: seoUrl,
     ogTitle: seoOgTitle,
     ogDescription: seoDescription,
     ogImage: seoImage,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
     twitterTitle: seoOgTitle,
@@ -1338,20 +1226,35 @@ useSeoMeta({
     twitterImage: seoImage,
 })
 
-useHead({ link: [{ rel: 'canonical', href: seoCanonical }] })
-
-watch(activeTab, async (tab) => {
-    if (tab === 'Opinie' && sellerReviews.value.length === 0 && advert.value?.userId) {
-        reviewsLoading.value = true
-        try {
-            const [r, ok] = await Promise.all([
-                getSellerReviews(advert.value.userId),
-                isLoggedIn.value ? canReview(advert.value.userId) : Promise.resolve(false),
-            ])
-            sellerReviews.value = r.items
-            canLeaveReview.value = ok
-        } catch {} finally { reviewsLoading.value = false }
-    }
+useHead({
+    link: [{ rel: 'canonical', href: seoUrl }],
+    script: [computed(() => {
+        const a = advert.value
+        if (!a) return { type: 'application/ld+json', innerHTML: '' }
+        const schema: Record<string, any> = {
+            '@context': 'https://schema.org',
+            '@type': 'Car',
+            name: a.title,
+            description: a.description?.slice(0, 500) ?? '',
+            url: seoUrl.value,
+            image: (a.images ?? []).map((i: any) => getImageUrl(i.url)).filter(Boolean),
+        }
+        if (a.brand?.name) schema.brand = { '@type': 'Brand', name: a.brand.name }
+        if (a.model?.name) schema.model = a.model.name
+        if (a.year) schema.vehicleModelDate = String(a.year)
+        if (a.mileage != null) schema.mileageFromOdometer = { '@type': 'QuantitativeValue', value: a.mileage, unitCode: 'KMT' }
+        if (a.fuelType?.name) schema.fuelType = a.fuelType.name
+        if (a.price != null) {
+            schema.offers = {
+                '@type': 'Offer',
+                price: a.price,
+                priceCurrency: 'PLN',
+                availability: 'https://schema.org/InStock',
+                url: seoUrl.value,
+            }
+        }
+        return { type: 'application/ld+json', innerHTML: JSON.stringify(schema) }
+    })]
 })
 
 async function doSubmitReview() {
@@ -1455,7 +1358,7 @@ async function downloadPDF() {
 // SSR-safe data fetching
 const { data: advertData } = await useAsyncData(`advert-${id}`, async () => {
     try {
-        const a = await $fetch<CarAdvert>(`/api/proxy/api/Advert/${id}`)
+        const a = await $fetch<CarAdvert>(`/api/proxy/api/listings/${id}`)
         if (!a) return null
         const uid = a.userId
         let s: UserProfile | null = null
@@ -1479,10 +1382,16 @@ sellerStats.value = advertData.value?.sellerStats ?? null
 onMounted(async () => {
     window.addEventListener('keydown', onKeydown)
     await fetchFavoriteIds()
+    if (isLoggedIn.value) {
+        try {
+            const me = await $fetch<{ id: number }>('/api/proxy/api/User/me')
+            currentUserId.value = me.id
+        } catch {}
+    }
     if (advert.value) {
         trackRecentlyViewed(Number(id))
         // Track view
-        $fetch(`/api/proxy/api/Advert/${id}/view`, { method: 'POST' }).catch(() => {})
+        $fetch(`/api/proxy/api/listings/${id}/view`, { method: 'POST' }).catch(() => {})
         isFav.value = isFavorite(id)
         if (advert.value.city) initMap(advert.value.city, advert.value.region ?? undefined)
     }
@@ -1503,10 +1412,22 @@ onMounted(async () => {
                 body.priceFrom = Math.round(p * 0.4)
                 body.priceTo   = Math.round(p * 2.5)
             }
-            const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', { method: 'POST', body })
+            const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', { method: 'POST', body })
             similar.value = (r?.items ?? []).filter(x => x.id !== id).slice(0, 6)
         }
     } catch { }
+    // Load reviews
+    if (advert.value?.userId) {
+        reviewsLoading.value = true
+        try {
+            const [r, ok] = await Promise.all([
+                getSellerReviews(advert.value.userId),
+                isLoggedIn.value ? canReview(advert.value.userId) : Promise.resolve(false),
+            ])
+            sellerReviews.value = r.items
+            canLeaveReview.value = ok
+        } catch {} finally { reviewsLoading.value = false }
+    }
 })
 
 onUnmounted(() => {
@@ -1519,6 +1440,10 @@ onUnmounted(() => {
     background: $bg;
     min-height: 100vh;
     padding-top: $nav-height;
+
+    @include respond-to(md) {
+        padding-bottom: $mobile-cta-height;
+    }
 }
 
 // ── Topbar ────────────────────────────────────────────────────────────────────
@@ -2200,6 +2125,16 @@ onUnmounted(() => {
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
+.own-advert-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin: 4px 0 0;
+    line-height: 1.4;
+}
+
 .cta-row2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2737,6 +2672,58 @@ onUnmounted(() => {
 .eq-sum-icon { color: $red; }
 
 .eq-group { margin-bottom: 20px; }
+
+.eq-total-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($red, 0.12);
+    color: lighten($red, 20%);
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    margin-left: 6px;
+    letter-spacing: 0;
+    vertical-align: middle;
+}
+
+.eq-cat-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+}
+
+.eq-chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 4px;
+}
+
+.eq-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: $text-muted;
+    line-height: 1;
+}
+
+.eq-chip-icon {
+    color: $red;
+    flex-shrink: 0;
+}
 
 .eq-group-title {
     font-size: 12px;
@@ -4273,5 +4260,137 @@ onUnmounted(() => {
     margin-top: 8px;
     transition: opacity 0.2s;
     &:hover { opacity: 0.88; }
+}
+
+// ── Compose modal ─────────────────────────────────────────────────────────────
+.compose-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.compose-modal {
+    background: #0d0d0d;
+    border: 1px solid $border;
+    border-radius: $r-xl;
+    padding: 28px;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.compose-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.compose-to {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $text-dim;
+    font-size: 14px;
+    strong { color: $text; }
+}
+
+.compose-close {
+    background: none;
+    border: none;
+    color: $text-dim;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    &:hover { color: $text; }
+}
+
+.compose-advert-ref {
+    font-size: 12px;
+    color: $text-dark;
+    background: rgba(255,255,255,0.04);
+    border-radius: $r-sm;
+    padding: 8px 12px;
+    border-left: 2px solid $red;
+}
+
+.compose-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.compose-chip {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid $border;
+    border-radius: 20px;
+    color: $text-dim;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    text-align: left;
+
+    &:hover, &.active {
+        border-color: rgba($red, 0.6);
+        color: $text;
+        background: rgba($red, 0.08);
+    }
+}
+
+.compose-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: $r-md;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    outline: none;
+    padding: 12px 14px;
+    resize: vertical;
+    min-height: 90px;
+    box-sizing: border-box;
+
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba($red, 0.4); }
+}
+
+.compose-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $red;
+}
+
+.compose-send {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: $red;
+    border: none;
+    border-radius: $r-md;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 13px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover:not(:disabled) { opacity: 0.88; }
+    &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 </style>

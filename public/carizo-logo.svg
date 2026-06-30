@@ -1,6 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 56" fill="none">
   <text
+    x="50%"
     y="42"
+    text-anchor="middle"
     font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
     font-size="46"
     font-weight="200"

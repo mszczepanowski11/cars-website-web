@@ -203,6 +203,18 @@ const userProfile = ref<UserProfile | null>(null)
 
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
+const { error: toastError } = useToast()
+
+const ALLOWED_PAYMENT_HOSTS = ['secure.imoje.pl', 'imoje.ing.pl', 'imoje.pl']
+function safePaymentRedirect(url: string) {
+    try {
+        const parsed = new URL(url)
+        if (parsed.protocol !== 'https:' || !ALLOWED_PAYMENT_HOSTS.includes(parsed.hostname)) throw new Error('Untrusted host')
+        window.location.href = parsed.toString()
+    } catch {
+        toastError('Błąd płatności: nieprawidłowy adres przekierowania.')
+    }
+}
 
 const plans = [
     {
@@ -261,7 +273,7 @@ onMounted(async () => {
     // Verify ownership before showing promotion options
     try {
         const [advert, me] = await Promise.all([
-            $fetch<{ userId: number }>(`/api/proxy/api/Advert/${advertId.value}`),
+            $fetch<{ userId: number }>(`/api/proxy/api/listings/${advertId.value}`),
             $fetch<{ id: number }>('/api/proxy/api/User/me'),
         ])
         if (advert.userId !== me.id) {
@@ -327,7 +339,7 @@ async function publishFree() {
     publishing.value = true
     actionError.value = ''
     try {
-        await $fetch(`/api/proxy/api/Advert/${advertId.value}/publish`, { method: 'POST', body: {} })
+        await $fetch(`/api/proxy/api/listings/${advertId.value}/publish`, { method: 'POST', body: {} })
         await navigateTo('/my-adverts')
     } catch (e: any) {
         actionError.value = e?.data?.message ?? 'Nie udało się opublikować ogłoszenia.'
@@ -352,8 +364,8 @@ async function initiatePayment() {
     actionError.value = ''
 
     // Refresh publish state — non-critical, advert may already be active
-    await $fetch(`/api/proxy/api/Advert/${advertId.value}/publish`, { method: 'POST', body: {} })
-        .catch((e: any) => console.warn('[promote] publish non-critical:', e?.data?.message ?? e?.message))
+    await $fetch(`/api/proxy/api/listings/${advertId.value}/publish`, { method: 'POST', body: {} })
+        .catch(() => {})
 
     try {
         const body: Record<string, unknown> = {
@@ -366,11 +378,9 @@ async function initiatePayment() {
         }
         if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
 
-        console.log('[promote] Payment/initiate body:', JSON.stringify(body))
         const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-        console.log('[promote] Payment/initiate result:', JSON.stringify(result))
         if (result.paymentUrl) {
-            window.location.href = result.paymentUrl
+            safePaymentRedirect(result.paymentUrl)
         }
     } catch (e: any) {
         actionError.value = e?.data?.message ?? 'Błąd podczas inicjowania płatności.'

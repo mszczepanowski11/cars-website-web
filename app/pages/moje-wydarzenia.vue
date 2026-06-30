@@ -57,13 +57,13 @@
                     </div>
                     <span class="ev-status" :class="`status-${ev.status?.toLowerCase()}`">{{ statusLabel(ev.status) }}</span>
                     <div class="ev-actions">
-                        <NuxtLink :to="`/wydarzenie/${ev.id}`" class="btn-view" title="Podgląd">
+                        <NuxtLink :to="`/wydarzenie/${ev.id}`" class="btn-view" :aria-label="`Podgląd: ${ev.name}`">
                             <v-icon icon="mdi-eye-outline" size="16" />
                         </NuxtLink>
-                        <NuxtLink :to="`/dodaj-wydarzenie?id=${ev.id}`" class="btn-edit" title="Edytuj">
+                        <NuxtLink :to="`/dodaj-wydarzenie?id=${ev.id}`" class="btn-edit" :aria-label="`Edytuj: ${ev.name}`">
                             <v-icon icon="mdi-pencil-outline" size="16" />
                         </NuxtLink>
-                        <button @click="confirmDelete(ev.id)" class="btn-delete" title="Usuń">
+                        <button @click="confirmDelete(ev.id)" class="btn-delete" :aria-label="`Usuń: ${ev.name}`">
                             <v-icon icon="mdi-delete-outline" size="16" />
                         </button>
                     </div>
@@ -72,11 +72,11 @@
 
             <!-- Pagination -->
             <div v-if="totalCount > pageSize" class="pagination">
-                <button class="page-btn" :disabled="page === 1" @click="goPage(page - 1)">
+                <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)">
                     <v-icon icon="mdi-chevron-left" size="18" />
                 </button>
                 <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                <button class="page-btn" :disabled="page >= totalPages" @click="goPage(page + 1)">
+                <button class="page-btn" :disabled="page >= totalPages" aria-label="Następna strona" @click="goPage(page + 1)">
                     <v-icon icon="mdi-chevron-right" size="18" />
                 </button>
             </div>
@@ -109,9 +109,11 @@
 import type { CarEvent, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Moje wydarzenia — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getMyEvents, deleteMyEvent } = useEvents()
 const { getImageUrl } = useImageUrl()
+const { success: toastSuccess, error: toastError } = useToast()
 
 const events = ref<CarEvent[]>([])
 const loading = ref(true)
@@ -148,9 +150,10 @@ async function fetchEvents() {
         const r = await getMyEvents(page.value, pageSize)
         events.value = r.items
         totalCount.value = r.totalCount
-    } catch {
+    } catch (e: any) {
         events.value = []
         totalCount.value = 0
+        toastError(e?.data?.message ?? 'Nie udało się załadować wydarzeń.')
     } finally {
         loading.value = false
     }
@@ -174,8 +177,9 @@ async function doDelete() {
         events.value = events.value.filter(e => e.id !== deleteId.value)
         totalCount.value = Math.max(0, totalCount.value - 1)
         deleteId.value = null
+        toastSuccess('Wydarzenie zostało usunięte.')
     } catch (err: any) {
-        alert(err?.data?.message || 'Nie udało się usunąć wydarzenia.')
+        toastError(err?.data?.message || 'Nie udało się usunąć wydarzenia. Spróbuj ponownie.')
     } finally {
         deleting.value = false
     }

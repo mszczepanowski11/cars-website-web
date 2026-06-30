@@ -54,7 +54,7 @@
                                 <v-icon icon="mdi-car-outline" size="14" class="fp-field-icon" />
                                 <select v-model="f.brandId" class="fp-select" @change="onBrandChange">
                                     <option :value="null">Wszystkie marki</option>
-                                    <option v-for="b in brands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                                    <option v-for="b in brands.filter(b => b.name && !/^\d+$/.test(b.name))" :key="b.id" :value="b.id">{{ b.name }}</option>
                                 </select>
                             </div>
                         </div>
@@ -113,21 +113,26 @@
                                 class="fp-keyword-input"
                                 placeholder="Słowo kluczowe, wyposażenie, opis..."
                                 autocomplete="off"
+                                aria-label="Szukaj po słowie kluczowym"
+                                role="combobox"
+                                :aria-expanded="showSuggestions && autocompleteItems.length > 0"
+                                aria-autocomplete="list"
                                 @keyup.enter="load(1); showSuggestions = false"
                                 @focus="showSuggestions = true"
                                 @blur="setTimeout(() => { showSuggestions = false }, 150)"
                                 @input="showSuggestions = true"
                             />
-                            <button v-if="f.textSearch" class="fp-kw-clear" @click="f.textSearch = ''; showSuggestions = false">
+                            <button v-if="f.textSearch" class="fp-kw-clear" aria-label="Wyczyść wyszukiwanie" @click="f.textSearch = ''; showSuggestions = false">
                                 <v-icon icon="mdi-close" size="13" />
                             </button>
                             <!-- Autocomplete dropdown -->
-                            <div v-if="showSuggestions && autocompleteItems.length" class="ac-dropdown">
+                            <div v-if="showSuggestions && autocompleteItems.length" class="ac-dropdown" role="listbox" aria-label="Podpowiedzi wyszukiwania">
                                 <button
                                     v-for="item in autocompleteItems"
                                     :key="item.type + item.id"
                                     type="button"
                                     class="ac-item"
+                                    role="option"
                                     @mousedown.prevent="applyAutocomplete(item)"
                                 >
                                     <v-icon
@@ -561,19 +566,31 @@
 import { useCategories } from '~/composables/useCategories'
 import type { TaxonomyItem, DriveType, CarColor, CarAdvert, Feature, PagedResult, CategoryWithCount } from '~/types'
 
+const advertsConfig = useRuntimeConfig()
 useSeoMeta({
     title: 'Ogłoszenia samochodowe — CARIZO',
     description: 'Przeglądaj tysiące ofert sprzedaży samochodów w Polsce. Filtruj po marce, modelu, cenie i przebiegu.',
+    ogType: 'website',
+    ogUrl: `${advertsConfig.public.siteUrl}/adverts`,
     ogTitle: 'Ogłoszenia samochodowe — CARIZO',
     ogDescription: 'Najlepsza platforma motoryzacyjna w Polsce — tysiące ogłoszeń.',
+    ogImage: `${advertsConfig.public.siteUrl}/hero-car.jpg`,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
+    ogSiteName: 'CARIZO',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Ogłoszenia samochodowe — CARIZO',
+    twitterDescription: 'Tysiące ofert samochodów i pojazdów na CARIZO.',
     robots: 'index, follow',
 })
+useHead({ link: [{ rel: 'canonical', href: `${advertsConfig.public.siteUrl}/adverts` }] })
 
 const route = useRoute()
 const router = useRouter()
 const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors, fetchFeatures } = useTaxonomy()
 const { fetchCategories } = useCategories()
 const { fetchFavoriteIds } = useFavorites()
+const { error: toastError } = useToast()
 
 // Initialize filter state from URL query params at setup time (SSR-safe — no onMounted)
 const f = reactive({
@@ -630,6 +647,7 @@ const models       = ref<TaxonomyItem[]>([])
 const allFeatures  = ref<Feature[]>([])
 const adverts      = ref<CarAdvert[]>([])
 const total        = ref(0)
+const frozenTotal  = ref(0) // snapshot of total at last fresh search; used for loadMore to avoid offset shifts
 const page         = ref(route.query.page ? Number(route.query.page) : 1)
 const loading      = ref(false)
 const loadingMore  = ref(false)
@@ -681,7 +699,7 @@ const quickViewOpen = ref(false)
 const quickViewId   = ref<number | null>(null)
 function openQuickView(id: number) { quickViewId.value = id; quickViewOpen.value = true }
 
-const totalPages = computed(() => Math.ceil(total.value / pageSize))
+const totalPages = computed(() => Math.ceil(frozenTotal.value / pageSize))
 
 const sortOptions = [
     { label: 'Najnowsze',       value: '' },
@@ -786,6 +804,7 @@ function toggleFeature(id: number) {
     const idx = f.featureIds.indexOf(id)
     if (idx === -1) f.featureIds.push(id)
     else f.featureIds.splice(idx, 1)
+    load(1)
 }
 
 function clearFilters() {
@@ -817,6 +836,7 @@ async function onBrandChange() {
     f.modelId = null
     models.value = []
     if (f.brandId) models.value = await fetchModels(f.brandId)
+    load(1)
 }
 
 function buildSearchBody(p: number): Record<string, unknown> {
@@ -902,7 +922,7 @@ if (taxoData.value?.initialModels?.length) {
 // ── SSR-safe initial advert search ────────────────────────────────────────────────
 const searchKey = computed(() => `adverts-search-${JSON.stringify(buildSearchBody(page.value))}`)
 const { data: searchData } = await useAsyncData(searchKey, () =>
-    $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+    $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
         method: 'POST',
         body: buildSearchBody(page.value),
     }).catch(() => ({ items: [] as CarAdvert[], totalCount: 0 }))
@@ -962,14 +982,16 @@ async function load(p: number = page.value) {
     router.replace({ query })
 
     try {
-        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
             body: buildSearchBody(p),
         })
         adverts.value = r?.items ?? []
         total.value   = r?.totalCount ?? 0
+        frozenTotal.value = r?.totalCount ?? 0 // freeze for stable loadMore pagination
     } catch {
         adverts.value = []
+        toastError('Nie udało się załadować ogłoszeń. Sprawdź połączenie i spróbuj ponownie.')
     } finally {
         loading.value = false
     }
@@ -980,14 +1002,16 @@ async function loadMore() {
     loadingMore.value = true
     const nextPage = page.value + 1
     try {
-        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Advert/search', {
+        const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
             body: buildSearchBody(nextPage),
         })
         adverts.value = [...adverts.value, ...(r?.items ?? [])]
         total.value   = r?.totalCount ?? 0
+        // frozenTotal intentionally NOT updated here to keep page count stable
         page.value    = nextPage
     } catch {
+        toastError('Nie udało się załadować kolejnych ogłoszeń.')
     } finally {
         loadingMore.value = false
     }
@@ -1018,7 +1042,8 @@ function applyAutocomplete(item: { type: AcType; id: number; name: string }) {
     if (item.type === 'brand') {
         f.textSearch = ''
         f.brandId = item.id
-        onBrandChange()
+        onBrandChange()  // handles model fetch then load(1) internally
+        return
     } else if (item.type === 'model') {
         f.textSearch = ''
         f.modelId = item.id
@@ -1031,7 +1056,7 @@ function applyAutocomplete(item: { type: AcType; id: number; name: string }) {
 
 // Fetch favorites client-side only; also load category-specific brands if URL has categoryId
 onMounted(async () => {
-    fetchFavoriteIds()
+    fetchFavoriteIds().catch(() => {})
     if (f.categoryId) {
         try { dynamicBrands.value = await fetchBrandsByCategory(f.categoryId) } catch { dynamicBrands.value = null }
     }
@@ -1573,6 +1598,12 @@ onMounted(async () => {
     transition: transform 0.12s, border-color 0.12s;
     outline: none;
     position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -10px;
+    }
 
     &:hover { transform: scale(1.18); }
 

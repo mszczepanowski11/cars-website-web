@@ -3,6 +3,13 @@ export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
     const body = await readBody(event)
 
+    if (!body || typeof body !== 'object') {
+        throw createError({ statusCode: 400, statusMessage: 'Invalid body' })
+    }
+    if (typeof body.accessToken !== 'string' || body.accessToken.length < 10 || body.accessToken.length > 4096) {
+        throw createError({ statusCode: 400, statusMessage: 'Invalid access token' })
+    }
+
     try {
         const data = await $fetch<{ token: string; refreshToken?: string }>(
             `${config.public.apiBase}api/Auth/facebook`,
@@ -17,9 +24,12 @@ export default defineEventHandler(async (event) => {
         })
         return { success: true }
     } catch (err: any) {
+        const displayMsg = 'Logowanie przez Facebook nie powiodło się.'
         throw createError({
-            statusCode: err.response?.status ?? 401,
-            statusMessage: err.data ?? 'Logowanie przez Facebook nie powiodło się.'
+            statusCode: err.response?.status ?? err.status ?? 401,
+            statusMessage: 'Unauthorized',
+            message: displayMsg,
+            data: { message: displayMsg }
         })
     }
 })

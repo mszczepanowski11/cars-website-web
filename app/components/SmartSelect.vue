@@ -74,12 +74,16 @@ const wrapRef = ref<HTMLElement | null>(null)
 const searchRef = ref<HTMLInputElement | null>(null)
 const listRef = ref<HTMLElement | null>(null)
 
-const selectedLabel = computed(() => props.options.find(o => o.value === props.modelValue)?.label ?? '')
+const isNumeric = (s: string) => /^\d+$/.test(s)
+
+const safeOptions = computed(() => props.options.filter(o => o.label && !isNumeric(String(o.label))))
+
+const selectedLabel = computed(() => safeOptions.value.find(o => o.value === props.modelValue)?.label ?? '')
 
 const filtered = computed(() => {
-    if (!query.value.trim()) return props.options
+    if (!query.value.trim()) return safeOptions.value
     const q = query.value.toLowerCase()
-    return props.options.filter(o => o.label.toLowerCase().includes(q))
+    return safeOptions.value.filter(o => o.label.toLowerCase().includes(q))
 })
 
 watch(filtered, () => { highlightIdx.value = 0 })

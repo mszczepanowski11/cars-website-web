@@ -67,7 +67,23 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Pomoc — CARIZO' })
+const pomocConfig = useRuntimeConfig()
+useSeoMeta({
+    title: 'Pomoc — CARIZO',
+    description: 'Centrum pomocy CARIZO — znajdź odpowiedzi na najczęstsze pytania dotyczące sprzedaży, zakupu i bezpieczeństwa transakcji.',
+    ogType: 'website',
+    ogUrl: `${pomocConfig.public.siteUrl}/pomoc`,
+    ogTitle: 'Centrum pomocy — CARIZO',
+    ogDescription: 'FAQ i wskazówki dla kupujących i sprzedających na platformie CARIZO.',
+    ogImage: `${pomocConfig.public.siteUrl}/hero-car.jpg`,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
+    ogSiteName: 'CARIZO',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Centrum pomocy — CARIZO',
+    twitterDescription: 'FAQ i wskazówki dla kupujących i sprzedających na platformie CARIZO.',
+})
+useHead({ link: [{ rel: 'canonical', href: `${pomocConfig.public.siteUrl}/pomoc` }] })
 
 const query = ref('')
 const openKey = ref<string | null>(null)
