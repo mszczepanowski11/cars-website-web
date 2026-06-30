@@ -46,7 +46,23 @@
                     <v-icon icon="mdi-logout" size="19" /><span>Wyloguj się</span>
                 </button>
             </nav>
-            <div class="dash-promo">
+            <!-- B2B subscription widget -->
+            <div v-if="profile?.accountType === 'Business'" class="dash-subscription">
+                <div v-if="subscription" class="sub-info">
+                    <div class="sub-label">
+                        <v-icon :icon="subscription.isActive ? 'mdi-check-circle-outline' : 'mdi-briefcase-outline'" size="14" />
+                        Pakiet B2B
+                    </div>
+                    <div class="sub-tier">{{ subscription.tierName }}</div>
+                    <div v-if="subscription.isActive" class="sub-quota">
+                        Wyróżnienia: {{ subscription.featuredQuotaUsed }}/{{ subscription.featuredQuotaPerMonth === -1 ? '∞' : subscription.featuredQuotaPerMonth }}
+                    </div>
+                </div>
+                <NuxtLink to="/pakiety" class="sub-btn">
+                    {{ subscription?.isActive ? 'Zmień pakiet' : 'Aktywuj pakiet' }}
+                </NuxtLink>
+            </div>
+            <div v-else class="dash-promo">
                 <div class="promo-text">
                     <div class="promo-title">Zwiększ zasięg<br>swoich ogłoszeń</div>
                     <p class="promo-sub">Wyróżnij ogłoszenia i sprzedawaj szybciej.</p>
@@ -773,6 +789,8 @@ definePageMeta({ middleware: 'auth' })
 useHead({ title: 'Panel użytkownika — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { fetchProfile, fetchStats, updateProfile, updatePassword, fetchSettings, updateSettings, deleteAccount } = useUser()
+const { getMySubscription } = useSubscription()
+const subscription = ref<Awaited<ReturnType<typeof getMySubscription>> | null>(null)
 const { getMyReceivedReviews } = useReviews()
 const { notifications: allNotifications, unreadCount: notifUnread, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, getPreferences, updatePreference } = useNotifications()
 const { getFollowedAdverts, getFollowers } = useFollow()
@@ -1197,6 +1215,10 @@ onMounted(async () => {
         advertTotal.value = r.totalCount
         // Lazy load notifications count
         fetchNotifications().catch(() => { })
+        // Load B2B subscription for business accounts
+        if (profile.value?.accountType === 'Business') {
+            getMySubscription().then(s => { subscription.value = s }).catch(() => { })
+        }
     } catch { toastError('Nie udało się załadować danych profilu.') } finally { loading.value = false }
 
     // Recently viewed (from localStorage — fire after loading so it doesn't block)
@@ -1358,6 +1380,46 @@ onMounted(async () => {
     height: 1px;
     background: $border;
     margin: 8px 0;
+}
+
+.dash-subscription {
+    margin: 12px;
+    background: linear-gradient(135deg, rgba(139,13,29,0.08), transparent);
+    border: 1px solid rgba($red, 0.2);
+    border-radius: $r-md;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sub-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $red;
+}
+
+.sub-tier { font-size: 13px; font-weight: 700; color: $text; }
+
+.sub-quota { font-size: 11px; color: $text-dim; }
+
+.sub-btn {
+    display: block;
+    text-align: center;
+    background: $red;
+    border-radius: $r-sm;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 7px 12px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.88; }
 }
 
 .dash-promo {

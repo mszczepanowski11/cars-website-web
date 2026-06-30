@@ -154,6 +154,8 @@ watch(mobileOpen, (open) => {
                     </div>
                 </div>
                 <NuxtLink to="/wydarzenia">Wydarzenia</NuxtLink>
+                <NuxtLink to="/pakiety">Dla dealerów</NuxtLink>
+                <NuxtLink to="/cennik">Cennik</NuxtLink>
                 <NuxtLink to="/#about">O nas</NuxtLink>
                 <NuxtLink to="/#contact">Kontakt</NuxtLink>
             </nav>
@@ -243,6 +245,14 @@ watch(mobileOpen, (open) => {
                     <NuxtLink to="/wydarzenia" class="drawer-link" @click="closeMobile">
                         <v-icon icon="mdi-calendar-star" size="18" />
                         Wydarzenia
+                    </NuxtLink>
+                    <NuxtLink to="/pakiety" class="drawer-link" @click="closeMobile">
+                        <v-icon icon="mdi-briefcase-outline" size="18" />
+                        Dla dealerów
+                    </NuxtLink>
+                    <NuxtLink to="/cennik" class="drawer-link" @click="closeMobile">
+                        <v-icon icon="mdi-tag-outline" size="18" />
+                        Cennik
                     </NuxtLink>
                     <NuxtLink to="/#about" class="drawer-link" @click="closeMobile">
                         <v-icon icon="mdi-information-outline" size="18" />
