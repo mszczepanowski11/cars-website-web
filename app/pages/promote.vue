@@ -487,8 +487,12 @@ async function doPurchase() {
                 cancelUrl: `${siteUrl}/payment/return?status=cancel&advertId=${selectedAdvertId.value}`,
             }
             if (couponValid.value && couponCode.value) body.couponCode = couponCode.value
-            const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string> }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-            submitImojeForm(result)
+            const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+            if (result.adminActivated) {
+                navigateTo(`/payment/return?status=success&advertId=${selectedAdvertId.value}`)
+            } else {
+                submitImojeForm(result)
+            }
         }
     } catch (e: any) {
         const msg = e?.data?.message ?? e?.message ?? ''
