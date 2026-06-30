@@ -101,13 +101,20 @@
                         :class="[`plan-card--${plan.key}`, { 'plan-selected': selectedPlan === plan.key }]"
                         @click="selectedPlan = plan.key"
                     >
+                        <!-- Accent strip + popular badge -->
+                        <div class="plan-accent-strip" />
+                        <div v-if="plan.popularLabel" class="plan-popular-badge">
+                            <v-icon icon="mdi-fire" size="11" />
+                            {{ plan.popularLabel }}
+                        </div>
+
                         <!-- Icon + badge preview -->
                         <div class="plan-top-row">
                             <div class="plan-icon-wrap">
-                                <v-icon :icon="plan.icon" size="26" />
+                                <v-icon :icon="plan.icon" size="24" />
                             </div>
                             <div v-if="plan.badgeLabel" class="plan-badge-preview" :class="`preview--${plan.key}`">
-                                <v-icon v-if="plan.key === 'top'" icon="mdi-crown" size="11" />
+                                <v-icon v-if="plan.key === 'top'" icon="mdi-crown" size="10" />
                                 {{ plan.badgeLabel }}
                             </div>
                         </div>
@@ -115,7 +122,15 @@
                         <h3 class="plan-name">{{ plan.name }}</h3>
                         <p class="plan-desc">{{ plan.desc }}</p>
 
-                        <!-- Duration toggle (Wyróżnij & TOP only) -->
+                        <!-- Features list -->
+                        <ul class="plan-features">
+                            <li v-for="f in plan.features" :key="f">
+                                <v-icon icon="mdi-check" size="13" class="feature-check" />
+                                {{ f }}
+                            </li>
+                        </ul>
+
+                        <!-- Duration toggle -->
                         <div v-if="plan.durations" class="duration-tabs">
                             <button
                                 v-for="d in plan.durations"
@@ -124,22 +139,29 @@
                                 :class="{ active: selectedDays[plan.key as MultiPlanKey] === d.days }"
                                 @click.stop="selectedDays[plan.key as MultiPlanKey] = d.days"
                             >
-                                {{ d.days }} dni
+                                {{ d.days }}d
                                 <span v-if="!isPremiereActive" class="dur-price">{{ getDurPrice(plan, d.days) }}</span>
                             </button>
                         </div>
 
                         <!-- Price display -->
-                        <div class="plan-price-row">
+                        <div class="plan-price-block">
                             <template v-if="isPremiereActive">
-                                <span class="plan-old-price">{{ getPrice(plan) }}</span>
-                                <span class="plan-new-price">0 zł</span>
+                                <div class="plan-price-row">
+                                    <span class="plan-old-price">{{ getPrice(plan) }}</span>
+                                    <span class="plan-new-price">0 zł</span>
+                                </div>
                             </template>
                             <template v-else>
-                                <span class="plan-new-price">{{ getPrice(plan) }}</span>
-                                <span v-if="plan.durations" class="plan-period">
-                                    / {{ selectedDays[plan.key as MultiPlanKey] }} dni
-                                </span>
+                                <div class="plan-price-row">
+                                    <span class="plan-new-price">{{ getPrice(plan) }}</span>
+                                    <span v-if="plan.durations" class="plan-period">
+                                        / {{ selectedDays[plan.key as MultiPlanKey] }} dni
+                                    </span>
+                                </div>
+                                <div v-if="isBusiness" class="plan-netto-row">
+                                    {{ getNettoPrice(plan) }} netto + 23% VAT
+                                </div>
                             </template>
                         </div>
 
@@ -250,6 +272,7 @@ const { purchasePromotion } = usePromotions()
 const { validateCoupon } = useCoupons()
 const { getImageUrl, placeholder } = useImageUrl()
 const { getPrice: getPriceApi } = usePayment()
+const { fetchProfile } = useUser()
 const config = useRuntimeConfig()
 
 type MultiPlanKey = 'highlight' | 'top' | 'premium'
@@ -259,50 +282,62 @@ interface Plan {
     key: string; icon: string; name: string; desc: string
     singlePrice: string | null; singlePriceNum: number
     durations: PlanDuration[] | null; cta: string; badgeLabel: string | null
+    popularLabel: string | null
+    features: string[]
     promotionType: string
 }
 
 const plans: Plan[] = [
     {
         key: 'refresh', icon: 'mdi-refresh', name: 'Odświeżenie',
-        desc: 'Twoje ogłoszenie wróci na początek wyników wyszukiwania i listy w kategorii.',
+        desc: 'Twoje ogłoszenie wróci na sam początek wyników wyszukiwania.',
         singlePrice: '4,99 zł', singlePriceNum: 4.99, durations: null,
-        cta: 'Odśwież teraz', badgeLabel: null, promotionType: 'Refresh',
+        cta: 'Odśwież teraz', badgeLabel: null, popularLabel: null,
+        features: ['Powrót na górę listy', 'Aktywacja natychmiastowa', 'Brak oznaczenia — subtelnie'],
+        promotionType: 'Refresh',
     },
     {
         key: 'highlight', icon: 'mdi-star', name: 'Wyróżnij ofertę',
-        desc: 'Ogłoszenie otrzymuje oznaczenie „WYRÓŻNIONE", czerwone obramowanie i jest wyświetlane wyżej od zwykłych ofert.',
+        desc: 'Ogłoszenie wyróżnia się czerwoną ramką i trafia wyżej w wynikach.',
         singlePrice: null, singlePriceNum: 0,
         durations: [
             { days: 7, price: '14,99 zł', priceNum: 14.99 },
             { days: 14, price: '24,99 zł', priceNum: 24.99 },
             { days: 30, price: '39,99 zł', priceNum: 39.99 },
         ],
-        cta: 'Wyróżnij teraz', badgeLabel: 'WYRÓŻNIONE', promotionType: 'Featured',
+        cta: 'Wyróżnij teraz', badgeLabel: 'WYRÓŻNIONE', popularLabel: null,
+        features: ['Etykieta WYRÓŻNIONE', 'Czerwone obramowanie', 'Wyższe pozycjonowanie w liście'],
+        promotionType: 'Featured',
     },
     {
         key: 'top', icon: 'mdi-crown', name: 'Oferta TOP',
-        desc: 'Ogłoszenie pojawia się na stronie głównej, na początku kategorii i wyników wyszukiwania.',
+        desc: 'Pojawia się na stronie głównej i na samym szczycie kategorii.',
         singlePrice: null, singlePriceNum: 0,
         durations: [
             { days: 7, price: '19,99 zł', priceNum: 19.99 },
             { days: 14, price: '29,99 zł', priceNum: 29.99 },
             { days: 30, price: '49,99 zł', priceNum: 49.99 },
         ],
-        cta: 'Dodaj do TOP', badgeLabel: 'TOP', promotionType: 'Top',
+        cta: 'Dodaj do TOP', badgeLabel: 'TOP', popularLabel: 'NAJPOPULARNIEJSZY',
+        features: ['Widoczność na stronie głównej', 'Pierwsza pozycja w kategorii', 'Złota etykieta TOP'],
+        promotionType: 'Top',
     },
     {
         key: 'premium', icon: 'mdi-diamond-outline', name: 'Premium',
-        desc: 'Maksymalna widoczność i priorytetowe pozycjonowanie. Twoje ogłoszenie zawsze na szczycie wyników.',
+        desc: 'Maksymalna widoczność — zawsze powyżej ofert TOP i wyróżnionych.',
         singlePrice: null, singlePriceNum: 0,
         durations: [
             { days: 7, price: '29,99 zł', priceNum: 29.99 },
             { days: 14, price: '44,99 zł', priceNum: 44.99 },
             { days: 30, price: '79,99 zł', priceNum: 79.99 },
         ],
-        cta: 'Aktywuj Premium', badgeLabel: null, promotionType: 'Premium',
+        cta: 'Aktywuj Premium', badgeLabel: null, popularLabel: null,
+        features: ['Priorytet nad ofertami TOP', 'Fioletowa etykieta PREMIUM', 'Najwyższy CTR spośród wszystkich planów'],
+        promotionType: 'Premium',
     },
 ]
+
+const isBusiness = ref(false)
 
 const benefits = [
     { icon: 'mdi-trending-up', title: 'Więcej wyświetleń', sub: 'Twoja oferta na górze listy' },
@@ -337,6 +372,12 @@ function resolvePrice(promotionType: string, days: number, fallback: number): nu
 
 function formatPln(n: number): string {
     return n.toFixed(2).replace('.', ',') + ' zł'
+}
+
+function getNettoPrice(plan: Plan): string {
+    const brutto = getPriceNum(plan)
+    if (brutto === 0) return '0,00 zł'
+    return formatPln(brutto / 1.23)
 }
 
 function getPrice(plan: Plan): string {
@@ -470,6 +511,7 @@ const countdownUnits = computed(() => {
 })
 
 onMounted(async () => {
+    fetchProfile().then(p => { isBusiness.value = p?.accountType === 'Business' }).catch(() => {})
     advertsLoading.value = true
     const priceQueries = [
         { type: 'Refresh', days: 1 },
@@ -679,27 +721,67 @@ onMounted(async () => {
 }
 
 .plan-card {
-    background: #0a0a0a;
+    background: #080808;
     border: 1px solid $border;
     border-radius: $r-lg;
-    padding: 28px 24px;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    transition: border-color 0.2s, transform 0.2s;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
 
-    &:hover { transform: translateY(-3px); }
+    &:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
 
-    &--refresh:hover  { border-color: rgba($red, 0.3); }
-    &--highlight:hover { border-color: rgba($red, 0.45); }
-    &--top:hover       { border-color: rgba(#f5a623, 0.4); }
-    &--premium:hover   { border-color: rgba(#b388ff, 0.45); }
+    &--refresh:hover  { border-color: rgba($red, 0.35); box-shadow: 0 12px 40px rgba($red, 0.07); }
+    &--highlight:hover { border-color: rgba($red, 0.5); box-shadow: 0 12px 40px rgba($red, 0.09); }
+    &--top:hover       { border-color: rgba(#f5a623, 0.5); box-shadow: 0 12px 40px rgba(#f5a623, 0.08); }
+    &--premium:hover   { border-color: rgba(#b388ff, 0.5); box-shadow: 0 12px 40px rgba(#b388ff, 0.08); }
+
+    // inner padding applied to children except accent strip
+    > *:not(.plan-accent-strip):not(.plan-popular-badge) {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+    > .plan-top-row   { padding-top: 22px; }
+    > .plan-btn       { margin: auto 22px 22px; padding-left: 0; padding-right: 0; }
+    > .plan-features  { padding-left: 22px; padding-right: 22px; }
+}
+
+.plan-accent-strip {
+    height: 4px;
+    width: 100%;
+    border-radius: $r-lg $r-lg 0 0;
+    background: $red;
+
+    .plan-card--top &     { background: linear-gradient(90deg, #f5a623, #ffcc66); }
+    .plan-card--premium & { background: linear-gradient(90deg, #7b52d4, #b388ff); }
+}
+
+.plan-popular-badge {
+    position: absolute;
+    top: 16px;
+    right: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(#f5a623, 0.15);
+    border: 1px solid rgba(#f5a623, 0.4);
+    color: #f5a623;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 4px 9px;
+    border-radius: 20px;
+    text-transform: uppercase;
 }
 
 .plan-top-row {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
 }
 
 .plan-icon-wrap {
@@ -761,9 +843,34 @@ onMounted(async () => {
 .plan-desc {
     font-size: 13px;
     color: $text-dim;
-    line-height: 1.65;
-    margin-bottom: 22px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
     flex: 1;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12px;
+        color: $text-muted;
+    }
+}
+
+.feature-check {
+    color: $red;
+    flex-shrink: 0;
+
+    .plan-card--top &     { color: #f5a623; }
+    .plan-card--premium & { color: #b388ff; }
 }
 
 // Duration toggle
@@ -815,11 +922,21 @@ onMounted(async () => {
 }
 
 // Price
+.plan-price-block {
+    margin-bottom: 14px;
+}
+
 .plan-price-row {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin-bottom: 12px;
+}
+
+.plan-netto-row {
+    font-size: 11px;
+    color: $text-dark;
+    margin-top: 4px;
+    font-weight: 500;
 }
 
 .plan-old-price {
@@ -871,22 +988,41 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: transparent;
-    border: 1px solid $border;
+    background: rgba($red, 0.12);
+    border: 1px solid rgba($red, 0.35);
     border-radius: $r-sm;
-    color: $text;
+    color: #ff8080;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     font-family: 'Inter', sans-serif;
-    padding: 14px;
+    padding: 13px;
     cursor: pointer;
-    margin-top: auto;
-    transition: background 0.2s, border-color 0.2s;
+    width: 100%;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
 
-    .plan-card--refresh &:hover,
-    .plan-card--highlight &:hover { background: rgba($red, 0.08); border-color: rgba($red, 0.4); }
-    .plan-card--top &:hover       { background: rgba(#f5a623, 0.07); border-color: rgba(#f5a623, 0.4); }
-    .plan-card--premium &:hover   { background: rgba(#b388ff, 0.07); border-color: rgba(#b388ff, 0.4); }
+    .plan-card--refresh &,
+    .plan-card--highlight & {
+        background: rgba($red, 0.1);
+        border-color: rgba($red, 0.3);
+        color: lighten($red, 15%);
+    }
+    .plan-card--top & {
+        background: rgba(#f5a623, 0.1);
+        border-color: rgba(#f5a623, 0.3);
+        color: #f5a623;
+    }
+    .plan-card--premium & {
+        background: rgba(#b388ff, 0.1);
+        border-color: rgba(#b388ff, 0.3);
+        color: #b388ff;
+    }
+
+    &:hover {
+        .plan-card--refresh &,
+        .plan-card--highlight & { background: rgba($red, 0.2); border-color: rgba($red, 0.5); }
+        .plan-card--top &       { background: rgba(#f5a623, 0.18); border-color: rgba(#f5a623, 0.5); }
+        .plan-card--premium &   { background: rgba(#b388ff, 0.18); border-color: rgba(#b388ff, 0.5); }
+    }
 }
 
 // ── Advert picker ─────────────────────────────────────────────────────────────
@@ -926,10 +1062,23 @@ onMounted(async () => {
 .picker-link { color: $red; font-weight: 600; text-decoration: none; &:hover { opacity: 0.8; } }
 
 // ── Plan selection ────────────────────────────────────────────────────────────
-.plan-selected { border-color: rgba($red, 0.5) !important; background: rgba($red, 0.04); }
+.plan-selected {
+    border-color: rgba($red, 0.6) !important;
+    background: rgba($red, 0.03);
+    box-shadow: 0 0 0 1px rgba($red, 0.25);
+}
 
-.plan-card--top.plan-selected { border-color: rgba(#f5a623, 0.5) !important; background: rgba(#f5a623, 0.04); }
-.plan-card--premium.plan-selected { border-color: rgba(#b388ff, 0.5) !important; background: rgba(#b388ff, 0.04); }
+.plan-card--top.plan-selected {
+    border-color: rgba(#f5a623, 0.6) !important;
+    background: rgba(#f5a623, 0.03);
+    box-shadow: 0 0 0 1px rgba(#f5a623, 0.2);
+}
+
+.plan-card--premium.plan-selected {
+    border-color: rgba(#b388ff, 0.6) !important;
+    background: rgba(#b388ff, 0.03);
+    box-shadow: 0 0 0 1px rgba(#b388ff, 0.2);
+}
 
 // ── Order panel ───────────────────────────────────────────────────────────────
 .order-panel {
