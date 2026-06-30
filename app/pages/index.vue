@@ -637,37 +637,85 @@
             </div>
         </section>
 
-        <!-- ─── Newsletter ───────────────────────────────────────────── -->
-        <section id="contact" class="section">
+        <!-- ─── Kontakt ──────────────────────────────────────────────── -->
+        <section id="contact" class="section contact-section">
             <div class="container">
-                <div class="newsletter">
-                    <div class="news-icon">
-                        <v-icon icon="mdi-email-outline" size="36" />
+                <div class="contact-grid">
+
+                    <!-- Info -->
+                    <div class="contact-info">
+                        <div class="contact-eyebrow">KONTAKT</div>
+                        <h2>Jesteśmy tu,<br><span>żeby pomóc</span></h2>
+                        <p class="contact-desc">Masz pytanie, problem techniczny albo chcesz porozmawiać o współpracy? Napisz do nas — odpowiadamy szybko.</p>
+
+                        <div class="contact-cards">
+                            <div class="contact-card">
+                                <div class="contact-card-icon"><v-icon icon="mdi-email-outline" size="20" /></div>
+                                <div>
+                                    <div class="contact-card-label">E-mail ogólny</div>
+                                    <a href="mailto:kontakt@carizo.eu" class="contact-card-val">kontakt@carizo.eu</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <div class="contact-card-icon"><v-icon icon="mdi-briefcase-outline" size="20" /></div>
+                                <div>
+                                    <div class="contact-card-label">Współpraca B2B / dealerzy</div>
+                                    <a href="mailto:b2b@carizo.eu" class="contact-card-val">b2b@carizo.eu</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <div class="contact-card-icon"><v-icon icon="mdi-clock-outline" size="20" /></div>
+                                <div>
+                                    <div class="contact-card-label">Czas odpowiedzi</div>
+                                    <div class="contact-card-val">do 24h w dni robocze</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="news-text">
-                        <h2>Bądź na bieżąco</h2>
-                        <p>Zapisz się do newslettera i otrzymuj najlepsze oferty.</p>
+
+                    <!-- Form -->
+                    <div class="contact-form-wrap">
+                        <template v-if="!contactSent">
+                            <div class="contact-form">
+                                <div class="cf-row cf-row--2">
+                                    <div class="cf-field">
+                                        <label class="cf-label">Imię i nazwisko <span class="cf-req">*</span></label>
+                                        <input v-model="contactName" class="cf-input" type="text" placeholder="Jan Kowalski" />
+                                    </div>
+                                    <div class="cf-field">
+                                        <label class="cf-label">Adres e-mail <span class="cf-req">*</span></label>
+                                        <input v-model="contactEmail" class="cf-input" type="email" placeholder="jan@przyklad.pl" />
+                                    </div>
+                                </div>
+                                <div class="cf-field">
+                                    <label class="cf-label">Temat</label>
+                                    <select v-model="contactTopic" class="cf-input cf-select">
+                                        <option value="">Wybierz temat…</option>
+                                        <option>Ogólne pytanie</option>
+                                        <option>Problem techniczny</option>
+                                        <option>Ogłoszenie / zgłoszenie naruszenia</option>
+                                        <option>Współpraca B2B / dealerzy</option>
+                                        <option>Inne</option>
+                                    </select>
+                                </div>
+                                <div class="cf-field">
+                                    <label class="cf-label">Wiadomość <span class="cf-req">*</span></label>
+                                    <textarea v-model="contactMessage" class="cf-input cf-textarea" rows="5" placeholder="Opisz swoje pytanie lub problem…" />
+                                </div>
+                                <p v-if="contactErr" class="cf-err">{{ contactErr }}</p>
+                                <button class="cf-btn" :disabled="contactLoading" @click="sendContact">
+                                    <v-icon v-if="contactLoading" icon="mdi-loading" size="16" class="spin" />
+                                    <span v-else>Wyślij wiadomość</span>
+                                </button>
+                            </div>
+                        </template>
+                        <div v-else class="contact-ok">
+                            <div class="contact-ok-icon"><v-icon icon="mdi-check-circle-outline" size="40" /></div>
+                            <div class="contact-ok-title">Wiadomość wysłana!</div>
+                            <div class="contact-ok-sub">Odpowiemy na adres <strong>{{ contactEmail }}</strong> w ciągu 24 godzin roboczych.</div>
+                        </div>
                     </div>
-                    <div class="news-form">
-                        <input v-model="email" class="news-input" placeholder="Twój adres email" @keyup.enter="subscribeNewsletter" />
-                        <button
-                            class="btn-subscribe"
-                            :disabled="subscribeLoading || !newsletterConsent"
-                            :title="!newsletterConsent ? 'Zaznacz zgodę na newsletter poniżej' : undefined"
-                            @click="subscribeNewsletter"
-                        >
-                            {{ subscribeLoading ? 'Zapisywanie...' : 'Zapisz się' }}
-                        </button>
-                    </div>
-                    <label class="news-consent">
-                        <input v-model="newsletterConsent" type="checkbox" class="news-consent-input" />
-                        <span class="news-consent-box" :class="{ 'news-consent-box--checked': newsletterConsent }">
-                            <v-icon v-if="newsletterConsent" icon="mdi-check" size="11" />
-                        </span>
-                        <span class="news-consent-text">Wyrażam zgodę na otrzymywanie newslettera CARIZO z ofertami i nowościami motoryzacyjnymi. Możesz zrezygnować w każdej chwili klikając link w e-mailu. <NuxtLink to="/polityka-prywatnosci" class="news-pp-link">Polityka prywatności</NuxtLink></span>
-                    </label>
-                    <p v-if="subscribeSuccess" class="subscribe-feedback subscribe-ok">{{ subscribeMessage }}</p>
-                    <p v-if="subscribeError" class="subscribe-feedback subscribe-err">{{ subscribeError }}</p>
+
                 </div>
             </div>
         </section>
@@ -1164,6 +1212,43 @@ const subscribeLoading = ref(false)
 const subscribeSuccess = ref(false)
 const subscribeMessage = ref('')
 const subscribeError = ref('')
+
+const contactName = ref('')
+const contactEmail = ref('')
+const contactTopic = ref('')
+const contactMessage = ref('')
+const contactLoading = ref(false)
+const contactSent = ref(false)
+const contactErr = ref('')
+
+async function sendContact() {
+    contactErr.value = ''
+    if (!contactName.value.trim() || !contactEmail.value.trim() || !contactMessage.value.trim()) {
+        contactErr.value = 'Wypełnij wszystkie wymagane pola.'
+        return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail.value.trim())) {
+        contactErr.value = 'Podaj prawidłowy adres e-mail.'
+        return
+    }
+    contactLoading.value = true
+    try {
+        await $fetch('/api/proxy/api/Contact/send', {
+            method: 'POST',
+            body: {
+                name: contactName.value.trim(),
+                email: contactEmail.value.trim(),
+                topic: contactTopic.value || null,
+                message: contactMessage.value.trim(),
+            },
+        })
+        contactSent.value = true
+    } catch (e: any) {
+        contactErr.value = e?.data?.message ?? 'Nie udało się wysłać wiadomości. Spróbuj ponownie.'
+    } finally {
+        contactLoading.value = false
+    }
+}
 
 async function subscribeNewsletter() {
     if (!email.value.trim()) return
@@ -3251,4 +3336,186 @@ h2 {
     color: $text-dim;
     line-height: 1.65;
 }
+
+// ─── Contact section ──────────────────────────────────────────────────────────
+
+.contact-section {
+    background: $card-alt;
+    border-top: 1px solid $border;
+    border-bottom: 1px solid $border;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 72px;
+    align-items: start;
+
+    @include respond-to(md) { grid-template-columns: 1fr; gap: 48px; }
+}
+
+.contact-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    color: $red;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 1px;
+        background: $red;
+        opacity: 0.6;
+    }
+}
+
+.contact-desc {
+    font-size: 15px;
+    color: $text-muted;
+    line-height: 1.7;
+    margin: 16px 0 32px;
+    max-width: 380px;
+}
+
+.contact-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contact-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    padding: 14px 18px;
+}
+
+.contact-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba($red, 0.08);
+    border: 1px solid rgba($red, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $red;
+    flex-shrink: 0;
+}
+
+.contact-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-dim;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.contact-card-val {
+    font-size: 14px;
+    color: $text-muted;
+    text-decoration: none;
+    &:hover { color: $text; }
+}
+
+.contact-form-wrap {
+    background: rgba(255,255,255,0.018);
+    border: 1px solid $border;
+    border-radius: $r-xl;
+    padding: 36px;
+
+    @include respond-to(xs) { padding: 24px 18px; }
+}
+
+.contact-form { display: flex; flex-direction: column; gap: 18px; }
+
+.cf-row { display: flex; gap: 16px; }
+.cf-row--2 > .cf-field { flex: 1; }
+
+@include respond-to(xs) { .cf-row--2 { flex-direction: column; } }
+
+.cf-field { display: flex; flex-direction: column; gap: 6px; }
+
+.cf-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-dim;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.cf-req { color: $red; }
+
+.cf-input {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+
+    &::placeholder { color: $text-dark; }
+    &:focus { border-color: rgba(255,255,255,0.18); }
+    option { background: #111; color: $text; }
+}
+
+.cf-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23888' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+.cf-textarea { resize: vertical; min-height: 120px; }
+
+.cf-err {
+    font-size: 13px;
+    color: #e07070;
+    margin: 0;
+}
+
+.cf-btn {
+    background: $red;
+    border: none;
+    border-radius: $r-sm;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    align-self: flex-start;
+
+    &:hover:not(:disabled) { opacity: 0.88; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.contact-ok {
+    text-align: center;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.contact-ok-icon { color: #4caf50; }
+.contact-ok-title { font-size: 20px; font-weight: 700; color: $text; }
+.contact-ok-sub { font-size: 14px; color: $text-muted; line-height: 1.6; strong { color: $text; } }
 </style>

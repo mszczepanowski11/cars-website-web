@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
         'api/FinancingInquiry',
         'api/Newsletter/subscribe',
         'api/Newsletter/unsubscribe',
+        'api/Contact/send',
     ]
     const isPublicPost = PUBLIC_POST_PATHS.some(p => path === p || path.startsWith(p + '/')) || /^api\/(Advert|listings)\/\d+\/view$/.test(path)
 
