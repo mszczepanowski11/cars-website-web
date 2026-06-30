@@ -121,7 +121,7 @@
                 <div class="info-col">
                     <div class="info-brand-line">
                         <span class="info-brand">{{ advert?.brand?.name ?? '' }}</span>
-                        <span v-if="advert?.generation" class="info-gen">{{ advert.generation.yearFrom ? (advert.generation.yearTo ? `${advert.generation.yearFrom} – ${advert.generation.yearTo}` : `od ${advert.generation.yearFrom}`) : advert.generation.name }}</span>
+                        <span v-if="advert?.generation" class="info-gen">{{ generationLabel(advert.generation) }}</span>
                     </div>
                     <h1 class="info-title">{{ advert?.model?.name ?? advert?.title ?? '' }}</h1>
 
@@ -391,7 +391,7 @@
                             <div class="spec-rows">
                                 <div v-if="advert?.brand" class="spec-row"><span class="sr-label">Marka</span><span class="sr-val">{{ advert.brand.name }}</span></div>
                                 <div v-if="advert?.model" class="spec-row"><span class="sr-label">Model</span><span class="sr-val">{{ advert.model.name }}</span></div>
-                                <div v-if="advert?.generation" class="spec-row"><span class="sr-label">Generacja</span><span class="sr-val">{{ advert.generation.yearFrom ? (advert.generation.yearTo ? `${advert.generation.yearFrom} – ${advert.generation.yearTo}` : `od ${advert.generation.yearFrom}`) : advert.generation.name }}</span></div>
+                                <div v-if="advert?.generation" class="spec-row"><span class="sr-label">Generacja</span><span class="sr-val">{{ generationLabel(advert.generation) }}</span></div>
                                 <div v-if="advert?.year" class="spec-row"><span class="sr-label">Rok produkcji</span><span class="sr-val">{{ advert.year }}</span></div>
                                 <div v-if="advert?.mileage" class="spec-row"><span class="sr-label">Przebieg</span><span class="sr-val">{{ Number(advert.mileage).toLocaleString('pl') }} km</span></div>
                                 <div v-if="advert?.condition" class="spec-row"><span class="sr-label">Stan pojazdu</span><span class="sr-val">{{ advert.condition === 'new' ? 'Nowy' : 'Używany' }}</span></div>

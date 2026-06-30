@@ -3332,12 +3332,7 @@ function isFieldRequired(field: string): boolean {
 // SmartSelect option arrays
 const brandOptions = computed<SelectOption[]>(() => brands.value.map(b => ({ value: b.id, label: b.name })))
 const modelOptions = computed<SelectOption[]>(() => models.value.map(m => ({ value: m.id, label: m.name })))
-const generationOptions = computed<SelectOption[]>(() => generations.value.map(g => {
-    const years = g.yearFrom
-        ? (g.yearTo ? `${g.yearFrom} – ${g.yearTo}` : `od ${g.yearFrom}`)
-        : g.name
-    return { value: g.id, label: years }
-}))
+const generationOptions = computed<SelectOption[]>(() => generations.value.map(g => ({ value: g.id, label: generationLabel(g) })))
 const engineOptions = computed<SelectOption[]>(() => engines.value.map(e => ({ value: e.id, label: `${e.name} (${e.powerHP ?? e.horsepower ?? '?'}KM)` })))
 const trimOptions = computed<SelectOption[]>(() => trims.value.map(t => ({ value: t.id, label: t.name })))
 const vehicleSubtypeOptions = computed<SelectOption[]>(() => vehicleSubtypes.value.map(s => ({ value: s.id, label: s.namePl ?? s.name })))
@@ -3740,7 +3735,7 @@ function generateAiDescription() {
 
     const brand = brandName.value || brandTextInput.value || ''
     const model = modelName.value || modelTextInput.value || ''
-    const gen = generations.value.find((g: any) => g.id === form.generationId)?.name ?? ''
+    const gen = generationLabel(generations.value.find((g: any) => g.id === form.generationId))
     const year = form.year
     const mileage = form.mileage
     const fuel = fuelTypeName.value || ''
