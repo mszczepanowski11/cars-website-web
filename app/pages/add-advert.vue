@@ -3332,7 +3332,12 @@ function isFieldRequired(field: string): boolean {
 // SmartSelect option arrays
 const brandOptions = computed<SelectOption[]>(() => brands.value.map(b => ({ value: b.id, label: b.name })))
 const modelOptions = computed<SelectOption[]>(() => models.value.map(m => ({ value: m.id, label: m.name })))
-const generationOptions = computed<SelectOption[]>(() => generations.value.map(g => ({ value: g.id, label: g.name })))
+const generationOptions = computed<SelectOption[]>(() => generations.value.map(g => {
+    const years = g.yearFrom
+        ? (g.yearTo ? `${g.yearFrom} – ${g.yearTo}` : `od ${g.yearFrom}`)
+        : g.name
+    return { value: g.id, label: years }
+}))
 const engineOptions = computed<SelectOption[]>(() => engines.value.map(e => ({ value: e.id, label: `${e.name} (${e.powerHP ?? e.horsepower ?? '?'}KM)` })))
 const trimOptions = computed<SelectOption[]>(() => trims.value.map(t => ({ value: t.id, label: t.name })))
 const vehicleSubtypeOptions = computed<SelectOption[]>(() => vehicleSubtypes.value.map(s => ({ value: s.id, label: s.namePl ?? s.name })))
