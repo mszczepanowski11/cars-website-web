@@ -66,8 +66,9 @@ async function subscribeNewsletter() {
         <div class="footer-col">
           <h4>Dla sprzedających</h4>
           <NuxtLink to="/add-advert">Dodaj ogłoszenie</NuxtLink>
+          <NuxtLink to="/cennik">Cennik</NuxtLink>
           <NuxtLink to="/promote">Pakiety Premium</NuxtLink>
-          <NuxtLink to="/dashboard">Konto biznesowe</NuxtLink>
+          <NuxtLink to="/pakiety">Dla dealerów</NuxtLink>
           <NuxtLink to="/regulamin-b2b">Regulamin B2B</NuxtLink>
         </div>
 
