@@ -188,14 +188,26 @@ const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { error: toastError } = useToast()
 
-const ALLOWED_PAYMENT_HOSTS = ['secure.imoje.pl', 'imoje.ing.pl', 'imoje.pl']
-function safePaymentRedirect(url: string) {
-    try {
-        const parsed = new URL(url)
-        if (parsed.protocol !== 'https:' || !ALLOWED_PAYMENT_HOSTS.includes(parsed.hostname)) throw new Error('Untrusted host')
-        window.location.href = parsed.toString()
-    } catch {
-        toastError('Błąd płatności: nieprawidłowy adres przekierowania.')
+function submitImojeForm(result: { paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }) {
+    if (result.adminActivated) {
+        navigateTo(`/payment/return?status=success&eventId=${eventId.value}`)
+        return
+    }
+    if (result.formFields && Object.keys(result.formFields).length && result.paymentUrl) {
+        const form = document.createElement('form')
+        form.method = 'POST'
+        form.action = result.paymentUrl
+        for (const [key, value] of Object.entries(result.formFields)) {
+            const input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = key
+            input.value = value
+            form.appendChild(input)
+        }
+        document.body.appendChild(form)
+        form.submit()
+    } else if (result.paymentUrl) {
+        window.location.href = result.paymentUrl
     }
 }
 
@@ -303,10 +315,8 @@ async function initiatePayment() {
         }
         if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
 
-        const result = await $fetch<{ paymentUrl: string }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-        if (result.paymentUrl) {
-            safePaymentRedirect(result.paymentUrl)
-        }
+        const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+        submitImojeForm(result)
     } catch (e: any) {
         actionError.value = e?.data?.message ?? 'Błąd podczas inicjowania płatności.'
     } finally {
