@@ -3848,7 +3848,7 @@ function buildDescription(): string {
     return sections.filter(Boolean).join('\n\n')
 }
 
-const ALLOWED_PAYMENT_HOSTS = ['secure.imoje.pl', 'imoje.ing.pl', 'imoje.pl']
+const ALLOWED_PAYMENT_HOSTS = ['secure.imoje.pl', 'imoje.ing.pl', 'imoje.pl', 'paywall.imoje.pl', 'sandbox.paywall.imoje.pl']
 
 function validatePaymentUrl(url: string): URL {
     let parsed: URL
