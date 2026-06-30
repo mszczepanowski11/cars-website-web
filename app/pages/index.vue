@@ -572,6 +572,71 @@
             </div>
         </section>
 
+        <!-- ─── O nas ──────────────────────────────────────────────── -->
+        <section id="about" class="section about-section">
+            <div class="container">
+                <div class="about-header">
+                    <div class="about-eyebrow">O NAS</div>
+                    <h2>Stworzyliśmy CARIZO,<br><span>bo rynek zasługuje na więcej</span></h2>
+                    <p class="about-lead">Jesteśmy zespołem pasjonatów motoryzacji i technologii, którzy postanowili zmienić sposób, w jaki Polacy kupują i sprzedają samochody.</p>
+                </div>
+
+                <div class="about-body">
+                    <div class="about-story">
+                        <p>CARIZO powstało z jednego przekonania — transakcja samochodowa powinna być prosta, przejrzysta i bezpieczna dla obu stron. Stare portale ogłoszeniowe oferowały skany wyblakłych ogłoszeń z lat 90. My chcieliśmy czegoś więcej.</p>
+                        <p>Budujemy narzędzia, które realnie pomagają: inteligentne wyszukiwanie, wyceny oparte na danych rynkowych, weryfikowane konta dealerów i bezpośredni kontakt bez pośredników. Każda funkcja jest przemyślana — od zdjęcia głównego po kalkulator raty ING.</p>
+                        <p>Dzisiaj CARIZO to tysiące aktywnych ogłoszeń, sieć zweryfikowanych dealerów i rosnąca społeczność ludzi, dla których samochód to więcej niż środek transportu.</p>
+                        <a href="mailto:kontakt@carizo.eu" class="about-cta">
+                            <v-icon icon="mdi-email-outline" size="16" />
+                            Napisz do nas
+                        </a>
+                    </div>
+
+                    <div class="about-stats">
+                        <div class="about-stat">
+                            <div class="about-stat-val">10k+</div>
+                            <div class="about-stat-label">Ogłoszeń</div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="about-stat-val">500+</div>
+                            <div class="about-stat-label">Dealerów</div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="about-stat-val">98%</div>
+                            <div class="about-stat-label">Zadowolonych użytkowników</div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="about-stat-val">24/7</div>
+                            <div class="about-stat-label">Wsparcie</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-values">
+                    <div class="about-value">
+                        <div class="about-value-icon"><v-icon icon="mdi-shield-check-outline" size="26" /></div>
+                        <div class="about-value-title">Bezpieczeństwo</div>
+                        <div class="about-value-desc">Weryfikujemy konta dealerów i monitorujemy ogłoszenia, żeby Twoja transakcja była bezpieczna.</div>
+                    </div>
+                    <div class="about-value">
+                        <div class="about-value-icon"><v-icon icon="mdi-lightbulb-outline" size="26" /></div>
+                        <div class="about-value-title">Technologia</div>
+                        <div class="about-value-desc">Budujemy nowoczesne narzędzia, które oszczędzają czas i dają przewagę zarówno kupującym, jak i sprzedającym.</div>
+                    </div>
+                    <div class="about-value">
+                        <div class="about-value-icon"><v-icon icon="mdi-handshake-outline" size="26" /></div>
+                        <div class="about-value-title">Transparentność</div>
+                        <div class="about-value-desc">Bez ukrytych opłat i sztuczek. Jasne ceny, uczciwe zasady i pełna historia ogłoszenia w jednym miejscu.</div>
+                    </div>
+                    <div class="about-value">
+                        <div class="about-value-icon"><v-icon icon="mdi-car-heart" size="26" /></div>
+                        <div class="about-value-title">Pasja</div>
+                        <div class="about-value-desc">Sami jesteśmy fanami motoryzacji. CARIZO robimy tak, jak sami chcielibyśmy używać takiej platformy.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ─── Newsletter ───────────────────────────────────────────── -->
         <section id="contact" class="section">
             <div class="container">
@@ -3015,4 +3080,175 @@ h2 {
 .cow-header { display: flex; align-items: center; margin-bottom: 24px; }
 .cow-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 2px; color: $red; text-transform: uppercase; }
 .cow-card { max-width: 400px; }
+
+// ─── About section ────────────────────────────────────────────────────────────
+
+.about-section {
+    position: relative;
+    overflow: hidden;
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 70% 50% at 100% 50%, rgba($red, 0.06) 0%, transparent 65%);
+        pointer-events: none;
+    }
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 64px;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.about-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    color: $red;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 1px;
+        background: $red;
+        opacity: 0.6;
+    }
+}
+
+.about-lead {
+    font-size: 16px;
+    color: $text-muted;
+    line-height: 1.7;
+    margin: 16px 0 0;
+}
+
+.about-body {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 56px;
+    align-items: start;
+    margin-bottom: 64px;
+
+    @include respond-to(md) { grid-template-columns: 1fr; gap: 40px; }
+}
+
+.about-story {
+    p {
+        font-size: 15px;
+        color: $text-muted;
+        line-height: 1.8;
+        margin: 0 0 20px;
+        &:last-of-type { margin-bottom: 28px; }
+    }
+}
+
+.about-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    color: $text-muted;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+    &:hover { border-color: rgba($red, 0.5); color: $text; }
+}
+
+.about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    @include respond-to(md) {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    @include respond-to(xs) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.about-stat {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: $r-lg;
+    padding: 24px 20px;
+    text-align: center;
+}
+
+.about-stat-val {
+    font-size: 32px;
+    font-weight: 800;
+    color: $red;
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.03em;
+}
+
+.about-stat-label {
+    font-size: 12px;
+    color: $text-dim;
+    line-height: 1.4;
+}
+
+.about-values {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    border-top: 1px solid $border;
+    padding-top: 48px;
+
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(xs) { grid-template-columns: 1fr; }
+}
+
+.about-value {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid $border;
+    border-radius: $r-xl;
+    transition: border-color 0.2s, background 0.2s;
+    &:hover { border-color: rgba($red, 0.25); background: rgba(255,255,255,0.03); }
+}
+
+.about-value-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba($red, 0.08);
+    border: 1px solid rgba($red, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $red;
+    flex-shrink: 0;
+}
+
+.about-value-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text;
+}
+
+.about-value-desc {
+    font-size: 13px;
+    color: $text-dim;
+    line-height: 1.65;
+}
 </style>
