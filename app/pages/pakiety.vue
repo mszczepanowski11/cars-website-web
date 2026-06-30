@@ -160,9 +160,9 @@
 
 <script setup lang="ts">
 import { useSubscription, type SubscriptionPlan, type SubscriptionStatus } from '~/composables/useSubscription'
-import { useAuth } from '~/composables/useAuth'
 
-const { user } = useAuth()
+const { fetchProfile } = useUser()
+const user = ref(false)
 const { getPlans, getMySubscription, activateStartProgram, buySubscription } = useSubscription()
 
 const plans = ref<SubscriptionPlan[]>([])
@@ -258,6 +258,8 @@ async function buyPlan(plan: SubscriptionPlan) {
 }
 
 onMounted(async () => {
+    const profile = await fetchProfile()
+    user.value = !!profile
     const [p, s] = await Promise.allSettled([getPlans(), user.value ? getMySubscription() : Promise.resolve(null)])
     if (p.status === 'fulfilled') plans.value = p.value
     if (s.status === 'fulfilled' && s.value) subscription.value = s.value
@@ -267,7 +269,7 @@ useHead({ title: 'Pakiety B2B – CARIZO', meta: [{ name: 'description', content
 </script>
 
 <style lang="scss" scoped>
-.packages-page { background: $bg; min-height: 100vh; }
+.packages-page { background: $bg; min-height: 100vh; padding-top: $nav-height; }
 
 // ── Hero ──────────────────────────────────────────────────────────────
 .hero {
