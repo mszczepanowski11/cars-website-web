@@ -4,7 +4,7 @@
             <div class="container">
                 <div class="hero-eyebrow">Dokumenty prawne</div>
                 <h1>Regulamin <span>serwisu</span></h1>
-                <p>Ostatnia aktualizacja: 23.06.2026</p>
+                <p>Ostatnia aktualizacja: 30.06.2026</p>
             </div>
         </div>
 
@@ -18,7 +18,7 @@
                 <section class="doc-section">
                     <h2>SŁOWNIK POJĘĆ</h2>
                     <ol>
-                        <li><strong>Administrator</strong> – Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej pod numerem NIP: 9452331007, REGON: 544870688.</li>
+                        <li><strong>Administrator</strong> – Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej (CEIDG) prowadzonej przez Ministra właściwego do spraw finansów i gospodarki, pod numerem NIP: 9452331007, REGON: 544870688.</li>
                         <li><strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.eu wraz ze wszystkimi jej podstronami i subdomenami.</li>
                         <li><strong>Użytkownik Indywidualny (Użytkownik)</strong> – osoba fizyczna posiadająca pełną zdolność do czynności prawnych, będąca konsumentem w rozumieniu art. 22¹ Kodeksu cywilnego, korzystająca z zasobów Serwisu w celach niezwiązanych bezpośrednio z jej działalnością gospodarczą lub zawodową.</li>
                         <li><strong>Konto</strong> – przydzielona danemu Użytkownikowi część Serwisu, zabezpieczona hasłem, umożliwiająca zarządzanie ogłoszeniami, usługami promowania oraz komunikacją wewnętrzną.</li>
@@ -104,6 +104,8 @@
                     <ol>
                         <li>Użytkownikowi będącemu konsumentem przysługuje prawo do odstąpienia od umowy o świadczenie usług drogą elektroniczną (w tym umowy o prowadzenie Konta oraz umów o usługi promowania) w terminie 14 dni od jej zawarcia, bez podania przyczyny, poprzez złożenie jednoznacznego oświadczenia woli na adres e-mail: <strong>kontakt@carizo.eu</strong>.</li>
                         <li>W przypadku zakupu odpłatnych usług promowania Ogłoszenia, których świadczenie — na wyraźne żądanie Użytkownika wyrażone poprzez aktywację opcji w panelu — rozpoczęło się przed upływem terminu do odstąpienia od umowy, Użytkownik traci prawo do odstąpienia od umowy z momentem pełnego wykonania usługi polegającej na emisji wyróżnienia przez CARIZO.</li>
+                        <li><strong>Koszty zwrotu przy odstąpieniu:</strong> Usługi świadczone przez CARIZO mają charakter wyłącznie cyfrowy (usługi teleinformatyczne). Odstąpienie od umowy o świadczenie usług przez CARIZO nie wiąże się z koniecznością zwrotu żadnych towarów fizycznych ani ponoszeniem kosztów przesyłki przez Użytkownika. Wszelkie koszty dostawy fizycznych towarów będących przedmiotem transakcji pomiędzy Użytkownikami Serwisu obciążają strony tej transakcji i są przez nie ustalane bezpośrednio.</li>
+                        <li><strong>Gwarancja producenta:</strong> CARIZO nie jest producentem ani sprzedawcą pojazdów mechanicznych ani części motoryzacyjnych. CARIZO świadczy wyłącznie usługi cyfrowe (publikacja ogłoszeń, usługi promowania). Gwarancji producenta na pojazdy lub części będące przedmiotem ogłoszeń udzielają odpowiednio ich producenci lub importerzy — Użytkownik (sprzedający) zobowiązany jest do przekazania kupującemu wszelkich dokumentów gwarancyjnych posiadanych do sprzedawanego pojazdu lub części. Odpłatne usługi CARIZO (pakiety promowania, emisja ogłoszeń) nie podlegają gwarancji producenta w rozumieniu art. 577 Kodeksu cywilnego.</li>
                         <li>Użytkownik ma prawo do złożenia reklamacji w przypadku niewykonania lub nienależytego wykonania usług o charakterze teleinformatycznym przez CARIZO (np. błędy techniczne w wyświetlaniu płatnego promowania, nieprawidłowe działanie Konta).</li>
                         <li>Reklamacje należy zgłaszać drogą elektroniczną na adres e-mail: <strong>kontakt@carizo.eu</strong>. Zgłoszenie powinno zawierać: identyfikator Konta lub ID Ogłoszenia, opis zaistniałego problemu technicznego oraz dane kontaktowe.</li>
                         <li>CARIZO rozpatruje reklamacje konsumenckie w nieprzekraczalnym, ustawowym terminie 14 dni od dnia ich prawidłowego otrzymania. Odpowiedź wysyłana jest na adres e-mail przypisany do Konta Użytkownika.</li>
@@ -173,7 +175,7 @@
                         <li>W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego, ustawy o prawach konsumenta oraz ustawy z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej.</li>
                         <li><strong>Prawo właściwe:</strong> Niniejszy Regulamin oraz wszelkie stosunki prawne wynikające z korzystania z Serwisu podlegają prawu Rzeczypospolitej Polskiej.</li>
                         <li><strong>Jurysdykcja:</strong> Wszelkie spory wynikłe z niniejszego Regulaminu lub z korzystania z Serwisu będą rozstrzygane przez właściwy sąd powszechny Rzeczypospolitej Polskiej. W stosunkach z konsumentami właściwy miejscowo jest sąd według siedziby pozwanego lub sąd miejsca zamieszkania konsumenta, według wyboru powoda. Konsumenci mogą korzystać z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń, w tym z platformy ODR dostępnej pod adresem: <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">ec.europa.eu/consumers/odr</a>. CARIZO informuje, że nie przystąpił do żadnego systemu pozasądowego rozwiązywania sporów konsumenckich w rozumieniu ustawy z dnia 23 września 2016 r. o pozasądowym rozwiązywaniu sporów konsumenckich (Dz. U. poz. 1823) — udział CARIZO w takim postępowaniu nie jest obowiązkowy. Konsument ma jednak prawo skorzystać z bezpłatnej pomocy powiatowych lub miejskich rzeczników praw konsumentów oraz Inspekcji Handlowej.</li>
-                        <li>Treść niniejszych postanowień wchodzi w życie z dniem 23.06.2026.</li>
+                        <li>Treść niniejszych postanowień wchodzi w życie z dniem 23.06.2026. Ostatnia aktualizacja: 30.06.2026.</li>
                     </ol>
                 </section>
 
