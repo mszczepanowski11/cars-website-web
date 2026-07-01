@@ -3802,6 +3802,22 @@ function generateAiDescription() {
 // Serialize category extras + history + seller info into description
 function buildDescription(): string {
     const sections: string[] = []
+    // Vehicle identity (brand/model/generation/year) — always shown when known
+    const brand = brandName.value || brandTextInput.value || ''
+    const model = modelName.value || modelTextInput.value || ''
+    const gen = generationLabel(generations.value.find((g: any) => g.id === form.generationId))
+    const identityLabel = [brand, model, gen].filter(Boolean).join(' ')
+    if (identityLabel || form.year) {
+        const yearPart = form.year ? ` (${form.year})` : ''
+        sections.push(`🚗 Pojazd: ${identityLabel}${yearPart}`.trim())
+    }
+    // Equipment / features
+    if (form.featureIds.length) {
+        const featNames = allFeatures.value
+            .filter(f => form.featureIds.includes(f.id))
+            .map(f => f.name)
+        if (featNames.length) sections.push(`✅ Wyposażenie:\n${featNames.map(n => `✓ ${n}`).join('\n')}`)
+    }
     // Technical data from extra fields
     const ef = categoryConfig.value.extraFields ?? []
     const techLines: string[] = []
@@ -3830,13 +3846,6 @@ function buildDescription(): string {
     }
     if (history.hasWarranty) histLines.push(`✓ Gwarancja do: ${history.warrantyUntil || 'aktywna'}`)
     if (histLines.length) sections.push(`🔍 Historia pojazdu:\n${histLines.join('\n')}`)
-    // For text-mode brand/model categories, include brand/model as text
-    if (categoryConfig.value.brandFieldType === 'text') {
-        const bmLines: string[] = []
-        if (brandTextInput.value) bmLines.push(`Producent: ${brandTextInput.value}`)
-        if (modelTextInput.value) bmLines.push(`Model: ${modelTextInput.value}`)
-        if (bmLines.length) sections.unshift(bmLines.join('\n'))
-    }
     // Seller & price info
     const infoLines: string[] = []
     if (form.sellerType === 'dealer') infoLines.push('Sprzedawca: Dealer / Firma')
