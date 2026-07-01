@@ -17,7 +17,7 @@
           <p>CARIZO powstało z jednego przekonania — transakcja samochodowa powinna być prosta, przejrzysta i bezpieczna dla obu stron. Stare portale ogłoszeniowe oferowały skany wyblakłych ogłoszeń z lat 90. My chcieliśmy czegoś więcej.</p>
           <p>Budujemy narzędzia, które realnie pomagają: inteligentne wyszukiwanie, wyceny oparte na danych rynkowych, weryfikowane konta dealerów i bezpośredni kontakt bez pośredników. Każda funkcja jest przemyślana — od zdjęcia głównego po kalkulator raty finansowania.</p>
           <p>Dzisiaj CARIZO to tysiące aktywnych ogłoszeń, sieć zweryfikowanych dealerów i rosnąca społeczność ludzi, dla których samochód to więcej niż środek transportu.</p>
-          <NuxtLink to="/#contact" class="onas-cta">
+          <NuxtLink to="/kontakt" class="onas-cta">
             <v-icon icon="mdi-email-outline" size="16" />
             Napisz do nas
           </NuxtLink>
@@ -82,7 +82,7 @@
         <h2>Masz pytania? <span>Porozmawiajmy.</span></h2>
         <p>Nasz zespół chętnie odpowie na każde pytanie — o platformę, współpracę lub Twoje konto.</p>
         <div class="onas-bottom-btns">
-          <NuxtLink to="/#contact" class="onas-btn-primary">
+          <NuxtLink to="/kontakt" class="onas-btn-primary">
             <v-icon icon="mdi-email-outline" size="16" />
             Skontaktuj się
           </NuxtLink>

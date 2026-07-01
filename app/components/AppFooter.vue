@@ -58,7 +58,7 @@ async function subscribeNewsletter() {
         <div class="footer-col">
           <h4>Firma</h4>
           <NuxtLink to="/o-nas">O nas</NuxtLink>
-          <NuxtLink to="/#contact">Kontakt</NuxtLink>
+          <NuxtLink to="/kontakt">Kontakt</NuxtLink>
           <NuxtLink to="/jak-to-dziala">Jak to działa</NuxtLink>
           <NuxtLink to="/pomoc">Pomoc i FAQ</NuxtLink>
         </div>
