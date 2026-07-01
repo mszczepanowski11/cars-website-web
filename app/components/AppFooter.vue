@@ -77,7 +77,7 @@ async function subscribeNewsletter() {
           <NuxtLink to="/regulamin">Regulamin</NuxtLink>
           <NuxtLink to="/polityka-prywatnosci">Polityka prywatności</NuxtLink>
           <button class="footer-cookie-btn" @click="openCookieSettings">Polityka cookies</button>
-          <NuxtLink to="/#contact">Zgłoś naruszenie</NuxtLink>
+          <a href="mailto:kontakt@carizo.eu?subject=Zg%C5%82oszenie%20naruszenia">Zgłoś naruszenie</a>
         </div>
 
       </div>
@@ -119,7 +119,7 @@ async function subscribeNewsletter() {
     <div class="footer-bottom">
       <div class="footer-bottom-inner">
         <span>© {{ year }} CARIZO. Wszelkie prawa zastrzeżone.</span>
-        <span class="footer-credit">Stworzone z pasją do motoryzacji. <span class="heart">❤</span></span>
+        <span class="footer-credit">Stworzone z pasją do motoryzacji.</span>
       </div>
     </div>
   </footer>
@@ -314,8 +314,6 @@ async function subscribeNewsletter() {
 
   @include respond-to(sm) { flex-direction: column; gap: 8px; text-align: center; }
 }
-
-.heart { color: $red; }
 
 .footer-cookie-btn {
   background: transparent;
