@@ -2570,6 +2570,160 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }] },
         ],
     },
+
+    // ── Kategorie dodane w ramach rozszerzenia 10 -> 17 ──────────────────────
+    // Rodzaj (np. "Jacht żaglowy", "Naczepa chłodnia") wybiera się przez sekcję
+    // "Rodzaj pojazdu" zasilaną prawdziwymi VehicleSubtype, nie przez extraFields — w
+    // odróżnieniu od starszych kategorii (przyczepy/rolnicze/budowlane/maszyny), które mają
+    // ten sam wybór zdublowany jako wolnotekstowy select. extraFields tu ograniczone do
+    // pól bez naturalnego miejsca gdzie indziej.
+    'lodzie-i-jachty': {
+        fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
+        required: ['year', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Producent / stocznia',
+        modelLabel: 'Model',
+        yearLabel: 'Rok produkcji',
+        mileageLabel: 'Godziny pracy silnika (mth)',
+        mileageHint: 'Liczba przepracowanych motogodzin (jeśli dotyczy)',
+        engineLabel: 'Pojemność silnika (cm³)',
+        priceHint: 'Rynek: 5 000 – 2 000 000 zł',
+        categoryNote: 'Łodzie, jachty i pontony. Wybierz rodzaj jednostki poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+        extraFields: [
+            { key: 'condition', label: 'Stan', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
+            { key: 'hullMaterial', label: 'Materiał kadłuba', type: 'select',
+              options: [
+                { value: 'laminat', label: 'Laminat / włókno szklane' }, { value: 'aluminium', label: 'Aluminium' },
+                { value: 'stal', label: 'Stal' }, { value: 'drewno', label: 'Drewno' }, { value: 'gumowy', label: 'Ponton gumowy / PVC' },
+              ] },
+            { key: 'lengthM', label: 'Długość całkowita', type: 'number', unit: 'm', placeholder: 'np. 7.5' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
+        ],
+    },
+
+    'kampery': {
+        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
+        required: ['year', 'fuelType', 'mileage', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Marka pojazdu bazowego',
+        modelLabel: 'Model',
+        yearLabel: 'Rok produkcji',
+        priceHint: 'Rynek: 20 000 – 1 000 000 zł',
+        categoryNote: 'Kampery i pojazdy rekreacyjne. Wybierz rodzaj zabudowy poniżej.',
+        showVinSection: true,
+        showHistorySection: true,
+        extraFields: [
+            { key: 'condition', label: 'Stan', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
+            { key: 'berths', label: 'Liczba miejsc do spania', type: 'number', placeholder: 'np. 4' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
+        ],
+    },
+
+    'quady-atv': {
+        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
+        required: ['year', 'fuelType', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Marka',
+        modelLabel: 'Model',
+        yearLabel: 'Rok produkcji',
+        engineLabel: 'Pojemność silnika (cm³)',
+        priceHint: 'Rynek: 3 000 – 150 000 zł',
+        categoryNote: 'Quady, ATV i pojazdy SSV/UTV. Wybierz rodzaj poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+        extraFields: [
+            { key: 'condition', label: 'Stan', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
+        ],
+    },
+
+    'skutery-wodne': {
+        fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
+        required: ['year', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Marka',
+        modelLabel: 'Model',
+        yearLabel: 'Rok produkcji',
+        mileageLabel: 'Godziny pracy silnika (mth)',
+        mileageHint: 'Liczba przepracowanych motogodzin',
+        engineLabel: 'Pojemność silnika (cm³)',
+        priceHint: 'Rynek: 5 000 – 150 000 zł',
+        categoryNote: 'Skutery wodne. Wybierz rodzaj poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+        extraFields: [
+            { key: 'condition', label: 'Stan', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
+        ],
+    },
+
+    'autobusy': {
+        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
+        required: ['year', 'fuelType', 'mileage', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Marka',
+        modelLabel: 'Model',
+        yearLabel: 'Rok produkcji',
+        priceHint: 'Rynek: 10 000 – 1 500 000 zł',
+        categoryNote: 'Autobusy, minibusy i autokary. Wybierz rodzaj poniżej.',
+        showVinSection: true,
+        showHistorySection: true,
+        extraFields: [
+            { key: 'condition', label: 'Stan', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
+            { key: 'seatsCount', label: 'Liczba miejsc siedzących', type: 'number', placeholder: 'np. 49' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
+        ],
+    },
+
+    'naczepy': {
+        fields: ['brand', 'model', 'year', 'price'],
+        required: ['year', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Producent',
+        modelLabel: 'Model',
+        yearLabel: 'Rok produkcji',
+        priceHint: 'Rynek: 5 000 – 300 000 zł',
+        categoryNote: 'Naczepy ciągnięte przez ciągnik siodłowy. Wybierz rodzaj poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+        extraFields: [
+            { key: 'condition', label: 'Stan', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
+            { key: 'axles', label: 'Liczba osi', type: 'select',
+              options: [{ value: '1', label: '1 oś' }, { value: '2', label: '2 osie' }, { value: '3', label: '3 osie' }, { value: '4+', label: '4+ osi' }] },
+            { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
+            { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
+        ],
+    },
+
+    'wozki-widlowe': {
+        fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
+        required: ['year', 'price'],
+        brandFieldType: 'text',
+        brandLabel: 'Producent / marka',
+        modelLabel: 'Model',
+        yearLabel: 'Rok produkcji',
+        mileageLabel: 'Motogodziny (mth)',
+        mileageHint: 'Liczba przepracowanych motogodzin',
+        priceHint: 'Rynek: 5 000 – 300 000 zł',
+        categoryNote: 'Wózki widłowe i magazynowe. Wybierz rodzaj poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+        extraFields: [
+            { key: 'condition', label: 'Stan', type: 'radio', required: true,
+              options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
+            { key: 'liftCapacity', label: 'Udźwig', type: 'number', unit: 'kg', placeholder: 'np. 2500' },
+            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
+        ],
+    },
 }
 
 const DEFAULT_CAT_CONFIG: CatFieldConfig = {
