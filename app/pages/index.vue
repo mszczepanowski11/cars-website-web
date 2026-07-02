@@ -413,7 +413,7 @@
                                 <span><v-icon icon="mdi-check" size="13" />do 84 miesięcy</span>
                                 <span><v-icon icon="mdi-check" size="13" />bez ukrytych kosztów</span>
                             </div>
-<a href="https://www.inglesing.pl" target="_blank" rel="noopener noreferrer" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
+<a href="https://www.inglease.pl" target="_blank" rel="noopener noreferrer" class="ing-cta">Sprawdź ofertę <v-icon icon="mdi-arrow-right" size="13" /></a>
                         </div>
                         <div class="ing-card">
                             <div class="ing-card-icon">
