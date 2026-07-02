@@ -29,7 +29,7 @@ export const useTaxonomy = () => {
     fetchPartCategories: () => $fetch<PartCategory[]>('/api/proxy/api/Taxonomy/part-categories'),
     fetchPartSubcategories: (partCategoryId: number) => $fetch<PartSubcategory[]>(`/api/proxy/api/Taxonomy/part-subcategories/category/${partCategoryId}`),
     fetchEngineSpecs: (engineVersionId: number) => $fetch<EngineVersion>(`/api/proxy/api/Taxonomy/engines/${engineVersionId}/specs`).catch(() => null),
-    validateChain: (payload: { brandId: number; modelId?: number | null; generationId?: number | null; trimId?: number | null; engineVersionId?: number | null; vehicleCategoryId?: number | null }) =>
+    validateChain: (payload: { brandId: number; modelId?: number | null; generationId?: number | null; trimId?: number | null; engineVersionId?: number | null; vehicleCategoryId?: number | null; fuelTypeId?: number | null; powerHP?: number | null }) =>
       $fetch<{ isValid: boolean; brokenLink?: string | null; errorMessage?: string | null }>('/api/proxy/api/Taxonomy/validate-chain', { method: 'POST', body: payload }),
   }
 }

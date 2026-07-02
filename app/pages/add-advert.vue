@@ -4007,6 +4007,8 @@ async function submit() {
                 trimId: form.trimId,
                 engineVersionId: form.engineVersionId,
                 vehicleCategoryId: form.categoryId,
+                fuelTypeId: form.fuelTypeId,
+                powerHP: form.power,
             })
             if (!chainCheck.isValid) {
                 stepError.value = chainCheck.errorMessage || 'Wybrane dane pojazdu są niespójne. Sprawdź markę, model, generację i silnik.'
