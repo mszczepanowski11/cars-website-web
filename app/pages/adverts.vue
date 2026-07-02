@@ -478,6 +478,19 @@
                                     </select>
                                 </div>
 
+                                <!-- Side -->
+                                <div v-if="filterConfig.showSide" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-swap-horizontal" size="13" />Strona montażu</div>
+                                    <select v-model="f.side" class="fp-select">
+                                        <option value="">Dowolna</option>
+                                        <option value="Lewa">Lewa</option>
+                                        <option value="Prawa">Prawa</option>
+                                        <option value="Przód">Przód</option>
+                                        <option value="Tył">Tył</option>
+                                        <option value="Obie strony">Obie strony / uniwersalna</option>
+                                    </select>
+                                </div>
+
                             </div>
 
                             <!-- Expanded footer -->
@@ -636,6 +649,7 @@ const f = reactive({
     bodySubtype: route.query.bodySubtype ? String(route.query.bodySubtype) : '' as string,
     catalogNumber: route.query.catalogNumber ? String(route.query.catalogNumber) : '' as string,
     partCategoryId: route.query.partCategoryId ? Number(route.query.partCategoryId) : null as number | null,
+    side: route.query.side ? String(route.query.side) : '' as string,
     hasRetarder: null as boolean | null,
     hasTachograph: null as boolean | null,
     featureIds:  route.query.featureIds ? String(route.query.featureIds).split(',').map(Number).filter(Boolean) : [] as number[],
@@ -691,6 +705,7 @@ const advancedFiltersCount = computed(() => {
     if (f.payloadFrom || f.payloadTo) n++
     if (f.catalogNumber) n++
     if (f.partCategoryId) n++
+    if (f.side) n++
     return n
 })
 
@@ -750,6 +765,7 @@ const filterConfig = computed(() => {
         showPayload: isTruck || isMachinery,
         showCatalogNumber: isParts,
         showPartCategory: isParts,
+        showSide: isParts,
         mileageLabel: isMachinery ? 'Motogodziny (mth)' : 'Przebieg (km)',
         mileageFromKey: isMachinery ? 'mileageFrom' : 'mileageFrom',
         brandLabel: isMoto ? 'Marka motocykla' : isParts ? 'Marka pojazdu' : isTruck ? 'Marka pojazdu' : 'Marka',
@@ -770,7 +786,7 @@ const hasActiveFilters = computed(() =>
        f.priceFrom || f.priceTo || f.yearFrom || f.yearTo ||
        f.mileageFrom || f.mileageTo || f.powerFrom || f.powerTo ||
        f.engineSizeFrom || f.engineSizeTo ||
-       f.payloadFrom || f.payloadTo || f.catalogNumber || f.partCategoryId ||
+       f.payloadFrom || f.payloadTo || f.catalogNumber || f.partCategoryId || f.side ||
        f.featureIds.length > 0 ||
        f.sellerType || f.condition ||
        f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null ||
@@ -825,7 +841,7 @@ function clearFilters() {
     f.axleCount = null; f.payloadFrom = null; f.payloadTo = null
     f.grossWeightFrom = null; f.grossWeightTo = null; f.bodySubtype = ''
     f.hasRetarder = null; f.hasTachograph = null; f.catalogNumber = ''
-    f.partCategoryId = null
+    f.partCategoryId = null; f.side = ''
     f.featureIds = []
     f.sortBy = ''
     f.locationCity = ''; f.vin = ''
@@ -881,6 +897,7 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.hasTachograph !== null)  body.hasTachograph  = f.hasTachograph
     if (f.catalogNumber)           body.catalogNumber  = f.catalogNumber
     if (f.partCategoryId)          body.partCategoryId = f.partCategoryId
+    if (f.side)                    body.side           = f.side
     if (f.featureIds.length)       body.featureIds     = f.featureIds
     // New fields (passed to API; API will ignore unknown fields gracefully)
     if (f.locationCity)            body.locationCity   = f.locationCity
@@ -975,6 +992,7 @@ async function load(p: number = page.value) {
     if (f.payloadTo)         query.payloadTo    = String(f.payloadTo)
     if (f.catalogNumber)     query.catalogNumber = f.catalogNumber
     if (f.partCategoryId)    query.partCategoryId = String(f.partCategoryId)
+    if (f.side)              query.side = f.side
     if (f.featureIds.length) query.featureIds   = f.featureIds.join(',')
     if (f.locationCity)  query.locationCity  = f.locationCity
     if (f.vin)           query.vin           = f.vin
