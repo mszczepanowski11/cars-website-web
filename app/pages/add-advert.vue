@@ -3371,12 +3371,12 @@ async function onCategory(catId: number) {
     } catch {
         subtypes.value = []
     }
-    // Reload brands filtered by category (fall back to all brands if none returned)
+    // Reload brands filtered by category (fall back to all brands only on a genuine fetch error,
+    // not merely because the category has zero mapped brands - an empty result is still correct).
     const cfg = categoryConfig.value
     if (cfg.brandFieldType !== 'text') {
         try {
-            const filtered = await fetchBrandsByCategory(catId)
-            brands.value = filtered.length ? filtered : await fetchBrands()
+            brands.value = await fetchBrandsByCategory(catId)
         } catch {
             brands.value = await fetchBrands()
         }
