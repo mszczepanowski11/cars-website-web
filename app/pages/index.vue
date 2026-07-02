@@ -91,8 +91,8 @@
                     <div v-if="currentSearchConfig.hasPartCategory" class="hsp-field">
                         <label class="hsp-label">Kategoria części</label>
                         <select v-model="searchPartCategory" class="hsp-select">
-                            <option value="">Wszystkie kategorie</option>
-                            <option v-for="pc in PART_CATEGORIES" :key="pc.value" :value="pc.value">{{ pc.label }}</option>
+                            <option :value="null">Wszystkie kategorie</option>
+                            <option v-for="pc in partCategories" :key="pc.id" :value="pc.id">{{ pc.name }}</option>
                         </select>
                     </div>
                     <div class="hsp-field hsp-range">
@@ -611,7 +611,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CarAdvert, CarEvent, PagedResult, TaxonomyItem } from '~/types'
+import type { CarAdvert, CarEvent, PagedResult, TaxonomyItem, PartCategory } from '~/types'
 
 const config = useRuntimeConfig()
 const siteUrl = config.public.siteUrl as string
@@ -869,24 +869,7 @@ const SEARCH_CONFIGS: Record<string, SearchConfig> = {
     'inne':         { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false },
 }
 
-const PART_CATEGORIES = [
-    { value: 'silnik',        label: 'Silnik i osprzęt' },
-    { value: 'skrzynia',      label: 'Skrzynia biegów / napęd' },
-    { value: 'zawieszenie',   label: 'Zawieszenie i układ kierowniczy' },
-    { value: 'hamulce',       label: 'Hamulce' },
-    { value: 'elektryka',     label: 'Elektryka i elektronika' },
-    { value: 'nadwozie-zewn', label: 'Nadwozie zewnętrzne' },
-    { value: 'nadwozie-wewn', label: 'Wnętrze / tapicerka' },
-    { value: 'oswietlenie',   label: 'Oświetlenie' },
-    { value: 'chlodnica',     label: 'Układ chłodzenia' },
-    { value: 'wydech',        label: 'Układ wydechowy' },
-    { value: 'paliwo',        label: 'Układ paliwowy' },
-    { value: 'klimatyzacja',  label: 'Klimatyzacja / ogrzewanie' },
-    { value: 'kola',          label: 'Koła, felgi i opony' },
-    { value: 'akcesoria',     label: 'Akcesoria i tuning' },
-    { value: 'narzedzia',     label: 'Narzędzia i wyposażenie warsztatu' },
-    { value: 'inne',          label: 'Inne' },
-]
+const partCategories = ref<PartCategory[]>([])
 
 const searchCat = ref('auta-osobowe')
 const searchText = ref('')
@@ -894,7 +877,7 @@ const searchBrandId = ref<number | null>(null)
 const searchModelId = ref<number | null>(null)
 const searchFuelId = ref<number | null>(null)
 const searchBodyTypeId = ref<number | null>(null)
-const searchPartCategory = ref('')
+const searchPartCategory = ref<number | null>(null)
 const searchSubtype = ref('')
 const searchPriceFrom = ref('')
 const searchPriceTo = ref('')
@@ -955,7 +938,7 @@ function selectSearchCat(slug: string) {
     searchBodyTypeId.value = null
     searchGearboxId.value = null
     searchSubtype.value = ''
-    searchPartCategory.value = ''
+    searchPartCategory.value = null
     searchCondition.value = ''
     searchEngineSizeFrom.value = ''
     searchEngineSizeTo.value = ''
@@ -1032,7 +1015,7 @@ function doSearch() {
     if (searchGearboxId.value) query.gearboxId = String(searchGearboxId.value)
     if (searchBodyTypeId.value) query.bodyTypeId = String(searchBodyTypeId.value)
     if (searchSubtype.value) query.bodySubtype = searchSubtype.value
-    if (searchPartCategory.value) query.partCategory = searchPartCategory.value
+    if (searchPartCategory.value) query.partCategoryId = String(searchPartCategory.value)
     if (searchPriceFrom.value) query.priceFrom = searchPriceFrom.value
     if (searchPriceTo.value) query.priceTo = searchPriceTo.value
     if (searchYearFrom.value) query.yearFrom = searchYearFrom.value
@@ -1076,7 +1059,7 @@ const ingMonthlyRate = computed(() => {
 
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchGearboxes, fetchFuelTypes, fetchBodyTypes } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchGearboxes, fetchFuelTypes, fetchBodyTypes, fetchPartCategories } = useTaxonomy()
 const { STATIC_CATEGORIES } = useCategories()
 const homeCategories = STATIC_CATEGORIES
 
@@ -1130,6 +1113,7 @@ async function subscribeNewsletter() {
 // ─── SSR-safe data fetching ───────────────────────────────────────────────────
 
 const { data: homeData } = await useAsyncData('home-data', async () => {
+    const defaultCategoryId = homeCategories.find((c: any) => c.slug === searchCat.value)?.id
     const [featuredResult, recentResult, evts, stats, brands] = await Promise.allSettled([
         $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
@@ -1141,7 +1125,7 @@ const { data: homeData } = await useAsyncData('home-data', async () => {
         }),
         getUpcoming(6).catch(() => []),
         $fetch<{ activeAdverts: number; totalUsers: number; soldVehicles: number; events: number }>('/api/stats/home').catch(() => null),
-        fetchBrands().catch(() => []),
+        (defaultCategoryId ? fetchBrandsByCategory(defaultCategoryId) : fetchBrands()).catch(() => []),
     ])
     return {
         featuredItems: featuredResult.status === 'fulfilled' ? featuredResult.value.items : [],
@@ -1192,10 +1176,7 @@ onMounted(async () => {
     try { fuelTypes.value = await fetchFuelTypes() } catch {}
     try { bodyTypes.value = await fetchBodyTypes() } catch {}
     try { gearboxes.value = await fetchGearboxes() } catch {}
-    try {
-        const brands = await fetchBrands()
-        if (brands.length) filterBrands.value = brands
-    } catch {}
+    try { partCategories.value = await fetchPartCategories() } catch {}
 })
 </script>
 

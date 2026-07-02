@@ -469,6 +469,15 @@
                                     </div>
                                 </div>
 
+                                <!-- Part category -->
+                                <div v-if="filterConfig.showPartCategory" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-cog" size="13" />Kategoria części</div>
+                                    <select v-model="f.partCategoryId" class="fp-select">
+                                        <option :value="null">Wszystkie kategorie</option>
+                                        <option v-for="pc in partCategories" :key="pc.id" :value="pc.id">{{ pc.name }}</option>
+                                    </select>
+                                </div>
+
                             </div>
 
                             <!-- Expanded footer -->
@@ -564,7 +573,7 @@
 
 <script setup lang="ts">
 import { useCategories } from '~/composables/useCategories'
-import type { TaxonomyItem, DriveType, CarColor, CarAdvert, Feature, PagedResult, CategoryWithCount } from '~/types'
+import type { TaxonomyItem, DriveType, CarColor, CarAdvert, Feature, PagedResult, CategoryWithCount, PartCategory } from '~/types'
 
 const advertsConfig = useRuntimeConfig()
 useSeoMeta({
@@ -587,7 +596,7 @@ useHead({ link: [{ rel: 'canonical', href: `${advertsConfig.public.siteUrl}/adve
 
 const route = useRoute()
 const router = useRouter()
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors, fetchFeatures } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors, fetchFeatures, fetchPartCategories } = useTaxonomy()
 const { fetchCategories } = useCategories()
 const { fetchFavoriteIds } = useFavorites()
 const { error: toastError } = useToast()
@@ -626,6 +635,7 @@ const f = reactive({
     grossWeightTo:   null as number | null,
     bodySubtype: route.query.bodySubtype ? String(route.query.bodySubtype) : '' as string,
     catalogNumber: route.query.catalogNumber ? String(route.query.catalogNumber) : '' as string,
+    partCategoryId: route.query.partCategoryId ? Number(route.query.partCategoryId) : null as number | null,
     hasRetarder: null as boolean | null,
     hasTachograph: null as boolean | null,
     featureIds:  route.query.featureIds ? String(route.query.featureIds).split(',').map(Number).filter(Boolean) : [] as number[],
@@ -680,6 +690,7 @@ const advancedFiltersCount = computed(() => {
     if (f.engineSizeFrom || f.engineSizeTo) n++
     if (f.payloadFrom || f.payloadTo) n++
     if (f.catalogNumber) n++
+    if (f.partCategoryId) n++
     return n
 })
 
@@ -738,6 +749,7 @@ const filterConfig = computed(() => {
         showPrice: true,
         showPayload: isTruck || isMachinery,
         showCatalogNumber: isParts,
+        showPartCategory: isParts,
         mileageLabel: isMachinery ? 'Motogodziny (mth)' : 'Przebieg (km)',
         mileageFromKey: isMachinery ? 'mileageFrom' : 'mileageFrom',
         brandLabel: isMoto ? 'Marka motocykla' : isParts ? 'Marka pojazdu' : isTruck ? 'Marka pojazdu' : 'Marka',
@@ -758,7 +770,7 @@ const hasActiveFilters = computed(() =>
        f.priceFrom || f.priceTo || f.yearFrom || f.yearTo ||
        f.mileageFrom || f.mileageTo || f.powerFrom || f.powerTo ||
        f.engineSizeFrom || f.engineSizeTo ||
-       f.payloadFrom || f.payloadTo || f.catalogNumber ||
+       f.payloadFrom || f.payloadTo || f.catalogNumber || f.partCategoryId ||
        f.featureIds.length > 0 ||
        f.sellerType || f.condition ||
        f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null ||
@@ -813,6 +825,7 @@ function clearFilters() {
     f.axleCount = null; f.payloadFrom = null; f.payloadTo = null
     f.grossWeightFrom = null; f.grossWeightTo = null; f.bodySubtype = ''
     f.hasRetarder = null; f.hasTachograph = null; f.catalogNumber = ''
+    f.partCategoryId = null
     f.featureIds = []
     f.sortBy = ''
     f.locationCity = ''; f.vin = ''
@@ -867,6 +880,7 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.hasRetarder !== null)    body.hasRetarder    = f.hasRetarder
     if (f.hasTachograph !== null)  body.hasTachograph  = f.hasTachograph
     if (f.catalogNumber)           body.catalogNumber  = f.catalogNumber
+    if (f.partCategoryId)          body.partCategoryId = f.partCategoryId
     if (f.featureIds.length)       body.featureIds     = f.featureIds
     // New fields (passed to API; API will ignore unknown fields gracefully)
     if (f.locationCity)            body.locationCity   = f.locationCity
@@ -884,7 +898,7 @@ function buildSearchBody(p: number): Record<string, unknown> {
 
 // ── SSR-safe taxonomy fetch ─────────────────────────────────────────────────────
 const { data: taxoData } = await useAsyncData('taxonomy', async () => {
-    const [b, ft, bt, gb, dt, c, cats, m] = await Promise.all([
+    const [b, ft, bt, gb, dt, c, cats, m, pc] = await Promise.all([
         fetchBrands().catch(() => [] as TaxonomyItem[]),
         fetchFuelTypes().catch(() => [] as TaxonomyItem[]),
         fetchBodyTypes().catch(() => [] as TaxonomyItem[]),
@@ -893,8 +907,9 @@ const { data: taxoData } = await useAsyncData('taxonomy', async () => {
         fetchColors().catch(() => [] as CarColor[]),
         fetchCategories().catch(() => [] as CategoryWithCount[]),
         f.brandId ? fetchModels(f.brandId).catch(() => [] as TaxonomyItem[]) : Promise.resolve([] as TaxonomyItem[]),
+        fetchPartCategories().catch(() => [] as PartCategory[]),
     ])
-    return { brands: b, fuelTypes: ft, bodyTypes: bt, gearboxes: gb, driveTypes: dt, colors: c, categories: cats, initialModels: m }
+    return { brands: b, fuelTypes: ft, bodyTypes: bt, gearboxes: gb, driveTypes: dt, colors: c, categories: cats, initialModels: m, partCategories: pc }
 })
 
 const allBrands  = computed(() => taxoData.value?.brands     ?? [])
@@ -906,6 +921,7 @@ const gearboxes  = computed(() => taxoData.value?.gearboxes  ?? [])
 const driveTypes = computed(() => taxoData.value?.driveTypes ?? [])
 const colors     = computed(() => taxoData.value?.colors     ?? [])
 const categories = computed(() => taxoData.value?.categories ?? [])
+const partCategories = computed(() => taxoData.value?.partCategories ?? [])
 
 if (taxoData.value?.initialModels?.length) {
     models.value = taxoData.value.initialModels
@@ -958,6 +974,7 @@ async function load(p: number = page.value) {
     if (f.payloadFrom)       query.payloadFrom  = String(f.payloadFrom)
     if (f.payloadTo)         query.payloadTo    = String(f.payloadTo)
     if (f.catalogNumber)     query.catalogNumber = f.catalogNumber
+    if (f.partCategoryId)    query.partCategoryId = String(f.partCategoryId)
     if (f.featureIds.length) query.featureIds   = f.featureIds.join(',')
     if (f.locationCity)  query.locationCity  = f.locationCity
     if (f.vin)           query.vin           = f.vin
