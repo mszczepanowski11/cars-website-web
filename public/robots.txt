@@ -24,4 +24,4 @@ Disallow: /compare
 Disallow: /newsletter/
 Allow: /
 
-Sitemap: https://carizo.pl/sitemap.xml
+Sitemap: https://carizo.eu/sitemap.xml
