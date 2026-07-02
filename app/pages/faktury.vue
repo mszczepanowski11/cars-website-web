@@ -236,7 +236,7 @@ async function downloadPdf(inv: MonthlyInvoice) {
         doc.setFontSize(18); doc.setFont('helvetica', 'bold')
         doc.text('CARIZO', 14, 14)
         doc.setFontSize(8); doc.setFont('helvetica', 'normal')
-        doc.text('carizo.pl | biuro@carizo.pl', W - 14, 14, { align: 'right' })
+        doc.text('carizo.eu | biuro@carizo.eu', W - 14, 14, { align: 'right' })
         y = 32
 
         // Invoice title block
@@ -331,7 +331,7 @@ async function downloadPdf(inv: MonthlyInvoice) {
 
         // Footer
         doc.setFontSize(7); doc.setTextColor(160, 160, 160)
-        doc.text('Dokument wygenerowany przez system CARIZO | carizo.pl | Nie wymaga podpisu ani pieczęci.', W / 2, 289, { align: 'center' })
+        doc.text('Dokument wygenerowany przez system CARIZO | carizo.eu | Nie wymaga podpisu ani pieczęci.', W / 2, 289, { align: 'center' })
 
         doc.save(`faktura-${inv.invoiceNumber.replace(/\//g, '-')}.pdf`)
     } catch {

@@ -39,7 +39,7 @@ export const useInvoices = () => {
         doc.setFontSize(18); doc.setFont('helvetica', 'bold')
         doc.text('CARIZO', 14, 14)
         doc.setFontSize(8); doc.setFont('helvetica', 'normal')
-        doc.text('carizo.pl | biuro@carizo.pl', W - 14, 14, { align: 'right' })
+        doc.text('carizo.eu | biuro@carizo.eu', W - 14, 14, { align: 'right' })
         y = 32
 
         doc.setTextColor(20, 20, 20)
@@ -60,7 +60,7 @@ export const useInvoices = () => {
         doc.roundedRect(W / 2 + 3, y - 2, (W - 30) / 2, boxH, 2, 2, 'F')
 
         const sellerName = inv.sellerName ?? 'CARIZO'
-        const sellerEmail = inv.sellerEmail ?? 'biuro@carizo.pl'
+        const sellerEmail = inv.sellerEmail ?? 'biuro@carizo.eu'
         const sellerAddress = inv.sellerAddress ?? 'ul. Przykładowa 1, 00-000 Warszawa'
         const sellerNip = inv.sellerNip ?? ''
 
@@ -69,7 +69,7 @@ export const useInvoices = () => {
         doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40)
         doc.text(sellerName, 16, y + 10)
         doc.setTextColor(80, 80, 80)
-        doc.text(`carizo.pl | ${sellerEmail}`, 16, y + 16)
+        doc.text(`carizo.eu | ${sellerEmail}`, 16, y + 16)
         if (sellerNip) doc.text(`NIP: ${sellerNip}`, 16, y + 22)
         else doc.text(sellerAddress, 16, y + 22)
 
@@ -127,7 +127,7 @@ export const useInvoices = () => {
         doc.text('Forma płatności: płatność elektroniczna (ING IMOJE)', 14, y)
 
         doc.setFontSize(7); doc.setTextColor(160, 160, 160)
-        doc.text('Dokument wygenerowany przez system CARIZO | carizo.pl | Nie wymaga podpisu ani pieczęci.', W / 2, 289, { align: 'center' })
+        doc.text('Dokument wygenerowany przez system CARIZO | carizo.eu | Nie wymaga podpisu ani pieczęci.', W / 2, 289, { align: 'center' })
 
         doc.save(`faktura-${inv.invoiceNumber.replace(/\//g, '-')}.pdf`)
     }
