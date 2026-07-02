@@ -1244,6 +1244,12 @@ useHead({
         if (a.year) schema.vehicleModelDate = String(a.year)
         if (a.mileage != null) schema.mileageFromOdometer = { '@type': 'QuantitativeValue', value: a.mileage, unitCode: 'KMT' }
         if (a.fuelType?.name) schema.fuelType = a.fuelType.name
+        if (a.gearbox?.name) schema.vehicleTransmission = a.gearbox.name
+        if (a.bodyType?.name) schema.bodyType = a.bodyType.name
+        if (a.color?.name) schema.color = a.color.name
+        if (a.driveType?.name) schema.driveWheelConfiguration = a.driveType.name
+        if (a.doorCount != null) schema.numberOfDoors = a.doorCount
+        if (a.vin) schema.vehicleIdentificationNumber = a.vin
         if (a.price != null) {
             schema.offers = {
                 '@type': 'Offer',
@@ -1251,6 +1257,13 @@ useHead({
                 priceCurrency: 'PLN',
                 availability: 'https://schema.org/InStock',
                 url: seoUrl.value,
+                itemCondition: a.condition === 'new' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
+            }
+            if (a.city) {
+                schema.offers.availableAtOrFrom = {
+                    '@type': 'Place',
+                    address: { '@type': 'PostalAddress', addressLocality: a.city, addressRegion: a.region || undefined, addressCountry: 'PL' },
+                }
             }
         }
         return { type: 'application/ld+json', innerHTML: JSON.stringify(schema) }
