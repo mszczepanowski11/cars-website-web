@@ -27,7 +27,7 @@ let mapInstance: L.Map | null = null
 async function geocode(query: string): Promise<[number, number] | null> {
     try {
         const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`
-        const res = await fetch(url, { headers: { 'Accept-Language': 'pl', 'User-Agent': 'Carizo/1.0 (carizo.pl)' } })
+        const res = await fetch(url, { headers: { 'Accept-Language': 'pl', 'User-Agent': 'Carizo/1.0 (carizo.eu)' } })
         const data = await res.json()
         if (data?.[0]) return [parseFloat(data[0].lat), parseFloat(data[0].lon)]
     } catch { }

@@ -952,7 +952,7 @@ async function initMap(city: string, region?: string) {
     try {
         const q = [city, region, 'Polska'].filter(Boolean).join(', ')
         const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`, {
-            headers: { 'Accept-Language': 'pl', 'User-Agent': 'Carizo/1.0 (carizo.pl)' }
+            headers: { 'Accept-Language': 'pl', 'User-Agent': 'Carizo/1.0 (carizo.eu)' }
         })
         const data = await res.json()
         if (data[0]) {
@@ -1311,7 +1311,7 @@ async function downloadPDF() {
         doc.setFontSize(14); doc.setFont('helvetica', 'bold')
         doc.text('CARIZO', 14, 12)
         doc.setFontSize(9); doc.setFont('helvetica', 'normal')
-        doc.text('carizo.pl', w - 14, 12, { align: 'right' })
+        doc.text('carizo.eu', w - 14, 12, { align: 'right' })
 
         doc.setTextColor(20, 20, 20)
         doc.setFontSize(16); doc.setFont('helvetica', 'bold')
@@ -1349,7 +1349,7 @@ async function downloadPDF() {
         }
 
         doc.setFontSize(8); doc.setTextColor(160, 160, 160)
-        doc.text(`Wygenerowano: ${new Date().toLocaleDateString('pl-PL')} | carizo.pl/advert/${a.id}`, 14, 285)
+        doc.text(`Wygenerowano: ${new Date().toLocaleDateString('pl-PL')} | carizo.eu/advert/${a.id}`, 14, 285)
 
         doc.save(`CARIZO-${a.id}-${(a.brand?.name ?? 'auto').replace(/\s/g, '-')}.pdf`)
     } finally { pdfLoading.value = false }
