@@ -416,6 +416,15 @@
                                     </div>
                                 </div>
 
+                                <!-- Vehicle subtype (dynamic, scoped to selected category) -->
+                                <div v-if="vehicleSubtypes.length" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-shape-outline" size="13" />Rodzaj pojazdu</div>
+                                    <select v-model="f.vehicleSubtypeId" class="fp-select" @change="load(1)">
+                                        <option :value="null">Wszystkie rodzaje</option>
+                                        <option v-for="st in vehicleSubtypes" :key="st.id" :value="st.id">{{ st.namePl ?? st.name }}</option>
+                                    </select>
+                                </div>
+
                                 <!-- Equipment / features -->
                                 <div v-if="allFeatures.length" class="fp-group fp-group--wide">
                                     <div class="fp-group-label"><v-icon icon="mdi-star-check-outline" size="13" />Wyposażenie</div>
@@ -489,6 +498,30 @@
                                         <option value="Tył">Tył</option>
                                         <option value="Obie strony">Obie strony / uniwersalna</option>
                                     </select>
+                                </div>
+
+                                <!-- OEM number (parts) -->
+                                <div v-if="filterConfig.showCatalogNumber" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-identifier" size="13" />Numer OEM</div>
+                                    <div class="fp-input-wrap">
+                                        <input v-model="f.oemNumber" type="text" class="fp-text-input" placeholder="np. 3C0853630A" />
+                                    </div>
+                                </div>
+
+                                <!-- Manufacturer part number (parts) -->
+                                <div v-if="filterConfig.showCatalogNumber" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-factory" size="13" />Numer katalogowy producenta</div>
+                                    <div class="fp-input-wrap">
+                                        <input v-model="f.manufacturerPartNumber" type="text" class="fp-text-input" placeholder="np. 0986490304" />
+                                    </div>
+                                </div>
+
+                                <!-- Minimum available quantity (parts) -->
+                                <div v-if="filterConfig.showCatalogNumber" class="fp-group">
+                                    <div class="fp-group-label"><v-icon icon="mdi-numeric" size="13" />Min. dostępna ilość</div>
+                                    <div class="fp-input-wrap">
+                                        <input v-model.number="f.quantityFrom" type="number" min="1" class="fp-text-input" placeholder="np. 1" />
+                                    </div>
                                 </div>
 
                             </div>
@@ -609,7 +642,7 @@ useHead({ link: [{ rel: 'canonical', href: `${advertsConfig.public.siteUrl}/adve
 
 const route = useRoute()
 const router = useRouter()
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors, fetchFeatures, fetchPartCategories } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchFuelTypes, fetchBodyTypes, fetchGearboxes, fetchDriveTypes, fetchColors, fetchFeatures, fetchPartCategories, fetchFeatureCategoriesByVehicle, fetchVehicleSubtypes } = useTaxonomy()
 const { fetchCategories } = useCategories()
 const { fetchFavoriteIds } = useFavorites()
 const { error: toastError } = useToast()
@@ -649,7 +682,12 @@ const f = reactive({
     bodySubtype: route.query.bodySubtype ? String(route.query.bodySubtype) : '' as string,
     catalogNumber: route.query.catalogNumber ? String(route.query.catalogNumber) : '' as string,
     partCategoryId: route.query.partCategoryId ? Number(route.query.partCategoryId) : null as number | null,
+    partSubcategoryId: route.query.partSubcategoryId ? Number(route.query.partSubcategoryId) : null as number | null,
     side: route.query.side ? String(route.query.side) : '' as string,
+    quantityFrom: route.query.quantityFrom ? Number(route.query.quantityFrom) : null as number | null,
+    oemNumber: route.query.oemNumber ? String(route.query.oemNumber) : '' as string,
+    manufacturerPartNumber: route.query.manufacturerPartNumber ? String(route.query.manufacturerPartNumber) : '' as string,
+    vehicleSubtypeId: route.query.vehicleSubtypeId ? Number(route.query.vehicleSubtypeId) : null as number | null,
     hasRetarder: null as boolean | null,
     hasTachograph: null as boolean | null,
     featureIds:  route.query.featureIds ? String(route.query.featureIds).split(',').map(Number).filter(Boolean) : [] as number[],
@@ -669,6 +707,7 @@ const f = reactive({
 
 const models       = ref<TaxonomyItem[]>([])
 const allFeatures  = ref<Feature[]>([])
+const vehicleSubtypes = ref<{ id: number; name: string; namePl?: string }[]>([])
 const adverts      = ref<CarAdvert[]>([])
 const total        = ref(0)
 const frozenTotal  = ref(0) // snapshot of total at last fresh search; used for loadMore to avoid offset shifts
@@ -705,7 +744,12 @@ const advancedFiltersCount = computed(() => {
     if (f.payloadFrom || f.payloadTo) n++
     if (f.catalogNumber) n++
     if (f.partCategoryId) n++
+    if (f.partSubcategoryId) n++
     if (f.side) n++
+    if (f.quantityFrom) n++
+    if (f.oemNumber) n++
+    if (f.manufacturerPartNumber) n++
+    if (f.vehicleSubtypeId) n++
     return n
 })
 
@@ -786,7 +830,8 @@ const hasActiveFilters = computed(() =>
        f.priceFrom || f.priceTo || f.yearFrom || f.yearTo ||
        f.mileageFrom || f.mileageTo || f.powerFrom || f.powerTo ||
        f.engineSizeFrom || f.engineSizeTo ||
-       f.payloadFrom || f.payloadTo || f.catalogNumber || f.partCategoryId || f.side ||
+       f.payloadFrom || f.payloadTo || f.catalogNumber || f.partCategoryId || f.partSubcategoryId ||
+       f.side || f.quantityFrom || f.oemNumber || f.manufacturerPartNumber || f.vehicleSubtypeId ||
        f.featureIds.length > 0 ||
        f.sellerType || f.condition ||
        f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null ||
@@ -806,17 +851,38 @@ const paginationPages = computed(() => {
     return pages
 })
 
+// Scopes the equipment/feature filter and the vehicle-subtype filter to the selected category,
+// via the same taxonomy endpoints the add-advert form uses — instead of allFeatures being every
+// feature across every category regardless of what's being searched (e.g. "Hydraulika" showing up
+// as a filter option while browsing cars). categoryId === null falls back to the unscoped feature
+// list (today's general-browse behavior) with no subtype filter.
+async function loadCategoryScopedFilters(categoryId: number | null) {
+    if (categoryId) {
+        try {
+            const cats = await fetchFeatureCategoriesByVehicle(categoryId) as any[]
+            allFeatures.value = cats.flatMap(c => c.features ?? [])
+        } catch { allFeatures.value = [] }
+        try { vehicleSubtypes.value = await fetchVehicleSubtypes(categoryId) } catch { vehicleSubtypes.value = [] }
+    } else {
+        try { allFeatures.value = await fetchFeatures() } catch { allFeatures.value = [] }
+        vehicleSubtypes.value = []
+    }
+}
+
 function onCategoryChange() {
     // v-model already wrote the newly picked option into f.categoryId before this
     // handler runs, so just react to it here - do not re-derive/toggle it.
     f.brandId = null
     f.modelId = null
+    f.vehicleSubtypeId = null
+    f.featureIds = []
     models.value = []
     if (f.categoryId) {
         fetchBrandsByCategory(f.categoryId).then(b => { dynamicBrands.value = b }).catch(() => { dynamicBrands.value = null })
     } else {
         dynamicBrands.value = null
     }
+    loadCategoryScopedFilters(f.categoryId)
     load(1)
 }
 
@@ -841,7 +907,9 @@ function clearFilters() {
     f.axleCount = null; f.payloadFrom = null; f.payloadTo = null
     f.grossWeightFrom = null; f.grossWeightTo = null; f.bodySubtype = ''
     f.hasRetarder = null; f.hasTachograph = null; f.catalogNumber = ''
-    f.partCategoryId = null; f.side = ''
+    f.partCategoryId = null; f.partSubcategoryId = null; f.side = ''
+    f.quantityFrom = null; f.oemNumber = ''; f.manufacturerPartNumber = ''
+    f.vehicleSubtypeId = null
     f.featureIds = []
     f.sortBy = ''
     f.locationCity = ''; f.vin = ''
@@ -850,6 +918,7 @@ function clearFilters() {
     f.emissionFrom = null; f.emissionTo = null
     f.euroNorm = ''; f.hasFinancing = null
     models.value = []
+    loadCategoryScopedFilters(null)
     load(1)
 }
 
@@ -897,7 +966,12 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.hasTachograph !== null)  body.hasTachograph  = f.hasTachograph
     if (f.catalogNumber)           body.catalogNumber  = f.catalogNumber
     if (f.partCategoryId)          body.partCategoryId = f.partCategoryId
+    if (f.partSubcategoryId)       body.partSubcategoryId = f.partSubcategoryId
     if (f.side)                    body.side           = f.side
+    if (f.quantityFrom)            body.quantityFrom   = f.quantityFrom
+    if (f.oemNumber)               body.oemNumber      = f.oemNumber
+    if (f.manufacturerPartNumber)  body.manufacturerPartNumber = f.manufacturerPartNumber
+    if (f.vehicleSubtypeId)        body.vehicleSubtypeId = f.vehicleSubtypeId
     if (f.featureIds.length)       body.featureIds     = f.featureIds
     // New fields (passed to API; API will ignore unknown fields gracefully)
     if (f.locationCity)            body.locationCity   = f.locationCity
@@ -992,7 +1066,12 @@ async function load(p: number = page.value) {
     if (f.payloadTo)         query.payloadTo    = String(f.payloadTo)
     if (f.catalogNumber)     query.catalogNumber = f.catalogNumber
     if (f.partCategoryId)    query.partCategoryId = String(f.partCategoryId)
+    if (f.partSubcategoryId) query.partSubcategoryId = String(f.partSubcategoryId)
     if (f.side)              query.side = f.side
+    if (f.quantityFrom)      query.quantityFrom = String(f.quantityFrom)
+    if (f.oemNumber)         query.oemNumber = f.oemNumber
+    if (f.manufacturerPartNumber) query.manufacturerPartNumber = f.manufacturerPartNumber
+    if (f.vehicleSubtypeId)  query.vehicleSubtypeId = String(f.vehicleSubtypeId)
     if (f.featureIds.length) query.featureIds   = f.featureIds.join(',')
     if (f.locationCity)  query.locationCity  = f.locationCity
     if (f.vin)           query.vin           = f.vin
@@ -1087,7 +1166,7 @@ onMounted(async () => {
     if (f.categoryId) {
         try { dynamicBrands.value = await fetchBrandsByCategory(f.categoryId) } catch { dynamicBrands.value = null }
     }
-    try { allFeatures.value = await fetchFeatures() } catch {}
+    await loadCategoryScopedFilters(f.categoryId)
 })
 </script>
 
