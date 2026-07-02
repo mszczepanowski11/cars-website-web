@@ -779,19 +779,11 @@ const paginationPages = computed(() => {
 })
 
 function onCategoryChange() {
-    const cat = categories.value.find(c => c.id === f.categoryId)
-    if (cat) selectCategory(cat)
-    else { f.brandId = null; f.modelId = null; models.value = []; dynamicBrands.value = null; load(1) }
-}
-
-async function selectCategory(cat: CategoryWithCount) {
-    const newId = f.categoryId === cat.id ? null : cat.id
-    if (newId !== f.categoryId) {
-        f.brandId = null
-        f.modelId = null
-        models.value = []
-    }
-    f.categoryId = newId
+    // v-model already wrote the newly picked option into f.categoryId before this
+    // handler runs, so just react to it here - do not re-derive/toggle it.
+    f.brandId = null
+    f.modelId = null
+    models.value = []
     if (f.categoryId) {
         fetchBrandsByCategory(f.categoryId).then(b => { dynamicBrands.value = b }).catch(() => { dynamicBrands.value = null })
     } else {
