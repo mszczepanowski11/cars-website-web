@@ -599,6 +599,102 @@
                         </div>
                     </transition>
 
+                    <!-- ── Parts catalog fields (czesci) ──────────────────────────────────── -->
+                    <transition name="fade-err">
+                        <div v-if="isPartsCategorySelected" class="extra-fields-wrap">
+                            <div class="form-section-subhead">Dane katalogowe części</div>
+                            <div class="fields-grid">
+                                <div class="field">
+                                    <label class="flabel">Kategoria części</label>
+                                    <SmartSelect
+                                        v-model="form.partCategoryId"
+                                        :options="partCategoryOptions"
+                                        placeholder="Wybierz kategorię części"
+                                        @change="onPartCategoryChange(form.partCategoryId)"
+                                    />
+                                </div>
+                                <div class="field">
+                                    <label class="flabel">Podkategoria</label>
+                                    <SmartSelect
+                                        v-model="form.partSubcategoryId"
+                                        :options="partSubcategoryOptions"
+                                        placeholder="Wybierz podkategorię"
+                                        :disabled="!form.partCategoryId"
+                                    />
+                                </div>
+                                <div class="field">
+                                    <label class="flabel">Strona montażu</label>
+                                    <SmartSelect
+                                        v-model="form.side"
+                                        :options="[
+                                            { value: 'Lewa', label: 'Lewa' }, { value: 'Prawa', label: 'Prawa' },
+                                            { value: 'Przód', label: 'Przód' }, { value: 'Tył', label: 'Tył' },
+                                            { value: 'Obie strony', label: 'Obie strony / uniwersalna' },
+                                        ]"
+                                        placeholder="Nie dotyczy"
+                                        clearable
+                                    />
+                                </div>
+                                <div class="field">
+                                    <label class="flabel">Dostępna ilość (szt.)</label>
+                                    <input v-model.number="form.quantity" type="number" min="1" class="finput" placeholder="np. 1" />
+                                </div>
+                                <div class="field">
+                                    <label class="flabel">Numer OEM</label>
+                                    <input v-model="form.oemNumber" type="text" class="finput" placeholder="np. 3C0853630A" />
+                                    <div class="field-hint"><v-icon icon="mdi-information-outline" size="12" />Numer oryginalny części od producenta pojazdu</div>
+                                </div>
+                                <div class="field">
+                                    <label class="flabel">Numer katalogowy producenta części</label>
+                                    <input v-model="form.manufacturerPartNumber" type="text" class="finput" placeholder="np. 0986490304" />
+                                </div>
+                                <div class="field">
+                                    <label class="flabel">Producent części</label>
+                                    <input v-model="form.partManufacturer" type="text" class="finput" placeholder="np. Bosch, Febi, SKF, OEM" />
+                                </div>
+                            </div>
+
+                            <div class="compat-picker">
+                                <div class="flabel">Pasuje również do (opcjonalnie)</div>
+                                <div class="compat-add-row">
+                                    <SmartSelect
+                                        v-model="compatBrandId"
+                                        :options="brands.map((b: any) => ({ value: b.id, label: b.name }))"
+                                        placeholder="Marka"
+                                        search-placeholder="marki"
+                                        @change="onCompatBrandChange"
+                                    />
+                                    <SmartSelect
+                                        v-model="compatModelId"
+                                        :options="compatBrandModels.map((m: any) => ({ value: m.id, label: m.name }))"
+                                        placeholder="Model (opcjonalnie)"
+                                        search-placeholder="modelu"
+                                        :disabled="!compatBrandId"
+                                        clearable
+                                        @change="onCompatModelChange"
+                                    />
+                                    <SmartSelect
+                                        v-model="compatGenerationId"
+                                        :options="compatModelGenerations.map((g: any) => ({ value: g.id, label: g.name }))"
+                                        placeholder="Generacja (opcjonalnie)"
+                                        search-placeholder="generacji"
+                                        :disabled="!compatModelId"
+                                        clearable
+                                    />
+                                    <button type="button" class="btn-compat-add" :disabled="!compatBrandId" @click="addCompatibility">
+                                        <v-icon icon="mdi-plus" size="15" />Dodaj
+                                    </button>
+                                </div>
+                                <div v-if="form.compatibilities.length" class="compat-list">
+                                    <span v-for="(c, idx) in form.compatibilities" :key="idx" class="compat-chip">
+                                        {{ [c.brandName, c.modelName, c.generationName].filter(Boolean).join(' ') }}
+                                        <button type="button" @click="removeCompatibility(idx)"><v-icon icon="mdi-close" size="12" /></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+
                     <!-- ── Subtype-specific extra fields ──────────────────────────────────── -->
                     <transition name="fade-err">
                         <div v-if="subtypeExtraFields.length > 0" class="extra-fields-wrap">
@@ -2243,6 +2339,10 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         categoryNote: 'Części, akcesoria i wyposażenie. Podaj szczegóły części poniżej.',
         showVinSection: false,
         showHistorySection: false,
+        // Kategoria/podkategoria części, strona montażu, numery katalogowe, producent i lista
+        // pojazdów kompatybilnych mają dedykowane, prawdziwe pola (patrz blok "Części — dane
+        // katalogowe" w szablonie) zamiast tego ogólnego mechanizmu extraFields, żeby trafiały
+        // do bazy jako przeszukiwalne kolumny, a nie do wolnego tekstu opisu.
         extraFields: [
             { key: 'condition', label: 'Stan części', type: 'radio', required: true,
               options: [
@@ -2250,28 +2350,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
                 { value: 'used-good', label: 'Używana – dobry stan' }, { value: 'used', label: 'Używana' },
                 { value: 'damaged', label: 'Uszkodzona / na części' },
               ] },
-            { key: 'partCategory', label: 'Kategoria części', type: 'select', required: true,
-              options: [
-                { value: 'silnik', label: 'Silnik i osprzęt' }, { value: 'skrzynia', label: 'Skrzynia biegów / napęd' },
-                { value: 'zawieszenie', label: 'Zawieszenie i układ kierowniczy' }, { value: 'hamulce', label: 'Hamulce' },
-                { value: 'elektryka', label: 'Elektryka i elektronika' }, { value: 'nadwozie-zewn', label: 'Nadwozie zewnętrzne' },
-                { value: 'nadwozie-wewn', label: 'Wnętrze / tapicerka' }, { value: 'oswietlenie', label: 'Oświetlenie' },
-                { value: 'chlodnica', label: 'Układ chłodzenia' }, { value: 'wydech', label: 'Układ wydechowy' },
-                { value: 'paliwo', label: 'Układ paliwowy' }, { value: 'klimatyzacja', label: 'Klimatyzacja / ogrzewanie' },
-                { value: 'kola', label: 'Koła, felgi i opony' }, { value: 'akcesoria', label: 'Akcesoria i tuning' },
-                { value: 'narzedzia', label: 'Narzędzia i wyposażenie warsztatu' },
-                { value: 'inne', label: 'Inne' },
-              ] },
-            { key: 'side', label: 'Strona montażu', type: 'select',
-              options: [
-                { value: 'left', label: 'Lewa' }, { value: 'right', label: 'Prawa' },
-                { value: 'front', label: 'Przód' }, { value: 'rear', label: 'Tył' },
-                { value: 'universal', label: 'Uniwersalna / obustronnie' },
-              ] },
-            { key: 'partNumber', label: 'Numer OEM / katalogowy', type: 'text', placeholder: 'np. 3C0853630A', hint: 'Numer oryginalny części od producenta pojazdu' },
-            { key: 'manufacturer', label: 'Producent części', type: 'text', placeholder: 'np. Bosch, Febi, SKF, OEM' },
-            { key: 'compatibility', label: 'Pasuje również do', type: 'text', placeholder: 'np. VW Golf VI, Seat Leon II', fullWidth: true, hint: 'Inne modele, do których pasuje ta część' },
-            { key: 'quantity', label: 'Dostępna ilość (szt.)', type: 'number', placeholder: 'np. 1' },
             { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
             { key: 'shipping', label: 'Możliwa wysyłka', type: 'boolean' },
             { key: 'warranty', label: 'Gwarancja na część', type: 'boolean' },
@@ -2970,6 +3048,9 @@ const form = reactive({
     oemNumber: '',
     manufacturerPartNumber: '',
     partManufacturer: '',
+    side: null as string | null,
+    quantity: null as number | null,
+    compatibilities: [] as { brandId: number; brandName?: string; modelId: number | null; modelName?: string; generationId: number | null; generationName?: string }[],
     registrationPlate: '',
     hasVatInvoice: false,
     isLeasingPossible: false,
@@ -3674,6 +3755,45 @@ async function onPartCategoryChange(categoryId: number | null) {
     }
 }
 
+// "Pasuje również do" — additional PartCompatibility entries beyond the advert's own
+// brand/model (form.brandId/form.modelId). A picked brand with no model, or a picked model
+// with no generation, is intentionally left as a wildcard (see PartCompatibility on the backend).
+const compatBrandId = ref<number | null>(null)
+const compatModelId = ref<number | null>(null)
+const compatGenerationId = ref<number | null>(null)
+const compatBrandModels = ref<any[]>([])
+const compatModelGenerations = ref<any[]>([])
+
+async function onCompatBrandChange() {
+    compatModelId.value = null
+    compatGenerationId.value = null
+    compatModelGenerations.value = []
+    compatBrandModels.value = compatBrandId.value ? await fetchModels(compatBrandId.value) : []
+}
+
+async function onCompatModelChange() {
+    compatGenerationId.value = null
+    compatModelGenerations.value = compatModelId.value ? await fetchGenerations(compatModelId.value) : []
+}
+
+function addCompatibility() {
+    if (!compatBrandId.value) return
+    const brandName = brands.value.find((b: any) => b.id === compatBrandId.value)?.name
+    const modelName = compatBrandModels.value.find((m: any) => m.id === compatModelId.value)?.name
+    const generationName = compatModelGenerations.value.find((g: any) => g.id === compatGenerationId.value)?.name
+    form.compatibilities.push({
+        brandId: compatBrandId.value, brandName,
+        modelId: compatModelId.value, modelName,
+        generationId: compatGenerationId.value, generationName,
+    })
+    compatBrandId.value = null; compatModelId.value = null; compatGenerationId.value = null
+    compatBrandModels.value = []; compatModelGenerations.value = []
+}
+
+function removeCompatibility(idx: number) {
+    form.compatibilities.splice(idx, 1)
+}
+
 watch(() => form.engineVersionId, (newId) => {
     if (!newId) { resetEngineLocks(); return }
     const engine = engines.value.find((e: any) => e.id === newId) as any
@@ -3915,6 +4035,9 @@ async function submit() {
                 cleanEdit[k] = v
             }
             cleanEdit.featureIds = (form.featureIds?.length ? form.featureIds : [])
+            cleanEdit.compatibilities = form.compatibilities.map(c => ({
+                brandId: c.brandId, modelId: c.modelId, generationId: c.generationId,
+            }))
             cleanEdit.description = buildDescription() || form.description || ''
             // Map renamed fields
             if (form.power) cleanEdit.powerHP = form.power
@@ -3948,9 +4071,6 @@ async function submit() {
             if (extras.trailerType) cleanEdit.bodySubtype = extras.trailerType
             if (extras.machineType) cleanEdit.bodySubtype = extras.machineType
             if (extras.truckType) cleanEdit.bodySubtype = extras.truckType
-            if (extras.partCategory) cleanEdit.bodySubtype = extras.partCategory
-            if (extras.partNumber) cleanEdit.catalogNumber = extras.partNumber
-            if (extras.compatibility) cleanEdit.compatibility = extras.compatibility
             if (extras.seatsCount != null) cleanEdit.seatsCount = Number(extras.seatsCount)
             if (extras.torque != null) cleanEdit.torque = Number(extras.torque)
             if (extras.co2 != null) cleanEdit.co2Emission = Number(extras.co2)
@@ -4021,7 +4141,7 @@ async function submit() {
                 'city', 'region', 'isNegotiable', 'sellerType',
                 'doorCount', 'seatsCount',
                 'trimId', 'vehicleSubtypeId', 'partCategoryId', 'partSubcategoryId',
-                'oemNumber', 'manufacturerPartNumber', 'partManufacturer',
+                'oemNumber', 'manufacturerPartNumber', 'partManufacturer', 'side', 'quantity',
                 'registrationPlate', 'hasVatInvoice', 'isLeasingPossible',
                 'isCreditPossible', 'isExchangePossible',
             ]
@@ -4031,6 +4151,11 @@ async function submit() {
                 const v = (form as any)[key]
                 if (v === null || v === undefined || v === '') continue
                 cleanBody[key] = v
+            }
+            if (form.compatibilities.length) {
+                cleanBody.compatibilities = form.compatibilities.map(c => ({
+                    brandId: c.brandId, modelId: c.modelId, generationId: c.generationId,
+                }))
             }
             cleanBody.featureIds = form.featureIds?.length ? form.featureIds : []
             cleanBody.description = buildDescription() || form.description || ''
@@ -4064,9 +4189,6 @@ async function submit() {
             if (extras.trailerType) cleanBody.bodySubtype = extras.trailerType
             if (extras.machineType) cleanBody.bodySubtype = extras.machineType
             if (extras.truckType) cleanBody.bodySubtype = extras.truckType
-            if (extras.partCategory) cleanBody.bodySubtype = extras.partCategory
-            if (extras.partNumber) cleanBody.catalogNumber = extras.partNumber
-            if (extras.compatibility) cleanBody.compatibility = extras.compatibility
             if (extras.seatsCount != null) cleanBody.seatsCount = Number(extras.seatsCount)
             if (extras.torque != null) cleanBody.torque = Number(extras.torque)
             if (extras.co2 != null) cleanBody.co2Emission = Number(extras.co2)
@@ -4256,9 +4378,22 @@ onMounted(async () => {
             form.engineCapacity = advert.engineSize ?? null
             // Restore extras from structured fields
             if (advert.condition) extras.condition = advert.condition
-            if (advert.bodySubtype && selectedCategory.value?.slug === 'czesci') extras.partCategory = advert.bodySubtype
-            if (advert.catalogNumber) extras.partNumber = advert.catalogNumber
-            if (advert.compatibility) extras.compatibility = advert.compatibility
+            // Parts catalog fields
+            form.partCategoryId = (advert as any).partCategoryId ?? null
+            form.partSubcategoryId = (advert as any).partSubcategoryId ?? null
+            if (form.partCategoryId) {
+                partSubcategories.value = await fetchPartSubcategories(form.partCategoryId).catch(() => [])
+            }
+            form.oemNumber = (advert as any).oemNumber ?? ''
+            form.manufacturerPartNumber = (advert as any).manufacturerPartNumber ?? ''
+            form.partManufacturer = (advert as any).partManufacturer ?? ''
+            form.side = (advert as any).side ?? null
+            form.quantity = (advert as any).quantity ?? null
+            form.compatibilities = ((advert as any).compatibilities ?? []).map((c: any) => ({
+                brandId: c.brandId, brandName: c.brandName,
+                modelId: c.modelId, modelName: c.modelName,
+                generationId: c.generationId, generationName: c.generationName,
+            }))
             if (advert.doorCount) extras.doors = String(advert.doorCount)
             if (advert.driveType) extras.driveType = advert.driveType.slug
             if (advert.color) extras.color = advert.color.id ?? advert.color.name
@@ -6190,6 +6325,37 @@ onBeforeUnmount(() => {
 .extra-fields-wrap { margin-top: 8px; }
 
 .full-width { grid-column: 1 / -1; }
+
+// Parts compatibility picker
+.compat-picker { margin-top: 18px; }
+.compat-add-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    margin-top: 8px;
+    align-items: center;
+    @media (max-width: 720px) { grid-template-columns: 1fr; }
+}
+.btn-compat-add {
+    display: flex; align-items: center; gap: 5px; padding: 9px 16px; height: fit-content;
+    background: rgba($red, 0.12); border: 1px solid rgba($red, 0.3); border-radius: 8px;
+    color: $red; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &:hover:not(:disabled) { background: rgba($red, 0.2); }
+}
+.compat-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.compat-chip {
+    display: flex; align-items: center; gap: 6px; font-size: 12px; font-family: 'Inter', sans-serif;
+    padding: 5px 8px 5px 12px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04); color: $text;
+    button {
+        display: flex; align-items: center; justify-content: center; width: 16px; height: 16px;
+        border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: $text-dark;
+        cursor: pointer;
+        &:hover { background: rgba($red, 0.3); color: $text; }
+    }
+}
 
 // Color picker (extraField type: color-picker)
 .ef-color-label {
