@@ -185,8 +185,10 @@
                             </label>
                             <SmartSelect
                                 v-model="form.vehicleSubtypeId"
-                                :options="subtypes.map(s => ({ value: s.id, label: s.name }))"
+                                :options="vehicleSubtypeOptions"
                                 placeholder="Wybierz rodzaj pojazdu"
+                                search-placeholder="podtypów"
+                                clearable
                             />
                         </div>
 
@@ -298,7 +300,7 @@
                                 prefix-icon="mdi-car-cog"
                                 search-placeholder="wersji"
                                 :disabled="!form.generationId"
-                                @change="onTrim"
+                                @change="onTrimChange(form.trimId)"
                             />
                             <div class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />{{ trims.length }} wersji dostępnych
@@ -355,18 +357,6 @@
                                     <span v-if="engineSpecs.avgConsumptionL" class="esp-chip esp-chip--success">{{ engineSpecs.avgConsumptionL }} l/100km</span>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Vehicle subtype — shown when subtypes exist for selected category -->
-                        <div v-if="vehicleSubtypes.length > 0" class="field">
-                            <label class="flabel">Podtyp pojazdu</label>
-                            <SmartSelect
-                                v-model="form.vehicleSubtypeId"
-                                :options="vehicleSubtypeOptions"
-                                placeholder="Np. Ciągnik siodłowy, Wywrotka..."
-                                search-placeholder="podtypów"
-                                clearable
-                            />
                         </div>
 
                         <!-- Year -->
@@ -2692,7 +2682,7 @@ const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
 
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchTrims, fetchEnginesByTrim, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext, fetchVehicleSubtypes, fetchPartCategories, fetchPartSubcategories, fetchEngineSpecs } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchTrims, fetchEnginesByTrim, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext, fetchVehicleSubtypes, fetchPartCategories, fetchPartSubcategories, fetchEngineSpecs, validateChain } = useTaxonomy()
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { fetchCategories } = useCategories()
@@ -2710,7 +2700,6 @@ const driveTypes = ref<DriveType[]>([])
 const colors = ref<CarColor[]>([])
 const allFeatures = ref<Feature[]>([])
 const featuresLoaded = ref(false)
-const vehicleSubtypes = ref<VehicleSubtype[]>([])
 const partCategories = ref<PartCategory[]>([])
 const partSubcategories = ref<PartSubcategory[]>([])
 const engineSpecs = ref<any>(null)
@@ -3335,7 +3324,7 @@ const modelOptions = computed<SelectOption[]>(() => models.value.map(m => ({ val
 const generationOptions = computed<SelectOption[]>(() => generations.value.map(g => ({ value: g.id, label: generationLabel(g) })))
 const engineOptions = computed<SelectOption[]>(() => engines.value.map(e => ({ value: e.id, label: `${e.name} (${e.powerHP ?? e.horsepower ?? '?'}KM)` })))
 const trimOptions = computed<SelectOption[]>(() => trims.value.map(t => ({ value: t.id, label: t.name })))
-const vehicleSubtypeOptions = computed<SelectOption[]>(() => vehicleSubtypes.value.map(s => ({ value: s.id, label: s.namePl ?? s.name })))
+const vehicleSubtypeOptions = computed<SelectOption[]>(() => subtypes.value.map(s => ({ value: s.id, label: s.namePl ?? s.name })))
 const partCategoryOptions = computed<SelectOption[]>(() => partCategories.value.map(c => ({ value: c.id, label: c.namePl ?? c.name })))
 const partSubcategoryOptions = computed<SelectOption[]>(() => partSubcategories.value.map(s => ({ value: s.id, label: s.namePl ?? s.name })))
 
@@ -3381,8 +3370,6 @@ async function onCategory(catId: number) {
             brands.value = await fetchBrands()
         }
     }
-    // Load vehicle subtypes for the selected category
-    vehicleSubtypes.value = await fetchVehicleSubtypes(catId)
     // Reload features for the new category context
     if (changed) await loadContextFeatures()
     // Auto-advance to vehicle data step on first category selection
@@ -3615,6 +3602,7 @@ function resetEngineLocks() {
 
 let _brandSeq = 0
 let _modelSeq = 0
+let _genSeq = 0
 async function onBrand() {
     const seq = ++_brandSeq
     form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
@@ -3640,15 +3628,16 @@ async function onModel() {
     await loadContextFeatures()
 }
 async function onGen() {
+    const seq = ++_genSeq
     form.trimId = null; form.engineVersionId = null; trims.value = []; engines.value = []
     if (form.generationId) {
         const [loadedTrims, loadedEngines] = await Promise.all([
             fetchTrims(form.generationId),
             fetchEngines(form.generationId),
         ])
-        trims.value = loadedTrims
-        engines.value = loadedEngines
+        if (seq === _genSeq) { trims.value = loadedTrims; engines.value = loadedEngines }
     }
+    if (seq !== _genSeq) return
     resetEngineLocks()
 }
 
@@ -3656,41 +3645,24 @@ async function onTrimChange(trimId: number | null) {
     form.engineVersionId = null
     engineSpecs.value = null
     engines.value = []
-    engineLocked.fuelType = false; engineLocked.power = false; engineLocked.capacity = false; engineLocked.consumptionCity = false; engineLocked.consumptionHwy = false; engineLocked.consumptionMix = false
-    engineLocked.torque = false; engineLocked.co2Emission = false; engineLocked.euroNorm = false; engineLocked.acceleration = false; engineLocked.fuelConsumptionCombined = false
+    resetEngineLocks()
     if (trimId) {
         const trimEngines = await fetchEnginesByTrim(trimId)
-        if (trimEngines.length > 0) {
-            engines.value = trimEngines
-        } else if (form.generationId) {
-            engines.value = await fetchEngines(form.generationId)
-        }
+        engines.value = trimEngines.length > 0
+            ? trimEngines
+            : (form.generationId ? await fetchEngines(form.generationId) : [])
     }
 }
 
+// Fetches full factory specs purely for the read-only info chips (engineSpecs.value, rendered
+// near the engine select). Actual form-field auto-fill happens once, synchronously, in the
+// form.engineVersionId watcher below, which reads the same data from the already-loaded
+// `engines` array — kept separate so the two don't race and overwrite each other.
 async function onEngineVersionChange(engineVersionId: number | null) {
     engineSpecs.value = null
     if (engineVersionId) {
         const specs = await fetchEngineSpecs(engineVersionId)
-        if (specs) {
-            engineSpecs.value = specs
-            if (specs.powerHP) { form.power = specs.powerHP; engineLocked.power = true }
-            if (specs.displacement) { form.engineCapacity = specs.displacement; engineLocked.capacity = true }
-            if (specs.torqueNm) { extras.torque = specs.torqueNm; engineLocked.torque = true }
-            if (specs.co2EmissionGkm) { extras.co2 = specs.co2EmissionGkm; engineLocked.co2Emission = true }
-            if (specs.euroNorm) { extras.euroNorm = specs.euroNorm; engineLocked.euroNorm = true }
-            if (specs.acceleration0100) { engineLocked.acceleration = true }
-            if (specs.avgConsumptionL) { extras.fuelConsumptionMix = specs.avgConsumptionL; engineLocked.fuelConsumptionCombined = true }
-            if (specs.fuelTypeId) { form.fuelTypeId = specs.fuelTypeId; engineLocked.fuelType = true }
-        }
-    }
-}
-
-async function onVehicleCategoryChange(categoryId: number | null) {
-    form.vehicleSubtypeId = null
-    vehicleSubtypes.value = []
-    if (categoryId) {
-        vehicleSubtypes.value = await fetchVehicleSubtypes(categoryId)
+        if (specs) engineSpecs.value = specs
     }
 }
 
@@ -3902,6 +3874,32 @@ async function submit() {
             return
         }
     }
+
+    // Re-validate the brand→model→generation→trim→engine chain against the backend right
+    // before submitting — none of the individual step validations above check referential
+    // consistency, only presence, so a stale selection could otherwise slip through.
+    if (form.brandId) {
+        try {
+            const chainCheck = await validateChain({
+                brandId: form.brandId as number,
+                modelId: form.modelId,
+                generationId: form.generationId,
+                trimId: form.trimId,
+                engineVersionId: form.engineVersionId,
+                vehicleCategoryId: form.categoryId,
+            })
+            if (!chainCheck.isValid) {
+                stepError.value = chainCheck.errorMessage || 'Wybrane dane pojazdu są niespójne. Sprawdź markę, model, generację i silnik.'
+                currentStep.value = 1
+                setTimeout(() => { stepError.value = '' }, 4000)
+                return
+            }
+        } catch {
+            // Validation endpoint unreachable — fail open rather than blocking submission on a
+            // transient network error; the backend still re-checks the chain on save.
+        }
+    }
+
     error.value = ''
     limitError.value = null
     loading.value = true
