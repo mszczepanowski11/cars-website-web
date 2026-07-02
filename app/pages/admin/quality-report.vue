@@ -53,6 +53,14 @@
                     </div>
                 </div>
 
+                <!-- Info stats (not issues, just current counts) -->
+                <div class="info-stats-row">
+                    <div v-for="s in infoStats" :key="s.label" class="info-stat">
+                        <span class="is-value">{{ s.value }}</span>
+                        <span class="is-label">{{ s.label }}</span>
+                    </div>
+                </div>
+
                 <!-- Section: Brands without models -->
                 <ReportSection
                     title="Marki bez modeli"
@@ -134,6 +142,30 @@
                     :items="report.advertsNoImages"
                     :columns="[{ key: 'id', label: 'ID' }, { key: 'title', label: 'Tytuł' }, { key: 'createdAt', label: 'Data dodania', type: 'date' }]"
                 />
+
+                <!-- Section: Categories without feature categories -->
+                <ReportSection
+                    title="Kategorie pojazdów bez wyposażenia"
+                    icon="mdi-tag-off-outline"
+                    :items="report.categoriesWithoutFeatureCategories"
+                    :columns="[{ key: 'id', label: 'ID' }, { key: 'name', label: 'Kategoria' }, { key: 'slug', label: 'Slug' }]"
+                />
+
+                <!-- Section: Categories without subtypes -->
+                <ReportSection
+                    title="Kategorie pojazdów bez podtypów"
+                    icon="mdi-shape-off-outline"
+                    :items="report.categoriesWithoutSubtypes"
+                    :columns="[{ key: 'id', label: 'ID' }, { key: 'name', label: 'Kategoria' }, { key: 'slug', label: 'Slug' }]"
+                />
+
+                <!-- Section: Part adverts missing structured category -->
+                <ReportSection
+                    title="Ogłoszenia części bez kategorii części (max 50)"
+                    icon="mdi-cog-off-outline"
+                    :items="report.partAdvertsMissingStructuredCategory"
+                    :columns="[{ key: 'id', label: 'ID' }, { key: 'title', label: 'Tytuł' }, { key: 'createdAt', label: 'Data dodania', type: 'date' }]"
+                />
             </template>
         </main>
     </div>
@@ -161,6 +193,18 @@ const summaryItems = computed(() => {
         { key: 'duplicateModels',          label: 'Zduplikowane modele',           count: s.duplicateModelsCount          },
         { key: 'advertsBlankTitle',        label: 'Ogłoszenia bez tytułu',         count: s.advertsBlankTitleCount        },
         { key: 'advertsNoImages',          label: 'Ogłoszenia bez zdjęć',          count: s.advertsNoImagesCount          },
+        { key: 'categoriesWithoutFeatureCategories', label: 'Kategorie bez wyposażenia', count: s.categoriesWithoutFeatureCategoriesCount },
+        { key: 'categoriesWithoutSubtypes',          label: 'Kategorie bez podtypów',    count: s.categoriesWithoutSubtypesCount          },
+        { key: 'partAdvertsMissingStructuredCategory', label: 'Części bez kategorii', count: s.partAdvertsMissingStructuredCategoryCount },
+    ]
+})
+
+const infoStats = computed(() => {
+    if (!report.value) return []
+    return [
+        { label: 'Kategorie pojazdów', value: report.value.vehicleCategoryCount },
+        { label: 'Reguły wiarygodności silnika', value: report.value.enginePlausibilityRuleCount },
+        { label: 'Oczekujące wnioski o kategorię', value: report.value.pendingCustomCategoryRequestCount },
     ]
 })
 
@@ -308,6 +352,26 @@ const ReportSection = defineComponent({
     .has-issues & { color: $red; }
     .ok & { color: rgb(34, 197, 94); }
 }
+
+.info-stats-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.info-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border;
+    border-radius: $r-md;
+}
+
+.is-value { font-size: 18px; font-weight: 800; color: $text; }
+.is-label { font-size: 11px; color: $text-dim; }
 
 .report-section {
     background: rgba(255,255,255,0.02);
