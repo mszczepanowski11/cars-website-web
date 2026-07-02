@@ -207,16 +207,19 @@
                             <p v-if="req.adminNotes" class="cat-card-notes">
                                 <strong>Notatka:</strong> {{ req.adminNotes }}
                             </p>
+                            <p v-if="req.resultingVehicleCategoryId || req.resultingVehicleSubtypeId" class="cat-card-notes">
+                                <strong>Utworzono:</strong>
+                                {{ req.resultingVehicleCategoryId ? 'nowa kategoria pojazdu' : 'podtyp pojazdu' }}
+                                (id={{ req.resultingVehicleCategoryId ?? req.resultingVehicleSubtypeId }})
+                            </p>
                         </div>
-                        <div v-if="req.status === 'Pending'" class="cat-card-actions">
+                        <div v-if="req.status === 'Pending' && curatingId !== req.id" class="cat-card-actions">
                             <button
                                 type="button"
                                 class="btn-approve"
-                                :disabled="categoryActionLoading === `${req.id}_approve`"
-                                @click="approveCategory(req.id)"
+                                @click="startCuration(req)"
                             >
-                                <v-icon v-if="categoryActionLoading === `${req.id}_approve`" icon="mdi-loading" size="14" class="spin" />
-                                <v-icon v-else icon="mdi-check" size="14" />
+                                <v-icon icon="mdi-check" size="14" />
                                 Zatwierdź
                             </button>
                             <button
@@ -229,6 +232,41 @@
                                 <v-icon v-else icon="mdi-close" size="14" />
                                 Odrzuć
                             </button>
+                        </div>
+
+                        <!-- Curation panel: admin decides what this request becomes -->
+                        <div v-if="curatingId === req.id" class="cat-curation-panel">
+                            <div class="afc-title">Zatwierdź jako...</div>
+                            <div class="radio-group" style="margin-bottom:10px">
+                                <label class="radio-opt" :class="{ active: curationForm.resultType === 'category' }">
+                                    <input type="radio" value="category" v-model="curationForm.resultType" hidden />
+                                    Nowa kategoria pojazdu
+                                </label>
+                                <label class="radio-opt" :class="{ active: curationForm.resultType === 'subtype' }">
+                                    <input type="radio" value="subtype" v-model="curationForm.resultType" hidden />
+                                    Podtyp istniejącej kategorii
+                                </label>
+                            </div>
+                            <div class="afc-fields">
+                                <input v-model="curationForm.name" class="afc-input" placeholder="Nazwa" />
+                                <input v-model="curationForm.slug" class="afc-input" placeholder="Slug (opcjonalnie)" />
+                                <select v-if="curationForm.resultType === 'subtype'" v-model="curationForm.vehicleCategoryId" class="afc-select">
+                                    <option value="">Wybierz kategorię nadrzędną</option>
+                                    <option v-for="vc in vehicleCategoriesForCuration" :key="vc.id" :value="vc.id">{{ vc.name }}</option>
+                                </select>
+                            </div>
+                            <div class="afc-actions">
+                                <button
+                                    type="button"
+                                    class="btn-confirm"
+                                    :disabled="!curationForm.name || (curationForm.resultType === 'subtype' && !curationForm.vehicleCategoryId) || categoryActionLoading === `${req.id}_approve`"
+                                    @click="confirmApproveCategory(req.id)"
+                                >
+                                    <v-icon v-if="categoryActionLoading === `${req.id}_approve`" icon="mdi-loading" size="13" class="spin" />
+                                    Potwierdź zatwierdzenie
+                                </button>
+                                <button type="button" class="btn-cancel" @click="cancelCuration">Anuluj</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -310,6 +348,12 @@ const loadingCategories = ref(false)
 const categoryActionLoading = ref<string | null>(null)
 const categoryStatusFilter = ref('')
 const pendingCategoriesCount = ref(0)
+const vehicleCategoriesForCuration = ref<{ id: number; name: string }[]>([])
+const curatingId = ref<number | null>(null)
+const curationForm = reactive({
+    resultType: 'category' as 'category' | 'subtype',
+    name: '', slug: '', vehicleCategoryId: '' as number | '',
+})
 
 const categoryFilters = [
     { value: '', label: 'Wszystkie' },
@@ -340,11 +384,42 @@ async function loadPendingCount() {
     } catch { /* silent — badge is non-critical */ }
 }
 
-async function approveCategory(id: number) {
+// Approval is a curation step: clicking "Zatwierdź" opens a small form instead of approving
+// immediately, since the admin decides whether this becomes a brand-new top-level category or a
+// subtype under an existing one, and supplies the actual name/slug — not auto-created from the
+// user's raw free text.
+async function startCuration(req: any) {
+    curatingId.value = req.id
+    curationForm.resultType = 'category'
+    curationForm.name = req.categoryName
+    curationForm.slug = ''
+    curationForm.vehicleCategoryId = ''
+    if (!vehicleCategoriesForCuration.value.length) {
+        vehicleCategoriesForCuration.value = await $fetch('/api/proxy/api/Taxonomy/categories').catch(() => [])
+    }
+}
+
+function cancelCuration() {
+    curatingId.value = null
+}
+
+async function confirmApproveCategory(id: number) {
+    if (!curationForm.name) return
+    if (curationForm.resultType === 'subtype' && !curationForm.vehicleCategoryId) return
     categoryActionLoading.value = `${id}_approve`
     try {
-        await $fetch(`/api/proxy/api/Admin/custom-categories/${id}/approve`, { method: 'PUT', body: { notes: null } })
-        toastSuccess('Kategoria została zatwierdzona.')
+        await $fetch(`/api/proxy/api/Admin/custom-categories/${id}/approve`, {
+            method: 'PUT',
+            body: {
+                notes: null,
+                resultType: curationForm.resultType,
+                name: curationForm.name,
+                slug: curationForm.slug || undefined,
+                vehicleCategoryId: curationForm.resultType === 'subtype' ? curationForm.vehicleCategoryId : undefined,
+            },
+        })
+        toastSuccess('Wniosek zatwierdzony — utworzono nową taksonomię.')
+        curatingId.value = null
         await loadCustomCategories()
         await loadPendingCount()
     } catch (e: any) {
@@ -914,6 +989,117 @@ function actionClass(type: string) {
     &:disabled {
         opacity: 0.6;
         cursor: not-allowed;
+    }
+}
+
+.cat-card {
+    flex-wrap: wrap;
+}
+
+.cat-curation-panel {
+    flex-basis: 100%;
+    width: 100%;
+    margin-top: 12px;
+    padding-top: 14px;
+    border-top: 1px solid $border;
+}
+
+.cat-curation-panel .afc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text;
+    margin-bottom: 10px;
+}
+
+.cat-curation-panel .radio-group {
+    display: flex;
+    gap: 8px;
+}
+
+.cat-curation-panel .radio-opt {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: $r-sm;
+    border: 1px solid $border;
+    color: $text-dim;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &.active {
+        background: rgba($red, 0.12);
+        color: $red;
+        border-color: rgba($red, 0.3);
+    }
+    &:hover:not(.active) {
+        border-color: rgba(255, 255, 255, 0.15);
+        color: $text-muted;
+    }
+}
+
+.cat-curation-panel .afc-fields {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.cat-curation-panel .afc-input,
+.cat-curation-panel .afc-select {
+    flex: 1;
+    min-width: 160px;
+    background: #080808;
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    color: $text;
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+
+    &:focus {
+        border-color: rgba($red, 0.4);
+    }
+}
+
+.cat-curation-panel .afc-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.cat-curation-panel .btn-confirm {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    background: $red;
+    border: none;
+    border-radius: $r-sm;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    &:hover:not(:disabled) {
+        opacity: 0.88;
+    }
+}
+
+.cat-curation-panel .btn-cancel {
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    color: $text-dim;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+        color: $text-muted;
     }
 }
 
