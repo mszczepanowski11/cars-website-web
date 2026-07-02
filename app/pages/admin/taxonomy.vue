@@ -12,6 +12,8 @@
                 <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
                 <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
                 <NuxtLink to="/admin/taxonomy" class="nav-item active"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
+                <NuxtLink to="/admin/vehicle-data" class="nav-item"><v-icon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item"><v-icon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
                 <div class="nav-divider" />
                 <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
@@ -97,7 +99,7 @@
                     <div class="afc-fields">
                         <input v-model="newCatName" class="afc-input" placeholder="Nazwa kategorii (np. Bezpieczeństwo)" />
                         <select v-model="newCatVehicleId" class="afc-select">
-                            <option value="">Wszystkie pojazdy</option>
+                            <option value="" disabled>Wybierz kategorię pojazdu *</option>
                             <option v-for="vc in vehicleCategories" :key="vc.id" :value="vc.id">{{ vc.name }}</option>
                         </select>
                         <select v-model="newCatBrandId" class="afc-select" @change="newCatModelId = ''; loadNewCatModels()">
@@ -108,11 +110,11 @@
                             <option value="">Wszystkie modele</option>
                             <option v-for="m in newCatModels" :key="m.id" :value="m.id">{{ m.name }}</option>
                         </select>
-                        <button class="btn-confirm" :disabled="!newCatName || addingCat" @click="addCategory">
+                        <button class="btn-confirm" :disabled="!newCatName || !newCatVehicleId || addingCat" @click="addCategory">
                             <v-icon v-if="addingCat" icon="mdi-loading" size="13" class="spin" />
                             Dodaj
                         </button>
-                        <button class="btn-cancel" @click="showAddCat = false; newCatName = ''; newCatBrandId = ''; newCatModelId = ''">Anuluj</button>
+                        <button class="btn-cancel" @click="showAddCat = false; newCatName = ''; newCatVehicleId = ''; newCatBrandId = ''; newCatModelId = ''">Anuluj</button>
                     </div>
                 </div>
 
@@ -231,14 +233,14 @@ async function deleteFeature(id: number, name: string) {
 }
 
 async function addCategory() {
-    if (!newCatName.value) return
+    if (!newCatName.value || !newCatVehicleId.value) return
     addingCat.value = true
     try {
         await $fetch('/api/proxy/api/Admin/feature-categories', {
             method: 'POST',
             body: {
                 name: newCatName.value,
-                vehicleCategoryId: newCatVehicleId.value || null,
+                vehicleCategoryId: newCatVehicleId.value,
                 brandId: newCatBrandId.value || null,
                 modelId: newCatModelId.value || null,
             }

@@ -36,6 +36,10 @@
                     <v-icon icon="mdi-tag-multiple-outline" size="17" />
                     Wyposażenie
                 </NuxtLink>
+                <NuxtLink to="/admin/vehicle-data" class="nav-item" :class="{ active: route.path === '/admin/vehicle-data' }">
+                    <v-icon icon="mdi-car-cog" size="17" />
+                    Marki i modele
+                </NuxtLink>
                 <NuxtLink to="/admin/quality-report" class="nav-item" :class="{ active: route.path === '/admin/quality-report' }">
                     <v-icon icon="mdi-database-check-outline" size="17" />
                     Jakość danych
