@@ -311,7 +311,7 @@
 
                     <div class="secure-note-sm">
                         <v-icon icon="mdi-shield-check-outline" size="13" class="secure-icon-sm" />
-                        Transakcja zabezpieczona przez CARI<span class="red-text">ZO</span>
+                        Transakcja zabezpieczona przez <span class="nowrap-brand">CARI<span class="red-text">ZO</span></span>
                     </div>
                 </div>
             </div>
@@ -2295,6 +2295,7 @@ onUnmounted(() => {
 
 .secure-icon-sm { color: #4caf50; }
 .red-text { color: $red; }
+.nowrap-brand { white-space: nowrap; }
 
 // ── Specs bar ─────────────────────────────────────────────────────────────────
 .specs-bar {
