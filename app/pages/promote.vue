@@ -19,11 +19,11 @@
                     </h1>
                     <p class="promo-desc">
                         <template v-if="isPremiereUpcoming">
-                            Od 12 do 14 czerwca wszystkie opcje promowania są bezpłatne.<br>
+                            Od 4 do 12 lipca wszystkie opcje promowania są bezpłatne.<br>
                             Przygotuj swoje ogłoszenia już teraz!
                         </template>
                         <template v-else>
-                            W czasie trwania premiery (12–14 czerwca) wszystkie opcje<br>
+                            W czasie trwania premiery (4–12 lipca) wszystkie opcje<br>
                             promowania są dostępne bezpłatnie.
                         </template>
                     </p>
@@ -177,7 +177,7 @@
                         <!-- Upcoming premiere: teaser tag -->
                         <div v-else-if="isPremiereUpcoming" class="plan-upcoming-row">
                             <v-icon icon="mdi-gift-outline" size="14" class="gift-icon" />
-                            <span>Bezpłatnie od 12 do 14 czerwca</span>
+                            <span>Bezpłatnie od 4 do 12 lipca</span>
                         </div>
 
                         <button class="plan-btn" @click.stop="selectAndPurchase(plan.key)">
