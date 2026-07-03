@@ -2313,7 +2313,12 @@ onUnmounted(() => {
 }
 
 .spec-item {
-    flex: 1;
+    // flex:1 let items shrink below their content's natural width (bounded only by
+    // min-width, which a longer value like "Automatyczna" could still exceed), causing the
+    // text to overflow its own box and visually overlap the next item's icon. flex:0 0 auto
+    // keeps each item at its natural content width — the parent's overflow-x:auto handles
+    // any total overflow via horizontal scroll instead of squishing items into each other.
+    flex: 0 0 auto;
     min-width: 90px;
     display: flex;
     align-items: center;
