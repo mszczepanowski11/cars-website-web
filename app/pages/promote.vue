@@ -269,7 +269,6 @@ useHead({ title: 'Promuj ogłoszenie — CARIZO', meta: [{ name: 'robots', conte
 import type { CarAdvert, CouponValidation } from '~/types'
 
 const { isPremiereActive, isPremiereUpcoming, remainingToEnd, remainingToStart, pad } = usePromotion()
-const { purchasePromotion } = usePromotions()
 const { validateCoupon } = useCoupons()
 const { getImageUrl, placeholder } = useImageUrl()
 const { getPrice: getPriceApi } = usePayment()
@@ -465,34 +464,28 @@ async function doPurchase() {
     purchaseSuccess.value = null
     purchaseError.value = null
     try {
-        if (isPremiereActive.value) {
-            await purchasePromotion({
-                advertId: selectedAdvertId.value,
-                type: plan.promotionType as any,
-                durationDays: days,
-            })
+        // Ensure advert is published before payment redirect
+        await $fetch(`/api/proxy/api/listings/${selectedAdvertId.value}/publish`, { method: 'POST', body: {} }).catch(() => {})
+
+        const siteUrl = config.public.siteUrl
+        const body: Record<string, unknown> = {
+            advertId: selectedAdvertId.value,
+            serviceType: plan.promotionType,
+            durationDays: days,
+            returnUrl: `${siteUrl}/payment/return?status=success&advertId=${selectedAdvertId.value}`,
+            cancelUrl: `${siteUrl}/payment/return?status=cancel&advertId=${selectedAdvertId.value}`,
+        }
+        if (couponValid.value && couponCode.value) body.couponCode = couponCode.value
+        // During the free launch promo, the backend activates every service immediately
+        // (adminActivated: true) instead of redirecting to imoje — same response shape as
+        // the existing admin bypass, so this one path covers both premiere and normal flow.
+        const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+        if (result.adminActivated) {
             purchaseSuccess.value = `${plan.name} zostało aktywowane bezpłatnie! Ogłoszenie jest teraz lepiej widoczne.`
             clearCoupon()
             selectedPlan.value = null
         } else {
-            // Ensure advert is published before payment redirect
-            await $fetch(`/api/proxy/api/listings/${selectedAdvertId.value}/publish`, { method: 'POST', body: {} }).catch(() => {})
-
-            const siteUrl = config.public.siteUrl
-            const body: Record<string, unknown> = {
-                advertId: selectedAdvertId.value,
-                serviceType: plan.promotionType,
-                durationDays: days,
-                returnUrl: `${siteUrl}/payment/return?status=success&advertId=${selectedAdvertId.value}`,
-                cancelUrl: `${siteUrl}/payment/return?status=cancel&advertId=${selectedAdvertId.value}`,
-            }
-            if (couponValid.value && couponCode.value) body.couponCode = couponCode.value
-            const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-            if (result.adminActivated) {
-                navigateTo(`/payment/return?status=success&advertId=${selectedAdvertId.value}`)
-            } else {
-                submitImojeForm(result)
-            }
+            submitImojeForm(result)
         }
     } catch (e: any) {
         const msg = e?.data?.message ?? e?.message ?? ''

@@ -26,8 +26,8 @@ function dismiss() {
             </span>
             <span class="ann-text">
                 {{ isPremiereUpcoming
-                    ? 'Promowanie ofert za darmo 12–14 czerwca!'
-                    : 'Promowanie ofert za darmo przez czas trwania premiery!' }}
+                    ? 'Wyróżnienia i pakiety za darmo od 4 do 12 lipca!'
+                    : 'Wyróżnienia i pakiety za darmo przez czas trwania premiery!' }}
             </span>
             <span class="ann-countdown">
                 {{ isPremiereUpcoming ? 'Premiera za:' : 'Pozostało:' }}
