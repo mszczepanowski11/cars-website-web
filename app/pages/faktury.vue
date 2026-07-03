@@ -224,118 +224,14 @@ onMounted(() => { loadInvoices(); loadPayments() })
 async function downloadPdf(inv: MonthlyInvoice) {
     pdfLoadingId.value = inv.id
     try {
-        const { jsPDF } = await import('jspdf')
-        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-        const W = doc.internal.pageSize.getWidth()
-        let y = 0
-
-        // Red header bar
-        doc.setFillColor(139, 13, 29)
-        doc.rect(0, 0, W, 22, 'F')
-        doc.setTextColor(255, 255, 255)
-        doc.setFontSize(18); doc.setFont('helvetica', 'bold')
-        doc.text('CARIZO', 14, 14)
-        doc.setFontSize(8); doc.setFont('helvetica', 'normal')
-        doc.text('carizo.eu | biuro@carizo.eu', W - 14, 14, { align: 'right' })
-        y = 32
-
-        // Invoice title block
-        doc.setTextColor(20, 20, 20)
-        doc.setFontSize(22); doc.setFont('helvetica', 'bold')
-        doc.text('FAKTURA VAT', 14, y); y += 8
-        doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(100, 100, 100)
-        doc.text(`Nr faktury: ${inv.invoiceNumber}`, 14, y)
-        doc.text(`Data wystawienia: ${new Date(inv.generatedAt).toLocaleDateString('pl-PL')}`, W - 14, y, { align: 'right' })
-        y += 6
-        doc.text(`Okres rozliczeniowy: ${monthName(inv.month)} ${inv.year}`, 14, y); y += 14
-
-        // Seller / Buyer boxes
-        const boxH = 36
-        doc.setFillColor(248, 248, 248)
-        doc.roundedRect(12, y - 2, (W - 30) / 2, boxH, 2, 2, 'F')
-        doc.roundedRect(W / 2 + 3, y - 2, (W - 30) / 2, boxH, 2, 2, 'F')
-
-        doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(139, 13, 29)
-        doc.text('SPRZEDAWCA', 16, y + 4)
-        doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40)
-        doc.text('CARIZO Sp. z o.o.', 16, y + 10)
-        doc.setTextColor(80, 80, 80)
-        doc.text('ul. Przykładowa 1', 16, y + 16)
-        doc.text('00-000 Warszawa', 16, y + 22)
-        doc.text('NIP: 0000000000', 16, y + 28)
-
-        const bx = W / 2 + 7
-        doc.setFont('helvetica', 'bold'); doc.setTextColor(139, 13, 29)
-        doc.text('NABYWCA', bx, y + 4)
-        doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40)
-        const buyerLines: string[] = []
-        if (inv.companyName) { buyerLines.push(inv.companyName); if (inv.nip) buyerLines.push(`NIP: ${inv.nip}`) }
-        else buyerLines.push(inv.userName)
-        if (inv.street) buyerLines.push(inv.street)
-        if (inv.postalCode || inv.city) buyerLines.push(`${inv.postalCode ?? ''} ${inv.city ?? ''}`.trim())
-        buyerLines.push(inv.userEmail)
-        buyerLines.forEach((line, i) => {
-            if (i === 0) doc.setTextColor(40, 40, 40)
-            else doc.setTextColor(80, 80, 80)
-            doc.text(line, bx, y + 10 + i * 6)
-        })
-        y += boxH + 12
-
-        // Items table
-        const colX = [14, 24, 110, 138, 158, 175]
-        doc.setFillColor(139, 13, 29)
-        doc.rect(12, y, W - 24, 8, 'F')
-        doc.setFontSize(7.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(255, 255, 255)
-        doc.text('Lp.', colX[0], y + 5.5)
-        doc.text('Nazwa usługi', colX[1], y + 5.5)
-        doc.text('Data', colX[2], y + 5.5)
-        doc.text('Netto', colX[3], y + 5.5)
-        doc.text('VAT', colX[4], y + 5.5)
-        doc.text('Brutto', colX[5], y + 5.5)
-        y += 9
-
-        doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40)
-        inv.items.forEach((item, idx) => {
-            if (idx % 2 === 0) { doc.setFillColor(248, 248, 248); doc.rect(12, y - 1, W - 24, 7, 'F') }
-            doc.setFontSize(7.5)
-            doc.text(String(idx + 1), colX[0], y + 4.5)
-            const lbl = (item.serviceDescription || serviceLabel(item.serviceType)) + (item.durationDays ? ` — ${item.durationDays} dni` : '')
-            doc.text(lbl.slice(0, 40), colX[1], y + 4.5)
-            doc.text(new Date(item.createdAt).toLocaleDateString('pl-PL'), colX[2], y + 4.5)
-            const net = item.amount / (1 + inv.vatRate / 100)
-            const vat = item.amount - net
-            doc.text(`${net.toFixed(2)} zł`, colX[3], y + 4.5)
-            doc.text(`${inv.vatRate}%`, colX[4], y + 4.5)
-            doc.text(`${item.amount.toFixed(2)} zł`, colX[5], y + 4.5)
-            y += 7
-        })
-
-        // Bottom line
-        doc.setDrawColor(200, 200, 200); doc.line(12, y + 2, W - 12, y + 2); y += 8
-
-        // Totals
-        const tw = 80; const tx = W - 12 - tw
-        doc.setFillColor(248, 248, 248); doc.roundedRect(tx, y, tw, 26, 2, 2, 'F')
-        doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(80, 80, 80)
-        doc.text('Razem netto:', tx + 4, y + 7); doc.text(`${fmtAmt(inv.netAmount)} zł`, tx + tw - 4, y + 7, { align: 'right' })
-        doc.text(`VAT (${inv.vatRate}%):`, tx + 4, y + 14); doc.text(`${fmtAmt(inv.vatAmount)} zł`, tx + tw - 4, y + 14, { align: 'right' })
-        doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(139, 13, 29)
-        doc.text('RAZEM:', tx + 4, y + 23); doc.text(`${fmtAmt(inv.totalAmount)} zł`, tx + tw - 4, y + 23, { align: 'right' })
-        y += 34
-
-        // Payment method
-        doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(100, 100, 100)
-        doc.text('Forma płatności: płatność elektroniczna (ING IMOJE)', 14, y)
-        if (inv.sentAt) { y += 5; doc.text(`Data opłacenia: ${new Date(inv.sentAt).toLocaleDateString('pl-PL')}`, 14, y) }
-        y += 10
-
-        // Footer
-        doc.setFontSize(7); doc.setTextColor(160, 160, 160)
-        doc.text('Dokument wygenerowany przez system CARIZO | carizo.eu | Nie wymaga podpisu ani pieczęci.', W / 2, 289, { align: 'center' })
-
-        doc.save(`faktura-${inv.invoiceNumber.replace(/\//g, '-')}.pdf`)
+        const blob = await $fetch<Blob>(`/api/proxy/api/Invoice/${inv.id}/pdf`, { responseType: 'blob' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url; a.download = `faktura-${inv.invoiceNumber.replace(/\//g, '-')}.pdf`
+        document.body.appendChild(a); a.click()
+        document.body.removeChild(a); URL.revokeObjectURL(url)
     } catch {
-        toastError('Nie udało się wygenerować PDF. Spróbuj ponownie.')
+        toastError('Nie udało się pobrać PDF. Spróbuj ponownie.')
     } finally {
         pdfLoadingId.value = null
     }
