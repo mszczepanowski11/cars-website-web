@@ -60,9 +60,14 @@ const props = withDefaults(defineProps<{
     searchPlaceholder?: string
     prefixIcon?: string
     disabled?: boolean
+    // Opt-in safety net for brand selects where a raw numeric ID can leak in as the label
+    // (see 8543eb4). Must stay opt-in: legitimately numeric labels (door/seat counts, years,
+    // etc.) are valid options elsewhere and this filter would silently delete them.
+    filterNumericLabels?: boolean
 }>(), {
     placeholder: 'Wybierz',
     disabled: false,
+    filterNumericLabels: false,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [v: number | string | null]; change: [v: number | string | null] }>()
@@ -76,7 +81,9 @@ const listRef = ref<HTMLElement | null>(null)
 
 const isNumeric = (s: string) => /^\d+$/.test(s)
 
-const safeOptions = computed(() => props.options.filter(o => o.label && !isNumeric(String(o.label))))
+const safeOptions = computed(() => props.filterNumericLabels
+    ? props.options.filter(o => o.label && !isNumeric(String(o.label)))
+    : props.options)
 
 const selectedLabel = computed(() => safeOptions.value.find(o => o.value === props.modelValue)?.label ?? '')
 
