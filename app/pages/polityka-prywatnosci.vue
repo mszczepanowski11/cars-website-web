@@ -4,7 +4,7 @@
             <div class="container">
                 <div class="hero-eyebrow">Dokumenty prawne</div>
                 <h1>Polityka <span>prywatności</span></h1>
-                <p>Ostatnia aktualizacja: 23.06.2026</p>
+                <p>Ostatnia aktualizacja: 04.07.2026</p>
             </div>
         </div>
 
@@ -221,7 +221,7 @@
                     <ol>
                         <li>CARIZO wdraża zaawansowane środki techniczne i organizacyjne (w tym szyfrowanie transmisji certyfikatami SSL/TLS, kryptograficzne haszowanie haseł, systemy kontroli dostępu do baz danych), gwarantujące poziom bezpieczeństwa adekwatny do ryzyka naruszenia praw lub wolności osób fizycznych.</li>
                         <li>Niniejsze zasady prywatności podlegają stałemu przeglądowi. O wszelkich zmianach strukturalnych w celach lub podstawach przetwarzania danych zarejestrowani Użytkownicy zostaną powiadomieni drogą mailową z 14-dniowym wyprzedzeniem.</li>
-                        <li>Treść niniejszych regulacji wchodzi w życie z dniem 23.06.2026.</li>
+                        <li>Treść niniejszych regulacji wchodzi w życie z dniem 04.07.2026.</li>
                     </ol>
                 </section>
 

@@ -4,7 +4,7 @@
             <div class="container">
                 <div class="hero-eyebrow">Dokumenty prawne</div>
                 <h1>Polityka <span>plików cookies</span></h1>
-                <p>Ostatnia aktualizacja: 23.06.2026</p>
+                <p>Ostatnia aktualizacja: 04.07.2026</p>
             </div>
         </div>
 
@@ -138,7 +138,7 @@
                     <ol>
                         <li>Niniejsza Polityka Plików Cookies funkcjonuje niezależnie od Polityki Prywatności Serwisu CARIZO, stanowiąc jej uszczegółowienie w zakresie technologii składowania informacji w Urządzeniach Końcowych.</li>
                         <li>Administrator zastrzega sobie prawo do wprowadzania modyfikacji w niniejszej Polityce w przypadku zmian w przepisach prawa lub wdrożenia nowych rozwiązań informatycznych w Serwisie. O zmianach Użytkownicy będą informowani poprzez publikację jednolitego tekstu na niniejszej podstronie.</li>
-                        <li>Polityka wchodzi w życie z dniem 23.06.2026.</li>
+                        <li>Polityka wchodzi w życie z dniem 04.07.2026.</li>
                     </ol>
                 </section>
 

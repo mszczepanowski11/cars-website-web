@@ -4,7 +4,7 @@
             <div class="container">
                 <div class="hero-eyebrow">Dokumenty prawne</div>
                 <h1>Regulamin <span>serwisu</span></h1>
-                <p>Ostatnia aktualizacja: 01.07.2026</p>
+                <p>Ostatnia aktualizacja: 04.07.2026</p>
             </div>
         </div>
 
@@ -177,7 +177,7 @@
                         <li>W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego, ustawy o prawach konsumenta oraz ustawy z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej.</li>
                         <li><strong>Prawo właściwe:</strong> Niniejszy Regulamin oraz wszelkie stosunki prawne wynikające z korzystania z Serwisu podlegają prawu Rzeczypospolitej Polskiej.</li>
                         <li><strong>Jurysdykcja:</strong> Wszelkie spory wynikłe z niniejszego Regulaminu lub z korzystania z Serwisu będą rozstrzygane przez właściwy sąd powszechny Rzeczypospolitej Polskiej. W stosunkach z konsumentami właściwy miejscowo jest sąd według siedziby pozwanego lub sąd miejsca zamieszkania konsumenta, według wyboru powoda. Konsumenci mogą korzystać z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń, w tym z platformy ODR dostępnej pod adresem: <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">ec.europa.eu/consumers/odr</a>. CARIZO informuje, że nie przystąpił do żadnego systemu pozasądowego rozwiązywania sporów konsumenckich w rozumieniu ustawy z dnia 23 września 2016 r. o pozasądowym rozwiązywaniu sporów konsumenckich (Dz. U. poz. 1823) — udział CARIZO w takim postępowaniu nie jest obowiązkowy. Konsument ma jednak prawo skorzystać z bezpłatnej pomocy powiatowych lub miejskich rzeczników praw konsumentów oraz Inspekcji Handlowej.</li>
-                        <li>Treść niniejszych postanowień wchodzi w życie z dniem 23.06.2026. Ostatnia aktualizacja: 01.07.2026.</li>
+                        <li>Treść niniejszych postanowień wchodzi w życie z dniem 04.07.2026. Ostatnia aktualizacja: 04.07.2026.</li>
                     </ol>
                 </section>
 

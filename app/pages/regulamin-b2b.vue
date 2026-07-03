@@ -4,7 +4,7 @@
             <div class="container">
                 <div class="hero-eyebrow">Dokumenty prawne</div>
                 <h1>Regulamin <span>B2B</span></h1>
-                <p>Ostatnia aktualizacja: 23.06.2026 · Dotyczy użytkowników prowadzących działalność gospodarczą</p>
+                <p>Ostatnia aktualizacja: 04.07.2026 · Dotyczy użytkowników prowadzących działalność gospodarczą</p>
             </div>
         </div>
 
@@ -187,7 +187,7 @@
                         <li>Prawem właściwym dla rozstrzygania sporów pomiędzy Administratorem a Użytkownikami Biznesowymi jest prawo polskie, a sądem wyłącznie właściwym – sąd powszechny właściwy dla siedziby Administratora.</li>
                         <li>Zmiany niniejszych postanowień wymagają powiadomienia Użytkowników Biznesowych na adres e-mail z zachowaniem minimum 15-dniowego okresu wyprzedzenia (zgodnie z art. 3 Rozporządzenia P2B), co umożliwia firmom dostosowanie operacyjne lub bezkosztowe usunięcie Konta przed wejściem modyfikacji w życie.</li>
                         <li>W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego oraz ustawy z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej.</li>
-                        <li>Treść niniejszych postanowień wchodzi w życie z dniem 23.06.2026.</li>
+                        <li>Treść niniejszych postanowień wchodzi w życie z dniem 04.07.2026.</li>
                     </ol>
                 </section>
 
