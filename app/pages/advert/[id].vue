@@ -268,59 +268,13 @@
                             <v-icon icon="mdi-information-outline" size="13" />
                             Nie możesz wysyłać wiadomości do samego siebie. To Twoje ogłoszenie.
                         </p>
-                        <div class="cta-row2">
-                            <button class="cta-alt" :disabled="!!txLoading" @click="showViewingPicker = !showViewingPicker">
-                                <v-icon icon="mdi-calendar-check-outline" size="15" />Oględziny
-                            </button>
-                            <button class="cta-alt" :disabled="!!txLoading" @click="showReservationPicker = !showReservationPicker">
-                                <v-icon icon="mdi-bookmark-check-outline" size="15" />Rezerwacja
-                            </button>
-                        </div>
-
-                        <!-- Viewing date picker -->
-                        <transition name="slide-down">
-                            <div v-if="showViewingPicker" class="date-picker-card">
-                                <div class="dpc-title"><v-icon icon="mdi-calendar-check-outline" size="14" />Umów oględziny</div>
-                                <div class="dpc-row">
-                                    <input v-model="viewingDate" type="date" class="dpc-input" :min="todayStr" />
-                                    <input v-model="viewingTime" type="time" class="dpc-input dpc-time" />
-                                </div>
-                                <textarea v-model="viewingNote" class="dpc-note" placeholder="Uwagi (opcjonalnie)..." rows="2" />
-                                <div class="dpc-btns">
-                                    <button class="dpc-cancel" @click="showViewingPicker = false">Anuluj</button>
-                                    <button class="dpc-confirm" :disabled="!viewingDate || txLoading === 'viewing'" @click="scheduleViewing">
-                                        <v-icon v-if="txLoading === 'viewing'" icon="mdi-loading" size="14" class="spin" />
-                                        Wyślij prośbę
-                                    </button>
-                                </div>
-                            </div>
-                        </transition>
-
-                        <!-- Reservation date picker -->
-                        <transition name="slide-down">
-                            <div v-if="showReservationPicker" class="date-picker-card">
-                                <div class="dpc-title"><v-icon icon="mdi-bookmark-check-outline" size="14" />Zarezerwuj pojazd</div>
-                                <div class="dpc-row">
-                                    <input v-model="reservationDate" type="date" class="dpc-input" :min="todayStr" />
-                                    <input v-model="reservationTime" type="time" class="dpc-input dpc-time" />
-                                </div>
-                                <textarea v-model="reservationNote" class="dpc-note" placeholder="Uwagi (opcjonalnie)..." rows="2" />
-                                <div class="dpc-btns">
-                                    <button class="dpc-cancel" @click="showReservationPicker = false">Anuluj</button>
-                                    <button class="dpc-confirm" :disabled="!reservationDate || txLoading === 'reservation'" @click="reserveCar">
-                                        <v-icon v-if="txLoading === 'reservation'" icon="mdi-loading" size="14" class="spin" />
-                                        Zarezerwuj
-                                    </button>
-                                </div>
-                            </div>
-                        </transition>
+                        <!-- Oględziny/Rezerwacja hidden until the Transaction backend exists (frontend
+                             posted to /api/Transaction, which has no controller/service/entity at all -
+                             every click 404'd). Re-enable once that feature is actually built. -->
                     </div>
 
                     <transition name="fade-msg">
-                        <div v-if="txSuccess" class="tx-success"><v-icon icon="mdi-check-circle-outline" size="14" />{{ txSuccess }}</div>
-                    </transition>
-                    <transition name="fade-msg">
-                        <div v-if="txError || contactError" class="tx-error"><v-icon icon="mdi-alert-circle-outline" size="14" />{{ txError || contactError }}</div>
+                        <div v-if="contactError" class="tx-error"><v-icon icon="mdi-alert-circle-outline" size="14" />{{ contactError }}</div>
                     </transition>
 
                     <div class="secure-note-sm">
