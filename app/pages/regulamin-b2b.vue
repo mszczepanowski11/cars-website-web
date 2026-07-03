@@ -211,74 +211,52 @@ useHead({ link: [{ rel: 'canonical', href: `${b2bConfig.public.siteUrl}/regulami
 </script>
 
 <style lang="scss" scoped>
-.static-page {
-    min-height: 100vh;
-    background: $bg;
-}
+.static-page { background: $bg; min-height: 100vh; padding-top: $nav-height; }
+.container { @include container; }
 
 .page-hero {
-    padding: 80px 0 60px;
+    padding: 56px 0 48px;
     border-bottom: 1px solid $border;
-    background: linear-gradient(180deg, rgba($red, 0.06) 0%, transparent 100%);
-
-    .hero-eyebrow {
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: $red;
-        margin-bottom: 16px;
-    }
-
-    h1 {
-        font-size: clamp(28px, 5vw, 48px);
-        font-weight: 800;
-        color: $text;
-        margin-bottom: 12px;
-        span { color: $red; }
-    }
-
-    p { color: $text-muted; font-size: 14px; }
+    background: linear-gradient(180deg, #0d0005 0%, $bg 100%);
 }
 
-.page-body {
-    padding: 60px 0 100px;
+.hero-eyebrow {
+    font-size: 11px; font-weight: 700; color: $red;
+    text-transform: uppercase; letter-spacing: 3px; margin-bottom: 14px;
 }
 
-.doc-content {
-    max-width: 780px;
+.page-hero h1 {
+    font-size: 48px; font-weight: 900; color: $text; margin-bottom: 10px;
+    span { color: $red; }
+    @include respond-to(sm) { font-size: 34px; }
 }
+
+.page-hero p { font-size: 14px; color: $text-dim; }
+
+.page-body { padding: 48px 0 80px; }
+
+.doc-content { max-width: 760px; }
 
 .doc-section {
-    margin-bottom: 48px;
+    margin-bottom: 40px;
 
     h2 {
-        font-size: 16px;
-        font-weight: 700;
-        color: $text;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        margin-bottom: 20px;
+        font-size: 18px; font-weight: 800; color: $text;
+        margin-bottom: 16px;
         padding-bottom: 10px;
         border-bottom: 1px solid $border;
     }
 
     p {
-        color: $text-muted;
-        font-size: 14px;
-        line-height: 1.75;
-        margin-bottom: 14px;
+        font-size: 14px; color: $text-muted; line-height: 1.8;
+        margin-bottom: 12px;
     }
 
     ol {
-        padding-left: 20px;
-        color: $text-muted;
-        font-size: 14px;
-        line-height: 1.75;
-
+        padding-left: 20px; margin-bottom: 12px;
         li {
-            margin-bottom: 12px;
-            strong { color: $text; }
+            font-size: 14px; color: $text-muted; line-height: 1.8;
+            margin-bottom: 10px;
         }
 
         ol {
@@ -288,21 +266,12 @@ useHead({ link: [{ rel: 'canonical', href: `${b2bConfig.public.siteUrl}/regulami
     }
 
     ul {
-        padding-left: 20px;
-        margin-top: 8px;
-        color: $text-muted;
-        font-size: 14px;
-        line-height: 1.75;
-        list-style: disc;
-
-        li { margin-bottom: 6px; }
+        padding-left: 20px; margin-top: 8px;
+        li {
+            font-size: 14px; color: $text-muted; line-height: 1.8; margin-bottom: 4px;
+        }
     }
-}
 
-.inline-link {
-    color: $red;
-    text-decoration: none;
-    font-weight: 500;
-    &:hover { text-decoration: underline; }
+    strong { color: $text; font-weight: 600; }
 }
 </style>
