@@ -128,8 +128,8 @@ export default defineNuxtConfig({
       googleClientId:   process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID   ?? '',
       facebookAppId:    process.env.NUXT_PUBLIC_FACEBOOK_APP_ID    ?? '',
       // Social media links — set in .env
-      socialFacebook:  process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK  ?? '',
-      socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM ?? '',
+      socialFacebook:  process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK  ?? 'https://www.facebook.com/profile.php?id=61589324586693&locale=pl_PL',
+      socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM ?? 'https://www.instagram.com/carizo.eu/',
       socialTiktok:    process.env.NUXT_PUBLIC_SOCIAL_TIKTOK    ?? '',
       socialYoutube:   process.env.NUXT_PUBLIC_SOCIAL_YOUTUBE   ?? '',
       devAccessKey:    process.env.DEV_ACCESS_KEY ?? '',
