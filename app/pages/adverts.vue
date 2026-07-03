@@ -622,23 +622,6 @@ import { useCategories } from '~/composables/useCategories'
 import type { TaxonomyItem, DriveType, CarColor, CarAdvert, Feature, PagedResult, CategoryWithCount, PartCategory } from '~/types'
 
 const advertsConfig = useRuntimeConfig()
-useSeoMeta({
-    title: 'Ogłoszenia samochodowe — CARIZO',
-    description: 'Przeglądaj tysiące ofert sprzedaży samochodów w Polsce. Filtruj po marce, modelu, cenie i przebiegu.',
-    ogType: 'website',
-    ogUrl: `${advertsConfig.public.siteUrl}/adverts`,
-    ogTitle: 'Ogłoszenia samochodowe — CARIZO',
-    ogDescription: 'Najlepsza platforma motoryzacyjna w Polsce — tysiące ogłoszeń.',
-    ogImage: `${advertsConfig.public.siteUrl}/hero-car.jpg`,
-    ogImageWidth: '1200',
-    ogImageHeight: '630',
-    ogSiteName: 'CARIZO',
-    twitterCard: 'summary_large_image',
-    twitterTitle: 'Ogłoszenia samochodowe — CARIZO',
-    twitterDescription: 'Tysiące ofert samochodów i pojazdów na CARIZO.',
-    robots: 'index, follow',
-})
-useHead({ link: [{ rel: 'canonical', href: `${advertsConfig.public.siteUrl}/adverts` }] })
 
 const route = useRoute()
 const router = useRouter()
@@ -1013,6 +996,35 @@ const driveTypes = computed(() => taxoData.value?.driveTypes ?? [])
 const colors     = computed(() => taxoData.value?.colors     ?? [])
 const categories = computed(() => (taxoData.value?.categories ?? []).filter(c => c.slug !== 'inne'))
 const partCategories = computed(() => taxoData.value?.partCategories ?? [])
+
+// Category-aware SEO: a search filtered to one category is effectively a distinct landing
+// page ("Auta osobowe — ogłoszenia") and should be indexable/rankable as such, instead of every
+// filtered view sharing the same generic title Google would treat as one page.
+const seoCategoryName = computed(() => f.categoryId ? categories.value.find(c => c.id === f.categoryId)?.name ?? null : null)
+const seoTitle = computed(() => seoCategoryName.value
+    ? `${seoCategoryName.value} — ogłoszenia | CARIZO`
+    : 'Ogłoszenia samochodowe — CARIZO')
+const seoDescription = computed(() => seoCategoryName.value
+    ? `Przeglądaj ogłoszenia w kategorii ${seoCategoryName.value} na CARIZO. Filtruj po marce, modelu, cenie i przebiegu.`
+    : 'Przeglądaj tysiące ofert sprzedaży samochodów w Polsce. Filtruj po marce, modelu, cenie i przebiegu.')
+
+useSeoMeta({
+    title: seoTitle,
+    description: seoDescription,
+    ogType: 'website',
+    ogUrl: `${advertsConfig.public.siteUrl}/adverts`,
+    ogTitle: seoTitle,
+    ogDescription: seoDescription,
+    ogImage: `${advertsConfig.public.siteUrl}/hero-car.jpg`,
+    ogImageWidth: '1200',
+    ogImageHeight: '630',
+    ogSiteName: 'CARIZO',
+    twitterCard: 'summary_large_image',
+    twitterTitle: seoTitle,
+    twitterDescription: seoDescription,
+    robots: 'index, follow',
+})
+useHead({ link: [{ rel: 'canonical', href: `${advertsConfig.public.siteUrl}/adverts` }] })
 
 if (taxoData.value?.initialModels?.length) {
     models.value = taxoData.value.initialModels
