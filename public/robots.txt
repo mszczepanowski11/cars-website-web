@@ -1,5 +1,7 @@
 User-agent: *
 Disallow: /api/
+Allow: /api/proxy/api/Taxonomy/
+Allow: /api/proxy/api/listings/
 Disallow: /dashboard
 Disallow: /add-advert
 Disallow: /my-adverts
