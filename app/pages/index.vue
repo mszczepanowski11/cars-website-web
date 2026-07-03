@@ -1231,14 +1231,20 @@ onMounted(async () => {
 .hfs-fade {
     position: absolute;
     inset: 0;
+    // Eases off faster than before through the 25-55% band, where the "Sprzedaj szybciej."
+    // headline actually sits — the old curve stayed dark almost all the way across the text,
+    // so how much of the photo's light showed through behind any given letter came down to
+    // where that letter happened to land relative to the steep 28-55% drop, not the text
+    // itself. Letting more of the underlying photo through uniformly there gives an even
+    // light level across the whole headline instead of a lucky/unlucky spot per letter.
     background:
         linear-gradient(to right,
             #{$bg} 0%,
-            #{$bg} 18%,
-            rgba(5,5,5,0.96) 28%,
-            rgba(5,5,5,0.78) 40%,
-            rgba(5,5,5,0.48) 55%,
-            rgba(5,5,5,0.18) 68%,
+            #{$bg} 15%,
+            rgba(5,5,5,0.75) 25%,
+            rgba(5,5,5,0.45) 40%,
+            rgba(5,5,5,0.25) 55%,
+            rgba(5,5,5,0.1) 68%,
             transparent 82%
         ),
         linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 30%, transparent 60%, rgba(0,0,0,0.6) 100%);
@@ -1319,10 +1325,6 @@ onMounted(async () => {
     color: $red;
     -webkit-text-stroke: 0;
     display: block;
-    // Even glow across the whole line so brightness doesn't depend on what the background
-    // photo happens to be doing behind any given letter (e.g. a light streak lighting up
-    // the middle of the word but fading out before the end).
-    text-shadow: 0 0 24px rgba($red, 0.65), 0 0 48px rgba($red, 0.35), 0 2px 20px rgba(0,0,0,0.6);
 }
 
 .hfs-sub {
