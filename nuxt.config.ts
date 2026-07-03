@@ -10,7 +10,11 @@ export default defineNuxtConfig({
   app: {
     head: {
       meta: [
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+        // maximum-scale=1 + user-scalable=no stop iOS Safari's automatic zoom-in when a form
+        // field is focused (its default behavior for any input with font-size below 16px) —
+        // without this, tapping a field on add-advert visibly zooms/shifts the page instead of
+        // staying full-screen and centered.
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
         { name: 'google-site-verification', content: 'M-Xj_zIclGdrERVKvxc9I_1Zlp7Wb93dgzUL-N7x0ks' },
       ],
       link: [
