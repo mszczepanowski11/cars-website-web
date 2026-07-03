@@ -4640,6 +4640,14 @@ onMounted(async () => {
         } catch {
             loadDraft()
         }
+        // loadDraft() restores form.categoryId via a raw Object.assign, bypassing onCategory() —
+        // so the equipment list and subtype options fetched above (with categoryId still null at
+        // that point) never get reloaded for the restored category, leaving the equipment step
+        // permanently stuck on "this category doesn't need an equipment list".
+        if (form.categoryId) {
+            try { subtypes.value = await fetchVehicleSubtypes(form.categoryId) } catch { subtypes.value = [] }
+            await loadContextFeatures()
+        }
         const queries = promoPlans.flatMap(p => p.days.map(d => ({ key: p.key, days: d })))
         await Promise.allSettled(queries.map(async ({ key, days }) => {
             try {
