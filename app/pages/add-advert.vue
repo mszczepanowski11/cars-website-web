@@ -382,9 +382,9 @@
                         <div v-if="isFieldVisible('fuelType')" class="field">
                             <label class="flabel">
                                 Rodzaj paliwa <span v-if="isFieldRequired('fuelType')" class="req">*</span>
-                                <span v-if="engineLocked.fuelType" class="field-locked-badge">
-                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika
-                                </span>
+                                <button v-if="engineLocked.fuelType" type="button" class="field-locked-badge" @click="unlockEngineField('fuelType')">
+                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                </button>
                             </label>
                             <SmartSelect
                                 v-model="form.fuelTypeId"
@@ -399,9 +399,9 @@
                         <div v-if="isFieldVisible('engine')" class="field">
                             <label class="flabel">
                                 {{ categoryConfig.engineLabel ?? 'Pojemność silnika (cm³)' }}
-                                <span v-if="engineLocked.capacity" class="field-locked-badge">
-                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika
-                                </span>
+                                <button v-if="engineLocked.capacity" type="button" class="field-locked-badge" @click="unlockEngineField('capacity')">
+                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                </button>
                             </label>
                             <input v-model.number="form.engineCapacity" type="number" class="finput"
                                 :class="{ 'finput--locked': engineLocked.capacity }"
@@ -416,9 +416,9 @@
                         <div v-if="isFieldVisible('power')" class="field">
                             <label class="flabel">
                                 {{ categoryConfig.powerLabel ?? 'Moc (KM)' }}
-                                <span v-if="engineLocked.power" class="field-locked-badge">
-                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika
-                                </span>
+                                <button v-if="engineLocked.power" type="button" class="field-locked-badge" @click="unlockEngineField('power')">
+                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                </button>
                             </label>
                             <input v-model.number="form.power" type="number"
                                 :class="['finput', engineLocked.power ? 'finput--locked' : '', fieldErrors.power ? 'finput--error' : '']"
@@ -512,9 +512,9 @@
                                     <div v-else-if="ef.type === 'select'" :class="['field', ef.fullWidth ? 'full-width' : '']">
                                         <label class="flabel">
                                             {{ ef.label }} <span v-if="ef.required" class="req">*</span>
-                                            <span v-if="efIsLocked(ef.key)" class="field-locked-badge">
-                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika
-                                            </span>
+                                            <button v-if="efIsLocked(ef.key)" type="button" class="field-locked-badge" @click="unlockEfField(ef.key)">
+                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                            </button>
                                         </label>
                                         <SmartSelect
                                             :model-value="extras[ef.key]"
@@ -530,9 +530,9 @@
                                     <div v-else-if="ef.type === 'number'" :class="['field', ef.fullWidth ? 'full-width' : '']">
                                         <label class="flabel">
                                             {{ ef.label }} <span v-if="ef.required" class="req">*</span>
-                                            <span v-if="efIsLocked(ef.key)" class="field-locked-badge">
-                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika
-                                            </span>
+                                            <button v-if="efIsLocked(ef.key)" type="button" class="field-locked-badge" @click="unlockEfField(ef.key)">
+                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                            </button>
                                         </label>
                                         <div class="input-unit-wrap">
                                             <input v-model.number="extras[ef.key]" type="number"
@@ -3251,6 +3251,16 @@ function efIsLocked(key: string): boolean {
     const lockKey = EF_LOCK_MAP[key]
     return lockKey ? engineLocked[lockKey] : false
 }
+// Values auto-filled from the selected engine version are readonly by default (they come
+// from a verified spec sheet), but the sheet can be wrong or slightly off for a given car —
+// unlocking lets the user override just that one field without losing the rest of the autofill.
+function unlockEngineField(key: keyof typeof engineLocked) {
+    engineLocked[key] = false
+}
+function unlockEfField(key: string) {
+    const lockKey = EF_LOCK_MAP[key]
+    if (lockKey) engineLocked[lockKey] = false
+}
 
 const currentYear = new Date().getFullYear()
 const VIN_REGEX = /^[A-HJ-NPR-Z0-9]{17}$/
@@ -4935,7 +4945,7 @@ onBeforeUnmount(() => {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    @media (max-width: 768px) { overflow: visible; }
+    @media (max-width: 768px) { overflow: visible; padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
 }
 
 .form-hero {
@@ -5028,10 +5038,19 @@ onBeforeUnmount(() => {
 .form-content {
     padding: 32px 40px 24px;
     flex: 1;
+    // Each step is a distinct v-if/v-else-if branch, so Vue mounts a fresh .form-content
+    // node whenever currentStep changes — this animation replays automatically on every
+    // step change without needing a <Transition> wrapper around the whole step chain.
+    animation: step-fade-in 0.22s ease;
 
     @media (max-width: 768px) {
         padding: 20px 16px 24px;
     }
+}
+
+@keyframes step-fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .form-section-head {
@@ -5146,6 +5165,7 @@ onBeforeUnmount(() => {
     display: inline-flex;
     align-items: center;
     gap: 3px;
+    font-family: inherit;
     font-size: 10px;
     font-weight: 600;
     color: #8B0D1D;
@@ -5155,6 +5175,9 @@ onBeforeUnmount(() => {
     padding: 1px 6px;
     margin-left: 8px;
     vertical-align: middle;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    &:hover { background: rgba(139, 13, 29, 0.22); border-color: rgba(139, 13, 29, 0.4); }
 }
 
 .finput--locked {
@@ -5409,6 +5432,16 @@ onBeforeUnmount(() => {
     background: $bg;
     flex-shrink: 0;
     @media (max-width: 600px) { padding: 14px 16px; gap: 10px; }
+
+    // Pinned to the bottom of the screen on mobile instead of scrolling away with the
+    // form — matches the "Next" action always being reachable in a native app.
+    @media (max-width: 768px) {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 20;
+        padding-bottom: calc(14px + env(safe-area-inset-bottom));
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+    }
 }
 
 .form-actions-left { display: flex; align-items: center; gap: 14px; }
