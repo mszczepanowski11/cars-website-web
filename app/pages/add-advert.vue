@@ -2241,12 +2241,10 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'noDamage', label: 'Bezwypadkowy (potwierdzony)', type: 'boolean' },
             { key: 'hasASO', label: 'Serwisowany w ASO', type: 'boolean' },
             { key: 'testDrive', label: 'Możliwość jazdy próbnej', type: 'boolean' },
-            { key: 'vatInvoice', label: 'Faktura VAT (23%)', type: 'boolean' },
             { key: 'vatMargin', label: 'Faktura VAT-marża', type: 'boolean' },
             { key: 'registeredInPoland', label: 'Zarejestrowany w Polsce', type: 'boolean' },
             { key: 'rightHandDrive', label: 'Kierownica po prawej stronie (RHD)', type: 'boolean' },
             { key: 'tuning', label: 'Tuning / modyfikacje', type: 'boolean' },
-            { key: 'leasingPossible', label: 'Możliwość leasingu / finansowania', type: 'boolean' },
         ],
     },
 
@@ -2287,7 +2285,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'hasReverseCam', label: 'Kamera cofania', type: 'boolean' },
             { key: 'hasLiftgate', label: 'Winda załadowcza', type: 'boolean' },
             { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
-            { key: 'vatInvoice', label: 'Faktura VAT (23%)', type: 'boolean' },
         ],
     },
 
@@ -2332,7 +2329,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'hasLiftAxle', label: 'Oś podnoszona (Lift Axle)', type: 'boolean' },
             { key: 'hasADR', label: 'Dopuszczenie ADR', type: 'boolean' },
             { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
-            { key: 'vatInvoice', label: 'Faktura VAT (23%)', type: 'boolean' },
         ],
     },
 
@@ -2360,7 +2356,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
                 { value: 'used-good', label: 'Używana – dobry stan' }, { value: 'used', label: 'Używana' },
                 { value: 'damaged', label: 'Uszkodzona / na części' },
               ] },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
             { key: 'shipping', label: 'Możliwa wysyłka', type: 'boolean' },
             { key: 'warranty', label: 'Gwarancja na część', type: 'boolean' },
         ],
@@ -2404,7 +2399,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
             { key: 'noDamage', label: 'Bezwypadkowy', type: 'boolean' },
             { key: 'testDrive', label: 'Możliwość jazdy próbnej', type: 'boolean' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2438,7 +2432,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'hasHydraulics', label: 'Hydraulika', type: 'boolean' },
             { key: 'hasLift', label: 'Winda załadunkowa', type: 'boolean' },
             { key: 'hasBrakes', label: 'Hamulec najazdowy', type: 'boolean' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2481,7 +2474,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'fourWD', label: 'Napęd 4WD', type: 'boolean' },
             { key: 'cabinAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
             { key: 'isobus', label: 'ISOBUS (ISO 11783)', type: 'boolean' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2529,7 +2521,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'hasCabin', label: 'Zamknięta kabina', type: 'boolean' },
             { key: 'hasAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
             { key: 'hasGPS', label: 'GPS / system sterowania', type: 'boolean' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2564,7 +2555,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
             { key: 'hasAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
             { key: 'hasCabin', label: 'Zamknięta kabina', type: 'boolean' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2610,7 +2600,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
                 { value: 'stal', label: 'Stal' }, { value: 'drewno', label: 'Drewno' }, { value: 'gumowy', label: 'Ponton gumowy / PVC' },
               ] },
             { key: 'lengthM', label: 'Długość całkowita', type: 'number', unit: 'm', placeholder: 'np. 7.5' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2629,7 +2618,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
             { key: 'berths', label: 'Liczba miejsc do spania', type: 'number', placeholder: 'np. 4' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2648,7 +2636,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2669,7 +2656,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2688,7 +2674,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
             { key: 'seatsCount', label: 'Liczba miejsc siedzących', type: 'number', placeholder: 'np. 49' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2710,7 +2695,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
               options: [{ value: '1', label: '1 oś' }, { value: '2', label: '2 osie' }, { value: '3', label: '3 osie' }, { value: '4+', label: '4+ osi' }] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
             { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 
@@ -2731,7 +2715,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
             { key: 'liftCapacity', label: 'Udźwig', type: 'number', unit: 'kg', placeholder: 'np. 2500' },
-            { key: 'vatInvoice', label: 'Faktura VAT', type: 'boolean' },
         ],
     },
 }
@@ -4599,7 +4582,8 @@ onMounted(async () => {
                 modelId: c.modelId, modelName: c.modelName,
                 generationId: c.generationId, generationName: c.generationName,
             }))
-            if (advert.doorCount) extras.doors = String(advert.doorCount)
+            if (advert.doorCount) extras.doors = String(Math.min(advert.doorCount, 6))
+            if (advert.seatsCount) extras.seatsCount = String(Math.min(advert.seatsCount, 9))
             if (advert.driveType) extras.driveType = advert.driveType.slug
             if (advert.color) extras.color = advert.color.id ?? advert.color.name
             // Restore history
