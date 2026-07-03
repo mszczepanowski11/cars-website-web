@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       meta: [
-        { name: 'google-site-verification', content: 'SOsH2QfY0Q1QWWLnEjEoFDRDpXUO34fdbjDSK5KJxpQ' },
+        { name: 'google-site-verification', content: 'M-Xj_zIclGdrERVKvxc9I_1Zlp7Wb93dgzUL-N7x0ks' },
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
