@@ -116,8 +116,8 @@ export default defineNuxtConfig({
     public: {
       maintenanceMode: process.env.NUXT_PUBLIC_MAINTENANCE_MODE ?? '',
       apiBase: process.env.NUXT_PUBLIC_API_BASE ?? 'http://localhost:5105/',
-      premiereStart: process.env.NUXT_PUBLIC_PREMIERE_START ?? '2026-06-12T00:00:00+02:00',
-      premiereEnd: process.env.NUXT_PUBLIC_PREMIERE_END ?? '2026-06-15T00:00:00+02:00',
+      premiereStart: process.env.NUXT_PUBLIC_PREMIERE_START ?? '2026-07-04T00:00:00+02:00',
+      premiereEnd: process.env.NUXT_PUBLIC_PREMIERE_END ?? '2026-07-13T00:00:00+02:00',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? 'https://carizo.eu',
       // Analytics — set in .env to activate
       gtmId:       process.env.NUXT_PUBLIC_GTM_ID       ?? '',
