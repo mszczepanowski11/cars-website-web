@@ -28,9 +28,6 @@
                 <button class="nav-item" :class="{ active: section === 'reviews' }" @click="goReviews">
                     <v-icon icon="mdi-star-outline" size="19" /><span>Opinie i oceny</span>
                 </button>
-                <NuxtLink to="/transactions" class="nav-item">
-                    <v-icon icon="mdi-handshake-outline" size="19" /><span>Transakcje</span>
-                </NuxtLink>
                 <NuxtLink to="/faktury" class="nav-item">
                     <v-icon icon="mdi-receipt-text-outline" size="19" /><span>Faktury</span>
                 </NuxtLink>
@@ -93,9 +90,6 @@
             <button :class="['dmn-item', { active: section === 'settings' }]" @click="goSettings">
                 <v-icon icon="mdi-cog-outline" size="20" /><span>Ustawienia</span>
             </button>
-            <NuxtLink to="/transactions" class="dmn-item">
-                <v-icon icon="mdi-handshake-outline" size="20" /><span>Transakcje</span>
-            </NuxtLink>
             <button class="dmn-item dmn-item--danger" @click="authLogout">
                 <v-icon icon="mdi-logout" size="20" /><span>Wyloguj</span>
             </button>
