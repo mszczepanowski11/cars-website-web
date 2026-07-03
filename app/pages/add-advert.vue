@@ -214,6 +214,7 @@
                                     :placeholder="`Wybierz ${categoryConfig.brandLabel ?? 'markę'}`"
                                     search-placeholder="marki"
                                     prefix-icon="mdi-car-outline"
+                                    filter-numeric-labels
                                     @change="onBrand"
                                 />
                             </template>
@@ -3836,7 +3837,9 @@ async function removePdf() {
     pdfPendingFile.value = null
 }
 
+let _featSeq = 0
 async function loadContextFeatures() {
+    const seq = ++_featSeq
     featuresLoaded.value = false
     featuresLoadFailed.value = false
     try {
@@ -3845,6 +3848,11 @@ async function loadContextFeatures() {
             form.brandId,
             form.modelId
         )
+        // onCategory/onBrand/onModel each call this in quick succession as the user clicks
+        // through the wizard - without a sequence guard, an earlier (e.g. the mount-time
+        // categoryId=null) request landing AFTER a later, correct one wins the race and
+        // silently wipes the real equipment list back to empty.
+        if (seq !== _featSeq) return
         allFeatures.value = cats.flatMap(cat =>
             cat.features.map(f => ({ id: f.id, name: f.name, category: { id: cat.id, name: cat.name, vehicleCategoryId: cat.vehicleCategoryId } }))
         )
@@ -3852,9 +3860,9 @@ async function loadContextFeatures() {
         // A failed fetch used to silently fall through to "this category doesn't need an
         // equipment list" (allFeatures stayed at its prior value, often still empty on first
         // load) - misleading for categories like auta-osobowe that always have real equipment.
-        featuresLoadFailed.value = true
+        if (seq === _featSeq) featuresLoadFailed.value = true
     } finally {
-        featuresLoaded.value = true
+        if (seq === _featSeq) featuresLoaded.value = true
     }
 }
 
