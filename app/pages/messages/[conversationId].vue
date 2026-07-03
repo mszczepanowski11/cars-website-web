@@ -800,11 +800,16 @@ onUnmounted(() => {
 @media (max-width: 768px) {
     .chat-wrap {
         // 100vh on iOS Safari is the *layout* viewport height, which ignores the on-screen
-        // keyboard — the input bar (flex-shrink:0, last in the column) ends up positioned
-        // below the visible area once the keyboard opens. 100dvh tracks the actual visible
-        // viewport and shrinks with it; vh stays as a fallback for browsers without dvh support.
+        // keyboard/toolbars — the input bar (flex-shrink:0, last in the column) ends up
+        // positioned below the visible area or under the browser's bottom bar. 100dvh tracks
+        // the *current* browser-chrome state but can still momentarily report the larger
+        // (chrome-collapsed) value while the chrome is actually expanded, letting the fixed
+        // panel's bottom slip under the toolbar. 100svh is the smallest possible viewport
+        // (chrome always fully expanded) — guarantees the input bar stays above it, at the
+        // cost of a little unused space on the rare occasion the chrome auto-hides.
         height: calc(100vh - $nav-height);
         height: calc(100dvh - $nav-height);
+        height: calc(100svh - $nav-height);
         position: fixed;
         inset: $nav-height 0 0 0;
         z-index: 10;
