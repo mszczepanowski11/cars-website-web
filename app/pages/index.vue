@@ -1319,6 +1319,10 @@ onMounted(async () => {
     color: $red;
     -webkit-text-stroke: 0;
     display: block;
+    // Even glow across the whole line so brightness doesn't depend on what the background
+    // photo happens to be doing behind any given letter (e.g. a light streak lighting up
+    // the middle of the word but fading out before the end).
+    text-shadow: 0 0 24px rgba($red, 0.65), 0 0 48px rgba($red, 0.35), 0 2px 20px rgba(0,0,0,0.6);
 }
 
 .hfs-sub {
