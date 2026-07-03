@@ -218,7 +218,7 @@
                             </template>
                             <div class="field-hint">
                                 <v-icon icon="mdi-information-outline" size="12" />
-                                {{ categoryConfig.brandHint ?? `${brands.length} dostępnych marek` }}
+                                {{ categoryConfig.brandHint ?? (categoryConfig.brandFieldType === 'text' ? 'Ta kategoria nie ma jeszcze pełnej bazy marek — wpisz markę ręcznie' : `${brands.length} dostępnych marek`) }}
                             </div>
                         </div>
 
@@ -228,7 +228,7 @@
                                 {{ categoryConfig.modelLabel ?? 'Model' }}
                                 <span v-if="isFieldRequired('model')" class="req">*</span>
                             </label>
-                            <template v-if="categoryConfig.brandFieldType === 'text'">
+                            <template v-if="isModelTextMode">
                                 <input
                                     v-model="modelTextInput"
                                     type="text"
@@ -2165,6 +2165,9 @@ interface CatFieldConfig {
     required: string[]
     // Whether brand uses API dropdown or free-text input
     brandFieldType?: 'select' | 'text'
+    // Whether model uses API dropdown or free-text input; defaults to brandFieldType when unset
+    // (used for categories with a real brand catalog but no per-brand model catalog yet)
+    modelFieldType?: 'select' | 'text'
     // Extra category-specific fields (stored in description on submit)
     extraFields?: ExtraField[]
     // Dynamic labels
@@ -2580,7 +2583,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'lodzie-i-jachty': {
         fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
         required: ['year', 'price'],
-        brandFieldType: 'text',
+        modelFieldType: 'text',
         brandLabel: 'Producent / stocznia',
         modelLabel: 'Model',
         yearLabel: 'Rok produkcji',
@@ -2607,7 +2610,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'kampery': {
         fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
         required: ['year', 'fuelType', 'mileage', 'price'],
-        brandFieldType: 'text',
+        modelFieldType: 'text',
         brandLabel: 'Marka pojazdu bazowego',
         modelLabel: 'Model',
         yearLabel: 'Rok produkcji',
@@ -2626,7 +2629,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'quady-atv': {
         fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
         required: ['year', 'fuelType', 'price'],
-        brandFieldType: 'text',
+        modelFieldType: 'text',
         brandLabel: 'Marka',
         modelLabel: 'Model',
         yearLabel: 'Rok produkcji',
@@ -2645,7 +2648,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'skutery-wodne': {
         fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
         required: ['year', 'price'],
-        brandFieldType: 'text',
+        modelFieldType: 'text',
         brandLabel: 'Marka',
         modelLabel: 'Model',
         yearLabel: 'Rok produkcji',
@@ -2666,7 +2669,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'autobusy': {
         fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price'],
         required: ['year', 'fuelType', 'mileage', 'price'],
-        brandFieldType: 'text',
+        modelFieldType: 'text',
         brandLabel: 'Marka',
         modelLabel: 'Model',
         yearLabel: 'Rok produkcji',
@@ -2685,7 +2688,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'naczepy': {
         fields: ['brand', 'model', 'year', 'price'],
         required: ['year', 'price'],
-        brandFieldType: 'text',
+        modelFieldType: 'text',
         brandLabel: 'Producent',
         modelLabel: 'Model',
         yearLabel: 'Rok produkcji',
@@ -2707,7 +2710,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'wozki-widlowe': {
         fields: ['brand', 'model', 'year', 'fuelType', 'engine', 'power', 'mileage', 'price'],
         required: ['year', 'price'],
-        brandFieldType: 'text',
+        modelFieldType: 'text',
         brandLabel: 'Producent / marka',
         modelLabel: 'Model',
         yearLabel: 'Rok produkcji',
@@ -3436,6 +3439,8 @@ const categoryConfig = computed<CatFieldConfig>(() => {
     return CATEGORY_CONFIGS[slug] ?? DEFAULT_CAT_CONFIG
 })
 
+const isModelTextMode = computed(() => (categoryConfig.value.modelFieldType ?? categoryConfig.value.brandFieldType) === 'text')
+
 const isPartsCategorySelected = computed(() => {
     const partsCategory = advertCategories.value.find(c =>
         c.slug?.toLowerCase() === 'czesci' ||
@@ -3569,9 +3574,8 @@ const bodyTypeOptions = computed<SelectOption[]>(() => bodyTypes.value.map(b => 
 
 // Smart title suggestion: brand + model + year + fuel (when enough filled)
 const suggestedTitle = computed(() => {
-    const isTextMode = categoryConfig.value.brandFieldType === 'text'
-    const brand = isTextMode ? brandTextInput.value : brandName.value
-    const model = isTextMode ? modelTextInput.value : modelName.value
+    const brand = categoryConfig.value.brandFieldType === 'text' ? brandTextInput.value : brandName.value
+    const model = isModelTextMode.value ? modelTextInput.value : modelName.value
     const parts = [brand, model, form.year ? String(form.year) : ''].filter(Boolean)
     return parts.length >= 2 ? parts.join(' ') : ''
 })
