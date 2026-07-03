@@ -4,7 +4,7 @@
             <div class="container">
                 <div class="hero-eyebrow">Dokumenty prawne</div>
                 <h1>Regulamin <span>B2B</span></h1>
-                <p>Ostatnia aktualizacja: 04.07.2026 · Dotyczy użytkowników prowadzących działalność gospodarczą</p>
+                <p>Ostatnia aktualizacja: 04.07.2026</p>
             </div>
         </div>
 
