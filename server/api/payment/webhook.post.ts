@@ -80,19 +80,24 @@ export default defineEventHandler(async (event) => {
     // 3. Generating the invoice
     // 4. Sending confirmation email
     //
-    // Forward the parsed body AS-IS instead of hand-picking flat fields into a new object.
-    // imoje's real payload nests transaction data under a "transaction" key (confirmed by the
-    // backend's own ImojeWebhookDto, which resolves orderId/status/transactionId from either the
-    // nested "transaction" object or flat top-level fields) — picking only
-    // notification.orderId/.status/.transactionId here silently dropped them to undefined
-    // whenever imoje sent the nested form, so the backend could never find the matching payment
-    // by orderId and the whole notification was a silent no-op.
+    // Forward the RAW body string and the ORIGINAL x-imoje-signature header, byte-for-byte,
+    // instead of re-serializing a parsed object. The backend's own VerifySignature computes
+    // SHA256(rawBody + secret) against the exact bytes imoje sent — re-JSON.stringify-ing the
+    // parsed notification (as this used to do) produces different bytes (key order, whitespace),
+    // so the backend's signature check always failed regardless of X-Internal-Secret, which
+    // requires a SECOND shared secret kept in sync across two separate Railway services and
+    // proved fragile every time it was set. Forwarding the untouched original lets the backend
+    // validate the real imoje signature it already knows how to check (Imoje:WebhookSecret) —
+    // no second secret needed. X-Internal-Secret is still sent as a fallback/defense-in-depth,
+    // not the primary trust mechanism.
+    const originalSignature = getHeader(event, 'x-imoje-signature') ?? notification.signature ?? ''
     try {
         await $fetch(`${config.public.apiBase}api/Payment/webhook`, {
             method: 'POST',
-            body: notification,
+            body: rawBody,
             headers: {
                 'Content-Type': 'application/json',
+                'X-Imoje-Signature': originalSignature,
                 // Internal service-to-service key so the backend can trust this call
                 'X-Internal-Secret': config.internalServiceSecret as string ?? ''
             }
