@@ -2,13 +2,24 @@
     <!-- Not found / error state -->
     <div v-if="!advert" class="advert-not-found">
         <div class="anf-inner">
-            <v-icon icon="mdi-car-off" size="64" class="anf-icon" />
-            <h1 class="anf-title">Ogłoszenie nie istnieje</h1>
-            <p class="anf-desc">To ogłoszenie mogło zostać usunięte, wygasnąć lub link jest nieprawidłowy.</p>
-            <NuxtLink to="/adverts" class="anf-btn">
-                <v-icon icon="mdi-magnify" size="18" />
-                Przeglądaj ogłoszenia
-            </NuxtLink>
+            <template v-if="advertFetchError && advertFetchError >= 500">
+                <v-icon icon="mdi-alert-circle-outline" size="64" class="anf-icon" />
+                <h1 class="anf-title">Chwilowy problem z serwerem</h1>
+                <p class="anf-desc">Nie udało się wczytać ogłoszenia. Spróbuj odświeżyć stronę za chwilę.</p>
+                <button type="button" class="anf-btn" @click="() => { if (typeof window !== 'undefined') window.location.reload() }">
+                    <v-icon icon="mdi-refresh" size="18" />
+                    Spróbuj ponownie
+                </button>
+            </template>
+            <template v-else>
+                <v-icon icon="mdi-car-off" size="64" class="anf-icon" />
+                <h1 class="anf-title">Ogłoszenie nie istnieje</h1>
+                <p class="anf-desc">To ogłoszenie mogło zostać usunięte, wygasnąć lub link jest nieprawidłowy.</p>
+                <NuxtLink to="/adverts" class="anf-btn">
+                    <v-icon icon="mdi-magnify" size="18" />
+                    Przeglądaj ogłoszenia
+                </NuxtLink>
+            </template>
         </div>
     </div>
     <div v-else class="advert-page">
@@ -802,6 +813,7 @@ const messageSuggestions = [
     'Czy możliwa jest zamiana?',
 ]
 const followError = ref('')
+const advertFetchError = ref<number | null>(null)
 const advert = ref<CarAdvert | null>(null)
 const similar = ref<CarAdvert[]>([])
 const seller = ref<UserProfile | null>(null)
@@ -1385,7 +1397,13 @@ const { data: advertData } = await useAsyncData(`advert-${id}`, async () => {
             ])
         }
         return { advert: a, seller: s, sellerStats: stats }
-    } catch { return null }
+    } catch (e: any) {
+        // Distinguish a genuine 404 from a transient server error - both used to render the
+        // same "ogłoszenie nie istnieje" screen, which reads as "deleted forever" to a user
+        // when the real cause was a backend 500 that a refresh would likely fix.
+        advertFetchError.value = e?.status ?? e?.statusCode ?? 0
+        return null
+    }
 })
 
 advert.value = advertData.value?.advert ?? null
@@ -4264,6 +4282,7 @@ onUnmounted(() => {
     gap: 8px;
     background: $red;
     color: white;
+    border: none;
     border-radius: $r-md;
     font-size: 14px;
     font-weight: 700;
@@ -4271,6 +4290,7 @@ onUnmounted(() => {
     padding: 12px 24px;
     text-decoration: none;
     margin-top: 8px;
+    cursor: pointer;
     transition: opacity 0.2s;
     &:hover { opacity: 0.88; }
 }
