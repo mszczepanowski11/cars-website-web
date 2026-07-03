@@ -113,6 +113,20 @@
                         <button class="photo-fav-btn" :class="{ active: isFav }" @click.stop="toggleFav">
                             <v-icon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
                         </button>
+                        <template v-if="hasImages && allImages.length > 1">
+                            <button
+                                class="photo-nav-arrow photo-nav-prev"
+                                aria-label="Poprzednie zdjęcie"
+                                :disabled="activeImg === 0"
+                                @click.stop="activeImg--"
+                            ><v-icon icon="mdi-chevron-left" size="22" /></button>
+                            <button
+                                class="photo-nav-arrow photo-nav-next"
+                                aria-label="Następne zdjęcie"
+                                :disabled="activeImg === allImages.length - 1"
+                                @click.stop="activeImg++"
+                            ><v-icon icon="mdi-chevron-right" size="22" /></button>
+                        </template>
                     </div>
                     <div v-if="hasImages && allImages.length > 1" class="photo-thumbs-row">
                         <button
@@ -1779,6 +1793,31 @@ onUnmounted(() => {
     z-index: 5;
     &:hover { background: rgba(0,0,0,0.9); }
     &.active { color: $red; }
+}
+
+.photo-nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: $text;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    transition: background 0.2s, opacity 0.2s;
+
+    &:hover:not(:disabled) { background: rgba(0,0,0,0.85); }
+    &:disabled { opacity: 0.35; cursor: default; }
+
+    &.photo-nav-prev { left: 12px; }
+    &.photo-nav-next { right: 12px; }
 }
 
 .photo-thumbs-row {
