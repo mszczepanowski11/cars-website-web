@@ -2954,6 +2954,13 @@ const selectedFiles = ref<File[]>([])
 const previews = ref<string[]>([])
 const currentStep = ref(0)
 
+// Changing steps (next/back/step-indicator click) kept whatever scroll position the previous
+// step ended at, so going back could land the user mid-page or at the bottom instead of at the
+// top of the new step's content.
+watch(currentStep, () => {
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
+})
+
 const advertCategories = ref<CategoryWithCount[]>([])
 
 // Success screen state
