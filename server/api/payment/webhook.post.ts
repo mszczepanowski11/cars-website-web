@@ -11,13 +11,23 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 
 interface ImojeNotification {
-    serviceId: string
-    orderId: string
-    transactionId: string
-    amount: number
-    currency: string
-    status: 'new' | 'pending' | 'completed' | 'rejected' | 'cancelled' | 'refunded'
-    statusDate: string
+    // imoje's real payload nests these under "transaction" — flat fields below are a fallback
+    // for integration modes that don't nest, mirroring the backend's ImojeWebhookDto exactly.
+    transaction?: {
+        id?: string
+        orderId?: string
+        status?: string
+        amount?: number
+        currency?: string
+        paymentMethod?: string
+    }
+    serviceId?: string
+    orderId?: string
+    transactionId?: string
+    amount?: number
+    currency?: string
+    status?: 'new' | 'pending' | 'completed' | 'rejected' | 'cancelled' | 'refunded'
+    statusDate?: string
     paymentType?: string
     paymentMethodCode?: string
     customerFirstName?: string
@@ -42,14 +52,15 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: 'Invalid JSON' })
     }
 
-    // Validate HMAC-SHA256 signature from ING IMOJE
+    // Validate HMAC-SHA256 signature from ING IMOJE. This is a SECONDARY check — the backend
+    // independently verifies the signature again (PaymentService.VerifySignature) before acting
+    // on anything, using its own Imoje:WebhookSecret. A misconfigured/mismatched secret HERE used
+    // to hard-block the request (500/401) before it ever reached the backend's own check, turning
+    // a local config slip into a total payment-confirmation outage. Now it only warns locally and
+    // always forwards — the backend remains the sole authority on whether to trust the payload.
     const webhookSecret = config.imojeWebhookSecret as string | undefined
     if (!webhookSecret) {
-        // Secret not configured — reject in production, warn in dev
-        if (process.env.NODE_ENV === 'production') {
-            throw createError({ statusCode: 500, statusMessage: 'Webhook secret not configured' })
-        }
-        console.warn('[webhook] IMOJE_WEBHOOK_SECRET not set — skipping signature check (dev only)')
+        console.warn('[webhook] NUXT_IMOJE_WEBHOOK_SECRET not set — forwarding without a local signature check (backend still verifies independently)')
     } else {
         const receivedSig = getHeader(event, 'x-imoje-signature') ?? notification.signature ?? ''
         const expectedSig = createHmac('sha256', webhookSecret)
@@ -59,8 +70,7 @@ export default defineEventHandler(async (event) => {
         const sigValid = receivedSig.length === expectedSig.length &&
             timingSafeEqual(Buffer.from(receivedSig), Buffer.from(expectedSig))
         if (!sigValid) {
-            console.warn('[webhook] IMOJE signature mismatch — possible spoofed request', { orderId: notification.orderId })
-            throw createError({ statusCode: 401, statusMessage: 'Invalid signature' })
+            console.warn('[webhook] Local IMOJE signature check failed — forwarding anyway, backend will do its own verification', { orderId: notification.orderId })
         }
     }
 
@@ -69,19 +79,18 @@ export default defineEventHandler(async (event) => {
     // 2. Activating the purchased service (promotion)
     // 3. Generating the invoice
     // 4. Sending confirmation email
+    //
+    // Forward the parsed body AS-IS instead of hand-picking flat fields into a new object.
+    // imoje's real payload nests transaction data under a "transaction" key (confirmed by the
+    // backend's own ImojeWebhookDto, which resolves orderId/status/transactionId from either the
+    // nested "transaction" object or flat top-level fields) — picking only
+    // notification.orderId/.status/.transactionId here silently dropped them to undefined
+    // whenever imoje sent the nested form, so the backend could never find the matching payment
+    // by orderId and the whole notification was a silent no-op.
     try {
         await $fetch(`${config.public.apiBase}api/Payment/webhook`, {
             method: 'POST',
-            body: {
-                transactionId: notification.transactionId,
-                orderId: notification.orderId,
-                amount: notification.amount,
-                currency: notification.currency,
-                status: notification.status,
-                statusDate: notification.statusDate,
-                paymentType: notification.paymentType,
-                customerEmail: notification.customerEmail
-            },
+            body: notification,
             headers: {
                 'Content-Type': 'application/json',
                 // Internal service-to-service key so the backend can trust this call
@@ -91,7 +100,7 @@ export default defineEventHandler(async (event) => {
     } catch (err: any) {
         // Log but return 200 to ING so they don't retry unnecessarily
         console.error('[webhook] Backend notification failed:', {
-            orderId: notification.orderId,
+            orderId: notification.orderId ?? (notification as any).transaction?.orderId,
             status: err?.response?.status,
             msg: err?.message
         })
