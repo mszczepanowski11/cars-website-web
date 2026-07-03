@@ -611,7 +611,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CarAdvert, CarEvent, PagedResult, TaxonomyItem, PartCategory } from '~/types'
+import type { CarAdvert, CarEvent, PagedResult, TaxonomyItem, PartCategory, CategoryWithCount } from '~/types'
 
 const config = useRuntimeConfig()
 const siteUrl = config.public.siteUrl as string
@@ -836,16 +836,22 @@ const visibleStats = computed(() => [
 const currentYear = new Date().getFullYear()
 
 const SEARCH_CATEGORIES = [
-    { slug: 'auta-osobowe', label: 'Auta osobowe', icon: 'mdi-car' },
-    { slug: 'dostawcze',    label: 'Dostawcze',    icon: 'mdi-truck-delivery' },
-    { slug: 'ciezarowe',    label: 'Ciężarowe',    icon: 'mdi-truck' },
-    { slug: 'motocykle',    label: 'Motocykle',    icon: 'mdi-motorbike' },
-    { slug: 'czesci',       label: 'Części',       icon: 'mdi-cog' },
-    { slug: 'budowlane',    label: 'Budowlane',    icon: 'mdi-excavator' },
-    { slug: 'rolnicze',     label: 'Rolnicze',     icon: 'mdi-tractor' },
-    { slug: 'maszyny',      label: 'Maszyny',      icon: 'mdi-forklift' },
-    { slug: 'przyczepy',    label: 'Przyczepy',    icon: 'mdi-rv-truck' },
-    { slug: 'inne',         label: 'Inne',         icon: 'mdi-dots-horizontal-circle' },
+    { slug: 'auta-osobowe',    label: 'Auta osobowe',    icon: 'mdi-car' },
+    { slug: 'dostawcze',       label: 'Dostawcze',       icon: 'mdi-truck-delivery' },
+    { slug: 'ciezarowe',       label: 'Ciężarowe',       icon: 'mdi-truck' },
+    { slug: 'motocykle',       label: 'Motocykle',       icon: 'mdi-motorbike' },
+    { slug: 'czesci',          label: 'Części',          icon: 'mdi-cog' },
+    { slug: 'budowlane',       label: 'Budowlane',       icon: 'mdi-excavator' },
+    { slug: 'rolnicze',        label: 'Rolnicze',        icon: 'mdi-tractor' },
+    { slug: 'maszyny',         label: 'Maszyny',         icon: 'mdi-forklift' },
+    { slug: 'przyczepy',       label: 'Przyczepy',       icon: 'mdi-rv-truck' },
+    { slug: 'lodzie-i-jachty', label: 'Łodzie i jachty', icon: 'mdi-sail-boat' },
+    { slug: 'kampery',         label: 'Kampery',         icon: 'mdi-caravan' },
+    { slug: 'quady-atv',       label: 'Quady i ATV',     icon: 'mdi-quadbike' },
+    { slug: 'skutery-wodne',   label: 'Skutery wodne',   icon: 'mdi-jet-ski' },
+    { slug: 'autobusy',        label: 'Autobusy',        icon: 'mdi-bus' },
+    { slug: 'naczepy',         label: 'Naczepy',         icon: 'mdi-truck-trailer' },
+    { slug: 'wozki-widlowe',   label: 'Wózki widłowe',   icon: 'mdi-forklift' },
 ] as const
 
 interface SearchConfig {
@@ -866,7 +872,13 @@ const SEARCH_CONFIGS: Record<string, SearchConfig> = {
     'rolnicze':     { hasBrand: true,  hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ maszyny', subtypes: ['Ciągnik', 'Kombajn', 'Siewnik', 'Pług', 'Prasa', 'Opryskiwacz', 'Rozsiewacz'] },
     'maszyny':      { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Typ', subtypes: ['Wózek widłowy', 'Dźwig/Żuraw', 'Platforma robocza', 'Agregat prądotwórczy', 'Sprężarka', 'Pompa'] },
     'przyczepy':    { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, subtypeLabel: 'Typ', subtypes: ['Naczepa plandeka', 'Laweta', 'Wywrotka', 'Kempingowa', 'Kontenerowa'] },
-    'inne':         { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false },
+    'lodzie-i-jachty': { hasBrand: true,  hasModel: true,  hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Rodzaj jednostki', subtypes: ['Łódź motorowa', 'Jacht żaglowy', 'Jacht motorowy', 'Ponton', 'Houseboat'] },
+    'kampery':         { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, hasCondition: true, subtypeLabel: 'Rodzaj', subtypes: ['Kamper zabudowany', 'Kamper na podwoziu VAN', 'Autobus kempingowy'] },
+    'quady-atv':       { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Rodzaj', subtypes: ['Quad sportowy', 'Quad użytkowy', 'SSV / UTV'] },
+    'skutery-wodne':   { hasBrand: true,  hasModel: true,  hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: true,  hasPower: true, subtypeLabel: 'Rodzaj', subtypes: ['Skuter jednoosobowy', 'Skuter wieloosobowy', 'Skuter wyścigowy'] },
+    'autobusy':        { hasBrand: true,  hasModel: true,  hasFuel: true,  hasBodyType: false, hasMileage: true,  hasHours: false, subtypeLabel: 'Rodzaj', subtypes: ['Autobus miejski', 'Autobus turystyczny', 'Minibus'] },
+    'naczepy':         { hasBrand: false, hasModel: false, hasFuel: false, hasBodyType: false, hasMileage: false, hasHours: false, subtypeLabel: 'Rodzaj', subtypes: ['Naczepa firanka', 'Naczepa chłodnia', 'Naczepa wywrotka', 'Naczepa niskopodwoziowa'] },
+    'wozki-widlowe':   { hasBrand: false, hasModel: false, hasFuel: true,  hasBodyType: false, hasMileage: false, hasHours: true,  subtypeLabel: 'Rodzaj', subtypes: ['Wózek spalinowy', 'Wózek elektryczny', 'Wózek boczny'] },
 }
 
 const partCategories = ref<PartCategory[]>([])
@@ -949,7 +961,7 @@ function selectSearchCat(slug: string) {
     searchLocation.value = ''
     searchModels.value = []
     searchGenerations.value = []
-    const cat = homeCategories.find((c: any) => c.slug === slug)
+    const cat = homeCategories.value.find((c: any) => c.slug === slug)
     if (cat?.id) {
         fetchBrandsByCategory(cat.id).then((b: any) => { filterBrands.value = b }).catch(() => {})
     } else {
@@ -1033,7 +1045,7 @@ function doSearch() {
     if (searchCondition.value) query.condition = searchCondition.value
     if (searchDriveType.value) query.driveType = searchDriveType.value
     if (searchEquipment.value.trim()) query.equipment = searchEquipment.value.trim()
-    const cat = homeCategories.find(c => c.slug === searchCat.value)
+    const cat = homeCategories.value.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })
 }
@@ -1060,8 +1072,10 @@ const ingMonthlyRate = computed(() => {
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
 const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchGearboxes, fetchFuelTypes, fetchBodyTypes, fetchPartCategories } = useTaxonomy()
-const { STATIC_CATEGORIES } = useCategories()
-const homeCategories = STATIC_CATEGORIES
+const { fetchCategories, STATIC_CATEGORIES } = useCategories()
+// Real category list (all 17, minus "Inne") fetched below in the SSR data block — starts from
+// the static fallback so slug->id lookups still work before that fetch resolves.
+const homeCategories = ref<CategoryWithCount[]>(STATIC_CATEGORIES)
 
 const featuredEvent = computed(() => events.value.find(e => e.isFeatured) ?? null)
 
@@ -1113,7 +1127,12 @@ async function subscribeNewsletter() {
 // ─── SSR-safe data fetching ───────────────────────────────────────────────────
 
 const { data: homeData } = await useAsyncData('home-data', async () => {
-    const defaultCategoryId = homeCategories.find((c: any) => c.slug === searchCat.value)?.id
+    // Real categories (all 17, minus "Inne") before anything else in this block, since
+    // defaultCategoryId below needs a real id for the currently selected search-category slug.
+    const realCategories = await fetchCategories().catch(() => STATIC_CATEGORIES)
+    const categories = (realCategories ?? STATIC_CATEGORIES).filter((c: any) => c.slug !== 'inne')
+    const defaultCategoryId = categories.find((c: any) => c.slug === searchCat.value)?.id
+
     const [featuredResult, recentResult, evts, stats, brands] = await Promise.allSettled([
         $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
@@ -1133,6 +1152,7 @@ const { data: homeData } = await useAsyncData('home-data', async () => {
         events:        evts.status           === 'fulfilled' ? (evts.value ?? [])          : [],
         stats:         stats.status          === 'fulfilled' ? stats.value                 : null,
         brands:        brands.status         === 'fulfilled' ? brands.value                : [],
+        categories,
     }
 })
 
@@ -1143,6 +1163,7 @@ if (homeData.value) {
     recentlyAdded.value = homeData.value.recentItems ?? []
     events.value        = homeData.value.events ?? []
     filterBrands.value  = homeData.value.brands ?? []
+    if (homeData.value.categories?.length) homeCategories.value = homeData.value.categories
     if (homeData.value.stats) Object.assign(homeStats.value, homeData.value.stats)
 }
 statsLoading.value = false
