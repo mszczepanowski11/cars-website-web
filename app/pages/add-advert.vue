@@ -101,8 +101,9 @@
             <!-- Center -->
             <main class="center-area">
 
-                <!-- Hero -->
-                <div class="form-hero">
+                <!-- Hero: only on the first step on mobile — repeating a full-height marketing
+                     banner on every step pushed the actual fields far down the screen. -->
+                <div class="form-hero" :class="{ 'form-hero--step-only': currentStep > 0 }">
                     <div class="form-hero-text">
                         <h1>Dodaj swoje auto.</h1>
                         <p>Stwórz premium ogłoszenie w kilka minut.</p>
@@ -4962,6 +4963,10 @@ onBeforeUnmount(() => {
         min-height: 100px;
         padding: 20px 16px;
     }
+}
+
+.form-hero--step-only {
+    @media (max-width: 768px) { display: none; }
 }
 
 .form-hero-text {
