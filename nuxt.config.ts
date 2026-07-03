@@ -130,7 +130,7 @@ export default defineNuxtConfig({
       // Social media links — set in .env
       socialFacebook:  process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK  ?? 'https://www.facebook.com/profile.php?id=61589324586693&locale=pl_PL',
       socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM ?? 'https://www.instagram.com/carizo.eu/',
-      socialTiktok:    process.env.NUXT_PUBLIC_SOCIAL_TIKTOK    ?? '',
+      socialTiktok:    process.env.NUXT_PUBLIC_SOCIAL_TIKTOK    ?? 'https://www.tiktok.com/@carizo.eu',
       socialYoutube:   process.env.NUXT_PUBLIC_SOCIAL_YOUTUBE   ?? '',
       devAccessKey:    process.env.DEV_ACCESS_KEY ?? '',
     }
