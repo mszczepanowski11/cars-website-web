@@ -736,7 +736,7 @@ onUnmounted(() => {
 // ── Input bar ──────────────────────────────────────────────────────────────────
 .input-bar {
     flex-shrink: 0;
-    padding: 10px 16px;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
     background: #050505;
     border-top: 1px solid $border;
 }
@@ -799,7 +799,12 @@ onUnmounted(() => {
 // ── Mobile ──────────────────────────────────────────────────────────────────────
 @media (max-width: 768px) {
     .chat-wrap {
+        // 100vh on iOS Safari is the *layout* viewport height, which ignores the on-screen
+        // keyboard — the input bar (flex-shrink:0, last in the column) ends up positioned
+        // below the visible area once the keyboard opens. 100dvh tracks the actual visible
+        // viewport and shrinks with it; vh stays as a fallback for browsers without dvh support.
         height: calc(100vh - $nav-height);
+        height: calc(100dvh - $nav-height);
         position: fixed;
         inset: $nav-height 0 0 0;
         z-index: 10;
