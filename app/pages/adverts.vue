@@ -1011,7 +1011,7 @@ const bodyTypes  = computed(() => taxoData.value?.bodyTypes  ?? [])
 const gearboxes  = computed(() => taxoData.value?.gearboxes  ?? [])
 const driveTypes = computed(() => taxoData.value?.driveTypes ?? [])
 const colors     = computed(() => taxoData.value?.colors     ?? [])
-const categories = computed(() => taxoData.value?.categories ?? [])
+const categories = computed(() => (taxoData.value?.categories ?? []).filter(c => c.slug !== 'inne'))
 const partCategories = computed(() => taxoData.value?.partCategories ?? [])
 
 if (taxoData.value?.initialModels?.length) {

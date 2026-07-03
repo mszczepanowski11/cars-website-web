@@ -4504,6 +4504,7 @@ onMounted(async () => {
     ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value, partCategories.value] = await Promise.all([
         fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories(), fetchPartCategories()
     ])
+    advertCategories.value = advertCategories.value.filter(c => c.slug !== 'inne')
     await loadContextFeatures()
 
     if (isEdit.value && editId.value) {
