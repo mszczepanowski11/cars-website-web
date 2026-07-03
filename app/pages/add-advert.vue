@@ -3153,6 +3153,15 @@ function loadDraft() {
         if (!raw) return
         const saved = JSON.parse(raw)
         if (saved.form) Object.assign(form, saved.form)
+        // Object.assign bypasses onCategory()'s reset, so a draft saved before a
+        // brand/model config change (or from a different category) can restore a stale
+        // model/generation/trim/engine chain for a category that now uses free-text model.
+        if (isModelTextMode.value) {
+            form.modelId = null
+            form.generationId = null
+            form.trimId = null
+            form.engineVersionId = null
+        }
         if (saved.extras) Object.assign(extras, saved.extras)
         if (saved.history) Object.assign(history, saved.history)
         if (saved.brandTextInput) brandTextInput.value = saved.brandTextInput
@@ -4165,6 +4174,20 @@ async function submit() {
             setTimeout(() => { stepError.value = '' }, 4000)
             return
         }
+    }
+
+    // Categories with modelFieldType 'text' (e.g. skutery-wodne) never populate form.modelId
+    // through normal use - the model is free text instead - but a stale value can linger from
+    // an older saved draft (loadDraft() does a raw Object.assign, bypassing onCategory()'s
+    // reset) or a category switch. Clear the whole model->generation->trim->engine chain here,
+    // on the actual form state, so neither the chain-validation call below nor the create/edit
+    // payload built further down (which spreads {...form} as-is) can ship a leftover id that
+    // was never meant to apply to this category.
+    if (isModelTextMode.value) {
+        form.modelId = null
+        form.generationId = null
+        form.trimId = null
+        form.engineVersionId = null
     }
 
     // Re-validate the brand→model→generation→trim→engine chain against the backend right
