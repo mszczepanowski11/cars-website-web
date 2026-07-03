@@ -1195,6 +1195,13 @@
                         <v-icon icon="mdi-loading" size="40" class="spin" />
                         <p>Ładowanie wyposażenia...</p>
                     </div>
+                    <div v-else-if="featuresLoadFailed" class="feat-empty">
+                        <v-icon icon="mdi-alert-circle-outline" size="36" style="color: #f87171" />
+                        <p>Nie udało się wczytać listy wyposażenia. Spróbuj ponownie.</p>
+                        <button type="button" class="btn-next" style="margin-top:16px" @click="loadContextFeatures">
+                            <v-icon icon="mdi-refresh" size="15" /> Spróbuj ponownie
+                        </button>
+                    </div>
                     <div v-else-if="!allFeatures.length" class="feat-empty">
                         <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
                         <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>Dane pojazdu</strong>.</p>
@@ -2935,6 +2942,7 @@ const driveTypes = ref<DriveType[]>([])
 const colors = ref<CarColor[]>([])
 const allFeatures = ref<Feature[]>([])
 const featuresLoaded = ref(false)
+const featuresLoadFailed = ref(false)
 const partCategories = ref<PartCategory[]>([])
 const partSubcategories = ref<PartSubcategory[]>([])
 const engineSpecs = ref<any>(null)
@@ -3820,6 +3828,7 @@ async function removePdf() {
 
 async function loadContextFeatures() {
     featuresLoaded.value = false
+    featuresLoadFailed.value = false
     try {
         const cats = await fetchFeatureCategoriesByContext(
             selectedCategory.value?.id ?? null,
@@ -3829,7 +3838,12 @@ async function loadContextFeatures() {
         allFeatures.value = cats.flatMap(cat =>
             cat.features.map(f => ({ id: f.id, name: f.name, category: { id: cat.id, name: cat.name, vehicleCategoryId: cat.vehicleCategoryId } }))
         )
-    } catch { /* keep existing features */ } finally {
+    } catch {
+        // A failed fetch used to silently fall through to "this category doesn't need an
+        // equipment list" (allFeatures stayed at its prior value, often still empty on first
+        // load) - misleading for categories like auta-osobowe that always have real equipment.
+        featuresLoadFailed.value = true
+    } finally {
         featuresLoaded.value = true
     }
 }
