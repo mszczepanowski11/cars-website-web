@@ -9,6 +9,9 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      meta: [
+        { name: 'google-site-verification', content: 'SOsH2QfY0Q1QWWLnEjEoFDRDpXUO34fdbjDSK5KJxpQ' },
+      ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
