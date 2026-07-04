@@ -256,16 +256,6 @@
             </div>
         </div>
 
-        <!-- ─── Car of week ──────────────────────────────────────────────── -->
-        <section v-if="carOfWeek" class="section cow-section">
-            <div class="container">
-                <div class="cow-header">
-                    <div class="cow-eyebrow"><v-icon icon="mdi-trophy-outline" size="16" />SAMOCHÓD TYGODNIA</div>
-                </div>
-                <AdvertCard :advert="carOfWeek" class="cow-card" />
-            </div>
-        </section>
-
         <!-- ─── Premium Collection ───────────────────────────────────────── -->
         <section v-if="clientDataLoading || premiumCollection.length" class="section">
             <div class="container">
@@ -693,7 +683,6 @@ const featured = ref<CarAdvert[]>([])
 const topAdverts = ref<CarAdvert[]>([])
 const recentlyAdded = ref<CarAdvert[]>([])
 const mostViewed = ref<CarAdvert[]>([])
-const carOfWeek = ref<CarAdvert | null>(null)
 const premiumCollection = ref<CarAdvert[]>([])
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
@@ -1195,7 +1184,6 @@ if (import.meta.client) {
             const pc = pcRes.value
             premiumCollection.value = Array.isArray(pc) ? pc : (pc as any).items ?? []
         }
-        if (mostViewed.value.length > 0) carOfWeek.value = mostViewed.value[0]
         clientDataLoading.value = false
     })
 }
@@ -3031,9 +3019,5 @@ h2 {
 
 // ─── Car of week / Most viewed / Premium collection ───────────────────────────
 
-.cow-section { background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 100%); }
-.cow-header { display: flex; align-items: center; margin-bottom: 24px; }
-.cow-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 2px; color: $red; text-transform: uppercase; }
-.cow-card { max-width: 400px; }
 
 </style>
