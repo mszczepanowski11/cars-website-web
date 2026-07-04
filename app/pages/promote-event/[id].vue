@@ -188,6 +188,20 @@ const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
 const { error: toastError } = useToast()
 
+// InitiatePaymentDto only has flat BillingName/BillingNip/BillingStreet/BillingPostalCode/
+// BillingCity properties - a nested { billing: {...} } object is silently dropped by the
+// JSON binder, so every BillingDataForm entry here was being lost before it ever reached
+// the database (the invoice would then fall back to the user's profile, or nothing).
+function mapBillingFields(bd: BillingData) {
+    return {
+        billingName: bd.type === 'business' ? bd.companyName : `${bd.firstName ?? ''} ${bd.lastName ?? ''}`.trim(),
+        billingNip: bd.type === 'business' ? bd.nip : undefined,
+        billingStreet: bd.street,
+        billingPostalCode: bd.postalCode,
+        billingCity: bd.city,
+    }
+}
+
 function submitImojeForm(result: { paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }) {
     if (result.adminActivated) {
         navigateTo(`/payment/return?status=success&eventId=${eventId.value}`)
@@ -309,7 +323,7 @@ async function initiatePayment() {
             eventId: eventId.value,
             serviceType: 'EventFeatured',
             durationDays: selectedDays.value,
-            billing: billingData.value,
+            ...mapBillingFields(billingData.value),
             returnUrl: `${window.location.origin}/payment/return?status=success&eventId=${eventId.value}`,
             cancelUrl: `${window.location.origin}/payment/return?status=cancel&eventId=${eventId.value}`,
         }

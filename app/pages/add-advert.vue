@@ -1979,7 +1979,7 @@
                                 <strong>{{ limitError === 'private_limit_yearly' ? 'Osiągnąłeś roczny limit 3 ogłoszeń' : 'Masz już aktywne ogłoszenie' }}</strong>
                                 <span>Konto prywatne pozwala na max. 1 aktywne i 3 roczne ogłoszenia. Przejdź na konto biznesowe, by publikować bez ograniczeń.</span>
                             </div>
-                            <NuxtLink to="/account/upgrade" class="limit-error-cta">Konto biznesowe</NuxtLink>
+                            <NuxtLink to="/pakiety" class="limit-error-cta">Konto biznesowe</NuxtLink>
                         </div>
                         <div v-else-if="error" class="submit-error-inline">
                             <v-icon icon="mdi-alert-circle-outline" size="15" />{{ error }}
