@@ -1049,6 +1049,10 @@ const { data: searchData } = await useAsyncData(searchKey, () =>
 
 adverts.value = searchData.value?.items ?? []
 total.value   = searchData.value?.totalCount ?? 0
+// frozenTotal otherwise only gets set inside load() (an explicit filter/sort/page action) -
+// without this, a page opened fresh (no prior interaction) always computes totalPages as 0
+// and hides "Załaduj więcej"/pagination even when there are more results, regardless of device.
+frozenTotal.value = total.value
 
 // ── Interactive load (client-side filtering) ────────────────────────────────────────────
 async function load(p: number = page.value) {
