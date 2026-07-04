@@ -67,13 +67,14 @@ useSeoMeta({
     ogUrl: `${jakConfig.public.siteUrl}/jak-to-dziala`,
     ogTitle: 'Jak to działa — CARIZO',
     ogDescription: 'Sprzedaj lub kup samochód w kilku prostych krokach. Zarejestruj się za darmo na CARIZO.',
-    ogImage: `${jakConfig.public.siteUrl}/hero-car.jpg`,
+    ogImage: `${jakConfig.public.siteUrl}/og-image.jpg`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
     twitterTitle: 'Jak to działa — CARIZO',
     twitterDescription: 'Sprzedaj lub kup samochód w kilku prostych krokach na CARIZO.',
+    twitterImage: `${jakConfig.public.siteUrl}/og-image.jpg`,
 })
 useHead({ link: [{ rel: 'canonical', href: `${jakConfig.public.siteUrl}/jak-to-dziala` }] })
 

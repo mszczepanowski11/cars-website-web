@@ -1181,10 +1181,11 @@ const seoDescription = computed(() => {
 
 const seoImage = computed(() => {
     const a = advert.value
-    if (!a) return ''
+    const fallback = `${config.public.siteUrl}/og-image.jpg`
+    if (!a) return fallback
     const imgUrl = a.images?.find(i => i.isMain)?.url ?? a.images?.[0]?.url ?? ''
     const imgPath = getImageUrl(imgUrl)
-    if (!imgPath || imgPath === placeholder) return ''
+    if (!imgPath || imgPath === placeholder) return fallback
     return imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`
 })
 const seoUrl = computed(() => currentUrl())

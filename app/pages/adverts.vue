@@ -1015,16 +1015,24 @@ useSeoMeta({
     ogUrl: `${advertsConfig.public.siteUrl}/adverts`,
     ogTitle: seoTitle,
     ogDescription: seoDescription,
-    ogImage: `${advertsConfig.public.siteUrl}/hero-car.jpg`,
+    ogImage: `${advertsConfig.public.siteUrl}/og-image.jpg`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
     twitterTitle: seoTitle,
     twitterDescription: seoDescription,
+    twitterImage: `${advertsConfig.public.siteUrl}/og-image.jpg`,
     robots: 'index, follow',
 })
-useHead({ link: [{ rel: 'canonical', href: `${advertsConfig.public.siteUrl}/adverts` }] })
+// Canonical must follow the category filter too - a hardcoded bare /adverts here would tell
+// Google every category-filtered view ("Auta osobowe — ogłoszenia" etc, see seoTitle above)
+// is a duplicate of the generic listing page, undoing the category-aware title/description
+// and preventing these from ever being indexed as their own distinct landing pages.
+const canonicalUrl = computed(() => f.categoryId
+    ? `${advertsConfig.public.siteUrl}/adverts?categoryId=${f.categoryId}`
+    : `${advertsConfig.public.siteUrl}/adverts`)
+useHead({ link: [{ rel: 'canonical', href: canonicalUrl }] })
 
 if (taxoData.value?.initialModels?.length) {
     models.value = taxoData.value.initialModels
