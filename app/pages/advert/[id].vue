@@ -819,9 +819,14 @@ const reportOpen = ref(false)
 
 const todayStr = computed(() => new Date().toISOString().slice(0, 10))
 
+// Date.now() called directly would return a different real-world instant during SSR vs.
+// client hydration - right at a day/week/month boundary that's enough to flip the text this
+// computed renders, producing a hydration text mismatch. useState freezes one "now" per
+// request and serializes it into the payload so the client reuses the same value.
+const nowMs = useState('advert-age-now-ms', () => Date.now())
 const advertAge = computed(() => {
     if (!advert.value?.createdAt) return ''
-    const diff = Date.now() - new Date(advert.value.createdAt).getTime()
+    const diff = nowMs.value - new Date(advert.value.createdAt).getTime()
     const days = Math.floor(diff / 86400000)
     if (days === 0) return 'dzisiaj'
     if (days === 1) return 'wczoraj'

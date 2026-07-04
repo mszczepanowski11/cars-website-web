@@ -9,9 +9,16 @@ const { toggle: compareToggle, isCompared } = useCompare()
 const mainImage = computed(() => props.advert.images?.find(i => i.isMain) ?? props.advert.images?.[0])
 const mainImageUrl = computed(() => getImageUrl(mainImage.value?.url, placeholder))
 
+// Date.now() called directly here would return a different real-world instant during SSR
+// vs. client hydration (a network round-trip apart) - for any advert whose createdAt sits
+// near the 24h boundary, that's enough to flip this v-if's result and produce a hydration
+// mismatch ("NOWE" badge present in the server HTML, absent after hydration, or vice versa).
+// useState freezes one "now" per request and serializes it into the payload so the client
+// reuses the exact same value instead of recomputing.
+const nowMs = useState('advert-card-now-ms', () => Date.now())
 const isNew = computed(() => {
     if (!props.advert.createdAt) return false
-    return Date.now() - new Date(props.advert.createdAt).getTime() < 24 * 60 * 60 * 1000
+    return nowMs.value - new Date(props.advert.createdAt).getTime() < 24 * 60 * 60 * 1000
 })
 
 async function toggleFav(e: Event) {
