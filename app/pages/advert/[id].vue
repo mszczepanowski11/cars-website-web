@@ -350,9 +350,9 @@
                     <h2 class="pg-section-title"><v-icon icon="mdi-text-box-outline" size="17" />Opis</h2>
                     <div class="tab-content">
                         <div class="desc-body">
-                            <p class="desc-text" :class="{ clamped: !showFullDesc }">{{ parsedUserDesc }}</p>
-                            <div v-if="parsedUserDesc.length > 400" class="desc-toggle">
-                                <button @click="showFullDesc = !showFullDesc" class="read-more-btn">
+                            <p ref="descRef" class="desc-text" :class="{ clamped: !showFullDesc }">{{ parsedUserDesc }}</p>
+                            <div v-if="descIsOverflowing" class="desc-toggle">
+                                <button @click="showFullDesc = !showFullDesc; checkDescOverflow()" class="read-more-btn">
                                     {{ showFullDesc ? 'Zwiń opis' : 'Czytaj więcej' }}
                                     <v-icon :icon="showFullDesc ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" />
                                 </button>
@@ -817,6 +817,29 @@ const showFullDesc = ref(false)
 const isFav = ref(false)
 const reportOpen = ref(false)
 
+// The "Czytaj więcej" toggle used to only show when the raw description text was over 400
+// characters, but the CSS clamp truncates by rendered LINE count (8 lines), not character
+// count - a description with a few short lines (e.g. a bullet-style "Cena: ...\nPrzebieg:
+// ...\n..." layout) can visually clamp well under 400 characters, while the same character
+// count as one long paragraph might not clamp at all on a wide viewport. That mismatch left
+// some descriptions truncated with no way to expand them, and made it look device-dependent
+// since line-wrapping (and therefore whether 8 lines is actually reached) depends on viewport
+// width and font size. Measure the real rendered overflow instead of guessing from length.
+const descRef = ref<HTMLElement | null>(null)
+const descIsOverflowing = ref(false)
+function checkDescOverflow() {
+    if (showFullDesc.value) return // only meaningful to (re-)measure while still clamped
+    nextTick(() => {
+        const el = descRef.value
+        descIsOverflowing.value = !!el && el.scrollHeight > el.clientHeight + 1
+    })
+}
+onMounted(() => {
+    checkDescOverflow()
+    window.addEventListener('resize', checkDescOverflow)
+})
+onUnmounted(() => window.removeEventListener('resize', checkDescOverflow))
+
 const todayStr = computed(() => new Date().toISOString().slice(0, 10))
 
 // Date.now() called directly would return a different real-world instant during SSR vs.
@@ -896,6 +919,7 @@ const parsedUserDesc = computed(() => {
     desc = desc.replace(/Sprzedawca:.*\n?/g, '').replace(/💬.*\n?/g, '')
     return desc.trim()
 })
+watch(parsedUserDesc, checkDescOverflow)
 
 const isNegotiable = computed(() =>
     !!(advert.value as any)?.isNegotiable ||
