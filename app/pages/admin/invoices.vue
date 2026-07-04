@@ -89,6 +89,7 @@
                                     <th>VAT</th>
                                     <th>Brutto</th>
                                     <th>Status</th>
+                                    <th>KSeF</th>
                                     <th>Akcje</th>
                                 </tr>
                             </thead>
@@ -110,6 +111,14 @@
                                     <td class="td-num">{{ inv.vatAmount.toFixed(2) }}</td>
                                     <td class="td-amount">{{ inv.totalAmount.toFixed(2) }} PLN</td>
                                     <td><span class="status-badge" :class="invoiceStatusClass(inv.status)">{{ invoiceStatusLabel(inv.status) }}</span></td>
+                                    <td>
+                                        <span v-if="inv.isKSeFSent" class="ksef-badge ksef-badge--sent" :title="inv.kSeFReferenceNumber ?? ''">
+                                            <v-icon icon="mdi-check-circle-outline" size="13" />Wysłano
+                                        </span>
+                                        <span v-else class="ksef-badge ksef-badge--not-sent" title="Brak numeru NIP nabywcy lub KSEF_TOKEN nie jest skonfigurowany na serwerze">
+                                            <v-icon icon="mdi-close-circle-outline" size="13" />Nie wysłano
+                                        </span>
+                                    </td>
                                     <td>
                                         <div class="actions">
                                             <button class="act-btn" title="Pobierz PDF" :disabled="pdfLoadingId === inv.id" @click="downloadPdfAdmin(inv)">
@@ -422,6 +431,8 @@ onMounted(() => { loadInvoices(); loadPayments() })
 .user-company { color: $text-dark; font-size: 11px; display: flex; align-items: center; gap: 3px; }
 
 .status-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.status-ok { background: rgba(76,175,80,0.12); color: #4caf50; } &.status-pending { background: rgba(255,152,0,0.12); color: #ff9800; } &.status-generated { background: rgba(33,150,243,0.12); color: #2196f3; } &.status-refunded { background: rgba(41,128,185,0.12); color: #5dade2; } &.status-fail { background: rgba($red, 0.12); color: $red; } }
+
+.ksef-badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.ksef-badge--sent { background: rgba(76,175,80,0.12); color: #4caf50; } &.ksef-badge--not-sent { background: rgba(255,152,0,0.12); color: #ff9800; } }
 
 .actions { display: flex; gap: 4px; }
 .act-btn { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: transparent; border: 1px solid $border; border-radius: $r-sm; color: $text-muted; cursor: pointer; transition: all 0.15s; &:hover:not(:disabled) { border-color: $red; color: $text; } &:disabled { opacity: 0.4; cursor: not-allowed; } }
