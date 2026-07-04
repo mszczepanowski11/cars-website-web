@@ -16,15 +16,25 @@ export default defineNuxtConfig({
         // staying full-screen and centered.
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
         { name: 'google-site-verification', content: 'M-Xj_zIclGdrERVKvxc9I_1Zlp7Wb93dgzUL-N7x0ks' },
+        { name: 'theme-color', content: '#050505' },
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'preconnect', href: 'https://res.cloudinary.com' },
         { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' },
+        // Google's own favicon crawler (and older browsers) don't reliably resolve an
+        // SVG-only favicon - it needs a real .ico/.png fallback to actually show up next
+        // to search results, so the SVG is an enhancement on top of a full raster set,
+        // not a replacement for one.
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'apple-touch-icon', sizes: '180x180', href: '/favicon.svg' },
+        { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/favicon-48x48.png' },
+        { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/favicon-192x192.png' },
+        { rel: 'icon', type: 'image/png', sizes: '512x512', href: '/favicon-512x512.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+        { rel: 'manifest', href: '/site.webmanifest' },
       ],
       script: [
         {

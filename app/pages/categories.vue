@@ -116,11 +116,14 @@ useHead({
         { property: 'og:url', content: `${config.public.siteUrl}/categories` },
         { property: 'og:title', content: 'Kategorie — CARIZO' },
         { property: 'og:description', content: 'Przeglądaj ogłoszenia motoryzacyjne na CARIZO według kategorii.' },
-        { property: 'og:image', content: `${config.public.siteUrl}/hero-car.jpg` },
+        { property: 'og:image', content: `${config.public.siteUrl}/og-image.jpg` },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
         { property: 'og:site_name', content: 'CARIZO' },
         { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: 'Kategorie — CARIZO' },
+        { name: 'twitter:description', content: 'Przeglądaj ogłoszenia motoryzacyjne na CARIZO według kategorii.' },
+        { name: 'twitter:image', content: `${config.public.siteUrl}/og-image.jpg` },
     ],
     link: [{ rel: 'canonical', href: `${config.public.siteUrl}/categories` }]
 })

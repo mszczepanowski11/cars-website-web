@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
         { loc: '/adverts', priority: '0.9', changefreq: 'hourly' },
         { loc: '/wydarzenia', priority: '0.8', changefreq: 'daily' },
         { loc: '/categories', priority: '0.7', changefreq: 'weekly' },
+        { loc: '/pakiety', priority: '0.6', changefreq: 'monthly' },
         { loc: '/jak-to-dziala', priority: '0.5', changefreq: 'monthly' },
         { loc: '/regulamin', priority: '0.3', changefreq: 'monthly' },
         { loc: '/regulamin-b2b', priority: '0.3', changefreq: 'monthly' },
@@ -19,6 +20,20 @@ export default defineEventHandler(async (event) => {
     const dynamicUrls: Array<{ loc: string; lastmod?: string; priority: string; changefreq: string }> = []
 
     const sellerIds = new Set<number>()
+
+    // Category-filtered listing views are indexable, distinct landing pages (adverts.vue sets a
+    // category-aware title/description/canonical for these) - list them so Google can discover
+    // and rank "Auta osobowe — ogłoszenia" etc. separately from the generic /adverts page.
+    try {
+        const categoriesRes = await $fetch<Array<{ id: number }>>(`${apiBase}/api/Taxonomy/categories`).catch(() => null)
+        for (const cat of categoriesRes ?? []) {
+            dynamicUrls.push({
+                loc: `/adverts?categoryId=${cat.id}`,
+                priority: '0.7',
+                changefreq: 'daily',
+            })
+        }
+    } catch { /* skip if API unavailable */ }
 
     try {
         let page = 1

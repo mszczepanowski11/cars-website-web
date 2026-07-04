@@ -205,7 +205,7 @@ useHead(computed(() => {
         : [s.name, s.surname].filter(Boolean).join(' ') || 'Sprzedawca'
     const desc = `Sprawdź ogłoszenia sprzedawcy ${displayName} na CARIZO — największej platformie motoryzacyjnej w Polsce.`
     const pageUrl = `${sellerConfig.public.siteUrl}/seller/${sellerId}`
-    const ogImage = s.avatarUrl ?? `${sellerConfig.public.siteUrl}/hero-car.jpg`
+    const ogImage = s.avatarUrl ?? `${sellerConfig.public.siteUrl}/og-image.jpg`
     return {
         title: `${displayName} — CARIZO`,
         meta: [

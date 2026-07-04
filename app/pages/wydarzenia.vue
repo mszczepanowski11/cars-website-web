@@ -171,13 +171,14 @@ useSeoMeta({
     ogUrl: `${wydarzeniaConfig.public.siteUrl}/wydarzenia`,
     ogTitle: 'Wydarzenia motoryzacyjne — CARIZO',
     ogDescription: 'Motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Bądź na bieżąco z CARIZO.',
-    ogImage: `${wydarzeniaConfig.public.siteUrl}/hero-car.jpg`,
+    ogImage: `${wydarzeniaConfig.public.siteUrl}/og-image.jpg`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
     twitterTitle: 'Wydarzenia motoryzacyjne — CARIZO',
     twitterDescription: 'Zloty, targi i spotkania motoryzacyjne w Polsce — CARIZO.',
+    twitterImage: `${wydarzeniaConfig.public.siteUrl}/og-image.jpg`,
 })
 useHead({ link: [{ rel: 'canonical', href: `${wydarzeniaConfig.public.siteUrl}/wydarzenia` }] })
 

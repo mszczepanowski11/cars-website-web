@@ -616,21 +616,23 @@ import type { CarAdvert, CarEvent, PagedResult, TaxonomyItem, PartCategory, Cate
 const config = useRuntimeConfig()
 const siteUrl = config.public.siteUrl as string
 useHead({
-    title: 'CARIZO — Nowoczesna platforma motoryzacyjna',
+    title: 'CARIZO — Kupuj pewniej. Sprzedaj szybciej.',
     meta: [
-        { name: 'description', content: 'Kupuj i sprzedawaj auta na CARIZO — zweryfikowane ogłoszenia, inteligentne narzędzia, zaufani sprzedawcy.' },
+        { name: 'description', content: 'Kupuj i sprzedawaj samochody, motocykle, ciężarówki, maszyny, łodzie, kampery i wiele więcej. Zweryfikowane ogłoszenia, inteligentne narzędzia AI i profesjonalni sprzedawcy. CARIZO – Kupuj pewniej. Sprzedaj szybciej.' },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: siteUrl },
-        { property: 'og:title', content: 'CARIZO — Nowoczesna platforma motoryzacyjna' },
-        { property: 'og:description', content: 'Kupuj i sprzedawaj auta na CARIZO — zweryfikowane ogłoszenia, inteligentne narzędzia, zaufani sprzedawcy.' },
-        { property: 'og:image', content: `${siteUrl}/hero-car.jpg` },
+        { property: 'og:title', content: 'CARIZO — Kupuj pewniej. Sprzedaj szybciej.' },
+        { property: 'og:description', content: 'Kupuj i sprzedawaj samochody, motocykle, ciężarówki, maszyny, łodzie, kampery i wiele więcej. Zweryfikowane ogłoszenia, inteligentne narzędzia AI i profesjonalni sprzedawcy.' },
+        { property: 'og:image', content: `${siteUrl}/og-image.jpg` },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
+        { property: 'og:image:alt', content: 'CARIZO — Kupuj pewniej. Sprzedaj szybciej.' },
         { property: 'og:site_name', content: 'CARIZO' },
+        { property: 'og:locale', content: 'pl_PL' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'CARIZO — Nowoczesna platforma motoryzacyjna' },
-        { name: 'twitter:description', content: 'Kupuj i sprzedawaj auta na CARIZO.' },
-        { name: 'twitter:image', content: `${siteUrl}/hero-car.jpg` },
+        { name: 'twitter:title', content: 'CARIZO — Kupuj pewniej. Sprzedaj szybciej.' },
+        { name: 'twitter:description', content: 'Kupuj i sprzedawaj samochody, motocykle, ciężarówki, maszyny, łodzie, kampery i wiele więcej na CARIZO.' },
+        { name: 'twitter:image', content: `${siteUrl}/og-image.jpg` },
     ],
     link: [
         { rel: 'canonical', href: siteUrl },
@@ -647,13 +649,22 @@ useHead({
                         '@id': `${siteUrl}/#organization`,
                         name: 'CARIZO',
                         url: siteUrl,
+                        description: 'CARIZO to nowoczesna platforma ogłoszeniowa łącząca kupujących i sprzedających samochody, motocykle, ciężarówki, maszyny, łodzie, kampery i wiele więcej — zweryfikowane ogłoszenia, inteligentne narzędzia AI i profesjonalni sprzedawcy.',
+                        // logo: the square brand mark Google's Knowledge Panel/rich results pull
+                        // from — kept distinct from `image` (a wider representative shot) per
+                        // Google's structured-data guidance to provide both.
                         logo: {
                             '@type': 'ImageObject',
-                            url: `${siteUrl}/carizo-logo.svg`,
+                            url: `${siteUrl}/favicon-512x512.png`,
+                            width: 512,
+                            height: 512,
                         },
+                        image: `${siteUrl}/og-image.jpg`,
                         sameAs: [
                             config.public.socialFacebook,
                             config.public.socialInstagram,
+                            config.public.socialTiktok,
+                            config.public.socialYoutube,
                         ].filter(Boolean),
                     },
                     {
@@ -661,6 +672,7 @@ useHead({
                         '@id': `${siteUrl}/#website`,
                         url: siteUrl,
                         name: 'CARIZO',
+                        description: 'Kupuj i sprzedawaj pojazdy na CARIZO — zweryfikowane ogłoszenia, inteligentne narzędzia AI i profesjonalni sprzedawcy.',
                         publisher: { '@id': `${siteUrl}/#organization` },
                         potentialAction: {
                             '@type': 'SearchAction',

@@ -75,13 +75,14 @@ useSeoMeta({
     ogUrl: `${pomocConfig.public.siteUrl}/pomoc`,
     ogTitle: 'Centrum pomocy — CARIZO',
     ogDescription: 'FAQ i wskazówki dla kupujących i sprzedających na platformie CARIZO.',
-    ogImage: `${pomocConfig.public.siteUrl}/hero-car.jpg`,
+    ogImage: `${pomocConfig.public.siteUrl}/og-image.jpg`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
     twitterTitle: 'Centrum pomocy — CARIZO',
     twitterDescription: 'FAQ i wskazówki dla kupujących i sprzedających na platformie CARIZO.',
+    twitterImage: `${pomocConfig.public.siteUrl}/og-image.jpg`,
 })
 useHead({ link: [{ rel: 'canonical', href: `${pomocConfig.public.siteUrl}/pomoc` }] })
 
