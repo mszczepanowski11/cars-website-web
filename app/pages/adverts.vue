@@ -590,7 +590,7 @@
                         </button>
                     </div>
                     <div v-if="totalPages > 1" class="pagination" role="navigation" aria-label="Paginacja wyników">
-                        <button class="page-btn" aria-label="Poprzednia strona" :disabled="page === 1" @click="load(page - 1)">
+                        <button class="page-btn" aria-label="Poprzednia strona" :disabled="page === 1" @click="goToPage(page - 1)">
                             <v-icon icon="mdi-chevron-left" size="18" />
                         </button>
                         <button
@@ -601,9 +601,9 @@
                             :disabled="p === '...'"
                             :aria-label="p !== '...' ? `Strona ${p}` : undefined"
                             :aria-current="p === page ? 'page' : undefined"
-                            @click="p !== '...' && load(Number(p))"
+                            @click="p !== '...' && goToPage(Number(p))"
                         >{{ p }}</button>
-                        <button class="page-btn" aria-label="Następna strona" :disabled="page >= totalPages" @click="load(page + 1)">
+                        <button class="page-btn" aria-label="Następna strona" :disabled="page >= totalPages" @click="goToPage(page + 1)">
                             <v-icon icon="mdi-chevron-right" size="18" />
                         </button>
                     </div>
@@ -1125,6 +1125,14 @@ async function load(p: number = page.value) {
     } finally {
         loading.value = false
     }
+}
+
+// Pagination page-change (as opposed to "Załaduj więcej", which appends to the
+// current scroll position) jumps to a new result set, so scroll back to the top
+// instead of leaving the user looking at the middle of the previous page's results.
+function goToPage(p: number) {
+    load(p)
+    if (import.meta.client) window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 async function loadMore() {
