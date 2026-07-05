@@ -57,6 +57,15 @@ export default defineNuxtPlugin(() => {
         )
     }
 
+    function loadGoogleAds(id: string) {
+        if (!id) return
+        injectScript(`https://www.googletagmanager.com/gtag/js?id=${id}`, 'google-ads-script')
+        injectInlineScript(
+            `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');`,
+            'google-ads-config'
+        )
+    }
+
     function loadMetaPixel(id: string) {
         if (!id) return
         injectInlineScript(
@@ -89,6 +98,7 @@ export default defineNuxtPlugin(() => {
         }
         if (p.marketing) {
             loadMetaPixel(config.public.metaPixelId as string)
+            loadGoogleAds(config.public.googleAdsId as string)
         }
     }
 
