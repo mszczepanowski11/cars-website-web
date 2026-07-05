@@ -142,6 +142,7 @@ export default defineNuxtConfig({
       ga4Id:       process.env.NUXT_PUBLIC_GA4_ID       ?? '',
       metaPixelId: process.env.NUXT_PUBLIC_META_PIXEL_ID ?? '',
       clarityId:   process.env.NUXT_PUBLIC_CLARITY_ID   ?? '',
+      googleAdsId: process.env.NUXT_PUBLIC_GOOGLE_ADS_ID ?? '',
       turnstileSiteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY ?? '',
       googleClientId:   process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID   ?? '',
       facebookAppId:    process.env.NUXT_PUBLIC_FACEBOOK_APP_ID    ?? '',
