@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
             `${config.public.apiBase}api/Auth/refresh`,
             { method: 'POST', body: { refreshToken } }
         )
-        const cookieOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict' as const, path: '/' }
+        const cookieOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' as const, path: '/' }
         setCookie(event, 'auth_token', data.token, { ...cookieOpts, maxAge: 60 * 60 * 2 })
         setCookie(event, 'refresh_token', data.refreshToken, { ...cookieOpts, maxAge: 60 * 60 * 24 * 30 })
         return { success: true }
