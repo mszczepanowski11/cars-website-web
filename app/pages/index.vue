@@ -277,42 +277,6 @@
             </div>
         </section>
 
-        <!-- ─── Premium showcase ─────────────────────────────────────── -->
-        <section class="section premium-showcase-section">
-            <div class="container">
-                <div class="psc-header">
-                    <div class="psc-header-text">
-                        <div class="psc-eyebrow">PREMIUM</div>
-                        <h2 class="psc-title">Marki premium</h2>
-                        <p class="psc-sub">Odkryj ogłoszenia od topowych producentów motoryzacji</p>
-                    </div>
-                    <NuxtLink to="/adverts" class="see-all">
-                        Przeglądaj wszystkie
-                        <v-icon icon="mdi-arrow-right" size="16" />
-                    </NuxtLink>
-                </div>
-                <div class="psc-grid">
-                    <NuxtLink
-                        v-for="car in premiumShowcase"
-                        :key="car.brand"
-                        :to="`/adverts?textSearch=${encodeURIComponent(car.brand)}`"
-                        class="psc-card"
-                    >
-                        <div class="psc-top-row">
-                            <span class="psc-badge">Premium</span>
-                        </div>
-                        <div class="psc-car-name">
-                            <div class="psc-brand">{{ car.brand }}</div>
-                        </div>
-                        <div class="psc-spec">{{ car.tagline }}</div>
-                        <div class="psc-cta">
-                            Szukaj ofert <v-icon icon="mdi-arrow-right" size="14" />
-                        </div>
-                    </NuxtLink>
-                </div>
-            </div>
-        </section>
-
         <!-- ─── Top adverts ──────────────────────────────────────────── -->
         <section v-if="topAdverts.length" class="section">
             <div class="container">
@@ -801,15 +765,6 @@ function doHeroSearch() {
     if (heroYearTo.value) query.yearTo = String(heroYearTo.value)
     navigateTo({ path: '/adverts', query })
 }
-
-// ─── Premium showcase ─────────────────────────────────────────────────────────
-
-const premiumShowcase = [
-    { brand: 'BMW',      tagline: 'Najwyższe osiągi i luksus' },
-    { brand: 'Porsche',  tagline: 'Ikona sportowej motoryzacji' },
-    { brand: 'Audi',     tagline: 'Technologia i elegancja' },
-    { brand: 'Mercedes', tagline: 'Prestiż i komfort jazdy' },
-]
 
 // ─── Features / Why CARIZO ───────────────────────────────────────────────────
 
@@ -2203,127 +2158,6 @@ onMounted(async () => {
     }
 }
 
-// ─── Premium showcase ─────────────────────────────────────────────────────────
-
-.premium-showcase-section { }
-
-.psc-header {
-    @include section-top;
-    margin-bottom: 28px;
-}
-
-.psc-header-text { display: flex; flex-direction: column; gap: 4px; }
-
-.psc-eyebrow {
-    font-size: 10px;
-    font-weight: 700;
-    color: $red;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-}
-
-.psc-title {
-    font-size: 26px;
-    font-weight: 800;
-    color: $text;
-    margin: 0;
-}
-
-.psc-sub {
-    font-size: 14px;
-    color: $text-dim;
-    margin: 0;
-}
-
-.psc-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-
-    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
-    @include respond-to(sm) { grid-template-columns: 1fr 1fr; }
-}
-
-.psc-card {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
-    border: 1px solid $border;
-    border-radius: $r-xl;
-    padding: 24px 20px 20px;
-    text-decoration: none;
-    transition: border-color 0.22s, transform 0.22s, background 0.22s;
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba($red, 0.06) 0%, transparent 60%);
-        opacity: 0;
-        transition: opacity 0.22s;
-    }
-
-    &:hover {
-        border-color: rgba($red, 0.35);
-        transform: translateY(-3px);
-        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-
-        &::before { opacity: 1; }
-
-        .psc-cta { color: $red; }
-    }
-}
-
-.psc-top-row { display: flex; justify-content: flex-start; }
-
-.psc-badge {
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    background: rgba($red, 0.12);
-    border: 1px solid rgba($red, 0.3);
-    color: $red;
-    padding: 3px 8px;
-    border-radius: 4px;
-}
-
-.psc-brand {
-    font-size: 11px;
-    font-weight: 700;
-    color: $text-dim;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.psc-model {
-    font-size: 22px;
-    font-weight: 900;
-    color: $text;
-    line-height: 1.1;
-}
-
-.psc-spec {
-    font-size: 12px;
-    color: $text-dark;
-    font-weight: 500;
-}
-
-.psc-cta {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    font-weight: 700;
-    color: $text-dim;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-top: auto;
-    transition: color 0.2s;
-}
 
 // ─── Premium label ────────────────────────────────────────────────────────────
 
