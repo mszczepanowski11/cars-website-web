@@ -4110,6 +4110,11 @@ function buildDescription(): string {
         else if (field.type === 'radio' || field.type === 'select') {
             const optLabel = field.options?.find(o => o.value === val)?.label ?? val
             techLines.push(`${field.label}: ${optLabel}`)
+        } else if (field.type === 'color-picker') {
+            // extras[key] stores the CarColor id (see the color-picker swatches above) - resolve
+            // to its name, otherwise the raw numeric id leaks straight into the description text.
+            const colorName = colors.value.find(c => c.id === val)?.name ?? val
+            techLines.push(`${field.label}: ${colorName}`)
         } else techLines.push(`${field.label}: ${val}${field.unit ? ' ' + field.unit : ''}`)
     }
     if (techLines.length) sections.push(`📋 Dane techniczne:\n${techLines.join('\n')}`)
