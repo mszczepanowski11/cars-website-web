@@ -262,7 +262,7 @@
                 <div class="sec-top">
                     <div class="sec-top-left">
                         <div class="sec-eyebrow">PREMIUM COLLECTION</div>
-                        <h2>Pojazdy premium</h2>
+                        <h2>Pakiet premium</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
