@@ -20,6 +20,17 @@ export const useImageUrl = () => {
         if (lower.startsWith('/uploads/')) {
             return '/img/' + url.slice('/uploads/'.length)
         }
+        // Older images were uploaded to Cloudinary with a public_id starting "adverts/..." (fixed
+        // for new uploads, but that segment is permanently baked into already-uploaded assets'
+        // URLs). Ad-blocker filter lists commonly block any request URL containing "/adverts/" -
+        // proxy these through our own domain with that segment swapped to "photos", same as the
+        // local-upload alias above, so the browser-visible request never contains the blocked text.
+        const cloudinaryHost = 'res.cloudinary.com/'
+        const hostIdx = lower.indexOf(cloudinaryHost)
+        if (hostIdx !== -1 && lower.includes('/adverts/')) {
+            const afterHost = url.slice(hostIdx + cloudinaryHost.length)
+            return '/img/cloudinary/' + afterHost.replace('/adverts/', '/photos/')
+        }
         return url
     }
 
