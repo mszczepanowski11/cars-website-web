@@ -62,7 +62,7 @@
             <div v-else class="dash-promo">
                 <div class="promo-text">
                     <div class="promo-title">Zwiększ zasięg<br>swoich ogłoszeń</div>
-                    <p class="promo-sub">Wyróżnij ogłoszenia i sprzedawaj szybciej.</p>
+                    <p class="promo-sub">Wyróżnij ogłoszenia i sprzedaj szybciej.</p>
                     <NuxtLink to="/promote" class="promo-btn">Dowiedz się więcej</NuxtLink>
                 </div>
             </div>
