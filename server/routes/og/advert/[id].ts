@@ -14,12 +14,12 @@ export default defineEventHandler(async (event) => {
     const id = event.context.params?.id ?? ''
     const apiBase = config.public.apiBase.replace(/\/$/, '')
 
-    setHeader(event, 'Content-Type', 'image/jpeg')
-    setHeader(event, 'Cache-Control', 'public, max-age=3600')
-
-    async function fallbackImage(): Promise<Buffer> {
-        const res = await fetch(`${config.public.siteUrl}/og-image.jpg`)
-        return Buffer.from(await res.arrayBuffer())
+    // Redirect (not fetch-and-re-serve) to the static fallback - a self-referencing HTTP
+    // fetch from within this same server to its own public URL is fragile in production
+    // (hairpin routing, cold-start timing), and must never be the thing standing between
+    // a failure here and getting SOME image back to the crawler.
+    function fallbackRedirect() {
+        return sendRedirect(event, '/og-image.jpg', 302)
     }
 
     try {
@@ -31,10 +31,10 @@ export default defineEventHandler(async (event) => {
             : ''
         const mainImageUrl: string | undefined = advert.images?.find((i: any) => i.isMain)?.url ?? advert.images?.[0]?.url
 
-        if (!mainImageUrl) return await fallbackImage()
+        if (!mainImageUrl) return fallbackRedirect()
 
         const imgRes = await fetch(mainImageUrl)
-        if (!imgRes.ok) return await fallbackImage()
+        if (!imgRes.ok) return fallbackRedirect()
         const photoBuffer = Buffer.from(await imgRes.arrayBuffer())
 
         const background = await sharp(photoBuffer)
@@ -56,11 +56,16 @@ export default defineEventHandler(async (event) => {
   ${priceText ? `<text x="56" y="${HEIGHT - 40}" font-family="${FONT_STACK}" font-size="60" font-weight="800" fill="${BRAND_RED}">${escapeXml(priceText)}</text>` : ''}
 </svg>`
 
-        return await sharp(background)
+        const jpeg = await sharp(background)
             .composite([{ input: Buffer.from(overlaySvg) }])
             .jpeg({ quality: 88 })
             .toBuffer()
-    } catch {
-        return await fallbackImage()
+
+        setHeader(event, 'Content-Type', 'image/jpeg')
+        setHeader(event, 'Cache-Control', 'public, max-age=3600')
+        return jpeg
+    } catch (err) {
+        console.error(`[og/advert/${id}] card generation failed:`, err)
+        return fallbackRedirect()
     }
 })
