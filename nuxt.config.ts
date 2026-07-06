@@ -52,6 +52,14 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'node_server',
+    // sharp's native bindings (used by server/routes/og/advert/[id].ts) can't be bundled -
+    // keep it fully external. Nitro's own output-copy step still misses the libvips shared
+    // library its .node binary dlopen's at the OS level (invisible to static analysis), so
+    // the gap is closed by a "postbuild" script (see package.json / scripts/postbuild-sharp.mjs)
+    // that copies it in directly rather than fighting the tracer's config for this.
+    externals: {
+      external: ['sharp']
+    },
     routeRules: {
       '/**': {
         headers: {
