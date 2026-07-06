@@ -235,8 +235,12 @@
                                     v-model="modelTextInput"
                                     type="text"
                                     class="finput"
-                                    :placeholder="`Wpisz ${(categoryConfig.modelLabel ?? 'model').toLowerCase()}`"
+                                    :placeholder="`Wpisz ${(categoryConfig.modelLabel ?? 'model').toLowerCase()} (opcjonalnie)`"
                                 />
+                                <div v-if="noModelsForBrand" class="field-hint">
+                                    <v-icon icon="mdi-information-outline" size="12" />
+                                    Nie mamy jeszcze listy modeli dla tej marki — możesz wpisać model ręcznie lub zostawić puste.
+                                </div>
                             </template>
                             <template v-else>
                                 <SmartSelect
@@ -2916,6 +2920,7 @@ const { fetchCategories } = useCategories()
 
 const brands = ref<TaxonomyItem[]>([])
 const models = ref<TaxonomyItem[]>([])
+const modelsLoading = ref(false)
 const generations = ref<Generation[]>([])
 const trims = ref<TaxonomyItem[]>([])
 const engines = ref<EngineVersion[]>([])
@@ -3458,7 +3463,17 @@ const categoryConfig = computed<CatFieldConfig>(() => {
     return CATEGORY_CONFIGS[slug] ?? DEFAULT_CAT_CONFIG
 })
 
-const isModelTextMode = computed(() => (categoryConfig.value.modelFieldType ?? categoryConfig.value.brandFieldType) === 'text')
+// True once a brand is picked, its models finished loading, and the result is empty - a real
+// taxonomy data gap (e.g. a motorcycle brand with no seeded models yet), not something the
+// user can fix by picking differently. Falls back to a free-text model field, and - unlike
+// categories that are always in text mode - the field stays optional rather than required,
+// since there's nothing for the user to have picked in the first place.
+const noModelsForBrand = computed(() =>
+    !!form.brandId && !modelsLoading.value && models.value.length === 0
+)
+const isModelTextMode = computed(() =>
+    (categoryConfig.value.modelFieldType ?? categoryConfig.value.brandFieldType) === 'text' || noModelsForBrand.value
+)
 
 const isPartsCategorySelected = computed(() => {
     const partsCategory = advertCategories.value.find(c =>
@@ -3574,6 +3589,7 @@ function isFieldVisible(field: string): boolean {
 
 function isFieldRequired(field: string): boolean {
     if (!form.categoryId) return false
+    if (field === 'model' && noModelsForBrand.value) return false
     return categoryConfig.value.required.includes(field)
 }
 
@@ -3646,7 +3662,8 @@ function validateStep(step: number): string | null {
         const cfg = categoryConfig.value
         if (cfg.required.includes('brand') && !form.brandId && cfg.brandFieldType !== 'text') return 'Wybierz markę pojazdu.'
         if (cfg.required.includes('brand') && cfg.brandFieldType === 'text' && !brandTextInput.value.trim()) return `Podaj ${cfg.brandLabel ?? 'markę'}.`
-        if (cfg.required.includes('model') && !form.modelId) return 'Wybierz model pojazdu.'
+        if (cfg.required.includes('model') && !isModelTextMode.value && !form.modelId) return 'Wybierz model pojazdu.'
+        if (cfg.required.includes('model') && isModelTextMode.value && !noModelsForBrand.value && !modelTextInput.value.trim()) return `Podaj ${(categoryConfig.value.modelLabel ?? 'model').toLowerCase()}.`
         if (!form.year) return 'Podaj rok produkcji.'
         if (cfg.required.includes('fuelType') && !form.fuelTypeId) return 'Wybierz rodzaj paliwa.'
         if (cfg.required.includes('mileage') && !form.mileage && form.mileage !== 0) return `Podaj ${cfg.mileageLabel ?? 'przebieg'}.`
@@ -3879,8 +3896,9 @@ async function onBrand() {
     form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
     models.value = []; generations.value = []; trims.value = []; engines.value = []
     if (form.brandId) {
+        modelsLoading.value = true
         const result = await fetchModels(form.brandId)
-        if (seq === _brandSeq) models.value = result
+        if (seq === _brandSeq) { models.value = result; modelsLoading.value = false }
     }
     if (seq !== _brandSeq) return
     resetEngineLocks()
