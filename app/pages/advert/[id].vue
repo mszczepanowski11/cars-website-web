@@ -1212,10 +1212,10 @@ const seoImage = computed(() => {
     const a = advert.value
     const fallback = `${config.public.siteUrl}/og-image.jpg`
     if (!a) return fallback
-    const imgUrl = a.images?.find(i => i.isMain)?.url ?? a.images?.[0]?.url ?? ''
-    const imgPath = getImageUrl(imgUrl)
-    if (!imgPath || imgPath === placeholder) return fallback
-    return imgPath.startsWith('http') ? imgPath : `${config.public.siteUrl}${imgPath}`
+    // Dynamically composited share card (photo + title + price + CARIZO badge) — see
+    // server/routes/og/advert/[id].ts. Falls back to the static premium image server-side
+    // if the advert has no photo or generation fails, so sharing never breaks.
+    return `${config.public.siteUrl}/og/advert/${a.id}`
 })
 const seoUrl = computed(() => currentUrl())
 
