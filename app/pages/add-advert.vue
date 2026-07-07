@@ -3873,6 +3873,12 @@ async function loadContextFeatures() {
         allFeatures.value = cats.flatMap(cat =>
             cat.features.map(f => ({ id: f.id, name: f.name, category: { id: cat.id, name: cat.name, vehicleCategoryId: cat.vehicleCategoryId } }))
         )
+        // Brand/model context change swaps the whole equipment catalog - drop any previously
+        // checked ids that no longer exist in it, otherwise they stay silently selected (the
+        // checkbox itself disappears from the UI, so there's no way to see or uncheck them) and
+        // still get submitted with the final advert.
+        const validIds = new Set(allFeatures.value.map(f => f.id))
+        form.featureIds = form.featureIds.filter(id => validIds.has(id))
     } catch {
         // A failed fetch used to silently fall through to "this category doesn't need an
         // equipment list" (allFeatures stayed at its prior value, often still empty on first
@@ -4198,7 +4204,11 @@ function submitImojeForm(result: { paymentUrl: string, formFields?: Record<strin
 }
 
 async function submit() {
-    for (const stepIdx of [4, 5]) {
+    // Validate every step, not just the last two - loadDraft() can jump currentStep straight to
+    // a late step (e.g. resuming a draft saved from the preview step), which never puts the user
+    // through goNext()'s per-step gate for the earlier steps, so an advert could otherwise publish
+    // with e.g. too few photos or a missing required field from step 0-3.
+    for (const stepIdx of [0, 1, 2, 3, 4, 5]) {
         const err = validateStep(stepIdx)
         if (err) {
             stepError.value = err
@@ -4597,15 +4607,13 @@ onMounted(async () => {
             form.year = advert.year ?? null
             form.mileage = advert.mileage ?? null
             form.featureIds = advert.features?.map(f => f.id) ?? []
-            form.engineCapacity = (advert as any).engineCapacity ?? advert.engineVersion?.displacement ?? null
-            form.power = (advert as any).power ?? advert.engineVersion?.horsepower ?? null
             form.vin = advert.vin ?? ''
             form.city = advert.city ?? ''
             form.region = advert.region ?? null
             form.isNegotiable = advert.isNegotiable ?? false
             form.sellerType = advert.sellerType ?? 'private'
-            form.power = advert.powerHP ?? null
-            form.engineCapacity = advert.engineSize ?? null
+            form.power = advert.powerHP ?? (advert as any).power ?? advert.engineVersion?.horsepower ?? null
+            form.engineCapacity = advert.engineSize ?? (advert as any).engineCapacity ?? advert.engineVersion?.displacement ?? null
             // Restore extras from structured fields
             if (advert.condition) extras.condition = advert.condition
             // Parts catalog fields
