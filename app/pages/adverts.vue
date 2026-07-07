@@ -636,6 +636,7 @@ const f = reactive({
     textSearch:  route.query.textSearch  ? String(route.query.textSearch)  : '',
     brandId:     route.query.brandId     ? Number(route.query.brandId)     : null as number | null,
     modelId:     route.query.modelId     ? Number(route.query.modelId)     : null as number | null,
+    generationId: route.query.generationId ? Number(route.query.generationId) : null as number | null,
     fuelTypeId:  route.query.fuelTypeId  ? Number(route.query.fuelTypeId)  : null as number | null,
     bodyTypeId:  route.query.bodyTypeId  ? Number(route.query.bodyTypeId)  : null as number | null,
     gearboxId:   route.query.gearboxId   ? Number(route.query.gearboxId)   : null as number | null,
@@ -857,6 +858,7 @@ function onCategoryChange() {
     // handler runs, so just react to it here - do not re-derive/toggle it.
     f.brandId = null
     f.modelId = null
+    f.generationId = null
     f.vehicleSubtypeId = null
     f.featureIds = []
     models.value = []
@@ -877,7 +879,7 @@ function toggleFeature(id: number) {
 }
 
 function clearFilters() {
-    f.categoryId = null; f.textSearch = ''; f.brandId = null; f.modelId = null
+    f.categoryId = null; f.textSearch = ''; f.brandId = null; f.modelId = null; f.generationId = null
     f.fuelTypeId = null; f.bodyTypeId = null; f.gearboxId = null
     f.driveTypeId = null; f.colorId = null
     f.priceFrom = null; f.priceTo = null
@@ -907,6 +909,7 @@ function clearFilters() {
 
 async function onBrandChange() {
     f.modelId = null
+    f.generationId = null
     models.value = []
     if (f.brandId) models.value = await fetchModels(f.brandId)
     load(1)
@@ -918,6 +921,7 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.textSearch)   body.textSearch   = f.textSearch
     if (f.brandId)      body.brandId      = f.brandId
     if (f.modelId)      body.modelId      = f.modelId
+    if (f.generationId) body.generationId = f.generationId
     if (f.fuelTypeId)   body.fuelTypeId   = f.fuelTypeId
     if (f.bodyTypeId)   body.bodyTypeId   = f.bodyTypeId
     if (f.gearboxId)    body.gearboxId    = f.gearboxId
@@ -1064,6 +1068,7 @@ async function load(p: number = page.value) {
     if (f.textSearch)  query.textSearch  = f.textSearch
     if (f.brandId)     query.brandId     = String(f.brandId)
     if (f.modelId)     query.modelId     = String(f.modelId)
+    if (f.generationId) query.generationId = String(f.generationId)
     if (f.fuelTypeId)  query.fuelTypeId  = String(f.fuelTypeId)
     if (f.bodyTypeId)  query.bodyTypeId  = String(f.bodyTypeId)
     if (f.gearboxId)   query.gearboxId   = String(f.gearboxId)

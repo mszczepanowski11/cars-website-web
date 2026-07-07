@@ -60,6 +60,15 @@
             </div>
         </div>
 
+        <!-- Admin "add advert for client" mode banner -->
+        <div v-if="isAdminClientMode" class="admin-client-banner">
+            <v-icon icon="mdi-account-tie-outline" size="18" />
+            <span>
+                Tworzysz ogłoszenie w imieniu klienta:
+                <strong>{{ adminClientDraft.fullName }}</strong> · {{ adminClientDraft.email }} · {{ adminClientDraft.phoneNumber }}
+            </span>
+        </div>
+
         <!-- Mobile step progress (hidden on desktop where left sidebar shows) -->
         <div class="mobile-step-bar">
             <div class="mobile-step-label">Krok {{ currentStep + 1 }} z {{ steps.length }}: {{ steps[currentStep]?.name }}</div>
@@ -235,8 +244,12 @@
                                     v-model="modelTextInput"
                                     type="text"
                                     class="finput"
-                                    :placeholder="`Wpisz ${(categoryConfig.modelLabel ?? 'model').toLowerCase()}`"
+                                    :placeholder="`Wpisz ${(categoryConfig.modelLabel ?? 'model').toLowerCase()} (opcjonalnie)`"
                                 />
+                                <div v-if="noModelsForBrand" class="field-hint">
+                                    <v-icon icon="mdi-information-outline" size="12" />
+                                    Nie mamy jeszcze listy modeli dla tej marki — możesz wpisać model ręcznie lub zostawić puste.
+                                </div>
                             </template>
                             <template v-else>
                                 <SmartSelect
@@ -2909,6 +2922,13 @@ const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
 
+// Admin "add advert for client" flow: the admin panel stashes the client's contact details in
+// sessionStorage (see admin/users.vue) before navigating here with ?adminClientMode=1. On submit
+// we call a different backend endpoint that creates/reuses the client's account and publishes
+// the advert under it, instead of the normal self-service create endpoint.
+const isAdminClientMode = computed(() => route.query.adminClientMode === '1')
+const adminClientDraft = reactive({ fullName: '', email: '', phoneNumber: '' })
+
 const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchTrims, fetchEnginesByTrim, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext, fetchVehicleSubtypes, fetchPartCategories, fetchPartSubcategories, fetchEngineSpecs, validateChain } = useTaxonomy()
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
@@ -2916,6 +2936,7 @@ const { fetchCategories } = useCategories()
 
 const brands = ref<TaxonomyItem[]>([])
 const models = ref<TaxonomyItem[]>([])
+const modelsLoading = ref(false)
 const generations = ref<Generation[]>([])
 const trims = ref<TaxonomyItem[]>([])
 const engines = ref<EngineVersion[]>([])
@@ -3458,7 +3479,17 @@ const categoryConfig = computed<CatFieldConfig>(() => {
     return CATEGORY_CONFIGS[slug] ?? DEFAULT_CAT_CONFIG
 })
 
-const isModelTextMode = computed(() => (categoryConfig.value.modelFieldType ?? categoryConfig.value.brandFieldType) === 'text')
+// True once a brand is picked, its models finished loading, and the result is empty - a real
+// taxonomy data gap (e.g. a motorcycle brand with no seeded models yet), not something the
+// user can fix by picking differently. Falls back to a free-text model field, and - unlike
+// categories that are always in text mode - the field stays optional rather than required,
+// since there's nothing for the user to have picked in the first place.
+const noModelsForBrand = computed(() =>
+    !!form.brandId && !modelsLoading.value && models.value.length === 0
+)
+const isModelTextMode = computed(() =>
+    (categoryConfig.value.modelFieldType ?? categoryConfig.value.brandFieldType) === 'text' || noModelsForBrand.value
+)
 
 const isPartsCategorySelected = computed(() => {
     const partsCategory = advertCategories.value.find(c =>
@@ -3574,6 +3605,7 @@ function isFieldVisible(field: string): boolean {
 
 function isFieldRequired(field: string): boolean {
     if (!form.categoryId) return false
+    if (field === 'model' && noModelsForBrand.value) return false
     return categoryConfig.value.required.includes(field)
 }
 
@@ -3646,7 +3678,8 @@ function validateStep(step: number): string | null {
         const cfg = categoryConfig.value
         if (cfg.required.includes('brand') && !form.brandId && cfg.brandFieldType !== 'text') return 'Wybierz markę pojazdu.'
         if (cfg.required.includes('brand') && cfg.brandFieldType === 'text' && !brandTextInput.value.trim()) return `Podaj ${cfg.brandLabel ?? 'markę'}.`
-        if (cfg.required.includes('model') && !form.modelId) return 'Wybierz model pojazdu.'
+        if (cfg.required.includes('model') && !isModelTextMode.value && !form.modelId) return 'Wybierz model pojazdu.'
+        if (cfg.required.includes('model') && isModelTextMode.value && !noModelsForBrand.value && !modelTextInput.value.trim()) return `Podaj ${(categoryConfig.value.modelLabel ?? 'model').toLowerCase()}.`
         if (!form.year) return 'Podaj rok produkcji.'
         if (cfg.required.includes('fuelType') && !form.fuelTypeId) return 'Wybierz rodzaj paliwa.'
         if (cfg.required.includes('mileage') && !form.mileage && form.mileage !== 0) return `Podaj ${cfg.mileageLabel ?? 'przebieg'}.`
@@ -3856,6 +3889,12 @@ async function loadContextFeatures() {
         allFeatures.value = cats.flatMap(cat =>
             cat.features.map(f => ({ id: f.id, name: f.name, category: { id: cat.id, name: cat.name, vehicleCategoryId: cat.vehicleCategoryId } }))
         )
+        // Brand/model context change swaps the whole equipment catalog - drop any previously
+        // checked ids that no longer exist in it, otherwise they stay silently selected (the
+        // checkbox itself disappears from the UI, so there's no way to see or uncheck them) and
+        // still get submitted with the final advert.
+        const validIds = new Set(allFeatures.value.map(f => f.id))
+        form.featureIds = form.featureIds.filter(id => validIds.has(id))
     } catch {
         // A failed fetch used to silently fall through to "this category doesn't need an
         // equipment list" (allFeatures stayed at its prior value, often still empty on first
@@ -3879,8 +3918,9 @@ async function onBrand() {
     form.modelId = null; form.generationId = null; form.trimId = null; form.engineVersionId = null
     models.value = []; generations.value = []; trims.value = []; engines.value = []
     if (form.brandId) {
+        modelsLoading.value = true
         const result = await fetchModels(form.brandId)
-        if (seq === _brandSeq) models.value = result
+        if (seq === _brandSeq) { models.value = result; modelsLoading.value = false }
     }
     if (seq !== _brandSeq) return
     resetEngineLocks()
@@ -4180,7 +4220,11 @@ function submitImojeForm(result: { paymentUrl: string, formFields?: Record<strin
 }
 
 async function submit() {
-    for (const stepIdx of [4, 5]) {
+    // Validate every step, not just the last two - loadDraft() can jump currentStep straight to
+    // a late step (e.g. resuming a draft saved from the preview step), which never puts the user
+    // through goNext()'s per-step gate for the earlier steps, so an advert could otherwise publish
+    // with e.g. too few photos or a missing required field from step 0-3.
+    for (const stepIdx of [0, 1, 2, 3, 4, 5]) {
         const err = validateStep(stepIdx)
         if (err) {
             stepError.value = err
@@ -4442,11 +4486,21 @@ async function submit() {
             if (form.maxTrailerWeight) cleanBody.maxTrailerWeight = form.maxTrailerWeight
             if (form.youtubeUrl) cleanBody.youtubeUrl = form.youtubeUrl
             if (form.pdfBrochureUrl) cleanBody.pdfBrochureUrl = form.pdfBrochureUrl
-            const created = await $fetch<any>('/api/proxy/api/listings', {
-                method: 'POST',
-                body: cleanBody,
-            })
-            const id: number = created?.id ?? created?.advertId ?? created
+            const created: any = isAdminClientMode.value
+                ? await $fetch<any>('/api/proxy/api/Admin/create-client-advert', {
+                    method: 'POST',
+                    body: {
+                        fullName: adminClientDraft.fullName,
+                        email: adminClientDraft.email,
+                        phoneNumber: adminClientDraft.phoneNumber,
+                        advert: cleanBody,
+                    },
+                })
+                : await $fetch<any>('/api/proxy/api/listings', {
+                    method: 'POST',
+                    body: cleanBody,
+                })
+            const id: number = isAdminClientMode.value ? created?.advertId : (created?.id ?? created?.advertId ?? created)
             if (!id) throw new Error('Brak ID ogłoszenia w odpowiedzi: ' + JSON.stringify(created))
 
             let imageErrors = 0
@@ -4469,6 +4523,23 @@ async function submit() {
             }
 
             localStorage.removeItem(draftKey.value)
+
+            if (isAdminClientMode.value) {
+                // Already published by the admin endpoint (and the admin's own session doesn't
+                // own this advert, so the normal owner-only publish/promo calls below would just
+                // fail) - skip straight to a confirmation and back to the admin panel.
+                sessionStorage.removeItem('carizo_admin_client_draft')
+                loading.value = false
+                const { success: toastSuccess } = useToast()
+                toastSuccess(created.wasNewAccount
+                    ? 'Ogłoszenie opublikowane. Utworzono nowe konto klienta i wysłano e-mail z linkiem do ustawienia hasła.'
+                    : 'Ogłoszenie zostało opublikowane na koncie klienta.')
+                if (imageErrors > 0) {
+                    toastSuccess(`Uwaga: ${imageErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych.`)
+                }
+                await navigateTo('/admin/users')
+                return
+            }
 
             await $fetch(`/api/proxy/api/listings/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
 
@@ -4555,6 +4626,21 @@ function onBeforeUnload(e: BeforeUnloadEvent) {
 }
 
 onMounted(async () => {
+    if (isAdminClientMode.value) {
+        try {
+            const raw = sessionStorage.getItem('carizo_admin_client_draft')
+            const parsed = raw ? JSON.parse(raw) : null
+            if (!parsed?.fullName || !parsed?.email || !parsed?.phoneNumber) throw new Error('missing')
+            adminClientDraft.fullName = parsed.fullName
+            adminClientDraft.email = parsed.email
+            adminClientDraft.phoneNumber = parsed.phoneNumber
+        } catch {
+            useToast().error('Brak danych klienta — zacznij od panelu administratora.')
+            await navigateTo('/admin/users')
+            return
+        }
+    }
+
     window.addEventListener('beforeunload', onBeforeUnload)
     ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value, partCategories.value] = await Promise.all([
         fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories(), fetchPartCategories()
@@ -4579,15 +4665,13 @@ onMounted(async () => {
             form.year = advert.year ?? null
             form.mileage = advert.mileage ?? null
             form.featureIds = advert.features?.map(f => f.id) ?? []
-            form.engineCapacity = (advert as any).engineCapacity ?? advert.engineVersion?.displacement ?? null
-            form.power = (advert as any).power ?? advert.engineVersion?.horsepower ?? null
             form.vin = advert.vin ?? ''
             form.city = advert.city ?? ''
             form.region = advert.region ?? null
             form.isNegotiable = advert.isNegotiable ?? false
             form.sellerType = advert.sellerType ?? 'private'
-            form.power = advert.powerHP ?? null
-            form.engineCapacity = advert.engineSize ?? null
+            form.power = advert.powerHP ?? (advert as any).power ?? advert.engineVersion?.horsepower ?? null
+            form.engineCapacity = advert.engineSize ?? (advert as any).engineCapacity ?? advert.engineVersion?.displacement ?? null
             // Restore extras from structured fields
             if (advert.condition) extras.condition = advert.condition
             // Parts catalog fields
@@ -4800,6 +4884,19 @@ onBeforeUnmount(() => {
     cursor: pointer;
     transition: border-color 0.2s, color 0.2s;
     &:hover { border-color: $text-dim; color: $text; }
+}
+
+// ── Admin "add advert for client" banner ──────────────────────────────────────
+.admin-client-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background: rgba(255, 180, 50, 0.1);
+    border-bottom: 1px solid rgba(255, 180, 50, 0.25);
+    color: #e5a83c;
+    font-size: 13px;
+    strong { color: $text; }
 }
 
 // ── Mobile step progress bar ──────────────────────────────────────────────────

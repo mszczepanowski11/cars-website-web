@@ -160,10 +160,8 @@
                             <div v-if="currentSearchConfig.hasFuel" class="hse-field">
                                 <label class="hse-label">Napęd</label>
                                 <select v-model="searchDriveType" class="hse-select">
-                                    <option value="">Wszystkie</option>
-                                    <option value="FWD">Przedni (FWD)</option>
-                                    <option value="RWD">Tylny (RWD)</option>
-                                    <option value="AWD">4x4 / AWD</option>
+                                    <option :value="null">Wszystkie</option>
+                                    <option v-for="dt in driveTypes" :key="dt.id" :value="dt.id">{{ dt.name }}</option>
                                 </select>
                             </div>
 
@@ -221,9 +219,8 @@
                                 <label class="hse-label">Stan pojazdu</label>
                                 <select v-model="searchCondition" class="hse-select">
                                     <option value="">Wszystkie</option>
-                                    <option value="Nowe">Nowe</option>
-                                    <option value="Używane">Używane</option>
-                                    <option value="Uszkodzone">Uszkodzone</option>
+                                    <option value="new">Nowe</option>
+                                    <option value="used">Używane</option>
                                 </select>
                             </div>
 
@@ -863,7 +860,7 @@ const searchPayloadFrom = ref('')
 const searchPayloadTo = ref('')
 const searchCondition = ref('')
 const searchLocation = ref('')
-const searchDriveType = ref('')
+const searchDriveType = ref<number | null>(null)
 const searchEquipment = ref('')
 const showMoreFilters = ref(false)
 const searchModels = ref<TaxonomyItem[]>([])
@@ -871,6 +868,7 @@ const searchGenerations = ref<any[]>([])
 const searchGenerationId = ref<number | null>(null)
 const searchGearboxId = ref<number | null>(null)
 const gearboxes = ref<TaxonomyItem[]>([])
+const driveTypes = ref<TaxonomyItem[]>([])
 const fuelTypes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
 
@@ -999,7 +997,7 @@ function doSearch() {
     if (searchPowerFrom.value) query.powerFrom = searchPowerFrom.value
     if (searchPowerTo.value) query.powerTo = searchPowerTo.value
     if (searchCondition.value) query.condition = searchCondition.value
-    if (searchDriveType.value) query.driveType = searchDriveType.value
+    if (searchDriveType.value) query.driveTypeId = String(searchDriveType.value)
     if (searchEquipment.value.trim()) query.equipment = searchEquipment.value.trim()
     const cat = homeCategories.value.find(c => c.slug === searchCat.value)
     if (cat) query.categoryId = String(cat.id)
@@ -1027,7 +1025,7 @@ const ingMonthlyRate = computed(() => {
 
 const { getUpcoming } = useEvents()
 const { getImageUrl } = useImageUrl()
-const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchGearboxes, fetchFuelTypes, fetchBodyTypes, fetchPartCategories } = useTaxonomy()
+const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchGearboxes, fetchFuelTypes, fetchBodyTypes, fetchPartCategories, fetchDriveTypes } = useTaxonomy()
 const { fetchCategories, STATIC_CATEGORIES } = useCategories()
 // Real category list (all 17, minus "Inne") fetched below in the SSR data block — starts from
 // the static fallback so slug->id lookups still work before that fetch resolves.
@@ -1152,6 +1150,7 @@ onMounted(async () => {
     try { fuelTypes.value = await fetchFuelTypes() } catch {}
     try { bodyTypes.value = await fetchBodyTypes() } catch {}
     try { gearboxes.value = await fetchGearboxes() } catch {}
+    try { driveTypes.value = await fetchDriveTypes() } catch {}
     try { partCategories.value = await fetchPartCategories() } catch {}
 })
 </script>
