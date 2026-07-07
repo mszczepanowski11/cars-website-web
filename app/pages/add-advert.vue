@@ -60,6 +60,15 @@
             </div>
         </div>
 
+        <!-- Admin "add advert for client" mode banner -->
+        <div v-if="isAdminClientMode" class="admin-client-banner">
+            <v-icon icon="mdi-account-tie-outline" size="18" />
+            <span>
+                Tworzysz ogłoszenie w imieniu klienta:
+                <strong>{{ adminClientDraft.fullName }}</strong> · {{ adminClientDraft.email }} · {{ adminClientDraft.phoneNumber }}
+            </span>
+        </div>
+
         <!-- Mobile step progress (hidden on desktop where left sidebar shows) -->
         <div class="mobile-step-bar">
             <div class="mobile-step-label">Krok {{ currentStep + 1 }} z {{ steps.length }}: {{ steps[currentStep]?.name }}</div>
@@ -2913,6 +2922,13 @@ const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
 
+// Admin "add advert for client" flow: the admin panel stashes the client's contact details in
+// sessionStorage (see admin/users.vue) before navigating here with ?adminClientMode=1. On submit
+// we call a different backend endpoint that creates/reuses the client's account and publishes
+// the advert under it, instead of the normal self-service create endpoint.
+const isAdminClientMode = computed(() => route.query.adminClientMode === '1')
+const adminClientDraft = reactive({ fullName: '', email: '', phoneNumber: '' })
+
 const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchTrims, fetchEnginesByTrim, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext, fetchVehicleSubtypes, fetchPartCategories, fetchPartSubcategories, fetchEngineSpecs, validateChain } = useTaxonomy()
 const { validateCoupon } = useCoupons()
 const { getPrice } = usePayment()
@@ -4470,11 +4486,21 @@ async function submit() {
             if (form.maxTrailerWeight) cleanBody.maxTrailerWeight = form.maxTrailerWeight
             if (form.youtubeUrl) cleanBody.youtubeUrl = form.youtubeUrl
             if (form.pdfBrochureUrl) cleanBody.pdfBrochureUrl = form.pdfBrochureUrl
-            const created = await $fetch<any>('/api/proxy/api/listings', {
-                method: 'POST',
-                body: cleanBody,
-            })
-            const id: number = created?.id ?? created?.advertId ?? created
+            const created: any = isAdminClientMode.value
+                ? await $fetch<any>('/api/proxy/api/Admin/create-client-advert', {
+                    method: 'POST',
+                    body: {
+                        fullName: adminClientDraft.fullName,
+                        email: adminClientDraft.email,
+                        phoneNumber: adminClientDraft.phoneNumber,
+                        advert: cleanBody,
+                    },
+                })
+                : await $fetch<any>('/api/proxy/api/listings', {
+                    method: 'POST',
+                    body: cleanBody,
+                })
+            const id: number = isAdminClientMode.value ? created?.advertId : (created?.id ?? created?.advertId ?? created)
             if (!id) throw new Error('Brak ID ogłoszenia w odpowiedzi: ' + JSON.stringify(created))
 
             let imageErrors = 0
@@ -4497,6 +4523,23 @@ async function submit() {
             }
 
             localStorage.removeItem(draftKey.value)
+
+            if (isAdminClientMode.value) {
+                // Already published by the admin endpoint (and the admin's own session doesn't
+                // own this advert, so the normal owner-only publish/promo calls below would just
+                // fail) - skip straight to a confirmation and back to the admin panel.
+                sessionStorage.removeItem('carizo_admin_client_draft')
+                loading.value = false
+                const { success: toastSuccess } = useToast()
+                toastSuccess(created.wasNewAccount
+                    ? 'Ogłoszenie opublikowane. Utworzono nowe konto klienta i wysłano e-mail z linkiem do ustawienia hasła.'
+                    : 'Ogłoszenie zostało opublikowane na koncie klienta.')
+                if (imageErrors > 0) {
+                    toastSuccess(`Uwaga: ${imageErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych.`)
+                }
+                await navigateTo('/admin/users')
+                return
+            }
 
             await $fetch(`/api/proxy/api/listings/${id}/publish`, { method: 'POST', body: {} }).catch(() => {})
 
@@ -4583,6 +4626,21 @@ function onBeforeUnload(e: BeforeUnloadEvent) {
 }
 
 onMounted(async () => {
+    if (isAdminClientMode.value) {
+        try {
+            const raw = sessionStorage.getItem('carizo_admin_client_draft')
+            const parsed = raw ? JSON.parse(raw) : null
+            if (!parsed?.fullName || !parsed?.email || !parsed?.phoneNumber) throw new Error('missing')
+            adminClientDraft.fullName = parsed.fullName
+            adminClientDraft.email = parsed.email
+            adminClientDraft.phoneNumber = parsed.phoneNumber
+        } catch {
+            useToast().error('Brak danych klienta — zacznij od panelu administratora.')
+            await navigateTo('/admin/users')
+            return
+        }
+    }
+
     window.addEventListener('beforeunload', onBeforeUnload)
     ;[brands.value, fuelTypes.value, gearboxes.value, bodyTypes.value, driveTypes.value, colors.value, allFeatures.value, advertCategories.value, partCategories.value] = await Promise.all([
         fetchBrands(), fetchFuelTypes(), fetchGearboxes(), fetchBodyTypes(), fetchDriveTypes(), fetchColors(), fetchFeatures(), fetchCategories(), fetchPartCategories()
@@ -4826,6 +4884,19 @@ onBeforeUnmount(() => {
     cursor: pointer;
     transition: border-color 0.2s, color 0.2s;
     &:hover { border-color: $text-dim; color: $text; }
+}
+
+// ── Admin "add advert for client" banner ──────────────────────────────────────
+.admin-client-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background: rgba(255, 180, 50, 0.1);
+    border-bottom: 1px solid rgba(255, 180, 50, 0.25);
+    color: #e5a83c;
+    font-size: 13px;
+    strong { color: $text; }
 }
 
 // ── Mobile step progress bar ──────────────────────────────────────────────────

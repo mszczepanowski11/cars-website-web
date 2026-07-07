@@ -202,6 +202,8 @@ export interface AdminUser {
     createdAt: string
     accountType?: 'Personal' | 'Business'
     companyName?: string
+    emailVerified: boolean
+    isAdminCreated: boolean
 }
 
 export interface AdminAdvert {

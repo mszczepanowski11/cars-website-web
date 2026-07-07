@@ -23,6 +23,12 @@
             <div class="admin-topbar">
                 <h1 class="page-title">Użytkownicy</h1>
                 <span class="topbar-count">{{ totalCount.toLocaleString('pl') }} kont</span>
+                <div class="topbar-actions">
+                    <button class="btn-add-client" @click="openClientModal">
+                        <v-icon icon="mdi-plus" size="16" />
+                        Dodaj ogłoszenie dla klienta
+                    </button>
+                </div>
             </div>
 
             <!-- Search + filter -->
@@ -79,8 +85,8 @@
                                 <td class="td-center">{{ u.advertCount ?? 0 }}</td>
                                 <td class="td-date">{{ u.createdAt ? formatDate(u.createdAt) : '—' }}</td>
                                 <td>
-                                    <span class="status-badge" :class="u.isBlocked ? 'status-blocked' : 'status-active'">
-                                        {{ u.isBlocked ? 'Zablokowany' : 'Aktywny' }}
+                                    <span class="status-badge" :class="u.isBlocked ? 'status-blocked' : (u.emailVerified ? 'status-active' : 'status-pending')">
+                                        {{ u.isBlocked ? 'Zablokowany' : (u.emailVerified ? 'Aktywny' : 'Oczekuje aktywacji') }}
                                     </span>
                                 </td>
                                 <td>
@@ -91,6 +97,18 @@
                                             <v-icon v-if="actionLoading === u.id" icon="mdi-loading" size="13" class="spin" />
                                             <v-icon v-else :icon="u.isBlocked ? 'mdi-lock-open-outline' : 'mdi-lock-outline'" size="13" />
                                             {{ u.isBlocked ? 'Odblokuj' : 'Zablokuj' }}
+                                        </button>
+                                        <button v-if="!u.isAdmin && !u.emailVerified && u.isAdminCreated" class="btn-action btn-resend"
+                                            :disabled="actionLoading === u.id"
+                                            @click="resendActivation(u)">
+                                            <v-icon icon="mdi-email-sync-outline" size="13" />
+                                            Wyślij ponownie
+                                        </button>
+                                        <button v-if="!u.isAdmin && !u.emailVerified" class="btn-action btn-activate"
+                                            :disabled="actionLoading === u.id"
+                                            @click="activateManually(u)">
+                                            <v-icon icon="mdi-check-circle-outline" size="13" />
+                                            Aktywuj ręcznie
                                         </button>
                                         <button v-if="!u.isAdmin" class="btn-action btn-delete"
                                             :disabled="actionLoading === u.id"
@@ -116,6 +134,38 @@
                 </div>
             </template>
         </main>
+
+        <Teleport to="body">
+            <transition name="fade">
+                <div v-if="showClientModal" class="modal-backdrop" @click.self="closeClientModal">
+                    <div class="confirm-modal client-modal">
+                        <h2 class="modal-title">Dodaj ogłoszenie dla klienta</h2>
+                        <p class="modal-desc">
+                            Podaj dane klienta. Jeśli konto o tym adresie e-mail nie istnieje, zostanie utworzone
+                            i automatycznie oznaczone jako oczekujące na aktywację - klient nie musi potwierdzać
+                            e-maila, aby ogłoszenie zostało opublikowane. Po zapisaniu wyślemy do niego link do
+                            ustawienia hasła.
+                        </p>
+                        <div class="client-form">
+                            <label class="field-label">Imię i nazwisko</label>
+                            <input v-model="clientDraft.fullName" class="field-input" placeholder="Jan Kowalski" />
+                            <label class="field-label">Adres e-mail</label>
+                            <input v-model="clientDraft.email" type="email" class="field-input" placeholder="jan.kowalski@example.com" />
+                            <label class="field-label">Numer telefonu</label>
+                            <input v-model="clientDraft.phoneNumber" class="field-input" placeholder="500 100 200" />
+                            <p v-if="clientModalError" class="field-error">{{ clientModalError }}</p>
+                        </div>
+                        <div class="confirm-actions">
+                            <button class="btn-cancel" @click="closeClientModal">Anuluj</button>
+                            <button class="btn-continue" @click="continueToAdvertForm">
+                                Dalej: dane ogłoszenia
+                                <v-icon icon="mdi-arrow-right" size="15" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </Teleport>
     </div>
 </template>
 
@@ -212,6 +262,69 @@ async function deleteUser(u: AdminUser) {
     } finally { actionLoading.value = null }
 }
 
+async function resendActivation(u: AdminUser) {
+    actionLoading.value = u.id
+    try {
+        await $fetch(`/api/proxy/api/Admin/users/${u.id}/resend-client-activation`, { method: 'POST', body: {} })
+        toastSuccess('Wysłano ponownie e-mail aktywacyjny.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się wysłać e-maila.')
+    } finally { actionLoading.value = null }
+}
+
+async function activateManually(u: AdminUser) {
+    if (!confirm(`Ręcznie aktywować konto ${u.name} ${u.surname} (${u.email})?`)) return
+    actionLoading.value = u.id
+    try {
+        await $fetch(`/api/proxy/api/Admin/users/${u.id}/activate`, { method: 'POST', body: {} })
+        u.emailVerified = true
+        toastSuccess('Konto zostało aktywowane.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się aktywować konta.')
+    } finally { actionLoading.value = null }
+}
+
+// "Add advert for client" flow: collect the client's contact details here, stash them in
+// sessionStorage, then hand off to the normal add-advert wizard in admin-client mode - it
+// already has all the category-specific form logic, we just need it to submit to a different
+// backend endpoint and carry the client's info along.
+const showClientModal = ref(false)
+const clientModalError = ref('')
+const clientDraft = reactive({ fullName: '', email: '', phoneNumber: '' })
+
+function openClientModal() {
+    clientDraft.fullName = ''
+    clientDraft.email = ''
+    clientDraft.phoneNumber = ''
+    clientModalError.value = ''
+    showClientModal.value = true
+}
+
+function closeClientModal() {
+    showClientModal.value = false
+}
+
+function continueToAdvertForm() {
+    const fullName = clientDraft.fullName.trim()
+    const email = clientDraft.email.trim()
+    const phoneNumber = clientDraft.phoneNumber.trim()
+    if (!fullName || fullName.split(' ').filter(Boolean).length < 2) {
+        clientModalError.value = 'Podaj imię i nazwisko klienta.'
+        return
+    }
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+        clientModalError.value = 'Podaj poprawny adres e-mail.'
+        return
+    }
+    if (phoneNumber.length < 9) {
+        clientModalError.value = 'Podaj poprawny numer telefonu.'
+        return
+    }
+    sessionStorage.setItem('carizo_admin_client_draft', JSON.stringify({ fullName, email, phoneNumber }))
+    showClientModal.value = false
+    navigateTo('/add-advert?adminClientMode=1')
+}
+
 onMounted(fetchUsers)
 </script>
 
@@ -254,9 +367,10 @@ onMounted(fetchUsers)
     font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
     &.status-active { background: rgba(76,175,80,0.1); color: #4caf50; border: 1px solid rgba(76,175,80,0.2); }
     &.status-blocked { background: rgba(220,50,50,0.1); color: #e55; border: 1px solid rgba(220,50,50,0.2); }
+    &.status-pending { background: rgba(255,180,50,0.1); color: #e5a83c; border: 1px solid rgba(255,180,50,0.25); }
 }
 
-.action-row { display: flex; gap: 6px; }
+.action-row { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .btn-action {
     display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600;
@@ -268,4 +382,63 @@ onMounted(fetchUsers)
 .btn-block { background: rgba(220,50,50,0.1); color: #e55; border-color: rgba(220,50,50,0.25); &:hover:not(:disabled) { background: rgba(220,50,50,0.2); } }
 .btn-unblock { background: rgba(76,175,80,0.1); color: #4caf50; border-color: rgba(76,175,80,0.2); &:hover:not(:disabled) { background: rgba(76,175,80,0.18); } }
 .btn-delete { background: rgba(220,50,50,0.06); color: rgba(229,85,85,0.7); border-color: rgba(220,50,50,0.15); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); color: #e55; border-color: rgba(220,50,50,0.35); } }
+.btn-resend { background: rgba(80,150,255,0.08); color: #6ba3ff; border-color: rgba(80,150,255,0.22); &:hover:not(:disabled) { background: rgba(80,150,255,0.18); } }
+.btn-activate { background: rgba(255,180,50,0.08); color: #e5a83c; border-color: rgba(255,180,50,0.25); &:hover:not(:disabled) { background: rgba(255,180,50,0.18); } }
+
+.btn-add-client {
+    display: flex; align-items: center; gap: 6px; background: rgba($red, 0.12);
+    color: $red; border: 1px solid rgba($red, 0.3); border-radius: $r-sm;
+    font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif;
+    padding: 9px 16px; cursor: pointer; transition: background 0.2s;
+    &:hover { background: rgba($red, 0.22); }
+}
+
+.modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+    z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+
+.confirm-modal {
+    background: #0e0e0e; border: 1px solid $border; border-radius: $r-lg;
+    padding: 32px 28px; max-width: 360px; text-align: center;
+}
+
+.client-modal { max-width: 440px; text-align: left; }
+
+.modal-title { font-size: 18px; font-weight: 800; color: $text; margin-bottom: 10px; }
+.modal-desc { font-size: 13px; color: $text-dim; line-height: 1.5; margin-bottom: 18px; }
+
+.client-form {
+    display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px;
+}
+
+.field-label { font-size: 12px; font-weight: 600; color: $text-muted; margin-top: 8px; }
+
+.field-input {
+    background: #141414; border: 1px solid $border; border-radius: $r-sm;
+    color: $text; font-size: 13px; font-family: 'Inter', sans-serif; padding: 9px 12px;
+    outline: none; transition: border-color 0.15s;
+    &:focus { border-color: rgba($red, 0.4); }
+    &::placeholder { color: $text-dark; }
+}
+
+.field-error { font-size: 12px; color: #e55; margin-top: 4px; }
+
+.confirm-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+.btn-cancel {
+    background: transparent; border: 1px solid $border; border-radius: $r-sm; color: $text-muted;
+    font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; padding: 9px 16px; cursor: pointer;
+    &:hover { color: $text; border-color: $text-dim; }
+}
+
+.btn-continue {
+    display: flex; align-items: center; gap: 6px; background: $red; color: white; border: none;
+    border-radius: $r-sm; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif;
+    padding: 9px 16px; cursor: pointer; transition: opacity 0.2s;
+    &:hover { opacity: 0.88; }
+}
+
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

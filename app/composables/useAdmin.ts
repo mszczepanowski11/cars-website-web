@@ -67,11 +67,25 @@ export const useAdmin = () => {
         return $fetch('/api/proxy/api/Admin/logs', { query: params })
     }
 
+    async function createClientAdvert(dto: { fullName: string; email: string; phoneNumber: string; advert: Record<string, any> }):
+        Promise<{ userId: number; advertId: number; wasNewAccount: boolean }> {
+        return $fetch('/api/proxy/api/Admin/create-client-advert', { method: 'POST', body: dto })
+    }
+
+    async function resendClientActivation(id: number) {
+        return $fetch(`/api/proxy/api/Admin/users/${id}/resend-client-activation`, { method: 'POST', body: {} })
+    }
+
+    async function activateUser(id: number) {
+        return $fetch(`/api/proxy/api/Admin/users/${id}/activate`, { method: 'POST', body: {} })
+    }
+
     return {
         getStats, getReports, getReport,
         resolveReport, rejectReport,
         hideAdvert, unhideAdvert, deleteAdvert, activateAdvert, deactivateAdvert,
         blockUser, unblockUser,
-        getUsers, getAdverts, getLogs
+        getUsers, getAdverts, getLogs,
+        createClientAdvert, resendClientActivation, activateUser
     }
 }
