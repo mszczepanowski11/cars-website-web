@@ -2,15 +2,47 @@ import sharp from 'sharp'
 
 const WIDTH = 1200
 const HEIGHT = 630
-// Safe margins around the car photo (spec: 40-60px on every edge).
+// Safe margins around the car photo(s) (spec: 40-60px on every edge).
 const MARGIN_X = 60
 const MARGIN_TOP = 50
 const MARGIN_BOTTOM = 50
+const COLLAGE_GAP = 8
 const BRAND_RED = '#8B0D1D'
 const FONT_STACK = "Arial, 'Liberation Sans', 'DejaVu Sans', sans-serif"
 
 function escapeXml(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
+// Tile positions (relative to the collage box's own top-left) for 2-4 photos. One big tile plus
+// smaller ones for 3, an even grid for 2/4 - the common photo-collage patterns.
+function gridLayout(n: number, boxW: number, boxH: number, gap: number) {
+    if (n === 2) {
+        const w = (boxW - gap) / 2
+        return [
+            { x: 0, y: 0, w, h: boxH },
+            { x: w + gap, y: 0, w, h: boxH },
+        ]
+    }
+    if (n === 3) {
+        const bigW = (boxW - gap) * 0.6
+        const smallW = boxW - gap - bigW
+        const smallH = (boxH - gap) / 2
+        return [
+            { x: 0, y: 0, w: bigW, h: boxH },
+            { x: bigW + gap, y: 0, w: smallW, h: smallH },
+            { x: bigW + gap, y: smallH + gap, w: smallW, h: smallH },
+        ]
+    }
+    // n === 4
+    const w = (boxW - gap) / 2
+    const h = (boxH - gap) / 2
+    return [
+        { x: 0, y: 0, w, h },
+        { x: w + gap, y: 0, w, h },
+        { x: 0, y: h + gap, w, h },
+        { x: w + gap, y: h + gap, w, h },
+    ]
 }
 
 export default defineEventHandler(async (event) => {
@@ -33,36 +65,69 @@ export default defineEventHandler(async (event) => {
         const priceText = priceNum !== null
             ? `${priceNum.toLocaleString('pl-PL')} ${!advert.currency || advert.currency === 'PLN' ? 'zł' : advert.currency}`
             : ''
-        const mainImageUrl: string | undefined = advert.images?.find((i: any) => i.isMain)?.url ?? advert.images?.[0]?.url
 
-        if (!mainImageUrl) return fallbackRedirect()
+        // Main image first, then whatever else exists - up to 4 total for the collage.
+        const imageUrls: string[] = Array.from(new Set(
+            [...(advert.images ?? [])]
+                .sort((a: any, b: any) => (b.isMain ? 1 : 0) - (a.isMain ? 1 : 0))
+                .map((i: any) => i.url)
+                .filter(Boolean)
+        )).slice(0, 4)
 
-        const imgRes = await fetch(mainImageUrl)
-        if (!imgRes.ok) return fallbackRedirect()
-        const photoBuffer = Buffer.from(await imgRes.arrayBuffer())
+        if (imageUrls.length === 0) return fallbackRedirect()
 
-        // Full-bleed blurred/darkened backdrop from the same photo, cropped to fill the whole
+        const mainRes = await fetch(imageUrls[0])
+        if (!mainRes.ok) return fallbackRedirect()
+        const mainBuffer = Buffer.from(await mainRes.arrayBuffer())
+
+        // Full-bleed blurred/darkened backdrop from the main photo, cropped to fill the whole
         // frame. This is what shows around (and through the bottom text gradient over) the
-        // letterboxed car below - so there's never a plain color bar, regardless of how far the
-        // source photo's aspect ratio is from 1200x630, and it's still cropped from the SAME
-        // photo like the spec asks, not a generic fill color.
-        const backdrop = await sharp(photoBuffer)
+        // photo(s) below - so there's never a plain color bar, and it's still cropped from a
+        // real advert photo rather than a generic fill color.
+        const backdrop = await sharp(mainBuffer)
             .resize(WIDTH, HEIGHT, { fit: 'cover', position: 'attention' })
             .modulate({ brightness: 0.5 })
             .blur(30)
             .toBuffer()
 
-        // The car itself: always "contain", never "cover" - the whole vehicle is guaranteed
-        // visible no matter the source photo's orientation. A portrait photo just comes out
-        // smaller and centered (with transparent padding sharp fills in automatically) instead
-        // of having its top/bottom cropped off, which is what the old fit:'cover' background
-        // was doing for every non-landscape photo.
+        // Extra photos for the collage are best-effort - one failing to fetch just drops it from
+        // the grid instead of aborting the whole card.
+        const extraBuffers: Buffer[] = []
+        for (const url of imageUrls.slice(1)) {
+            try {
+                const r = await fetch(url)
+                if (r.ok) extraBuffers.push(Buffer.from(await r.arrayBuffer()))
+            } catch { /* skip this photo */ }
+        }
+        const photoBuffers = [mainBuffer, ...extraBuffers]
+
         const boxW = WIDTH - MARGIN_X * 2
         const boxH = HEIGHT - MARGIN_TOP - MARGIN_BOTTOM
-        const carLayer = await sharp(photoBuffer)
-            .resize(boxW, boxH, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-            .png()
-            .toBuffer()
+
+        let photoLayers: sharp.OverlayOptions[]
+        if (photoBuffers.length === 1) {
+            // Single photo: always "contain", never "cover" - the whole vehicle is guaranteed
+            // visible no matter the source photo's orientation. A portrait photo just comes out
+            // smaller and centered instead of having its top/bottom cropped off.
+            const carLayer = await sharp(photoBuffers[0])
+                .resize(boxW, boxH, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+                .png()
+                .toBuffer()
+            photoLayers = [{ input: carLayer, left: MARGIN_X, top: MARGIN_TOP }]
+        } else {
+            // 2-4 photos: collage grid. Each tile is "cover"-fit with a thin gap between tiles -
+            // some cropping per tile is the expected look for a multi-photo collage, unlike the
+            // single-hero-photo case above where the whole car must stay visible.
+            const cells = gridLayout(photoBuffers.length, boxW, boxH, COLLAGE_GAP)
+            photoLayers = await Promise.all(cells.map(async (cell, i) => ({
+                input: await sharp(photoBuffers[i])
+                    .resize(Math.round(cell.w), Math.round(cell.h), { fit: 'cover', position: 'attention' })
+                    .jpeg()
+                    .toBuffer(),
+                left: MARGIN_X + Math.round(cell.x),
+                top: MARGIN_TOP + Math.round(cell.y),
+            })))
+        }
 
         const overlaySvg = `
 <svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
@@ -81,7 +146,7 @@ export default defineEventHandler(async (event) => {
 
         const jpeg = await sharp(backdrop)
             .composite([
-                { input: carLayer, left: MARGIN_X, top: MARGIN_TOP },
+                ...photoLayers,
                 { input: Buffer.from(overlaySvg) },
             ])
             .jpeg({ quality: 88 })
