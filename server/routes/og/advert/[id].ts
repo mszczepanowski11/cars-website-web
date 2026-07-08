@@ -115,18 +115,30 @@ export default defineEventHandler(async (event) => {
                 .toBuffer()
             photoLayers = [{ input: carLayer, left: MARGIN_X, top: MARGIN_TOP }]
         } else {
-            // 2-4 photos: collage grid. Each tile is "cover"-fit with a thin gap between tiles -
-            // some cropping per tile is the expected look for a multi-photo collage, unlike the
-            // single-hero-photo case above where the whole car must stay visible.
+            // 2-4 photos: collage grid. Every tile still uses "contain", never "cover" - the
+            // "whole car always visible" requirement applies per-photo, not just to the single-
+            // photo layout. Each tile gets its own blurred/darkened backdrop (from the same
+            // photo) behind the contain-fit image, same trick as the single-photo case, so a
+            // photo whose aspect ratio doesn't match its tile doesn't show plain letterbox bars.
             const cells = gridLayout(photoBuffers.length, boxW, boxH, COLLAGE_GAP)
-            photoLayers = await Promise.all(cells.map(async (cell, i) => ({
-                input: await sharp(photoBuffers[i])
-                    .resize(Math.round(cell.w), Math.round(cell.h), { fit: 'cover', position: 'attention' })
+            photoLayers = await Promise.all(cells.map(async (cell, i) => {
+                const w = Math.round(cell.w)
+                const h = Math.round(cell.h)
+                const tileBackdrop = await sharp(photoBuffers[i])
+                    .resize(w, h, { fit: 'cover', position: 'attention' })
+                    .modulate({ brightness: 0.5 })
+                    .blur(Math.max(8, Math.round(Math.min(w, h) * 0.05)))
+                    .toBuffer()
+                const tileForeground = await sharp(photoBuffers[i])
+                    .resize(w, h, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+                    .png()
+                    .toBuffer()
+                const tile = await sharp(tileBackdrop)
+                    .composite([{ input: tileForeground }])
                     .jpeg()
-                    .toBuffer(),
-                left: MARGIN_X + Math.round(cell.x),
-                top: MARGIN_TOP + Math.round(cell.y),
-            })))
+                    .toBuffer()
+                return { input: tile, left: MARGIN_X + Math.round(cell.x), top: MARGIN_TOP + Math.round(cell.y) }
+            }))
         }
 
         const overlaySvg = `
