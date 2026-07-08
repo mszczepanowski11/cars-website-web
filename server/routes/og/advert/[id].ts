@@ -2,6 +2,10 @@ import sharp from 'sharp'
 
 const WIDTH = 1200
 const HEIGHT = 630
+// Safe margins around the car photo (spec: 40-60px on every edge).
+const MARGIN_X = 60
+const MARGIN_TOP = 50
+const MARGIN_BOTTOM = 50
 const BRAND_RED = '#8B0D1D'
 const FONT_STACK = "Arial, 'Liberation Sans', 'DejaVu Sans', sans-serif"
 
@@ -37,8 +41,27 @@ export default defineEventHandler(async (event) => {
         if (!imgRes.ok) return fallbackRedirect()
         const photoBuffer = Buffer.from(await imgRes.arrayBuffer())
 
-        const background = await sharp(photoBuffer)
+        // Full-bleed blurred/darkened backdrop from the same photo, cropped to fill the whole
+        // frame. This is what shows around (and through the bottom text gradient over) the
+        // letterboxed car below - so there's never a plain color bar, regardless of how far the
+        // source photo's aspect ratio is from 1200x630, and it's still cropped from the SAME
+        // photo like the spec asks, not a generic fill color.
+        const backdrop = await sharp(photoBuffer)
             .resize(WIDTH, HEIGHT, { fit: 'cover', position: 'attention' })
+            .modulate({ brightness: 0.5 })
+            .blur(30)
+            .toBuffer()
+
+        // The car itself: always "contain", never "cover" - the whole vehicle is guaranteed
+        // visible no matter the source photo's orientation. A portrait photo just comes out
+        // smaller and centered (with transparent padding sharp fills in automatically) instead
+        // of having its top/bottom cropped off, which is what the old fit:'cover' background
+        // was doing for every non-landscape photo.
+        const boxW = WIDTH - MARGIN_X * 2
+        const boxH = HEIGHT - MARGIN_TOP - MARGIN_BOTTOM
+        const carLayer = await sharp(photoBuffer)
+            .resize(boxW, boxH, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+            .png()
             .toBuffer()
 
         const overlaySvg = `
@@ -56,8 +79,11 @@ export default defineEventHandler(async (event) => {
   ${priceText ? `<text x="56" y="${HEIGHT - 40}" font-family="${FONT_STACK}" font-size="60" font-weight="800" fill="${BRAND_RED}">${escapeXml(priceText)}</text>` : ''}
 </svg>`
 
-        const jpeg = await sharp(background)
-            .composite([{ input: Buffer.from(overlaySvg) }])
+        const jpeg = await sharp(backdrop)
+            .composite([
+                { input: carLayer, left: MARGIN_X, top: MARGIN_TOP },
+                { input: Buffer.from(overlaySvg) },
+            ])
             .jpeg({ quality: 88 })
             .toBuffer()
 
