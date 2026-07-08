@@ -109,6 +109,24 @@
                     :columns="[{ key: 'id', label: 'ID' }, { key: 'brandName', label: 'Marka' }, { key: 'modelName', label: 'Model' }, { key: 'name', label: 'Generacja' }, { key: 'yearFrom', label: 'Od' }, { key: 'yearTo', label: 'Do' }]"
                 />
 
+                <!-- Section: Engines attached to the wrong generation -->
+                <div class="report-section">
+                    <div class="rs-header">
+                        <v-icon icon="mdi-engine-off-outline" size="16" class="rs-icon" />
+                        <span class="rs-title">Silniki niedopasowane do generacji/modelu</span>
+                        <span class="rs-count" :class="mismatchedEngines.length > 0 ? 'has-issues' : 'ok'">{{ mismatchedEngines.length }}</span>
+                    </div>
+                    <div v-if="mismatchedEngines.length === 0" class="rs-empty">
+                        <v-icon icon="mdi-check" size="14" /> Brak problemów
+                    </div>
+                    <ul v-else class="rs-string-list">
+                        <li v-for="(item, i) in mismatchedEngines" :key="i">{{ item }}</li>
+                    </ul>
+                    <p v-if="mismatchedEngines.length" class="rs-hint">
+                        Popraw generację silnika w Admin → Marki i modele (edycja wersji silnika pozwala teraz zmienić przypisaną generację).
+                    </p>
+                </div>
+
                 <!-- Section: Duplicate brands -->
                 <ReportSection
                     v-if="report.duplicateBrands.length"
@@ -177,7 +195,10 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const loading = ref(false)
 const report = ref<any>(null)
+const auditReport = ref<any>(null)
 const error = ref('')
+
+const mismatchedEngines = computed(() => auditReport.value?.mismatchedEngineTrimGeneration ?? [])
 
 const summaryItems = computed(() => {
     if (!report.value) return []
@@ -189,6 +210,7 @@ const summaryItems = computed(() => {
         { key: 'modelsWithoutAdverts',     label: 'Modele bez ogłoszeń',           count: s.modelsWithoutAdvertsCount     },
         { key: 'emptyFeatureCategories',   label: 'Puste kat. wyposażenia',        count: s.emptyFeatureCategoriesCount   },
         { key: 'emptyGenerations',         label: 'Generacje bez silników',        count: s.emptyGenerationsCount         },
+        { key: 'mismatchedEngines',        label: 'Silniki złej generacji',        count: mismatchedEngines.value.length  },
         { key: 'duplicateBrands',          label: 'Zduplikowane marki',            count: s.duplicateBrandsCount          },
         { key: 'duplicateModels',          label: 'Zduplikowane modele',           count: s.duplicateModelsCount          },
         { key: 'advertsBlankTitle',        label: 'Ogłoszenia bez tytułu',         count: s.advertsBlankTitleCount        },
@@ -212,7 +234,12 @@ async function runReport() {
     loading.value = true
     error.value = ''
     try {
-        report.value = await $fetch('/api/proxy/api/Admin/quality-report')
+        const [quality, audit] = await Promise.all([
+            $fetch('/api/proxy/api/Admin/quality-report'),
+            $fetch('/api/proxy/api/Admin/taxonomy-audit'),
+        ])
+        report.value = quality
+        auditReport.value = audit
     } catch (e: any) {
         error.value = e?.data?.message ?? 'Błąd podczas analizy bazy danych.'
     } finally {
@@ -407,6 +434,28 @@ const ReportSection = defineComponent({
     padding: 14px 18px;
     font-size: 13px;
     color: rgb(34, 197, 94);
+}
+
+.rs-string-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    li {
+        padding: 8px 18px;
+        font-size: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        color: $text-muted;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+        &:last-child { border-bottom: none; }
+    }
+}
+
+.rs-hint {
+    margin: 0;
+    padding: 10px 18px 14px;
+    font-size: 12px;
+    color: $text-dim;
+    border-top: 1px solid $border;
 }
 
 .rs-table-wrap {
