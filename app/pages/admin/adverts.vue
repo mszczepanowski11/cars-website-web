@@ -81,6 +81,10 @@
                                         <NuxtLink :to="`/advert/${a.id}`" class="btn-action btn-view" target="_blank" :aria-label="`Podgląd: ${a.title}`">
                                             <v-icon icon="mdi-eye-outline" size="13" />
                                         </NuxtLink>
+                                        <NuxtLink :to="`/add-advert?edit=${a.id}`" class="btn-action btn-edit" :aria-label="`Edytuj: ${a.title}`">
+                                            <v-icon icon="mdi-pencil-outline" size="13" />
+                                            Edytuj
+                                        </NuxtLink>
                                         <button class="btn-action" :class="a.isHidden ? 'btn-show' : 'btn-hide'"
                                             :disabled="actionLoading === a.id"
                                             @click="toggleHide(a)">
@@ -267,6 +271,7 @@ onMounted(fetchAdverts)
 }
 
 .btn-view { background: rgba(255,255,255,0.05); color: $text-muted; border-color: $border; &:hover { background: rgba(255,255,255,0.09); color: $text; } }
+.btn-edit { background: rgba(80,150,255,0.09); color: #6ba3ff; border-color: rgba(80,150,255,0.2); &:hover { background: rgba(80,150,255,0.18); } }
 .btn-hide { background: rgba(255,152,0,0.09); color: #ff9800; border-color: rgba(255,152,0,0.2); &:hover:not(:disabled) { background: rgba(255,152,0,0.16); } }
 .btn-show { background: rgba(76,175,80,0.09); color: #4caf50; border-color: rgba(76,175,80,0.2); &:hover:not(:disabled) { background: rgba(76,175,80,0.16); } }
 .btn-delete { background: rgba(220,50,50,0.09); color: #e55; border-color: rgba(220,50,50,0.2); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); } }
