@@ -1,6 +1,7 @@
 export const useAuth = () => {
     const loading = ref(false)
     const error = ref('')
+    const pendingFacebookConsent = ref<{ accessToken: string; name: string; email: string } | null>(null)
 
     async function login(credentials: { email: string; password: string; turnstileToken?: string }, redirectTo?: string) {
         loading.value = true
@@ -39,11 +40,20 @@ export const useAuth = () => {
         }
     }
 
-    async function loginWithFacebook(accessToken: string, redirectTo?: string) {
+    async function loginWithFacebook(accessToken: string, redirectTo?: string, consentGiven = false) {
         loading.value = true
         error.value = ''
         try {
-            await $fetch('/api/auth/facebook', { method: 'POST', body: { accessToken } })
+            const data = await $fetch<{ consentRequired?: boolean; name?: string; email?: string }>(
+                '/api/auth/facebook', { method: 'POST', body: { accessToken, consentGiven } }
+            )
+            if (data?.consentRequired) {
+                // Brand-new account - don't navigate anywhere yet, let the page show the consent
+                // screen and call confirmFacebookConsent() once the user agrees.
+                pendingFacebookConsent.value = { accessToken, name: data.name ?? '', email: data.email ?? '' }
+                return
+            }
+            pendingFacebookConsent.value = null
             await navigateTo(redirectTo || '/')
         } catch (err: any) {
             if (err?.status === 429 || err?.statusCode === 429) {
@@ -54,6 +64,15 @@ export const useAuth = () => {
         } finally {
             loading.value = false
         }
+    }
+
+    async function confirmFacebookConsent(redirectTo?: string) {
+        if (!pendingFacebookConsent.value) return
+        await loginWithFacebook(pendingFacebookConsent.value.accessToken, redirectTo, true)
+    }
+
+    function cancelFacebookConsent() {
+        pendingFacebookConsent.value = null
     }
 
     async function register(dto: {
@@ -99,5 +118,8 @@ export const useAuth = () => {
         await navigateTo('/')
     }
 
-    return { login, loginWithGoogle, loginWithFacebook, logout, register, loading, error }
+    return {
+        login, loginWithGoogle, loginWithFacebook, logout, register, loading, error,
+        pendingFacebookConsent, confirmFacebookConsent, cancelFacebookConsent,
+    }
 }

@@ -11,12 +11,17 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        const data = await $fetch<{ token: string; refreshToken?: string }>(
+        const data = await $fetch<{ token?: string; refreshToken?: string; consentRequired?: boolean; name?: string; email?: string }>(
             `${config.public.apiBase}api/Auth/facebook`,
-            { method: 'POST', body }
+            { method: 'POST', body: { accessToken: body.accessToken, consentGiven: !!body.consentGiven } }
         )
+        if (data.consentRequired) {
+            // New account, not created yet - hand the preview straight back to the browser so it
+            // can show the consent screen. No cookies are set at this point.
+            return { consentRequired: true, name: data.name ?? '', email: data.email ?? '' }
+        }
         const cookieOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' as const, path: '/' }
-        setCookie(event, 'auth_token', data.token, { ...cookieOpts, maxAge: 60 * 60 * 2 })
+        setCookie(event, 'auth_token', data.token!, { ...cookieOpts, maxAge: 60 * 60 * 2 })
         if (data.refreshToken)
             setCookie(event, 'refresh_token', data.refreshToken, { ...cookieOpts, maxAge: 60 * 60 * 24 * 30 })
         setCookie(event, 'auth_status', '1', {

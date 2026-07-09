@@ -248,18 +248,26 @@
                 </svg>
                 <span>{{ fbLoading ? 'Logowanie...' : 'Kontynuuj z Facebook' }}</span>
             </button>
-            <p v-if="facebookAppId" class="fb-disclosure">Logując się przez Facebook, akceptujesz nasz <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> i <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink>. Pobieramy Twój adres email oraz imię i nazwisko z konta Facebook.</p>
+            <p v-if="facebookAppId" class="fb-disclosure">Logując się przez Facebook, akceptujesz nasz <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> i <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink>. Nowe konto zakładamy dopiero po Twoim potwierdzeniu.</p>
 
             <p class="auth-link">Masz już konto? <NuxtLink to="/login">Zaloguj się</NuxtLink></p>
         </div>
 
+        <FacebookConsentModal
+            :visible="!!pendingFacebookConsent"
+            :name="pendingFacebookConsent?.name ?? ''"
+            :email="pendingFacebookConsent?.email ?? ''"
+            :loading="loading"
+            @confirm="onConfirmFacebookConsent"
+            @cancel="cancelFacebookConsent"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
 useHead({ title: 'Zarejestruj się — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
-const { register, loginWithFacebook, loading, error } = useAuth()
+const { register, loginWithFacebook, loading, error, pendingFacebookConsent, confirmFacebookConsent, cancelFacebookConsent } = useAuth()
 const { success: toastSuccess, error: toastError } = useToast()
 const runtimeConfig = useRuntimeConfig()
 
@@ -414,10 +422,13 @@ async function handleFacebookLogin() {
     ;(window as any).FB.login(async (response: any) => {
         if (response.authResponse?.accessToken) {
             await loginWithFacebook(response.authResponse.accessToken, redirectTo.value)
-        } else {
-            fbLoading.value = false
         }
+        fbLoading.value = false
     }, { scope: 'email,public_profile' })
+}
+
+async function onConfirmFacebookConsent() {
+    await confirmFacebookConsent(redirectTo.value)
 }
 
 async function resendVerification() {

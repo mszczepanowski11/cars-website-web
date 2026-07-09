@@ -193,6 +193,17 @@
                     </ol>
                 </section>
 
+                <section class="doc-section">
+                    <h2>§14 Logowanie przez zewnętrznych dostawców tożsamości</h2>
+                    <ol>
+                        <li>Serwis umożliwia założenie Konta i logowanie się przy użyciu zewnętrznego dostawcy tożsamości (Facebook, Google). Konto założone w ten sposób podlega niniejszemu Regulaminowi na tych samych zasadach co Konto założone przy użyciu adresu e-mail i hasła.</li>
+                        <li>Nowe Konto na podstawie danych z Facebooka jest zakładane wyłącznie po jednoznacznym potwierdzeniu przez Użytkownika ekranu zgody wyświetlanego przed utworzeniem Konta. Szczegóły dotyczące zakresu pobieranych danych oraz zasad ich usuwania opisane są w Polityce Prywatności (§2, §3 i §12).</li>
+                        <li>Użytkownik może w każdej chwili odłączyć swoje Konto od Facebooka — z poziomu ustawień Konta w Serwisie lub z poziomu ustawień swojego konta Facebook (Facebook → Ustawienia → Aplikacje i strony internetowe). Odłączenie nie powoduje usunięcia Konta w CARIZO, jeżeli Użytkownik ustawił hasło niezależne od Facebooka.</li>
+                        <li>Użytkownik odpowiada za posiadanie praw autorskich lub innych uprawnień do zdjęć i materiałów, które samodzielnie dodaje do ogłoszenia w Serwisie, niezależnie od źródła ich pozyskania (w tym zdjęć pierwotnie opublikowanych przez Użytkownika na Facebooku).</li>
+                        <li>Opisy ogłoszeń, sugestie danych technicznych pojazdu oraz elementy graficzne generowane z wykorzystaniem sztucznej inteligencji na podstawie zdjęć dodanych przez Użytkownika mają charakter propozycji wymagającej zatwierdzenia przed publikacją. Za ostateczną treść opublikowanego ogłoszenia odpowiada Użytkownik publikujący.</li>
+                    </ol>
+                </section>
+
             </div>
         </div>
     </div>

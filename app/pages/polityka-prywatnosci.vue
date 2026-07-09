@@ -38,7 +38,7 @@
                             <ul>
                                 <li><strong>Klasyczna metoda uwierzytelniania (E-mail i Hasło):</strong> adres e-mail, imię i nazwisko, numer telefonu kontaktowego oraz hasło dostępu, które zostaje nieodwracalnie przekształcone metodami kryptograficznymi (haszowanie) i nie jest znane Administratorowi.</li>
                                 <li><strong>Logowanie przez konto Google (Google Ireland Limited):</strong> unikalny identyfikator użytkownika (Google ID), adres e-mail, imię i nazwisko oraz informacja o zweryfikowaniu adresu e-mail przez Google.</li>
-                                <li><strong>Logowanie przez konto Facebook (Meta Platforms Ireland Limited):</strong> unikalny identyfikator użytkownika w ekosystemie Meta (Facebook ID), adres e-mail, imię i nazwisko oraz opcjonalnie publiczne zdjęcie profilowe.</li>
+                                <li><strong>Logowanie przez konto Facebook (Meta Platforms Ireland Limited):</strong> unikalny identyfikator użytkownika w ekosystemie Meta (Facebook ID), adres e-mail oraz imię i nazwisko. CARIZO nie pobiera zdjęcia profilowego, listy znajomych ani innych danych dostępnych w ramach uprawnienia <code>public_profile</code> poza wymienionymi. Szczegóły dotyczące zgody i usuwania tych danych opisane są w §12.</li>
                             </ul>
                         </li>
                         <li>
@@ -222,6 +222,17 @@
                         <li>CARIZO wdraża zaawansowane środki techniczne i organizacyjne (w tym szyfrowanie transmisji certyfikatami SSL/TLS, kryptograficzne haszowanie haseł, systemy kontroli dostępu do baz danych), gwarantujące poziom bezpieczeństwa adekwatny do ryzyka naruszenia praw lub wolności osób fizycznych.</li>
                         <li>Niniejsze zasady prywatności podlegają stałemu przeglądowi. O wszelkich zmianach strukturalnych w celach lub podstawach przetwarzania danych zarejestrowani Użytkownicy zostaną powiadomieni drogą mailową z 14-dniowym wyprzedzeniem.</li>
                         <li>Treść niniejszych regulacji wchodzi w życie z dniem 04.07.2026.</li>
+                    </ol>
+                </section>
+
+                <section class="doc-section">
+                    <h2>§12 Logowanie przez Facebook i usuwanie danych (Meta Data Deletion)</h2>
+                    <ol>
+                        <li><strong>Meta jako odrębny administrator danych:</strong> W zakresie logowania przez Facebook, Meta Platforms Ireland Limited jest odrębnym, niezależnym administratorem danych po swojej stronie — decyduje samodzielnie o sposobie przetwarzania danych profilowych Użytkownika w ramach ekosystemu Meta. CARIZO odpowiada wyłącznie za dane faktycznie pobrane i zapisane w swojej bazie (Facebook ID, adres e-mail, imię i nazwisko). Polityka prywatności Meta dostępna jest pod adresem: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">facebook.com/privacy/policy</a>.</li>
+                        <li><strong>Podstawa prawna:</strong> Dane pobierane przy logowaniu przez Facebook przetwarzane są na podstawie art. 6 ust. 1 lit. b RODO — w celu zawarcia i wykonania umowy o świadczenie usług drogą elektroniczną (założenie i prowadzenie Konta).</li>
+                        <li><strong>Zgoda przed utworzeniem Konta:</strong> Nowe Konto na podstawie danych z Facebooka nie jest tworzone automatycznie — Użytkownik musi jednoznacznie potwierdzić ekran zgody wskazujący dokładny zakres pobieranych danych, zanim Konto zostanie utworzone. Fakt wyrażenia zgody jest rejestrowany wraz z datą, adresem IP oraz wersją niniejszej Polityki, zgodnie z zasadą rozliczalności (art. 5 ust. 2 RODO).</li>
+                        <li><strong>Mechanizm usuwania danych (Data Deletion Callback):</strong> Zgodnie z wymogami Meta Platform Terms, CARIZO obsługuje zautomatyzowane żądania usunięcia danych inicjowane bezpośrednio z poziomu ustawień Facebooka (Facebook → Ustawienia → Aplikacje i strony internetowe → Usuń). Po otrzymaniu takiego żądania CARIZO usuwa identyfikator Facebook powiązany z Kontem w ciągu maksymalnie kilku minut od jego otrzymania. Status realizacji żądania dostępny jest pod adresem <NuxtLink to="/data-deletion-status">carizo.eu/data-deletion-status</NuxtLink> wraz z otrzymanym kodem potwierdzenia.</li>
+                        <li>Usunięcie danych pochodzących z Facebooka nie powoduje automatycznego usunięcia całego Konta CARIZO, jeżeli Użytkownik posiada niezależne dane dostępowe (np. ustawione hasło) lub aktywne ogłoszenia — usunięcie samego Konta odbywa się na zasadach ogólnych opisanych w §9.</li>
                     </ol>
                 </section>
 

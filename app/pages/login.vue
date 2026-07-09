@@ -80,15 +80,26 @@
                 <span>{{ fbLoading ? 'Logowanie...' : 'Kontynuuj z Facebook' }}</span>
             </button>
 
+            <p v-if="facebookAppId" class="fb-disclosure">Logując się przez Facebook, akceptujesz nasz <NuxtLink to="/regulamin" class="fb-disclosure-link">Regulamin</NuxtLink> i <NuxtLink to="/polityka-prywatnosci" class="fb-disclosure-link">Politykę prywatności</NuxtLink>. Nowe konto zakładamy dopiero po Twoim potwierdzeniu.</p>
+
             <p class="auth-link">Nie masz konto? <NuxtLink to="/register">Zarejestruj się bezpłatnie</NuxtLink></p>
         </div>
+
+        <FacebookConsentModal
+            :visible="!!pendingFacebookConsent"
+            :name="pendingFacebookConsent?.name ?? ''"
+            :email="pendingFacebookConsent?.email ?? ''"
+            :loading="loading"
+            @confirm="onConfirmFacebookConsent"
+            @cancel="cancelFacebookConsent"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
 useHead({ title: 'Zaloguj się — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
-const { login, loginWithGoogle, loginWithFacebook, loading, error } = useAuth()
+const { login, loginWithGoogle, loginWithFacebook, loading, error, pendingFacebookConsent, confirmFacebookConsent, cancelFacebookConsent } = useAuth()
 const runtimeConfig = useRuntimeConfig()
 const email    = ref('')
 const password = ref('')
@@ -182,10 +193,13 @@ async function handleFacebookLogin() {
     ;(window as any).FB.login(async (response: any) => {
         if (response.authResponse?.accessToken) {
             await loginWithFacebook(response.authResponse.accessToken, redirectTo.value)
-        } else {
-            fbLoading.value = false
         }
+        fbLoading.value = false
     }, { scope: 'email,public_profile' })
+}
+
+async function onConfirmFacebookConsent() {
+    await confirmFacebookConsent(redirectTo.value)
 }
 
 async function handleGoogleCredential(response: { credential: string }) {
@@ -428,6 +442,15 @@ h2 {
 }
 
 .fb-icon { flex-shrink: 0; }
+
+.fb-disclosure {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin: -8px 0 16px;
+    line-height: 1.5;
+}
+.fb-disclosure-link { color: rgba(255,255,255,0.6); text-decoration: underline; }
 
 .auth-link {
     color: $text-dim;
