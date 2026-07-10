@@ -251,10 +251,11 @@ function buildOverlaySvg(data: AdCardData, format: CardFormat): string {
 </svg>`
 }
 
-// Renders one premium "ad card" for the given advert data + output format. Always uses a
-// cover-fit (never stretched) crop of the main photo - "automatyczne przycięcie zdjęcia bez
-// deformacji" - filling the format's photo band edge-to-edge, with dark gradients laid over it
-// for text legibility rather than a hard-edged photo box like the old collage template.
+// Renders one premium "ad card" for the given advert data + output format. The whole car is
+// always kept fully in frame - "automatyczne przycięcie zdjęcia bez deformacji" means never
+// cropping into the vehicle, not just never stretching it - via a contain-fit foreground over a
+// cover-fit blurred/darkened backdrop of the same photo, so the photo band is still filled
+// edge-to-edge without ugly letterbox bars.
 export async function renderAdCard(data: AdCardData, format: CardFormat): Promise<Buffer> {
     const L = layoutFor(format)
     const base = sharp({
@@ -268,9 +269,18 @@ export async function renderAdCard(data: AdCardData, format: CardFormat): Promis
             const res = await fetch(data.photoUrl)
             if (res.ok) {
                 const buf = Buffer.from(await res.arrayBuffer())
-                const photo = await sharp(buf)
-                    .resize(L.photoBox.w, L.photoBox.h, { fit: 'cover', position: 'attention' })
-                    .modulate({ brightness: 0.94 })
+                const { w: pw, h: ph } = L.photoBox
+                const backdrop = await sharp(buf)
+                    .resize(pw, ph, { fit: 'cover', position: 'attention' })
+                    .modulate({ brightness: 0.45 })
+                    .blur(28)
+                    .toBuffer()
+                const foreground = await sharp(buf)
+                    .resize(pw, ph, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+                    .png()
+                    .toBuffer()
+                const photo = await sharp(backdrop)
+                    .composite([{ input: foreground }])
                     .jpeg()
                     .toBuffer()
                 layers.push({ input: photo, left: L.photoBox.x, top: L.photoBox.y })
