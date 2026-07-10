@@ -199,7 +199,7 @@ function buildOverlaySvg(data: AdCardData, format: CardFormat): string {
   ${L.topFade ? `<rect x="0" y="${L.topFade.y0}" width="${W}" height="${L.topFade.y1 - L.topFade.y0}" fill="url(#topFade)"/>` : ''}
   <rect x="0" y="${L.bottomFade.y0}" width="${W}" height="${L.bottomFade.y1 - L.bottomFade.y0}" fill="url(#bottomFade)"/>
 
-  <text x="64" y="${L.logoY}" font-family="${FONT_STACK}" font-size="${L.logoFontSize}" font-weight="800" letter-spacing="0.5" fill="#FFFFFF">CARIZ<tspan fill="${RED_BRIGHT}">O</tspan></text>
+  <text x="64" y="${L.logoY}" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="${L.logoFontSize}" font-weight="200" letter-spacing="2" fill="#FFFFFF">CARI<tspan fill="${BRAND_RED}">Z</tspan>O</text>
 
   <line x1="${W - 64 - 168}" y1="${L.domainY - 10}" x2="${W - 64 - 158}" y2="${L.domainY + 4}" stroke="${RED_BRIGHT}" stroke-width="2.5"/>
   <text x="${W - 64}" y="${L.domainY}" text-anchor="end" font-family="${FONT_STACK}" font-size="${L.domainFontSize}" font-weight="700" letter-spacing="2.5" fill="#FFFFFF">CARIZO.EU</text>
