@@ -11,6 +11,15 @@ function escapeXml(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
+// Rough advance width for bold uppercase Arial/Liberation Sans at a given font-size + tracking -
+// good enough to size the CTA button/arrow so they never overlap, without needing a real text
+// shaper at generation time.
+function estimateTextWidth(text: string, fontSize: number, letterSpacing = 0): number {
+    return text.length * fontSize * 0.62 + Math.max(0, text.length - 1) * letterSpacing
+}
+
+const CTA_LABEL = 'ZOBACZ OFERTĘ'
+
 interface SpecColumn { icon: string; value: string; label: string }
 
 interface Layout {
@@ -39,17 +48,22 @@ interface Layout {
     bottomRightY: number
 }
 
+// Reserves a solid black header band for the logo+headline (never sits on top of the photo, so
+// it's always legible regardless of how bright/busy the source photo is) and confines the photo
+// to the remaining band - ~73% of the frame height, matching the "70-80% duże zdjęcie" spec
+// instead of the old 100% full-bleed treatment.
 function wideLayout(w: number, h: number): Layout {
     const mx = 64
+    const headerH = 170
     return {
-        photoBox: { x: 0, y: 0, w, h },
-        topFade: { y0: 0, y1: 240 },
+        photoBox: { x: 0, y: headerH, w, h: h - headerH },
+        topFade: null,
         bottomFade: { y0: h - 260, y1: h },
-        logoY: 66,
-        logoFontSize: 28,
-        domainY: 64,
-        domainFontSize: 15,
-        headline: { lines: ['SAMOCHÓD DNIA.'], x: mx, startY: 190, lineHeight: 0, fontSize: 58, underlineY: 214 },
+        logoY: 50,
+        logoFontSize: 24,
+        domainY: 48,
+        domainFontSize: 14,
+        headline: { lines: ['SAMOCHÓD DNIA.'], x: mx, startY: 130, lineHeight: 0, fontSize: 42, underlineY: 146 },
         modelTwoLine: false,
         infoTopY: h - 128,
         modelY: [h - 92],
@@ -180,8 +194,18 @@ function buildOverlaySvg(data: AdCardData, format: CardFormat): string {
            <line x1="${L.dividerXs[1]}" y1="${L.infoTopY - 10}" x2="${L.dividerXs[1]}" y2="${L.specLabelY + 6}" stroke="#3a3a3a" stroke-width="1.5"/>`
         : ''
 
-    const arrowX = L.ctaBox.x + L.ctaBox.w - 42
-    const arrowY = L.ctaBox.y + L.ctaBox.h / 2
+    // Size the button around the actual label so the arrow never overlaps the text, whichever
+    // layout's font size/padding this is - see estimateTextWidth.
+    const ctaFontSize = 14
+    const ctaPadLeft = 22
+    const ctaGap = 14
+    const ctaArrowSize = 16
+    const ctaPadRight = 20
+    const ctaTextW = estimateTextWidth(CTA_LABEL, ctaFontSize, 1)
+    const ctaBoxW = Math.max(L.ctaBox.w, ctaPadLeft + ctaTextW + ctaGap + ctaArrowSize + ctaPadRight)
+    const ctaBox = { x: L.ctaBox.x, y: L.ctaBox.y, w: ctaBoxW, h: L.ctaBox.h }
+    const arrowX = ctaBox.x + ctaPadLeft + ctaTextW + ctaGap
+    const arrowY = ctaBox.y + ctaBox.h / 2
 
     return `
 <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
@@ -218,9 +242,9 @@ function buildOverlaySvg(data: AdCardData, format: CardFormat): string {
 
   <line x1="64" y1="${L.fullDividerY}" x2="${W - 64}" y2="${L.fullDividerY}" stroke="#333333" stroke-width="1.5"/>
 
-  <rect x="${L.ctaBox.x}" y="${L.ctaBox.y}" width="${L.ctaBox.w}" height="${L.ctaBox.h}" rx="6" fill="none" stroke="${RED_BRIGHT}" stroke-width="1.5"/>
-  <text x="${L.ctaBox.x + 22}" y="${L.ctaBox.y + L.ctaBox.h / 2 + 5}" font-family="${FONT_STACK}" font-size="14" font-weight="700" letter-spacing="1" fill="#FFFFFF">ZOBACZ OFERTĘ</text>
-  ${arrowGlyph(arrowX, arrowY, 16, '#FFFFFF')}
+  <rect x="${ctaBox.x}" y="${ctaBox.y}" width="${ctaBox.w}" height="${ctaBox.h}" rx="6" fill="none" stroke="${RED_BRIGHT}" stroke-width="1.5"/>
+  <text x="${ctaBox.x + ctaPadLeft}" y="${ctaBox.y + ctaBox.h / 2 + 5}" font-family="${FONT_STACK}" font-size="${ctaFontSize}" font-weight="700" letter-spacing="1" fill="#FFFFFF">${CTA_LABEL}</text>
+  ${arrowGlyph(arrowX, arrowY, ctaArrowSize, '#FFFFFF')}
 
   ${iconGroup(ICON_GLOBE, W - 64 - 100, L.bottomRightY, 18)}
   <text x="${W - 64 - 82}" y="${L.bottomRightY + 5}" font-family="${FONT_STACK}" font-size="14" font-weight="700" letter-spacing="1" fill="#cfcfcf">CARIZO.EU</text>
