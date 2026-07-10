@@ -139,6 +139,11 @@ export default defineNuxtConfig({
     turnstileSecretKey: process.env.NUXT_TURNSTILE_SECRET_KEY ?? '',
     // Maintenance mode — set NUXT_SITE_PASSWORD to a non-empty value to enable
     sitePassword: process.env.NUXT_SITE_PASSWORD ?? '',
+    // Same Cloudinary account/env var names as cars-website-api (Program.cs) — used to persist
+    // generated advert ad-card (OG/social) images so crawlers never wait on a live render.
+    cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME ?? '',
+    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY ?? '',
+    cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET ?? '',
     public: {
       maintenanceMode: process.env.NUXT_PUBLIC_MAINTENANCE_MODE ?? '',
       apiBase: process.env.NUXT_PUBLIC_API_BASE ?? 'http://localhost:5105/',
