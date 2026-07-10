@@ -251,11 +251,10 @@ function buildOverlaySvg(data: AdCardData, format: CardFormat): string {
 </svg>`
 }
 
-// Renders one premium "ad card" for the given advert data + output format. The whole car is
-// always kept fully in frame - "automatyczne przycięcie zdjęcia bez deformacji" means never
-// cropping into the vehicle, not just never stretching it - via a contain-fit foreground over a
-// cover-fit blurred/darkened backdrop of the same photo, so the photo band is still filled
-// edge-to-edge without ugly letterbox bars.
+// Renders one premium "ad card" for the given advert data + output format. The photo fills its
+// band edge-to-edge (cover-fit, never stretched) - "automatyczne przycięcie zdjęcia bez
+// deformacji" - matching the reference design's full-bleed look; "attention" cropping keeps the
+// most detailed/high-contrast region (almost always the car itself) in frame.
 export async function renderAdCard(data: AdCardData, format: CardFormat): Promise<Buffer> {
     const L = layoutFor(format)
     const base = sharp({
@@ -269,18 +268,9 @@ export async function renderAdCard(data: AdCardData, format: CardFormat): Promis
             const res = await fetch(data.photoUrl)
             if (res.ok) {
                 const buf = Buffer.from(await res.arrayBuffer())
-                const { w: pw, h: ph } = L.photoBox
-                const backdrop = await sharp(buf)
-                    .resize(pw, ph, { fit: 'cover', position: 'attention' })
-                    .modulate({ brightness: 0.45 })
-                    .blur(28)
-                    .toBuffer()
-                const foreground = await sharp(buf)
-                    .resize(pw, ph, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-                    .png()
-                    .toBuffer()
-                const photo = await sharp(backdrop)
-                    .composite([{ input: foreground }])
+                const photo = await sharp(buf)
+                    .resize(L.photoBox.w, L.photoBox.h, { fit: 'cover', position: 'attention' })
+                    .modulate({ brightness: 0.92 })
                     .jpeg()
                     .toBuffer()
                 layers.push({ input: photo, left: L.photoBox.x, top: L.photoBox.y })
