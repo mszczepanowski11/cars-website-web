@@ -4295,8 +4295,8 @@ async function submit() {
             }))
             cleanEdit.description = buildDescription() || form.description || ''
             // Map renamed fields
-            if (form.power) cleanEdit.powerHP = form.power
-            if (form.engineCapacity) cleanEdit.engineSize = form.engineCapacity
+            if (form.power) cleanEdit.powerHP = Math.round(form.power)
+            if (form.engineCapacity) cleanEdit.engineSize = Math.round(form.engineCapacity)
             delete cleanEdit.power
             delete cleanEdit.engineCapacity
             // Map extras → structured API fields
@@ -4415,8 +4415,8 @@ async function submit() {
             cleanBody.featureIds = form.featureIds?.length ? form.featureIds : []
             cleanBody.description = buildDescription() || form.description || ''
             // Map renamed fields
-            if (form.power) cleanBody.powerHP = form.power
-            if (form.engineCapacity) cleanBody.engineSize = form.engineCapacity
+            if (form.power) cleanBody.powerHP = Math.round(form.power)
+            if (form.engineCapacity) cleanBody.engineSize = Math.round(form.engineCapacity)
             // Map extras → structured API fields
             if (extras.condition) cleanBody.condition = extras.condition
             if (extras.doors) cleanBody.doorCount = Number(extras.doors)
@@ -4581,9 +4581,9 @@ async function submit() {
         const bd = e?.data
         let msg = ''
         if (bd?.errors && typeof bd.errors === 'object') {
-            msg = Object.entries(bd.errors as Record<string, string[]>)
-                .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-                .join('; ')
+            // ASP.NET model-validation errors are keyed by raw C#/JSON paths (e.g. "$.advert.engineSize",
+            // "dto") that mean nothing to a user - never surface them verbatim, show a friendly message.
+            msg = 'Sprawdź wpisane dane — któraś z wartości liczbowych (np. pojemność silnika, moc, przebieg) ma nieprawidłowy format.'
         } else {
             msg = bd?.message ?? bd?.title ?? bd?.detail ?? ''
         }
