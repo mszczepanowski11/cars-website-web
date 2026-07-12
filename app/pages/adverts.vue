@@ -419,7 +419,7 @@
                                 <!-- Vehicle subtype (dynamic, scoped to selected category) -->
                                 <div v-if="vehicleSubtypes.length" class="fp-group">
                                     <div class="fp-group-label"><v-icon icon="mdi-shape-outline" size="13" />Rodzaj pojazdu</div>
-                                    <select v-model="f.vehicleSubtypeId" class="fp-select" @change="load(1)">
+                                    <select v-model="f.vehicleSubtypeId" class="fp-select" @change="onSubtypeChange">
                                         <option :value="null">Wszystkie rodzaje</option>
                                         <option v-for="st in vehicleSubtypes" :key="st.id" :value="st.id">{{ st.namePl ?? st.name }}</option>
                                     </select>
@@ -523,6 +523,15 @@
                                         <input v-model.number="f.quantityFrom" type="number" min="1" class="fp-text-input" placeholder="np. 1" />
                                     </div>
                                 </div>
+
+                                <!-- AttributeDefinition-driven filters (Faza 5, category/subtype-scoped) -->
+                                <DynamicAttributeFilter
+                                    v-for="def in filterableAttributes"
+                                    :key="def.id"
+                                    :definition="def"
+                                    :model-value="attrFilters[def.id] ?? null"
+                                    @update:model-value="v => { if (v) attrFilters[def.id] = v; else delete attrFilters[def.id] }"
+                                />
 
                             </div>
 
@@ -692,6 +701,20 @@ const f = reactive({
 const models       = ref<TaxonomyItem[]>([])
 const allFeatures  = ref<Feature[]>([])
 const vehicleSubtypes = ref<{ id: number; name: string; namePl?: string }[]>([])
+
+// Faza 5 of the category/attribute restructure: filterable AttributeDefinition rows for the
+// active category (+subtype), and the current filter-panel value per definition id.
+interface FilterableAttrDef {
+    id: number; key: string; labelPl: string
+    dataType: 'Text' | 'Number' | 'Decimal' | 'Boolean' | 'Select' | 'MultiSelect' | 'Date' | 'File'
+    unit?: string | null; optionsJson?: string | null; isFilterable: boolean
+}
+interface AttrFilterValue { bool?: boolean | null; multi?: string[]; from?: number | null; to?: number | null }
+const filterableAttributes = ref<FilterableAttrDef[]>([])
+const attrFilters = reactive<Record<number, AttrFilterValue>>({})
+function clearAttrFilters() {
+    for (const k of Object.keys(attrFilters)) delete attrFilters[Number(k)]
+}
 const adverts      = ref<CarAdvert[]>([])
 const total        = ref(0)
 const frozenTotal  = ref(0) // snapshot of total at last fresh search; used for loadMore to avoid offset shifts
@@ -734,6 +757,7 @@ const advancedFiltersCount = computed(() => {
     if (f.oemNumber) n++
     if (f.manufacturerPartNumber) n++
     if (f.vehicleSubtypeId) n++
+    n += Object.values(attrFilters).length
     return n
 })
 
@@ -820,7 +844,8 @@ const hasActiveFilters = computed(() =>
        f.sellerType || f.condition ||
        f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null ||
        f.locationCity || f.vin || f.doorsFrom || f.doorsTo || f.seatsFrom || f.seatsTo ||
-       f.emissionFrom || f.emissionTo || f.euroNorm || f.hasFinancing !== null)
+       f.emissionFrom || f.emissionTo || f.euroNorm || f.hasFinancing !== null ||
+       Object.keys(attrFilters).length > 0)
 )
 
 const paginationPages = computed(() => {
@@ -840,17 +865,25 @@ const paginationPages = computed(() => {
 // feature across every category regardless of what's being searched (e.g. "Hydraulika" showing up
 // as a filter option while browsing cars). categoryId === null falls back to the unscoped feature
 // list (today's general-browse behavior) with no subtype filter.
-async function loadCategoryScopedFilters(categoryId: number | null) {
+async function loadCategoryScopedFilters(categoryId: number | null, subtypeId: number | null = null) {
     if (categoryId) {
         try {
             const cats = await fetchFeatureCategoriesByVehicle(categoryId) as any[]
             allFeatures.value = cats.flatMap(c => c.features ?? [])
         } catch { allFeatures.value = [] }
         try { vehicleSubtypes.value = await fetchVehicleSubtypes(categoryId) } catch { vehicleSubtypes.value = [] }
+        try {
+            const defs = await $fetch<FilterableAttrDef[]>('/api/proxy/api/Attributes', {
+                query: { categoryId, subtypeId: subtypeId ?? undefined, activeOnly: true },
+            })
+            filterableAttributes.value = defs.filter(d => d.isFilterable)
+        } catch { filterableAttributes.value = [] }
     } else {
         try { allFeatures.value = await fetchFeatures() } catch { allFeatures.value = [] }
         vehicleSubtypes.value = []
+        filterableAttributes.value = []
     }
+    clearAttrFilters()
 }
 
 function onCategoryChange() {
@@ -868,6 +901,13 @@ function onCategoryChange() {
         dynamicBrands.value = null
     }
     loadCategoryScopedFilters(f.categoryId)
+    load(1)
+}
+
+// AttributeDefinitions can be scoped to one VehicleSubtypeId, so picking a subtype needs to
+// re-fetch the filterable-attributes list too (not just re-run the search).
+function onSubtypeChange() {
+    loadCategoryScopedFilters(f.categoryId, f.vehicleSubtypeId)
     load(1)
 }
 
@@ -903,7 +943,7 @@ function clearFilters() {
     f.emissionFrom = null; f.emissionTo = null
     f.euroNorm = ''; f.hasFinancing = null
     models.value = []
-    loadCategoryScopedFilters(null)
+    loadCategoryScopedFilters(null) // also clears attrFilters
     load(1)
 }
 
@@ -971,6 +1011,14 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.emissionTo)              body.emissionTo     = f.emissionTo
     if (f.euroNorm)                body.euroNorm       = f.euroNorm
     if (f.hasFinancing !== null)   body.hasFinancing   = f.hasFinancing
+    const attributeFilters = Object.entries(attrFilters).map(([defId, v]) => {
+        const attributeDefinitionId = Number(defId)
+        if (v.bool != null) return { attributeDefinitionId, valueBool: v.bool }
+        if (v.multi?.length) return { attributeDefinitionId, valueTextIn: v.multi }
+        if (v.from != null || v.to != null) return { attributeDefinitionId, valueNumberFrom: v.from ?? undefined, valueNumberTo: v.to ?? undefined }
+        return null
+    }).filter(Boolean)
+    if (attributeFilters.length) body.attributeFilters = attributeFilters
     return body
 }
 
