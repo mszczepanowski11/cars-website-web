@@ -944,6 +944,25 @@
                         </div>
                     </div>
 
+                    <div class="hist-section">
+                        <div class="hist-section-title"><v-icon icon="mdi-certificate" size="16" />Homologacja</div>
+                        <div class="fields-grid">
+                            <div class="field">
+                                <label class="bool-check" :class="{ active: form.hasHomologation }">
+                                    <input type="checkbox" v-model="form.hasHomologation" hidden />
+                                    <span class="bool-box"><v-icon v-if="form.hasHomologation" icon="mdi-check" size="12" /></span>
+                                    Pojazd posiada homologację
+                                </label>
+                            </div>
+                            <transition name="fade-err">
+                                <div v-if="form.hasHomologation" class="field">
+                                    <label class="flabel">Typ homologacji</label>
+                                    <SmartSelect v-model="form.homologationType" :options="HOMOLOGATION_TYPES" placeholder="Wybierz typ" clearable />
+                                </div>
+                            </transition>
+                        </div>
+                    </div>
+
                     <div class="hist-quality-tip">
                         <v-icon icon="mdi-trophy-outline" size="16" class="hq-icon" />
                         <div>
@@ -1706,6 +1725,33 @@
                                 allowfullscreen
                                 loading="lazy"
                             />
+                        </div>
+                    </div>
+
+                    <!-- Faza 8: additional documents/videos (beyond the primary YouTube link + PDF above) -->
+                    <div class="field full-width" style="margin-top:16px;margin-bottom:16px">
+                        <label class="flabel">
+                            Dodatkowe dokumenty i filmy
+                            <span class="flabel-opt">(opcjonalnie)</span>
+                        </label>
+                        <div v-for="(doc, idx) in documents" :key="idx" class="doc-row">
+                            <select v-model="doc.type" class="fselect doc-type-select">
+                                <option value="Video">Film</option>
+                                <option value="Pdf">Dokument PDF</option>
+                                <option value="Image">Zdjęcie</option>
+                                <option value="Other">Inne</option>
+                            </select>
+                            <input v-model="doc.url" type="url" class="finput" placeholder="https://..." />
+                            <input v-model="doc.label" type="text" class="finput doc-label-input" placeholder="Opis (opcjonalnie)" />
+                            <button type="button" class="btn-doc-remove" @click="documents.splice(idx, 1)">
+                                <v-icon icon="mdi-close" size="16" />
+                            </button>
+                        </div>
+                        <button type="button" class="btn-doc-add" @click="documents.push({ url: '', type: 'Video', label: '' })">
+                            <v-icon icon="mdi-plus" size="15" />Dodaj dokument / film
+                        </button>
+                        <div class="field-hint">
+                            <v-icon icon="mdi-information-outline" size="12" />Dodatkowe filmy (np. z jazdy próbnej), instrukcje, książki serwisowe itp.
                         </div>
                     </div>
 
@@ -3164,7 +3210,22 @@ const form = reactive({
     maxTrailerWeight: null as number | null,
     youtubeUrl: '',
     pdfBrochureUrl: '' as string,
+    // Faza 8 of the category/attribute restructure
+    hasHomologation: false,
+    homologationType: null as string | null,
 })
+
+// Faza 8: additional documents/videos beyond the primary YouTube link + PDF brochure above -
+// URL-only (no upload), same convention as File-type AttributeDefinition fields in
+// DynamicAttributeField.vue. Real file uploads stay exclusively on the existing PDF flow.
+const documents = ref<{ url: string; type: 'Video' | 'Pdf' | 'Image' | 'Other'; label: string }[]>([])
+const HOMOLOGATION_TYPES = [
+    { value: 'Ciężarowa (N1)', label: 'Ciężarowa (N1)' },
+    { value: 'Specjalna', label: 'Specjalna' },
+    { value: 'Sportowa', label: 'Sportowa' },
+    { value: 'Zabytkowa', label: 'Zabytkowa' },
+    { value: 'Inna', label: 'Inna' },
+]
 
 const extras = reactive<Record<string, any>>({})
 
@@ -4050,6 +4111,13 @@ function generateAiDescription() {
 }
 
 // Serialize category extras + history + seller info into description
+// Faza 8: strips out any half-filled rows (no URL) before sending.
+function buildDocumentsPayload() {
+    return documents.value
+        .filter(d => d.url.trim())
+        .map((d, idx) => ({ url: d.url.trim(), type: d.type, label: d.label.trim() || null, sortOrder: idx }))
+}
+
 function buildDescription(): string {
     const sections: string[] = []
     // Vehicle identity (brand/model/generation/year) — always shown when known
@@ -4297,6 +4365,9 @@ async function submit() {
             if (form.maxTrailerWeight) cleanEdit.maxTrailerWeight = form.maxTrailerWeight
             if (form.youtubeUrl) cleanEdit.youtubeUrl = form.youtubeUrl
             if (form.pdfBrochureUrl) cleanEdit.pdfBrochureUrl = form.pdfBrochureUrl
+            cleanEdit.hasHomologation = form.hasHomologation
+            if (form.hasHomologation && form.homologationType) cleanEdit.homologationType = form.homologationType
+            cleanEdit.documents = buildDocumentsPayload()
             await $fetch(`/api/proxy/api/listings/${editId.value}`, {
                 method: 'PUT',
                 body: cleanEdit,
@@ -4416,6 +4487,10 @@ async function submit() {
             if (form.maxTrailerWeight) cleanBody.maxTrailerWeight = form.maxTrailerWeight
             if (form.youtubeUrl) cleanBody.youtubeUrl = form.youtubeUrl
             if (form.pdfBrochureUrl) cleanBody.pdfBrochureUrl = form.pdfBrochureUrl
+            cleanBody.hasHomologation = form.hasHomologation
+            if (form.hasHomologation && form.homologationType) cleanBody.homologationType = form.homologationType
+            const docsPayload = buildDocumentsPayload()
+            if (docsPayload.length) cleanBody.documents = docsPayload
             const created: any = isAdminClientMode.value
                 ? await $fetch<any>('/api/proxy/api/Admin/create-client-advert', {
                     method: 'POST',
@@ -4653,6 +4728,9 @@ onMounted(async () => {
             form.maxTrailerWeight = (advert as any).maxTrailerWeight ?? null
             if ((advert as any).youtubeUrl) form.youtubeUrl = (advert as any).youtubeUrl
             if ((advert as any).pdfBrochureUrl) form.pdfBrochureUrl = (advert as any).pdfBrochureUrl
+            form.hasHomologation = advert.hasHomologation ?? false
+            form.homologationType = advert.homologationType ?? null
+            documents.value = (advert.documents ?? []).map(d => ({ url: d.url, type: d.type, label: d.label ?? '' }))
             existingImages.value = advert.images ?? []
             if (form.brandId) models.value = await fetchModels(form.brandId)
             if (form.modelId) generations.value = await fetchGenerations(form.modelId)
@@ -6639,6 +6717,29 @@ onBeforeUnmount(() => {
         cursor: pointer;
         &:hover { background: rgba($red, 0.3); color: $text; }
     }
+}
+
+// Faza 8: additional documents/videos list (add-advert.vue media section)
+.doc-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 160px auto;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+    @media (max-width: 720px) { grid-template-columns: 1fr; }
+}
+.doc-label-input { max-width: 100%; }
+.btn-doc-remove {
+    display: flex; align-items: center; justify-content: center; width: 34px; height: 34px;
+    border-radius: 8px; border: 1px solid $border; background: rgba(255,255,255,0.04);
+    color: $text-muted; cursor: pointer;
+    &:hover { border-color: rgba($red, 0.3); color: $red; }
+}
+.btn-doc-add {
+    display: flex; align-items: center; gap: 5px; padding: 9px 16px; margin-top: 4px;
+    background: rgba($red, 0.12); border: 1px solid rgba($red, 0.3); border-radius: 8px;
+    color: $red; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+    &:hover { background: rgba($red, 0.2); }
 }
 
 // Color picker (extraField type: color-picker)
