@@ -2268,14 +2268,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'fuelConsumptionHwy', label: 'Spalanie trasa', type: 'number', unit: 'l/100km', placeholder: 'np. 5.5' },
             { key: 'fuelConsumptionMix', label: 'Spalanie mieszane', type: 'number', unit: 'l/100km', placeholder: 'np. 6.5' },
             { key: 'torque', label: 'Moment obrotowy', type: 'number', unit: 'Nm', placeholder: 'np. 400' },
-            { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
-            { key: 'noDamage', label: 'Bezwypadkowy (potwierdzony)', type: 'boolean' },
-            { key: 'hasASO', label: 'Serwisowany w ASO', type: 'boolean' },
-            { key: 'testDrive', label: 'Możliwość jazdy próbnej', type: 'boolean' },
-            { key: 'vatMargin', label: 'Faktura VAT-marża', type: 'boolean' },
-            { key: 'registeredInPoland', label: 'Zarejestrowany w Polsce', type: 'boolean' },
-            { key: 'rightHandDrive', label: 'Kierownica po prawej stronie (RHD)', type: 'boolean' },
-            { key: 'tuning', label: 'Tuning / modyfikacje', type: 'boolean' },
+            // Faza 4: firstOwner/noDamage/hasASO/testDrive/vatMargin/registeredInPoland/
+            // rightHandDrive/tuning migrated to AttributeDefinition (rendered by DynamicAttributeField).
         ],
     },
 
@@ -2301,8 +2295,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 1000' },
             { key: 'gvw', label: 'DMC (dopuszczalna masa całkowita)', type: 'number', unit: 'kg', placeholder: 'np. 3500' },
             { key: 'loadingLength', label: 'Długość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 3.5' },
-            { key: 'loadingHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 1.8' },
-            { key: 'loadingWidth', label: 'Szerokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 1.9' },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
             { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
               options: [
@@ -2312,10 +2304,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'euroNorm', label: 'Norma EURO', type: 'select',
               options: [{ value: 'euro3', label: 'Euro 3' }, { value: 'euro4', label: 'Euro 4' },
                         { value: 'euro5', label: 'Euro 5' }, { value: 'euro6', label: 'Euro 6' }, { value: 'euro6d', label: 'Euro 6d' }] },
-            { key: 'hasAC', label: 'Klimatyzacja', type: 'boolean' },
-            { key: 'hasReverseCam', label: 'Kamera cofania', type: 'boolean' },
-            { key: 'hasLiftgate', label: 'Winda załadowcza', type: 'boolean' },
-            { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
+            // Faza 4: loadingHeight/loadingWidth/hasAC/hasReverseCam/hasLiftgate/firstOwner
+            // migrated to AttributeDefinition.
         ],
     },
 
@@ -2342,10 +2332,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'axles', label: 'Liczba osi', type: 'select', required: true,
               options: [{ value: '2', label: '2 osie' }, { value: '3', label: '3 osie' },
                         { value: '4', label: '4 osie' }, { value: '5+', label: '5+ osi' }] },
-            { key: 'cabType', label: 'Typ kabiny', type: 'select',
-              options: [{ value: 'normal', label: 'Normalna' }, { value: 'low', label: 'Niska' },
-                        { value: 'high', label: 'Wysoka (sleeper)' }, { value: 'mega', label: 'Mega / Super Space' },
-                        { value: 'crew', label: 'Crew cab (załogowa)' }] },
             { key: 'gvw', label: 'DMC (tony)', type: 'number', unit: 't', placeholder: 'np. 26' },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 18000' },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
@@ -2354,12 +2340,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
                         { value: 'euro5', label: 'Euro 5' }, { value: 'euro6', label: 'Euro 6' }, { value: 'euro6d', label: 'Euro 6d' }] },
             { key: 'hasTachograph', label: 'Tachograf cyfrowy', type: 'boolean' },
             { key: 'hasRetarder', label: 'Retarder (hamulec hydrodynamiczny)', type: 'boolean' },
-            { key: 'hasAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
-            { key: 'hasAPU', label: 'Agregat postojowy (APU)', type: 'boolean' },
-            { key: 'hasHydraulics', label: 'Hydraulika (PTO)', type: 'boolean' },
-            { key: 'hasLiftAxle', label: 'Oś podnoszona (Lift Axle)', type: 'boolean' },
-            { key: 'hasADR', label: 'Dopuszczenie ADR', type: 'boolean' },
-            { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
+            // Faza 4: cabType/hasAC/hasAPU/hasHydraulics/hasLiftAxle/hasADR/firstOwner
+            // migrated to AttributeDefinition.
         ],
     },
 
@@ -2387,8 +2369,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
                 { value: 'used-good', label: 'Używana – dobry stan' }, { value: 'used', label: 'Używana' },
                 { value: 'damaged', label: 'Uszkodzona / na części' },
               ] },
-            { key: 'shipping', label: 'Możliwa wysyłka', type: 'boolean' },
-            { key: 'warranty', label: 'Gwarancja na część', type: 'boolean' },
+            // Faza 4: shipping/warranty migrated to AttributeDefinition.
         ],
     },
 
@@ -2403,33 +2384,15 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
-            { key: 'motorcycleType', label: 'Typ motocykla', type: 'select', required: true,
-              options: [
-                { value: 'sport', label: 'Sportowy / Supersport' }, { value: 'touring', label: 'Turystyczny (Tourer)' },
-                { value: 'adventure', label: 'Adventure / Enduro drogowe' }, { value: 'enduro', label: 'Enduro / Cross / Off-road' },
-                { value: 'cruiser', label: 'Cruiser / Chopper' }, { value: 'naked', label: 'Naked / Streetfighter' },
-                { value: 'cafe-racer', label: 'Café Racer / Scrambler' }, { value: 'scooter', label: 'Skuter' },
-                { value: 'scooter125', label: 'Skuter 125 cm³ (AM)' }, { value: 'trial', label: 'Trial' },
-                { value: 'quad', label: 'Quad / ATV' }, { value: 'sidecar', label: 'Z wózkiem bocznym' },
-                { value: 'electric', label: 'Elektryczny' }, { value: 'other', label: 'Inny' },
-              ] },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
             { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
               options: [
                 { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
                 { value: 'matte', label: 'Matowy' }, { value: 'multicolor', label: 'Wielobarwny / racing livery' },
               ] },
-            { key: 'hasABS', label: 'ABS', type: 'boolean' },
-            { key: 'hasTCS', label: 'Kontrola trakcji (TCS)', type: 'boolean' },
-            { key: 'hasQuickshifter', label: 'Quickshifter (bi-directional)', type: 'boolean' },
-            { key: 'hasHeatedGrips', label: 'Podgrzewane manetki', type: 'boolean' },
-            { key: 'hasCruiseControl', label: 'Tempomat', type: 'boolean' },
-            { key: 'hasRideByWire', label: 'Ride-by-Wire / tryby jazdy', type: 'boolean' },
-            { key: 'hasLedLights', label: 'Oświetlenie LED', type: 'boolean' },
-            { key: 'hasSaddlebags', label: 'Kufry / sakwy', type: 'boolean' },
-            { key: 'firstOwner', label: 'Pierwszy właściciel', type: 'boolean' },
-            { key: 'noDamage', label: 'Bezwypadkowy', type: 'boolean' },
-            { key: 'testDrive', label: 'Możliwość jazdy próbnej', type: 'boolean' },
+            // Faza 4: motorcycleType (required)/hasABS/hasTCS/hasQuickshifter/hasHeatedGrips/
+            // hasCruiseControl/hasRideByWire/hasLedLights/hasSaddlebags/firstOwner/noDamage/
+            // testDrive migrated to AttributeDefinition (motorcycleType stays required there).
         ],
     },
 
@@ -2456,13 +2419,9 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
             { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
             { key: 'length', label: 'Długość całkowita', type: 'number', unit: 'm', placeholder: 'np. 13.6' },
-            { key: 'width', label: 'Szerokość całkowita', type: 'number', unit: 'm', placeholder: 'np. 2.6' },
-            { key: 'height', label: 'Wysokość całkowita', type: 'number', unit: 'm', placeholder: 'np. 4.0' },
             { key: 'axles', label: 'Liczba osi', type: 'select',
               options: [{ value: '1', label: '1 oś' }, { value: '2', label: '2 osie' }, { value: '3', label: '3 osie' }, { value: '4+', label: '4+ osi' }] },
-            { key: 'hasHydraulics', label: 'Hydraulika', type: 'boolean' },
-            { key: 'hasLift', label: 'Winda załadunkowa', type: 'boolean' },
-            { key: 'hasBrakes', label: 'Hamulec najazdowy', type: 'boolean' },
+            // Faza 4: width/height/hasHydraulics/hasLift/hasBrakes migrated to AttributeDefinition.
         ],
     },
 
@@ -2496,15 +2455,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona / na części' }] },
             { key: 'workingWidth', label: 'Szerokość robocza', type: 'number', unit: 'm', placeholder: 'np. 6.0' },
-            { key: 'engineHp', label: 'Moc silnika (HP)', type: 'number', unit: 'HP', placeholder: 'np. 200' },
-            { key: 'frontLoader', label: 'Ładowacz czołowy (TUR)', type: 'boolean' },
-            { key: 'dualWheels', label: 'Bliźniaki (koła bliźniacze)', type: 'boolean' },
-            { key: 'frontPTO', label: 'Przedni WOM', type: 'boolean' },
-            { key: 'rearPTO', label: 'Tylny WOM', type: 'boolean' },
-            { key: 'gps', label: 'GPS / Auto-steer', type: 'boolean' },
-            { key: 'fourWD', label: 'Napęd 4WD', type: 'boolean' },
-            { key: 'cabinAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
-            { key: 'isobus', label: 'ISOBUS (ISO 11783)', type: 'boolean' },
+            // Faza 4: engineHp/frontLoader/dualWheels/frontPTO/rearPTO/gps/fourWD/cabinAC/isobus
+            // migrated to AttributeDefinition.
         ],
     },
 
@@ -2545,13 +2497,9 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
               ] },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona / na części' }] },
-            { key: 'liftCapacity', label: 'Udźwig / nośność', type: 'number', unit: 'kg', placeholder: 'np. 10000' },
-            { key: 'workingHeight', label: 'Wysokość robocza / zasięg', type: 'number', unit: 'm', placeholder: 'np. 12' },
             { key: 'operatingWeight', label: 'Masa robocza maszyny', type: 'number', unit: 'kg', placeholder: 'np. 20000' },
-            { key: 'hasHydraulics', label: 'Rozdzielacz hydrauliczny', type: 'boolean' },
-            { key: 'hasCabin', label: 'Zamknięta kabina', type: 'boolean' },
-            { key: 'hasAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
-            { key: 'hasGPS', label: 'GPS / system sterowania', type: 'boolean' },
+            // Faza 4: liftCapacity/workingHeight/hasHydraulics/hasCabin/hasAC/hasGPS migrated to
+            // AttributeDefinition.
         ],
     },
 
@@ -2580,12 +2528,9 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
                 { value: 'agregat-prad', label: 'Agregat prądotwórczy' }, { value: 'sprężarka', label: 'Sprężarka powietrza' },
                 { value: 'inne', label: 'Inne maszyny przemysłowe' },
               ] },
-            { key: 'liftCapacity', label: 'Udźwig / nośność', type: 'number', unit: 'kg', placeholder: 'np. 5000' },
-            { key: 'workingHeight', label: 'Wysokość robocza / zasięg', type: 'number', unit: 'm', placeholder: 'np. 12' },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
-            { key: 'hasAC', label: 'Klimatyzacja kabiny', type: 'boolean' },
-            { key: 'hasCabin', label: 'Zamknięta kabina', type: 'boolean' },
+            // Faza 4: liftCapacity/workingHeight/hasAC/hasCabin migrated to AttributeDefinition.
         ],
     },
 
@@ -2625,12 +2570,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
-            { key: 'hullMaterial', label: 'Materiał kadłuba', type: 'select',
-              options: [
-                { value: 'laminat', label: 'Laminat / włókno szklane' }, { value: 'aluminium', label: 'Aluminium' },
-                { value: 'stal', label: 'Stal' }, { value: 'drewno', label: 'Drewno' }, { value: 'gumowy', label: 'Ponton gumowy / PVC' },
-              ] },
-            { key: 'lengthM', label: 'Długość całkowita', type: 'number', unit: 'm', placeholder: 'np. 7.5' },
+            // Faza 4: hullMaterial/lengthM migrated to AttributeDefinition.
         ],
     },
 
@@ -2648,7 +2588,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
-            { key: 'berths', label: 'Liczba miejsc do spania', type: 'number', placeholder: 'np. 4' },
+            // Faza 4: berths migrated to AttributeDefinition.
         ],
     },
 
@@ -2745,7 +2685,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
-            { key: 'liftCapacity', label: 'Udźwig', type: 'number', unit: 'kg', placeholder: 'np. 2500' },
+            // Faza 4: liftCapacity migrated to AttributeDefinition.
         ],
     },
 }
@@ -2757,114 +2697,38 @@ const DEFAULT_CAT_CONFIG: CatFieldConfig = {
 }
 
 // ── Subtype-specific extra fields ──────────────────────────────────────────
+// Faza 4: every field below is one that still maps to a real CarAdvert column in submit()
+// (tankCapacity->tankCapacityL, workingWidth->workingWidthCm, operatingWeight->operatingWeightKg,
+// maxDiggingDepth->maxDiggingDepthM, bucketCapacity->bucketCapacityL). Everything else that used
+// to live here (cabType/suspension/axleConfig/bodySubtype/dumpBodyMaterial/volume/tempMin/tempMax/
+// atpCert/loadingHeight/hasLiftgate/tankMaterial/adrClass/ptoRpm/hasFrontLinkage/hydraulicOutputs/
+// cabin/hasStrawChopper/selfPropelled/hasGps/hasNetWrap/rowSpacing/undercarriage/tailSwing/
+// hasOffsetBoom/liftHeight/hasPalletForks/hasTelescopicArm/hasRipper/hasVibration/maxLoad/maxBoom)
+// is now an AttributeDefinition, rendered by DynamicAttributeField.
 const SUBTYPE_EXTRA_FIELDS: Record<string, ExtraField[]> = {
   // ── Trucks ──────────────────────────────────────────────────────────────
-  'ciagnik-siodlowy': [
-    { key: 'cabType', label: 'Typ kabiny', type: 'select', options: [
-      { value: 'dzienna', label: 'Kabina dzienna' },
-      { value: 'sypialnia', label: 'Kabina sypialnia' },
-      { value: 'maxi', label: 'Kabina Maxi' },
-    ]},
-    { key: 'suspension', label: 'Zawieszenie tylne', type: 'select', options: [
-      { value: 'resorowe', label: 'Resorowe' },
-      { value: 'powietrzne', label: 'Powietrzne' },
-    ]},
-    { key: 'axleConfig', label: 'Konfiguracja osi', type: 'select', options: [
-      { value: '4x2', label: '4x2' }, { value: '6x2', label: '6x2' },
-      { value: '6x4', label: '6x4' }, { value: '8x4', label: '8x4' },
-    ]},
-  ],
-  'wywrotka': [
-    { key: 'bodySubtype', label: 'Kierunek wysypu', type: 'select', options: [
-      { value: 'tylny', label: 'Tylny' },
-      { value: '3-stronny', label: '3-stronny' },
-      { value: 'boczny', label: 'Boczny' },
-    ]},
-    { key: 'dumpBodyMaterial', label: 'Materiał skrzyni', type: 'select', options: [
-      { value: 'stal', label: 'Stal' },
-      { value: 'aluminium', label: 'Aluminium' },
-      { value: 'polietylen', label: 'Polietylen' },
-    ]},
-    { key: 'volume', label: 'Pojemność skrzyni (m³)', type: 'number', unit: 'm³' },
-  ],
   'chlodnia-ciezarowa': [
-    { key: 'tempMin', label: 'Min. temperatura (°C)', type: 'number', unit: '°C' },
-    { key: 'tempMax', label: 'Max. temperatura (°C)', type: 'number', unit: '°C' },
     { key: 'tankCapacity', label: 'Objętość ładowni (m³)', type: 'number', unit: 'm³' },
-    { key: 'atpCert', label: 'Certyfikat ATP', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
-  ],
-  'firanka': [
-    { key: 'loadingHeight', label: 'Wysokość załadunku (m)', type: 'number', unit: 'm' },
-    { key: 'volume', label: 'Objętość ładowni (m³)', type: 'number', unit: 'm³' },
-    { key: 'hasLiftgate', label: 'Winda załadowcza', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
   ],
   'cysterna': [
     { key: 'tankCapacity', label: 'Pojemność zbiornika (m³)', type: 'number', unit: 'm³' },
-    { key: 'tankMaterial', label: 'Materiał zbiornika', type: 'select', options: [
-      { value: 'stal', label: 'Stal nierdzewna' },
-      { value: 'aluminium', label: 'Aluminium' },
-      { value: 'tworzywo', label: 'Tworzywo sztuczne' },
-    ]},
-    { key: 'adrClass', label: 'Klasa ADR', type: 'select', options: [
-      { value: 'brak', label: 'Brak' }, { value: '1', label: 'Klasa 1 (mat. wybuchowe)' },
-      { value: '2', label: 'Klasa 2 (gazy)' }, { value: '3', label: 'Klasa 3 (ciecze łatwopal.)' },
-      { value: '8', label: 'Klasa 8 (substancje żrące)' },
-    ]},
   ],
 
   // ── Agricultural ────────────────────────────────────────────────────────
-  'ciagnik': [
-    { key: 'ptoRpm', label: 'WOM (rpm)', type: 'select', options: [
-      { value: '540', label: '540 rpm' }, { value: '1000', label: '1000 rpm' },
-      { value: '540/1000', label: '540/1000 rpm' }, { value: 'eco', label: 'ECO' },
-    ]},
-    { key: 'hasFrontLinkage', label: 'TUZ przedni', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
-    { key: 'hydraulicOutputs', label: 'Wyjścia hydrauliczne', type: 'number', unit: 'szt.' },
-    { key: 'cabin', label: 'Kabina', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
-  ],
   'kombajn': [
-    { key: 'bodySubtype', label: 'Typ uprawy', type: 'select', options: [
-      { value: 'zbozowy', label: 'Zbożowy' }, { value: 'kukurydza', label: 'Kukurydza' },
-      { value: 'rzepak', label: 'Rzepak' }, { value: 'uniwersalny', label: 'Uniwersalny' },
-    ]},
     { key: 'workingWidth', label: 'Szerokość heder (cm)', type: 'number', unit: 'cm' },
     { key: 'tankCapacity', label: 'Pojemność zbiornika ziarna (L)', type: 'number', unit: 'L' },
-    { key: 'hasStrawChopper', label: 'Rozdrabniacz słomy', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
   ],
   'opryskiwacz': [
-    { key: 'selfPropelled', label: 'Typ', type: 'radio', options: [
-      { value: 'samojezdny', label: 'Samojezdny' }, { value: 'zawieszany', label: 'Zawieszany' },
-      { value: 'przyczepiany', label: 'Przyczepiany' },
-    ]},
     { key: 'workingWidth', label: 'Szerokość robocza (m)', type: 'number', unit: 'm' },
     { key: 'tankCapacity', label: 'Pojemność zbiornika (L)', type: 'number', unit: 'L' },
-    { key: 'hasGps', label: 'Prowadzenie GPS', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
   ],
   'prasa': [
-    { key: 'bodySubtype', label: 'Typ bel', type: 'select', options: [
-      { value: 'okragle', label: 'Bele okrągłe' }, { value: 'prostokatne', label: 'Bele prostokątne' },
-    ]},
     { key: 'workingWidth', label: 'Szerokość podbierania (cm)', type: 'number', unit: 'cm' },
-    { key: 'hasNetWrap', label: 'Owijarka siatką', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
   ],
   'siewnik': [
     { key: 'workingWidth', label: 'Szerokość robocza (m)', type: 'number', unit: 'm' },
     { key: 'tankCapacity', label: 'Pojemność skrzyni nasiennej (L)', type: 'number', unit: 'L' },
-    { key: 'rowSpacing', label: 'Rozstaw rzędów (cm)', type: 'number', unit: 'cm' },
   ],
 
   // ── Construction ─────────────────────────────────────────────────────────
@@ -2872,65 +2736,21 @@ const SUBTYPE_EXTRA_FIELDS: Record<string, ExtraField[]> = {
     { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
     { key: 'maxDiggingDepth', label: 'Max. głębokość kopania (m)', type: 'number', unit: 'm' },
     { key: 'bucketCapacity', label: 'Pojemność łyżki (L)', type: 'number', unit: 'L' },
-    { key: 'undercarriage', label: 'Podwozie', type: 'select', options: [
-      { value: 'gabki-gumowe', label: 'Gąsienice gumowe' },
-      { value: 'gabki-stalowe', label: 'Gąsienice stalowe' },
-      { value: 'kolowe', label: 'Kołowe' },
-    ]},
-    { key: 'tailSwing', label: 'Tylni zwis', type: 'select', options: [
-      { value: 'standardowy', label: 'Standardowy' },
-      { value: 'ograniczony', label: 'Ograniczony' },
-      { value: 'zerowy', label: 'Zerowy' },
-    ]},
   ],
   'minikopiarka': [
     { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
     { key: 'maxDiggingDepth', label: 'Max. głębokość kopania (m)', type: 'number', unit: 'm' },
     { key: 'bucketCapacity', label: 'Pojemność łyżki (L)', type: 'number', unit: 'L' },
-    { key: 'hasOffsetBoom', label: 'Offset ramię', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
   ],
   'ladowarka': [
     { key: 'bucketCapacity', label: 'Pojemność łyżki (m³)', type: 'number', unit: 'm³' },
-    { key: 'liftHeight', label: 'Wysokość podnoszenia (m)', type: 'number', unit: 'm' },
-    { key: 'hasPalletForks', label: 'Widelce paletowe', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
-    { key: 'hasTelescopicArm', label: 'Ramię teleskopowe', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
   ],
   'spycharka': [
-    { key: 'bodySubtype', label: 'Typ lemiesza', type: 'select', options: [
-      { value: 'prosty', label: 'Lemiesz prosty (S)' },
-      { value: 'u-blade', label: 'Lemiesz U' },
-      { value: 's-blade', label: 'Lemiesz S-blade' },
-    ]},
     { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
-    { key: 'hasRipper', label: 'Spulchniacz', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
   ],
   'walec': [
-    { key: 'bodySubtype', label: 'Typ walca', type: 'select', options: [
-      { value: 'jednostkowy', label: 'Jednostkowy (wibracyjny)' },
-      { value: 'dwuwalcowy', label: 'Dwuwalcowy' },
-      { value: 'ogumiony', label: 'Ogumiony' },
-    ]},
     { key: 'operatingWeight', label: 'Masa robocza (t)', type: 'number', unit: 't' },
     { key: 'workingWidth', label: 'Szerokość robocza (cm)', type: 'number', unit: 'cm' },
-    { key: 'hasVibration', label: 'Wibrator', type: 'radio', options: [
-      { value: 'tak', label: 'Tak' }, { value: 'nie', label: 'Nie' },
-    ]},
-  ],
-  'zuraw': [
-    { key: 'bodySubtype', label: 'Typ żurawia', type: 'select', options: [
-      { value: 'wiezowy', label: 'Wieżowy' }, { value: 'mobilny', label: 'Mobilny' },
-      { value: 'samojezdny', label: 'Samojezdny' },
-    ]},
-    { key: 'maxLoad', label: 'Udźwig max (t)', type: 'number', unit: 't' },
-    { key: 'maxBoom', label: 'Długość wysięgnika (m)', type: 'number', unit: 'm' },
   ],
 }
 
