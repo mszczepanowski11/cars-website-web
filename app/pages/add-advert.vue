@@ -761,6 +761,22 @@
                         </div>
                     </transition>
 
+                    <!-- ── Category attribute fields (AttributeDefinition-driven, Faza 3) ─── -->
+                    <transition name="fade-err">
+                        <div v-if="attributeDefinitions.length > 0" class="extra-fields-wrap">
+                            <div class="form-section-subhead">Dodatkowe informacje</div>
+                            <div class="fields-grid">
+                                <DynamicAttributeField
+                                    v-for="def in attributeDefinitions"
+                                    :key="def.id"
+                                    :definition="def"
+                                    :model-value="attributeValues[def.id] ?? null"
+                                    @update:model-value="v => (attributeValues[def.id] = v)"
+                                />
+                            </div>
+                        </div>
+                    </transition>
+
                     <!-- ── VIN & Identification ── -->
                     <div v-if="categoryConfig.showVinSection !== false" class="hist-section">
                         <div class="hist-section-title"><v-icon icon="mdi-barcode-scan" size="16" />Identyfikacja pojazdu</div>
@@ -2941,6 +2957,37 @@ const generations = ref<Generation[]>([])
 const trims = ref<TaxonomyItem[]>([])
 const engines = ref<EngineVersion[]>([])
 const subtypes = ref<VehicleSubtype[]>([])
+
+// Faza 3 of the category/attribute restructure: AttributeDefinition-driven fields, additive
+// alongside the legacy extraFields/SUBTYPE_EXTRA_FIELDS system (Faza 4 migrates the latter away).
+interface AttrDef {
+    id: number
+    key: string
+    labelPl: string
+    dataType: 'Text' | 'Number' | 'Decimal' | 'Boolean' | 'Select' | 'MultiSelect' | 'Date' | 'File'
+    unit?: string | null
+    optionsJson?: string | null
+    isRequired: boolean
+}
+interface AttrValue {
+    attributeDefinitionId: number
+    valueText?: string | null
+    valueNumber?: number | null
+    valueBool?: boolean | null
+    valueDate?: string | null
+}
+const attributeDefinitions = ref<AttrDef[]>([])
+const attributeValues = reactive<Record<number, AttrValue | null>>({})
+async function loadAttributeDefinitions(categoryId: number | null = form.categoryId, subtypeId: number | null = form.vehicleSubtypeId) {
+    if (!categoryId) { attributeDefinitions.value = []; return }
+    try {
+        attributeDefinitions.value = await $fetch<AttrDef[]>('/api/proxy/api/Attributes', {
+            query: { categoryId, subtypeId: subtypeId ?? undefined },
+        })
+    } catch {
+        attributeDefinitions.value = []
+    }
+}
 const fuelTypes = ref<TaxonomyItem[]>([])
 const gearboxes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
@@ -3662,6 +3709,9 @@ async function onCategory(catId: number) {
     }
     // Reload features for the new category context
     if (changed) await loadContextFeatures()
+    // Reload AttributeDefinitions for the new category (subtype starts null on a category change,
+    // so this covers the category-wide definitions; the subtype watcher covers the rest)
+    await loadAttributeDefinitions()
     // Auto-advance to vehicle data step on first category selection
     if (changed && currentStep.value === 0) {
         setTimeout(() => { currentStep.value = 1 }, 250)
@@ -3688,6 +3738,13 @@ function validateStep(step: number): string | null {
             if (ef.required && !extras[ef.key] && extras[ef.key] !== false) {
                 return `Pole "${ef.label}" jest wymagane.`
             }
+        }
+        // Validate required AttributeDefinition-driven fields
+        for (const def of attributeDefinitions.value) {
+            if (!def.isRequired) continue
+            const v = attributeValues[def.id]
+            const empty = !v || (v.valueText == null && v.valueNumber == null && v.valueBool == null && v.valueDate == null)
+            if (empty) return `Pole "${def.labelPl}" jest wymagane.`
         }
     }
     // Step 2: Photos
@@ -4024,6 +4081,8 @@ function removeCompatibility(idx: number) {
     form.compatibilities.splice(idx, 1)
 }
 
+watch(() => form.vehicleSubtypeId, () => { loadAttributeDefinitions() })
+
 watch(() => form.engineVersionId, (newId) => {
     if (!newId) { resetEngineLocks(); return }
     const engine = engines.value.find((e: any) => e.id === newId) as any
@@ -4290,6 +4349,7 @@ async function submit() {
                 cleanEdit[k] = v
             }
             cleanEdit.featureIds = (form.featureIds?.length ? form.featureIds : [])
+            cleanEdit.attributeValues = Object.values(attributeValues).filter((v): v is AttrValue => v != null)
             cleanEdit.compatibilities = form.compatibilities.map(c => ({
                 brandId: c.brandId, modelId: c.modelId, generationId: c.generationId,
             }))
@@ -4413,6 +4473,7 @@ async function submit() {
                 }))
             }
             cleanBody.featureIds = form.featureIds?.length ? form.featureIds : []
+            cleanBody.attributeValues = Object.values(attributeValues).filter((v): v is AttrValue => v != null)
             cleanBody.description = buildDescription() || form.description || ''
             // Map renamed fields
             if (form.power) cleanBody.powerHP = Math.round(form.power)
@@ -4734,6 +4795,15 @@ onMounted(async () => {
                 trims.value = loadedTrims
                 engines.value = loadedEngines
             }
+            // Faza 3: load AttributeDefinitions for this advert's actual category/subtype
+            // (form.categoryId itself is intentionally left untouched here - it drives the legacy
+            // CATEGORY_CONFIGS lookup, and changing its edit-mode behavior is out of scope) and
+            // pre-fill any previously saved AttributeValue rows.
+            await loadAttributeDefinitions(advert.categoryId ?? null, advert.vehicleSubtypeId ?? null)
+            try {
+                const savedValues = await $fetch<AttrValue[]>(`/api/proxy/api/Attributes/values/${editId.value}`)
+                for (const v of savedValues) attributeValues[v.attributeDefinitionId] = v
+            } catch { /* no saved attribute values yet, ignore */ }
         } catch {
             error.value = 'Nie udało się załadować danych ogłoszenia.'
         }
