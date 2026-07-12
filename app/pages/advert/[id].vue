@@ -361,6 +361,33 @@
                     </div>
                 </section>
 
+                <!-- SECTION: Dokumenty i filmy (Faza 8 of the category/attribute restructure) -->
+                <section v-if="advert?.documents?.length" class="pg-section">
+                    <h2 class="pg-section-title"><v-icon icon="mdi-file-video-outline" size="17" />Dokumenty i filmy</h2>
+                    <div class="docs-grid">
+                        <div v-for="doc in advert.documents" :key="doc.id" class="doc-card">
+                            <template v-if="doc.type === 'Video' && youtubeEmbedIdFor(doc.url)">
+                                <div class="doc-video-wrap">
+                                    <iframe
+                                        :src="`https://www.youtube-nocookie.com/embed/${youtubeEmbedIdFor(doc.url)}`"
+                                        class="doc-video-iframe"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen
+                                        loading="lazy"
+                                    />
+                                </div>
+                                <div v-if="doc.label" class="doc-card-label">{{ doc.label }}</div>
+                            </template>
+                            <a v-else :href="doc.url" target="_blank" rel="noopener noreferrer" class="doc-link-card">
+                                <v-icon :icon="docTypeIcon(doc.type)" size="20" />
+                                <span>{{ doc.label || docTypeLabel(doc.type) }}</span>
+                                <v-icon icon="mdi-open-in-new" size="14" class="doc-link-ext" />
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- SECTION 2: Parametry techniczne -->
                 <section class="pg-section">
                     <h2 class="pg-section-title"><v-icon icon="mdi-cog-outline" size="17" />Parametry techniczne</h2>
@@ -783,6 +810,18 @@ const messageSuggestions = [
 const followError = ref('')
 const advertFetchError = ref<number | null>(null)
 const advert = ref<CarAdvert | null>(null)
+
+// Faza 8 of the category/attribute restructure: multi-document/video display helpers.
+function youtubeEmbedIdFor(url: string): string {
+    const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/)
+    return m ? m[1] : ''
+}
+function docTypeIcon(type: string): string {
+    return type === 'Pdf' ? 'mdi-file-pdf-box' : type === 'Video' ? 'mdi-youtube' : type === 'Image' ? 'mdi-image-outline' : 'mdi-file-outline'
+}
+function docTypeLabel(type: string): string {
+    return type === 'Pdf' ? 'Dokument PDF' : type === 'Video' ? 'Film' : type === 'Image' ? 'Zdjęcie' : 'Dokument'
+}
 const similar = ref<CarAdvert[]>([])
 const seller = ref<UserProfile | null>(null)
 const sellerStats = ref<UserStats | null>(null)
@@ -2433,6 +2472,27 @@ onUnmounted(() => {
 .tc-label { color: $text-dim; }
 .tc-value { color: $text; font-weight: 600; }
 .tc-check { color: #4caf50; display: flex; align-items: center; gap: 4px; }
+
+// Faza 8: documents/videos section
+.docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+}
+.doc-video-wrap {
+    position: relative; width: 100%; padding-top: 56.25%; border-radius: $r-md; overflow: hidden;
+    border: 1px solid $border; background: #000;
+}
+.doc-video-iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.doc-card-label { margin-top: 6px; font-size: 12px; color: $text-dim; }
+.doc-link-card {
+    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+    background: #0d0d0d; border: 1px solid $border; border-radius: $r-md;
+    color: $text; text-decoration: none; font-size: 13px; font-weight: 600;
+    transition: border-color 0.15s;
+    &:hover { border-color: rgba($red, 0.4); }
+}
+.doc-link-ext { margin-left: auto; color: $text-dim; }
 .tc-check-icon { color: #4caf50; }
 
 // ── Premium vertical scroll sections ─────────────────────────────────────────

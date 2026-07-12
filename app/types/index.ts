@@ -67,6 +67,19 @@ export interface CarAdvert {
     oemNumber?: string
     manufacturerPartNumber?: string
     partManufacturer?: string
+
+    // Faza 8 of the category/attribute restructure
+    hasHomologation?: boolean
+    homologationType?: string | null
+    documents?: AdvertDocument[]
+}
+
+export interface AdvertDocument {
+    id: number
+    url: string
+    type: 'Video' | 'Pdf' | 'Image' | 'Other'
+    label?: string | null
+    sortOrder: number
 }
 
 export interface PagedResult<T> { items: T[]; totalCount: number }
