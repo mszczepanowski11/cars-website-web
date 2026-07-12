@@ -139,6 +139,45 @@
                         <p>Zaznacz typ pojazdu — formularz dostosuje się do wybranej kategorii.</p>
                     </div>
 
+                    <!-- CEPiK autofill shortcut -->
+                    <div class="cepik-panel">
+                        <button type="button" class="cepik-toggle-btn" @click="cepikOpen = !cepikOpen">
+                            <v-icon icon="mdi-database-search-outline" size="18" />
+                            <span>Masz numer VIN? Uzupełnij dane pojazdu automatycznie z CEPiK</span>
+                            <v-icon :icon="cepikOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="cepik-toggle-chevron" />
+                        </button>
+                        <transition name="fade-err">
+                            <div v-if="cepikOpen" class="cepik-form">
+                                <div class="fields-grid">
+                                    <div class="field">
+                                        <label class="flabel">Województwo rejestracji <span class="req">*</span></label>
+                                        <SmartSelect v-model="cepikWojewodztwo" :options="WOJEWODZTWA" placeholder="Wybierz województwo" />
+                                    </div>
+                                    <div class="field">
+                                        <label class="flabel">Numer VIN <span class="req">*</span></label>
+                                        <input v-model="cepikVin" class="finput cepik-vin-input" placeholder="17-znakowy numer VIN" maxlength="17" />
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-cepik-search"
+                                    :disabled="!cepikWojewodztwo || cepikVin.trim().length !== 17 || cepikLoading"
+                                    @click="lookupCepik">
+                                    <v-icon v-if="cepikLoading" icon="mdi-loading" size="16" class="spin" />
+                                    <v-icon v-else icon="mdi-magnify" size="16" />
+                                    {{ cepikLoading ? 'Szukam...' : 'Pobierz dane z CEPiK' }}
+                                </button>
+                                <div v-if="cepikError" class="cepik-error">
+                                    <v-icon icon="mdi-alert-circle-outline" size="14" />{{ cepikError }}
+                                </div>
+                                <p class="field-hint">
+                                    <v-icon icon="mdi-information-outline" size="12" />
+                                    Pobierzemy markę, model, rok, silnik i inne dane z Centralnej Ewidencji Pojazdów i Kierowców. Będziesz mógł je poprawić przed publikacją.
+                                </p>
+                            </div>
+                        </transition>
+                    </div>
+
+                    <div class="cepik-or-divider"><span>lub wybierz kategorię i wypełnij formularz ręcznie</span></div>
+
                     <!-- Category -->
                     <div class="field full-width" style="margin-bottom: 16px;">
                         <label class="flabel">Kategoria <span class="req">*</span></label>
@@ -2927,6 +2966,27 @@ const loading = ref(false)
 const error = ref('')
 const limitError = ref<'private_limit_active' | 'private_limit_yearly' | null>(null)
 const stepError = ref('')
+
+// CEPiK autofill (Centralna Ewidencja Pojazdów i Kierowców) - alternative to filling the form by
+// hand: seller supplies wojewodztwo + VIN, we look the vehicle up and pre-fill what we can. See
+// CepikService.cs on the backend for important caveats (integration unverified against the live
+// API pending an access token) - failures here should always fall back gracefully to manual entry.
+const cepikOpen = ref(false)
+const cepikWojewodztwo = ref<string | null>(null)
+const cepikVin = ref('')
+const cepikLoading = ref(false)
+const cepikError = ref('')
+const WOJEWODZTWA: SelectOption[] = [
+    { value: '02', label: 'Dolnośląskie' }, { value: '04', label: 'Kujawsko-pomorskie' },
+    { value: '06', label: 'Lubelskie' }, { value: '08', label: 'Lubuskie' },
+    { value: '10', label: 'Łódzkie' }, { value: '12', label: 'Małopolskie' },
+    { value: '14', label: 'Mazowieckie' }, { value: '16', label: 'Opolskie' },
+    { value: '18', label: 'Podkarpackie' }, { value: '20', label: 'Podlaskie' },
+    { value: '22', label: 'Pomorskie' }, { value: '24', label: 'Śląskie' },
+    { value: '26', label: 'Świętokrzyskie' }, { value: '28', label: 'Warmińsko-mazurskie' },
+    { value: '30', label: 'Wielkopolskie' }, { value: '32', label: 'Zachodniopomorskie' },
+]
+
 const selectedFiles = ref<File[]>([])
 const previews = ref<string[]>([])
 const currentStep = ref(0)
@@ -3659,6 +3719,61 @@ async function onCategory(catId: number) {
     if (changed && currentStep.value === 0) {
         setTimeout(() => { currentStep.value = 1 }, 250)
     }
+}
+
+async function lookupCepik() {
+    if (!cepikWojewodztwo.value || cepikVin.value.trim().length !== 17) return
+    cepikLoading.value = true
+    cepikError.value = ''
+    try {
+        const res = await $fetch<{ success: boolean; errorMessage?: string; vehicle?: Record<string, any> }>('/api/proxy/api/Cepik/lookup', {
+            method: 'POST',
+            body: { wojewodztwo: cepikWojewodztwo.value, vin: cepikVin.value.trim().toUpperCase() },
+        })
+        if (!res.success || !res.vehicle) {
+            cepikError.value = res.errorMessage || 'Nie udało się pobrać danych z CEPiK. Wypełnij formularz ręcznie.'
+            return
+        }
+        await applyCepikVehicle(res.vehicle)
+    } catch {
+        cepikError.value = 'Nie udało się połączyć z CEPiK. Spróbuj ponownie lub wypełnij formularz ręcznie.'
+    } finally {
+        cepikLoading.value = false
+    }
+}
+
+// Best-effort field-by-field fill from CEPiK data — any field that can't be confidently matched
+// against our taxonomy (unrecognized brand/model/fuel name) is simply left for the seller to fill
+// in manually rather than guessing wrong. Case-insensitive exact match first, substring fallback.
+function fuzzyFind<T extends { name: string }>(list: T[], value: string | null | undefined): T | undefined {
+    if (!value) return undefined
+    const v = value.trim().toLowerCase()
+    return list.find(x => x.name.toLowerCase() === v)
+        ?? list.find(x => x.name.toLowerCase().includes(v) || v.includes(x.name.toLowerCase()))
+}
+
+async function applyCepikVehicle(v: Record<string, any>) {
+    const carCategory = advertCategories.value.find(c => c.slug === 'auta-osobowe')
+    if (carCategory && form.categoryId !== carCategory.id) {
+        await onCategory(carCategory.id)
+    }
+    const brandMatch = fuzzyFind(brands.value, v.marka)
+    if (brandMatch) {
+        form.brandId = brandMatch.id
+        await onBrand()
+        const modelMatch = fuzzyFind(models.value, v.model)
+        if (modelMatch) form.modelId = modelMatch.id
+    }
+    if (v.rokProdukcji) form.year = Number(v.rokProdukcji)
+    const fuelMatch = fuzzyFind(fuelTypes.value, v.rodzajPaliwa)
+    if (fuelMatch) form.fuelTypeId = fuelMatch.id
+    if (v.pojemnoscSkokowa) form.engineCapacity = Number(v.pojemnoscSkokowa)
+    if (v.mocSilnika) form.power = Number(v.mocSilnika)
+    if (v.liczbaMiejsc) extras.seatsCount = String(Math.min(Number(v.liczbaMiejsc), 9))
+    if (v.liczbaDrzwi) extras.doors = String(Math.min(Number(v.liczbaDrzwi), 6))
+    form.vin = String(v.vin ?? cepikVin.value).toUpperCase()
+    cepikOpen.value = false
+    currentStep.value = 1
 }
 
 function validateStep(step: number): string | null {
@@ -5284,6 +5399,75 @@ onBeforeUnmount(() => {
 
     &:hover:not(:disabled) { background: rgba($red, 0.25); border-color: rgba($red, 0.7); }
     &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+// CEPiK autofill panel (Step 0)
+.cepik-panel {
+    border: 1px solid $border;
+    border-radius: $r-md;
+    background: rgba(255,255,255,0.02);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.cepik-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 16px;
+    background: transparent;
+    border: none;
+    color: $text;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    text-align: left;
+
+    .v-icon:first-child { color: $red; }
+    span { flex: 1; }
+    .cepik-toggle-chevron { color: $text-dim; }
+    &:hover { background: rgba(255,255,255,0.03); }
+}
+.cepik-form {
+    padding: 0 16px 16px;
+}
+.cepik-vin-input { text-transform: uppercase; }
+.btn-cepik-search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: $red;
+    border: none;
+    border-radius: $r-sm;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s;
+
+    &:hover:not(:disabled) { opacity: 0.88; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+.cepik-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: $red;
+}
+.cepik-or-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    color: $text-dim;
+    font-size: 12px;
+
+    &::before, &::after { content: ''; flex: 1; height: 1px; background: $border; }
 }
 
 .vin-error {
