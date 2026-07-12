@@ -40,6 +40,10 @@
                     <v-icon icon="mdi-car-cog" size="17" />
                     Marki i modele
                 </NuxtLink>
+                <NuxtLink to="/admin/attributes" class="nav-item" :class="{ active: route.path === '/admin/attributes' }">
+                    <v-icon icon="mdi-form-select" size="17" />
+                    Pola kategorii
+                </NuxtLink>
                 <NuxtLink to="/admin/quality-report" class="nav-item" :class="{ active: route.path === '/admin/quality-report' }">
                     <v-icon icon="mdi-database-check-outline" size="17" />
                     Jakość danych
