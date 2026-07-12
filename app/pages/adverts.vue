@@ -450,6 +450,26 @@
                                     </div>
                                 </div>
 
+                                <!-- Faza 7: calculated pill filters (origin/luxury/era/sport) plus
+                                     one-click SUV/Crossover/Pickup/Van shortcuts for the BodyType
+                                     dropdown above — Auta osobowe only. -->
+                                <div v-if="categorySlug === 'auta-osobowe'" class="fp-group fp-group--wide">
+                                    <div class="fp-group-label"><v-icon icon="mdi-tag-multiple-outline" size="13" />Szybkie filtry</div>
+                                    <div class="filter-options">
+                                        <button class="fopt-btn" :class="{ active: f.originCountry === 'USA' }" @click="toggleOriginCountry('USA')">Amerykańskie</button>
+                                        <button class="fopt-btn" :class="{ active: f.originCountry === 'Japonia' }" @click="toggleOriginCountry('Japonia')">Japońskie</button>
+                                        <button class="fopt-btn" :class="{ active: f.originCountry === 'Chiny' }" @click="toggleOriginCountry('Chiny')">Chińskie</button>
+                                        <button class="fopt-btn" :class="{ active: f.isLuxuryBrand === true }" @click="toggleLuxury">Luksusowe</button>
+                                        <button class="fopt-btn" :class="{ active: f.era === 'youngtimer' }" @click="toggleEra('youngtimer')">Youngtimery</button>
+                                        <button class="fopt-btn" :class="{ active: f.era === 'classic' }" @click="toggleEra('classic')">Klasyczne i zabytkowe</button>
+                                        <button class="fopt-btn" :class="{ active: f.isSporty === true }" @click="toggleSporty">Sportowe</button>
+                                        <button class="fopt-btn" :class="{ active: isBodyTypeActive('SUV') }" @click="toggleBodyTypeByName('SUV')">SUV</button>
+                                        <button class="fopt-btn" :class="{ active: isBodyTypeActive('Crossover') }" @click="toggleBodyTypeByName('Crossover')">Crossover</button>
+                                        <button class="fopt-btn" :class="{ active: isBodyTypeActive('Pickup') }" @click="toggleBodyTypeByName('Pickup')">Pickup</button>
+                                        <button class="fopt-btn" :class="{ active: isBodyTypeActive('Minivan / Van') }" @click="toggleBodyTypeByName('Minivan / Van')">Van</button>
+                                    </div>
+                                </div>
+
                                 <!-- Engine size (motorcycles) -->
                                 <div v-if="filterConfig.showEngineSize" class="fp-group">
                                     <div class="fp-group-label"><v-icon icon="mdi-engine-outline" size="13" />Pojemność (cm³)</div>
@@ -696,6 +716,11 @@ const f = reactive({
     emissionTo:   route.query.emissionTo   ? Number(route.query.emissionTo)   : null as number | null,
     euroNorm:     route.query.euroNorm     ? String(route.query.euroNorm)     : '' as string,
     hasFinancing: route.query.hasFinancing !== undefined ? route.query.hasFinancing === 'true' : null as boolean | null,
+    // Faza 7 of the category/attribute restructure: calculated pill filters for Auta osobowe.
+    originCountry: route.query.originCountry ? String(route.query.originCountry) : '' as string,
+    isLuxuryBrand: route.query.isLuxuryBrand !== undefined ? route.query.isLuxuryBrand === 'true' : null as boolean | null,
+    era:          route.query.era          ? String(route.query.era) as '' | 'youngtimer' | 'classic' : '' as '' | 'youngtimer' | 'classic',
+    isSporty:     route.query.isSporty     !== undefined ? route.query.isSporty     === 'true' : null as boolean | null,
 })
 
 const models       = ref<TaxonomyItem[]>([])
@@ -743,6 +768,10 @@ const advancedFiltersCount = computed(() => {
     if (f.euroNorm) n++
     if (f.vin) n++
     if (f.hasFinancing !== null) n++
+    if (f.originCountry) n++
+    if (f.isLuxuryBrand !== null) n++
+    if (f.era) n++
+    if (f.isSporty !== null) n++
     if (f.featureIds.length) n++
     if (f.sellerType) n++
     if (f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null) n++
@@ -845,6 +874,7 @@ const hasActiveFilters = computed(() =>
        f.hasDamage !== null || f.hasWarranty !== null || f.hasServiceBook !== null || f.isImported !== null ||
        f.locationCity || f.vin || f.doorsFrom || f.doorsTo || f.seatsFrom || f.seatsTo ||
        f.emissionFrom || f.emissionTo || f.euroNorm || f.hasFinancing !== null ||
+       f.originCountry || f.isLuxuryBrand !== null || f.era || f.isSporty !== null ||
        Object.keys(attrFilters).length > 0)
 )
 
@@ -918,6 +948,35 @@ function toggleFeature(id: number) {
     load(1)
 }
 
+// Faza 7 of the category/attribute restructure: calculated pill filters for Auta osobowe.
+function toggleOriginCountry(country: string) {
+    f.originCountry = f.originCountry === country ? '' : country
+    load(1)
+}
+function toggleLuxury() {
+    f.isLuxuryBrand = f.isLuxuryBrand === true ? null : true
+    load(1)
+}
+function toggleEra(era: 'youngtimer' | 'classic') {
+    f.era = f.era === era ? '' : era
+    load(1)
+}
+function toggleSporty() {
+    f.isSporty = f.isSporty === true ? null : true
+    load(1)
+}
+// SUV/Crossover/Pickup/Van one-click shortcuts reuse the existing f.bodyTypeId filter/dropdown
+// (the data was already there via BodyType — this is purely a UI convenience, no new backend field).
+function isBodyTypeActive(name: string): boolean {
+    return bodyTypes.value.find(b => b.name === name)?.id === f.bodyTypeId
+}
+function toggleBodyTypeByName(name: string) {
+    const bt = bodyTypes.value.find(b => b.name === name)
+    if (!bt) return
+    f.bodyTypeId = f.bodyTypeId === bt.id ? null : bt.id
+    load(1)
+}
+
 function clearFilters() {
     f.categoryId = null; f.textSearch = ''; f.brandId = null; f.modelId = null; f.generationId = null
     f.fuelTypeId = null; f.bodyTypeId = null; f.gearboxId = null
@@ -942,6 +1001,7 @@ function clearFilters() {
     f.seatsFrom = null; f.seatsTo = null
     f.emissionFrom = null; f.emissionTo = null
     f.euroNorm = ''; f.hasFinancing = null
+    f.originCountry = ''; f.isLuxuryBrand = null; f.era = ''; f.isSporty = null
     models.value = []
     loadCategoryScopedFilters(null) // also clears attrFilters
     load(1)
@@ -1011,6 +1071,10 @@ function buildSearchBody(p: number): Record<string, unknown> {
     if (f.emissionTo)              body.emissionTo     = f.emissionTo
     if (f.euroNorm)                body.euroNorm       = f.euroNorm
     if (f.hasFinancing !== null)   body.hasFinancing   = f.hasFinancing
+    if (f.originCountry)           body.originCountry  = f.originCountry
+    if (f.isLuxuryBrand !== null)  body.isLuxuryBrand  = f.isLuxuryBrand
+    if (f.era)                     body.era            = f.era
+    if (f.isSporty !== null)       body.isSporty       = f.isSporty
     const attributeFilters = Object.entries(attrFilters).map(([defId, v]) => {
         const attributeDefinitionId = Number(defId)
         if (v.bool != null) return { attributeDefinitionId, valueBool: v.bool }
@@ -1160,6 +1224,10 @@ async function load(p: number = page.value) {
     if (f.emissionTo)    query.emissionTo    = String(f.emissionTo)
     if (f.euroNorm)      query.euroNorm      = f.euroNorm
     if (f.hasFinancing !== null) query.hasFinancing = String(f.hasFinancing)
+    if (f.originCountry)         query.originCountry = f.originCountry
+    if (f.isLuxuryBrand !== null) query.isLuxuryBrand = String(f.isLuxuryBrand)
+    if (f.era)                   query.era = f.era
+    if (f.isSporty !== null)     query.isSporty = String(f.isSporty)
     if (f.sortBy)      query.sortBy      = f.sortBy
     if (p > 1)         query.page        = String(p)
     router.replace({ query })
