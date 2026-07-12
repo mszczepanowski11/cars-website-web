@@ -2247,8 +2247,11 @@ interface CatFieldConfig {
     // Standard backend fields to show
     fields: string[]
     required: string[]
-    // Whether brand uses API dropdown or free-text input
-    brandFieldType?: 'select' | 'text'
+    // Whether brand uses API dropdown or free-text input. 'select-all' is a dropdown too, but
+    // fetches the full unscoped brand list instead of brands linked to this category - for a
+    // category like czesci where "brand" means "which vehicle brand this fits", not the part's
+    // own brand, so scoping to czesci-linked brands (of which there are none) makes no sense.
+    brandFieldType?: 'select' | 'text' | 'select-all'
     // Whether model uses API dropdown or free-text input; defaults to brandFieldType when unset
     // (used for categories with a real brand catalog but no per-brand model catalog yet)
     modelFieldType?: 'select' | 'text'
@@ -2394,6 +2397,9 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'czesci': {
         fields: ['brand', 'model', 'year', 'price'],
         required: ['price'],
+        // "Marka" here means the vehicle brand this part fits, not the part's own brand - no
+        // VehicleCategory-scoped brand set makes sense, so show every seeded brand instead.
+        brandFieldType: 'select-all',
         brandLabel: 'Pasuje do marki pojazdu',
         modelLabel: 'Pasuje do modelu pojazdu',
         yearLabel: 'Rocznik pojazdu (do którego pasuje)',
@@ -2583,6 +2589,9 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'inne': {
         fields: ['brand', 'model', 'year', 'mileage', 'price'],
         required: ['price'],
+        // Catch-all miscellaneous-vehicle category - no natural brand catalog to scope to,
+        // same free-text convention as rolnicze/budowlane/maszyny.
+        brandFieldType: 'text',
         mileageLabel: 'Przebieg (km)',
         priceHint: 'Podaj cenę pojazdu',
         showVinSection: false,
@@ -3629,8 +3638,12 @@ async function onCategory(catId: number) {
     }
     // Reload brands filtered by category (fall back to all brands only on a genuine fetch error,
     // not merely because the category has zero mapped brands - an empty result is still correct).
+    // 'select-all' categories (czesci: "brand" means the vehicle it fits, not its own brand) skip
+    // the category scoping entirely and always show the full brand list.
     const cfg = categoryConfig.value
-    if (cfg.brandFieldType !== 'text') {
+    if (cfg.brandFieldType === 'select-all') {
+        try { brands.value = await fetchBrands() } catch { brands.value = [] }
+    } else if (cfg.brandFieldType !== 'text') {
         try {
             brands.value = await fetchBrandsByCategory(catId)
         } catch {
