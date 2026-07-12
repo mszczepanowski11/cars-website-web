@@ -2688,6 +2688,55 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             // Faza 4: liftCapacity migrated to AttributeDefinition.
         ],
     },
+
+    // ── Faza 6: Opony, Felgi, Akcesoria, Usługi motoryzacyjne ────────────────
+    // Wszystkie 4 nie mają hardkodowanych extraFields — ich specyfika (rozmiar opony/felgi, typ
+    // akcesorium, typ usługi itd.) przychodzi wyłącznie z AttributeDefinition (Faza 3/5), więc
+    // te configi ograniczają się do tego, które z ~90 "twardych" pól CarAdvert w ogóle pokazać.
+    'opony': {
+        fields: ['brand', 'model', 'price'],
+        required: ['brand', 'price'],
+        brandLabel: 'Producent opon',
+        modelLabel: 'Linia produktowa',
+        priceHint: 'Rynek: 100 – 5 000 zł za sztukę / komplet',
+        categoryNote: 'Opony do wszystkich typów pojazdów. Wybierz rodzaj pojazdu i uzupełnij rozmiar poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+    },
+
+    'felgi': {
+        fields: ['brand', 'model', 'price'],
+        required: ['brand', 'price'],
+        brandLabel: 'Producent felg',
+        modelLabel: 'Linia produktowa',
+        priceHint: 'Rynek: 200 – 10 000 zł za sztukę / komplet',
+        categoryNote: 'Felgi do wszystkich typów pojazdów. Wybierz rodzaj pojazdu i uzupełnij rozmiar poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+    },
+
+    'akcesoria': {
+        fields: ['price'],
+        required: ['price'],
+        priceHint: 'Podaj cenę akcesorium',
+        categoryNote: 'Akcesoria i wyposażenie dodatkowe. Typ i szczegóły uzupełnij poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+    },
+
+    // Jedyna kategoria semantycznie niepojazdowa - pusty `fields` ukrywa całą taksonomię
+    // pojazdu (marka/model/rok/paliwo/silnik/moc/skrzynia/przebieg/nadwozie), zostaje tylko cena
+    // (renderowana bez względu na `fields`, patrz pole Cena w kroku 5) i pola usługowe przez
+    // AttributeDefinition (typ usługi, obszar działania, godziny, telefon).
+    'uslugi-motoryzacyjne': {
+        fields: [],
+        required: ['price'],
+        priceLabel: 'Cena usługi (zł)',
+        priceHint: 'Podaj cenę usługi lub cenę od',
+        categoryNote: 'Usługi motoryzacyjne (warsztaty, wulkanizacja, detailing itd.) — to nie jest ogłoszenie pojazdu. Uzupełnij szczegóły usługi poniżej.',
+        showVinSection: false,
+        showHistorySection: false,
+    },
 }
 
 const DEFAULT_CAT_CONFIG: CatFieldConfig = {
