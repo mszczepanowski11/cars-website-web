@@ -47,6 +47,14 @@
                     <div class="afc-fields">
                         <input v-model="newBrand.name" class="afc-input" placeholder="Nazwa marki (np. Toyota)" />
                         <input v-model="newBrand.slug" class="afc-input" placeholder="Slug (opcjonalnie, wygeneruje się automatycznie)" />
+                        <select v-model="newBrand.originCountry" class="afc-input">
+                            <option value="">Kraj pochodzenia (opcjonalnie)</option>
+                            <option v-for="o in ORIGIN_COUNTRIES" :key="o" :value="o">{{ o }}</option>
+                        </select>
+                        <label class="afc-check">
+                            <input type="checkbox" v-model="newBrand.isLuxury" />
+                            Marka luksusowa
+                        </label>
                     </div>
                     <div class="afc-cats">
                         <label v-for="c in vehicleCategories" :key="c.id" class="afc-check">
@@ -67,7 +75,7 @@
                 <div v-else-if="brands.length" class="feat-table">
                     <table>
                         <thead>
-                            <tr><th>ID</th><th>Nazwa</th><th>Slug</th><th>Kategorie</th><th>Modele</th><th>Akcje</th></tr>
+                            <tr><th>ID</th><th>Nazwa</th><th>Slug</th><th>Kategorie</th><th>Modele</th><th>Pochodzenie</th><th>Luksusowa</th><th>Akcje</th></tr>
                         </thead>
                         <tbody>
                             <tr v-for="b in brands" :key="b.id">
@@ -76,6 +84,15 @@
                                 <td class="td-dim">{{ b.slug }}</td>
                                 <td><span v-for="c in b.categories" :key="c.id" class="cat-badge">{{ c.name }}</span></td>
                                 <td class="td-dim">{{ b.modelCount }}</td>
+                                <td>
+                                    <select :value="b.originCountry ?? ''" class="afc-input afc-input--sm" @change="onOriginCountryChange(b, $event)">
+                                        <option value="">—</option>
+                                        <option v-for="o in ORIGIN_COUNTRIES" :key="o" :value="o">{{ o }}</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="checkbox" :checked="b.isLuxury" @change="onIsLuxuryChange(b, $event)" />
+                                </td>
                                 <td>
                                     <button class="btn-action btn-delete" @click="deleteBrand(b.id, b.name, b.modelCount)">
                                         <v-icon icon="mdi-delete-outline" size="13" />Usuń
@@ -305,13 +322,41 @@ async function loadLookups() {
 }
 
 // ── Brands ──
+const ORIGIN_COUNTRIES = ['Niemcy', 'Japonia', 'Chiny', 'USA', 'Korea', 'Włochy', 'Francja',
+    'Wielka Brytania', 'Szwecja', 'Czechy', 'Rosja', 'Polska', 'Kanada', 'Tajwan', 'Austria',
+    'Rumunia', 'Białoruś', 'Indie', 'Turcja', 'Węgry', 'Inne']
 const brands = ref<any[]>([])
 const brandsLoading = ref(true)
 const brandSearch = ref('')
 const showAddBrand = ref(false)
 const savingBrand = ref(false)
-const newBrand = reactive({ name: '', slug: '', categoryIds: [] as number[] })
-function resetNewBrand() { newBrand.name = ''; newBrand.slug = ''; newBrand.categoryIds = [] }
+const newBrand = reactive({ name: '', slug: '', categoryIds: [] as number[], originCountry: '', isLuxury: false })
+function resetNewBrand() { newBrand.name = ''; newBrand.slug = ''; newBrand.categoryIds = []; newBrand.originCountry = ''; newBrand.isLuxury = false }
+
+// Inline-editable Pochodzenie/Luksusowa cells save immediately on change (same PUT endpoint the
+// full edit form would use) - a brand flagged unmatched by BrandMetadataSeeder gets fixed here.
+async function updateBrandMeta(b: any, patch: { originCountry?: string | null; isLuxury?: boolean }) {
+    const body = {
+        name: b.name, slug: b.slug, categoryIds: b.categories.map((c: any) => c.id),
+        originCountry: patch.originCountry !== undefined ? patch.originCountry : (b.originCountry ?? null),
+        isLuxury: patch.isLuxury !== undefined ? patch.isLuxury : !!b.isLuxury,
+    }
+    try {
+        await $fetch(`/api/proxy/api/Admin/brands/${b.id}`, { method: 'PUT', body })
+        Object.assign(b, { originCountry: body.originCountry, isLuxury: body.isLuxury })
+        toastSuccess(`Zapisano metadane marki "${b.name}".`)
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się zapisać zmiany.')
+    }
+}
+function onOriginCountryChange(b: any, event: Event) {
+    const value = (event.target as HTMLSelectElement).value
+    updateBrandMeta(b, { originCountry: value || null })
+}
+function onIsLuxuryChange(b: any, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked
+    updateBrandMeta(b, { isLuxury: checked })
+}
 
 async function loadBrands() {
     brandsLoading.value = true
@@ -332,7 +377,10 @@ async function addBrand() {
     try {
         await $fetch('/api/proxy/api/Admin/brands', {
             method: 'POST',
-            body: { name: newBrand.name, slug: newBrand.slug || undefined, categoryIds: newBrand.categoryIds },
+            body: {
+                name: newBrand.name, slug: newBrand.slug || undefined, categoryIds: newBrand.categoryIds,
+                originCountry: newBrand.originCountry || null, isLuxury: newBrand.isLuxury,
+            },
         })
         await Promise.all([loadBrands(), loadLookups()])
         showAddBrand.value = false
