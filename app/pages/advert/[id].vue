@@ -1675,7 +1675,7 @@ onUnmounted(() => {
 
 .hero-inner {
     display: grid;
-    grid-template-columns: 58% 42%;
+    grid-template-columns: 58fr 42fr;
     gap: 28px;
     align-items: start;
 
@@ -1690,6 +1690,7 @@ onUnmounted(() => {
 
 .main-photo-wrap {
     position: relative;
+    width: 100%;
     border-radius: $r-lg;
     overflow: hidden;
     background: #0a0a0a;
