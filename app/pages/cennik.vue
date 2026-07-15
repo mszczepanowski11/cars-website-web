@@ -30,6 +30,11 @@
             <!-- ── PERSONAL ─────────────────────────────────────────────────── -->
             <div v-if="tab === 'personal'" class="tab-content">
 
+                <div v-if="promoActive" class="promo-banner">
+                    <v-icon icon="mdi-gift-outline" size="17" />
+                    Promocja startowa: wszystkie wyróżnienia i pakiety są teraz całkowicie darmowe!
+                </div>
+
                 <section class="price-section">
                     <h2 class="section-title">Ogłoszenia</h2>
                     <p class="section-sub">Dodawanie ogłoszeń dla kont prywatnych jest bezpłatne.</p>
@@ -53,7 +58,7 @@
                                 <div class="info-card-title">Czas emisji ogłoszenia</div>
                                 <div class="info-card-desc">Po upływie można odświeżyć lub wyróżnić</div>
                             </div>
-                            <div class="info-card-price">30 dni</div>
+                            <div class="info-card-price">90 dni</div>
                         </div>
                     </div>
 
@@ -82,7 +87,14 @@
                                     <div class="promo-hint">{{ p.hint }}</div>
                                 </div>
                             </div>
-                            <span v-for="price in p.prices" :key="price" class="promo-price">{{ price }}</span>
+                            <span v-for="price in p.prices" :key="price" class="promo-price">
+                                <template v-if="price === '—'">—</template>
+                                <template v-else-if="promoActive">
+                                    <span class="promo-price-crossed">{{ price }}</span>
+                                    <span class="promo-price-free">za darmo</span>
+                                </template>
+                                <template v-else>{{ price }}</template>
+                            </span>
                         </div>
                     </div>
 
@@ -93,6 +105,11 @@
 
             <!-- ── BUSINESS ─────────────────────────────────────────────────── -->
             <div v-if="tab === 'business'" class="tab-content">
+
+                <div v-if="promoActive" class="promo-banner">
+                    <v-icon icon="mdi-gift-outline" size="17" />
+                    Promocja startowa: wszystkie wyróżnienia i pakiety są teraz całkowicie darmowe!
+                </div>
 
                 <section class="price-section">
                     <h2 class="section-title">Pakiety miesięczne</h2>
@@ -119,7 +136,11 @@
                                 </div>
                             </div>
 
-                            <div v-if="!plan.custom" class="b2b-price-block">
+                            <div v-if="!plan.custom && promoActive" class="b2b-price-block">
+                                <div class="b2b-price-netto b2b-price-netto--crossed">{{ plan.priceNetto }}</div>
+                                <div class="b2b-price-brutto b2b-price-brutto--free">ZA DARMO</div>
+                            </div>
+                            <div v-else-if="!plan.custom" class="b2b-price-block">
                                 <div class="b2b-price-netto">{{ plan.priceNetto }} <span>netto / mies.</span></div>
                                 <div class="b2b-price-brutto">{{ plan.priceBrutto }} brutto (z VAT 23%)</div>
                             </div>
@@ -171,8 +192,17 @@
                                 </div>
                             </div>
                             <div v-for="col in p.cols" :key="col.brutto" class="promo-price-cell">
-                                <div class="promo-brutto">{{ col.brutto }}</div>
-                                <div class="promo-netto">{{ col.netto }} netto</div>
+                                <template v-if="col.brutto === '—'">
+                                    <div class="promo-brutto">—</div>
+                                </template>
+                                <template v-else-if="promoActive">
+                                    <div class="promo-price-crossed">{{ col.brutto }}</div>
+                                    <div class="promo-price-free">za darmo</div>
+                                </template>
+                                <template v-else>
+                                    <div class="promo-brutto">{{ col.brutto }}</div>
+                                    <div class="promo-netto">{{ col.netto }} netto</div>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -207,6 +237,12 @@ useHead({
 })
 
 const tab = ref<'personal' | 'business'>('personal')
+
+const { getPromoStatus } = usePayment()
+const promoActive = ref(false)
+onMounted(() => {
+    getPromoStatus().then(r => { promoActive.value = r.isFreePromoActive }).catch(() => {})
+})
 
 const promoPlansPersonal = [
     {
@@ -284,7 +320,7 @@ const b2bPlans = [
         priceNetto: '99,00 zł', priceBrutto: '121,77 zł',
         features: [
             '25 aktywnych ogłoszeń',
-            '30 dni emisji ogłoszenia',
+            '90 dni emisji ogłoszenia',
             '3 wyróżnienia miesięcznie',
             'Faktura VAT automatycznie',
             'Wsparcie e-mail',
@@ -296,7 +332,7 @@ const b2bPlans = [
         priceNetto: '279,00 zł', priceBrutto: '343,17 zł',
         features: [
             '75 aktywnych ogłoszeń',
-            '45 dni emisji ogłoszenia',
+            '90 dni emisji ogłoszenia',
             '10 wyróżnień miesięcznie',
             'Faktura VAT automatycznie',
             'Priorytetowe wsparcie',
@@ -308,7 +344,7 @@ const b2bPlans = [
         priceNetto: '599,00 zł', priceBrutto: '736,77 zł',
         features: [
             '200 aktywnych ogłoszeń',
-            '60 dni emisji ogłoszenia',
+            '90 dni emisji ogłoszenia',
             '30 wyróżnień miesięcznie',
             'Faktura VAT automatycznie',
             'Dedykowany opiekun',
@@ -428,6 +464,22 @@ const faq = [
 
 .tab-content { animation: fadeIn 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.promo-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(76,175,80,0.1);
+    border: 1px solid rgba(76,175,80,0.3);
+    color: #4caf50;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: $r-sm;
+    margin-bottom: 24px;
+    text-align: center;
+}
 
 // ── Section ───────────────────────────────────────────────────────────────────
 .price-section {
@@ -604,6 +656,23 @@ const faq = [
     font-size: 13px;
     font-weight: 700;
     color: $text;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.promo-price-crossed {
+    text-decoration: line-through;
+    color: $text-dim;
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.promo-price-free {
+    color: #4caf50;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 12px;
 }
 
 .promo-price-cell {
@@ -759,11 +828,25 @@ const faq = [
         font-weight: 700;
         color: $text-muted;
     }
+
+    &--crossed {
+        font-size: 16px;
+        font-weight: 500;
+        color: $text-dim;
+        text-decoration: line-through;
+    }
 }
 
 .b2b-price-brutto {
     font-size: 12px;
     color: $text-dark;
+
+    &--free {
+        font-size: 20px;
+        font-weight: 900;
+        color: #4caf50;
+        letter-spacing: 0.02em;
+    }
 }
 
 .b2b-features {

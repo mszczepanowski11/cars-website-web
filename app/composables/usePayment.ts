@@ -8,6 +8,10 @@ export const usePayment = () => {
         return $fetch('/api/proxy/api/Payment/price', { query: { serviceType, durationDays } })
     }
 
+    async function getPromoStatus(): Promise<{ isFreePromoActive: boolean; freeUntilUtc: string | null }> {
+        return $fetch('/api/proxy/api/Payment/promo-status')
+    }
+
     async function initiatePayment(dto: { serviceType: string; advertId?: number; eventId?: number; durationDays: number; returnUrl?: string; cancelUrl?: string; couponCode?: string }): Promise<PaymentInitiated> {
         loading.value = true
         error.value = null
@@ -29,5 +33,5 @@ export const usePayment = () => {
         return $fetch('/api/proxy/api/Payment/admin/all', { query: { page, pageSize } })
     }
 
-    return { loading, error, getPrice, initiatePayment, getMyPayments, getAdminPayments }
+    return { loading, error, getPrice, getPromoStatus, initiatePayment, getMyPayments, getAdminPayments }
 }

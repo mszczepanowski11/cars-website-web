@@ -31,6 +31,11 @@
                 <p>Wybierz pakiet promocji i sprzedaj szybciej. Możesz też opublikować bez promocji za darmo.</p>
             </div>
 
+            <div v-if="promoActive" class="promo-banner">
+                <v-icon icon="mdi-gift-outline" size="17" />
+                Promocja startowa: wszystkie wyróżnienia są teraz całkowicie darmowe!
+            </div>
+
             <div class="plans-grid">
                 <!-- Free option -->
                 <div class="plan-card plan-free" :class="{ selected: selected === 'free' }" @click="selected = 'free'">
@@ -43,7 +48,7 @@
                     <div class="plan-desc">Standardowe ogłoszenie w wynikach wyszukiwania.</div>
                     <ul class="plan-features">
                         <li><v-icon icon="mdi-check" size="14" />Widoczne w wynikach</li>
-                        <li><v-icon icon="mdi-check" size="14" />30 dni aktywności</li>
+                        <li><v-icon icon="mdi-check" size="14" />90 dni aktywności</li>
                         <li class="disabled"><v-icon icon="mdi-close" size="14" />Brak wyróżnienia</li>
                     </ul>
                     <div class="plan-sel-indicator" />
@@ -58,9 +63,16 @@
                     <div class="plan-header">
                         <div class="plan-icon"><v-icon :icon="plan.icon" size="26" /></div>
                         <div class="plan-name">{{ plan.name }}</div>
+                        <div v-if="promoActive" class="plan-badge plan-badge-free">ZA DARMO</div>
                     </div>
                     <div class="plan-price">
-                        od <strong>{{ getPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</strong>
+                        <template v-if="promoActive">
+                            <span class="price-original">{{ getPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</span>
+                            <strong>za darmo</strong>
+                        </template>
+                        <template v-else>
+                            od <strong>{{ getPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</strong>
+                        </template>
                     </div>
                     <div class="plan-desc">{{ plan.desc }}</div>
                     <ul class="plan-features">
@@ -70,7 +82,7 @@
                         <button v-for="d in plan.days" :key="d"
                             class="day-btn" :class="{ active: selectedDays === d }"
                             @click.stop="selectedDays = d">
-                            {{ d }} dni · {{ getDisplayPrice(plan.key, d).toFixed(2) }} zł
+                            {{ d }} dni · <template v-if="promoActive">za darmo</template><template v-else>{{ getDisplayPrice(plan.key, d).toFixed(2) }} zł</template>
                         </button>
                     </div>
                     <div class="plan-sel-indicator" />
@@ -86,15 +98,19 @@
                 <div v-else class="summary-paid">
                     <div class="summary-name">{{ selectedPlan?.name }} – {{ selectedDays }} dni</div>
                     <div class="summary-price">
-                        <span v-if="couponResult?.isValid" class="price-original">{{ selectedPrice?.toFixed(2) }} zł</span>
-                        <span>{{ finalPrice.toFixed(2) }} zł</span>
+                        <span v-if="promoActive || couponResult?.isValid" class="price-original">{{ selectedPrice?.toFixed(2) }} zł</span>
+                        <span>{{ promoActive ? 'ZA DARMO' : `${finalPrice.toFixed(2)} zł` }}</span>
                     </div>
-                    <div v-if="couponResult?.isValid" class="coupon-applied">
+                    <div v-if="promoActive" class="coupon-applied">
+                        <v-icon icon="mdi-gift-outline" size="14" />
+                        Promocja startowa – aktywacja bez opłat
+                    </div>
+                    <div v-else-if="couponResult?.isValid" class="coupon-applied">
                         <v-icon icon="mdi-tag-outline" size="14" />
                         Rabat zastosowany
                     </div>
                 </div>
-                <div v-if="selected !== 'free'" class="coupon-row">
+                <div v-if="selected !== 'free' && !promoActive" class="coupon-row">
                     <div class="coupon-input-wrap">
                         <input v-model="couponCode" class="coupon-input" placeholder="Kod rabatowy (opcjonalnie)" :disabled="couponLoading" @keyup.enter="applyCoupon" />
                         <button class="coupon-btn" :disabled="!couponCode || couponLoading" @click="applyCoupon">
@@ -140,21 +156,25 @@
                         <span>Promocja</span>
                         <span>{{ selectedPlan?.name }} – {{ selectedDays }} dni</span>
                     </div>
-                    <div v-if="couponResult?.isValid" class="bos-row bos-discount">
+                    <div v-if="promoActive" class="bos-row bos-discount">
+                        <span>Promocja startowa</span>
+                        <span>-{{ selectedPrice?.toFixed(2) }} zł</span>
+                    </div>
+                    <div v-else-if="couponResult?.isValid" class="bos-row bos-discount">
                         <span>Rabat</span>
                         <span>-{{ (selectedPrice! - finalPrice).toFixed(2) }} zł</span>
                     </div>
                     <div class="bos-row bos-net">
                         <span>Kwota netto</span>
-                        <span>{{ (finalPrice / 1.23).toFixed(2) }} zł</span>
+                        <span>{{ (billingFinalPrice / 1.23).toFixed(2) }} zł</span>
                     </div>
                     <div class="bos-row bos-vat">
                         <span>VAT (23%)</span>
-                        <span>{{ (finalPrice - finalPrice / 1.23).toFixed(2) }} zł</span>
+                        <span>{{ (billingFinalPrice - billingFinalPrice / 1.23).toFixed(2) }} zł</span>
                     </div>
                     <div class="bos-row bos-total">
                         <span>Do zapłaty</span>
-                        <strong>{{ finalPrice.toFixed(2) }} zł</strong>
+                        <strong>{{ billingFinalPrice.toFixed(2) }} zł</strong>
                     </div>
                 </div>
 
@@ -162,8 +182,10 @@
                     <button class="btn-skip" @click="step = 1"><v-icon icon="mdi-arrow-left" size="15" />Wróć</button>
                     <button class="btn-pay" :disabled="paying" @click="initiatePayment">
                         <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
+                        <v-icon v-else-if="promoActive" icon="mdi-gift-outline" size="16" />
                         <v-icon v-else icon="mdi-credit-card-outline" size="16" />
-                        Zapłać {{ finalPrice.toFixed(2) }} zł przez ING
+                        <template v-if="promoActive">Aktywuj za darmo</template>
+                        <template v-else>Zapłać {{ finalPrice.toFixed(2) }} zł przez ING</template>
                     </button>
                 </div>
                 <div v-if="actionError" class="action-error"><v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
@@ -202,8 +224,10 @@ const billingData = ref<BillingData>({
 const userProfile = ref<UserProfile | null>(null)
 
 const { validateCoupon } = useCoupons()
-const { getPrice } = usePayment()
+const { getPrice, getPromoStatus } = usePayment()
 const { error: toastError } = useToast()
+
+const promoActive = ref(false)
 
 // InitiatePaymentDto only has flat BillingName/BillingNip/BillingStreet/BillingPostalCode/
 // BillingCity properties - a nested { billing: {...} } object is silently dropped by the
@@ -294,8 +318,11 @@ const selectedPrice = computed(() => {
     return getDisplayPrice(selectedPlan.value.key, selectedDays.value)
 })
 const finalPrice = computed(() => couponResult.value?.isValid ? couponResult.value.finalPrice : (selectedPrice.value ?? 0))
+const billingFinalPrice = computed(() => promoActive.value ? 0 : finalPrice.value)
 
 onMounted(async () => {
+    getPromoStatus().then(r => { promoActive.value = r.isFreePromoActive }).catch(() => {})
+
     // Verify ownership before showing promotion options
     try {
         const [advert, me] = await Promise.all([
@@ -443,6 +470,13 @@ async function initiatePayment() {
 .promo-body { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
 
 .promo-hero { text-align: center; margin-bottom: 40px; h1 { font-size: 28px; font-weight: 900; margin-bottom: 8px; } p { font-size: 14px; color: $text-dim; } }
+
+.promo-banner {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 10px;
+    color: #4caf50; font-size: 13px; font-weight: 700; padding: 10px 16px; margin: -20px auto 24px;
+    max-width: 560px;
+}
 
 .plans-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 32px; @media (max-width: 900px) { grid-template-columns: 1fr 1fr; } @media (max-width: 600px) { grid-template-columns: 1fr; } }
 

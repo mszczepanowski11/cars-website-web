@@ -56,8 +56,8 @@
                     <ol>
                         <li>Dodawanie Ogłoszeń przez Użytkowników Indywidualnych w ich podstawowym wariancie jest bezpłatne.</li>
                         <li>CARIZO oferuje dodatkowe, odpłatne usługi zwiększające widoczność ofert (usługi promowania, podbicia, wyróżnienia na stronie głównej). Aktualny zakres tych usług, ich specyfikacja oraz ceny określane są w Cenniku dostępnym w Serwisie.</li>
-                        <li>Standardowy czas publikacji Ogłoszenia wynosi 30 dni.</li>
-                        <li>Po upływie 30 dni Ogłoszenie wygasa automatycznie i zostaje przeniesione do archiwum Konta Użytkownika. Użytkownik ma możliwość ponownej, ręcznej aktywacji Ogłoszenia z poziomu swojego Konta.</li>
+                        <li>Standardowy czas publikacji Ogłoszenia wynosi 90 dni.</li>
+                        <li>Po upływie 90 dni Ogłoszenie wygasa automatycznie i zostaje przeniesione do archiwum Konta Użytkownika. Użytkownik ma możliwość ponownej, ręcznej aktywacji Ogłoszenia z poziomu swojego Konta.</li>
                         <li>Serwis nie stosuje mechanizmów automatycznego odnawiania Ogłoszeń ani automatycznego pobierania opłat finansowych z kont bankowych lub kart Użytkownika bez jego wyraźnej, każdorazowej i uprzedniej zgody.</li>
                         <li>Ogłoszenie jest ściśle i nierozerwalnie przypisane do jednego, konkretnego pojazdu lub zestawu części zdefiniowanego w momencie jego utworzenia. Zabrania się zmiany przedmiotu Ogłoszenia w trakcie jego emisji (w tym poprzez edycję parametrów, opisu lub zdjęć w celu zaoferowania innego pojazdu w ramach tego samego ogłoszenia).</li>
                         <li>W przypadku intencjonalnego usunięcia Ogłoszenia przez Użytkownika przed zakończeniem standardowego lub przedłużonego okresu publikacji (np. w wyniku wcześniejszej sprzedaży pojazdu), wniesione opłaty za usługi promowania nie podlegają zwrotowi ani proporcjonalnemu rozliczeniu, z zastrzeżeniem praw konsumenckich opisanych w §6.</li>

@@ -121,7 +121,7 @@ const groups = [
         faqs: [
             { q: 'Jak dodać ogłoszenie?', a: 'Kliknij „Dodaj ogłoszenie" w menu. Wypełnij dane pojazdu w formularzu: marka, model, rok, przebieg, cena i opis. Dodaj co najmniej 3 zdjęcia. Kliknij „Opublikuj".' },
             { q: 'Ile kosztuje dodanie ogłoszenia?', a: 'Podstawowe ogłoszenie jest <strong>bezpłatne</strong>. Płatne są jedynie pakiety promocji (TOP, Premium, Wyróżnienie), które zwiększają widoczność oferty.' },
-            { q: 'Jak długo ogłoszenie jest aktywne?', a: 'Standardowe ogłoszenie jest aktywne przez <strong>30 dni</strong>. Po tym czasie możesz je odświeżyć (płatna opcja) lub opublikować ponownie.' },
+            { q: 'Jak długo ogłoszenie jest aktywne?', a: 'Standardowe ogłoszenie jest aktywne przez <strong>90 dni</strong>. Po tym czasie możesz je odświeżyć (płatna opcja) lub opublikować ponownie.' },
             { q: 'Mogę edytować opublikowane ogłoszenie?', a: 'Tak, możesz edytować ogłoszenie w dowolnym momencie z poziomu panelu „Moje ogłoszenia". Zmiany będą widoczne natychmiast.' },
             { q: 'Jak oznaczyć auto jako sprzedane?', a: 'W panelu „Moje ogłoszenia" kliknij przycisk z ikoną uścisku dłoni (handshake) przy ogłoszeniu. Potwierdź w oknie dialogowym. Ogłoszenie zniknie z wyników wyszukiwania.' },
             { q: 'Ile zdjęć mogę dodać?', a: 'Możesz dodać do 20 zdjęć do jednego ogłoszenia. Pierwsze zdjęcie będzie zdjęciem głównym widocznym w wynikach wyszukiwania. Zalecamy dodanie minimum 8 zdjęć.' },
