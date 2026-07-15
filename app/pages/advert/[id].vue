@@ -100,7 +100,7 @@
                                 {{ advert.badge }}
                             </span>
                         </div>
-                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" />
+                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" width="1200" height="750" fetchpriority="high" />
                         <div class="photo-bottom-bar">
                             <span v-if="hasImages" class="photo-count-pill">
                                 <v-icon icon="mdi-image-multiple-outline" size="13" />
@@ -1026,7 +1026,13 @@ const allImages = computed(() => {
     return advert.value.images.map(img => ({ ...img, url: getImageUrl(img.url) }))
 })
 
-const mainImg = computed(() => allImages.value[activeImg.value]?.url ?? placeholder)
+// This is the page's LCP (largest contentful paint) element - request a display-appropriate
+// size straight from the raw source rather than reusing allImages' full-size proxy URL, and
+// mark fetchpriority="high" on the <img> below so the browser starts downloading it immediately.
+const mainImg = computed(() => {
+    const raw = advert.value?.images?.length ? advert.value.images[activeImg.value]?.url : null
+    return getImageUrl(raw, placeholder, { width: 1200, quality: 80, format: 'auto' })
+})
 
 const featureGroups = computed(() => {
     if (!advert.value?.features?.length) return {}
