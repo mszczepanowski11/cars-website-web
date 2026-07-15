@@ -1437,11 +1437,23 @@ const { data: advertData } = await useAsyncData(`advert-${id}`, async () => {
     } catch (e: any) {
         // Distinguish a genuine 404 from a transient server error - both used to render the
         // same "ogłoszenie nie istnieje" screen, which reads as "deleted forever" to a user
-        // when the real cause was a backend 500 that a refresh would likely fix.
-        advertFetchError.value = e?.status ?? e?.statusCode ?? 0
+        // when the real cause was a backend 500 that a refresh would likely fix. Signal notFound
+        // here and throw outside this callback, below - a throw from inside useAsyncData's own
+        // handler is caught internally and stored on its `error` ref rather than propagating to
+        // Nuxt's error page, so it never actually produced a real 404 on its own.
+        const status = e?.response?.status ?? e?.statusCode ?? e?.status ?? 0
+        if (status === 404 || status === 410) return { notFound: true as const }
+        advertFetchError.value = status
         return null
     }
 })
+
+if (advertData.value && 'notFound' in advertData.value) {
+    // A genuinely deleted/sold/expired listing must return a real HTTP 404, not render the
+    // "not found" panel under a 200 - otherwise search engines index and keep re-crawling a dead
+    // URL as if it were live, thin/duplicate content forever.
+    throw createError({ statusCode: 404, statusMessage: 'Ogłoszenie nie istnieje', fatal: true })
+}
 
 advert.value = advertData.value?.advert ?? null
 seller.value = advertData.value?.seller ?? null

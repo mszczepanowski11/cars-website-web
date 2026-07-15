@@ -821,9 +821,9 @@
                         <div class="hist-section-title"><v-icon icon="mdi-barcode-scan" size="16" />Identyfikacja pojazdu</div>
                         <div class="fields-grid">
                             <div class="field full-width">
-                                <label class="flabel">Numer VIN <span class="req">*</span></label>
+                                <label class="flabel">Numer VIN <span class="req req--optional">zalecany</span></label>
                                 <div class="vin-row">
-                                    <input v-model="form.vin" class="finput vin-input" placeholder="Wpisz 17-znakowy numer VIN" maxlength="17"
+                                    <input v-model="form.vin" class="finput vin-input" placeholder="Wpisz 17-znakowy numer VIN (opcjonalnie)" maxlength="17"
                                         :class="{ 'input-ok': form.vin.length === 17 }" />
                                     <button type="button" class="btn-vin-lookup"
                                         :disabled="form.vin.length !== 17 || vinLoading"
@@ -838,7 +838,7 @@
                                         <v-icon icon="mdi-alert-circle-outline" size="14" />{{ fieldErrors.vin || vinError }}
                                     </span>
                                 </transition>
-                                <p class="field-hint"><v-icon icon="mdi-information-outline" size="12" />VIN pozwala automatycznie uzupełnić dane i buduje zaufanie kupujących</p>
+                                <p class="field-hint"><v-icon icon="mdi-information-outline" size="12" />VIN pozwala automatycznie uzupełnić dane i buduje zaufanie kupujących. Ogłoszenie bez VIN nadal można opublikować, ale nie dostanie plakietki "VIN zweryfikowany".</p>
                             </div>
                             <div class="field">
                                 <label class="flabel">Pierwsza data rejestracji</label>
@@ -3832,10 +3832,12 @@ function validateStep(step: number): string | null {
         if (!isEdit.value && totalPhotos < 3) return 'Dodaj minimum 3 zdjęcia.'
     }
     // Step 3: Equipment — no required fields
-    // Step 4: Historia pojazdu — VIN required per Regulamin §4.1
+    // Step 4: Historia pojazdu — VIN zalecany (Regulamin §4.1), ale nie blokuje publikacji;
+    // ogłoszenie bez VIN po prostu nie dostaje plakietki "VIN zweryfikowany". Jeśli ktoś go poda,
+    // musi być poprawny — nie akceptujemy błędnego/sfałszowanego numeru.
     if (step === 4) {
-        if (categoryConfig.value.showVinSection !== false) {
-            if (!form.vin || form.vin.length !== 17) return 'Podaj prawidłowy numer VIN (17 znaków). Numer VIN jest obowiązkowy.'
+        if (categoryConfig.value.showVinSection !== false && form.vin) {
+            if (form.vin.length !== 17) return 'Numer VIN musi mieć dokładnie 17 znaków (albo zostaw pole puste).'
             if (!VIN_REGEX.test(form.vin)) return 'Numer VIN zawiera niedozwolone znaki. VIN składa się z cyfr i liter A-H, J-N, P-Z.'
         }
     }
@@ -5382,6 +5384,17 @@ onBeforeUnmount(() => {
 }
 
 .req { color: $red; }
+.req--optional {
+    color: $text-dim;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: rgba(255,255,255,0.06);
+    padding: 2px 6px;
+    border-radius: 20px;
+    vertical-align: middle;
+}
 
 .fselect, .finput {
     width: 100%;
