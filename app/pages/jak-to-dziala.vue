@@ -96,7 +96,7 @@ const buySteps = [
 
 const faqs = [
     { q: 'Czy zamieszczenie ogłoszenia jest bezpłatne?', a: 'Tak, podstawowe ogłoszenie jest całkowicie bezpłatne. Płatne są jedynie opcje promocji zwiększające widoczność.' },
-    { q: 'Jak długo ogłoszenie jest widoczne?', a: 'Standardowe ogłoszenie jest aktywne przez 30 dni. Możesz je przedłużyć lub odświeżyć (opcja płatna).' },
+    { q: 'Jak długo ogłoszenie jest widoczne?', a: 'Standardowe ogłoszenie jest aktywne przez 90 dni. Możesz je przedłużyć lub odświeżyć (opcja płatna).' },
     { q: 'Czy CARIZO weryfikuje ogłoszenia?', a: 'Tak, ogłoszenia przechodzą weryfikację systemu. Ogłoszenia oznaczone jako VERIFIED zostały dodatkowo sprawdzone przez nasz zespół.' },
     { q: 'Jak działa system płatności?', a: 'Płatności obsługuje ING IMOJE – bezpieczny system płatności online. Akceptujemy karty Visa/Mastercard, BLIK, przelewy bankowe i inne metody.' },
     { q: 'Mogę usunąć ogłoszenie przed wygaśnięciem?', a: 'Tak, możesz usunąć lub ukryć ogłoszenie w każdej chwili z poziomu panelu „Moje ogłoszenia".' },

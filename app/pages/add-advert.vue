@@ -1912,6 +1912,11 @@
                         </div>
                     </div>
 
+                    <div v-if="!isEdit && promoActive" class="promo-banner">
+                        <v-icon icon="mdi-gift-outline" size="17" />
+                        Promocja startowa: wszystkie wyróżnienia są teraz całkowicie darmowe!
+                    </div>
+
                     <!-- Plans grid (create mode only) -->
                     <div v-if="!isEdit" class="promo-plans-grid">
                         <!-- Free -->
@@ -1925,7 +1930,7 @@
                             <div class="pp-desc">Standardowe ogłoszenie w wynikach wyszukiwania.</div>
                             <ul class="pp-feats">
                                 <li><v-icon icon="mdi-check" size="13" />Widoczne w wynikach</li>
-                                <li><v-icon icon="mdi-check" size="13" />30 dni aktywności</li>
+                                <li><v-icon icon="mdi-check" size="13" />90 dni aktywności</li>
                                 <li class="pp-feat-no"><v-icon icon="mdi-close" size="13" />Brak wyróżnienia</li>
                             </ul>
                             <div class="pp-sel-bar" />
@@ -1940,8 +1945,15 @@
                             <div class="pp-header">
                                 <div class="pp-icon"><v-icon :icon="plan.icon" size="24" /></div>
                                 <div class="pp-name">{{ plan.name }}</div>
+                                <span v-if="promoActive" class="pp-badge-free">ZA DARMO</span>
                             </div>
-                            <div class="pp-price">od <strong>{{ getPromoPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</strong></div>
+                            <div class="pp-price">
+                                <template v-if="promoActive">
+                                    <span class="ps-original">{{ getPromoPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</span>
+                                    <strong>za darmo</strong>
+                                </template>
+                                <template v-else>od <strong>{{ getPromoPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</strong></template>
+                            </div>
                             <div class="pp-desc">{{ plan.desc }}</div>
                             <ul class="pp-feats">
                                 <li v-for="f in plan.feats" :key="f"><v-icon icon="mdi-check" size="13" />{{ f }}</li>
@@ -1950,7 +1962,7 @@
                                 <button v-for="d in plan.days" :key="d"
                                     class="pp-day-btn" :class="{ active: promoDays === d }"
                                     @click.stop="promoDays = d">
-                                    {{ d }} dni · {{ getPromoDisplayPrice(plan.key, d).toFixed(2) }} zł
+                                    {{ d }} dni · <template v-if="promoActive">za darmo</template><template v-else>{{ getPromoDisplayPrice(plan.key, d).toFixed(2) }} zł</template>
                                 </button>
                             </div>
                             <div class="pp-sel-bar" />
@@ -1966,14 +1978,17 @@
                         <div v-else class="ps-paid-info">
                             <div class="ps-plan-name">{{ selectedPromoPlan?.name }} – {{ promoDays }} dni</div>
                             <div class="ps-plan-price">
-                                <span v-if="couponResult?.isValid" class="ps-original">{{ selectedPromoPrice?.toFixed(2) }} zł</span>
-                                {{ finalPromoPrice.toFixed(2) }} zł
+                                <span v-if="promoActive || couponResult?.isValid" class="ps-original">{{ selectedPromoPrice?.toFixed(2) }} zł</span>
+                                {{ promoActive ? 'ZA DARMO' : `${finalPromoPrice.toFixed(2)} zł` }}
                             </div>
-                            <div v-if="couponResult?.isValid" class="ps-coupon-ok">
+                            <div v-if="promoActive" class="ps-coupon-ok">
+                                <v-icon icon="mdi-gift-outline" size="13" />Promocja startowa – aktywacja bez opłat
+                            </div>
+                            <div v-else-if="couponResult?.isValid" class="ps-coupon-ok">
                                 <v-icon icon="mdi-tag-outline" size="13" />Rabat zastosowany
                             </div>
                         </div>
-                        <div v-if="promoSelected !== 'free'" class="ps-coupon-row">
+                        <div v-if="promoSelected !== 'free' && !promoActive" class="ps-coupon-row">
                             <div class="ps-coupon-wrap">
                                 <input v-model="couponCode" class="ps-coupon-input"
                                     placeholder="Kod rabatowy (opcjonalnie)"
@@ -2115,8 +2130,12 @@
                             </button>
                             <button v-else class="btn-pay" :disabled="loading || paying" @click="submit">
                                 <v-icon v-if="loading || paying" icon="mdi-loading" size="16" class="spin" />
+                                <v-icon v-else-if="promoActive" icon="mdi-gift-outline" size="16" />
                                 <v-icon v-else icon="mdi-credit-card-outline" size="16" />
-                                {{ loading ? 'Tworzę ogłoszenie...' : paying ? 'Przekierowuję...' : `Zapłać ${finalPromoPrice.toFixed(2)} zł` }}
+                                <template v-if="loading">Tworzę ogłoszenie...</template>
+                                <template v-else-if="paying">Przekierowuję...</template>
+                                <template v-else-if="promoActive">Aktywuj za darmo</template>
+                                <template v-else>Zapłać {{ finalPromoPrice.toFixed(2) }} zł</template>
                             </button>
                         </template>
                     </template>
@@ -2910,7 +2929,8 @@ const adminClientDraft = reactive({ fullName: '', email: '', phoneNumber: '' })
 
 const { fetchBrands, fetchBrandsByCategory, fetchModels, fetchGenerations, fetchEngines, fetchTrims, fetchEnginesByTrim, fetchFuelTypes, fetchGearboxes, fetchBodyTypes, fetchDriveTypes, fetchColors, fetchFeatures, fetchFeatureCategoriesByContext, fetchVehicleSubtypes, fetchPartCategories, fetchPartSubcategories, fetchEngineSpecs, validateChain } = useTaxonomy()
 const { validateCoupon } = useCoupons()
-const { getPrice } = usePayment()
+const { getPrice, getPromoStatus } = usePayment()
+const promoActive = ref(false)
 const { fetchCategories } = useCategories()
 
 const brands = ref<TaxonomyItem[]>([])
@@ -4696,8 +4716,17 @@ async function submit() {
                         durationDays: promoDays.value,
                     }
                     if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
-                    const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string> }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
-                    submitImojeForm(result)
+                    const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+                    if (result.adminActivated) {
+                        paying.value = false
+                        publishedAdvertId.value = id
+                        showSuccess.value = true
+                        if (imageErrors > 0) {
+                            error.value = `${imageErrors} z ${selectedFiles.value.length} zdjęć nie zostało przesłanych. Możesz je dodać w edycji ogłoszenia.`
+                        }
+                    } else {
+                        submitImojeForm(result)
+                    }
                 } catch (payErr: any) {
                     paying.value = false
                     publishedAdvertId.value = id
@@ -4759,6 +4788,8 @@ function onBeforeUnload(e: BeforeUnloadEvent) {
 }
 
 onMounted(async () => {
+    getPromoStatus().then(r => { promoActive.value = r.isFreePromoActive }).catch(() => {})
+
     if (isAdminClientMode.value) {
         try {
             const raw = sessionStorage.getItem('carizo_admin_client_draft')
@@ -6567,6 +6598,12 @@ onBeforeUnmount(() => {
     position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
     background: $red; color: white; font-size: 9px; font-weight: 800;
     padding: 2px 8px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.5px;
+}
+
+.promo-banner {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 10px;
+    color: #4caf50; font-size: 13px; font-weight: 700; padding: 10px 16px; margin-bottom: 16px;
 }
 
 .pp-header { display: flex; align-items: center; gap: 8px; }

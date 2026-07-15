@@ -16,6 +16,11 @@
                     Twój aktywny pakiet: <strong>{{ subscription.tierName }}</strong>
                     <span v-if="subscription.expiresAt" class="exp-date">— ważny do {{ formatDate(subscription.expiresAt) }}</span>
                 </div>
+
+                <div v-if="promoActive" class="promo-banner">
+                    <v-icon icon="mdi-gift-outline" size="17" />
+                    Promocja startowa: wszystkie pakiety są teraz całkowicie darmowe!
+                </div>
             </div>
         </div>
 
@@ -25,7 +30,7 @@
                 <div class="sp-left">
                     <div class="sp-label">Program Start</div>
                     <div class="sp-title">3 miesiące bezpłatnie dla nowych dealerów</div>
-                    <div class="sp-desc">Do 20 aktywnych ogłoszeń · emisja 30 dni · 3 wyróżnienia/miesiąc · konto weryfikowane przez CARIZO</div>
+                    <div class="sp-desc">Do 20 aktywnych ogłoszeń · emisja 90 dni · 3 wyróżnienia/miesiąc · konto weryfikowane przez CARIZO</div>
                 </div>
                 <button class="sp-btn" :disabled="startLoading || !user" @click="activateStart">
                     <template v-if="!user">Zaloguj się, aby aktywować</template>
@@ -68,8 +73,15 @@
                     </div>
 
                     <div class="plan-header">
-                        <div class="plan-name">{{ plan.name }}</div>
-                        <div v-if="!plan.isCustom" class="plan-price">
+                        <div class="plan-name">
+                            {{ plan.name }}
+                            <span v-if="promoActive && !plan.isCustom" class="plan-badge-free">ZA DARMO</span>
+                        </div>
+                        <div v-if="!plan.isCustom && promoActive" class="plan-price">
+                            <span class="price-amount price-amount--crossed">{{ formatPrice(plan.nettoPrice) }} zł</span>
+                            <span class="price-amount price-amount--free">za darmo</span>
+                        </div>
+                        <div v-else-if="!plan.isCustom" class="plan-price">
                             <span class="price-amount">{{ formatPrice(plan.nettoPrice) }}</span>
                             <span class="price-unit">zł netto/mies.</span>
                         </div>
@@ -77,7 +89,7 @@
                             <span class="price-amount">Wycena</span>
                             <span class="price-unit">indywidualna</span>
                         </div>
-                        <div v-if="!plan.isCustom" class="price-brutto">{{ formatPrice(plan.bruttoPrice) }} zł brutto (+23% VAT)</div>
+                        <div v-if="!plan.isCustom && !promoActive" class="price-brutto">{{ formatPrice(plan.bruttoPrice) }} zł brutto (+23% VAT)</div>
                     </div>
 
                     <ul class="plan-features">
@@ -125,6 +137,7 @@
                                 <v-icon icon="mdi-loading" size="16" class="spin" />
                                 Przekierowanie…
                             </template>
+                            <template v-else-if="promoActive">Aktywuj za darmo</template>
                             <template v-else>
                                 {{ subscription?.isActive ? 'Zmień pakiet' : 'Wybierz pakiet' }}
                             </template>
@@ -164,9 +177,11 @@ import { useSubscription, type SubscriptionPlan, type SubscriptionStatus } from 
 const { fetchProfile } = useUser()
 const user = ref(false)
 const { getPlans, getMySubscription, activateStartProgram, buySubscription } = useSubscription()
+const { getPromoStatus } = usePayment()
 
 const plans = ref<SubscriptionPlan[]>([])
 const subscription = ref<SubscriptionStatus | null>(null)
+const promoActive = ref(false)
 const startLoading = ref(false)
 const buyLoading = ref<string | null>(null)
 const openFaq = ref<number | null>(null)
@@ -175,7 +190,7 @@ const toast = ref<{ msg: string; type: 'success' | 'error' } | null>(null)
 const faq = [
     {
         q: 'Czym jest Program Start?',
-        a: 'Program Start to bezpłatny 3-miesięczny okres próbny dla nowych dealerów zarejestrowanych na CARIZO. Obejmuje do 20 aktywnych ogłoszeń z emisją 30 dni i 3 wyróżnieniami miesięcznie. Można aktywować tylko raz na konto.',
+        a: 'Program Start to bezpłatny 3-miesięczny okres próbny dla nowych dealerów zarejestrowanych na CARIZO. Obejmuje do 20 aktywnych ogłoszeń z emisją 90 dni i 3 wyróżnieniami miesięcznie. Można aktywować tylko raz na konto.',
     },
     {
         q: 'Kiedy zostanę obciążony za pakiet?',
@@ -266,6 +281,7 @@ onMounted(async () => {
     const [p, s] = await Promise.allSettled([getPlans(), user.value ? getMySubscription() : Promise.resolve(null)])
     if (p.status === 'fulfilled') plans.value = p.value
     if (s.status === 'fulfilled' && s.value) subscription.value = s.value
+    getPromoStatus().then(r => { promoActive.value = r.isFreePromoActive }).catch(() => {})
 })
 
 useHead({ title: 'Pakiety B2B – CARIZO', meta: [{ name: 'description', content: 'Wybierz pakiet subskrypcyjny dla dealerów samochodowych. Dodawaj nieograniczone ogłoszenia, korzystaj z wyróżnień i rozwijaj sprzedaż.' }] })
@@ -331,6 +347,20 @@ useHead({ title: 'Pakiety B2B – CARIZO', meta: [{ name: 'description', content
     v-icon { color: $red; }
     strong { color: $text; }
     .exp-date { color: $text-dim; }
+}
+
+.promo-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(76,175,80,0.1);
+    border: 1px solid rgba(76,175,80,0.3);
+    color: #4caf50;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: $r-sm;
+    margin-top: 12px;
 }
 
 // ── Start Program ─────────────────────────────────────────────────────
@@ -444,12 +474,28 @@ useHead({ title: 'Pakiety B2B – CARIZO', meta: [{ name: 'description', content
     color: $text;
     margin-bottom: 12px;
     letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.plan-badge-free {
+    font-size: 10px;
+    font-weight: 800;
+    color: #4caf50;
+    background: rgba(76,175,80,0.12);
+    border: 1px solid rgba(76,175,80,0.3);
+    padding: 2px 8px;
+    border-radius: 20px;
 }
 
 .plan-price { display: flex; align-items: baseline; gap: 4px; justify-content: center; }
 .plan-price--custom { flex-direction: column; gap: 2px; }
 
 .price-amount { font-size: 36px; font-weight: 800; color: $text; line-height: 1; }
+.price-amount--crossed { font-size: 18px; font-weight: 500; color: $text-dim; text-decoration: line-through; }
+.price-amount--free { color: #4caf50; }
 .price-unit { font-size: 13px; color: $text-dim; align-self: flex-end; padding-bottom: 3px; }
 .price-brutto { font-size: 11px; color: $text-dim; margin-top: 4px; }
 
