@@ -44,7 +44,7 @@
                         <li>
                             <strong>Dane dodatkowe Sprzedawców (Indywidualnych i Biznesowych):</strong>
                             <ul>
-                                <li><strong>Sprzedawca Prywatny:</strong> opis pojazdu, zdjęcia, żądana cena, lokalizacja pojazdu, obowiązkowy numer VIN, treść konwersacji na wewnętrznym czacie.</li>
+                                <li><strong>Sprzedawca Prywatny:</strong> opis pojazdu, zdjęcia, żądana cena, lokalizacja pojazdu, numer VIN (opcjonalny, zalecany), treść konwersacji na wewnętrznym czacie.</li>
                                 <li><strong>Klient Biznesowy:</strong> pełna firma (nazwa), adres stałego wykonywania działalności, numer NIP oraz numer REGON (weryfikowane w publicznych rejestrach CEIDG/KRS).</li>
                             </ul>
                         </li>
