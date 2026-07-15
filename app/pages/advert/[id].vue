@@ -1465,6 +1465,29 @@ advert.value = advertData.value?.advert ?? null
 seller.value = advertData.value?.seller ?? null
 sellerStats.value = advertData.value?.sellerStats ?? null
 
+// Fetched server-side (not from onMounted) so "Podobne ogłoszenia" is present in the initial
+// HTML instead of popping in after a client-side round-trip once JS hydrates.
+const { data: similarData } = await useAsyncData(`similar-adverts-${id}`, async () => {
+    const a = advert.value
+    if (!a) return { items: [] }
+    const body: Record<string, unknown> = { page: 1, pageSize: 12 }
+    if (a.brand?.id) body.brandId = a.brand.id
+    if (a.categoryId) body.categoryId = a.categoryId
+    else if (a.category?.id) body.categoryId = a.category.id
+    if (a.bodyType?.id) body.bodyTypeId = a.bodyType.id
+    if (a.price) {
+        const p = Number(a.price)
+        body.priceFrom = Math.round(p * 0.4)
+        body.priceTo = Math.round(p * 2.5)
+    }
+    try {
+        return await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', { method: 'POST', body })
+    } catch {
+        return { items: [] }
+    }
+})
+similar.value = (similarData.value?.items ?? []).filter(x => x.id !== id).slice(0, 6)
+
 onMounted(async () => {
     window.addEventListener('keydown', onKeydown)
     await fetchFavoriteIds()
@@ -1485,23 +1508,6 @@ onMounted(async () => {
     if (uid && uid > 0 && isLoggedIn.value) {
         isFollowingSeller.value = await checkFollowingSeller(uid).catch(() => false)
     }
-    try {
-        const a = advert.value
-        if (a) {
-            const body: Record<string, unknown> = { page: 1, pageSize: 12 }
-            if (a.brand?.id) body.brandId = a.brand.id
-            if (a.categoryId) body.categoryId = a.categoryId
-            else if (a.category?.id) body.categoryId = a.category.id
-            if (a.bodyType?.id) body.bodyTypeId = a.bodyType.id
-            if (a.price) {
-                const p = Number(a.price)
-                body.priceFrom = Math.round(p * 0.4)
-                body.priceTo   = Math.round(p * 2.5)
-            }
-            const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', { method: 'POST', body })
-            similar.value = (r?.items ?? []).filter(x => x.id !== id).slice(0, 6)
-        }
-    } catch { }
     // Load reviews
     if (advert.value?.userId) {
         reviewsLoading.value = true
