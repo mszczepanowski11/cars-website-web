@@ -24,7 +24,7 @@
         <main class="admin-main">
             <div class="admin-topbar">
                 <h1 class="page-title">Partnerzy API (import XML/CSV)</h1>
-                <p class="page-sub">Firmy z własnym oprogramowaniem dealerskim mogą wysyłać swoje ogłoszenia bezpośrednio na CARIZO. Każdy partner dostaje klucz API i wysyła feed na <code>POST /api/partner/adverts/import?format=xml|csv</code> z nagłówkiem <code>X-Api-Key</code>.</p>
+                <p class="page-sub">Firmy z własnym oprogramowaniem dealerskim mogą wysyłać swoje ogłoszenia bezpośrednio na CARIZO — nie tylko auta, ale dowolną kategorię (części, maszyny, przyczepy, opony...), każda pozycja w feedzie sama wskazuje kategorię. Każdy partner dostaje klucz API i wysyła feed na <code>POST /api/partner/adverts/import?format=xml|csv</code> z nagłówkiem <code>X-Api-Key</code>.</p>
             </div>
 
             <div class="toolbar">
