@@ -27,6 +27,38 @@
                 <p class="page-sub">Firmy z własnym oprogramowaniem dealerskim mogą wysyłać swoje ogłoszenia bezpośrednio na CARIZO — nie tylko auta, ale dowolną kategorię (części, maszyny, przyczepy, opony...), każda pozycja w feedzie sama wskazuje kategorię. Każdy partner dostaje klucz API i wysyła feed na <code>POST /api/partner/adverts/import?format=xml|csv</code> z nagłówkiem <code>X-Api-Key</code>.</p>
             </div>
 
+            <div class="signup-section">
+                <div class="signup-header">
+                    <h2 class="signup-title">Zgłoszenia z formularza "Dla firm"</h2>
+                    <span v-if="pendingSignups.length" class="signup-count">{{ pendingSignups.length }}</span>
+                </div>
+                <div v-if="signupsLoading" class="loading-state"><v-icon icon="mdi-loading" size="22" class="spin" />Ładowanie...</div>
+                <div v-else-if="!pendingSignups.length" class="td-dim">Brak oczekujących zgłoszeń.</div>
+                <div v-else class="signup-list">
+                    <div v-for="s in pendingSignups" :key="s.id" class="signup-card">
+                        <div class="signup-card-main">
+                            <div class="signup-card-name">{{ s.companyName }}</div>
+                            <div class="td-dim">{{ s.email }} · {{ s.phone }}</div>
+                            <div v-if="s.websiteUrl" class="td-dim">{{ s.websiteUrl }}</div>
+                            <div v-if="s.feedUrl" class="signup-feed">
+                                <v-icon icon="mdi-file-code-outline" size="13" />
+                                {{ s.feedUrl }}
+                                <span v-if="s.detectedItemCount != null" class="signup-count-inline">({{ s.detectedItemCount }} ogłoszeń, {{ s.format }})</span>
+                            </div>
+                            <div v-else class="td-dim">Brak podanego linku do feedu — kontakt manualny.</div>
+                            <div class="td-dim">Zgłoszono: {{ formatDate(s.createdAt) }}</div>
+                        </div>
+                        <div class="signup-card-actions">
+                            <button class="btn-confirm" :disabled="signupActionId === s.id" @click="approveSignup(s)">
+                                <v-icon v-if="signupActionId === s.id" icon="mdi-loading" size="13" class="spin" />
+                                Zatwierdź
+                            </button>
+                            <button class="btn-cancel" :disabled="signupActionId === s.id" @click="rejectSignup(s)">Odrzuć</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="toolbar">
                 <button class="btn-add" @click="openCreateForm">
                     <v-icon icon="mdi-plus" size="15" /> Dodaj partnera
@@ -149,8 +181,24 @@ interface ImportLog {
     itemsFailed: number
 }
 
+interface SignupRequest {
+    id: number
+    companyName: string
+    email: string
+    phone: string
+    websiteUrl: string | null
+    feedUrl: string | null
+    format: string | null
+    detectedItemCount: number | null
+    status: string
+    createdAt: string
+}
+
 const partners = ref<Partner[]>([])
 const loading = ref(true)
+const pendingSignups = ref<SignupRequest[]>([])
+const signupsLoading = ref(true)
+const signupActionId = ref<number | null>(null)
 const showForm = ref(false)
 const saving = ref(false)
 const newApiKey = ref('')
@@ -175,6 +223,53 @@ async function loadPartners() {
         toastError(e?.data?.message ?? 'Nie udało się załadować partnerów.')
         partners.value = []
     } finally { loading.value = false }
+}
+
+async function loadSignupRequests() {
+    signupsLoading.value = true
+    try {
+        pendingSignups.value = await $fetch<SignupRequest[]>('/api/proxy/api/admin/partners/signup-requests', {
+            query: { status: 'Pending' },
+        })
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się załadować zgłoszeń.')
+        pendingSignups.value = []
+    } finally { signupsLoading.value = false }
+}
+
+async function approveSignup(s: SignupRequest) {
+    if (!confirm(`Zatwierdzić zgłoszenie "${s.companyName}"? Utworzy to konto firmowe i uruchomi pierwszy import.`)) return
+    signupActionId.value = s.id
+    try {
+        const result = await $fetch<{ apiKey: string; importedItemsCreated: number | null; importedItemsFailed: number | null }>(
+            `/api/proxy/api/admin/partners/signup-requests/${s.id}/approve`,
+            { method: 'POST' }
+        )
+        pendingSignups.value = pendingSignups.value.filter(x => x.id !== s.id)
+        newApiKey.value = result.apiKey
+        const importNote = result.importedItemsCreated != null
+            ? ` Zaimportowano ${result.importedItemsCreated} ogłoszeń (błędy: ${result.importedItemsFailed ?? 0}).`
+            : ''
+        toastSuccess(`Partner "${s.companyName}" zatwierdzony.${importNote}`)
+        await loadPartners()
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się zatwierdzić zgłoszenia.')
+    } finally { signupActionId.value = null }
+}
+
+async function rejectSignup(s: SignupRequest) {
+    const reason = prompt(`Powód odrzucenia zgłoszenia "${s.companyName}" (opcjonalnie):`) ?? undefined
+    signupActionId.value = s.id
+    try {
+        await $fetch(`/api/proxy/api/admin/partners/signup-requests/${s.id}/reject`, {
+            method: 'POST',
+            body: { reason },
+        })
+        pendingSignups.value = pendingSignups.value.filter(x => x.id !== s.id)
+        toastSuccess(`Zgłoszenie "${s.companyName}" odrzucone.`)
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się odrzucić zgłoszenia.')
+    } finally { signupActionId.value = null }
 }
 
 function openCreateForm() {
@@ -283,7 +378,10 @@ async function copyKey() {
     } catch { /* clipboard API unavailable — user can still select/copy the text manually */ }
 }
 
-onMounted(loadPartners)
+onMounted(() => {
+    loadPartners()
+    loadSignupRequests()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -291,6 +389,28 @@ onMounted(loadPartners)
 
 .page-sub { font-size: 13px; color: $text-dim; margin: 4px 0 0; max-width: 720px; line-height: 1.6; }
 .page-sub code { background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+
+.signup-section { margin-bottom: 24px; }
+.signup-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.signup-title { font-size: 15px; font-weight: 700; color: $text; margin: 0; }
+.signup-count {
+    background: $red; color: white; font-size: 11px; font-weight: 700;
+    border-radius: 10px; padding: 2px 8px; min-width: 18px; text-align: center;
+}
+.signup-list { display: flex; flex-direction: column; gap: 10px; }
+.signup-card {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    background: #0d0d0d; border: 1px solid rgba($red, 0.2); border-radius: $r-md;
+    padding: 14px 18px; flex-wrap: wrap;
+}
+.signup-card-main { flex: 1; min-width: 240px; }
+.signup-card-name { font-size: 14px; font-weight: 700; color: $text; margin-bottom: 4px; }
+.signup-feed {
+    display: flex; align-items: center; gap: 6px; font-size: 12px; color: $text-muted;
+    margin: 2px 0; word-break: break-all;
+}
+.signup-count-inline { color: $red; font-weight: 600; white-space: nowrap; }
+.signup-card-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
 .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
 

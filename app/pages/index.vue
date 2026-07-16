@@ -523,6 +523,25 @@
             </div>
         </section>
 
+        <!-- ─── Dla firm ─────────────────────────────────────────────── -->
+        <section class="section b2b-section">
+            <div class="container">
+                <div class="b2b-card">
+                    <div class="b2b-content">
+                        <div class="b2b-badge"><v-icon icon="mdi-sync" size="13" />XML • CSV • API</div>
+                        <h2 class="b2b-title">Połącz swoją firmę z CARIZO</h2>
+                        <p class="b2b-sub">Synchronizuj swoje ogłoszenia automatycznie. Bez ręcznego dodawania.</p>
+                        <NuxtLink to="/dla-firm" class="b2b-cta">
+                            Połącz firmę <v-icon icon="mdi-arrow-right" size="14" />
+                        </NuxtLink>
+                    </div>
+                    <div class="b2b-visual">
+                        <v-icon icon="mdi-warehouse" size="56" class="b2b-visual-icon" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ─── Newsletter ───────────────────────────────────────────── -->
         <section id="contact" class="section">
             <div class="container">
@@ -2721,6 +2740,69 @@ onMounted(async () => {
 
     &:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.15); color: $text; }
 }
+
+// ─── Dla firm ───────────────────────────────────────────────────────────────
+
+.b2b-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    background: linear-gradient(135deg, rgba(139, 13, 29, 0.14), rgba(139, 13, 29, 0.03));
+    border: 1px solid rgba($red, 0.25);
+    border-radius: $r-lg;
+    padding: 40px 48px;
+
+    @media (max-width: $bp-sm) {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 28px 24px;
+        gap: 20px;
+    }
+}
+.b2b-content { flex: 1; }
+.b2b-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: $red;
+    background: rgba($red, 0.12);
+    border: 1px solid rgba($red, 0.3);
+    border-radius: $r-sm;
+    padding: 5px 12px;
+    margin-bottom: 14px;
+}
+.b2b-title { font-size: 26px; font-weight: 800; color: $text; margin: 0 0 8px; }
+.b2b-sub { font-size: 15px; color: $text-muted; margin: 0 0 20px; max-width: 480px; line-height: 1.5; }
+.b2b-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: $red;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: $r-sm;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.88; }
+}
+.b2b-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba($red, 0.1);
+    flex-shrink: 0;
+    @media (max-width: $bp-sm) { display: none; }
+}
+.b2b-visual-icon { color: $red; }
 
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
