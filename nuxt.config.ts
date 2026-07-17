@@ -4,8 +4,21 @@ const scss = (file: string) =>
   fileURLToPath(new URL(`./app/assets/scss/${file}`, import.meta.url)).replace(/\\/g, '/')
 
 export default defineNuxtConfig({
-  modules: ['vuetify-nuxt-module'],
+  modules: ['vuetify-nuxt-module', '@nuxt/image'],
   compatibilityDate: '2025-07-15',
+
+  image: {
+    // Our own image proxy (server/routes/img/) already resolves local uploads and Cloudinary
+    // assets through ad-blocker-safe paths; this provider just adds width/quality/format query
+    // params on top so <NuxtImg> gets real resizing/format-negotiation instead of full-size passthrough.
+    provider: 'carizo',
+    providers: {
+      carizo: {
+        name: 'carizo',
+        provider: '~/providers/carizo.ts',
+      },
+    },
+  },
 
   app: {
     head: {

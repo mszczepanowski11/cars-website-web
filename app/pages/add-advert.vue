@@ -815,6 +815,16 @@
                             </div>
                         </div>
                     </transition>
+                </div>
+
+                <!-- ════════════════════════════════════════════════════════════ -->
+                <!-- Step 2: Historia i weryfikacja                               -->
+                <!-- ════════════════════════════════════════════════════════════ -->
+                <div v-else-if="currentStep === 2" class="form-content">
+                    <div class="form-section-head">
+                        <h2>Historia i weryfikacja</h2>
+                        <p>VIN i historia pojazdu budują zaufanie kupujących i przyspieszają sprzedaż.</p>
+                    </div>
 
                     <!-- ── VIN & Identification ── -->
                     <div v-if="categoryConfig.showVinSection !== false" class="hist-section">
@@ -1093,8 +1103,8 @@
                     </template>
                 </div>
 
-                <!-- Step 2: Zdjęcia -->
-                <div v-else-if="currentStep === 2" class="form-content">
+                <!-- Step 3: Zdjęcia -->
+                <div v-else-if="currentStep === 3" class="form-content">
                     <div class="form-section-head">
                         <h2>Zdjęcia</h2>
                         <p v-if="!isEdit">Dodaj minimum <strong>3 zdjęcia</strong> pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
@@ -1265,8 +1275,8 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Wyposażenie -->
-                <div v-else-if="currentStep === 3" class="form-content">
+                <!-- Step 4: Wyposażenie -->
+                <div v-else-if="currentStep === 4" class="form-content">
                     <div class="form-section-head">
                         <h2>Wyposażenie</h2>
                         <p>Zaznacz wyposażenie pojazdu. Ogłoszenia z kompletnym wyposażeniem sprzedają się <strong>2× szybciej</strong>.</p>
@@ -1374,11 +1384,11 @@
                     </div>
                 </div>
 
-                <!-- Step 4: Historia pojazdu -->
-                <div v-else-if="currentStep === 4" class="form-content">
+                <!-- Step 5: Ocena zaufania -->
+                <div v-else-if="currentStep === 5" class="form-content">
                     <div class="form-section-head">
-                        <h2>Historia pojazdu</h2>
-                        <p>Kompletna historia zwiększa <strong>zaufanie kupujących</strong> i przyspiesza sprzedaż. Każda potwierdzona pozycja podnosi ocenę ogłoszenia.</p>
+                        <h2>Ocena zaufania</h2>
+                        <p>Podsumowanie danych z poprzedniego kroku — kompletna historia zwiększa <strong>zaufanie kupujących</strong> i przyspiesza sprzedaż. Każda potwierdzona pozycja podnosi ocenę ogłoszenia.</p>
                     </div>
                     <div class="verified-grid">
                         <!-- VIN -->
@@ -1569,8 +1579,8 @@
                     </div>
                 </div>
 
-                <!-- Step 5: Opis -->
-                <div v-else-if="currentStep === 5" class="form-content">
+                <!-- Step 6: Opis -->
+                <div v-else-if="currentStep === 6" class="form-content">
                     <div class="form-section-head">
                         <h2>Cena i opis</h2>
                         <p>Ustal cenę, opisz pojazd i podaj lokalizację.</p>
@@ -1817,8 +1827,8 @@
                     </div>
                 </div>
 
-                <!-- Step 6: Promocja -->
-                <div v-else-if="currentStep === 6" class="form-content promo-step">
+                <!-- Step 7: Promocja -->
+                <div v-else-if="currentStep === 7" class="form-content promo-step">
                     <div class="form-section-head">
                         <h2>{{ isEdit ? 'Podsumowanie zmian' : 'Podsumowanie i promocja' }}</h2>
                         <p v-if="isEdit">Sprawdź wprowadzone zmiany i zapisz ogłoszenie.</p>
@@ -2004,8 +2014,8 @@
                     </div>
                 </div>
 
-                <!-- Step 7: Podgląd -->
-                <div v-else-if="currentStep === 7" class="form-content">
+                <!-- Step 8: Podgląd -->
+                <div v-else-if="currentStep === 8" class="form-content">
                     <div class="form-section-head">
                         <h2>Podgląd i publikacja</h2>
                         <p>Sprawdź jak będzie wyglądało Twoje ogłoszenie przed publikacją.</p>
@@ -3403,22 +3413,24 @@ const history = reactive({
 })
 
 const steps = [
-    { name: 'Kategoria',        desc: 'Typ pojazdu',                   icon: 'mdi-apps' },
-    { name: 'Dane pojazdu',     desc: 'Marka, model, dane techniczne', icon: 'mdi-car-outline' },
-    { name: 'Zdjęcia',          desc: 'Galeria pojazdu',               icon: 'mdi-image-outline' },
-    { name: 'Wyposażenie',      desc: 'Opcje i wyposażenie',           icon: 'mdi-format-list-checkbox' },
-    { name: 'Historia pojazdu', desc: 'VIN, historia, dokumenty',      icon: 'mdi-shield-check-outline' },
-    { name: 'Opis',             desc: 'Opis i lokalizacja',            icon: 'mdi-text-box-outline' },
-    { name: 'Promocja',         desc: 'Wyróżnij ogłoszenie',           icon: 'mdi-crown-outline' },
-    { name: 'Podgląd',          desc: 'Przejrzyj i opublikuj',         icon: 'mdi-check-circle-outline' },
+    { name: 'Kategoria',           desc: 'Typ pojazdu',                    icon: 'mdi-apps' },
+    { name: 'Dane pojazdu',        desc: 'Marka, model, dane techniczne',  icon: 'mdi-car-outline' },
+    { name: 'Historia i VIN',      desc: 'Identyfikacja i historia',       icon: 'mdi-barcode-scan' },
+    { name: 'Zdjęcia',             desc: 'Galeria pojazdu',                icon: 'mdi-image-outline' },
+    { name: 'Wyposażenie',         desc: 'Opcje i wyposażenie',            icon: 'mdi-format-list-checkbox' },
+    { name: 'Ocena zaufania',      desc: 'Podsumowanie wiarygodności',     icon: 'mdi-shield-check-outline' },
+    { name: 'Opis',                desc: 'Opis i lokalizacja',             icon: 'mdi-text-box-outline' },
+    { name: 'Promocja',            desc: 'Wyróżnij ogłoszenie',            icon: 'mdi-crown-outline' },
+    { name: 'Podgląd',             desc: 'Przejrzyj i opublikuj',          icon: 'mdi-check-circle-outline' },
 ]
 
 const progressSteps = [
     { label: 'Kategoria',  icon: 'mdi-apps' },
     { label: 'Pojazd',     icon: 'mdi-car-outline' },
+    { label: 'Historia',   icon: 'mdi-barcode-scan' },
     { label: 'Zdjęcia',    icon: 'mdi-image-outline' },
     { label: 'Wyposażenie',icon: 'mdi-format-list-checkbox' },
-    { label: 'Historia',   icon: 'mdi-shield-check-outline' },
+    { label: 'Zaufanie',   icon: 'mdi-shield-check-outline' },
     { label: 'Opis',       icon: 'mdi-text-box-outline' },
     { label: 'Promocja',   icon: 'mdi-crown-outline' },
     { label: 'Podgląd',    icon: 'mdi-check-circle-outline' },
@@ -3825,24 +3837,32 @@ function validateStep(step: number): string | null {
             if (empty) return `Pole "${def.labelPl}" jest wymagane.`
         }
     }
-    // Step 2: Photos
-    if (step === 2) {
-        const totalPhotos = existingImages.value.length + selectedFiles.value.length
-        if (isEdit.value && totalPhotos < 1) return 'Ogłoszenie musi zawierać co najmniej 1 zdjęcie.'
-        if (!isEdit.value && totalPhotos < 3) return 'Dodaj minimum 3 zdjęcia.'
-    }
-    // Step 3: Equipment — no required fields
-    // Step 4: Historia pojazdu — VIN zalecany (Regulamin §4.1), ale nie blokuje publikacji;
+    // Step 2: Historia i VIN — VIN zalecany (Regulamin §4.1), ale nie blokuje publikacji;
     // ogłoszenie bez VIN po prostu nie dostaje plakietki "VIN zweryfikowany". Jeśli ktoś go poda,
-    // musi być poprawny — nie akceptujemy błędnego/sfałszowanego numeru.
-    if (step === 4) {
+    // musi być poprawny — nie akceptujemy błędnego/sfałszowanego numeru. Re-checked at step 5
+    // (Ocena zaufania) too, since that gamified summary also lets the same form.vin be edited.
+    if (step === 2) {
         if (categoryConfig.value.showVinSection !== false && form.vin) {
             if (form.vin.length !== 17) return 'Numer VIN musi mieć dokładnie 17 znaków (albo zostaw pole puste).'
             if (!VIN_REGEX.test(form.vin)) return 'Numer VIN zawiera niedozwolone znaki. VIN składa się z cyfr i liter A-H, J-N, P-Z.'
         }
     }
-    // Step 5: Opis i cena
+    // Step 3: Photos
+    if (step === 3) {
+        const totalPhotos = existingImages.value.length + selectedFiles.value.length
+        if (isEdit.value && totalPhotos < 1) return 'Ogłoszenie musi zawierać co najmniej 1 zdjęcie.'
+        if (!isEdit.value && totalPhotos < 3) return 'Dodaj minimum 3 zdjęcia.'
+    }
+    // Step 4: Equipment — no required fields
+    // Step 5: Ocena zaufania
     if (step === 5) {
+        if (categoryConfig.value.showVinSection !== false && form.vin) {
+            if (form.vin.length !== 17) return 'Numer VIN musi mieć dokładnie 17 znaków (albo zostaw pole puste).'
+            if (!VIN_REGEX.test(form.vin)) return 'Numer VIN zawiera niedozwolone znaki. VIN składa się z cyfr i liter A-H, J-N, P-Z.'
+        }
+    }
+    // Step 6: Opis i cena
+    if (step === 6) {
         if (!form.price || form.price <= 0) return 'Podaj cenę pojazdu (musi być większa od 0).'
         if (form.price > 10_000_000) return 'Cena wydaje się nieprawidłowa (>10 000 000 zł).'
         if (!form.region) return 'Wybierz województwo.'
@@ -4369,8 +4389,8 @@ async function submit() {
     // Validate every step, not just the last two - loadDraft() can jump currentStep straight to
     // a late step (e.g. resuming a draft saved from the preview step), which never puts the user
     // through goNext()'s per-step gate for the earlier steps, so an advert could otherwise publish
-    // with e.g. too few photos or a missing required field from step 0-3.
-    for (const stepIdx of [0, 1, 2, 3, 4, 5]) {
+    // with e.g. too few photos or a missing required field from an earlier step.
+    for (const stepIdx of [0, 1, 2, 3, 4, 5, 6]) {
         const err = validateStep(stepIdx)
         if (err) {
             stepError.value = err

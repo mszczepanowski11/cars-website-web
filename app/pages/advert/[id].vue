@@ -100,7 +100,7 @@
                                 {{ advert.badge }}
                             </span>
                         </div>
-                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" />
+                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" width="1200" height="750" fetchpriority="high" />
                         <div class="photo-bottom-bar">
                             <span v-if="hasImages" class="photo-count-pill">
                                 <v-icon icon="mdi-image-multiple-outline" size="13" />
@@ -268,13 +268,26 @@
                             <v-icon icon="mdi-information-outline" size="13" />
                             Nie możesz wysyłać wiadomości do samego siebie. To Twoje ogłoszenie.
                         </p>
-                        <!-- Oględziny/Rezerwacja hidden until the Transaction backend exists (frontend
-                             posted to /api/Transaction, which has no controller/service/entity at all -
-                             every click 404'd). Re-enable once that feature is actually built. -->
+                        <template v-if="!isOwnAdvert">
+                            <button class="cta-viewing" @click="showViewingPicker = true">
+                                <v-icon icon="mdi-calendar-outline" size="17" />
+                                Umów oględziny
+                            </button>
+                            <button class="cta-reserve" @click="showReservationPicker = true">
+                                <v-icon icon="mdi-bookmark-outline" size="17" />
+                                Zarezerwuj auto
+                            </button>
+                        </template>
                     </div>
 
                     <transition name="fade-msg">
                         <div v-if="contactError" class="tx-error"><v-icon icon="mdi-alert-circle-outline" size="14" />{{ contactError }}</div>
+                    </transition>
+                    <transition name="fade-msg">
+                        <div v-if="txSuccess" class="tx-success"><v-icon icon="mdi-check-circle-outline" size="14" />{{ txSuccess }}</div>
+                    </transition>
+                    <transition name="fade-msg">
+                        <div v-if="txError" class="tx-error"><v-icon icon="mdi-alert-circle-outline" size="14" />{{ txError }}</div>
                     </transition>
 
                     <div class="secure-note-sm">
@@ -740,6 +753,102 @@
         </transition>
     </Teleport>
 
+    <!-- Viewing (oględziny) booking modal -->
+    <Teleport to="body">
+        <transition name="fade">
+            <div v-if="showViewingPicker" class="compose-backdrop" @click.self="showViewingPicker = false">
+                <div class="compose-modal tx-modal">
+                    <div class="compose-header">
+                        <div class="compose-to">
+                            <v-icon icon="mdi-calendar-outline" size="18" />
+                            <span>Umów oględziny</span>
+                        </div>
+                        <button class="compose-close" @click="showViewingPicker = false">
+                            <v-icon icon="mdi-close" size="20" />
+                        </button>
+                    </div>
+                    <div class="compose-advert-ref">{{ advert?.title }}</div>
+                    <VDatePicker
+                        v-model="viewingDate"
+                        :min="today"
+                        :max="maxBookingDate"
+                        hide-header
+                        show-adjacent-months
+                        color="red"
+                        class="tx-calendar"
+                    />
+                    <div class="tx-time-row">
+                        <label class="tx-time-label">Godzina</label>
+                        <select v-model="viewingTime" class="tx-time-select">
+                            <option v-for="t in TIME_OPTIONS" :key="t" :value="t">{{ t }}</option>
+                        </select>
+                    </div>
+                    <textarea
+                        v-model="viewingNote"
+                        class="compose-textarea"
+                        placeholder="Dodatkowe informacje dla sprzedawcy (opcjonalnie)..."
+                        rows="2"
+                    />
+                    <button class="compose-send" :disabled="txLoading === 'viewing' || !viewingDate" @click="scheduleViewing">
+                        <v-icon v-if="txLoading === 'viewing'" icon="mdi-loading" size="17" class="spin" />
+                        <v-icon v-else icon="mdi-calendar-check-outline" size="17" />
+                        {{ txLoading === 'viewing' ? 'Wysyłanie...' : 'Wyślij prośbę o oględziny' }}
+                    </button>
+                </div>
+            </div>
+        </transition>
+    </Teleport>
+
+    <!-- Reservation booking modal -->
+    <Teleport to="body">
+        <transition name="fade">
+            <div v-if="showReservationPicker" class="compose-backdrop" @click.self="showReservationPicker = false">
+                <div class="compose-modal tx-modal">
+                    <div class="compose-header">
+                        <div class="compose-to">
+                            <v-icon icon="mdi-bookmark-outline" size="18" />
+                            <span>Zarezerwuj auto</span>
+                        </div>
+                        <button class="compose-close" @click="showReservationPicker = false">
+                            <v-icon icon="mdi-close" size="20" />
+                        </button>
+                    </div>
+                    <div class="compose-advert-ref">{{ advert?.title }}</div>
+                    <p class="tx-hint">
+                        <v-icon icon="mdi-information-outline" size="13" />
+                        Wybierz termin, do kiedy chcesz zarezerwować to auto — sprzedawca musi potwierdzić rezerwację.
+                    </p>
+                    <VDatePicker
+                        v-model="reservationDate"
+                        :min="today"
+                        :max="maxBookingDate"
+                        hide-header
+                        show-adjacent-months
+                        color="red"
+                        class="tx-calendar"
+                    />
+                    <div class="tx-time-row">
+                        <label class="tx-time-label">Godzina</label>
+                        <select v-model="reservationTime" class="tx-time-select">
+                            <option v-for="t in TIME_OPTIONS" :key="t" :value="t">{{ t }}</option>
+                        </select>
+                    </div>
+                    <textarea
+                        v-model="reservationNote"
+                        class="compose-textarea"
+                        placeholder="Dodatkowe informacje dla sprzedawcy (opcjonalnie)..."
+                        rows="2"
+                    />
+                    <button class="compose-send" :disabled="txLoading === 'reservation' || !reservationDate" @click="reserveCar">
+                        <v-icon v-if="txLoading === 'reservation'" icon="mdi-loading" size="17" class="spin" />
+                        <v-icon v-else icon="mdi-bookmark-check-outline" size="17" />
+                        {{ txLoading === 'reservation' ? 'Wysyłanie...' : 'Wyślij prośbę o rezerwację' }}
+                    </button>
+                </div>
+            </div>
+        </transition>
+    </Teleport>
+
     <!-- Mobile sticky contact bar -->
     <Teleport to="body">
         <div v-if="seller" class="mobile-cta-bar">
@@ -839,15 +948,32 @@ const txLoading = ref<'reservation' | 'viewing' | null>(null)
 const txSuccess = ref<string | null>(null)
 const txError = ref<string | null>(null)
 
-// Date/time pickers for viewing & reservation
+// Date/time pickers for viewing & reservation - VDatePicker gives a real calendar grid rather
+// than a bare <input type="date">, with today..+60d as the selectable range.
+const today = new Date(); today.setHours(0, 0, 0, 0)
+const maxBookingDate = new Date(today); maxBookingDate.setDate(maxBookingDate.getDate() + 60)
+const TIME_OPTIONS = Array.from({ length: 21 }, (_, i) => {
+    const totalMinutes = 8 * 60 + i * 30 // 08:00..18:00 in 30-min steps
+    const h = String(Math.floor(totalMinutes / 60)).padStart(2, '0')
+    const m = String(totalMinutes % 60).padStart(2, '0')
+    return `${h}:${m}`
+})
+
 const showViewingPicker = ref(false)
-const viewingDate = ref('')
+const viewingDate = ref<Date | null>(null)
 const viewingTime = ref('10:00')
 const viewingNote = ref('')
 const showReservationPicker = ref(false)
-const reservationDate = ref('')
+const reservationDate = ref<Date | null>(null)
 const reservationTime = ref('10:00')
 const reservationNote = ref('')
+
+function combineDateAndTime(date: Date, time: string): string {
+    const [h, m] = time.split(':').map(Number)
+    const combined = new Date(date)
+    combined.setHours(h ?? 10, m ?? 0, 0, 0)
+    return combined.toISOString()
+}
 
 const mainLayoutRef = ref<HTMLElement | null>(null)
 
@@ -1026,7 +1152,13 @@ const allImages = computed(() => {
     return advert.value.images.map(img => ({ ...img, url: getImageUrl(img.url) }))
 })
 
-const mainImg = computed(() => allImages.value[activeImg.value]?.url ?? placeholder)
+// This is the page's LCP (largest contentful paint) element - request a display-appropriate
+// size straight from the raw source rather than reusing allImages' full-size proxy URL, and
+// mark fetchpriority="high" on the <img> below so the browser starts downloading it immediately.
+const mainImg = computed(() => {
+    const raw = advert.value?.images?.length ? advert.value.images[activeImg.value]?.url : null
+    return getImageUrl(raw, placeholder, { width: 1200, quality: 80, format: 'auto' })
+})
 
 const featureGroups = computed(() => {
     if (!advert.value?.features?.length) return {}
@@ -1167,12 +1299,12 @@ async function reserveCar() {
     txError.value = null
     try {
         const scheduled = reservationDate.value
-            ? new Date(`${reservationDate.value}T${reservationTime.value || '10:00'}`).toISOString()
+            ? combineDateAndTime(reservationDate.value, reservationTime.value)
             : undefined
         await createTransaction({ type: 'Reservation', advertId: id, scheduledAt: scheduled, notes: reservationNote.value || undefined })
-        txSuccess.value = 'Auto zarezerwowane! Sprzedawca zostanie powiadomiony.'
+        txSuccess.value = 'Prośba o rezerwację wysłana! Sprzedawca zostanie powiadomiony.'
         showReservationPicker.value = false
-        reservationDate.value = ''
+        reservationDate.value = null
         reservationNote.value = ''
         setTimeout(() => txSuccess.value = null, 5000)
     } catch (e: any) {
@@ -1188,12 +1320,12 @@ async function scheduleViewing() {
     txError.value = null
     try {
         const scheduled = viewingDate.value
-            ? new Date(`${viewingDate.value}T${viewingTime.value || '10:00'}`).toISOString()
+            ? combineDateAndTime(viewingDate.value, viewingTime.value)
             : undefined
         await createTransaction({ type: 'Viewing', advertId: id, scheduledAt: scheduled, notes: viewingNote.value || undefined })
         txSuccess.value = 'Prośba o oględziny wysłana! Sprzedawca skontaktuje się z Tobą.'
         showViewingPicker.value = false
-        viewingDate.value = ''
+        viewingDate.value = null
         viewingNote.value = ''
         setTimeout(() => txSuccess.value = null, 5000)
     } catch (e: any) {
@@ -1459,6 +1591,29 @@ advert.value = advertData.value?.advert ?? null
 seller.value = advertData.value?.seller ?? null
 sellerStats.value = advertData.value?.sellerStats ?? null
 
+// Fetched server-side (not from onMounted) so "Podobne ogłoszenia" is present in the initial
+// HTML instead of popping in after a client-side round-trip once JS hydrates.
+const { data: similarData } = await useAsyncData(`similar-adverts-${id}`, async () => {
+    const a = advert.value
+    if (!a) return { items: [] }
+    const body: Record<string, unknown> = { page: 1, pageSize: 12 }
+    if (a.brand?.id) body.brandId = a.brand.id
+    if (a.categoryId) body.categoryId = a.categoryId
+    else if (a.category?.id) body.categoryId = a.category.id
+    if (a.bodyType?.id) body.bodyTypeId = a.bodyType.id
+    if (a.price) {
+        const p = Number(a.price)
+        body.priceFrom = Math.round(p * 0.4)
+        body.priceTo = Math.round(p * 2.5)
+    }
+    try {
+        return await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', { method: 'POST', body })
+    } catch {
+        return { items: [] }
+    }
+})
+similar.value = (similarData.value?.items ?? []).filter(x => x.id !== id).slice(0, 6)
+
 onMounted(async () => {
     window.addEventListener('keydown', onKeydown)
     await fetchFavoriteIds()
@@ -1479,23 +1634,6 @@ onMounted(async () => {
     if (uid && uid > 0 && isLoggedIn.value) {
         isFollowingSeller.value = await checkFollowingSeller(uid).catch(() => false)
     }
-    try {
-        const a = advert.value
-        if (a) {
-            const body: Record<string, unknown> = { page: 1, pageSize: 12 }
-            if (a.brand?.id) body.brandId = a.brand.id
-            if (a.categoryId) body.categoryId = a.categoryId
-            else if (a.category?.id) body.categoryId = a.category.id
-            if (a.bodyType?.id) body.bodyTypeId = a.bodyType.id
-            if (a.price) {
-                const p = Number(a.price)
-                body.priceFrom = Math.round(p * 0.4)
-                body.priceTo   = Math.round(p * 2.5)
-            }
-            const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', { method: 'POST', body })
-            similar.value = (r?.items ?? []).filter(x => x.id !== id).slice(0, 6)
-        }
-    } catch { }
     // Load reviews
     if (advert.value?.userId) {
         reviewsLoading.value = true
@@ -2239,6 +2377,69 @@ onUnmounted(() => {
     color: rgba(255,255,255,0.4);
     margin: 4px 0 0;
     line-height: 1.4;
+}
+
+.cta-viewing, .cta-reserve {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    color: $text;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s, border-color 0.2s;
+    &:hover { background: rgba(255,255,255,0.1); border-color: #333; }
+}
+
+.tx-modal { max-width: 420px; }
+
+.tx-calendar {
+    width: 100%;
+    border-radius: $r-md;
+    overflow: hidden;
+    background: rgba(255,255,255,0.03);
+}
+
+.tx-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    color: $text-dim;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.tx-time-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tx-time-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-dim;
+}
+
+.tx-time-select {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    color: $text;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 8px 12px;
+    outline: none;
+    cursor: pointer;
 }
 
 .cta-row2 {

@@ -44,6 +44,10 @@
                     <v-icon icon="mdi-form-select" size="17" />
                     Pola kategorii
                 </NuxtLink>
+                <NuxtLink to="/admin/partners" class="nav-item" :class="{ active: route.path === '/admin/partners' }">
+                    <v-icon icon="mdi-handshake-outline" size="17" />
+                    Partnerzy API
+                </NuxtLink>
                 <NuxtLink to="/admin/quality-report" class="nav-item" :class="{ active: route.path === '/admin/quality-report' }">
                     <v-icon icon="mdi-database-check-outline" size="17" />
                     Jakość danych
