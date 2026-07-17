@@ -133,7 +133,7 @@
                 </div>
 
                 <!-- Step 0: Basic info -->
-                <div v-if="currentStep === 0" class="form-content">
+                <div v-if="stepKey === 'category'" class="form-content">
                     <div class="form-section-head">
                         <h2>Wybierz kategorię</h2>
                         <p>Zaznacz typ pojazdu — formularz dostosuje się do wybranej kategorii.</p>
@@ -220,7 +220,7 @@
                 <!-- ════════════════════════════════════════════════════════════ -->
                 <!-- Step 1: Dane pojazdu                                        -->
                 <!-- ════════════════════════════════════════════════════════════ -->
-                <div v-else-if="currentStep === 1" class="form-content">
+                <div v-else-if="stepKey === 'details'" class="form-content">
                     <div class="form-section-head">
                         <h2>Dane pojazdu</h2>
                         <p>Podaj dane techniczne i identyfikacyjne pojazdu.</p>
@@ -413,8 +413,8 @@
                             </div>
                         </div>
 
-                        <!-- Year -->
-                        <div class="field">
+                        <!-- Year (hidden for categories without it, e.g. felgi/akcesoria/usługi) -->
+                        <div v-if="isFieldVisible('year')" class="field">
                             <label class="flabel">
                                 {{ categoryConfig.yearLabel ?? 'Rok produkcji' }} <span class="req">*</span>
                             </label>
@@ -820,7 +820,7 @@
                 <!-- ════════════════════════════════════════════════════════════ -->
                 <!-- Step 2: Historia i weryfikacja                               -->
                 <!-- ════════════════════════════════════════════════════════════ -->
-                <div v-else-if="currentStep === 2" class="form-content">
+                <div v-else-if="stepKey === 'history'" class="form-content">
                     <div class="form-section-head">
                         <h2>Historia i weryfikacja</h2>
                         <p>VIN i historia pojazdu budują zaufanie kupujących i przyspieszają sprzedaż.</p>
@@ -1104,7 +1104,7 @@
                 </div>
 
                 <!-- Step 3: Zdjęcia -->
-                <div v-else-if="currentStep === 3" class="form-content">
+                <div v-else-if="stepKey === 'photos'" class="form-content">
                     <div class="form-section-head">
                         <h2>Zdjęcia</h2>
                         <p v-if="!isEdit">Dodaj minimum <strong>3 zdjęcia</strong> pojazdu. Pierwsze zdjęcie będzie zdjęciem głównym.</p>
@@ -1276,7 +1276,7 @@
                 </div>
 
                 <!-- Step 4: Wyposażenie -->
-                <div v-else-if="currentStep === 4" class="form-content">
+                <div v-else-if="stepKey === 'equipment'" class="form-content">
                     <div class="form-section-head">
                         <h2>Wyposażenie</h2>
                         <p>Zaznacz wyposażenie pojazdu. Ogłoszenia z kompletnym wyposażeniem sprzedają się <strong>2× szybciej</strong>.</p>
@@ -1385,7 +1385,7 @@
                 </div>
 
                 <!-- Step 5: Ocena zaufania -->
-                <div v-else-if="currentStep === 5" class="form-content">
+                <div v-else-if="stepKey === 'trust'" class="form-content">
                     <div class="form-section-head">
                         <h2>Ocena zaufania</h2>
                         <p>Podsumowanie danych z poprzedniego kroku — kompletna historia zwiększa <strong>zaufanie kupujących</strong> i przyspiesza sprzedaż. Każda potwierdzona pozycja podnosi ocenę ogłoszenia.</p>
@@ -1580,7 +1580,7 @@
                 </div>
 
                 <!-- Step 6: Opis -->
-                <div v-else-if="currentStep === 6" class="form-content">
+                <div v-else-if="stepKey === 'description'" class="form-content">
                     <div class="form-section-head">
                         <h2>Cena i opis</h2>
                         <p>Ustal cenę, opisz pojazd i podaj lokalizację.</p>
@@ -1828,7 +1828,7 @@
                 </div>
 
                 <!-- Step 7: Promocja -->
-                <div v-else-if="currentStep === 7" class="form-content promo-step">
+                <div v-else-if="stepKey === 'promo'" class="form-content promo-step">
                     <div class="form-section-head">
                         <h2>{{ isEdit ? 'Podsumowanie zmian' : 'Podsumowanie i promocja' }}</h2>
                         <p v-if="isEdit">Sprawdź wprowadzone zmiany i zapisz ogłoszenie.</p>
@@ -2015,7 +2015,7 @@
                 </div>
 
                 <!-- Step 8: Podgląd -->
-                <div v-else-if="currentStep === 8" class="form-content">
+                <div v-else-if="stepKey === 'preview'" class="form-content">
                     <div class="form-section-head">
                         <h2>Podgląd i publikacja</h2>
                         <p>Sprawdź jak będzie wyglądało Twoje ogłoszenie przed publikacją.</p>
@@ -2344,6 +2344,9 @@ interface CatFieldConfig {
     // Step 1 section visibility
     showVinSection?: boolean
     showHistorySection?: boolean
+    // Wizard "details" step title/desc override (default: "Dane pojazdu")
+    detailsStepName?: string
+    detailsStepDesc?: string
 }
 
 const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
@@ -2821,6 +2824,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         required: ['brand', 'price'],
         brandLabel: 'Producent opon',
         modelLabel: 'Linia produktowa',
+        detailsStepName: 'Dane opon',
+        detailsStepDesc: 'Producent, rozmiar, sezon',
         priceHint: 'Rynek: 100 – 5 000 zł za sztukę / komplet',
         categoryNote: 'Opony do wszystkich typów pojazdów. Wybierz rodzaj pojazdu i uzupełnij rozmiar poniżej.',
         showVinSection: false,
@@ -2832,6 +2837,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         required: ['brand', 'price'],
         brandLabel: 'Producent felg',
         modelLabel: 'Linia produktowa',
+        detailsStepName: 'Dane felg',
+        detailsStepDesc: 'Producent, rozmiar, rozstaw śrub',
         priceHint: 'Rynek: 200 – 10 000 zł za sztukę / komplet',
         categoryNote: 'Felgi do wszystkich typów pojazdów. Wybierz rodzaj pojazdu i uzupełnij rozmiar poniżej.',
         showVinSection: false,
@@ -2841,6 +2848,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'akcesoria': {
         fields: ['price'],
         required: ['price'],
+        detailsStepName: 'Szczegóły',
+        detailsStepDesc: 'Typ, stan, dopasowanie',
         priceHint: 'Podaj cenę akcesorium',
         categoryNote: 'Akcesoria i wyposażenie dodatkowe. Typ i szczegóły uzupełnij poniżej.',
         showVinSection: false,
@@ -2854,6 +2863,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'uslugi-motoryzacyjne': {
         fields: [],
         required: ['price'],
+        detailsStepName: 'Szczegóły usługi',
+        detailsStepDesc: 'Typ usługi, obszar, kontakt',
         priceLabel: 'Cena usługi (zł)',
         priceHint: 'Podaj cenę usługi lub cenę od',
         categoryNote: 'Usługi motoryzacyjne (warsztaty, wulkanizacja, detailing itd.) — to nie jest ogłoszenie pojazdu. Uzupełnij szczegóły usługi poniżej.',
@@ -3214,7 +3225,10 @@ function saveDraft() {
         history: { ...history },
         brandTextInput: brandTextInput.value,
         modelTextInput: modelTextInput.value,
+        // Steps are dynamic per category, so the KEY is the stable coordinate; the numeric
+        // index is kept only for drafts read by older builds.
         step: currentStep.value,
+        stepKey: stepKey.value,
     }
     localStorage.setItem(draftKey.value, JSON.stringify(draft))
     draftSaved.value = true
@@ -3240,7 +3254,10 @@ function loadDraft() {
         if (saved.history) Object.assign(history, saved.history)
         if (saved.brandTextInput) brandTextInput.value = saved.brandTextInput
         if (saved.modelTextInput) modelTextInput.value = saved.modelTextInput
-        if (typeof saved.step === 'number' && saved.step >= 0 && saved.step < steps.length) currentStep.value = saved.step
+        const savedIdx = typeof saved.stepKey === 'string'
+            ? steps.value.findIndex(s => s.key === saved.stepKey)
+            : (typeof saved.step === 'number' ? saved.step : -1)
+        if (savedIdx >= 0 && savedIdx < steps.value.length) currentStep.value = savedIdx
     } catch {}
 }
 
@@ -3412,29 +3429,8 @@ const history = reactive({
     insuranceUntil: '',
 })
 
-const steps = [
-    { name: 'Kategoria',           desc: 'Typ pojazdu',                    icon: 'mdi-apps' },
-    { name: 'Dane pojazdu',        desc: 'Marka, model, dane techniczne',  icon: 'mdi-car-outline' },
-    { name: 'Historia i VIN',      desc: 'Identyfikacja i historia',       icon: 'mdi-barcode-scan' },
-    { name: 'Zdjęcia',             desc: 'Galeria pojazdu',                icon: 'mdi-image-outline' },
-    { name: 'Wyposażenie',         desc: 'Opcje i wyposażenie',            icon: 'mdi-format-list-checkbox' },
-    { name: 'Ocena zaufania',      desc: 'Podsumowanie wiarygodności',     icon: 'mdi-shield-check-outline' },
-    { name: 'Opis',                desc: 'Opis i lokalizacja',             icon: 'mdi-text-box-outline' },
-    { name: 'Promocja',            desc: 'Wyróżnij ogłoszenie',            icon: 'mdi-crown-outline' },
-    { name: 'Podgląd',             desc: 'Przejrzyj i opublikuj',          icon: 'mdi-check-circle-outline' },
-]
-
-const progressSteps = [
-    { label: 'Kategoria',  icon: 'mdi-apps' },
-    { label: 'Pojazd',     icon: 'mdi-car-outline' },
-    { label: 'Historia',   icon: 'mdi-barcode-scan' },
-    { label: 'Zdjęcia',    icon: 'mdi-image-outline' },
-    { label: 'Wyposażenie',icon: 'mdi-format-list-checkbox' },
-    { label: 'Zaufanie',   icon: 'mdi-shield-check-outline' },
-    { label: 'Opis',       icon: 'mdi-text-box-outline' },
-    { label: 'Promocja',   icon: 'mdi-crown-outline' },
-    { label: 'Podgląd',    icon: 'mdi-check-circle-outline' },
-]
+// (Dynamic wizard step definitions live below, right after categoryConfig — they must not
+// be evaluated before it is initialized.)
 
 const stripFeats = [
     { icon: 'mdi-lock-outline', title: 'Bezpieczne transakcje', desc: 'Weryfikujemy i dbamy o bezpieczeństwo' },
@@ -3555,6 +3551,57 @@ const categoryConfig = computed<CatFieldConfig>(() => {
     if (!selectedCategory.value) return DEFAULT_CAT_CONFIG
     const slug = selectedCategory.value.slug ?? ''
     return CATEGORY_CONFIGS[slug] ?? DEFAULT_CAT_CONFIG
+})
+
+// ── Dynamic wizard steps (Allegro-style) ───────────────────────────────────
+// The step list is computed per category: non-vehicle categories (felgi, opony, akcesoria,
+// usługi motoryzacyjne...) skip "Historia i VIN", "Ocena zaufania" and "Wyposażenie" entirely
+// instead of walking the user through empty screens. currentStep stays an INDEX into this
+// array, so template blocks and validation branch on `stepKey` — never on a hardcoded index.
+const STEP_DEFS = {
+    category:    { name: 'Kategoria',      short: 'Kategoria',   desc: 'Typ ogłoszenia',                icon: 'mdi-apps' },
+    details:     { name: 'Dane pojazdu',   short: 'Pojazd',      desc: 'Marka, model, dane techniczne', icon: 'mdi-car-outline' },
+    history:     { name: 'Historia i VIN', short: 'Historia',    desc: 'Identyfikacja i historia',      icon: 'mdi-barcode-scan' },
+    photos:      { name: 'Zdjęcia',        short: 'Zdjęcia',     desc: 'Galeria ogłoszenia',            icon: 'mdi-image-outline' },
+    equipment:   { name: 'Wyposażenie',    short: 'Wyposażenie', desc: 'Opcje i wyposażenie',           icon: 'mdi-format-list-checkbox' },
+    trust:       { name: 'Ocena zaufania', short: 'Zaufanie',    desc: 'Podsumowanie wiarygodności',    icon: 'mdi-shield-check-outline' },
+    description: { name: 'Opis',           short: 'Opis',        desc: 'Opis i lokalizacja',            icon: 'mdi-text-box-outline' },
+    promo:       { name: 'Promocja',       short: 'Promocja',    desc: 'Wyróżnij ogłoszenie',           icon: 'mdi-crown-outline' },
+    preview:     { name: 'Podgląd',        short: 'Podgląd',     desc: 'Przejrzyj i opublikuj',         icon: 'mdi-check-circle-outline' },
+} as const
+
+type StepKey = keyof typeof STEP_DEFS
+
+const steps = computed(() => {
+    const cfg = categoryConfig.value
+    // Trust score is built entirely from VIN + history answers, so it hides on the same
+    // condition as the history step.
+    const historyHidden = cfg.showVinSection === false && cfg.showHistorySection === false
+    // Equipment hides only once features HAVE loaded empty for a category that also has no
+    // bodyType select — before/without a category the step stays visible (it shows a loader).
+    const equipmentHidden = !!form.categoryId
+        && !isFieldVisible('bodyType')
+        && featuresLoaded.value && !featuresLoadFailed.value
+        && allFeatures.value.length === 0
+    const keys = (['category', 'details', 'history', 'photos', 'equipment', 'trust', 'description', 'promo', 'preview'] as StepKey[])
+        .filter(k => !((k === 'history' || k === 'trust') && historyHidden))
+        .filter(k => !(k === 'equipment' && equipmentHidden))
+    return keys.map(k => ({
+        key: k,
+        name: k === 'details' ? (cfg.detailsStepName ?? STEP_DEFS.details.name) : STEP_DEFS[k].name,
+        desc: k === 'details' ? (cfg.detailsStepDesc ?? STEP_DEFS.details.desc) : STEP_DEFS[k].desc,
+        icon: STEP_DEFS[k].icon,
+    }))
+})
+
+const stepKey = computed<StepKey>(() => (steps.value[currentStep.value]?.key ?? 'category') as StepKey)
+
+const progressSteps = computed(() => steps.value.map(s => ({ label: STEP_DEFS[s.key].short, icon: s.icon })))
+
+// If the visible-step list shrinks under the cursor (e.g. features finish loading empty while
+// a restored draft already sits on a later index), clamp instead of falling off the end.
+watch(() => steps.value.length, (len) => {
+    if (currentStep.value >= len) currentStep.value = Math.max(0, len - 1)
 })
 
 // True once a brand is picked, its models finished loading, and the result is empty - a real
@@ -3809,18 +3856,21 @@ async function applyCepikVehicle(v: Record<string, any>) {
 }
 
 function validateStep(step: number): string | null {
-    // Step 0: Category
-    if (step === 0) {
-        if (!form.categoryId) return 'Wybierz kategorię pojazdu.'
+    // Steps are dynamic per category (some are skipped entirely), so validation branches on
+    // the step KEY at the given index — never on the index itself.
+    const key = steps.value[step]?.key
+    if (key === 'category') {
+        if (!form.categoryId) return 'Wybierz kategorię ogłoszenia.'
     }
-    // Step 1: Vehicle data
-    if (step === 1) {
+    if (key === 'details') {
         const cfg = categoryConfig.value
         if (cfg.required.includes('brand') && !form.brandId && cfg.brandFieldType !== 'text') return 'Wybierz markę pojazdu.'
         if (cfg.required.includes('brand') && cfg.brandFieldType === 'text' && !brandTextInput.value.trim()) return `Podaj ${cfg.brandLabel ?? 'markę'}.`
         if (cfg.required.includes('model') && !isModelTextMode.value && !form.modelId) return 'Wybierz model pojazdu.'
         if (cfg.required.includes('model') && isModelTextMode.value && !noModelsForBrand.value && !modelTextInput.value.trim()) return `Podaj ${(categoryConfig.value.modelLabel ?? 'model').toLowerCase()}.`
-        if (!form.year) return 'Podaj rok produkcji.'
+        // Year is only rendered (and therefore only demanded) for categories that declare it —
+        // felgi/akcesoria/usługi used to hard-block here on a field the user couldn't see.
+        if (cfg.fields.includes('year') && !form.year) return 'Podaj rok produkcji.'
         if (cfg.required.includes('fuelType') && !form.fuelTypeId) return 'Wybierz rodzaj paliwa.'
         if (cfg.required.includes('mileage') && !form.mileage && form.mileage !== 0) return `Podaj ${cfg.mileageLabel ?? 'przebieg'}.`
         // Validate extra required fields
@@ -3837,32 +3887,24 @@ function validateStep(step: number): string | null {
             if (empty) return `Pole "${def.labelPl}" jest wymagane.`
         }
     }
-    // Step 2: Historia i VIN — VIN zalecany (Regulamin §4.1), ale nie blokuje publikacji;
+    // Historia i VIN — VIN zalecany (Regulamin §4.1), ale nie blokuje publikacji;
     // ogłoszenie bez VIN po prostu nie dostaje plakietki "VIN zweryfikowany". Jeśli ktoś go poda,
-    // musi być poprawny — nie akceptujemy błędnego/sfałszowanego numeru. Re-checked at step 5
-    // (Ocena zaufania) too, since that gamified summary also lets the same form.vin be edited.
-    if (step === 2) {
+    // musi być poprawny — nie akceptujemy błędnego/sfałszowanego numeru. Re-checked at the trust
+    // step too, since that gamified summary also lets the same form.vin be edited.
+    if (key === 'history' || key === 'trust') {
         if (categoryConfig.value.showVinSection !== false && form.vin) {
             if (form.vin.length !== 17) return 'Numer VIN musi mieć dokładnie 17 znaków (albo zostaw pole puste).'
             if (!VIN_REGEX.test(form.vin)) return 'Numer VIN zawiera niedozwolone znaki. VIN składa się z cyfr i liter A-H, J-N, P-Z.'
         }
     }
-    // Step 3: Photos
-    if (step === 3) {
+    if (key === 'photos') {
         const totalPhotos = existingImages.value.length + selectedFiles.value.length
         if (isEdit.value && totalPhotos < 1) return 'Ogłoszenie musi zawierać co najmniej 1 zdjęcie.'
         if (!isEdit.value && totalPhotos < 3) return 'Dodaj minimum 3 zdjęcia.'
     }
-    // Step 4: Equipment — no required fields
-    // Step 5: Ocena zaufania
-    if (step === 5) {
-        if (categoryConfig.value.showVinSection !== false && form.vin) {
-            if (form.vin.length !== 17) return 'Numer VIN musi mieć dokładnie 17 znaków (albo zostaw pole puste).'
-            if (!VIN_REGEX.test(form.vin)) return 'Numer VIN zawiera niedozwolone znaki. VIN składa się z cyfr i liter A-H, J-N, P-Z.'
-        }
-    }
-    // Step 6: Opis i cena
-    if (step === 6) {
+    // Equipment — no required fields
+    // Opis i cena
+    if (key === 'description') {
         if (!form.price || form.price <= 0) return 'Podaj cenę pojazdu (musi być większa od 0).'
         if (form.price > 10_000_000) return 'Cena wydaje się nieprawidłowa (>10 000 000 zł).'
         if (!form.region) return 'Wybierz województwo.'
@@ -4389,8 +4431,11 @@ async function submit() {
     // Validate every step, not just the last two - loadDraft() can jump currentStep straight to
     // a late step (e.g. resuming a draft saved from the preview step), which never puts the user
     // through goNext()'s per-step gate for the earlier steps, so an advert could otherwise publish
-    // with e.g. too few photos or a missing required field from an earlier step.
-    for (const stepIdx of [0, 1, 2, 3, 4, 5, 6]) {
+    // with e.g. too few photos or a missing required field from an earlier step. Steps are dynamic
+    // per category, so iterate whatever is actually visible (promo/preview have nothing to check).
+    for (let stepIdx = 0; stepIdx < steps.value.length; stepIdx++) {
+        const k = steps.value[stepIdx].key
+        if (k === 'promo' || k === 'preview') continue
         const err = validateStep(stepIdx)
         if (err) {
             stepError.value = err
@@ -4799,7 +4844,7 @@ async function deleteExistingImage(imageId: number) {
 
 const isDirty = computed(() => !isEdit.value && (
     !!form.title || !!form.brandId || !!form.price ||
-    selectedFiles.value.length > 0 || selectedFeatureIds.value.size > 0
+    selectedFiles.value.length > 0 || form.featureIds.length > 0
 ))
 
 function onBeforeUnload(e: BeforeUnloadEvent) {
