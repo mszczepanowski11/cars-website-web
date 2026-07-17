@@ -36,8 +36,10 @@
                         <span class="crumb">{{ advert.brand?.name }}</span>
                         <v-icon icon="mdi-chevron-right" size="12" class="crumb-sep" />
                         <span class="crumb">{{ advert.model?.name }}</span>
-                        <v-icon icon="mdi-chevron-right" size="12" class="crumb-sep" />
-                        <span class="crumb crumb-active">{{ advert.year }}</span>
+                        <template v-if="advert.year">
+                            <v-icon icon="mdi-chevron-right" size="12" class="crumb-sep" />
+                            <span class="crumb crumb-active">{{ advert.year }}</span>
+                        </template>
                     </div>
                 </div>
                 <div class="topbar-actions">
@@ -609,7 +611,7 @@
                             </div>
                             <div class="sim-body">
                                 <div class="sim-title">{{ a.brand?.name }} {{ a.model?.name }}</div>
-                                <div class="sim-meta">{{ a.year }} • {{ Number(a.mileage).toLocaleString('pl') }} km</div>
+                                <div class="sim-meta">{{ [a.year || null, a.mileage ? `${Number(a.mileage).toLocaleString('pl')} km` : null].filter(Boolean).join(' • ') }}</div>
                                 <div class="sim-price">{{ Number(a.price).toLocaleString('pl') }} zł</div>
                             </div>
                         </NuxtLink>

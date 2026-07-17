@@ -17,6 +17,10 @@ const STATIC_CATEGORIES: CategoryWithCount[] = [
     { id: 15, slug: 'autobusy', name: 'Autobusy', description: 'Autobusy miejskie, turystyczne i minibusy', iconName: 'mdi-bus', advertCount: 0 },
     { id: 16, slug: 'naczepy', name: 'Naczepy', description: 'Naczepy ciągnięte przez ciągniki siodłowe', iconName: 'mdi-truck-trailer', advertCount: 0 },
     { id: 17, slug: 'wozki-widlowe', name: 'Wózki widłowe', description: 'Wózki widłowe spalinowe, elektryczne i magazynowe', iconName: 'mdi-forklift', advertCount: 0 },
+    { id: 18, slug: 'opony', name: 'Opony', description: 'Opony letnie, zimowe i całoroczne do wszystkich pojazdów', iconName: 'mdi-tire', advertCount: 0 },
+    { id: 19, slug: 'felgi', name: 'Felgi', description: 'Felgi aluminiowe, stalowe i akcesoria kołowe', iconName: 'mdi-record-circle-outline', advertCount: 0 },
+    { id: 20, slug: 'akcesoria', name: 'Akcesoria', description: 'Akcesoria i wyposażenie dodatkowe', iconName: 'mdi-seat-recline-extra', advertCount: 0 },
+    { id: 21, slug: 'uslugi-motoryzacyjne', name: 'Usługi motoryzacyjne', description: 'Warsztaty, detailing, wulkanizacja i inne usługi', iconName: 'mdi-account-wrench', advertCount: 0 },
 ]
 // "Inne" is deliberately excluded — this is only a fallback used if the real /api/Category
 // fetch fails, and index.vue also filters it out of whatever the API returns (see homeCategories).
