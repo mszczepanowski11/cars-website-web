@@ -21,12 +21,51 @@
       "title": "Ogłoszenia z każdej kategorii",
       "seeAll": "Wszystkie",
       "seeAllInCategory": "Zobacz wszystkie"
-    }
+    },
+    "premiumEyebrow": "PREMIUM COLLECTION",
+    "premiumTitle": "Pakiet premium",
+    "featuredLabel": "WYRÓŻNIONE",
+    "featuredTitle": "Polecane oferty",
+    "popularEyebrow": "NAJCZĘŚCIEJ OGLĄDANE",
+    "popularTitle": "Popularne ogłoszenia",
+    "whyEyebrow": "DLACZEGO",
+    "whySub": "Łączymy najlepszą technologię z pasją do motoryzacji",
+    "eventsTitle": "Nadchodzące",
+    "eventsTitleAccent": "wydarzenia",
+    "recentEyebrow": "NOWE OGŁOSZENIA",
+    "recentTitle": "Ostatnio dodane",
+    "newsletterTitle": "Bądź na bieżąco"
   },
   "common": {
     "search": "Szukaj",
     "seeAll": "Zobacz wszystkie",
     "loading": "Ładowanie…",
     "language": "Język"
+  },
+  "footer": {
+    "tagline": "Nowoczesna platforma motoryzacyjna dla ludzi, którzy kochają samochody.",
+    "company": "Firma",
+    "about": "O nas",
+    "contact": "Kontakt",
+    "howItWorks": "Jak to działa",
+    "help": "Pomoc i FAQ",
+    "forSellers": "Dla sprzedających",
+    "addAdvert": "Dodaj ogłoszenie",
+    "pricing": "Cennik",
+    "premium": "Pakiety Premium",
+    "forDealers": "Dla dealerów",
+    "b2bTerms": "Regulamin B2B",
+    "safety": "Bezpieczeństwo",
+    "terms": "Regulamin",
+    "privacy": "Polityka prywatności",
+    "cookies": "Polityka cookies",
+    "report": "Zgłoś naruszenie",
+    "newsTitle": "Bądź na bieżąco",
+    "newsSub": "Najlepsze oferty prosto na Twój e-mail",
+    "emailPlaceholder": "Twój adres e-mail",
+    "subscribe": "Zapisz się",
+    "newsOk": "Sprawdź skrzynkę email i potwierdź zapis — link ważny 24h.",
+    "rights": "Wszelkie prawa zastrzeżone.",
+    "credit": "Stworzone z pasją do motoryzacji."
   }
 }

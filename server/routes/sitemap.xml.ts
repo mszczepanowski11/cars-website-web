@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     // the old code silently stopped adding URLs past 45,000 instead of splitting, which would
     // have made every advert past that point permanently invisible to search engines.
     if (urls.length <= CHUNK_SIZE) {
-        return renderUrlset(urls.map(u => ({ ...u, loc: `${siteUrl}${u.loc}` })))
+        return renderUrlset(urls.map(u => ({ ...u, loc: `${siteUrl}${u.loc}` })), siteUrl)
     }
 
     const chunkCount = Math.ceil(urls.length / CHUNK_SIZE)

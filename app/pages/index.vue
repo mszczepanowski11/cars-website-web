@@ -258,8 +258,8 @@
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
-                        <div class="sec-eyebrow">PREMIUM COLLECTION</div>
-                        <h2>Pakiet premium</h2>
+                        <div class="sec-eyebrow">{{ $t('home.premiumEyebrow') }}</div>
+                        <h2>{{ $t('home.premiumTitle') }}</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
@@ -281,9 +281,9 @@
                     <div class="sec-top-left">
                         <span class="premium-label">
                             <v-icon icon="mdi-crown" size="14" />
-                            WYRÓŻNIONE
+                            {{ $t('home.featuredLabel') }}
                         </span>
-                        <h2>Polecane oferty</h2>
+                        <h2>{{ $t('home.featuredTitle') }}</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Zobacz wszystkie
@@ -301,8 +301,8 @@
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
-                        <div class="sec-eyebrow">NAJCZĘŚCIEJ OGLĄDANE</div>
-                        <h2>Popularne ogłoszenia</h2>
+                        <div class="sec-eyebrow">{{ $t('home.popularEyebrow') }}</div>
+                        <h2>{{ $t('home.popularTitle') }}</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
@@ -359,9 +359,9 @@
         <section class="section why-section">
             <div class="container">
                 <div class="why-header">
-                    <div class="why-eyebrow">DLACZEGO</div>
+                    <div class="why-eyebrow">{{ $t('home.whyEyebrow') }}</div>
                     <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" loading="lazy" />
-                    <p class="why-sub">Łączymy najlepszą technologię z pasją do motoryzacji</p>
+                    <p class="why-sub">{{ $t('home.whySub') }}</p>
                 </div>
                 <div class="why-grid">
                     <div v-for="f in feats" :key="f.title" class="why-card">
@@ -462,7 +462,7 @@
         <section v-if="events.length" class="section events-section">
             <div class="container">
                 <div class="sec-top">
-                    <h2>Nadchodzące <span>wydarzenia</span></h2>
+                    <h2>{{ $t('home.eventsTitle') }} <span>{{ $t('home.eventsTitleAccent') }}</span></h2>
                     <NuxtLink to="/wydarzenia" class="see-all">
                         Zobacz wszystkie
                         <v-icon icon="mdi-arrow-right" size="16" />
@@ -543,8 +543,8 @@
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
-                        <div class="sec-eyebrow">NOWE OGŁOSZENIA</div>
-                        <h2>Ostatnio dodane</h2>
+                        <div class="sec-eyebrow">{{ $t('home.recentEyebrow') }}</div>
+                        <h2>{{ $t('home.recentTitle') }}</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Wszystkie ogłoszenia
