@@ -22,6 +22,13 @@
                 <span v-if="company.status === 'unverified'" class="cp-badge">niezweryfikowana</span>
                 <span v-else-if="company.status === 'active'" class="cp-badge cp-badge--ok"><v-icon icon="mdi-check-decagram" size="13" /> zweryfikowana</span>
               </div>
+              <div v-if="(company.availableLanguages?.length ?? 0) > 1" class="cp-langs">
+                <v-icon icon="mdi-translate" size="14" />
+                <button
+                  v-for="l in company.availableLanguages" :key="l"
+                  class="cp-lang" :class="{ active: currentLang === l }"
+                  @click="setLang(l)">{{ l.toUpperCase() }}</button>
+              </div>
             </div>
           </div>
         </div>
@@ -116,7 +123,7 @@ interface DirCompanyDetail {
   countryCode?: string | null; city?: string | null; address?: string | null;
   postalCode?: string | null; phone?: string | null; email?: string | null;
   website?: string | null; profileUrl?: string | null; language?: string | null;
-  description?: string | null; linked?: boolean;
+  description?: string | null; linked?: boolean; availableLanguages?: string[];
   status: string; createdAt: string; updatedAt: string;
 }
 
@@ -150,10 +157,16 @@ const CATEGORY_META: Record<string, { label: string; icon: string }> = {
 function categoryLabel(v: string) { return CATEGORY_META[v]?.label ?? v }
 function categoryIcon(v: string) { return CATEGORY_META[v]?.icon ?? 'mdi-domain' }
 
+// Viewer's chosen language for this company (base language by default; switched via the chips).
+const currentLang = ref<string | null>(null)
+function setLang(l: string) { currentLang.value = l }
+
 const { data: company, pending } = await useAsyncData(
   () => `directory-${slug.value}`,
-  () => $fetch<DirCompanyDetail>(`/api/proxy/api/directory/${slug.value}`).catch(() => null),
-  { watch: [slug] },
+  () => $fetch<DirCompanyDetail>(`/api/proxy/api/directory/${slug.value}`, {
+    query: { lang: currentLang.value || undefined },
+  }).catch(() => null),
+  { watch: [slug, currentLang] },
 )
 
 const fullAddress = computed(() => {
@@ -216,6 +229,9 @@ useHead(() => ({
 .cp-name { font-size: clamp(22px, 4vw, 32px); font-weight: 800; color: $text; margin: 0 0 8px; line-height: 1.1; }
 .cp-tags { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .cp-cat { color: $text-muted; font-size: 14px; }
+.cp-langs { display: flex; align-items: center; gap: 4px; margin-top: 10px; color: $text-muted;
+  .cp-lang { background: transparent; border: 1px solid $border; color: $text-muted; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; cursor: pointer;
+    &.active { background: rgba($red,.16); border-color: rgba($red,.4); color: $red; } &:hover:not(.active) { color: $text; } } }
 .cp-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: #b6791b; background: rgba(#b6791b, .14); padding: 3px 9px; border-radius: 20px; display: inline-flex; align-items: center; gap: 3px;
   &--ok { color: #2e9d5b; background: rgba(#2e9d5b, .14); } }
 

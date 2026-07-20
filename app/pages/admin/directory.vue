@@ -144,6 +144,33 @@
           <input v-model="form.website" class="dr-input" />
           <label>Opis (o firmie)</label>
           <textarea v-model="form.description" class="dr-input" rows="3"></textarea>
+          <div class="dr-form-grid">
+            <div><label>Szerokość geo (lat)</label><input v-model.number="form.latitude" class="dr-input" type="number" step="any" placeholder="np. 50.0614" /></div>
+            <div><label>Długość geo (lng)</label><input v-model.number="form.longitude" class="dr-input" type="number" step="any" placeholder="np. 19.9366" /></div>
+          </div>
+
+          <div v-if="!editingIsNew" class="dr-i18n">
+            <div class="dr-i18n-head">
+              <label>Tłumaczenia</label>
+              <button type="button" class="dr-btn dr-btn--ghost dr-btn--xs" :disabled="translating" @click="autoTranslate">
+                <v-icon :icon="translating ? 'mdi-loading' : 'mdi-translate'" size="14" :class="{ spin: translating }" /> Auto-tłumacz (EN/DE/FR)
+              </button>
+            </div>
+            <div v-for="(t, lang) in form.i18n" :key="lang" class="dr-i18n-row">
+              <span class="dr-i18n-lang">{{ lang.toUpperCase() }}</span>
+              <input v-model="t.name" class="dr-input dr-input--sm" placeholder="Nazwa" />
+              <input v-model="t.description" class="dr-input dr-input--sm" placeholder="Opis" />
+              <button type="button" class="dr-mini dr-mini--danger" @click="removeLang(lang)"><v-icon icon="mdi-close" size="14" /></button>
+            </div>
+            <div class="dr-i18n-add">
+              <select v-model="newLang" class="dr-input dr-input--sm">
+                <option value="">+ język</option>
+                <option v-for="l in ADD_LANGS" :key="l.code" :value="l.code">{{ l.name }}</option>
+              </select>
+              <button type="button" class="dr-btn dr-btn--ghost dr-btn--xs" :disabled="!newLang" @click="addLang">Dodaj</button>
+            </div>
+          </div>
+
           <label>Status</label>
           <select v-model="form.status" class="dr-input">
             <option value="active">Zweryfikowana (active)</option>
@@ -224,12 +251,56 @@ function applyFilters() { searchQ.value = searchInput.value.trim(); page.value =
 const editing = ref<DirCompany | null>(null)
 const editingIsNew = ref(false)
 const saving = ref(false)
+interface LocalizedText { name?: string; description?: string }
+const ADD_LANGS = [
+  { code: 'en', name: 'Angielski (EN)' }, { code: 'de', name: 'Niemiecki (DE)' },
+  { code: 'fr', name: 'Francuski (FR)' }, { code: 'it', name: 'Włoski (IT)' },
+  { code: 'es', name: 'Hiszpański (ES)' }, { code: 'uk', name: 'Ukraiński (UK)' },
+  { code: 'cs', name: 'Czeski (CS)' }, { code: 'nl', name: 'Holenderski (NL)' },
+]
 const form = reactive({
   name: '', category: 'firmy', countryCode: 'PL', city: '', address: '',
-  postalCode: '', phone: '', email: '', website: '', description: '', status: 'active',
+  postalCode: '', phone: '', email: '', website: '', description: '',
+  latitude: null as number | null, longitude: null as number | null,
+  i18n: {} as Record<string, LocalizedText>, status: 'active',
 })
 function resetForm() {
-  Object.assign(form, { name: '', category: 'firmy', countryCode: 'PL', city: '', address: '', postalCode: '', phone: '', email: '', website: '', description: '', status: 'active' })
+  Object.assign(form, { name: '', category: 'firmy', countryCode: 'PL', city: '', address: '', postalCode: '', phone: '', email: '', website: '', description: '', latitude: null, longitude: null, i18n: {}, status: 'active' })
+}
+const newLang = ref('')
+const translating = ref(false)
+function addLang() {
+  if (newLang.value && !form.i18n[newLang.value]) form.i18n[newLang.value] = { name: '', description: '' }
+  newLang.value = ''
+}
+function removeLang(lang: string) { delete form.i18n[lang] }
+async function autoTranslate() {
+  const co = editing.value as DirCompany
+  if (!co?.slug) return
+  translating.value = true
+  try {
+    const res = await $fetch<{ filled: string[] }>(`/api/proxy/api/directory/${co.slug}/translate`, { method: 'POST' })
+    // Reload translations from the server so the freshly filled languages appear in the editor.
+    const d = await $fetch<any>(`/api/proxy/api/directory/${co.slug}?lang=`)
+    void d
+    useToast().success(res.filled.length ? `Przetłumaczono: ${res.filled.join(', ').toUpperCase()}` : 'Wszystkie języki już były przetłumaczone.')
+    await reloadI18n(co.slug)
+  } catch (e: any) {
+    useToast().error(e?.data?.message || e?.data || 'Silnik tłumaczeń niedostępny (skonfiguruj TRANSLATION_API_KEY).')
+  } finally { translating.value = false }
+}
+async function reloadI18n(slug: string) {
+  // The public detail endpoint returns availableLanguages; fetch each translated variant to fill the editor.
+  try {
+    const base = await $fetch<any>(`/api/proxy/api/directory/${slug}`)
+    const langs: string[] = (base.availableLanguages || []).filter((l: string) => l !== (base.language || 'pl'))
+    const next: Record<string, LocalizedText> = { ...form.i18n }
+    for (const l of langs) {
+      const t = await $fetch<any>(`/api/proxy/api/directory/${slug}`, { query: { lang: l } })
+      next[l] = { name: t.name, description: t.description }
+    }
+    form.i18n = next
+  } catch { /* keep current editor state */ }
 }
 function openCreate() { resetForm(); editingIsNew.value = true; editing.value = {} as DirCompany }
 async function openEdit(co: DirCompany) {
@@ -242,8 +313,10 @@ async function openEdit(co: DirCompany) {
       name: d.name ?? '', category: d.category ?? 'firmy', countryCode: d.countryCode ?? '',
       city: d.city ?? '', address: d.address ?? '', postalCode: d.postalCode ?? '',
       phone: d.phone ?? '', email: d.email ?? '', website: d.website ?? '',
-      description: d.description ?? '', status: d.status ?? 'active',
+      description: d.description ?? '', latitude: d.latitude ?? null, longitude: d.longitude ?? null,
+      i18n: {}, status: d.status ?? 'active',
     })
+    if ((d.availableLanguages?.length ?? 0) > 1) await reloadI18n(co.slug)
   } catch { /* keep whatever the list gave us */ }
 }
 async function save() {
@@ -346,7 +419,14 @@ onMounted(load)
   &--primary { background: $red; color: #fff; border-color: $red; &:hover:not(:disabled) { filter: brightness(1.1); } }
   &--ghost { background: transparent; color: $text-muted; &:hover { border-color: rgba($red,.4); color: $text; } }
   &:disabled { opacity: .5; cursor: not-allowed; }
+  &--xs { padding: 5px 10px; font-size: 12px; }
 }
+
+.dr-i18n { border: 1px solid $border; border-radius: $r-sm; padding: 12px; margin-top: 8px; }
+.dr-i18n-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; label { color: $text-dim; font-size: 12px; } }
+.dr-i18n-row { display: grid; grid-template-columns: 34px 1fr 1fr 30px; gap: 6px; align-items: center; margin-bottom: 6px; }
+.dr-i18n-lang { font-family: monospace; font-size: 11px; font-weight: 700; color: $red; }
+.dr-i18n-add { display: flex; gap: 6px; margin-top: 8px; }
 
 .dr-filters { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
 .dr-input {

@@ -55,8 +55,18 @@
           <div class="dir-results-head">
             <span v-if="!pending">Znaleziono <strong>{{ total.toLocaleString('pl') }}</strong> {{ pluralFirm(total) }}</span>
             <span v-else>Ładowanie…</span>
+            <div class="dir-viewtoggle">
+              <button :class="{ active: view === 'list' }" @click="view = 'list'"><v-icon icon="mdi-format-list-bulleted" size="16" /> Lista</button>
+              <button :class="{ active: view === 'map' }" @click="view = 'map'"><v-icon icon="mdi-map-outline" size="16" /> Mapa</button>
+            </div>
           </div>
 
+          <ClientOnly v-if="view === 'map'">
+            <CompanyMap :category="activeCategory" :country="activeCountry" />
+            <template #fallback><div class="dir-loading"><v-icon icon="mdi-loading" size="34" class="spin" /></div></template>
+          </ClientOnly>
+
+          <template v-else>
           <div v-if="pending" class="dir-loading">
             <v-icon icon="mdi-loading" size="34" class="spin" />
           </div>
@@ -99,6 +109,7 @@
               Następna <v-icon icon="mdi-chevron-right" size="18" />
             </button>
           </div>
+          </template>
         </div>
       </div>
     </section>
@@ -160,6 +171,8 @@ const activeCountry = computed(() => (route.query.country as string) || null)
 const page = computed(() => Math.max(1, parseInt((route.query.page as string) || '1') || 1))
 const qInput = ref(q.value)
 watch(q, (v) => { qInput.value = v })
+
+const view = ref<'list' | 'map'>('list')
 
 const PAGE_SIZE = 24
 
@@ -272,7 +285,10 @@ useHead({
   &.active &-count { color: $red; }
 }
 
-.dir-results-head { color: $text-muted; font-size: 14px; margin-bottom: 14px; strong { color: $text; } }
+.dir-results-head { color: $text-muted; font-size: 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; strong { color: $text; } }
+.dir-viewtoggle { display: flex; gap: 2px; background: $card; border: 1px solid $border; border-radius: 8px; padding: 2px;
+  button { display: inline-flex; align-items: center; gap: 5px; background: transparent; border: none; color: $text-muted; font-size: 13px; padding: 6px 12px; border-radius: 6px; cursor: pointer;
+    &.active { background: rgba($red, .16); color: $red; } &:hover:not(.active) { color: $text; } } }
 .dir-loading, .dir-empty { text-align: center; padding: 60px 20px; color: $text-muted; }
 .dir-empty p { margin: 12px 0; }
 .dir-reset { background: $red; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; cursor: pointer; font-weight: 600; }
