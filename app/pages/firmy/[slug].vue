@@ -30,6 +30,11 @@
       <section class="cp-body">
         <div class="cp-grid">
           <div class="cp-main">
+            <div v-if="company.description" class="cp-card">
+              <h2 class="cp-card-h">O firmie</h2>
+              <p class="cp-desc">{{ company.description }}</p>
+            </div>
+
             <div class="cp-card">
               <h2 class="cp-card-h">Dane kontaktowe</h2>
               <dl class="cp-dl">
@@ -53,6 +58,31 @@
                   <dd class="cp-nocontact">Brak danych kontaktowych w katalogu.</dd>
                 </template>
               </dl>
+            </div>
+
+            <div v-if="listings.length" class="cp-card">
+              <h2 class="cp-card-h">Ogłoszenia tej firmy <span class="cp-count">{{ listingsTotal }}</span></h2>
+              <ul class="cp-listings">
+                <li v-for="ad in listings" :key="ad.id">
+                  <NuxtLink :to="`/advert/${ad.id}`" class="cp-listing">
+                    <div class="cp-listing-img">
+                      <img :src="getImageUrl(ad.imageUrl, undefined, { width: 160, height: 120 })" :alt="ad.title" loading="lazy" width="80" height="60" />
+                      <span v-if="ad.badge" class="cp-listing-badge">{{ ad.badge }}</span>
+                    </div>
+                    <div class="cp-listing-body">
+                      <div class="cp-listing-title">{{ ad.title }}</div>
+                      <div class="cp-listing-meta">
+                        <span v-if="ad.year">{{ ad.year }}</span>
+                        <span v-if="ad.mileage != null">{{ ad.mileage.toLocaleString('pl') }} km</span>
+                      </div>
+                    </div>
+                    <div class="cp-listing-price">{{ ad.price.toLocaleString('pl') }} {{ ad.currency === 'PLN' ? 'zł' : ad.currency }}</div>
+                  </NuxtLink>
+                </li>
+              </ul>
+              <p v-if="listingsTotal > listings.length" class="cp-listings-more">
+                …oraz {{ listingsTotal - listings.length }} więcej ogłoszeń tej firmy.
+              </p>
             </div>
 
             <div v-if="isOwnerClaimable" class="cp-claim">
@@ -86,12 +116,20 @@ interface DirCompanyDetail {
   countryCode?: string | null; city?: string | null; address?: string | null;
   postalCode?: string | null; phone?: string | null; email?: string | null;
   website?: string | null; profileUrl?: string | null; language?: string | null;
-  status: string; partnerId?: number | null; createdAt: string; updatedAt: string;
+  description?: string | null; linked?: boolean;
+  status: string; createdAt: string; updatedAt: string;
 }
 
 const route = useRoute()
 const config = useRuntimeConfig()
+const { getImageUrl } = useImageUrl()
 const slug = computed(() => route.params.slug as string)
+
+interface ListingCard {
+  id: number; slug?: string | null; title: string; price: number; currency: string;
+  year?: number | null; mileage?: number | null; brandName?: string | null;
+  modelName?: string | null; imageUrl?: string | null; badge?: string | null;
+}
 
 const CATEGORY_META: Record<string, { label: string; icon: string }> = {
   'komisy': { label: 'Komis samochodowy', icon: 'mdi-car-multiple' },
@@ -129,8 +167,19 @@ const normalizedWebsite = computed(() => {
   if (!w) return '#'
   return w.startsWith('http') ? w : `https://${w}`
 })
+// Adverts published by this company (graph edge Firma -> Ogłoszenia). Only resolvable once the
+// company is linked to a Carizo account, so this is empty for seeded/un-claimed rows.
+const { data: listingsData } = await useAsyncData(
+  () => `directory-listings-${slug.value}`,
+  () => $fetch<{ items: ListingCard[]; total: number; linked: boolean }>(`/api/proxy/api/directory/${slug.value}/listings`)
+    .catch(() => ({ items: [], total: 0, linked: false })),
+  { watch: [slug] },
+)
+const listings = computed(() => listingsData.value?.items ?? [])
+const listingsTotal = computed(() => listingsData.value?.total ?? 0)
+
 // A seeded, un-claimed row (no linked partner) can be claimed by its owner.
-const isOwnerClaimable = computed(() => !!company.value && !company.value.partnerId)
+const isOwnerClaimable = computed(() => !!company.value && !company.value.linked)
 
 function fmtDate(s: string) {
   try { return new Date(s).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' }) }
@@ -174,6 +223,21 @@ useHead(() => ({
 .cp-grid { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
 .cp-card { background: $card; border: 1px solid $border; border-radius: 12px; padding: 22px; margin-bottom: 16px; }
 .cp-card-h { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: $text-muted; margin: 0 0 16px; font-weight: 700; }
+
+.cp-count { font-size: 12px; color: $text-muted; font-weight: 600; background: rgba($red,.12); padding: 2px 9px; border-radius: 20px; margin-left: 6px; }
+.cp-desc { color: $text-muted; font-size: 14.5px; line-height: 1.6; margin: 0; white-space: pre-line; }
+
+.cp-listings { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.cp-listing { display: flex; align-items: center; gap: 12px; text-decoration: none; padding: 8px; border-radius: 10px; transition: background .15s;
+  &:hover { background: rgba($red,.06); } }
+.cp-listing-img { position: relative; width: 80px; height: 60px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #111;
+  img { width: 100%; height: 100%; object-fit: cover; } }
+.cp-listing-badge { position: absolute; top: 3px; left: 3px; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; background: $red; color: #fff; padding: 1px 5px; border-radius: 3px; }
+.cp-listing-body { flex: 1; min-width: 0; }
+.cp-listing-title { color: $text; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cp-listing-meta { display: flex; gap: 10px; color: $text-muted; font-size: 12.5px; margin-top: 3px; }
+.cp-listing-price { color: $red; font-weight: 700; font-size: 14.5px; white-space: nowrap; }
+.cp-listings-more { color: $text-muted; font-size: 13px; margin: 10px 0 0; }
 
 .cp-dl { display: grid; grid-template-columns: 130px 1fr; gap: 12px 16px; margin: 0; }
 .cp-dl dt { color: $text-muted; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }

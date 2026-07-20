@@ -18,6 +18,20 @@
       <div class="dir-grid">
         <!-- Filters -->
         <aside class="dir-filters">
+          <div v-if="countryFacets.length > 1" class="dir-filter-block">
+            <h3 class="dir-filter-h">Kraj</h3>
+            <button class="dir-facet" :class="{ active: !activeCountry }" @click="setCountry(null)">
+              <span>Wszystkie kraje</span>
+            </button>
+            <button
+              v-for="c in countryFacets" :key="c.value"
+              class="dir-facet" :class="{ active: activeCountry === c.value }"
+              @click="setCountry(c.value)">
+              <span>{{ countryName(c.value) }}</span>
+              <span class="dir-facet-count">{{ c.count }}</span>
+            </button>
+          </div>
+
           <div class="dir-filter-block">
             <h3 class="dir-filter-h">Kategoria</h3>
             <button
@@ -50,7 +64,7 @@
           <div v-else-if="items.length === 0" class="dir-empty">
             <v-icon icon="mdi-office-building-outline" size="44" />
             <p>Brak firm dla wybranych filtrów.</p>
-            <button v-if="activeCategory || q" class="dir-reset" @click="resetAll">Wyczyść filtry</button>
+            <button v-if="activeCategory || activeCountry || q" class="dir-reset" @click="resetAll">Wyczyść filtry</button>
           </div>
 
           <ul v-else class="dir-list">
@@ -67,7 +81,7 @@
                   <div class="dir-card-meta">
                     <span class="dir-card-cat">{{ categoryLabel(co.category) }}</span>
                     <span v-if="co.city" class="dir-card-city"><v-icon icon="mdi-map-marker-outline" size="13" />{{ co.city }}</span>
-                    <span v-if="co.countryCode" class="dir-card-country">{{ co.countryCode }}</span>
+                    <span v-if="co.countryCode" class="dir-card-country" :title="countryName(co.countryCode)">{{ co.countryCode }}</span>
                   </div>
                 </div>
                 <v-icon icon="mdi-chevron-right" size="18" class="dir-card-arrow" />
@@ -102,6 +116,17 @@ const config = useRuntimeConfig()
 const route = useRoute()
 const router = useRouter()
 
+// EU + UK + Norway + Switzerland (blueprint: docelowy zasięg geograficzny).
+const COUNTRY_NAMES: Record<string, string> = {
+  PL: 'Polska', DE: 'Niemcy', FR: 'Francja', IT: 'Włochy', ES: 'Hiszpania', NL: 'Holandia',
+  BE: 'Belgia', AT: 'Austria', CZ: 'Czechy', SK: 'Słowacja', SE: 'Szwecja', DK: 'Dania',
+  FI: 'Finlandia', NO: 'Norwegia', CH: 'Szwajcaria', GB: 'Wielka Brytania', IE: 'Irlandia',
+  PT: 'Portugalia', GR: 'Grecja', HU: 'Węgry', RO: 'Rumunia', BG: 'Bułgaria', HR: 'Chorwacja',
+  SI: 'Słowenia', LT: 'Litwa', LV: 'Łotwa', EE: 'Estonia', LU: 'Luksemburg', CY: 'Cypr',
+  MT: 'Malta',
+}
+function countryName(code: string) { return COUNTRY_NAMES[code] ?? code }
+
 const CATEGORY_META: Record<string, { label: string; icon: string }> = {
   'komisy':      { label: 'Komisy samochodowe',      icon: 'mdi-car-multiple' },
   'dealerzy':    { label: 'Dealerzy',                icon: 'mdi-car-estate' },
@@ -131,6 +156,7 @@ function pluralFirm(n: number) {
 // State from query
 const q = computed(() => (route.query.q as string) || '')
 const activeCategory = computed(() => (route.query.category as string) || null)
+const activeCountry = computed(() => (route.query.country as string) || null)
 const page = computed(() => Math.max(1, parseInt((route.query.page as string) || '1') || 1))
 const qInput = ref(q.value)
 watch(q, (v) => { qInput.value = v })
@@ -143,23 +169,28 @@ const { data, pending } = await useAsyncData(
     query: {
       q: q.value || undefined,
       category: activeCategory.value || undefined,
+      country: activeCountry.value || undefined,
       page: page.value,
       pageSize: PAGE_SIZE,
     },
   }),
-  { watch: [q, activeCategory, page], default: () => ({ items: [], total: 0 }) },
+  { watch: [q, activeCategory, activeCountry, page], default: () => ({ items: [], total: 0 }) },
 )
 
+// Category facets follow the selected country; country facets are global.
 const { data: facetData } = await useAsyncData(
   'directory-facets',
-  () => $fetch<{ categories: Facet[] }>('/api/proxy/api/directory/facets'),
-  { default: () => ({ categories: [] }) },
+  () => $fetch<{ categories: Facet[]; countries: Facet[] }>('/api/proxy/api/directory/facets', {
+    query: { country: activeCountry.value || undefined },
+  }),
+  { watch: [activeCountry], default: () => ({ categories: [], countries: [] }) },
 )
 
 const items = computed(() => data.value?.items ?? [])
 const total = computed(() => data.value?.total ?? 0)
 const totalPages = computed(() => Math.ceil(total.value / PAGE_SIZE))
 const categoryFacets = computed(() => facetData.value?.categories ?? [])
+const countryFacets = computed(() => facetData.value?.countries ?? [])
 const totalAll = computed(() => categoryFacets.value.reduce((s, c) => s + c.count, 0))
 
 function applySearch() {
@@ -167,6 +198,10 @@ function applySearch() {
 }
 function setCategory(cat: string | null) {
   router.push({ query: { ...cleanQuery(), category: cat || undefined, page: undefined } })
+}
+function setCountry(country: string | null) {
+  // Changing country resets the category too (facets are country-scoped).
+  router.push({ query: { ...cleanQuery(), country: country || undefined, category: undefined, page: undefined } })
 }
 function goPage(p: number) {
   router.push({ query: { ...route.query, page: p > 1 ? p : undefined } })

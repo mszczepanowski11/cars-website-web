@@ -142,6 +142,8 @@
           <input v-model="form.email" class="dr-input" />
           <label>Strona WWW</label>
           <input v-model="form.website" class="dr-input" />
+          <label>Opis (o firmie)</label>
+          <textarea v-model="form.description" class="dr-input" rows="3"></textarea>
           <label>Status</label>
           <select v-model="form.status" class="dr-input">
             <option value="active">Zweryfikowana (active)</option>
@@ -224,10 +226,10 @@ const editingIsNew = ref(false)
 const saving = ref(false)
 const form = reactive({
   name: '', category: 'firmy', countryCode: 'PL', city: '', address: '',
-  postalCode: '', phone: '', email: '', website: '', status: 'active',
+  postalCode: '', phone: '', email: '', website: '', description: '', status: 'active',
 })
 function resetForm() {
-  Object.assign(form, { name: '', category: 'firmy', countryCode: 'PL', city: '', address: '', postalCode: '', phone: '', email: '', website: '', status: 'active' })
+  Object.assign(form, { name: '', category: 'firmy', countryCode: 'PL', city: '', address: '', postalCode: '', phone: '', email: '', website: '', description: '', status: 'active' })
 }
 function openCreate() { resetForm(); editingIsNew.value = true; editing.value = {} as DirCompany }
 async function openEdit(co: DirCompany) {
@@ -239,7 +241,8 @@ async function openEdit(co: DirCompany) {
     Object.assign(form, {
       name: d.name ?? '', category: d.category ?? 'firmy', countryCode: d.countryCode ?? '',
       city: d.city ?? '', address: d.address ?? '', postalCode: d.postalCode ?? '',
-      phone: d.phone ?? '', email: d.email ?? '', website: d.website ?? '', status: d.status ?? 'active',
+      phone: d.phone ?? '', email: d.email ?? '', website: d.website ?? '',
+      description: d.description ?? '', status: d.status ?? 'active',
     })
   } catch { /* keep whatever the list gave us */ }
 }
