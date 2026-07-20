@@ -11,6 +11,8 @@
 
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import type * as L from 'leaflet'
 
 interface MapPoint {
@@ -24,8 +26,9 @@ const mapContainer = ref<HTMLElement | null>(null)
 const loading = ref(true)
 const points = ref<MapPoint[]>([])
 let mapInstance: L.Map | null = null
+// markercluster augments L.LayerGroup; a plain LayerGroup type is enough here.
 let markerLayer: L.LayerGroup | null = null
-let Lref: typeof L | null = null
+let Lref: any = null
 
 async function fetchPoints() {
   loading.value = true
@@ -40,7 +43,11 @@ async function fetchPoints() {
 function renderMarkers() {
   if (!Lref || !mapInstance) return
   markerLayer?.remove()
-  markerLayer = Lref.layerGroup().addTo(mapInstance)
+  // Cluster nearby markers so hundreds of companies stay readable; falls back to a plain
+  // layer group if the plugin somehow isn't loaded.
+  markerLayer = (typeof Lref.markerClusterGroup === 'function'
+    ? Lref.markerClusterGroup({ maxClusterRadius: 50, showCoverageOnHover: false })
+    : Lref.layerGroup()).addTo(mapInstance)
   if (points.value.length === 0) return
 
   const bounds: [number, number][] = []
@@ -68,7 +75,11 @@ function escapeHtml(s: string) {
 }
 
 onMounted(async () => {
-  Lref = await import('leaflet')
+  const leaflet = await import('leaflet')
+  // Use the default export: the markercluster plugin augments THAT object at runtime, and the
+  // ESM namespace's re-exported bindings don't reflect a prop added after import.
+  Lref = (leaflet as any).default ?? leaflet
+  await import('leaflet.markercluster')
   await fetchPoints()
   await nextTick()
   if (!mapContainer.value) return
