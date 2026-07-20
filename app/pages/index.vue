@@ -322,10 +322,10 @@
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
-                        <div class="sec-eyebrow">PEŁNA OFERTA</div>
-                        <h2>Ogłoszenia z każdej kategorii</h2>
+                        <div class="sec-eyebrow">{{ $t('home.everyCategory.eyebrow') }}</div>
+                        <h2>{{ $t('home.everyCategory.title') }}</h2>
                     </div>
-                    <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                    <NuxtLink to="/adverts" class="see-all">{{ $t('home.everyCategory.seeAll') }} <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
 
                 <template v-if="catShowcaseLoading">

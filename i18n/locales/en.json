@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "listings": "Listings",
+    "categories": "Categories",
+    "companies": "Companies",
+    "events": "Events",
+    "forDealers": "For dealers",
+    "about": "About",
+    "contact": "Contact",
+    "allCategories": "All categories",
+    "login": "Sign in",
+    "dashboard": "Dashboard",
+    "addAdvert": "Post a listing",
+    "favorites": "Favorites",
+    "messages": "Messages",
+    "backToPanel": "Back to dashboard"
+  },
+  "home": {
+    "everyCategory": {
+      "eyebrow": "FULL OFFER",
+      "title": "Listings from every category",
+      "seeAll": "See all",
+      "seeAllInCategory": "See all"
+    }
+  },
+  "common": {
+    "search": "Search",
+    "seeAll": "See all",
+    "loading": "Loading…",
+    "language": "Language"
+  }
+}

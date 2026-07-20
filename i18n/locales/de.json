@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "listings": "Angebote",
+    "categories": "Kategorien",
+    "companies": "Firmen",
+    "events": "Veranstaltungen",
+    "forDealers": "Für Händler",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "allCategories": "Alle Kategorien",
+    "login": "Anmelden",
+    "dashboard": "Konto",
+    "addAdvert": "Anzeige aufgeben",
+    "favorites": "Favoriten",
+    "messages": "Nachrichten",
+    "backToPanel": "Zurück zum Konto"
+  },
+  "home": {
+    "everyCategory": {
+      "eyebrow": "GESAMTES ANGEBOT",
+      "title": "Anzeigen aus allen Kategorien",
+      "seeAll": "Alle ansehen",
+      "seeAllInCategory": "Alle ansehen"
+    }
+  },
+  "common": {
+    "search": "Suchen",
+    "seeAll": "Alle ansehen",
+    "loading": "Wird geladen…",
+    "language": "Sprache"
+  }
+}

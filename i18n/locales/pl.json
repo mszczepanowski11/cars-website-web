@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "listings": "Ogłoszenia",
+    "categories": "Kategorie",
+    "companies": "Firmy",
+    "events": "Wydarzenia",
+    "forDealers": "Dla dealerów",
+    "about": "O nas",
+    "contact": "Kontakt",
+    "allCategories": "Wszystkie kategorie",
+    "login": "Zaloguj",
+    "dashboard": "Panel",
+    "addAdvert": "Dodaj ogłoszenie",
+    "favorites": "Ulubione",
+    "messages": "Wiadomości",
+    "backToPanel": "Wróć do panelu"
+  },
+  "home": {
+    "everyCategory": {
+      "eyebrow": "PEŁNA OFERTA",
+      "title": "Ogłoszenia z każdej kategorii",
+      "seeAll": "Wszystkie",
+      "seeAllInCategory": "Zobacz wszystkie"
+    }
+  },
+  "common": {
+    "search": "Szukaj",
+    "seeAll": "Zobacz wszystkie",
+    "loading": "Ładowanie…",
+    "language": "Język"
+  }
+}
