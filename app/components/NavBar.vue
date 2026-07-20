@@ -153,6 +153,7 @@ watch(mobileOpen, (open) => {
                         </NuxtLink>
                     </div>
                 </div>
+                <NuxtLink to="/firmy">Firmy</NuxtLink>
                 <NuxtLink to="/wydarzenia">Wydarzenia</NuxtLink>
                 <NuxtLink to="/pakiety">Dla dealerów</NuxtLink>
                 <NuxtLink to="/o-nas">O nas</NuxtLink>
@@ -241,6 +242,10 @@ watch(mobileOpen, (open) => {
                         </div>
                     </transition>
 
+                    <NuxtLink to="/firmy" class="drawer-link" @click="closeMobile">
+                        <v-icon icon="mdi-domain" size="18" />
+                        Firmy
+                    </NuxtLink>
                     <NuxtLink to="/wydarzenia" class="drawer-link" @click="closeMobile">
                         <v-icon icon="mdi-calendar-star" size="18" />
                         Wydarzenia
