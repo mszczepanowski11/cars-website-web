@@ -33,6 +33,12 @@ const categoriesOpen = ref(false)
 const mobileOpen = ref(false)
 const mobileCatsOpen = ref(false)
 
+// i18n: locale-aware links (localePath), language switch (switchLocalePath) and the current locale.
+const { locale, locales } = useI18n()
+const localePath = useLocalePath()
+const switchLocalePath = useSwitchLocalePath()
+const langOpen = ref(false)
+
 function toggleCategories() {
     categoriesOpen.value = !categoriesOpen.value
 }
@@ -127,37 +133,56 @@ watch(mobileOpen, (open) => {
             </NuxtLink>
 
             <nav class="nav-links">
-                <NuxtLink to="/adverts">Ogłoszenia</NuxtLink>
+                <NuxtLink :to="localePath('/adverts')">{{ $t('nav.listings') }}</NuxtLink>
                 <div class="nav-dropdown">
                     <button
                         class="nav-dropdown-trigger"
                         aria-haspopup="true"
                         :aria-expanded="categoriesOpen"
-                        aria-label="Kategorie pojazdów"
+                        :aria-label="$t('nav.categories')"
                         @click="toggleCategories"
                     >
-                        Kategorie
+                        {{ $t('nav.categories') }}
                         <v-icon icon="mdi-chevron-down" size="16" :class="{ rotated: categoriesOpen }" />
                     </button>
-                    <div v-show="categoriesOpen" class="nav-dropdown-menu" role="menu" aria-label="Kategorie pojazdów">
+                    <div v-show="categoriesOpen" class="nav-dropdown-menu" role="menu" :aria-label="$t('nav.categories')">
                         <NuxtLink v-for="c in categories" :key="c.id"
-                            :to="`/adverts?categoryId=${c.id}`" class="dropdown-item"
+                            :to="localePath(`/adverts?categoryId=${c.id}`)" class="dropdown-item"
                             role="menuitem"
                             @click="closeCategories">
                             <v-icon :icon="c.icon" size="16" />
                             {{ c.label }}
                         </NuxtLink>
-                        <NuxtLink to="/adverts" class="dropdown-item dropdown-all" role="menuitem" @click="closeCategories">
-                            Wszystkie kategorie
+                        <NuxtLink :to="localePath('/adverts')" class="dropdown-item dropdown-all" role="menuitem" @click="closeCategories">
+                            {{ $t('nav.allCategories') }}
                             <v-icon icon="mdi-arrow-right" size="14" />
                         </NuxtLink>
                     </div>
                 </div>
-                <NuxtLink to="/wydarzenia">Wydarzenia</NuxtLink>
-                <NuxtLink to="/pakiety">Dla dealerów</NuxtLink>
-                <NuxtLink to="/o-nas">O nas</NuxtLink>
-                <NuxtLink to="/kontakt">Kontakt</NuxtLink>
+                <NuxtLink :to="localePath('/firmy')">{{ $t('nav.companies') }}</NuxtLink>
+                <NuxtLink :to="localePath('/wydarzenia')">{{ $t('nav.events') }}</NuxtLink>
+                <NuxtLink :to="localePath('/pakiety')">{{ $t('nav.forDealers') }}</NuxtLink>
+                <NuxtLink :to="localePath('/o-nas')">{{ $t('nav.about') }}</NuxtLink>
+                <NuxtLink :to="localePath('/kontakt')">{{ $t('nav.contact') }}</NuxtLink>
             </nav>
+
+            <!-- Language switcher -->
+            <div class="nav-lang">
+                <button class="nav-lang-btn" :aria-label="$t('common.language')" @click="langOpen = !langOpen">
+                    <v-icon icon="mdi-translate" size="18" />
+                    <span>{{ locale.toUpperCase() }}</span>
+                    <v-icon icon="mdi-chevron-down" size="14" :class="{ rotated: langOpen }" />
+                </button>
+                <div v-show="langOpen" class="nav-lang-menu" role="menu">
+                    <NuxtLink
+                        v-for="l in locales" :key="l.code"
+                        :to="switchLocalePath(l.code)" class="nav-lang-item"
+                        :class="{ active: l.code === locale }" role="menuitem"
+                        @click="langOpen = false">
+                        {{ l.name }}
+                    </NuxtLink>
+                </div>
+            </div>
 
             <div class="nav-btns">
                 <NuxtLink v-if="isLoggedIn" to="/favorites" class="nav-icon-btn" title="Ulubione">
@@ -241,6 +266,10 @@ watch(mobileOpen, (open) => {
                         </div>
                     </transition>
 
+                    <NuxtLink to="/firmy" class="drawer-link" @click="closeMobile">
+                        <v-icon icon="mdi-domain" size="18" />
+                        Firmy
+                    </NuxtLink>
                     <NuxtLink to="/wydarzenia" class="drawer-link" @click="closeMobile">
                         <v-icon icon="mdi-calendar-star" size="18" />
                         Wydarzenia
@@ -404,6 +433,23 @@ watch(mobileOpen, (open) => {
     color: $red;
     justify-content: space-between;
     &:hover { color: $red; }
+}
+
+.nav-lang { position: relative; margin-left: 4px; }
+.nav-lang-btn {
+    display: inline-flex; align-items: center; gap: 5px; background: transparent; border: 1px solid $border;
+    color: $text-muted; border-radius: 8px; padding: 7px 10px; cursor: pointer; font-size: 13px; font-weight: 600;
+    &:hover { border-color: rgba($red, .4); color: $text; }
+    .rotated { transform: rotate(180deg); }
+}
+.nav-lang-menu {
+    position: absolute; top: calc(100% + 6px); right: 0; min-width: 150px; z-index: 60;
+    background: $card; border: 1px solid $border; border-radius: 10px; padding: 6px; box-shadow: 0 12px 30px rgba(0,0,0,.4);
+}
+.nav-lang-item {
+    display: block; text-decoration: none; color: $text-muted; padding: 8px 12px; border-radius: 7px; font-size: 14px;
+    &:hover { background: rgba($red, .1); color: $text; }
+    &.active { color: $red; font-weight: 700; }
 }
 
 .nav-btns { display: flex; gap: 8px; align-items: center; }

@@ -1,0 +1,71 @@
+{
+  "nav": {
+    "listings": "Listings",
+    "categories": "Categories",
+    "companies": "Companies",
+    "events": "Events",
+    "forDealers": "For dealers",
+    "about": "About",
+    "contact": "Contact",
+    "allCategories": "All categories",
+    "login": "Sign in",
+    "dashboard": "Dashboard",
+    "addAdvert": "Post a listing",
+    "favorites": "Favorites",
+    "messages": "Messages",
+    "backToPanel": "Back to dashboard"
+  },
+  "home": {
+    "everyCategory": {
+      "eyebrow": "FULL OFFER",
+      "title": "Listings from every category",
+      "seeAll": "See all",
+      "seeAllInCategory": "See all"
+    },
+    "premiumEyebrow": "PREMIUM COLLECTION",
+    "premiumTitle": "Premium package",
+    "featuredLabel": "FEATURED",
+    "featuredTitle": "Recommended offers",
+    "popularEyebrow": "MOST VIEWED",
+    "popularTitle": "Popular listings",
+    "whyEyebrow": "WHY",
+    "whySub": "We combine the best technology with a passion for cars",
+    "eventsTitle": "Upcoming",
+    "eventsTitleAccent": "events",
+    "recentEyebrow": "NEW LISTINGS",
+    "recentTitle": "Recently added",
+    "newsletterTitle": "Stay up to date"
+  },
+  "common": {
+    "search": "Search",
+    "seeAll": "See all",
+    "loading": "Loading…",
+    "language": "Language"
+  },
+  "footer": {
+    "tagline": "A modern automotive platform for people who love cars.",
+    "company": "Company",
+    "about": "About",
+    "contact": "Contact",
+    "howItWorks": "How it works",
+    "help": "Help & FAQ",
+    "forSellers": "For sellers",
+    "addAdvert": "Post a listing",
+    "pricing": "Pricing",
+    "premium": "Premium packages",
+    "forDealers": "For dealers",
+    "b2bTerms": "B2B Terms",
+    "safety": "Safety",
+    "terms": "Terms",
+    "privacy": "Privacy policy",
+    "cookies": "Cookie policy",
+    "report": "Report abuse",
+    "newsTitle": "Stay up to date",
+    "newsSub": "The best deals straight to your inbox",
+    "emailPlaceholder": "Your email address",
+    "subscribe": "Subscribe",
+    "newsOk": "Check your inbox and confirm — the link is valid for 24h.",
+    "rights": "All rights reserved.",
+    "credit": "Made with passion for cars."
+  }
+}

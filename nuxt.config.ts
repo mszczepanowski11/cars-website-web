@@ -4,8 +4,30 @@ const scss = (file: string) =>
   fileURLToPath(new URL(`./app/assets/scss/${file}`, import.meta.url)).replace(/\\/g, '/')
 
 export default defineNuxtConfig({
-  modules: ['vuetify-nuxt-module', '@nuxt/image'],
+  modules: ['vuetify-nuxt-module', '@nuxt/image', '@nuxtjs/i18n'],
   compatibilityDate: '2025-07-15',
+
+  // Multilingual + global SEO. Polish stays unprefixed (carizo.eu/...) so every existing URL keeps
+  // working; other languages get a prefix (carizo.eu/en/..., carizo.eu/de/...). baseUrl makes the
+  // module emit hreflang alternate links automatically for every localized route.
+  i18n: {
+    strategy: 'prefix_except_default',
+    defaultLocale: 'pl',
+    lazy: true,
+    langDir: 'locales',
+    locales: [
+      { code: 'pl', language: 'pl-PL', name: 'Polski', file: 'pl.json' },
+      { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+      { code: 'de', language: 'de-DE', name: 'Deutsch', file: 'de.json' },
+    ],
+    baseUrl: process.env.NUXT_PUBLIC_SITE_URL ?? 'https://carizo.eu',
+    // Auto-detection OFF: the unprefixed URL (carizo.eu/) is always Polish, /en and /de are the
+    // other languages. Predictable canonical URLs, no surprise redirect that would flip the
+    // default page to the visitor's browser language. Manual switch via the navbar; can be
+    // enabled later once per-language content is complete.
+    detectBrowserLanguage: false,
+    bundle: { optimizeTranslationDirective: false },
+  },
 
   image: {
     // Our own image proxy (server/routes/img/) already resolves local uploads and Cloudinary

@@ -1,11 +1,18 @@
 <script setup lang="ts">
 const { compared } = useCompare()
 
-useHead({
+// Emits <html lang>, canonical and hreflang alternate links for every locale on every page -
+// this is what makes the multilingual pages correctly discoverable worldwide in search engines.
+const head = useLocaleHead()
+
+useHead(() => ({
+  htmlAttrs: { lang: head.value.htmlAttrs?.lang },
+  link: head.value.link,
+  meta: head.value.meta,
   bodyAttrs: {
-    class: computed(() => compared.value.length > 0 ? 'has-compare-panel' : ''),
+    class: computed(() => compared.value.length > 0 ? 'has-compare-panel' : '').value,
   },
-})
+}))
 </script>
 
 <template>

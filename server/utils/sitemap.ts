@@ -3,6 +3,28 @@ export interface SitemapUrl {
     lastmod?: string
     priority: string
     changefreq: string
+    // Per-language alternate versions (paths; the renderer prefixes the site URL). Present only on
+    // pages that actually have translated chrome - user-generated advert pages stay single-language.
+    alternates?: { hreflang: string; loc: string }[]
+}
+
+// Languages that have prefixed routes (see nuxt.config i18n). Polish is the default (no prefix).
+const SITEMAP_LOCALES = [
+    { prefix: '', hreflang: 'pl' },
+    { prefix: '/en', hreflang: 'en' },
+    { prefix: '/de', hreflang: 'de' },
+]
+
+// Turns one path into one <url> per language, each carrying the full hreflang alternate set
+// (+ x-default → the Polish version). This is what tells Google the pages are translations of
+// each other so it surfaces the right language per market.
+function localizedRoutes(path: string, priority: string, changefreq: string, lastmod?: string): SitemapUrl[] {
+    const withPrefix = (prefix: string) => (path === '/' ? (prefix || '/') : `${prefix}${path}`)
+    const alternates = [
+        ...SITEMAP_LOCALES.map(l => ({ hreflang: l.hreflang, loc: withPrefix(l.prefix) })),
+        { hreflang: 'x-default', loc: withPrefix('') },
+    ]
+    return SITEMAP_LOCALES.map(l => ({ loc: withPrefix(l.prefix), priority, changefreq, lastmod, alternates }))
 }
 
 // Sitemap protocol caps a single file at 50,000 URLs; 45,000 leaves headroom. Above that this
@@ -17,13 +39,15 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
     const apiBase = (config.public.apiBase as string).replace(/\/$/, '')
     const now = new Date().toISOString().split('T')[0]
 
+    // Static pages have translated chrome, so each gets pl/en/de versions with hreflang alternates.
     const staticRoutes: SitemapUrl[] = [
-        { loc: '/', priority: '1.0', changefreq: 'daily', lastmod: now },
-        { loc: '/adverts', priority: '0.9', changefreq: 'hourly', lastmod: now },
-        { loc: '/wydarzenia', priority: '0.8', changefreq: 'daily', lastmod: now },
-        { loc: '/categories', priority: '0.7', changefreq: 'weekly', lastmod: now },
-        { loc: '/pakiety', priority: '0.6', changefreq: 'monthly', lastmod: now },
-        { loc: '/jak-to-dziala', priority: '0.5', changefreq: 'monthly', lastmod: now },
+        ...localizedRoutes('/', '1.0', 'daily', now),
+        ...localizedRoutes('/adverts', '0.9', 'hourly', now),
+        ...localizedRoutes('/firmy', '0.8', 'daily', now),
+        ...localizedRoutes('/wydarzenia', '0.8', 'daily', now),
+        ...localizedRoutes('/categories', '0.7', 'weekly', now),
+        ...localizedRoutes('/pakiety', '0.6', 'monthly', now),
+        ...localizedRoutes('/jak-to-dziala', '0.5', 'monthly', now),
         { loc: '/regulamin', priority: '0.3', changefreq: 'monthly', lastmod: now },
         { loc: '/regulamin-b2b', priority: '0.3', changefreq: 'monthly', lastmod: now },
         { loc: '/polityka-prywatnosci', priority: '0.3', changefreq: 'monthly', lastmod: now },
@@ -94,13 +118,14 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
     return [...staticRoutes, ...dynamicUrls]
 }
 
-export function renderUrlset(urls: SitemapUrl[]): string {
+// siteUrl prefixes the alternate paths (loc is already absolute by the time it reaches here).
+export function renderUrlset(urls: SitemapUrl[], siteUrl = ''): string {
     return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${urls.map(u => `  <url>
     <loc>${u.loc}</loc>${u.lastmod ? `\n    <lastmod>${u.lastmod}</lastmod>` : ''}
     <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>
+    <priority>${u.priority}</priority>${(u.alternates ?? []).map(a => `\n    <xhtml:link rel="alternate" hreflang="${a.hreflang}" href="${siteUrl}${a.loc}"/>`).join('')}
   </url>`).join('\n')}
 </urlset>`
 }

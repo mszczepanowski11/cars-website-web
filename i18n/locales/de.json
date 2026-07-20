@@ -1,0 +1,71 @@
+{
+  "nav": {
+    "listings": "Angebote",
+    "categories": "Kategorien",
+    "companies": "Firmen",
+    "events": "Veranstaltungen",
+    "forDealers": "Für Händler",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "allCategories": "Alle Kategorien",
+    "login": "Anmelden",
+    "dashboard": "Konto",
+    "addAdvert": "Anzeige aufgeben",
+    "favorites": "Favoriten",
+    "messages": "Nachrichten",
+    "backToPanel": "Zurück zum Konto"
+  },
+  "home": {
+    "everyCategory": {
+      "eyebrow": "GESAMTES ANGEBOT",
+      "title": "Anzeigen aus allen Kategorien",
+      "seeAll": "Alle ansehen",
+      "seeAllInCategory": "Alle ansehen"
+    },
+    "premiumEyebrow": "PREMIUM COLLECTION",
+    "premiumTitle": "Premium-Paket",
+    "featuredLabel": "HERVORGEHOBEN",
+    "featuredTitle": "Empfohlene Angebote",
+    "popularEyebrow": "AM MEISTEN ANGESEHEN",
+    "popularTitle": "Beliebte Anzeigen",
+    "whyEyebrow": "WARUM",
+    "whySub": "Wir verbinden beste Technologie mit Leidenschaft für Autos",
+    "eventsTitle": "Kommende",
+    "eventsTitleAccent": "Veranstaltungen",
+    "recentEyebrow": "NEUE ANZEIGEN",
+    "recentTitle": "Kürzlich hinzugefügt",
+    "newsletterTitle": "Bleiben Sie auf dem Laufenden"
+  },
+  "common": {
+    "search": "Suchen",
+    "seeAll": "Alle ansehen",
+    "loading": "Wird geladen…",
+    "language": "Sprache"
+  },
+  "footer": {
+    "tagline": "Eine moderne Automotive-Plattform für Menschen, die Autos lieben.",
+    "company": "Unternehmen",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "howItWorks": "So funktioniert's",
+    "help": "Hilfe & FAQ",
+    "forSellers": "Für Verkäufer",
+    "addAdvert": "Anzeige aufgeben",
+    "pricing": "Preise",
+    "premium": "Premium-Pakete",
+    "forDealers": "Für Händler",
+    "b2bTerms": "B2B-AGB",
+    "safety": "Sicherheit",
+    "terms": "AGB",
+    "privacy": "Datenschutz",
+    "cookies": "Cookie-Richtlinie",
+    "report": "Missbrauch melden",
+    "newsTitle": "Bleiben Sie auf dem Laufenden",
+    "newsSub": "Die besten Angebote direkt in Ihr Postfach",
+    "emailPlaceholder": "Ihre E-Mail-Adresse",
+    "subscribe": "Abonnieren",
+    "newsOk": "Prüfen Sie Ihr Postfach und bestätigen Sie — der Link ist 24 Std. gültig.",
+    "rights": "Alle Rechte vorbehalten.",
+    "credit": "Mit Leidenschaft für Autos erstellt."
+  }
+}

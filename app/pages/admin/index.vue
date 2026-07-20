@@ -48,6 +48,10 @@
                     <v-icon icon="mdi-handshake-outline" size="17" />
                     Partnerzy API
                 </NuxtLink>
+                <NuxtLink to="/admin/directory" class="nav-item" :class="{ active: route.path === '/admin/directory' }">
+                    <v-icon icon="mdi-domain" size="17" />
+                    Katalog firm
+                </NuxtLink>
                 <NuxtLink to="/admin/quality-report" class="nav-item" :class="{ active: route.path === '/admin/quality-report' }">
                     <v-icon icon="mdi-database-check-outline" size="17" />
                     Jakość danych

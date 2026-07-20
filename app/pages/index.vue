@@ -258,8 +258,8 @@
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
-                        <div class="sec-eyebrow">PREMIUM COLLECTION</div>
-                        <h2>Pakiet premium</h2>
+                        <div class="sec-eyebrow">{{ $t('home.premiumEyebrow') }}</div>
+                        <h2>{{ $t('home.premiumTitle') }}</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
@@ -281,9 +281,9 @@
                     <div class="sec-top-left">
                         <span class="premium-label">
                             <v-icon icon="mdi-crown" size="14" />
-                            WYRÓŻNIONE
+                            {{ $t('home.featuredLabel') }}
                         </span>
-                        <h2>Polecane oferty</h2>
+                        <h2>{{ $t('home.featuredTitle') }}</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Zobacz wszystkie
@@ -301,8 +301,8 @@
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
-                        <div class="sec-eyebrow">NAJCZĘŚCIEJ OGLĄDANE</div>
-                        <h2>Popularne ogłoszenia</h2>
+                        <div class="sec-eyebrow">{{ $t('home.popularEyebrow') }}</div>
+                        <h2>{{ $t('home.popularTitle') }}</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
@@ -317,13 +317,51 @@
             </div>
         </section>
 
+        <!-- ─── Browse by category (listings from EVERY category) ──────── -->
+        <section v-if="catShowcaseLoading || categoryShowcase.length" class="section cat-showcase-section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">{{ $t('home.everyCategory.eyebrow') }}</div>
+                        <h2>{{ $t('home.everyCategory.title') }}</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">{{ $t('home.everyCategory.seeAll') }} <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                </div>
+
+                <template v-if="catShowcaseLoading">
+                    <div v-for="n in 3" :key="n" class="cat-row">
+                        <div class="cat-row-head"><div class="cat-row-title-sk" /></div>
+                        <div class="cars-grid cars-grid--small">
+                            <AdvertCardSkeleton v-for="m in 4" :key="m" />
+                        </div>
+                    </div>
+                </template>
+
+                <div v-for="group in categoryShowcase" v-else :key="group.category.id" class="cat-row">
+                    <div class="cat-row-head">
+                        <NuxtLink :to="`/adverts?categoryId=${group.category.id}`" class="cat-row-title">
+                            <span class="cat-row-icon"><v-icon :icon="group.category.iconName || 'mdi-tag'" size="18" /></span>
+                            {{ group.category.name }}
+                            <span v-if="group.total" class="cat-row-count">{{ group.total.toLocaleString('pl') }}</span>
+                        </NuxtLink>
+                        <NuxtLink :to="`/adverts?categoryId=${group.category.id}`" class="cat-row-all">
+                            Zobacz wszystkie <v-icon icon="mdi-arrow-right" size="14" />
+                        </NuxtLink>
+                    </div>
+                    <div class="cars-grid cars-grid--small">
+                        <AdvertCard v-for="a in group.items" :key="a.id" :advert="a" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ─── Why CARIZO ───────────────────────────────────────────── -->
         <section class="section why-section">
             <div class="container">
                 <div class="why-header">
-                    <div class="why-eyebrow">DLACZEGO</div>
+                    <div class="why-eyebrow">{{ $t('home.whyEyebrow') }}</div>
                     <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" loading="lazy" />
-                    <p class="why-sub">Łączymy najlepszą technologię z pasją do motoryzacji</p>
+                    <p class="why-sub">{{ $t('home.whySub') }}</p>
                 </div>
                 <div class="why-grid">
                     <div v-for="f in feats" :key="f.title" class="why-card">
@@ -424,7 +462,7 @@
         <section v-if="events.length" class="section events-section">
             <div class="container">
                 <div class="sec-top">
-                    <h2>Nadchodzące <span>wydarzenia</span></h2>
+                    <h2>{{ $t('home.eventsTitle') }} <span>{{ $t('home.eventsTitleAccent') }}</span></h2>
                     <NuxtLink to="/wydarzenia" class="see-all">
                         Zobacz wszystkie
                         <v-icon icon="mdi-arrow-right" size="16" />
@@ -505,8 +543,8 @@
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
-                        <div class="sec-eyebrow">NOWE OGŁOSZENIA</div>
-                        <h2>Ostatnio dodane</h2>
+                        <div class="sec-eyebrow">{{ $t('home.recentEyebrow') }}</div>
+                        <h2>{{ $t('home.recentTitle') }}</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Wszystkie ogłoszenia
@@ -664,6 +702,10 @@ const topAdverts = ref<CarAdvert[]>([])
 const recentlyAdded = ref<CarAdvert[]>([])
 const mostViewed = ref<CarAdvert[]>([])
 const premiumCollection = ref<CarAdvert[]>([])
+// Newest listings grouped per category - the homepage now surfaces every category, not just cars.
+interface CategoryShowcaseGroup { category: CategoryWithCount; items: CarAdvert[]; total: number }
+const categoryShowcase = ref<CategoryShowcaseGroup[]>([])
+const catShowcaseLoading = ref(false)
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
@@ -1158,6 +1200,29 @@ if (import.meta.client) {
         }
         clientDataLoading.value = false
     })
+
+    // Per-category showcase: newest listings for every category that has any. Client-side and
+    // lazy so it never blocks SSR; each category is one small search, run in parallel.
+    loadCategoryShowcase()
+}
+
+async function loadCategoryShowcase() {
+    catShowcaseLoading.value = true
+    try {
+        const cats = (homeCategories.value ?? []).filter(c => c.slug !== 'inne')
+        const results = await Promise.allSettled(
+            cats.map(c => $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
+                method: 'POST',
+                body: { page: 1, pageSize: 4, sortBy: '', categoryId: c.id },
+            }).then(r => ({ category: c, items: r.items ?? [], total: r.totalCount ?? (r as any).total ?? 0 })))
+        )
+        categoryShowcase.value = results
+            .filter((r): r is PromiseFulfilledResult<CategoryShowcaseGroup> => r.status === 'fulfilled' && r.value.items.length > 0)
+            .map(r => r.value)
+            // Busiest categories first so the strongest content leads.
+            .sort((a, b) => b.total - a.total)
+    } catch { categoryShowcase.value = [] }
+    finally { catShowcaseLoading.value = false }
 }
 
 onMounted(async () => {
@@ -2176,6 +2241,41 @@ onMounted(async () => {
     }
 }
 
+
+// ─── Category showcase (listings from every category) ──────────────────────────
+
+.cat-showcase-section {
+    .cat-row { margin-bottom: 40px; &:last-child { margin-bottom: 0; } }
+}
+.cat-row-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid $border;
+}
+.cat-row-title {
+    display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+    color: $text; font-size: 19px; font-weight: 800; letter-spacing: -0.01em;
+    &:hover { color: $red; }
+    &:hover .cat-row-icon { border-color: $red; color: $red; }
+}
+.cat-row-icon {
+    display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px;
+    background: rgba($red, 0.1); border: 1px solid rgba($red, 0.25); color: $red; transition: all .2s;
+}
+.cat-row-count {
+    font-size: 12px; font-weight: 600; color: $text-muted; background: $card;
+    border: 1px solid $border; padding: 2px 9px; border-radius: 20px;
+}
+.cat-row-all {
+    display: inline-flex; align-items: center; gap: 4px; text-decoration: none; flex-shrink: 0;
+    color: $text-muted; font-size: 13px; font-weight: 600;
+    &:hover { color: $red; }
+}
+.cat-row-title-sk {
+    width: 200px; height: 24px; border-radius: 6px;
+    background: linear-gradient(90deg, $card 25%, lighten($card, 4%) 50%, $card 75%);
+    background-size: 200% 100%; animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
 
 // ─── Premium label ────────────────────────────────────────────────────────────
 

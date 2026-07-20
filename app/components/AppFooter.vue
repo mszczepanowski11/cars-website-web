@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const year = new Date().getFullYear()
 const config = useRuntimeConfig()
+const localePath = useLocalePath()
 
 const social = {
     tiktok:    (config.public as any).socialTiktok    || null,
@@ -46,7 +47,7 @@ async function subscribeNewsletter() {
 
         <div class="footer-brand">
           <img src="/carizo-logo.svg" alt="CARIZO" class="footer-logo" loading="lazy" />
-          <p class="footer-desc">Nowoczesna platforma motoryzacyjna dla ludzi, którzy kochają samochody.</p>
+          <p class="footer-desc">{{ $t('footer.tagline') }}</p>
           <div class="footer-social">
             <a v-if="social.tiktok" :href="social.tiktok" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na TikTok"><v-icon icon="mdi-music-note" size="18" /></a>
             <a v-if="social.instagram" :href="social.instagram" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="CARIZO na Instagram"><v-icon icon="mdi-instagram" size="18" /></a>
@@ -56,28 +57,28 @@ async function subscribeNewsletter() {
         </div>
 
         <div class="footer-col">
-          <h4>Firma</h4>
-          <NuxtLink to="/o-nas">O nas</NuxtLink>
-          <NuxtLink to="/kontakt">Kontakt</NuxtLink>
-          <NuxtLink to="/jak-to-dziala">Jak to działa</NuxtLink>
-          <NuxtLink to="/pomoc">Pomoc i FAQ</NuxtLink>
+          <h4>{{ $t('footer.company') }}</h4>
+          <NuxtLink :to="localePath('/o-nas')">{{ $t('footer.about') }}</NuxtLink>
+          <NuxtLink :to="localePath('/kontakt')">{{ $t('footer.contact') }}</NuxtLink>
+          <NuxtLink :to="localePath('/jak-to-dziala')">{{ $t('footer.howItWorks') }}</NuxtLink>
+          <NuxtLink :to="localePath('/pomoc')">{{ $t('footer.help') }}</NuxtLink>
         </div>
 
         <div class="footer-col">
-          <h4>Dla sprzedających</h4>
-          <NuxtLink to="/add-advert">Dodaj ogłoszenie</NuxtLink>
-          <NuxtLink to="/cennik">Cennik</NuxtLink>
-          <NuxtLink to="/promote">Pakiety Premium</NuxtLink>
-          <NuxtLink to="/pakiety">Dla dealerów</NuxtLink>
-          <NuxtLink to="/regulamin-b2b">Regulamin B2B</NuxtLink>
+          <h4>{{ $t('footer.forSellers') }}</h4>
+          <NuxtLink :to="localePath('/add-advert')">{{ $t('footer.addAdvert') }}</NuxtLink>
+          <NuxtLink :to="localePath('/cennik')">{{ $t('footer.pricing') }}</NuxtLink>
+          <NuxtLink :to="localePath('/promote')">{{ $t('footer.premium') }}</NuxtLink>
+          <NuxtLink :to="localePath('/pakiety')">{{ $t('footer.forDealers') }}</NuxtLink>
+          <NuxtLink :to="localePath('/regulamin-b2b')">{{ $t('footer.b2bTerms') }}</NuxtLink>
         </div>
 
         <div class="footer-col">
-          <h4>Bezpieczeństwo</h4>
-          <NuxtLink to="/regulamin">Regulamin</NuxtLink>
-          <NuxtLink to="/polityka-prywatnosci">Polityka prywatności</NuxtLink>
-          <button class="footer-cookie-btn" @click="openCookieSettings">Polityka cookies</button>
-          <a href="mailto:kontakt@carizo.eu?subject=Zg%C5%82oszenie%20naruszenia">Zgłoś naruszenie</a>
+          <h4>{{ $t('footer.safety') }}</h4>
+          <NuxtLink :to="localePath('/regulamin')">{{ $t('footer.terms') }}</NuxtLink>
+          <NuxtLink :to="localePath('/polityka-prywatnosci')">{{ $t('footer.privacy') }}</NuxtLink>
+          <button class="footer-cookie-btn" @click="openCookieSettings">{{ $t('footer.cookies') }}</button>
+          <a href="mailto:kontakt@carizo.eu?subject=Zg%C5%82oszenie%20naruszenia">{{ $t('footer.report') }}</a>
         </div>
 
       </div>
@@ -89,8 +90,8 @@ async function subscribeNewsletter() {
         <div class="fn-text">
           <v-icon icon="mdi-email-fast-outline" size="20" class="fn-icon" />
           <div>
-            <div class="fn-title">Bądź na bieżąco</div>
-            <div class="fn-sub">Najlepsze oferty prosto na Twój e-mail</div>
+            <div class="fn-title">{{ $t('footer.newsTitle') }}</div>
+            <div class="fn-sub">{{ $t('footer.newsSub') }}</div>
           </div>
         </div>
         <template v-if="!newsletterOk">
@@ -99,27 +100,27 @@ async function subscribeNewsletter() {
               v-model="newsletterEmail"
               class="fn-input"
               type="email"
-              placeholder="Twój adres e-mail"
+              :placeholder="$t('footer.emailPlaceholder')"
               @keyup.enter="subscribeNewsletter"
             />
             <button class="fn-btn" :disabled="newsletterLoading" @click="subscribeNewsletter">
               <v-icon v-if="newsletterLoading" icon="mdi-loading" size="15" class="spin" />
-              <span v-else>Zapisz się</span>
+              <span v-else>{{ $t('footer.subscribe') }}</span>
             </button>
           </div>
           <p v-if="newsletterErr" class="fn-err">{{ newsletterErr }}</p>
         </template>
         <div v-else class="fn-ok">
           <v-icon icon="mdi-email-check-outline" size="18" />
-          Sprawdź skrzynkę email i potwierdź zapis — link ważny 24h.
+          {{ $t('footer.newsOk') }}
         </div>
       </div>
     </div>
 
     <div class="footer-bottom">
       <div class="footer-bottom-inner">
-        <span>© {{ year }} CARIZO. Wszelkie prawa zastrzeżone.</span>
-        <span class="footer-credit">Stworzone z pasją do motoryzacji.</span>
+        <span>© {{ year }} CARIZO. {{ $t('footer.rights') }}</span>
+        <span class="footer-credit">{{ $t('footer.credit') }}</span>
       </div>
     </div>
   </footer>
