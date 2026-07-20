@@ -21,7 +21,7 @@
         <!-- Page title when no category -->
         <div v-else class="page-header">
             <div class="container">
-                <h1 class="page-title">Wszystkie ogłoszenia</h1>
+                <h1 class="page-title">{{ $t('adverts.title') }}</h1>
                 <p class="page-sub">{{ total.toLocaleString('pl') }} ogłoszeń czeka na Ciebie</p>
             </div>
         </div>
@@ -35,7 +35,7 @@
                     <div class="fp-primary">
                         <!-- Category -->
                         <div class="fp-field">
-                            <label class="fp-label">Kategoria</label>
+                            <label class="fp-label">{{ $t('adverts.category') }}</label>
                             <div class="fp-select-wrap">
                                 <v-icon icon="mdi-tag-multiple-outline" size="14" class="fp-field-icon" />
                                 <select v-model="f.categoryId" class="fp-select" @change="onCategoryChange">
@@ -49,7 +49,7 @@
 
                         <!-- Brand -->
                         <div class="fp-field">
-                            <label class="fp-label">Marka</label>
+                            <label class="fp-label">{{ $t('adverts.brand') }}</label>
                             <div class="fp-select-wrap">
                                 <v-icon icon="mdi-car-outline" size="14" class="fp-field-icon" />
                                 <select v-model="f.brandId" class="fp-select" @change="onBrandChange">
@@ -63,11 +63,11 @@
 
                         <!-- Model -->
                         <div class="fp-field">
-                            <label class="fp-label">Model</label>
+                            <label class="fp-label">{{ $t('adverts.model') }}</label>
                             <div class="fp-select-wrap">
                                 <v-icon icon="mdi-car-settings" size="14" class="fp-field-icon" />
                                 <select v-model="f.modelId" class="fp-select" :disabled="!f.brandId">
-                                    <option :value="null">Wszystkie modele</option>
+                                    <option :value="null">{{ $t('adverts.allModels') }}</option>
                                     <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
                                 </select>
                             </div>
@@ -77,7 +77,7 @@
 
                         <!-- Price range -->
                         <div class="fp-field fp-field--range">
-                            <label class="fp-label">Cena (zł)</label>
+                            <label class="fp-label">{{ $t('adverts.price') }}</label>
                             <div class="fp-range">
                                 <input v-model.number="f.priceFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
                                 <span class="fp-range-sep">–</span>
@@ -89,17 +89,17 @@
 
                         <!-- Location -->
                         <div class="fp-field">
-                            <label class="fp-label">Lokalizacja</label>
+                            <label class="fp-label">{{ $t('adverts.location') }}</label>
                             <div class="fp-input-wrap">
                                 <v-icon icon="mdi-map-marker-outline" size="14" class="fp-field-icon" />
-                                <input v-model="f.locationCity" type="text" class="fp-text-input" placeholder="Miasto lub region" />
+                                <input v-model="f.locationCity" type="text" class="fp-text-input" :placeholder="$t('adverts.locationPlaceholder')" />
                             </div>
                         </div>
 
                         <!-- Search button -->
                         <button class="fp-search-btn" @click="load(1)">
                             <v-icon icon="mdi-magnify" size="17" />
-                            Szukaj
+                            {{ $t('adverts.searchBtn') }}
                             <span v-if="total > 0" class="fp-btn-count">{{ total.toLocaleString('pl') }}</span>
                         </button>
                     </div>
@@ -111,7 +111,7 @@
                             <input
                                 v-model="f.textSearch"
                                 class="fp-keyword-input"
-                                placeholder="Słowo kluczowe, wyposażenie, opis..."
+                                :placeholder="$t('adverts.keywordPlaceholder')"
                                 autocomplete="off"
                                 aria-label="Szukaj po słowie kluczowym"
                                 role="combobox"
@@ -152,7 +152,7 @@
                                 @click="showMoreFilters = !showMoreFilters"
                             >
                                 <v-icon :icon="showMoreFilters ? 'mdi-chevron-up' : 'mdi-tune-variant'" size="15" />
-                                {{ showMoreFilters ? 'Mniej filtrów' : 'Więcej filtrów' }}
+                                {{ showMoreFilters ? $t('adverts.lessFilters') : $t('adverts.moreFilters') }}
                                 <span v-if="advancedFiltersCount > 0" class="fp-more-count">{{ advancedFiltersCount }}</span>
                             </button>
                         </div>
@@ -578,7 +578,7 @@
             <div class="content">
                 <div class="results-hd">
                     <p class="result-count">
-                        Znaleziono <strong>{{ total.toLocaleString('pl') }}</strong> ogłoszeń
+                        {{ $t('adverts.found') }} <strong>{{ total.toLocaleString(locale) }}</strong> {{ $t('adverts.foundSuffix') }}
                     </p>
                     <div class="sort-wrap">
                         <v-icon icon="mdi-sort" size="16" class="sort-icon" />
@@ -604,18 +604,18 @@
                     </div>
                     <div v-if="!adverts.length" class="no-results">
                         <v-icon icon="mdi-car-off" size="64" class="no-results-icon" />
-                        <p>Nie znaleziono ogłoszeń</p>
-                        <span>Spróbuj innych kryteriów wyszukiwania lub usuń część filtrów</span>
+                        <p>{{ $t('adverts.noResults') }}</p>
+                        <span>{{ $t('adverts.noResultsHint') }}</span>
                         <button v-if="hasActiveFilters" class="clear-filters-btn" @click="clearFilters">
                             <v-icon icon="mdi-filter-remove-outline" size="15" />
-                            Wyczyść filtry
+                            {{ $t('adverts.clearFilters') }}
                         </button>
                     </div>
                     <div v-if="page < totalPages" class="load-more-wrap">
                         <button class="load-more-btn" :disabled="loadingMore" @click="loadMore">
                             <v-icon v-if="loadingMore" icon="mdi-loading" size="17" class="spin" />
                             <v-icon v-else icon="mdi-chevron-down" size="17" />
-                            {{ loadingMore ? 'Ładowanie…' : `Załaduj więcej (${total - adverts.length} pozostałych)` }}
+                            {{ loadingMore ? $t('adverts.loading') : `${$t('adverts.loadMore')} (${total - adverts.length})` }}
                         </button>
                     </div>
                     <div v-if="totalPages > 1" class="pagination" role="navigation" aria-label="Paginacja wyników">
@@ -808,15 +808,16 @@ function openQuickView(id: number) { quickViewId.value = id; quickViewOpen.value
 
 const totalPages = computed(() => Math.ceil(frozenTotal.value / pageSize))
 
-const sortOptions = [
-    { label: 'Najnowsze',       value: '' },
-    { label: 'Polecane',        value: 'featured' },
-    { label: 'Cena: rosnąco',   value: 'price_asc' },
-    { label: 'Cena: malejąco',  value: 'price_desc' },
-    { label: 'Rok: najnowszy',  value: 'year_desc' },
-    { label: 'Przebieg: mniej', value: 'mileage_asc' },
-    { label: 'Moc: malejąco',  value: 'power_desc' },
-]
+const { t, locale } = useI18n()
+const sortOptions = computed(() => [
+    { label: t('adverts.sortNewest'),    value: '' },
+    { label: t('adverts.sortFeatured'),  value: 'featured' },
+    { label: t('adverts.sortPriceAsc'),  value: 'price_asc' },
+    { label: t('adverts.sortPriceDesc'), value: 'price_desc' },
+    { label: t('adverts.sortYearDesc'),  value: 'year_desc' },
+    { label: t('adverts.sortMileageAsc'),value: 'mileage_asc' },
+    { label: t('adverts.sortPowerDesc'), value: 'power_desc' },
+])
 
 const activeCategory = computed(() =>
     f.categoryId ? (categories.value.find(c => c.id === f.categoryId) ?? null) : null
