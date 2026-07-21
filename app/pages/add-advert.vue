@@ -2985,8 +2985,17 @@ const attributeValues = reactive<Record<number, AttrValue | null>>({})
 async function loadAttributeDefinitions(categoryId: number | null = form.categoryId, subtypeId: number | null = form.vehicleSubtypeId) {
     if (!categoryId) { attributeDefinitions.value = []; return }
     try {
+        // Pass the whole selected chain so the "inteligentny formularz" returns vehicle-specific
+        // fields (e.g. BMW → xDrive/Head-Up Display) on top of the category/subtype-wide ones.
         attributeDefinitions.value = await $fetch<AttrDef[]>('/api/proxy/api/Attributes', {
-            query: { categoryId, subtypeId: subtypeId ?? undefined },
+            query: {
+                categoryId,
+                subtypeId: subtypeId ?? undefined,
+                brandId: form.brandId ?? undefined,
+                modelId: form.modelId ?? undefined,
+                generationId: form.generationId ?? undefined,
+                trimId: form.trimId ?? undefined,
+            },
         })
     } catch {
         attributeDefinitions.value = []
@@ -4224,6 +4233,9 @@ function removeCompatibility(idx: number) {
 }
 
 watch(() => form.vehicleSubtypeId, () => { loadAttributeDefinitions() })
+// Re-fetch vehicle-specific attributes whenever the brand/model/generation/version chain changes,
+// so the form live-adapts to the picked vehicle (BMW → xDrive, Golf GTI → DSG, ...).
+watch(() => [form.brandId, form.modelId, form.generationId, form.trimId], () => { loadAttributeDefinitions() })
 
 watch(() => form.engineVersionId, (newId) => {
     if (!newId) { resetEngineLocks(); return }
