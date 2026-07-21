@@ -1,1 +1,150 @@
-{}
+{
+    "cAdvertCard": {
+        "badgeFeatured": "WYRÓŻNIONE",
+        "badgeNew": "NOWE",
+        "quickView": "Szybki podgląd",
+        "addToCompare": "Dodaj do porównania",
+        "removeFromCompare": "Usuń z porównania",
+        "addToFavorites": "Dodaj do ulubionych",
+        "removeFromFavorites": "Usuń z ulubionych",
+        "gearboxAutomatic": "Automat",
+        "gearboxManual": "Manual",
+        "gearboxSemiAuto": "Półautomat",
+        "compatFits": "pasuje do",
+        "compatModelSingular": "modelu",
+        "compatModelPlural": "modeli",
+        "priceNegotiable": "Do negocjacji",
+        "monthlyFrom": "od {rate} zł/mies.",
+        "powerUnit": "KM"
+    },
+    "cAnnounce": {
+        "badgeUpcoming": "NADCHODZI PREMIERA",
+        "badgePremiere": "PREMIERA CARIZO",
+        "textUpcoming": "Wyróżnienia i pakiety za darmo od 4 do 12 lipca!",
+        "textActive": "Wyróżnienia i pakiety za darmo przez czas trwania premiery!",
+        "countdownUpcoming": "Premiera za:",
+        "countdownActive": "Pozostało:",
+        "daySingular": "dzień",
+        "dayPlural": "dni",
+        "hoursShort": "godz.",
+        "minutesShort": "min.",
+        "secondsShort": "sek.",
+        "learnMore": "Dowiedz się więcej",
+        "close": "Zamknij"
+    },
+    "cBilling": {
+        "typePersonal": "Osoba prywatna",
+        "typeBusiness": "Firma / VAT",
+        "firstName": "Imię",
+        "lastName": "Nazwisko",
+        "placeholderFirstName": "Jan",
+        "placeholderLastName": "Kowalski",
+        "companyName": "Nazwa firmy",
+        "placeholderCompany": "Kowalski Sp. z o.o.",
+        "nip": "NIP",
+        "country": "Kraj",
+        "placeholderCountry": "Polska",
+        "addressLabel": "Adres (ulica i numer)",
+        "placeholderStreet": "ul. Marszałkowska 1/2",
+        "postalCode": "Kod pocztowy",
+        "city": "Miasto",
+        "placeholderCity": "Warszawa",
+        "emailLabel": "E-mail do faktury",
+        "note": "Faktura zostanie wygenerowana automatycznie po potwierdzeniu płatności i wysłana na podany adres e-mail.",
+        "required": "Pole wymagane",
+        "invalidEmail": "Nieprawidłowy adres e-mail",
+        "nipLength": "NIP musi mieć 10 cyfr"
+    },
+    "cVerified": {
+        "vinVerified": "VIN zweryfikowany",
+        "phoneNumber": "Numer telefonu",
+        "serviceHistory": "Historia serwisowa",
+        "mileageVerified": "Przebieg zweryfikowany",
+        "sellerVerified": "Sprzedawca zweryfikowany"
+    },
+    "cCompare": {
+        "removeAria": "Usuń #{id} z porównania",
+        "addEmpty": "Dodaj",
+        "compareBtn": "Porównaj ({count})",
+        "clear": "Wyczyść"
+    },
+    "cConversation": {
+        "previewMine": "Ty: ",
+        "startConversation": "Zacznij rozmowę",
+        "timeNow": "teraz",
+        "pin": "Przypnij",
+        "unpin": "Odepnij",
+        "markUnread": "Oznacz jako nieprzeczytane",
+        "archive": "Archiwizuj",
+        "unarchive": "Przywróć"
+    },
+    "cCookie": {
+        "barText": "Używamy plików cookie do analizy ruchu i personalizacji reklam.",
+        "policyLink": "Polityka cookies",
+        "rejectAll": "Odrzuć wszystkie",
+        "settings": "Ustawienia",
+        "acceptAll": "Akceptuj wszystkie",
+        "panelTitle": "Ustawienia plików cookie",
+        "catEssential": "Niezbędne",
+        "alwaysOn": "Zawsze włączone",
+        "catEssentialDesc": "Wymagane do działania serwisu (sesja, autoryzacja, bezpieczeństwo).",
+        "catAnalytics": "Analityczne",
+        "catAnalyticsDesc": "Google Analytics — pomaga nam mierzyć ruch i ulepszać serwis.",
+        "catMarketing": "Marketingowe",
+        "catMarketingDesc": "Google Ads — umożliwiają wyświetlanie spersonalizowanych reklam.",
+        "savePrefs": "Zapisz ustawienia"
+    },
+    "cAttrField": {
+        "selectPlaceholder": "— wybierz —",
+        "filePlaceholder": "Link do pliku (URL)"
+    },
+    "cAttrFilter": {
+        "rangeFrom": "Od",
+        "rangeTo": "Do"
+    },
+    "cFbConsent": {
+        "title": "Tworzymy dla Ciebie konto CARIZO",
+        "body": "Na podstawie Twojego konta Facebook założymy konto CARIZO, korzystając wyłącznie z:",
+        "namePlaceholder": "Twoje imię i nazwisko",
+        "legalPrefix": "Zakładając konto akceptujesz",
+        "linkTerms": "Regulamin",
+        "legalAnd": "i",
+        "linkPrivacy": "Politykę prywatności",
+        "legalSuffix": "Możesz w każdej chwili usunąć te dane — szczegóły w Polityce prywatności.",
+        "cancel": "Anuluj",
+        "creating": "Tworzenie konta...",
+        "createAccount": "Utwórz konto"
+    },
+    "cQuickView": {
+        "dialogLabel": "Szybki podgląd ogłoszenia",
+        "closeAria": "Zamknij podgląd",
+        "loadingAria": "Ładowanie ogłoszenia",
+        "badgeFeatured": "WYRÓŻNIONE",
+        "badgeNew": "NOWE",
+        "powerUnit": "KM",
+        "viewAdvert": "Zobacz ogłoszenie"
+    },
+    "cReport": {
+        "titleAdvert": "Zgłoś ogłoszenie",
+        "titleUser": "Zgłoś użytkownika",
+        "close": "Zamknij",
+        "reasonLabel": "Powód zgłoszenia",
+        "descLabel": "Opis (opcjonalnie)",
+        "descPlaceholder": "Opisz problem dokładniej...",
+        "successMsg": "Zgłoszenie zostało wysłane. Dziękujemy!",
+        "cancel": "Anuluj",
+        "submit": "Wyślij zgłoszenie",
+        "reasonFraud": "Oszustwo",
+        "reasonFalseData": "Fałszywe dane",
+        "reasonInvalidVin": "Nieprawidłowy VIN",
+        "reasonDuplicate": "Duplikat ogłoszenia",
+        "reasonInappropriate": "Nieodpowiednia treść",
+        "reasonSpam": "Spam",
+        "reasonOther": "Inne"
+    },
+    "cSmartSelect": {
+        "placeholderDefault": "Wybierz",
+        "searchPlaceholder": "Szukaj {hint}...",
+        "noResults": "Brak wyników dla „{query}\""
+    }
+}

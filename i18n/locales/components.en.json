@@ -1,1 +1,150 @@
-{}
+{
+    "cAdvertCard": {
+        "badgeFeatured": "FEATURED",
+        "badgeNew": "NEW",
+        "quickView": "Quick view",
+        "addToCompare": "Add to comparison",
+        "removeFromCompare": "Remove from comparison",
+        "addToFavorites": "Add to favorites",
+        "removeFromFavorites": "Remove from favorites",
+        "gearboxAutomatic": "Automatic",
+        "gearboxManual": "Manual",
+        "gearboxSemiAuto": "Semi-automatic",
+        "compatFits": "fits",
+        "compatModelSingular": "model",
+        "compatModelPlural": "models",
+        "priceNegotiable": "Negotiable",
+        "monthlyFrom": "from {rate} zł/mo.",
+        "powerUnit": "HP"
+    },
+    "cAnnounce": {
+        "badgeUpcoming": "PREMIERE COMING",
+        "badgePremiere": "CARIZO PREMIERE",
+        "textUpcoming": "Featured listings and packages free from July 4 to 12!",
+        "textActive": "Featured listings and packages free throughout the premiere!",
+        "countdownUpcoming": "Premiere in:",
+        "countdownActive": "Remaining:",
+        "daySingular": "day",
+        "dayPlural": "days",
+        "hoursShort": "h",
+        "minutesShort": "min",
+        "secondsShort": "s",
+        "learnMore": "Learn more",
+        "close": "Close"
+    },
+    "cBilling": {
+        "typePersonal": "Private individual",
+        "typeBusiness": "Company / VAT",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "placeholderFirstName": "John",
+        "placeholderLastName": "Smith",
+        "companyName": "Company name",
+        "placeholderCompany": "Smith Ltd.",
+        "nip": "Tax ID (NIP)",
+        "country": "Country",
+        "placeholderCountry": "Poland",
+        "addressLabel": "Address (street and number)",
+        "placeholderStreet": "123 Main St.",
+        "postalCode": "Postal code",
+        "city": "City",
+        "placeholderCity": "Warsaw",
+        "emailLabel": "E-mail for invoice",
+        "note": "The invoice will be generated automatically after payment confirmation and sent to the provided e-mail address.",
+        "required": "Required field",
+        "invalidEmail": "Invalid e-mail address",
+        "nipLength": "NIP must have 10 digits"
+    },
+    "cVerified": {
+        "vinVerified": "VIN verified",
+        "phoneNumber": "Phone number",
+        "serviceHistory": "Service history",
+        "mileageVerified": "Mileage verified",
+        "sellerVerified": "Seller verified"
+    },
+    "cCompare": {
+        "removeAria": "Remove #{id} from comparison",
+        "addEmpty": "Add",
+        "compareBtn": "Compare ({count})",
+        "clear": "Clear"
+    },
+    "cConversation": {
+        "previewMine": "You: ",
+        "startConversation": "Start a conversation",
+        "timeNow": "now",
+        "pin": "Pin",
+        "unpin": "Unpin",
+        "markUnread": "Mark as unread",
+        "archive": "Archive",
+        "unarchive": "Restore"
+    },
+    "cCookie": {
+        "barText": "We use cookies to analyze traffic and personalize ads.",
+        "policyLink": "Cookie policy",
+        "rejectAll": "Reject all",
+        "settings": "Settings",
+        "acceptAll": "Accept all",
+        "panelTitle": "Cookie settings",
+        "catEssential": "Essential",
+        "alwaysOn": "Always on",
+        "catEssentialDesc": "Required for the site to function (session, authorization, security).",
+        "catAnalytics": "Analytics",
+        "catAnalyticsDesc": "Google Analytics — helps us measure traffic and improve the site.",
+        "catMarketing": "Marketing",
+        "catMarketingDesc": "Google Ads — enable displaying personalized ads.",
+        "savePrefs": "Save settings"
+    },
+    "cAttrField": {
+        "selectPlaceholder": "— select —",
+        "filePlaceholder": "File link (URL)"
+    },
+    "cAttrFilter": {
+        "rangeFrom": "From",
+        "rangeTo": "To"
+    },
+    "cFbConsent": {
+        "title": "We're creating a CARIZO account for you",
+        "body": "Based on your Facebook account, we'll create a CARIZO account using only:",
+        "namePlaceholder": "Your first and last name",
+        "legalPrefix": "By creating an account you accept the",
+        "linkTerms": "Terms of Service",
+        "legalAnd": "and",
+        "linkPrivacy": "Privacy Policy",
+        "legalSuffix": "You can delete this data at any time — details in the Privacy Policy.",
+        "cancel": "Cancel",
+        "creating": "Creating account...",
+        "createAccount": "Create account"
+    },
+    "cQuickView": {
+        "dialogLabel": "Listing quick view",
+        "closeAria": "Close preview",
+        "loadingAria": "Loading listing",
+        "badgeFeatured": "FEATURED",
+        "badgeNew": "NEW",
+        "powerUnit": "HP",
+        "viewAdvert": "View listing"
+    },
+    "cReport": {
+        "titleAdvert": "Report listing",
+        "titleUser": "Report user",
+        "close": "Close",
+        "reasonLabel": "Reason for report",
+        "descLabel": "Description (optional)",
+        "descPlaceholder": "Describe the problem in more detail...",
+        "successMsg": "The report has been sent. Thank you!",
+        "cancel": "Cancel",
+        "submit": "Send report",
+        "reasonFraud": "Fraud",
+        "reasonFalseData": "False data",
+        "reasonInvalidVin": "Invalid VIN",
+        "reasonDuplicate": "Duplicate listing",
+        "reasonInappropriate": "Inappropriate content",
+        "reasonSpam": "Spam",
+        "reasonOther": "Other"
+    },
+    "cSmartSelect": {
+        "placeholderDefault": "Select",
+        "searchPlaceholder": "Search {hint}...",
+        "noResults": "No results for „{query}\""
+    }
+}

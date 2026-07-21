@@ -2,12 +2,12 @@
     <div class="auth-bg">
         <div class="auth-card">
             <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
-            <h2>Zaloguj się</h2>
-            <p class="auth-sub">Witaj ponownie w CARIZO</p>
+            <h2>{{ $t('login.heading') }}</h2>
+            <p class="auth-sub">{{ $t('login.subtitle') }}</p>
 
             <form class="auth-form" @submit.prevent="submit">
                 <div class="auth-field">
-                    <label for="login-email" class="auth-label">Adres email</label>
+                    <label for="login-email" class="auth-label">{{ $t('login.emailLabel') }}</label>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--focus': emailFocused }">
                         <v-icon icon="mdi-email-outline" size="17" class="auth-field-icon" />
                         <input
@@ -15,7 +15,7 @@
                             v-model="email"
                             type="email"
                             class="auth-input"
-                            placeholder="np. jan@kowalski.pl"
+                            :placeholder="$t('login.emailPlaceholder')"
                             required
                             autocomplete="email"
                             @focus="emailFocused = true"
@@ -26,8 +26,8 @@
 
                 <div class="auth-field">
                     <div class="auth-label-row">
-                        <label for="login-password" class="auth-label">Hasło</label>
-                        <NuxtLink to="/forgot-password" class="auth-forgot">Zapomniałem hasła</NuxtLink>
+                        <label for="login-password" class="auth-label">{{ $t('login.passwordLabel') }}</label>
+                        <NuxtLink to="/forgot-password" class="auth-forgot">{{ $t('login.forgot') }}</NuxtLink>
                     </div>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--focus': passwordFocused }">
                         <v-icon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
@@ -42,7 +42,7 @@
                             @focus="passwordFocused = true"
                             @blur="passwordFocused = false"
                         />
-                        <button type="button" class="auth-eye" :aria-label="showPassword ? 'Ukryj hasło' : 'Pokaż hasło'" @click="showPassword = !showPassword">
+                        <button type="button" class="auth-eye" :aria-label="showPassword ? $t('login.hidePassword') : $t('login.showPassword')" @click="showPassword = !showPassword">
                             <v-icon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
                         </button>
                     </div>
@@ -52,7 +52,7 @@
                     <v-icon icon="mdi-alert-circle-outline" size="15" />
                     {{ error }}
                     <NuxtLink v-if="unverifiedEmail" :to="`/register`" class="verify-hint">
-                        Zarejestruj ponownie lub sprawdź skrzynkę email
+                        {{ $t('login.verifyHint') }}
                     </NuxtLink>
                 </div>
 
@@ -65,11 +65,11 @@
 
                 <button type="submit" class="auth-btn" :disabled="loading">
                     <v-icon v-if="loading" icon="mdi-loading" size="18" class="spin" />
-                    <span>{{ loading ? 'Logowanie...' : 'Zaloguj się' }}</span>
+                    <span>{{ loading ? $t('login.loggingIn') : $t('login.submit') }}</span>
                 </button>
             </form>
 
-            <div class="auth-divider"><span>lub</span></div>
+            <div class="auth-divider"><span>{{ $t('login.divider') }}</span></div>
 
             <div v-if="googleClientId" ref="googleBtnRef" class="google-btn-wrap"></div>
 
@@ -77,12 +77,12 @@
                 <svg class="fb-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
-                <span>{{ fbLoading ? 'Logowanie...' : 'Kontynuuj z Facebook' }}</span>
+                <span>{{ fbLoading ? $t('login.loggingIn') : $t('login.fbContinue') }}</span>
             </button>
 
-            <p v-if="facebookAppId" class="fb-disclosure">Logując się przez Facebook, akceptujesz nasz <NuxtLink to="/regulamin" class="fb-disclosure-link">Regulamin</NuxtLink> i <NuxtLink to="/polityka-prywatnosci" class="fb-disclosure-link">Politykę prywatności</NuxtLink>. Nowe konto zakładamy dopiero po Twoim potwierdzeniu.</p>
+            <p v-if="facebookAppId" class="fb-disclosure">{{ $t('login.fbDisclosurePre') }}<NuxtLink to="/regulamin" class="fb-disclosure-link">{{ $t('login.fbDisclosureTerms') }}</NuxtLink>{{ $t('login.fbDisclosureAnd') }}<NuxtLink to="/polityka-prywatnosci" class="fb-disclosure-link">{{ $t('login.fbDisclosurePrivacy') }}</NuxtLink>{{ $t('login.fbDisclosurePost') }}</p>
 
-            <p class="auth-link">Nie masz konto? <NuxtLink to="/register">Zarejestruj się bezpłatnie</NuxtLink></p>
+            <p class="auth-link">{{ $t('login.noAccount') }} <NuxtLink to="/register">{{ $t('login.registerFree') }}</NuxtLink></p>
         </div>
 
         <FacebookConsentModal
@@ -97,7 +97,8 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Zaloguj się — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: t('login.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 const { login, loginWithGoogle, loginWithFacebook, loading, error, pendingFacebookConsent, confirmFacebookConsent, cancelFacebookConsent } = useAuth()
 const runtimeConfig = useRuntimeConfig()

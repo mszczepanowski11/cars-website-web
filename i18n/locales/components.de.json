@@ -1,1 +1,150 @@
-{}
+{
+    "cAdvertCard": {
+        "badgeFeatured": "HERVORGEHOBEN",
+        "badgeNew": "NEU",
+        "quickView": "Schnellansicht",
+        "addToCompare": "Zum Vergleich hinzufügen",
+        "removeFromCompare": "Aus Vergleich entfernen",
+        "addToFavorites": "Zu Favoriten hinzufügen",
+        "removeFromFavorites": "Aus Favoriten entfernen",
+        "gearboxAutomatic": "Automatik",
+        "gearboxManual": "Schaltgetriebe",
+        "gearboxSemiAuto": "Halbautomatik",
+        "compatFits": "passt zu",
+        "compatModelSingular": "Modell",
+        "compatModelPlural": "Modelle",
+        "priceNegotiable": "Verhandelbar",
+        "monthlyFrom": "ab {rate} zł/Mon.",
+        "powerUnit": "PS"
+    },
+    "cAnnounce": {
+        "badgeUpcoming": "PREMIERE KOMMT",
+        "badgePremiere": "CARIZO-PREMIERE",
+        "textUpcoming": "Hervorhebungen und Pakete kostenlos vom 4. bis 12. Juli!",
+        "textActive": "Hervorhebungen und Pakete kostenlos während der Premiere!",
+        "countdownUpcoming": "Premiere in:",
+        "countdownActive": "Verbleibend:",
+        "daySingular": "Tag",
+        "dayPlural": "Tage",
+        "hoursShort": "Std.",
+        "minutesShort": "Min.",
+        "secondsShort": "Sek.",
+        "learnMore": "Mehr erfahren",
+        "close": "Schließen"
+    },
+    "cBilling": {
+        "typePersonal": "Privatperson",
+        "typeBusiness": "Firma / USt.",
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "placeholderFirstName": "Max",
+        "placeholderLastName": "Mustermann",
+        "companyName": "Firmenname",
+        "placeholderCompany": "Mustermann GmbH",
+        "nip": "Steuernummer (NIP)",
+        "country": "Land",
+        "placeholderCountry": "Polen",
+        "addressLabel": "Adresse (Straße und Nummer)",
+        "placeholderStreet": "Musterstraße 1/2",
+        "postalCode": "Postleitzahl",
+        "city": "Stadt",
+        "placeholderCity": "Warschau",
+        "emailLabel": "E-Mail für Rechnung",
+        "note": "Die Rechnung wird nach Zahlungsbestätigung automatisch erstellt und an die angegebene E-Mail-Adresse gesendet.",
+        "required": "Pflichtfeld",
+        "invalidEmail": "Ungültige E-Mail-Adresse",
+        "nipLength": "NIP muss 10 Ziffern haben"
+    },
+    "cVerified": {
+        "vinVerified": "VIN verifiziert",
+        "phoneNumber": "Telefonnummer",
+        "serviceHistory": "Servicehistorie",
+        "mileageVerified": "Kilometerstand verifiziert",
+        "sellerVerified": "Verkäufer verifiziert"
+    },
+    "cCompare": {
+        "removeAria": "#{id} aus Vergleich entfernen",
+        "addEmpty": "Hinzufügen",
+        "compareBtn": "Vergleichen ({count})",
+        "clear": "Löschen"
+    },
+    "cConversation": {
+        "previewMine": "Du: ",
+        "startConversation": "Gespräch beginnen",
+        "timeNow": "jetzt",
+        "pin": "Anheften",
+        "unpin": "Lösen",
+        "markUnread": "Als ungelesen markieren",
+        "archive": "Archivieren",
+        "unarchive": "Wiederherstellen"
+    },
+    "cCookie": {
+        "barText": "Wir verwenden Cookies zur Analyse des Datenverkehrs und zur Personalisierung von Anzeigen.",
+        "policyLink": "Cookie-Richtlinie",
+        "rejectAll": "Alle ablehnen",
+        "settings": "Einstellungen",
+        "acceptAll": "Alle akzeptieren",
+        "panelTitle": "Cookie-Einstellungen",
+        "catEssential": "Notwendig",
+        "alwaysOn": "Immer aktiv",
+        "catEssentialDesc": "Erforderlich für den Betrieb der Website (Sitzung, Autorisierung, Sicherheit).",
+        "catAnalytics": "Analyse",
+        "catAnalyticsDesc": "Google Analytics — hilft uns, den Datenverkehr zu messen und die Website zu verbessern.",
+        "catMarketing": "Marketing",
+        "catMarketingDesc": "Google Ads — ermöglichen die Anzeige personalisierter Werbung.",
+        "savePrefs": "Einstellungen speichern"
+    },
+    "cAttrField": {
+        "selectPlaceholder": "— auswählen —",
+        "filePlaceholder": "Datei-Link (URL)"
+    },
+    "cAttrFilter": {
+        "rangeFrom": "Von",
+        "rangeTo": "Bis"
+    },
+    "cFbConsent": {
+        "title": "Wir erstellen ein CARIZO-Konto für Sie",
+        "body": "Auf Basis Ihres Facebook-Kontos erstellen wir ein CARIZO-Konto und verwenden ausschließlich:",
+        "namePlaceholder": "Ihr Vor- und Nachname",
+        "legalPrefix": "Mit der Kontoerstellung akzeptieren Sie die",
+        "linkTerms": "AGB",
+        "legalAnd": "und",
+        "linkPrivacy": "Datenschutzerklärung",
+        "legalSuffix": "Sie können diese Daten jederzeit löschen — Details in der Datenschutzerklärung.",
+        "cancel": "Abbrechen",
+        "creating": "Konto wird erstellt...",
+        "createAccount": "Konto erstellen"
+    },
+    "cQuickView": {
+        "dialogLabel": "Anzeigen-Schnellansicht",
+        "closeAria": "Vorschau schließen",
+        "loadingAria": "Anzeige wird geladen",
+        "badgeFeatured": "HERVORGEHOBEN",
+        "badgeNew": "NEU",
+        "powerUnit": "PS",
+        "viewAdvert": "Anzeige ansehen"
+    },
+    "cReport": {
+        "titleAdvert": "Anzeige melden",
+        "titleUser": "Nutzer melden",
+        "close": "Schließen",
+        "reasonLabel": "Grund der Meldung",
+        "descLabel": "Beschreibung (optional)",
+        "descPlaceholder": "Beschreiben Sie das Problem genauer...",
+        "successMsg": "Die Meldung wurde gesendet. Vielen Dank!",
+        "cancel": "Abbrechen",
+        "submit": "Meldung senden",
+        "reasonFraud": "Betrug",
+        "reasonFalseData": "Falsche Daten",
+        "reasonInvalidVin": "Ungültige VIN",
+        "reasonDuplicate": "Doppelte Anzeige",
+        "reasonInappropriate": "Unangemessener Inhalt",
+        "reasonSpam": "Spam",
+        "reasonOther": "Sonstiges"
+    },
+    "cSmartSelect": {
+        "placeholderDefault": "Auswählen",
+        "searchPlaceholder": "Suche {hint}...",
+        "noResults": "Keine Ergebnisse für „{query}\""
+    }
+}

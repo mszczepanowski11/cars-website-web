@@ -8,23 +8,23 @@
                 <div class="reg-success-icon email-icon">
                     <v-icon icon="mdi-email-check-outline" size="44" />
                 </div>
-                <h2 class="reg-success-title">Sprawdź swoją skrzynkę!</h2>
+                <h2 class="reg-success-title">{{ $t('register.successTitle') }}</h2>
                 <p class="reg-success-desc">
-                    Wysłaliśmy link weryfikacyjny na adres <strong>{{ registeredEmail }}</strong>.<br>
-                    Kliknij w link w e-mailu, aby aktywować konto.
+                    {{ $t('register.successDescBefore') }}<strong>{{ registeredEmail }}</strong>.<br>
+                    {{ $t('register.successDescLine2') }}
                 </p>
                 <div class="reg-success-tip">
                     <v-icon icon="mdi-information-outline" size="15" />
-                    Nie widzisz e-maila? Sprawdź folder spam lub
+                    {{ $t('register.successTipPre') }}
                     <button type="button" class="resend-link" :disabled="resending" @click="resendVerification">
-                        <span v-if="resending">wysyłanie...</span>
-                        <span v-else>wyślij ponownie</span>
+                        <span v-if="resending">{{ $t('register.resending') }}</span>
+                        <span v-else>{{ $t('register.resendLink') }}</span>
                     </button>.
                 </div>
                 <div class="reg-success-actions">
                     <NuxtLink to="/login" class="rsact-btn rsact-btn--primary">
                         <v-icon icon="mdi-login" size="17" />
-                        Przejdź do logowania
+                        {{ $t('register.goToLogin') }}
                     </NuxtLink>
                 </div>
             </div>
@@ -32,8 +32,8 @@
 
         <div v-if="!registrationSuccess" class="auth-card">
             <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
-            <h2>Zarejestruj się</h2>
-            <p class="auth-sub">Dołącz do społeczności CARIZO</p>
+            <h2>{{ $t('register.heading') }}</h2>
+            <p class="auth-sub">{{ $t('register.subtitle') }}</p>
 
             <!-- Account type toggle -->
             <div class="type-toggle">
@@ -44,7 +44,7 @@
                     @click="accountType = 'Personal'; businessSubType = null"
                 >
                     <v-icon icon="mdi-account-outline" size="18" />
-                    Sprzedawca prywatny
+                    {{ $t('register.typePersonal') }}
                 </button>
                 <button
                     type="button"
@@ -53,14 +53,14 @@
                     @click="accountType = 'Business'"
                 >
                     <v-icon icon="mdi-domain" size="18" />
-                    Dealer / Firma
+                    {{ $t('register.typeBusiness') }}
                 </button>
             </div>
 
             <!-- Business sub-type selector -->
             <Transition name="btype-fade">
                 <div v-if="accountType === 'Business'" class="btype-section">
-                    <p class="btype-title">Wybierz typ konta biznesowego</p>
+                    <p class="btype-title">{{ $t('register.businessTitle') }}</p>
                     <div class="btype-cards">
                         <button
                             v-for="bt in businessTypes"
@@ -92,20 +92,20 @@
                 <!-- Business fields -->
                 <template v-if="accountType === 'Business'">
                     <div class="auth-field">
-                        <label for="reg-company" class="auth-label">Nazwa firmy <span class="req">*</span></label>
+                        <label for="reg-company" class="auth-label">{{ $t('register.companyLabel') }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
                             <v-icon icon="mdi-domain" size="17" class="auth-field-icon" />
-                            <input id="reg-company" v-model="companyName" class="auth-input" placeholder="np. Auto Salon Kowalski" required />
+                            <input id="reg-company" v-model="companyName" class="auth-input" :placeholder="$t('register.companyPlaceholder')" required />
                         </div>
                     </div>
                     <div class="auth-field">
-                        <label for="reg-nip" class="auth-label">NIP <span class="req">*</span></label>
+                        <label for="reg-nip" class="auth-label">{{ $t('register.nipLabel') }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
                             <v-icon icon="mdi-card-account-details-outline" size="17" class="auth-field-icon" />
                             <input id="reg-nip" v-model="nip" class="auth-input" inputmode="numeric" pattern="[0-9\-]*" placeholder="123-456-78-90" maxlength="13" required />
                         </div>
                         <div v-if="nip && nip.replace(/\D/g,'').length !== 10" class="auth-hint">
-                            Wymagane 10 cyfr
+                            {{ $t('register.nipDigitsHint') }}
                         </div>
                     </div>
                 </template>
@@ -113,37 +113,37 @@
                 <!-- Name row -->
                 <div class="auth-row">
                     <div class="auth-field">
-                        <label for="reg-name" class="auth-label">{{ accountType === 'Business' ? 'Imię (kontakt)' : 'Imię' }} <span class="req">*</span></label>
+                        <label for="reg-name" class="auth-label">{{ accountType === 'Business' ? $t('register.nameLabelBusiness') : $t('register.nameLabel') }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <input id="reg-name" v-model="name" class="auth-input auth-input--solo" :placeholder="accountType === 'Business' ? 'Jan' : 'Jan'" required autocomplete="given-name" />
+                            <input id="reg-name" v-model="name" class="auth-input auth-input--solo" :placeholder="$t('register.namePlaceholder')" required autocomplete="given-name" />
                         </div>
                     </div>
                     <div class="auth-field">
-                        <label for="reg-surname" class="auth-label">{{ accountType === 'Business' ? 'Nazwisko (kontakt)' : 'Nazwisko' }} <span class="req">*</span></label>
+                        <label for="reg-surname" class="auth-label">{{ accountType === 'Business' ? $t('register.surnameLabelBusiness') : $t('register.surnameLabel') }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <input id="reg-surname" v-model="surname" class="auth-input auth-input--solo" placeholder="Kowalski" required autocomplete="family-name" />
+                            <input id="reg-surname" v-model="surname" class="auth-input auth-input--solo" :placeholder="$t('register.surnamePlaceholder')" required autocomplete="family-name" />
                         </div>
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label for="reg-email" class="auth-label">Adres email <span class="req">*</span></label>
+                    <label for="reg-email" class="auth-label">{{ $t('register.emailLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-email-outline" size="17" class="auth-field-icon" />
-                        <input id="reg-email" v-model="email" type="email" class="auth-input" placeholder="np. jan@kowalski.pl" required autocomplete="email" />
+                        <input id="reg-email" v-model="email" type="email" class="auth-input" :placeholder="$t('register.emailPlaceholder')" required autocomplete="email" />
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label for="reg-phone" class="auth-label">Numer telefonu <span class="req">*</span></label>
+                    <label for="reg-phone" class="auth-label">{{ $t('register.phoneLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-phone-outline" size="17" class="auth-field-icon" />
-                        <input id="reg-phone" v-model="phoneNumber" type="tel" inputmode="tel" pattern="[+0-9\s\-()]*" maxlength="20" class="auth-input" placeholder="+48 600 123 456" required autocomplete="tel" />
+                        <input id="reg-phone" v-model="phoneNumber" type="tel" inputmode="tel" pattern="[+0-9\s\-()]*" maxlength="20" class="auth-input" :placeholder="$t('register.phonePlaceholder')" required autocomplete="tel" />
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label for="reg-password" class="auth-label">Hasło <span class="req">*</span></label>
+                    <label for="reg-password" class="auth-label">{{ $t('register.passwordLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
                         <input
@@ -151,11 +151,11 @@
                             v-model="password"
                             :type="showPassword ? 'text' : 'password'"
                             class="auth-input"
-                            placeholder="Min. 8 znaków"
+                            :placeholder="$t('register.passwordPlaceholder')"
                             required
                             autocomplete="new-password"
                         />
-                        <button type="button" class="auth-eye" :aria-label="showPassword ? 'Ukryj hasło' : 'Pokaż hasło'" @click="showPassword = !showPassword">
+                        <button type="button" class="auth-eye" :aria-label="showPassword ? $t('register.hidePassword') : $t('register.showPassword')" @click="showPassword = !showPassword">
                             <v-icon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
                         </button>
                     </div>
@@ -169,7 +169,7 @@
                 </div>
 
                 <div class="auth-field">
-                    <label for="reg-password-confirm" class="auth-label">Powtórz hasło <span class="req">*</span></label>
+                    <label for="reg-password-confirm" class="auth-label">{{ $t('register.passwordConfirmLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--error': passwordConfirm && password !== passwordConfirm }">
                         <v-icon icon="mdi-lock-check-outline" size="17" class="auth-field-icon" />
                         <input
@@ -183,18 +183,18 @@
                         />
                     </div>
                     <div v-if="passwordConfirm && password !== passwordConfirm" class="auth-hint auth-hint--error">
-                        Hasła nie są identyczne.
+                        {{ $t('register.passwordMismatch') }}
                     </div>
                 </div>
 
                 <div class="auth-field">
-                    <label for="reg-dob" class="auth-label">Data urodzenia <span class="req">*</span></label>
+                    <label for="reg-dob" class="auth-label">{{ $t('register.dobLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap">
                         <v-icon icon="mdi-calendar-outline" size="17" class="auth-field-icon" />
                         <input id="reg-dob" v-model="dateOfBirth" type="date" class="auth-input" :max="maxDob" required />
                     </div>
                     <div v-if="dateOfBirth && !isAdult" class="auth-hint auth-hint--error">
-                        Musisz mieć ukończone 18 lat.
+                        {{ $t('register.ageHint') }}
                     </div>
                 </div>
 
@@ -203,7 +203,7 @@
                     <span class="age-check-box" :class="{ 'age-check-box--checked': termsConfirmed }">
                         <v-icon v-if="termsConfirmed" icon="mdi-check" size="13" />
                     </span>
-                    <span class="age-check-label">Akceptuję <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> oraz <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink> <span class="req">*</span></span>
+                    <span class="age-check-label">{{ $t('register.termsAccept') }}<NuxtLink to="/regulamin" class="cookie-link">{{ $t('register.termsTerms') }}</NuxtLink>{{ $t('register.termsAnd') }}<NuxtLink to="/polityka-prywatnosci" class="cookie-link">{{ $t('register.termsPrivacy') }}</NuxtLink> <span class="req">*</span></span>
                 </label>
 
                 <label class="age-check">
@@ -211,7 +211,7 @@
                     <span class="age-check-box" :class="{ 'age-check-box--checked': gdprConfirmed }">
                         <v-icon v-if="gdprConfirmed" icon="mdi-check" size="13" />
                     </span>
-                    <span class="age-check-label">Wyrażam zgodę na przetwarzanie moich danych osobowych przez CARIZO Wiktor Niezgoda w celu realizacji usług świadczonych drogą elektroniczną, zgodnie z <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Polityką prywatności</NuxtLink> <span class="req">*</span></span>
+                    <span class="age-check-label">{{ $t('register.gdprPre') }}<NuxtLink to="/polityka-prywatnosci" class="cookie-link">{{ $t('register.gdprPrivacy') }}</NuxtLink> <span class="req">*</span></span>
                 </label>
 
                 <label class="age-check">
@@ -219,7 +219,7 @@
                     <span class="age-check-box" :class="{ 'age-check-box--checked': marketingConsent }">
                         <v-icon v-if="marketingConsent" icon="mdi-check" size="13" />
                     </span>
-                    <span class="age-check-label age-check-label--optional">Wyrażam zgodę na otrzymywanie informacji handlowych i ofert specjalnych CARIZO drogą elektroniczną. Zgodę możesz wycofać w każdej chwili. <span class="opt-label">(opcjonalne)</span></span>
+                    <span class="age-check-label age-check-label--optional">{{ $t('register.marketing') }} <span class="opt-label">{{ $t('register.optional') }}</span></span>
                 </label>
 
                 <div v-if="validationError || error" role="alert" class="auth-error">
@@ -236,21 +236,21 @@
 
                 <button type="submit" class="auth-btn" :disabled="loading">
                     <v-icon v-if="loading" icon="mdi-loading" size="18" class="spin" />
-                    <span>{{ loading ? 'Rejestrowanie...' : 'Zarejestruj się' }}</span>
+                    <span>{{ loading ? $t('register.registering') : $t('register.submit') }}</span>
                 </button>
             </form>
 
-            <div class="auth-divider"><span>lub</span></div>
+            <div class="auth-divider"><span>{{ $t('register.divider') }}</span></div>
 
             <button v-if="facebookAppId" class="fb-btn" :disabled="fbLoading" @click="handleFacebookLogin">
                 <svg class="fb-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
-                <span>{{ fbLoading ? 'Logowanie...' : 'Kontynuuj z Facebook' }}</span>
+                <span>{{ fbLoading ? $t('register.loggingIn') : $t('register.fbContinue') }}</span>
             </button>
-            <p v-if="facebookAppId" class="fb-disclosure">Logując się przez Facebook, akceptujesz nasz <NuxtLink to="/regulamin" class="cookie-link">Regulamin</NuxtLink> i <NuxtLink to="/polityka-prywatnosci" class="cookie-link">Politykę prywatności</NuxtLink>. Nowe konto zakładamy dopiero po Twoim potwierdzeniu.</p>
+            <p v-if="facebookAppId" class="fb-disclosure">{{ $t('register.fbDisclosurePre') }}<NuxtLink to="/regulamin" class="cookie-link">{{ $t('register.fbDisclosureTerms') }}</NuxtLink>{{ $t('register.fbDisclosureAnd') }}<NuxtLink to="/polityka-prywatnosci" class="cookie-link">{{ $t('register.fbDisclosurePrivacy') }}</NuxtLink>{{ $t('register.fbDisclosurePost') }}</p>
 
-            <p class="auth-link">Masz już konto? <NuxtLink to="/login">Zaloguj się</NuxtLink></p>
+            <p class="auth-link">{{ $t('register.haveAccount') }} <NuxtLink to="/login">{{ $t('register.login') }}</NuxtLink></p>
         </div>
 
         <FacebookConsentModal
@@ -265,7 +265,8 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Zarejestruj się — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: t('register.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 const { register, loginWithFacebook, loading, error, pendingFacebookConsent, confirmFacebookConsent, cancelFacebookConsent } = useAuth()
 const { success: toastSuccess, error: toastError } = useToast()
