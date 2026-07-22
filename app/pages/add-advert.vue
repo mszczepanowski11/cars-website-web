@@ -2841,28 +2841,29 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     // Wszystkie 4 nie mają hardkodowanych extraFields — ich specyfika (rozmiar opony/felgi, typ
     // akcesorium, typ usługi itd.) przychodzi wyłącznie z AttributeDefinition (Faza 3/5), więc
     // te configi ograniczają się do tego, które z ~90 "twardych" pól CarAdvert w ogóle pokazać.
+    // Opony/Felgi: NIE używają taksonomii pojazdu (marka/model) - to były przerobione pola
+    // "Producent opon"/"Linia produktowa", mylące dla użytkownika. Właściwe pola (rozmiar, sezon,
+    // DOT, ET, PCD, materiał, producent opon/felg...) przychodzą w całości z AttributeDefinition
+    // (renderowane jako "Dodatkowe informacje"). Zostaje tylko cena + opcjonalny "Rodzaj pojazdu"
+    // (do jakiego typu pojazdu pasują), jeśli kategoria ma podtypy.
     'opony': {
-        fields: ['brand', 'model', 'price'],
-        required: ['brand', 'price'],
-        brandLabel: 'Producent opon',
-        modelLabel: 'Linia produktowa',
+        fields: ['price'],
+        required: ['price'],
         detailsStepName: 'Dane opon',
-        detailsStepDesc: 'Producent, rozmiar, sezon',
+        detailsStepDesc: 'Rozmiar, sezon, stan',
         priceHint: 'Rynek: 100 – 5 000 zł za sztukę / komplet',
-        categoryNote: 'Opony do wszystkich typów pojazdów. Wybierz rodzaj pojazdu i uzupełnij rozmiar poniżej.',
+        categoryNote: 'Opony do wszystkich typów pojazdów. Uzupełnij rozmiar i parametry poniżej.',
         showVinSection: false,
         showHistorySection: false,
     },
 
     'felgi': {
-        fields: ['brand', 'model', 'price'],
-        required: ['brand', 'price'],
-        brandLabel: 'Producent felg',
-        modelLabel: 'Linia produktowa',
+        fields: ['price'],
+        required: ['price'],
         detailsStepName: 'Dane felg',
-        detailsStepDesc: 'Producent, rozmiar, rozstaw śrub',
+        detailsStepDesc: 'Rozmiar, rozstaw śrub, materiał',
         priceHint: 'Rynek: 200 – 10 000 zł za sztukę / komplet',
-        categoryNote: 'Felgi do wszystkich typów pojazdów. Wybierz rodzaj pojazdu i uzupełnij rozmiar poniżej.',
+        categoryNote: 'Felgi do wszystkich typów pojazdów. Uzupełnij rozmiar i parametry poniżej.',
         showVinSection: false,
         showHistorySection: false,
     },
