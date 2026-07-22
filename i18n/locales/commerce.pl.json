@@ -156,6 +156,7 @@
     "orderDurationDays": "{days} dni",
     "orderBasePrice": "Cena bazowa",
     "couponPlaceholder": "Kod promocyjny (opcjonalnie)",
+    "couponRemoveAria": "Usuń kod promocyjny",
     "apply": "Zastosuj",
     "couponApplied": "Kupon zastosowany — oszczędzasz {amount} zł",
     "toPay": "Do zapłaty",

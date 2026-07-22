@@ -156,6 +156,7 @@
     "orderDurationDays": "{days} Tage",
     "orderBasePrice": "Grundpreis",
     "couponPlaceholder": "Aktionscode (optional)",
+    "couponRemoveAria": "Aktionscode entfernen",
     "apply": "Anwenden",
     "couponApplied": "Gutschein angewendet — Sie sparen {amount} PLN",
     "toPay": "Zu zahlen",

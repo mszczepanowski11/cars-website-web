@@ -156,6 +156,7 @@
     "orderDurationDays": "{days} days",
     "orderBasePrice": "Base price",
     "couponPlaceholder": "Promo code (optional)",
+    "couponRemoveAria": "Remove promo code",
     "apply": "Apply",
     "couponApplied": "Coupon applied — you save {amount} PLN",
     "toPay": "To pay",

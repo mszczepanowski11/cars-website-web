@@ -4,36 +4,36 @@
         <div class="promo-topbar">
             <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" />
             <div class="promo-steps">
-                <span class="ps done"><v-icon icon="mdi-check" size="14" />Ogłoszenie</span>
+                <span class="ps done"><v-icon icon="mdi-check" size="14" />{{ $t('promoteAdvert.stepAdvert') }}</span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ done: step > 1, active: step === 1 }">
-                    <v-icon :icon="step > 1 ? 'mdi-check' : 'mdi-star-outline'" size="14" />Promocja
+                    <v-icon :icon="step > 1 ? 'mdi-check' : 'mdi-star-outline'" size="14" />{{ $t('promoteAdvert.stepPromo') }}
                 </span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ done: step > 2, active: step === 2 }">
-                    <v-icon :icon="step > 2 ? 'mdi-check' : 'mdi-receipt-outline'" size="14" />Faktura
+                    <v-icon :icon="step > 2 ? 'mdi-check' : 'mdi-receipt-outline'" size="14" />{{ $t('promoteAdvert.stepInvoice') }}
                 </span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ active: step === 3 }">
-                    <v-icon icon="mdi-check-circle-outline" size="14" />Płatność
+                    <v-icon icon="mdi-check-circle-outline" size="14" />{{ $t('promoteAdvert.stepPayment') }}
                 </span>
             </div>
             <button class="skip-link" :disabled="publishing" @click="publishFree">
                 <v-icon v-if="publishing" icon="mdi-loading" size="14" class="spin" />
-                Pomiń i opublikuj bez promocji
+                {{ $t('promoteAdvert.skipPublish') }}
                 <v-icon v-if="!publishing" icon="mdi-arrow-right" size="15" />
             </button>
         </div>
 
         <div class="promo-body">
             <div class="promo-hero">
-                <h1>Wyróżnij swoje ogłoszenie</h1>
-                <p>Wybierz pakiet promocji i sprzedaj szybciej. Możesz też opublikować bez promocji za darmo.</p>
+                <h1>{{ $t('promoteAdvert.heroTitle') }}</h1>
+                <p>{{ $t('promoteAdvert.heroDesc') }}</p>
             </div>
 
             <div v-if="promoActive" class="promo-banner">
                 <v-icon icon="mdi-gift-outline" size="17" />
-                Promocja startowa: wszystkie wyróżnienia są teraz całkowicie darmowe!
+                {{ $t('promoteAdvert.promoBanner') }}
             </div>
 
             <div class="plans-grid">
@@ -41,15 +41,15 @@
                 <div class="plan-card plan-free" :class="{ selected: selected === 'free' }" @click="selected = 'free'">
                     <div class="plan-header">
                         <div class="plan-icon"><v-icon icon="mdi-car-outline" size="26" /></div>
-                        <div class="plan-name">Podstawowe</div>
-                        <div class="plan-badge plan-badge-free">DARMOWE</div>
+                        <div class="plan-name">{{ $t('promoteAdvert.freePlanName') }}</div>
+                        <div class="plan-badge plan-badge-free">{{ $t('promoteAdvert.freeBadge') }}</div>
                     </div>
                     <div class="plan-price">0 zł</div>
-                    <div class="plan-desc">Standardowe ogłoszenie w wynikach wyszukiwania.</div>
+                    <div class="plan-desc">{{ $t('promoteAdvert.freeDesc') }}</div>
                     <ul class="plan-features">
-                        <li><v-icon icon="mdi-check" size="14" />Widoczne w wynikach</li>
-                        <li><v-icon icon="mdi-check" size="14" />90 dni aktywności</li>
-                        <li class="disabled"><v-icon icon="mdi-close" size="14" />Brak wyróżnienia</li>
+                        <li><v-icon icon="mdi-check" size="14" />{{ $t('promoteAdvert.freeFeat1') }}</li>
+                        <li><v-icon icon="mdi-check" size="14" />{{ $t('promoteAdvert.freeFeat2') }}</li>
+                        <li class="disabled"><v-icon icon="mdi-close" size="14" />{{ $t('promoteAdvert.freeFeat3') }}</li>
                     </ul>
                     <div class="plan-sel-indicator" />
                 </div>
@@ -59,19 +59,19 @@
                     class="plan-card"
                     :class="[`plan-${plan.key}`, { selected: selected === plan.key, 'plan-popular': plan.popular }]"
                     @click="selected = plan.key; selectedDays = plan.defaultDays">
-                    <div v-if="plan.popular" class="popular-badge">NAJPOPULARNIEJSZY</div>
+                    <div v-if="plan.popular" class="popular-badge">{{ $t('promoteAdvert.mostPopular') }}</div>
                     <div class="plan-header">
                         <div class="plan-icon"><v-icon :icon="plan.icon" size="26" /></div>
                         <div class="plan-name">{{ plan.name }}</div>
-                        <div v-if="promoActive" class="plan-badge plan-badge-free">ZA DARMO</div>
+                        <div v-if="promoActive" class="plan-badge plan-badge-free">{{ $t('promoteAdvert.forFreeUpper') }}</div>
                     </div>
                     <div class="plan-price">
                         <template v-if="promoActive">
                             <span class="price-original">{{ getPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</span>
-                            <strong>za darmo</strong>
+                            <strong>{{ $t('promoteAdvert.forFreeLower') }}</strong>
                         </template>
                         <template v-else>
-                            od <strong>{{ getPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</strong>
+                            {{ $t('promoteAdvert.priceFrom') }} <strong>{{ getPriceFrom(plan.key, plan.priceFrom).toFixed(2) }} zł</strong>
                         </template>
                     </div>
                     <div class="plan-desc">{{ plan.desc }}</div>
@@ -82,7 +82,7 @@
                         <button v-for="d in plan.days" :key="d"
                             class="day-btn" :class="{ active: selectedDays === d }"
                             @click.stop="selectedDays = d">
-                            {{ d }} dni · <template v-if="promoActive">za darmo</template><template v-else>{{ getDisplayPrice(plan.key, d).toFixed(2) }} zł</template>
+                            {{ $t('promoteAdvert.daysLabel', { days: d }) }} · <template v-if="promoActive">{{ $t('promoteAdvert.forFreeLower') }}</template><template v-else>{{ getDisplayPrice(plan.key, d).toFixed(2) }} zł</template>
                         </button>
                     </div>
                     <div class="plan-sel-indicator" />
@@ -93,43 +93,43 @@
             <div v-if="step === 1" class="promo-footer">
                 <div v-if="selected === 'free'" class="summary-free">
                     <v-icon icon="mdi-check-circle-outline" size="20" class="sf-icon" />
-                    Opublikujesz ogłoszenie bez promocji (darmowe)
+                    {{ $t('promoteAdvert.summaryFreePublish') }}
                 </div>
                 <div v-else class="summary-paid">
-                    <div class="summary-name">{{ selectedPlan?.name }} – {{ selectedDays }} dni</div>
+                    <div class="summary-name">{{ $t('promoteAdvert.summaryPlanDays', { name: selectedPlan?.name, days: selectedDays }) }}</div>
                     <div class="summary-price">
                         <span v-if="promoActive || couponResult?.isValid" class="price-original">{{ selectedPrice?.toFixed(2) }} zł</span>
-                        <span>{{ promoActive ? 'ZA DARMO' : `${finalPrice.toFixed(2)} zł` }}</span>
+                        <span>{{ promoActive ? $t('promoteAdvert.forFreeUpper') : `${finalPrice.toFixed(2)} zł` }}</span>
                     </div>
                     <div v-if="promoActive" class="coupon-applied">
                         <v-icon icon="mdi-gift-outline" size="14" />
-                        Promocja startowa – aktywacja bez opłat
+                        {{ $t('promoteAdvert.promoStartActivation') }}
                     </div>
                     <div v-else-if="couponResult?.isValid" class="coupon-applied">
                         <v-icon icon="mdi-tag-outline" size="14" />
-                        Rabat zastosowany
+                        {{ $t('promoteAdvert.discountApplied') }}
                     </div>
                 </div>
                 <div v-if="selected !== 'free' && !promoActive" class="coupon-row">
                     <div class="coupon-input-wrap">
-                        <input v-model="couponCode" class="coupon-input" placeholder="Kod rabatowy (opcjonalnie)" :disabled="couponLoading" @keyup.enter="applyCoupon" />
+                        <input v-model="couponCode" class="coupon-input" :placeholder="$t('promoteAdvert.couponPlaceholder')" :disabled="couponLoading" @keyup.enter="applyCoupon" />
                         <button class="coupon-btn" :disabled="!couponCode || couponLoading" @click="applyCoupon">
                             <v-icon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
-                            <span v-else>Zastosuj</span>
+                            <span v-else>{{ $t('promoteAdvert.apply') }}</span>
                         </button>
                     </div>
                     <div v-if="couponError" class="coupon-error">{{ couponError }}</div>
                 </div>
                 <div class="footer-actions">
-                    <button class="btn-skip" @click="skipPromotion"><v-icon icon="mdi-arrow-left" size="15" />Wróć</button>
+                    <button class="btn-skip" @click="skipPromotion"><v-icon icon="mdi-arrow-left" size="15" />{{ $t('promoteAdvert.back') }}</button>
                     <button v-if="selected === 'free'" class="btn-publish" :disabled="publishing" @click="publishFree">
                         <v-icon v-if="publishing" icon="mdi-loading" size="16" class="spin" />
                         <v-icon v-else icon="mdi-check" size="16" />
-                        Opublikuj ogłoszenie
+                        {{ $t('promoteAdvert.publishAdvert') }}
                     </button>
                     <button v-else class="btn-pay" @click="goToBilling">
                         <v-icon icon="mdi-receipt-outline" size="16" />
-                        Dane do faktury
+                        {{ $t('promoteAdvert.invoiceData') }}
                         <v-icon icon="mdi-arrow-right" size="15" />
                     </button>
                 </div>
@@ -140,9 +140,9 @@
             <div v-else-if="step === 2" class="billing-step">
                 <h2 class="billing-step-title">
                     <v-icon icon="mdi-receipt-outline" size="20" />
-                    Dane do faktury
+                    {{ $t('promoteAdvert.invoiceData') }}
                 </h2>
-                <p class="billing-step-sub">Faktura zostanie automatycznie wygenerowana i wysłana na podany e-mail po potwierdzeniu płatności.</p>
+                <p class="billing-step-sub">{{ $t('promoteAdvert.invoiceStepSub') }}</p>
 
                 <BillingDataForm
                     v-model="billingData"
@@ -153,39 +153,39 @@
 
                 <div class="billing-order-summary">
                     <div class="bos-row">
-                        <span>Promocja</span>
-                        <span>{{ selectedPlan?.name }} – {{ selectedDays }} dni</span>
+                        <span>{{ $t('promoteAdvert.promoRow') }}</span>
+                        <span>{{ $t('promoteAdvert.summaryPlanDays', { name: selectedPlan?.name, days: selectedDays }) }}</span>
                     </div>
                     <div v-if="promoActive" class="bos-row bos-discount">
-                        <span>Promocja startowa</span>
+                        <span>{{ $t('promoteAdvert.promoStartRow') }}</span>
                         <span>-{{ selectedPrice?.toFixed(2) }} zł</span>
                     </div>
                     <div v-else-if="couponResult?.isValid" class="bos-row bos-discount">
-                        <span>Rabat</span>
+                        <span>{{ $t('promoteAdvert.discount') }}</span>
                         <span>-{{ (selectedPrice! - finalPrice).toFixed(2) }} zł</span>
                     </div>
                     <div class="bos-row bos-net">
-                        <span>Kwota netto</span>
+                        <span>{{ $t('promoteAdvert.nettoAmount') }}</span>
                         <span>{{ (billingFinalPrice / 1.23).toFixed(2) }} zł</span>
                     </div>
                     <div class="bos-row bos-vat">
-                        <span>VAT (23%)</span>
+                        <span>{{ $t('promoteAdvert.vat23') }}</span>
                         <span>{{ (billingFinalPrice - billingFinalPrice / 1.23).toFixed(2) }} zł</span>
                     </div>
                     <div class="bos-row bos-total">
-                        <span>Do zapłaty</span>
+                        <span>{{ $t('promoteAdvert.toPay') }}</span>
                         <strong>{{ billingFinalPrice.toFixed(2) }} zł</strong>
                     </div>
                 </div>
 
                 <div class="footer-actions">
-                    <button class="btn-skip" @click="step = 1"><v-icon icon="mdi-arrow-left" size="15" />Wróć</button>
+                    <button class="btn-skip" @click="step = 1"><v-icon icon="mdi-arrow-left" size="15" />{{ $t('promoteAdvert.back') }}</button>
                     <button class="btn-pay" :disabled="paying" @click="initiatePayment">
                         <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
                         <v-icon v-else-if="promoActive" icon="mdi-gift-outline" size="16" />
                         <v-icon v-else icon="mdi-credit-card-outline" size="16" />
-                        <template v-if="promoActive">Aktywuj za darmo</template>
-                        <template v-else>Zapłać {{ finalPrice.toFixed(2) }} zł przez ING</template>
+                        <template v-if="promoActive">{{ $t('promoteAdvert.activateForFree') }}</template>
+                        <template v-else>{{ $t('promoteAdvert.payViaIng', { price: finalPrice.toFixed(2) }) }}</template>
                     </button>
                 </div>
                 <div v-if="actionError" class="action-error"><v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
@@ -198,6 +198,7 @@
 import type { CouponValidation, BillingData, UserProfile } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+const { t } = useI18n()
 useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
@@ -266,53 +267,53 @@ function submitImojeForm(result: { paymentUrl: string, formFields?: Record<strin
     }
 }
 
-const plans = [
+const plans = computed(() => [
     {
-        key: 'Featured', name: 'Wyróżnienie', icon: 'mdi-star-outline',
+        key: 'Featured', name: t('promoteAdvert.plans.featured.name'), icon: 'mdi-star-outline',
         priceFrom: 14.99, popular: false, defaultDays: 7, days: [7, 14, 30],
-        desc: 'Ogłoszenie wyróżnione w wynikach wyszukiwania.',
-        feats: ['Wyróżniony kolor ramki', 'Oznaczenie WYRÓŻNIONE', '2× więcej wyświetleń'],
+        desc: t('promoteAdvert.plans.featured.desc'),
+        feats: [t('promoteAdvert.plans.featured.f1'), t('promoteAdvert.plans.featured.f2'), t('promoteAdvert.plans.featured.f3')],
         prices: { 7: 14.99, 14: 24.99, 30: 39.99 } as Record<number, number>,
     },
     {
-        key: 'Top', name: 'TOP', icon: 'mdi-crown-outline',
+        key: 'Top', name: t('promoteAdvert.plans.top.name'), icon: 'mdi-crown-outline',
         priceFrom: 19.99, popular: true, defaultDays: 7, days: [7, 14, 30],
-        desc: 'Ogłoszenie na szczycie wyników wyszukiwania.',
-        feats: ['Pozycja TOP w wynikach', 'Baner reklamowy', '5× więcej wyświetleń'],
+        desc: t('promoteAdvert.plans.top.desc'),
+        feats: [t('promoteAdvert.plans.top.f1'), t('promoteAdvert.plans.top.f2'), t('promoteAdvert.plans.top.f3')],
         prices: { 7: 19.99, 14: 29.99, 30: 49.99 } as Record<number, number>,
     },
     {
-        key: 'Premium', name: 'Premium', icon: 'mdi-diamond-outline',
+        key: 'Premium', name: t('promoteAdvert.plans.premium.name'), icon: 'mdi-diamond-outline',
         priceFrom: 29.99, popular: false, defaultDays: 7, days: [7, 14, 30],
-        desc: 'Maksymalna widoczność i priorytetowe pozycjonowanie.',
-        feats: ['Wszystko z TOP', 'Sekcja polecane ogłoszenia', 'Priorytetowe wsparcie'],
+        desc: t('promoteAdvert.plans.premium.desc'),
+        feats: [t('promoteAdvert.plans.premium.f1'), t('promoteAdvert.plans.premium.f2'), t('promoteAdvert.plans.premium.f3')],
         prices: { 7: 29.99, 14: 44.99, 30: 79.99 } as Record<number, number>,
     },
     {
-        key: 'Refresh', name: 'Odświeżenie', icon: 'mdi-refresh',
+        key: 'Refresh', name: t('promoteAdvert.plans.refresh.name'), icon: 'mdi-refresh',
         priceFrom: 4.99, popular: false, defaultDays: 1, days: [1],
-        desc: 'Przesuń ogłoszenie na górę listy – jednorazowo.',
-        feats: ['Awans na szczyt listy', 'Nowa data publikacji'],
+        desc: t('promoteAdvert.plans.refresh.desc'),
+        feats: [t('promoteAdvert.plans.refresh.f1'), t('promoteAdvert.plans.refresh.f2')],
         prices: { 1: 4.99 } as Record<number, number>,
     },
-]
+])
 
 // API prices: keyed as "ServiceType-days" → price
 const apiPrices = ref<Record<string, number>>({})
 
 function getDisplayPrice(planKey: string, days: number): number {
     const apiKey = `${planKey}-${days}`
-    return apiPrices.value[apiKey] ?? plans.find(p => p.key === planKey)?.prices[days] ?? 0
+    return apiPrices.value[apiKey] ?? plans.value.find(p => p.key === planKey)?.prices[days] ?? 0
 }
 
 function getPriceFrom(planKey: string, fallback: number): number {
-    const plan = plans.find(p => p.key === planKey)
+    const plan = plans.value.find(p => p.key === planKey)
     if (!plan) return fallback
     const minDay = Math.min(...plan.days)
     return getDisplayPrice(planKey, minDay)
 }
 
-const selectedPlan = computed(() => plans.find(p => p.key === selected.value))
+const selectedPlan = computed(() => plans.value.find(p => p.key === selected.value))
 const selectedPrice = computed(() => {
     if (!selectedPlan.value) return null
     return getDisplayPrice(selectedPlan.value.key, selectedDays.value)
@@ -338,7 +339,7 @@ onMounted(async () => {
         return
     }
 
-    const queries = plans.flatMap(p => p.days.map(d => ({ key: p.key, days: d })))
+    const queries = plans.value.flatMap(p => p.days.map(d => ({ key: p.key, days: d })))
     await Promise.allSettled(queries.map(async ({ key, days }) => {
         try {
             const r = await getPrice(key, days)
@@ -376,9 +377,9 @@ async function applyCoupon() {
     try {
         const r = await validateCoupon(couponCode.value.trim(), selectedPrice.value)
         couponResult.value = r
-        if (!r.isValid) couponError.value = r.message ?? 'Nieprawidłowy kod rabatowy.'
+        if (!r.isValid) couponError.value = r.message ?? t('promoteAdvert.couponInvalidCode')
     } catch (e: any) {
-        couponError.value = e?.data?.message ?? 'Nie udało się zastosować kuponu.'
+        couponError.value = e?.data?.message ?? t('promoteAdvert.couponApplyError')
     } finally {
         couponLoading.value = false
     }
@@ -395,7 +396,7 @@ async function publishFree() {
         await $fetch(`/api/proxy/api/listings/${advertId.value}/publish`, { method: 'POST', body: {} })
         await navigateTo('/my-adverts')
     } catch (e: any) {
-        actionError.value = e?.data?.message ?? 'Nie udało się opublikować ogłoszenia.'
+        actionError.value = e?.data?.message ?? t('promoteAdvert.publishError')
     } finally {
         publishing.value = false
     }
@@ -410,7 +411,7 @@ async function initiatePayment() {
     if (!selectedPlan.value || !selectedPrice.value) return
     // Validate billing form
     if (!billingFormRef.value?.validateAll()) {
-        actionError.value = 'Uzupełnij dane do faktury.'
+        actionError.value = t('promoteAdvert.fillBilling')
         return
     }
     paying.value = true
@@ -434,7 +435,7 @@ async function initiatePayment() {
         const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
         submitImojeForm(result)
     } catch (e: any) {
-        actionError.value = e?.data?.message ?? 'Błąd podczas inicjowania płatności.'
+        actionError.value = e?.data?.message ?? t('promoteAdvert.paymentInitError')
     } finally {
         paying.value = false
     }

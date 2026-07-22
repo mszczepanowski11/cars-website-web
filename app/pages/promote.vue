@@ -11,31 +11,31 @@
                 <div class="promo-hero-left">
                     <div class="promo-badge">
                         <v-icon icon="mdi-rocket-launch-outline" size="15" />
-                        {{ isPremiereUpcoming ? 'NADCHODZI PREMIERA' : 'PREMIERA CARIZO' }}
+                        {{ isPremiereUpcoming ? $t('promote.premiereUpcoming') : $t('promote.premiereActive') }}
                     </div>
                     <h1 class="promo-title">
-                        Promowanie ofert<br>
-                        <span class="promo-free">za darmo</span>
+                        {{ $t('promote.heroTitleLine1') }}<br>
+                        <span class="promo-free">{{ $t('promote.heroTitleFree') }}</span>
                     </h1>
                     <p class="promo-desc">
                         <template v-if="isPremiereUpcoming">
-                            Od 4 do 12 lipca wszystkie opcje promowania są bezpłatne.<br>
-                            Przygotuj swoje ogłoszenia już teraz!
+                            {{ $t('promote.heroDescUpcomingLine1') }}<br>
+                            {{ $t('promote.heroDescUpcomingLine2') }}
                         </template>
                         <template v-else>
-                            W czasie trwania premiery (4–12 lipca) wszystkie opcje<br>
-                            promowania są dostępne bezpłatnie.
+                            {{ $t('promote.heroDescActiveLine1') }}<br>
+                            {{ $t('promote.heroDescActiveLine2') }}
                         </template>
                     </p>
                     <NuxtLink to="/add-advert" class="promo-cta">
-                        Dodaj ogłoszenie
+                        {{ $t('promote.addAdvert') }}
                         <v-icon icon="mdi-arrow-right" size="16" />
                     </NuxtLink>
                 </div>
 
                 <div class="promo-hero-right">
                     <div class="countdown-label">
-                        {{ isPremiereUpcoming ? 'Premiera za:' : 'Oferta kończy się za:' }}
+                        {{ isPremiereUpcoming ? $t('promote.countdownUpcoming') : $t('promote.countdownActive') }}
                     </div>
                     <div class="countdown-row">
                         <template v-for="(unit, i) in countdownUnits" :key="unit.label">
@@ -53,15 +53,15 @@
 
             <!-- ── Standard header (after premiere) ───────────────────────── -->
             <div v-else class="page-header">
-                <h1 class="page-title">Wyróżnij swoje ogłoszenie</h1>
-                <p class="page-sub">Większa widoczność = większe szanse na sprzedaż</p>
+                <h1 class="page-title">{{ $t('promote.headerTitle') }}</h1>
+                <p class="page-sub">{{ $t('promote.headerSub') }}</p>
             </div>
 
             <!-- ── Advert picker ────────────────────────────────────────────── -->
             <div class="advert-picker-section">
-                <h2 class="picker-title">1. Wybierz ogłoszenie</h2>
+                <h2 class="picker-title">{{ $t('promote.step1Title') }}</h2>
                 <div v-if="advertsLoading" class="picker-loading">
-                    <v-icon icon="mdi-loading" size="22" class="spin" />Ładowanie ogłoszeń...
+                    <v-icon icon="mdi-loading" size="22" class="spin" />{{ $t('promote.loadingAdverts') }}
                 </div>
                 <div v-else-if="myAdverts.length" class="picker-grid">
                     <div
@@ -82,15 +82,15 @@
                     </div>
                 </div>
                 <p v-else class="picker-empty">
-                    Nie masz aktywnych ogłoszeń. <NuxtLink to="/add-advert" class="picker-link">Dodaj ogłoszenie</NuxtLink>
+                    {{ $t('promote.noAdverts') }} <NuxtLink to="/add-advert" class="picker-link">{{ $t('promote.addAdvertLink') }}</NuxtLink>
                 </p>
             </div>
 
             <!-- ── Pricing section ─────────────────────────────────────────── -->
             <div class="pricing-section">
-                <h2 class="picker-title">2. Wybierz opcję promowania</h2>
+                <h2 class="picker-title">{{ $t('promote.step2Title') }}</h2>
                 <div v-if="isPremiereActive || isPremiereUpcoming" class="pricing-head">
-                    <p class="pricing-sub">Większa widoczność = większe szanse na sprzedaż</p>
+                    <p class="pricing-sub">{{ $t('promote.pricingSub') }}</p>
                 </div>
 
                 <div class="pricing-grid">
@@ -156,11 +156,11 @@
                                 <div class="plan-price-row">
                                     <span class="plan-new-price">{{ getPrice(plan) }}</span>
                                     <span v-if="plan.durations" class="plan-period">
-                                        / {{ selectedDays[plan.key as MultiPlanKey] }} dni
+                                        {{ $t('promote.perDays', { days: selectedDays[plan.key as MultiPlanKey] }) }}
                                     </span>
                                 </div>
                                 <div v-if="isBusiness" class="plan-netto-row">
-                                    {{ getNettoPrice(plan) }} netto + 23% VAT
+                                    {{ $t('promote.nettoVat', { price: getNettoPrice(plan) }) }}
                                 </div>
                             </template>
                         </div>
@@ -168,7 +168,7 @@
                         <!-- Active premiere: countdown tag -->
                         <div v-if="isPremiereActive" class="plan-promo-row">
                             <v-icon icon="mdi-fire" size="14" class="fire-icon" />
-                            <span class="plan-promo-label">Oferta premierowa</span>
+                            <span class="plan-promo-label">{{ $t('promote.premiereOfferLabel') }}</span>
                             <span class="plan-promo-time">
                                 {{ pad(remainingToEnd.h) }}h&nbsp;{{ pad(remainingToEnd.m) }}m
                             </span>
@@ -177,7 +177,7 @@
                         <!-- Upcoming premiere: teaser tag -->
                         <div v-else-if="isPremiereUpcoming" class="plan-upcoming-row">
                             <v-icon icon="mdi-gift-outline" size="14" class="gift-icon" />
-                            <span>Bezpłatnie od 4 do 12 lipca</span>
+                            <span>{{ $t('promote.freeFromTo') }}</span>
                         </div>
 
                         <button class="plan-btn" @click.stop="selectAndPurchase(plan.key)">
@@ -189,17 +189,17 @@
 
                 <!-- Coupon + order summary -->
                 <div v-if="selectedPlan && selectedAdvertId" class="order-panel">
-                    <h2 class="picker-title" style="margin-bottom:20px">3. Podsumowanie zamówienia</h2>
+                    <h2 class="picker-title" style="margin-bottom:20px">{{ $t('promote.step3Title') }}</h2>
                     <div class="order-row">
-                        <span class="order-label">Plan</span>
+                        <span class="order-label">{{ $t('promote.orderPlan') }}</span>
                         <span class="order-val">{{ plans.find(p => p.key === selectedPlan)?.name }}</span>
                     </div>
                     <div v-if="selectedPlan !== 'refresh'" class="order-row">
-                        <span class="order-label">Czas trwania</span>
-                        <span class="order-val">{{ selectedDays[selectedPlan as MultiPlanKey] }} dni</span>
+                        <span class="order-label">{{ $t('promote.orderDuration') }}</span>
+                        <span class="order-val">{{ $t('promote.orderDurationDays', { days: selectedDays[selectedPlan as MultiPlanKey] }) }}</span>
                     </div>
                     <div class="order-row">
-                        <span class="order-label">Cena bazowa</span>
+                        <span class="order-label">{{ $t('promote.orderBasePrice') }}</span>
                         <span class="order-val">{{ isPremiereActive ? '0,00 zł' : getPrice(plans.find(p => p.key === selectedPlan)!) }}</span>
                     </div>
 
@@ -207,18 +207,18 @@
                     <div v-if="!isPremiereActive" class="coupon-row">
                         <div class="coupon-input-wrap" :class="{ 'coupon-valid': couponValid, 'coupon-invalid': couponInvalid }">
                             <v-icon icon="mdi-ticket-percent-outline" size="17" class="coupon-icon" />
-                            <input v-model="couponCode" class="coupon-input" placeholder="Kod promocyjny (opcjonalnie)" @keyup.enter="applyCoupon" />
+                            <input v-model="couponCode" class="coupon-input" :placeholder="$t('promote.couponPlaceholder')" @keyup.enter="applyCoupon" />
                             <button v-if="couponCode && !couponValid" class="coupon-apply-btn" :disabled="couponLoading" @click="applyCoupon">
                                 <v-icon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
-                                <span v-else>Zastosuj</span>
+                                <span v-else>{{ $t('promote.apply') }}</span>
                             </button>
-                            <button v-if="couponValid" class="coupon-clear-btn" aria-label="Usuń kod promocyjny" @click="clearCoupon">
+                            <button v-if="couponValid" class="coupon-clear-btn" :aria-label="$t('promote.couponRemoveAria')" @click="clearCoupon">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
                         </div>
                         <div v-if="couponValid && couponData" class="coupon-ok">
                             <v-icon icon="mdi-check-circle-outline" size="14" />
-                            Kupon zastosowany — oszczędzasz {{ couponData.discountAmount.toFixed(2) }} zł
+                            {{ $t('promote.couponApplied', { amount: couponData.discountAmount.toFixed(2) }) }}
                         </div>
                         <div v-if="couponInvalid" class="coupon-err">
                             <v-icon icon="mdi-alert-circle-outline" size="14" />
@@ -227,14 +227,14 @@
                     </div>
 
                     <div v-if="!isPremiereActive && couponValid && couponData" class="order-row order-row-total">
-                        <span class="order-label">Do zapłaty</span>
+                        <span class="order-label">{{ $t('promote.toPay') }}</span>
                         <span class="order-val-total">{{ couponData.finalPrice.toFixed(2) }} zł</span>
                     </div>
 
                     <button class="purchase-btn" :disabled="purchasing" @click="doPurchase">
                         <v-icon v-if="purchasing" icon="mdi-loading" size="17" class="spin" />
                         <v-icon v-else icon="mdi-rocket-launch-outline" size="17" />
-                        {{ isPremiereActive ? 'Aktywuj bezpłatnie' : 'Kup i aktywuj' }}
+                        {{ isPremiereActive ? $t('promote.activateFree') : $t('promote.buyAndActivate') }}
                     </button>
                     <div v-if="purchaseSuccess" class="purchase-ok">
                         <v-icon icon="mdi-check-circle-outline" size="18" />
@@ -263,10 +263,11 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Promuj ogłoszenie — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
-
 import type { CarAdvert, CouponValidation } from '~/types'
+
+definePageMeta({ middleware: 'auth' })
+const { t } = useI18n()
+useHead({ title: t('promote.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { isPremiereActive, isPremiereUpcoming, remainingToEnd, remainingToStart, pad } = usePromotion()
 const { validateCoupon } = useCoupons()
@@ -288,64 +289,64 @@ interface Plan {
     promotionType: string
 }
 
-const plans: Plan[] = [
+const plans = computed<Plan[]>(() => [
     {
-        key: 'refresh', icon: 'mdi-refresh', name: 'Odświeżenie',
-        desc: 'Twoje ogłoszenie wróci na sam początek wyników wyszukiwania.',
+        key: 'refresh', icon: 'mdi-refresh', name: t('promote.plans.refresh.name'),
+        desc: t('promote.plans.refresh.desc'),
         singlePrice: '4,99 zł', singlePriceNum: 4.99, durations: null,
-        cta: 'Odśwież teraz', badgeLabel: null, popularLabel: null,
-        features: ['Powrót na górę listy', 'Aktywacja natychmiastowa', 'Brak oznaczenia — subtelnie'],
+        cta: t('promote.plans.refresh.cta'), badgeLabel: null, popularLabel: null,
+        features: [t('promote.plans.refresh.f1'), t('promote.plans.refresh.f2'), t('promote.plans.refresh.f3')],
         promotionType: 'Refresh',
     },
     {
-        key: 'highlight', icon: 'mdi-star', name: 'Wyróżnij ofertę',
-        desc: 'Ogłoszenie wyróżnia się czerwoną ramką i trafia wyżej w wynikach.',
+        key: 'highlight', icon: 'mdi-star', name: t('promote.plans.highlight.name'),
+        desc: t('promote.plans.highlight.desc'),
         singlePrice: null, singlePriceNum: 0,
         durations: [
             { days: 7, price: '14,99 zł', priceNum: 14.99 },
             { days: 14, price: '24,99 zł', priceNum: 24.99 },
             { days: 30, price: '39,99 zł', priceNum: 39.99 },
         ],
-        cta: 'Wyróżnij teraz', badgeLabel: 'WYRÓŻNIONE', popularLabel: null,
-        features: ['Etykieta WYRÓŻNIONE', 'Czerwone obramowanie', 'Wyższe pozycjonowanie w liście'],
+        cta: t('promote.plans.highlight.cta'), badgeLabel: t('promote.plans.highlight.badge'), popularLabel: null,
+        features: [t('promote.plans.highlight.f1'), t('promote.plans.highlight.f2'), t('promote.plans.highlight.f3')],
         promotionType: 'Featured',
     },
     {
-        key: 'top', icon: 'mdi-crown', name: 'Oferta TOP',
-        desc: 'Pojawia się na stronie głównej i na samym szczycie kategorii.',
+        key: 'top', icon: 'mdi-crown', name: t('promote.plans.top.name'),
+        desc: t('promote.plans.top.desc'),
         singlePrice: null, singlePriceNum: 0,
         durations: [
             { days: 7, price: '19,99 zł', priceNum: 19.99 },
             { days: 14, price: '29,99 zł', priceNum: 29.99 },
             { days: 30, price: '49,99 zł', priceNum: 49.99 },
         ],
-        cta: 'Dodaj do TOP', badgeLabel: 'TOP', popularLabel: 'NAJPOPULARNIEJSZY',
-        features: ['Widoczność na stronie głównej', 'Pierwsza pozycja w kategorii', 'Złota etykieta TOP'],
+        cta: t('promote.plans.top.cta'), badgeLabel: t('promote.plans.top.badge'), popularLabel: t('promote.plans.top.popular'),
+        features: [t('promote.plans.top.f1'), t('promote.plans.top.f2'), t('promote.plans.top.f3')],
         promotionType: 'Top',
     },
     {
-        key: 'premium', icon: 'mdi-diamond-outline', name: 'Premium',
-        desc: 'Maksymalna widoczność — zawsze powyżej ofert TOP i wyróżnionych.',
+        key: 'premium', icon: 'mdi-diamond-outline', name: t('promote.plans.premium.name'),
+        desc: t('promote.plans.premium.desc'),
         singlePrice: null, singlePriceNum: 0,
         durations: [
             { days: 7, price: '29,99 zł', priceNum: 29.99 },
             { days: 14, price: '44,99 zł', priceNum: 44.99 },
             { days: 30, price: '79,99 zł', priceNum: 79.99 },
         ],
-        cta: 'Aktywuj Premium', badgeLabel: null, popularLabel: null,
-        features: ['Priorytet nad ofertami TOP', 'Fioletowa etykieta PREMIUM', 'Najwyższy CTR spośród wszystkich planów'],
+        cta: t('promote.plans.premium.cta'), badgeLabel: null, popularLabel: null,
+        features: [t('promote.plans.premium.f1'), t('promote.plans.premium.f2'), t('promote.plans.premium.f3')],
         promotionType: 'Premium',
     },
-]
+])
 
 const isBusiness = ref(false)
 
-const benefits = [
-    { icon: 'mdi-trending-up', title: 'Więcej wyświetleń', sub: 'Twoja oferta na górze listy' },
-    { icon: 'mdi-eye-outline', title: 'Lepsza widoczność', sub: 'Docieraj do większej liczby kupujących' },
-    { icon: 'mdi-lightning-bolt', title: 'Szybsza sprzedaż', sub: 'Zwiększ szanse na udaną transakcję' },
-    { icon: 'mdi-shield-check-outline', title: 'Bezpiecznie i skutecznie', sub: 'Sprawdzona platforma wymagających' },
-]
+const benefits = computed(() => [
+    { icon: 'mdi-trending-up', title: t('promote.benefits.b1title'), sub: t('promote.benefits.b1sub') },
+    { icon: 'mdi-eye-outline', title: t('promote.benefits.b2title'), sub: t('promote.benefits.b2sub') },
+    { icon: 'mdi-lightning-bolt', title: t('promote.benefits.b3title'), sub: t('promote.benefits.b3sub') },
+    { icon: 'mdi-shield-check-outline', title: t('promote.benefits.b4title'), sub: t('promote.benefits.b4sub') },
+])
 
 const selectedDays = reactive<Record<MultiPlanKey, number>>({ highlight: 7, top: 7, premium: 7 })
 const apiPrices = ref<Record<string, number>>({})
@@ -435,7 +436,7 @@ function submitImojeForm(result: { paymentUrl: string, formFields?: Record<strin
 
 async function applyCoupon() {
     if (!couponCode.value.trim()) return
-    const plan = plans.find(p => p.key === selectedPlan.value)
+    const plan = plans.value.find(p => p.key === selectedPlan.value)
     if (!plan) return
     couponLoading.value = true
     couponValid.value = false
@@ -445,7 +446,7 @@ async function applyCoupon() {
         couponValid.value = true
     } catch (e: any) {
         couponInvalid.value = true
-        couponError.value = e?.data?.message ?? 'Nieprawidłowy kod kuponu.'
+        couponError.value = e?.data?.message ?? t('promote.couponInvalid')
     } finally { couponLoading.value = false }
 }
 
@@ -458,7 +459,7 @@ function clearCoupon() {
 
 async function doPurchase() {
     if (!selectedAdvertId.value || !selectedPlan.value) return
-    const plan = plans.find(p => p.key === selectedPlan.value)!
+    const plan = plans.value.find(p => p.key === selectedPlan.value)!
     const days = plan.durations ? selectedDays[selectedPlan.value as MultiPlanKey] : 1
     purchasing.value = true
     purchaseSuccess.value = null
@@ -481,7 +482,7 @@ async function doPurchase() {
         // the existing admin bypass, so this one path covers both premiere and normal flow.
         const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
         if (result.adminActivated) {
-            purchaseSuccess.value = `${plan.name} zostało aktywowane bezpłatnie! Ogłoszenie jest teraz lepiej widoczne.`
+            purchaseSuccess.value = t('promote.purchaseSuccess', { plan: plan.name })
             clearCoupon()
             selectedPlan.value = null
         } else {
@@ -490,11 +491,11 @@ async function doPurchase() {
     } catch (e: any) {
         const msg = e?.data?.message ?? e?.message ?? ''
         if (msg.toLowerCase().includes('właścicielem')) {
-            purchaseError.value = 'Nie możesz promować tego ogłoszenia — nie jesteś jego właścicielem.'
+            purchaseError.value = t('promote.notOwner')
         } else if (e?.status === 403) {
-            purchaseError.value = 'Brak uprawnień do tej operacji.'
+            purchaseError.value = t('promote.noPermission')
         } else {
-            purchaseError.value = msg || 'Nie udało się zainicjować płatności. Spróbuj ponownie.'
+            purchaseError.value = msg || t('promote.paymentInitError')
         }
     } finally { purchasing.value = false }
 }
@@ -502,10 +503,10 @@ async function doPurchase() {
 const countdownUnits = computed(() => {
     const r = isPremiereUpcoming.value ? remainingToStart.value : remainingToEnd.value
     return [
-        { value: r.d, label: 'DNI' },
-        { value: r.h, label: 'GODZ.' },
-        { value: r.m, label: 'MIN.' },
-        { value: r.s, label: 'SEK.' },
+        { value: r.d, label: t('promote.unitDays') },
+        { value: r.h, label: t('promote.unitHours') },
+        { value: r.m, label: t('promote.unitMinutes') },
+        { value: r.s, label: t('promote.unitSeconds') },
     ]
 })
 
@@ -521,7 +522,7 @@ onMounted(async () => {
     await Promise.allSettled([
         $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/listings/user?page=1&pageSize=20')
             .then(r => { myAdverts.value = r.items.filter(a => a.isActive !== false) })
-            .catch(() => { toastError('Nie udało się załadować Twoich ogłoszeń.') })
+            .catch(() => { toastError(t('promote.loadAdvertsError')) })
             .finally(() => { advertsLoading.value = false }),
         ...priceQueries.map(async ({ type, days }) => {
             try {
