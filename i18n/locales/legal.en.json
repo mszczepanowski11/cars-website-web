@@ -1,1 +1,386 @@
-{}
+{
+  "terms": {
+    "metaTitle": "Terms of Service — CARIZO",
+    "metaDescription": "Terms of service of the CARIZO website for individual customers.",
+    "heroEyebrow": "Legal documents",
+    "heroTitle": "Terms of",
+    "heroTitleAccent": "Service",
+    "lastUpdated": "Last updated: 04.07.2026",
+    "docTitle": "TERMS OF SERVICE OF THE CARIZO WEBSITE (FOR INDIVIDUAL CUSTOMERS)",
+    "glossaryTitle": "GLOSSARY OF TERMS",
+    "glossaryItems": [
+      "<strong>Administrator</strong> – Wiktor Niezgoda conducting sole proprietorship business under the name CARIZO Wiktor Niezgoda with its registered office in Kraków, at ul. Henryka Pachońskiego 7/60, 31-223 Kraków, entered in the Central Registration and Information on Business (CEIDG) kept by the Minister competent for finance and economy, under NIP (Tax ID): 9452331007, REGON: 544870688.",
+      "<strong>Service</strong> – a marketplace-type ICT platform intermediating in automotive transactions, available at the domain address carizo.eu together with all its subpages and subdomains.",
+      "<strong>Individual User (User)</strong> – a natural person having full legal capacity, being a consumer within the meaning of Article 22¹ of the Civil Code, using the resources of the Service for purposes not directly related to their business or professional activity.",
+      "<strong>Entrepreneur with Consumer Rights</strong> – a User being a natural person who concludes with the Administrator an agreement directly related to their business activity, where it follows from the content of such agreement that it does not have a professional character for that person, arising in particular from the subject of the business activity conducted by them, made available on the basis of the regulations on the Central Registration and Information on Business (CEIDG).",
+      "<strong>Account</strong> – the part of the Service assigned to a given User, secured with a password, enabling the management of listings, promotion services and internal communication.",
+      "<strong>Listing</strong> – an invitation to conclude a contract for the sale of a motor vehicle or automotive parts, drawn up by the User and published in the Service, constituting commercial information within the meaning of the law.",
+      "<strong>Price List</strong> – a schedule of fees for paid services, including highlighting and promotion packages, published openly and directly available in the Service."
+    ],
+    "s1Title": "§1 General provisions and the nature of the services",
+    "s1Items": [
+      "These provisions constitute a contractual template setting out the rules, technical and legal conditions for using the CARIZO website, the rights and obligations of Individual Users, and the scope of the Administrator's liability.",
+      "The CARIZO Service is an online platform of a commercial nature (marketplace) which provides Users with ICT space and technical tools for publishing and browsing automotive Listings.",
+      "<strong>Legal status of the platform:</strong> The Administrator provides exclusively digital intermediation services (hosting services). CARIZO is not a car dealership, consignment dealer, wholesaler, authorised dealer, nor a party to any commercial transactions initiated in the Service. All contracts for the sale of vehicles or parts are concluded directly between Users, at their own cost and risk.",
+      "CARIZO does not take part in contacts between Users, does not participate in price negotiations, does not intermediate in the transfer of funds for vehicles, and does not guarantee that publishing a Listing will lead to the finalisation of a sale transaction.",
+      "Each User, upon commencing use of any resources of the Service (including mere browsing of the pages), confirms that they have read these provisions and undertake to strictly comply with them.",
+      "Only persons who have reached 18 years of age and have full legal capacity may use the Service with regard to creating an Account and publishing Listings. Browsing the Service and subscribing to the newsletter are permitted for persons who have reached 16 years of age.",
+      "When using the Service, the User is obliged to act in a manner consistent with the law, good practices and the principles of social coexistence. The User is prohibited from providing content of an unlawful nature, infringing the personal rights of third parties, or disrupting the operation of the Service's IT infrastructure."
+    ],
+    "s2Title": "§2 Technical conditions and availability of the service",
+    "s2Items": [
+      "Browsing the resources of the Service, including searching, filtering and viewing published Listings, is free of charge and does not require having an Account or logging in.",
+      "To use the full functionality of the Service, including publishing Listings, purchasing additional services and using the internal communication system, it is necessary to register an Account, have an active e-mail address and a mobile phone number with a Polish telecommunications operator.",
+      "CARIZO makes every effort to ensure the continuous and uninterrupted operation of the Service; however, it reserves the right to introduce technical breaks necessary for the maintenance, updating or expansion of the IT system.",
+      "CARIZO shall not be liable for damages, lost benefits, or disruptions in the functioning of the platform arising from technical breaks or failures attributable to external providers of ICT services and hosting operators."
+    ],
+    "s3Title": "§3 Rules for publishing listings and the price list",
+    "s3Items": [
+      "Adding Listings by Individual Users in their basic variant is free of charge.",
+      "CARIZO offers additional, paid services that increase the visibility of offers (promotion, bumping, and front-page highlighting services). The current scope of these services, their specification and prices are set out in the Price List available in the Service.",
+      "The standard publication period of a Listing is 90 days.",
+      "After 90 days, a Listing expires automatically and is moved to the archive of the User's Account. The User has the option to manually reactivate the Listing from within their Account.",
+      "The Service does not use mechanisms for automatic renewal of Listings or automatic collection of financial charges from the User's bank accounts or cards without their explicit, prior consent given on each occasion.",
+      "A Listing is strictly and inseparably assigned to one specific vehicle or set of parts defined at the moment of its creation. Changing the subject of the Listing during its display is prohibited (including by editing parameters, description or photos in order to offer a different vehicle within the same listing).",
+      "In the event of the User intentionally removing a Listing before the end of the standard or extended publication period (e.g. as a result of an earlier sale of the vehicle), the fees paid for promotion services are non-refundable and not subject to proportional settlement, subject to the consumer rights described in §6.",
+      "Payments for paid promotion services are processed via the external payment system <strong>imoje</strong>, operated by <strong>ING Bank Śląski S.A.</strong> with its registered office in Katowice. The costs of payment are set out in the operator's current price list. CARIZO does not store payment card data — it is processed exclusively by ING Bank Śląski S.A.",
+      "The costs of delivery of goods in transactions concluded between Users of the Service are agreed directly between the parties to the transaction (the seller and the buyer). CARIZO, as an intermediary platform (C2C marketplace), is not a party to these transactions and does not charge buyers any delivery fees."
+    ],
+    "s4Title": "§4 Requirements concerning the content of listings, parameters and photos",
+    "s4Items": [
+      "When adding a Listing concerning a vehicle, the Service recommends providing a correct, authentic and complete 17-character VIN (Vehicle Identification Number) — Listings with a provided VIN are marked in the Service as verified and taken into account in the offer ranking mechanism described in §5. Providing a VIN is not mandatory; however, if the User decides to provide it, they are obliged to provide a correct, authentic number pertaining to the vehicle actually offered — providing an incorrect, false or third party's VIN constitutes a breach of the Terms of Service (§9). Providing the vehicle's registration number is optional.",
+      "The User enters all technical data, description and condition of the vehicle independently and bears full responsibility for their conformity with the actual and legal condition of the vehicle. The content of the offer must reflect a genuine intention to sell the vehicle.",
+      "In the content of the Listing, the User is obliged to provide the total, actual gross price of the vehicle. It is prohibited to enter in the \"Price\" field amounts of leasing instalments, credit instalments, key-money amounts, or grossly understated prices for the purpose of manipulating search results. Details concerning financing may be included solely in the description field.",
+      "The subject of a single Listing may be only one specific vehicle. It is not permitted to offer several vehicles to choose from within the content of one Listing, to offer exchanges, or to present offers of a general nature.",
+      "The description of the vehicle must relate solely to the subject of the sale. The use of so-called keyword spam (entering names of other makes, models and phrases unrelated to the offer) and the placing of links redirecting to competing listing services is prohibited.",
+      "Photos added to a Listing must depict the offered vehicle in its current actual condition. It is prohibited to:<ul><li>Use catalogue or promotional photos (originating from manufacturers) or digitally altered photos;</li><li>Overlay photos with additional graphic elements, such as phone numbers, e-mail addresses, promotional captions (e.g. \"BARGAIN\", \"URGENT\", \"SEE\");</li><li>Place watermarks or logos of other websites on photos.</li></ul>"
+    ],
+    "s5Title": "§5 Recommendation system and offer ranking mechanism",
+    "s5Items": [
+      "Listings added by the User are published in the Service automatically after approval of the form or after the payment for optional promotion has been credited.",
+      "The order in which Listings are displayed in search results (so-called default ranking / relevance) is based on an automated algorithm taking into account objective technical criteria. The main parameters determining a Listing's position in the list are:<ul><li>The use of active promotion services (Listings with paid highlighting are positioned higher);</li><li>The recency of the offer: date of publication, date of the last update or reactivation from the archive;</li><li>The degree of match to the technical filters defined by the person browsing the Service (including: price, year of production, mileage, engine power, engine capacity, fuel type, body type, vehicle condition new/used, availability of video, presence of a VIN, and the geographical location of the vehicle).</li></ul>"
+    ],
+    "s6Title": "§6 Withdrawal from the contract and complaint procedure",
+    "s6Items": [
+      "A Buyer who is a consumer, as well as an Entrepreneur with Consumer Rights, has the right to withdraw in writing from the concluded contract for the provision of electronic services (including the contract for maintaining an Account and contracts for promotion services) without giving a reason, within 14 (in words: fourteen) days from the date of concluding the contract, pursuant to the Act of 30 May 2014 on Consumer Rights (Journal of Laws of 2014, item 827, as amended), by submitting an unequivocal declaration of intent to the e-mail address: <strong>kontakt@carizo.eu</strong>.",
+      "The right referred to in the point above also applies to a natural person – an Entrepreneur with Consumer Rights – who concludes with the Administrator an agreement directly related to their business activity, where it follows from the content of such agreement that it does not have a professional character for that person, arising in particular from the subject of the business activity conducted by them, made available on the basis of the regulations on the Central Registration and Information on Business.",
+      "In the case of the purchase of paid Listing promotion services, the provision of which — at the User's express request expressed by activating the option in the panel — commenced before the expiry of the period for withdrawal from the contract, the User loses the right to withdraw from the contract upon the full performance of the service consisting in the display of the highlighting by CARIZO.",
+      "<strong>Return costs upon withdrawal:</strong> The services provided by CARIZO are exclusively digital in nature (ICT services) and do not include the delivery of any physical goods. Consequently, withdrawal from the contract by the Buyer, including an Entrepreneur with Consumer Rights, does not entail an obligation to return goods or to bear shipping costs. Any costs of delivery of physical goods (e.g. vehicles or parts) that are the subject of a transaction between Users of the Service are borne by the parties to that transaction and are agreed directly by them.",
+      "<strong>Manufacturer's warranty:</strong> CARIZO is neither a manufacturer nor a seller of motor vehicles or automotive parts. CARIZO provides exclusively digital services (publication of listings, promotion services). The manufacturer's warranty for vehicles or parts that are the subject of listings is granted respectively by their manufacturers or importers — the User (seller) is obliged to hand over to the buyer all warranty documents held for the vehicle or parts being sold. CARIZO's paid services (promotion packages, listing display) are not subject to a manufacturer's warranty within the meaning of Article 577 of the Civil Code.",
+      "The User, including an Entrepreneur with Consumer Rights, has the right to file a complaint in the event of non-performance or improper performance of ICT services by CARIZO (e.g. technical errors in the display of paid promotion, malfunctioning of the Account).",
+      "Complaints should be submitted electronically to the e-mail address: <strong>kontakt@carizo.eu</strong>. The submission should include: the Account identifier or the Listing ID, a description of the technical problem that occurred, and contact details.",
+      "CARIZO examines complaints of Users, including Entrepreneurs with Consumer Rights, within the non-extendable, statutory period of 14 days from the day of their proper receipt. The response is sent to the e-mail address assigned to the User's Account."
+    ],
+    "s7Title": "§7 Communication within the Service and advertising content",
+    "s7Items": [
+      "Contact between Users for the purpose of carrying out a transaction takes place using the data provided by the seller (phone number, e-mail address) and via the internal messaging system (chat) integrated with the Service.",
+      "CARIZO reserves the right to display within the Service advertisements and offers of external partners, in particular from the automotive, financial (leasing, loans), insurance sectors and providers of vehicle history reports."
+    ],
+    "s8Title": "§8 Copyright and licences",
+    "s8Items": [
+      "The User declares that they hold full rights, including economic copyrights, to the photographic materials and descriptions placed in the Listing.",
+      "The Service automatically applies to photos published by Users a watermark with the \"CARIZO\" logo in order to counteract the unauthorised use of photographs by third parties.",
+      "Upon publication of the Listing, the User grants CARIZO a non-exclusive, royalty-free, territorially and temporally unlimited licence to use the photo and descriptions for the purpose of the proper functioning of the Service, promotion of the platform, conducting marketing activities, as well as presenting offers on social media and in external advertising materials. The licence includes the right to crop, change the resolution and format the graphic materials.",
+      "In the event that any third party raises legal or financial claims against CARIZO on the grounds of infringement of their copyright, industrial property rights or personal rights through the content or photos placed in the Listing by the User, that User undertakes to fully indemnify CARIZO and to cover all documented costs of defence, legal disputes, legal representation costs, and awarded damages."
+    ],
+    "s9Title": "§9 Moderation, account blocking and prohibition of automation",
+    "s9Items": [
+      "CARIZO does not carry out prior, mandatory manual verification (moderation) of each Listing before its publication. Users and external authorities have the ability to report, via an electronic interface form, offers that infringe the law or these terms.",
+      "Each report of illegal content within the meaning of Article 16 of the Digital Services Act (DSA) should contain: the precise location of the content (URL link), a justification, the details of the reporting party (except for reports concerning paedophile offences), and a statement of acting in good faith.",
+      "CARIZO reserves the right to subsequent verification, editing, hiding or complete removal of a Listing, as well as temporary or permanent blocking of a User's Account, in the event of finding:<ul><li>the provision of false personal or contact data,</li><li>the publication of duplicate Listings concerning the same vehicle,</li><li>the entry of an incorrect, false or third party's VIN,</li><li>the manipulation of Listing parameters (including price and photos) described in §4,</li><li>a reasonable suspicion of an attempted fraud (scam, phishing) or actions to the detriment of other Users,</li><li>the infringement of the rights of third parties,</li><li>the publication of vulgar, offensive or unlawful content.</li></ul>",
+      "The use of any automated tools (in particular bots, scripts, filtering programs or so-called web crawlers/scrapers) for the purpose of monitoring, copying, downloading or automatically aggregating the resources of the Service, including the content of Listings and Users' contact data, without the prior consent of CARIZO is prohibited, under pain of immediate blocking of access to the Service and taking legal action.",
+      "In the event of applying an Account block or removing content, CARIZO will promptly notify the User of the decision taken, together with a justification, by electronic means. The User has the right to file a free-of-charge appeal against the decision within 14 days via the e-mail address: <strong>kontakt@carizo.eu</strong>."
+    ],
+    "s10Title": "§10 Closure of the User's Account",
+    "s10Items": [
+      "The User has the right to terminate the contract for the provision of electronic services at any time and without giving a reason by independently deleting the Account from within the user panel.",
+      "Deletion of the Account results in the permanent deletion or anonymisation of the User's personal data, with the exception of information whose storage is required directly by mandatory provisions of tax and accounting law."
+    ],
+    "s11Title": "§11 Exclusion of the Administrator's liability",
+    "s11Items": [
+      "CARIZO is not a party to transactions or civil-law contracts concluded between Users of the Service. Full and exclusive responsibility for the content of a Listing, the technical, legal and factual condition of the vehicle, as well as for the proper course and execution of the transaction, is borne solely by the parties to that transaction.",
+      "Any additional tools made available by the platform in the future (such as vehicle sale-purchase contract templates in PDF format, financial services, or vehicle history reports) are of a purely auxiliary and indicative nature. CARIZO shall not be liable for the legal and financial consequences arising from their use by Users."
+    ],
+    "s12Title": "§12 Final provisions",
+    "s12Items": [
+      "CARIZO reserves the right to amend these terms for important technical, legal or organisational reasons. Registered Users will be notified of changes by e-mail with a 14-day notice period.",
+      "In matters not regulated herein, the provisions of the Civil Code, the Act on Consumer Rights, and the Act of 12 July 2024 – Electronic Communications Law shall apply.",
+      "<strong>Governing law:</strong> These Terms of Service and all legal relationships arising from the use of the Service are subject to the law of the Republic of Poland.",
+      "<strong>Jurisdiction:</strong> All disputes arising from these Terms of Service or from the use of the Service shall be settled by the competent common court of the Republic of Poland. In relations with consumers, the court having local jurisdiction is the court according to the defendant's registered office or the court of the consumer's place of residence, at the claimant's choice. Consumers may make use of out-of-court methods of handling complaints and pursuing claims, including the ODR platform available at: <a href='https://ec.europa.eu/consumers/odr' target='_blank' rel='noopener noreferrer'>ec.europa.eu/consumers/odr</a>. CARIZO informs that it has not joined any out-of-court consumer dispute resolution system within the meaning of the Act of 23 September 2016 on out-of-court resolution of consumer disputes (Journal of Laws, item 1823) — CARIZO's participation in such proceedings is not mandatory. The consumer nevertheless has the right to use the free assistance of district or municipal consumer ombudsmen and the Trade Inspection.",
+      "The content of these provisions enters into force on 04.07.2026. Last updated: 04.07.2026."
+    ],
+    "s13Title": "§13 Terms for Business Users (P2B Regulation 2019/1150)",
+    "s13Items": [
+      "This paragraph applies to Business Users within the meaning of Regulation (EU) 2019/1150 of the European Parliament and of the Council of 20 June 2019 on promoting fairness and transparency for business users of online intermediation services (the P2B Regulation).",
+      "<strong>Ranking of offers — transparency:</strong> The main parameters determining the ranking of listings are described in §5 of these Terms of Service. CARIZO does not apply differentiated treatment of its own services or products relative to the services of Business Users.",
+      "<strong>Restriction of access or suspension of the Account:</strong> In the event of a decision to suspend or restrict access to the Service for a Business User, CARIZO will inform the Business User of that decision and its justification before it takes effect or — if this is not possible — promptly after it takes effect. The Business User has the right to file a free-of-charge appeal within 14 days to the e-mail address: <strong>kontakt@carizo.eu</strong>.",
+      "<strong>Internal complaint-handling system:</strong> CARIZO provides Business Users with access to an internal complaint-handling system via the e-mail address: <strong>kontakt@carizo.eu</strong>. CARIZO endeavours to examine each complaint within 14 working days.",
+      "<strong>Mediation:</strong> In the event of a failure to reach an agreement within the internal complaint-handling system, CARIZO is ready to consider mediation conducted by a neutral mediator. The parties may turn to the Mediation Centre at the Lewiatan Confederation or another agreed mediator.",
+      "<strong>Business Users' data:</strong> The rules for processing the personal data of Business Users are described in the Privacy Policy available in the Service."
+    ],
+    "s14Title": "§14 Login via external identity providers",
+    "s14Items": [
+      "The Service enables the creation of an Account and logging in using an external identity provider (Facebook, Google). An Account created in this way is subject to these Terms of Service on the same principles as an Account created using an e-mail address and password.",
+      "A new Account based on data from Facebook is created only after the User has unequivocally confirmed the consent screen displayed before the Account is created. Details concerning the scope of the collected data and the rules for its deletion are described in the Privacy Policy (§2, §3 and §12).",
+      "The User may disconnect their Account from Facebook at any time — from within the Account settings in the Service or from within the settings of their Facebook account (Facebook → Settings → Apps and Websites). Disconnection does not result in the deletion of the Account in CARIZO if the User has set a password independent of Facebook.",
+      "The User is responsible for holding copyright or other rights to the photos and materials that they add to a listing in the Service themselves, regardless of the source from which they were obtained (including photos originally published by the User on Facebook).",
+      "Listing descriptions, suggestions of the vehicle's technical data, and graphic elements generated using artificial intelligence on the basis of photos added by the User are of the nature of a proposal requiring approval before publication. The User who publishes is responsible for the final content of the published listing."
+    ]
+  },
+  "termsB2b": {
+    "metaTitle": "B2B Terms of Service — CARIZO",
+    "metaDescription": "Terms of service provision for business customers of the CARIZO service. Compliant with the P2B Regulation (EU) 2019/1150 and the Digital Services Act (DSA).",
+    "heroEyebrow": "Legal documents",
+    "heroTitle": "B2B",
+    "heroTitleAccent": "Terms",
+    "lastUpdated": "Last updated: 04.07.2026",
+    "docTitle": "TERMS OF SERVICE PROVISION FOR BUSINESS CUSTOMERS (B2B) – CARIZO SERVICE",
+    "glossaryTitle": "GLOSSARY OF TERMS",
+    "glossaryItems": [
+      "<strong>Administrator</strong> – Wiktor Niezgoda conducting sole proprietorship business under the name CARIZO Wiktor Niezgoda with its registered office in Kraków, at ul. Henryka Pachońskiego 7/60, 31-223 Kraków, entered in the Central Registration and Information on Business under NIP (Tax ID): 9452331007, REGON: 544870688.",
+      "<strong>Service</strong> – a marketplace-type ICT platform intermediating in automotive transactions, available at the domain address carizo.eu together with all its subpages and subdomains.",
+      "<strong>Business User (Dealer)</strong> – an entrepreneur (a natural person conducting business activity, a legal person or an organisational unit without legal personality) using the services of the Service for purposes directly related to their business or professional activity (e.g. a car consignment dealer, dealership, authorised dealer, vehicle rental company).",
+      "<strong>Business Account</strong> – the part of the ICT space of the Service assigned to a given Business User, secured with a password, enabling bulk management of Listings, verification of statistics, management of Packages, and handling of financial settlements.",
+      "<strong>Listing</strong> – an invitation to conclude a contract for the sale of a vehicle or automotive parts, drawn up by the Business User, constituting commercial information within the meaning of the law, published in the Service.",
+      "<strong>Price List</strong> – a schedule of fees for paid services, including highlighting and promotion packages as well as Pre-Paid Packages, published openly and directly available in the Service.",
+      "<strong>Pre-Paid Package</strong> – a paid service consisting in the purchase in advance of a specified number of Listings and options for their promotion, to be used within a defined time period, in accordance with the current Price List.",
+      "<strong>P2B Regulation</strong> – Regulation (EU) 2019/1150 of the European Parliament and of the Council of 20 June 2019 on promoting fairness and transparency for business users of online intermediation services."
+    ],
+    "s1Title": "§1 General provisions and the nature of the services (General Terms)",
+    "s1Items": [
+      "These provisions constitute a contractual template setting out the rules, technical and legal conditions of commercial cooperation between the Administrator and Business Users with regard to the provision of electronic services.",
+      "The CARIZO Service is an online platform of a commercial nature (marketplace) which provides Business Users with ICT space and technical tools for the bulk publication of automotive Listings.",
+      "<strong>Legal status of the platform:</strong> The Administrator provides exclusively digital intermediation services (hosting services). CARIZO is not a car dealership, consignment dealer, wholesaler, authorised dealer, nor a party to any commercial vehicle trading transactions. All contracts for the sale of vehicles or parts are concluded directly between Users, at their own cost and risk.",
+      "CARIZO does not take part in contacts between Users, does not participate in price negotiations, does not intermediate in the transfer of funds for vehicles, and does not guarantee that publishing a Listing will lead to the finalisation of a sale transaction.",
+      "The relationship between the Service and the Dealer is based on the principle of purely professional trading (B2B). The parties exclude the application of any consumer law provisions, including provisions concerning the right to withdraw from the contract without giving a reason.",
+      "Each Business User, upon commencing use of any resources of the Service intended for professionals, confirms that they have read these provisions and undertake to strictly comply with them.",
+      "When using the Service, the Business User is obliged to act in a manner consistent with the law, good practices and the principles of social coexistence. The Business User is prohibited from providing content of an unlawful nature, infringing the personal rights of third parties, or disrupting the operation of the Service's IT infrastructure."
+    ],
+    "s2Title": "§2 Two-stage Registration and Verification Procedure (Verified Dealer Status)",
+    "s2Intro": "In order to eliminate attempts at market fraud and to guarantee the highest quality of the offer database, the process of setting up a Business Account is based on a two-stage verification filter:",
+    "s2Items": [
+      "<strong>Stage 1 – ICT Verification:</strong> The entity completes the registration form, providing its full company name, NIP number, e-mail address and phone number. The system automatically queries the register databases (CEIDG or KRS) in order to check the status of the business. A condition for proceeding further is the authorisation of the phone number by means of a one-time SMS code and the confirmation of the activation link sent to the e-mail address.",
+      "<strong>Stage 2 – Manual Verification and Administrator Acceptance:</strong> After the successful completion of Stage 1, the Business Account remains inactive (no possibility of publishing). The Administrator or a specialised moderator carries out a manual assessment of the entity's business profile.",
+      "<strong>Finalisation:</strong> After a positive manual verification, the Business Account is finally activated, and the entity obtains the public status of a \"Verified Dealer\". The Administrator reserves the right to refuse acceptance of an account without giving a reason."
+    ],
+    "s3Title": "§3 Pre-Paid Settlement Model and Starter Programme",
+    "s3Items": [
+      "In its commercial relations, the CARIZO Service applies exclusively the Pre-Paid system (payment in advance). The publication of Listings is technically blocked until the funds for the selected package have been credited.",
+      "The Business User selects one of four dedicated subscription variants:<ol type='a'><li>Start Package,</li><li>Business Package,</li><li>Premium Package,</li><li>Enterprise Package.</li></ol>The detailed limits, prices and technical parameters of the individual variants are specified in the current Price List available in the Service panel.",
+      "<strong>Starter Programme:</strong> In order to build up the liquidity of the listing database, a newly registered Dealer has the right to a one-time activation of the Starter Programme. The Programme offers a 3-month free trial period with a technical limit of a maximum of 20 active Listings simultaneously. After the end of this period, or in the event of wishing to exceed the limit of 20 offers before the expiry of 3 months, the Dealer is obliged to purchase one of the standard Pre-Paid Packages."
+    ],
+    "s4Title": "§4 Requirements concerning the content of Listings, parameters and photos",
+    "s4Items": [
+      "When adding a Listing concerning a vehicle, the Business User is obliged to provide a correct, authentic and complete 17-character VIN (Vehicle Identification Number). Providing the vehicle's registration number is optional.",
+      "The Business User enters all technical data, description and condition of the vehicle independently and bears full responsibility for their conformity with the actual and legal condition of the vehicle. The content of the offer must reflect a genuine intention to sell the vehicle.",
+      "In the content of the Listing, the Business User is obliged to provide the total, actual gross price of the vehicle. It is prohibited to enter in the \"Price\" field amounts of leasing instalments, credit instalments, key-money amounts, or grossly understated prices for the purpose of manipulating search results. Details concerning financing may be included solely in the description field.",
+      "The subject of a single Listing may be only one specific vehicle. It is not permitted to offer several vehicles to choose from within the content of one Listing, to offer exchanges, or to present offers of a general nature. A Listing is inseparably assigned to the car defined at the start; changing the subject of the Listing during its display is prohibited.",
+      "The description of the vehicle must relate solely to the subject of the sale. The use of so-called keyword spam (entering names of other makes, models and phrases unrelated to the offer) and the placing of links redirecting to competing listing services is prohibited.",
+      "Photos added to a Listing must depict the offered vehicle in its current actual condition. It is prohibited to:<ol type='a'><li>Use catalogue or promotional photos (originating from manufacturers) or digitally altered photos;</li><li>Overlay photos with additional graphic elements, such as phone numbers, e-mail addresses, promotional captions (e.g. \"BARGAIN\", \"URGENT\", \"SEE\");</li><li>Place watermarks or logos of other websites on photos.</li></ol>"
+    ],
+    "s5Title": "§5 Recommendation system and offer ranking mechanism (Omnibus Requirement)",
+    "s5Items": [
+      "Listings added by the Business User are published in the Service automatically after approval of the form or after verification of the payment for the selected Pre-Paid Package.",
+      "The order in which Listings are displayed in search results (so-called default ranking / relevance) is based on an automated algorithm taking into account objective technical criteria. The main parameters determining a Listing's position in the list are:<ol type='a'><li>The use of active promotion services (Listings with paid highlighting are positioned higher);</li><li>The recency of the offer: date of publication, date of the last update or reactivation from the archive;</li><li>The degree of match to the technical filters defined by the person browsing the Service (including: price, year of production, mileage, engine power, engine capacity, fuel type, body type, vehicle condition new/used, availability of video, presence of a VIN, and the geographical location of the vehicle).</li></ol>"
+    ],
+    "s6Title": "§6 Mandatory Qualification of Entrepreneurs and Detection of Linked Accounts",
+    "s6Items": [
+      "In order to protect the integrity of the database and counteract the avoidance of commercial fees, the Service refers to the limits for Individual Users amounting to: a maximum of 2 active listings simultaneously and a maximum of 4 listings during an entire calendar year.",
+      "<strong>Unilateral qualification:</strong> If the activity of a user registered as a private person indicates an organised, continuous, income-generating character (in particular by exceeding the limits in paragraph 1, serial sale of cars, or offering vehicles of a typically commercial nature), the Administrator has the right to their mandatory qualification as an entrepreneur.",
+      "<strong>Detection technologies:</strong> CARIZO applies advanced heuristic algorithms analysing technical parameters in order to detect users creating networks of linked individual accounts. Subject to analysis are: phone numbers, e-mail addresses, IP addresses, digital device fingerprints (browser fingerprint), bank account numbers, payer data, as well as the similarity of photographs and descriptions.",
+      "<strong>Sanctions:</strong> In the event of detecting the practice of circumventing the limits, the Administrator has the right to immediately suspend all Listings on all linked accounts, to call on the user to provide explanations, and to direct the user to the mandatory migration procedure to a Business Account."
+    ],
+    "s7Title": "§7 Communication within the Service and advertising content",
+    "s7Items": [
+      "Contact between Users for the purpose of carrying out a transaction takes place using the data provided by the seller (phone number, e-mail address) and via the internal messaging system (chat) integrated with the Service.",
+      "CARIZO reserves the right to display within the Service advertisements and offers of external partners, in particular from the automotive, financial (leasing, loans), insurance sectors and providers of vehicle history reports."
+    ],
+    "s8Title": "§8 Copyright and licences",
+    "s8Items": [
+      "The Business User declares that they hold full rights, including economic copyrights, to the photographic materials and descriptions placed in the Listing.",
+      "The Service automatically applies to photos published by Users a watermark with the \"CARIZO\" logo in order to counteract the unauthorised use of photographs by third parties.",
+      "Upon publication of the Listing, the Business User grants CARIZO a non-exclusive, royalty-free, territorially and temporally unlimited licence to use the photo and descriptions for the purpose of the proper functioning of the Service, promotion of the platform, conducting marketing activities, as well as presenting offers on social media and in external advertising materials. The licence includes the right to crop, change the resolution and format the graphic materials.",
+      "In the event that any third party raises legal or financial claims against CARIZO on the grounds of infringement of their copyright, industrial property rights or personal rights through the content or photos placed in the Listing by the Business User, that User undertakes to fully indemnify CARIZO and to cover all documented costs of defence, legal disputes, legal representation costs, and awarded damages."
+    ],
+    "s9Title": "§9 Moderation, account blocking and the complaint-handling system (DSA / P2B)",
+    "s9Items": [
+      "CARIZO does not carry out prior, mandatory manual verification (moderation) of each Listing before its publication. Users and external authorities have the ability to report, via an electronic interface form, offers that infringe the law or these terms.",
+      "Each report of illegal content within the meaning of Article 16 of the Digital Services Act (DSA) should contain: the precise location of the content (URL link), a justification, the details of the reporting party (except for reports concerning paedophile offences), and a statement of acting in good faith.",
+      "CARIZO reserves the right to subsequent verification, editing, hiding or complete removal of a Listing, as well as temporary or permanent blocking of a Business Account, in the event of finding:<ol type='a'><li>the provision of false personal or contact data,</li><li>the publication of duplicate Listings concerning the same vehicle,</li><li>the entry of an incorrect, false or third party's VIN,</li><li>the manipulation of Listing parameters (including price and photos) described in §4,</li><li>a reasonable suspicion of an attempted fraud (scam, phishing) or actions to the detriment of other Users,</li><li>the infringement of the rights of third parties,</li><li>the publication of vulgar, offensive or unlawful content.</li></ol>",
+      "<strong>Rigour of immediate blocking:</strong> The Administrator applies the procedure of immediately cutting off access to the Service and removing all of the Dealer's active offers, without observing any notice periods, in the event of detecting incidents consisting in:<ol type='a'><li>offering vehicles originating from a crime,</li><li>the deliberate provision of false VINs,</li><li>carrying out fraudulent practices/scams,</li><li>impersonating other entities or publishing listings of a phantom nature (non-existent vehicles).</li></ol>",
+      "The use of any automated tools (in particular bots, scripts, filtering programs or so-called web crawlers/scrapers) for the purpose of monitoring, copying, downloading or automatically aggregating the resources of the Service, including the content of Listings, without the prior consent of CARIZO is prohibited, under pain of immediate blocking of access to the Service and taking legal action.",
+      "In the event of applying an Account block or removing content, CARIZO will promptly notify the Business User of the decision taken, together with a justification, by electronic means. In accordance with the requirements of the P2B Regulation, CARIZO provides a free-of-charge, internal complaint-handling system. The Business User has the right to file an appeal within 14 days via the e-mail address: <strong>kontakt@carizo.eu</strong>. A response to the complaint is sent within 14 days."
+    ],
+    "s10Title": "§10 Termination of the Contract (Notice Period)",
+    "s10Items": [
+      "In the absence of violations of the law or of the platform's regulations, each party (both the Business User and the Administrator) has the right to terminate the contract for the provision of electronic services (closure of the Business Account) without giving a reason.",
+      "The notice period of the contract in B2B trading is 15 days and is counted from the day of delivery of the relevant declaration of intent to the other party's e-mail address.",
+      "During the notice period, the Dealer is not able to purchase new Pre-Paid Packages, and unused funds for active packages are non-refundable, on account of maintaining the full technical readiness of the Service's infrastructure.",
+      "Closure of the Business Account results in the permanent deletion or anonymisation of data, with the exception of information whose storage is required directly by mandatory provisions of tax and accounting law."
+    ],
+    "s11Title": "§11 Exclusion of the Administrator's liability",
+    "s11Items": [
+      "CARIZO is not a party to transactions or civil-law contracts concluded between Users of the Service. Full and exclusive responsibility for the content of a Listing, the technical, legal and factual condition of the vehicle, as well as for the proper course and execution of the transaction, is borne solely by the parties to that transaction.",
+      "Any additional tools made available by the platform in the future (such as vehicle sale-purchase contract templates in PDF format, financial services, or vehicle history reports) are of a purely auxiliary and indicative nature. CARIZO shall not be liable for the legal and financial consequences arising from their use by Business Users."
+    ],
+    "s12Title": "§12 Final provisions",
+    "s12Items": [
+      "The law governing the settlement of disputes between the Administrator and Business Users is Polish law, and the exclusively competent court is the common court having jurisdiction over the Administrator's registered office.",
+      "Amendments to these provisions require notification of Business Users to their e-mail address, observing a minimum 15-day advance notice period (in accordance with Article 3 of the P2B Regulation), which allows companies to make operational adjustments or to close the Account free of charge before the modifications take effect.",
+      "In matters not regulated herein, the provisions of the Civil Code and the Act of 12 July 2024 – Electronic Communications Law shall apply.",
+      "The content of these provisions enters into force on 04.07.2026."
+    ]
+  },
+  "privacy": {
+    "metaTitle": "Privacy Policy — CARIZO",
+    "metaDescription": "Privacy policy and personal data protection policy of the CARIZO service, compliant with the GDPR.",
+    "heroEyebrow": "Legal documents",
+    "heroTitle": "Privacy",
+    "heroTitleAccent": "Policy",
+    "lastUpdated": "Last updated: 04.07.2026",
+    "s1Title": "§1 General provisions and the Administrator's details",
+    "s1Items": [
+      "This Privacy Policy sets out the rules, legal bases, scope and methods of processing and protecting the personal data of Users using the CARIZO online platform.",
+      "The controller of personal data within the meaning of Article 4(7) of Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 (GDPR) is Wiktor Niezgoda conducting sole proprietorship business under the name CARIZO Wiktor Niezgoda with its registered office in Kraków, at: ul. Henryka Pachońskiego 7/60, 31-223 Kraków, entered in the Central Registration and Information on Business under NIP (Tax ID): 9452331007, REGON: 544870688 (hereinafter: the \"Administrator\" or \"CARIZO\").",
+      "In order to ensure the highest standard of data protection, the Administrator has designated a contact point through which the User may submit any inquiries and exercise their privacy-related rights, available at the e-mail address: <strong>kontakt@carizo.eu</strong>.",
+      "<strong>Data Protection Officer (DPO):</strong> The Administrator is not obliged to designate a Data Protection Officer within the meaning of Article 37 of the GDPR, as the processing of data by CARIZO does not constitute an activity requiring regular and systematic monitoring of data subjects on a large scale, nor does it involve the processing of special categories of data on a large scale. All requests concerning personal data should be addressed directly to the Administrator at the e-mail address: <strong>kontakt@carizo.eu</strong>."
+    ],
+    "s2Title": "§2 Categories, sources and authentication methods of the processed data",
+    "s2Intro": "CARIZO processes personal data obtained directly from Users during the Account registration procedure, interaction with the Service interface, as well as data packages transferred via external authentication service providers. The scope and structure of the processed information are strictly conditioned by the authorisation method chosen by the User:",
+    "s2Items": [
+      "<strong>Browsing User (Buyer without an Account):</strong><ul><li>Telemetric and hardware data: IP address, mobile device identifiers, type and configuration of the web browser, operating system, screen resolution.</li><li>Behavioural and analytical data: history of vehicle searches, filtering parameters (make, model, price range), time spent on specific listing pages, conversion events.</li><li>Location data: approximate geographical location (at the level of city/voivodeship) used for the purpose of sorting offers by distance.</li></ul>",
+      "<strong>Registered User – Data collected depending on the registration and login method:</strong><ul><li><strong>Classic authentication method (E-mail and Password):</strong> e-mail address, first and last name, contact phone number, and access password, which is irreversibly transformed by cryptographic methods (hashing) and is not known to the Administrator.</li><li><strong>Login via Google account (Google Ireland Limited):</strong> unique user identifier (Google ID), e-mail address, first and last name, and information on the verification of the e-mail address by Google.</li><li><strong>Login via Facebook account (Meta Platforms Ireland Limited):</strong> unique user identifier in the Meta ecosystem (Facebook ID), e-mail address, and first and last name. CARIZO does not collect the profile photo, friends list, or other data available under the <code>public_profile</code> permission beyond those listed. Details concerning consent and the deletion of this data are described in §12.</li></ul>",
+      "<strong>Additional data of Sellers (Individual and Business):</strong><ul><li><strong>Private Seller:</strong> vehicle description, photos, requested price, vehicle location, VIN (optional, recommended), the content of the conversation on the internal chat.</li><li><strong>Business Customer:</strong> full company name, address of the permanent place of business, NIP number and REGON number (verified in the public CEIDG/KRS registers).</li></ul>",
+      "<strong>Data obtained from publicly available sources (Business Customers):</strong> The Administrator may process the contact data of entrepreneurs from the automotive sector (consignment dealers, dealerships, workshops) obtained from public registers (CEIDG, KRS) and generally available internet sources. The scope of this data is limited to: the company name, NIP number, address, and a public phone number or e-mail address."
+    ],
+    "s3Title": "§3 Purposes, legal bases and periods of data processing",
+    "s3TableHeaders": ["Purpose of processing", "Legal basis (GDPR)", "Retention period"],
+    "s3TableRows": [
+      ["Provision of electronic services: Account registration, publication of Listings, handling of the chat.", "Article 6(1)(b) – necessity for the performance of a contract.", "Until the effective deletion of the Account."],
+      ["Handling and processing of online payments.", "Article 6(1)(b) – necessity for the performance of a paid contract.", "Until the finalisation of the payment transaction."],
+      ["Fulfilment of financial and accounting obligations (issuing invoices, archiving).", "Article 6(1)(c) – legal obligation arising from tax regulations and the Accounting Act.", "5 years from the end of the calendar year in which the payment deadline of the tax liability expired."],
+      ["Ensuring cybersecurity and protecting the platform (anti-bot, anti-scam, chat analysis).", "Article 6(1)(f) – the legitimate interest of CARIZO.", "24 months from the moment of registering the event or network log."],
+      ["Analytics and statistics (Google Analytics 4, Microsoft Clarity).", "Article 6(1)(a) – consent given via the cookie banner (CMP).", "Until the withdrawal of consent or the expiry of the cookies (max. 24 months)."],
+      ["Direct marketing (e-mail, SMS) and profiling (personalised recommendations).", "Article 6(1)(a) – the User's voluntary, separate consent (required for e-mail/SMS communication in accordance with Article 172 of the Electronic Communications Law); for on-site profiling on the basis of (f) – legitimate interest.", "Until the withdrawal of consent or the raising of an effective objection."],
+      ["Newsletter and Web-Push notifications.", "Article 6(1)(a) – voluntary, separate consent.", "Until the withdrawal of consent or the cancellation of the subscription."],
+      ["Handling of moderation procedures (DSA).", "Article 6(1)(c) – legal obligation arising from the Digital Services Act.", "6 months from the end of the moderation procedure."],
+      ["Legal protection and the pursuit of claims.", "Article 6(1)(f) – the legitimate interest of CARIZO.", "Until the expiry of the limitation periods for claims; chat logs and authentication SMS logs – up to 3 years from the end of the conversation."]
+    ],
+    "s4Title": "§4 Rules on communication, notifications and marketing",
+    "s4Items": [
+      "<strong>Transactional and System Communication (necessary):</strong> CARIZO provides registered Users with key information related to the provision of services via e-mail, SMS or native system notifications. This includes:<ul><li>Updates on the status of Account verification.</li><li>Technical notifications on the activation, approaching end date, or expiry of the publication of Listings.</li><li>System messages related to the security of the Account and the handling of reports. On account of the technical necessity of these communications, the User does not have the option to opt out of receiving them without simultaneously deleting the Account.</li></ul>",
+      "<strong>Interactions between Users and opinion surveys:</strong><ul><li>The Administrator may contact the Seller in order to confirm the details of a transaction or the inspection of a vehicle initiated by another User (legitimate interest, Article 6(1)(f) GDPR).</li><li>The Administrator reserves the right to occasionally contact Users in order to conduct satisfaction surveys and collect opinions on the operation of the Service.</li></ul>",
+      "<strong>Marketing Communication (Optional):</strong> Provided that the User has given separate, voluntary consent (Article 6(1)(a) GDPR), CARIZO may send information of a commercial nature using the e-mail address (newsletter) or phone number (SMS campaigns). The User retains the full right to withdraw this consent at any time.",
+      "<strong>Special procedures for external B2B contacts:</strong> In the event of obtaining an entrepreneur's contact data from external sources, CARIZO undertakes to:<ul><li>Fulfil the information obligation during the first contact.</li><li>Obtain explicit consent before sending any detailed commercial offers by electronic means.</li><li>Ensure the immediate possibility of raising an objection to further contact (opt-out).</li></ul>"
+    ],
+    "s5Title": "§5 The nature and voluntariness of providing personal data",
+    "s5Items": [
+      "The provision of personal data for the purpose of registering an Account and publishing Listings (first name, last name, e-mail address, phone number, and in the case of companies – NIP and register data) is voluntary but is a contractual requirement. Failure to provide this information makes it impossible to conclude the contract for the provision of services in the Service.",
+      "The provision of data for marketing purposes, newsletter subscription, or the granting of consent to optional cookies is entirely voluntary and does not condition the possibility of using the basic, free resources of the CARIZO platform."
+    ],
+    "s6Title": "§6 Categories of data recipients and processors",
+    "s6Intro": "The Administrator shares Users' data with two categories of external entities:",
+    "s6Items": [
+      "<strong>Processors (on behalf of CARIZO):</strong> entities with which the Administrator has concluded data processing entrustment agreements (Article 28 GDPR): providers of cloud and hosting infrastructure, providers of IT and CRM systems, an external accounting office, and entities providing legal support.",
+      "<strong>Independent Controllers (Separate legal entities):</strong><ul><li><strong>Other network users:</strong> the seller's contact data (name, phone) are publicly disclosed in the Listing in order to enable the completion of the vehicle purchase transaction.</li><li><strong>Payment service providers:</strong> external operators of payment institutions handling the transaction gateway in the Service. CARIZO does not record, process or store Users' full payment card data.</li><li><strong>Technology and advertising partners:</strong> Google Ireland Limited (GA4, Google Ads, Google Maps), Meta Platforms Ireland Limited (Meta Pixel), and Microsoft Ireland Operations Limited (Clarity) – processing data on their own terms, provided that the User has consented to this.</li><li><strong>Cloudinary (Cloudinary Inc., USA)</strong> — a processor to which CARIZO entrusts the storage and processing of listing photos. The transfer of data to the USA takes place on the basis of Standard Contractual Clauses. Privacy policy: <a href='https://cloudinary.com/privacy' target='_blank' rel='noopener'>cloudinary.com/privacy</a>.</li><li><strong>iMoje / ING Bank Śląski S.A.</strong> — the operator handling electronic payments. The data necessary for the completion of the transaction (payer data, amount, order identifier) are transferred directly to the payment gateway operator. CARIZO does not store payment card data. Privacy policy: <a href='https://imoje.pl/polityka-prywatnosci' target='_blank' rel='noopener'>imoje.pl/polityka-prywatnosci</a>.</li><li><strong>Authorised authorities:</strong> Courts, the Public Prosecutor's Office, the Police, the President of the UODO (Data Protection Authority) or UOKiK (Office of Competition and Consumer Protection) – solely on the basis of an official request and within the limits of the applicable law.</li></ul>"
+    ],
+    "s7Title": "§7 International data transfers (Outside the EEA)",
+    "s7Intro": "On account of the use of analytical and marketing tools provided by entities from the Google, Meta and Microsoft capital groups, Users' telemetric data and advertising identifiers may be transferred to third countries, including the United States of America. This transfer is carried out on the basis of:",
+    "s7Items": [
+      "The implementing decision of the European Commission of 10 July 2023 finding an adequate level of data protection under the EU-US Data Privacy Framework, or",
+      "Standard Contractual Clauses (SCC) approved by the European Commission, imposing on entities outside the EEA the obligation to apply safeguards identical to those of the GDPR."
+    ],
+    "s8Title": "§8 Behavioural profiling and automated decisions (Anti-Fraud)",
+    "s8Items": [
+      "In order to optimise the User's experience and increase the effectiveness of vehicle sales, CARIZO filters and analyses Users' activity (e.g. it analyses the most frequently searched car segments, locations, or price ranges), which constitutes profiling within the meaning of the GDPR.",
+      "The profiling processes serve exclusively to personalise advertising content and recommendations within the Service. Profiling is of a marketing and informational nature and does not produce legal effects concerning the User.",
+      "In order to ensure the security of Users and combat financial fraud, the Service applies algorithms that automatically analyse the behaviour and parameters of listings. In the event of detecting extreme security anomalies, the system may take an automated decision to block content or an Account. In each such case, the User, in accordance with Article 22(3) of the GDPR, has the right to contest that decision, to express their own point of view, and to obtain human intervention via the contact point indicated in §1(3)."
+    ],
+    "s9Title": "§9 Rights of the data subjects",
+    "s9Intro": "Every User, within the limits and on the terms set out in Chapter III of the GDPR, has the following rights:",
+    "s9Items": [
+      "<strong>Right of access to data (Article 15 GDPR):</strong> The right to obtain confirmation of processing and to receive a copy of the data.",
+      "<strong>Right to rectification of data (Article 16 GDPR):</strong> The right to the prompt correction of inaccurate or outdated data.",
+      "<strong>Right to erasure of data \"the right to be forgotten\" (Article 17 GDPR):</strong> A request for the erasure of data if the legal basis for their processing has expired or an effective objection has been raised.",
+      "<strong>Right to restriction of processing (Article 18 GDPR):</strong> A request to block operations on data for the duration of the verification of their accuracy or in the course of a legal dispute.",
+      "<strong>Right to data portability (Article 20 GDPR):</strong> The right to receive data in a structured, commonly used, machine-readable format.",
+      "<strong>Right to object (Article 21 GDPR):</strong> The possibility of raising an objection at any time to the processing of data based on the legitimate interest of CARIZO. An objection to direct marketing binds the Administrator immediately and unconditionally.",
+      "<strong>Right to withdraw consent (Article 7(3) GDPR):</strong> The possibility of withdrawing marketing consents or cookie consents at any time, without affecting the lawfulness of processing before the withdrawal.",
+      "<strong>Supervisory Authority and the Right to Lodge a Complaint (Article 77 GDPR):</strong> In the event of considering that the operations of processing personal data by CARIZO infringe the law, the User has the right to lodge a complaint with the competent data protection supervisory authority. In the case of the Republic of Poland, the competent authority is:<span class='authority-box'><strong>The President of the Personal Data Protection Office</strong><br>ul. Stawki 2, 00-193 Warszawa<br><a href='https://uodo.gov.pl' target='_blank' rel='noopener noreferrer'>uodo.gov.pl</a></span>"
+    ],
+    "s10Title": "§10 Processing of the data of minors",
+    "s10Body": "The CARIZO Service is directed at persons who have reached 18 years of age (and, in the case of certain functionalities of a purely informational nature – at least 16 years of age). The Administrator does not intentionally collect or process the personal data of minors below this age. In the event of obtaining information about the accidental registration of a minor, the Administrator will take immediate action to delete such an Account and the informational records associated with it.",
+    "s11Title": "§11 Security and final provisions",
+    "s11Items": [
+      "CARIZO implements advanced technical and organisational measures (including encryption of transmission with SSL/TLS certificates, cryptographic hashing of passwords, and systems for controlling access to databases) guaranteeing a level of security adequate to the risk of infringing the rights or freedoms of natural persons.",
+      "These privacy rules are subject to ongoing review. Registered Users will be notified of any structural changes to the purposes or bases of data processing by e-mail with 14 days' advance notice.",
+      "The content of these regulations enters into force on 04.07.2026."
+    ],
+    "s12Title": "§12 Login via Facebook and data deletion (Meta Data Deletion)",
+    "s12Items": [
+      "<strong>Meta as a separate data controller:</strong> With regard to login via Facebook, Meta Platforms Ireland Limited is a separate, independent data controller on its side — it independently decides on the manner of processing the User's profile data within the Meta ecosystem. CARIZO is responsible solely for the data actually collected and saved in its database (Facebook ID, e-mail address, first and last name). Meta's privacy policy is available at: <a href='https://www.facebook.com/privacy/policy/' target='_blank' rel='noopener'>facebook.com/privacy/policy</a>.",
+      "<strong>Legal basis:</strong> The data collected upon login via Facebook are processed on the basis of Article 6(1)(b) of the GDPR — for the purpose of concluding and performing the contract for the provision of electronic services (creating and maintaining an Account).",
+      "<strong>Consent before creating an Account:</strong> A new Account based on data from Facebook is not created automatically — the User must unequivocally confirm the consent screen indicating the exact scope of the collected data before the Account is created. The fact of giving consent is recorded together with the date, IP address, and version of this Policy, in accordance with the principle of accountability (Article 5(2) GDPR).",
+      "<strong>Data deletion mechanism (Data Deletion Callback):</strong> In accordance with the requirements of the Meta Platform Terms, CARIZO handles automated data deletion requests initiated directly from within the Facebook settings (Facebook → Settings → Apps and Websites → Remove). Upon receiving such a request, CARIZO deletes the Facebook identifier associated with the Account within a maximum of a few minutes of receiving it. The status of the request is available at <a href='/data-deletion-status'>carizo.eu/data-deletion-status</a> together with the received confirmation code.",
+      "The deletion of data originating from Facebook does not result in the automatic deletion of the entire CARIZO Account if the User has independent access data (e.g. a set password) or active listings — the deletion of the Account itself takes place on the general terms described in §9."
+    ]
+  },
+  "cookies": {
+    "metaTitle": "Cookie Policy — CARIZO",
+    "metaDescription": "Cookie policy and policy on related technologies of the CARIZO service, compliant with the Electronic Communications Law and the GDPR.",
+    "ogDescription": "Cookie policy of the CARIZO service, compliant with the Electronic Communications Law and the GDPR.",
+    "heroEyebrow": "Legal documents",
+    "heroTitle": "Cookie",
+    "heroTitleAccent": "Policy",
+    "lastUpdated": "Last updated: 04.07.2026",
+    "docTitle": "COOKIE POLICY AND POLICY ON RELATED TECHNOLOGIES OF THE CARIZO SERVICE",
+    "glossaryTitle": "Glossary of terms",
+    "glossaryItems": [
+      "<strong>Administrator</strong> – Wiktor Niezgoda conducting sole proprietorship business under the name CARIZO Wiktor Niezgoda with its registered office in Kraków, at ul. Henryka Pachońskiego 7/60, 31-223 Kraków, entered in the Central Registration and Information on Business under NIP (Tax ID): 9452331007, REGON: 544870688.",
+      "<strong>Service</strong> – a marketplace-type ICT platform intermediating in automotive transactions, available at the domain address carizo.eu together with all its subpages and subdomains.",
+      "<strong>Terminal Device</strong> – a telecommunications terminal device (e.g. a computer, tablet, smartphone) through which the User accesses the Service.",
+      "<strong>User</strong> – any natural person, legal person or organisational unit without legal personality using the resources of the Service.",
+      "<strong>Cookies and related technologies</strong> – IT data, including unique text-numeric packages, unique alphanumeric device identifiers, programming scripts, navigational tags (tracking and conversion pixels), and browser cache resources (including Local Storage and Session Storage technologies), which are saved, read and stored on the User's Terminal Device during interaction with the Service."
+    ],
+    "s1Title": "§1 Legal basis and scope of application",
+    "s1Items": [
+      "This Policy constitutes the fulfilment of the information obligation imposed on the Administrator by Article 398 of the Act of 12 July 2024 – Electronic Communications Law (Journal of Laws 2024, item 1221, as amended) and by Articles 13 and 14 of Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 (GDPR).",
+      "This Policy sets out the rules for storing and accessing information on the User's Terminal Devices by means of Cookies and related technologies (including Local Storage, Session Storage and conversion pixels), serving to optimise the operation of the Service, for analytical purposes, to ensure the security of transactions, and to target behavioural advertising campaigns."
+    ],
+    "s2Title": "§2 The essence and types of technologies used",
+    "s2Items": [
+      "The Service uses Cookies and related technologies in order to ensure the integrity of the session, protection against abuse, the collection of statistical data, and the delivery of advertising content.",
+      "Within the Service, two basic types of Cookies are used according to their retention time:<ul><li><strong>Session Cookies:</strong> files of a temporary nature, stored on the Terminal Device only until the end of the given browser session or leaving the Service.</li><li><strong>Persistent Cookies:</strong> files stored on the Terminal Device for a period specified in the parameters of the file itself or until they are intentionally deleted by the User. Closing the browser does not result in their automatic deletion.</li></ul>"
+    ],
+    "s3Title": "§3 Classification of Cookies by purpose and processing time",
+    "s3Intro": "Saving and accessing data via Cookies (with the exception of necessary files) is conditioned upon the prior, informed, voluntary and unequivocal granting of consent by the User via the Consent Management Platform (CMP) implemented in the Service.",
+    "s3TableHeaders": ["Category", "Description and purpose of processing", "Max. storage period", "Legal basis"],
+    "s3TableRows": [
+      ["<strong>Necessary</strong><br>(Technical, Security and Functional)", "They enable the correct display of the Service's structure, the handling of login, and the maintenance of the User's session. They include scripts for detecting bots, preventing fraudulent registrations, and protecting against data scraping. This also includes functional data necessary for the provision of functions expressly requested by the User: remembering the configuration chosen by the User, the \"Favourite listings\" section, and filters and saved vehicle searches for non-logged-in users (Local Storage).", "Session: up to 30 days.<br>Remembering login: up to 30 days.<br>Preferences and favourites: up to 12 months or until deleted by the User.<br>Record of CMP consents: up to 12 months.", "Article 398(2)(2) of the Electronic Communications Law (technical necessity and necessity for the provision of a service expressly requested by the User)."],
+      ["<strong>Analytical and Performance</strong>", "They serve to aggregate anonymised data on traffic in the Service, to study the unique views of listings, to map the paths of the User's movement, to identify technical errors, and to measure the conversion of registration and payment processes.", "Depending on the parameters of external providers (Google, Microsoft) – a maximum of up to 24 months. Microsoft Clarity session recordings: <strong>30 days</strong>.", "Article 6(1)(a) GDPR in conjunction with Article 398(1) of the Electronic Communications Law."],
+      ["<strong>Advertising and Behavioural</strong>", "Used to profile the User's automotive preferences on the basis of the browsed makes and vehicle segments in order to display personalised commercial messages within the Service and on the pages of external partners.", "Depending on the parameters of external providers – a maximum of up to 12 months.", "Article 6(1)(a) GDPR (Consent to profiling and targeting)."]
+    ],
+    "s4Title": "§4 Integration with third parties and Google Consent Mode v2",
+    "s4Items": [
+      "The scripts of external technology providers have been implemented in the structure of the Service. These entities may place their own Cookies on the User's Terminal Device. The authorised partners of the Service include:<ul><li><strong>Google Ireland Limited:</strong> Google Analytics 4 (traffic analytics), Google Ads (advertising campaign management), Google Tag Manager (technical tag management), and Google Maps (geolocation and displaying maps in Listings).</li><li><strong>Meta Platforms Ireland Limited:</strong> Meta Pixel for the purpose of measuring the effectiveness of campaigns on social media and conducting remarketing activities.</li><li><strong>Microsoft Ireland Operations Limited:</strong> Microsoft Clarity, serving for the advanced analysis of User behaviour (heatmaps, session recordings). Session recording retention time: <strong>30 days</strong>.</li><li><strong>Providers of Communication Systems:</strong> newsletter handling systems serving to send notifications about new offers.</li></ul>",
+      "The Service has the <strong>Google Consent Mode v2</strong> standard implemented. Depending on the User's decision made in the CMP panel, the Service sends to Google systems precise consent state parameters: <code>ad_storage</code>, <code>analytics_storage</code>, <code>ad_user_data</code>, and <code>ad_personalization</code>.",
+      "In the event of the User's lack of consent to the analytical or marketing categories, the scripts of third parties are blocked or operate in a cookieless mode (pings without cookies), which makes it impossible to identify the digital identity of the User.",
+      "The Administrator reserves the right to implement external advertising networks in the future (such as Google AdSense or Google AdX) in order to automate the monetisation of the Service's advertising space, of which Users will be informed by updating this schedule."
+    ],
+    "s5Title": "§5 The manner of granting, withdrawing and changing consents to the use of Cookies",
+    "s5Items": [
+      "During the first session in the Service, before the loading of any optional Cookies, the User is shown an interactive privacy management banner (CMP) provided by a certified partner.",
+      "Granting consent to individual or all categories of files is entirely voluntary. The User has the right at any time to withdraw the consent granted with effect for the future, without incurring any costs.",
+      "The withdrawal or modification of consent may take place by:<ul><li>Re-invoking the CMP panel via the \"Cookie settings\" link placed in the footer of the Service.</li><li>Manual modification of the privacy settings, newsletter subscription, and Web-Push notifications directly in the User panel (after logging in to the Account).</li><li>Manual modification of the privacy level settings directly in the User's web browser.</li></ul>",
+      "Detailed instructions on the ways to configure, block and delete Cookies are provided by the software manufacturers:<ul><li>Google Chrome: <a href='https://support.google.com/chrome/answer/95647' target='_blank' rel='noopener noreferrer'>Google Chrome Help Centre</a></li><li>Mozilla Firefox: <a href='https://support.mozilla.org/pl/kb/usuwanie-ciasteczek' target='_blank' rel='noopener noreferrer'>Mozilla Firefox Help Centre</a></li><li>Apple Safari: <a href='https://support.apple.com/pl-pl/guide/safari/sfri11471/mac' target='_blank' rel='noopener noreferrer'>Apple Safari User Guide</a></li><li>Microsoft Edge: <a href='https://support.microsoft.com/pl-pl/microsoft-edge/usuwanie-plik%C3%B3w-cookie-w-przegl%C4%85darce-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09' target='_blank' rel='noopener noreferrer'>Microsoft Edge Support Page</a></li></ul>"
+    ],
+    "s6Title": "§6 Data transfers outside the European Economic Area (EEA)",
+    "s6Body": "In connection with the use of technological solutions of providers located outside the EEA, data obtained via Cookies may be transferred to third countries (in particular to the United States of America). The legal basis for such a transfer is the decision of the European Commission finding an adequate level of personal data protection (EU-US Data Privacy Framework) or the application of Standard Contractual Clauses (SCC) ensuring adequate technical and organisational security measures.",
+    "s7Title": "§7 Final provisions",
+    "s7Items": [
+      "This Cookie Policy functions independently of the Privacy Policy of the CARIZO Service, constituting a detailing thereof with regard to technologies for storing information on Terminal Devices.",
+      "The Administrator reserves the right to introduce modifications to this Policy in the event of changes in the law or the implementation of new IT solutions in the Service. Users will be informed of changes by the publication of the consolidated text on this subpage.",
+      "The Policy enters into force on 04.07.2026."
+    ]
+  }
+}
