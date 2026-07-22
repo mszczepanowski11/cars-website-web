@@ -3,9 +3,9 @@
 
     <div class="df-hero">
       <div class="df-hero-inner">
-        <div class="df-eyebrow">DLA FIRM</div>
-        <h1>Połącz swoją firmę<br><span class="accent">z CARIZO</span></h1>
-        <p class="df-hero-desc">Synchronizuj swoje ogłoszenia automatycznie. Bez ręcznego dodawania.</p>
+        <div class="df-eyebrow">{{ $t('forBusiness.eyebrow') }}</div>
+        <h1>{{ $t('forBusiness.heroTitleLine1') }}<br><span class="accent">{{ $t('forBusiness.heroTitleLine2') }}</span></h1>
+        <p class="df-hero-desc">{{ $t('forBusiness.heroDesc') }}</p>
         <div class="df-badge"><v-icon icon="mdi-sync" size="13" />XML • CSV • API</div>
       </div>
     </div>
@@ -14,29 +14,29 @@
       <div class="df-form-card">
 
         <template v-if="step === 'form'">
-          <h2 class="df-form-title">Rozpocznij integrację</h2>
-          <p class="df-form-sub">Podaj podstawowe dane — resztę ustalimy mailowo. Jeśli masz link do pliku XML/CSV z ofertą, sprawdzimy go od razu.</p>
+          <h2 class="df-form-title">{{ $t('forBusiness.formTitle') }}</h2>
+          <p class="df-form-sub">{{ $t('forBusiness.formSub') }}</p>
 
           <div class="df-field">
-            <label>Nazwa firmy *</label>
-            <input v-model="form.companyName" type="text" placeholder="np. AutoHandel Kowalski Sp. z o.o." />
+            <label>{{ $t('forBusiness.labelCompanyName') }}</label>
+            <input v-model="form.companyName" type="text" :placeholder="$t('forBusiness.placeholderCompanyName')" />
           </div>
           <div class="df-field-row">
             <div class="df-field">
-              <label>E-mail *</label>
+              <label>{{ $t('forBusiness.labelEmail') }}</label>
               <input v-model="form.email" type="email" placeholder="kontakt@twojafirma.pl" />
             </div>
             <div class="df-field">
-              <label>Telefon *</label>
+              <label>{{ $t('forBusiness.labelPhone') }}</label>
               <input v-model="form.phone" type="tel" placeholder="+48 600 000 000" />
             </div>
           </div>
           <div class="df-field">
-            <label>Adres strony</label>
+            <label>{{ $t('forBusiness.labelWebsite') }}</label>
             <input v-model="form.websiteUrl" type="text" placeholder="https://twojafirma.pl" />
           </div>
           <div class="df-field">
-            <label>Link do XML/CSV <span class="df-optional">(jeżeli posiadasz)</span></label>
+            <label>{{ $t('forBusiness.labelFeed') }} <span class="df-optional">{{ $t('forBusiness.labelFeedOptional') }}</span></label>
             <input v-model="form.feedUrl" type="text" placeholder="https://twojafirma.pl/export/oferty.xml" />
           </div>
 
@@ -44,53 +44,53 @@
 
           <button class="df-btn-primary" :disabled="!canSubmit || loading" @click="startIntegration">
             <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-            Rozpocznij integrację
+            {{ $t('forBusiness.btnStart') }}
           </button>
         </template>
 
         <template v-else-if="step === 'preview-error'">
           <div class="df-result-icon df-result-icon--error"><v-icon icon="mdi-alert-circle-outline" size="32" /></div>
-          <h2 class="df-form-title">Nie udało się odczytać pliku</h2>
+          <h2 class="df-form-title">{{ $t('forBusiness.previewErrorTitle') }}</h2>
           <p class="df-form-sub">{{ previewError }}</p>
           <div class="df-result-actions">
-            <button class="df-btn-secondary" @click="step = 'form'">Popraw link</button>
+            <button class="df-btn-secondary" @click="step = 'form'">{{ $t('forBusiness.btnFixLink') }}</button>
             <button class="df-btn-primary" :disabled="loading" @click="submitWithoutFeed">
               <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-              Wyślij zgłoszenie bez pliku
+              {{ $t('forBusiness.btnSubmitWithoutFeed') }}
             </button>
           </div>
         </template>
 
         <template v-else-if="step === 'preview-ok'">
           <div class="df-result-icon df-result-icon--ok"><v-icon icon="mdi-check-circle-outline" size="32" /></div>
-          <h2 class="df-form-title">Znaleźliśmy {{ previewCount }} {{ pluralOgloszen(previewCount) }}.</h2>
-          <p class="df-form-sub">Synchronizacja będzie wykonywana automatycznie. Po zatwierdzeniu zgłoszenia (zwykle w ciągu 1 dnia roboczego) otworzymy Ci konto i zaimportujemy plik.</p>
+          <h2 class="df-form-title">{{ $t('forBusiness.previewOkTitle', { count: previewCount, noun: pluralOgloszen(previewCount) }) }}</h2>
+          <p class="df-form-sub">{{ $t('forBusiness.previewOkSub') }}</p>
           <div class="df-result-actions">
-            <button class="df-btn-secondary" @click="step = 'form'">Wróć</button>
+            <button class="df-btn-secondary" @click="step = 'form'">{{ $t('forBusiness.btnBack') }}</button>
             <button class="df-btn-primary" :disabled="loading" @click="submit">
               <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-              Importuj
+              {{ $t('forBusiness.btnImport') }}
             </button>
           </div>
         </template>
 
         <template v-else-if="step === 'no-feed'">
-          <h2 class="df-form-title">Wyślij zgłoszenie</h2>
-          <p class="df-form-sub">Nie podałeś linku do pliku — skontaktujemy się z Tobą, aby ustalić szczegóły integracji.</p>
+          <h2 class="df-form-title">{{ $t('forBusiness.noFeedTitle') }}</h2>
+          <p class="df-form-sub">{{ $t('forBusiness.noFeedSub') }}</p>
           <div class="df-result-actions">
-            <button class="df-btn-secondary" @click="step = 'form'">Wróć</button>
+            <button class="df-btn-secondary" @click="step = 'form'">{{ $t('forBusiness.btnBack') }}</button>
             <button class="df-btn-primary" :disabled="loading" @click="submit">
               <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-              Wyślij zgłoszenie
+              {{ $t('forBusiness.btnSubmitApplication') }}
             </button>
           </div>
         </template>
 
         <template v-else-if="step === 'done'">
           <div class="df-result-icon df-result-icon--ok"><v-icon icon="mdi-check-circle-outline" size="32" /></div>
-          <h2 class="df-form-title">Dziękujemy!</h2>
-          <p class="df-form-sub">Zgłoszenie zostało wysłane i czeka na zatwierdzenie. Odezwiemy się na adres <strong>{{ form.email }}</strong>, zwykle w ciągu 1 dnia roboczego.</p>
-          <NuxtLink to="/" class="df-btn-secondary df-btn-secondary--link">Wróć na stronę główną</NuxtLink>
+          <h2 class="df-form-title">{{ $t('forBusiness.doneTitle') }}</h2>
+          <p class="df-form-sub">{{ $t('forBusiness.doneSubBefore') }}<strong>{{ form.email }}</strong>{{ $t('forBusiness.doneSubAfter') }}</p>
+          <NuxtLink to="/" class="df-btn-secondary df-btn-secondary--link">{{ $t('forBusiness.btnBackHome') }}</NuxtLink>
         </template>
 
       </div>
@@ -98,18 +98,18 @@
       <div class="df-info-grid">
         <div class="df-info-card">
           <v-icon icon="mdi-file-code-outline" size="22" />
-          <div class="df-info-title">XML lub CSV</div>
-          <div class="df-info-desc">Obsługujemy oba formaty — wystarczy jeden link do pliku, który już eksportujesz z Twojego systemu.</div>
+          <div class="df-info-title">{{ $t('forBusiness.infoXmlTitle') }}</div>
+          <div class="df-info-desc">{{ $t('forBusiness.infoXmlDesc') }}</div>
         </div>
         <div class="df-info-card">
           <v-icon icon="mdi-shape-outline" size="22" />
-          <div class="df-info-title">Wszystkie kategorie</div>
-          <div class="df-info-desc">Auta, części, maszyny, przyczepy, opony — feed sam wskazuje kategorię dla każdej pozycji.</div>
+          <div class="df-info-title">{{ $t('forBusiness.infoCategoriesTitle') }}</div>
+          <div class="df-info-desc">{{ $t('forBusiness.infoCategoriesDesc') }}</div>
         </div>
         <div class="df-info-card">
           <v-icon icon="mdi-sync" size="22" />
-          <div class="df-info-title">Sync automatyczny</div>
-          <div class="df-info-desc">Po zatwierdzeniu Twój plik jest pobierany cyklicznie — nowe pozycje pojawiają się bez Twojego udziału.</div>
+          <div class="df-info-title">{{ $t('forBusiness.infoSyncTitle') }}</div>
+          <div class="df-info-desc">{{ $t('forBusiness.infoSyncDesc') }}</div>
         </div>
       </div>
     </div>
@@ -118,9 +118,10 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 useHead({
-  title: 'Dla firm — CARIZO',
-  meta: [{ name: 'description', content: 'Połącz swoją firmę z CARIZO i synchronizuj ogłoszenia automatycznie przez XML, CSV lub API.' }],
+  title: t('forBusiness.metaTitle'),
+  meta: [{ name: 'description', content: t('forBusiness.metaDescription') }],
 })
 
 const { error: toastError } = useToast()
@@ -142,11 +143,11 @@ const previewCount = ref(0)
 const canSubmit = computed(() => !!form.companyName.trim() && !!form.email.trim() && !!form.phone.trim())
 
 function pluralOgloszen(n: number) {
-  if (n === 1) return 'ogłoszenie'
+  if (n === 1) return t('forBusiness.listingFormOne')
   const lastDigit = n % 10
   const lastTwo = n % 100
-  if (lastDigit >= 2 && lastDigit <= 4 && !(lastTwo >= 12 && lastTwo <= 14)) return 'ogłoszenia'
-  return 'ogłoszeń'
+  if (lastDigit >= 2 && lastDigit <= 4 && !(lastTwo >= 12 && lastTwo <= 14)) return t('forBusiness.listingFormFew')
+  return t('forBusiness.listingFormMany')
 }
 
 function payload() {
@@ -174,11 +175,11 @@ async function startIntegration() {
       previewCount.value = result.itemCount ?? 0
       step.value = 'preview-ok'
     } else {
-      previewError.value = result.error ?? 'Nie udało się odczytać pliku pod podanym adresem.'
+      previewError.value = result.error ?? t('forBusiness.errorReadFile')
       step.value = 'preview-error'
     }
   } catch (e: any) {
-    formError.value = e?.data?.message ?? 'Nie udało się wysłać formularza. Spróbuj ponownie.'
+    formError.value = e?.data?.message ?? t('forBusiness.errorSubmitForm')
   } finally {
     loading.value = false
   }
@@ -190,7 +191,7 @@ async function submit() {
     await $fetch('/api/proxy/api/partner-signup', { method: 'POST', body: payload() })
     step.value = 'done'
   } catch (e: any) {
-    toastError(e?.data?.message ?? 'Nie udało się wysłać zgłoszenia. Spróbuj ponownie.')
+    toastError(e?.data?.message ?? t('forBusiness.errorSubmitApplication'))
   } finally {
     loading.value = false
   }

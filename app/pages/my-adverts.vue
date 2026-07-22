@@ -2,10 +2,10 @@
     <div class="page-bg">
         <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
             <div class="page-header">
-                <h1 class="page-title">Moje ogłoszenia</h1>
+                <h1 class="page-title">{{ $t('myAdverts.title') }}</h1>
                 <NuxtLink to="/add-advert" class="btn-add-top">
                     <v-icon icon="mdi-plus" size="17" />
-                    Dodaj ogłoszenie
+                    {{ $t('myAdverts.addAdvert') }}
                 </NuxtLink>
             </div>
 
@@ -16,11 +16,11 @@
                 <div class="empty-block-icon">
                     <v-icon icon="mdi-car-outline" size="44" />
                 </div>
-                <h3 class="empty-block-title">Nie masz jeszcze żadnych ogłoszeń</h3>
-                <p class="empty-block-desc">Dodaj swoje pierwsze ogłoszenie i dotrzyj do tysięcy kupujących na CARIZO.</p>
+                <h3 class="empty-block-title">{{ $t('myAdverts.emptyTitle') }}</h3>
+                <p class="empty-block-desc">{{ $t('myAdverts.emptyDesc') }}</p>
                 <NuxtLink to="/add-advert" class="empty-block-btn">
                     <v-icon icon="mdi-plus" size="18" />
-                    Dodaj pierwsze ogłoszenie
+                    {{ $t('myAdverts.addFirst') }}
                 </NuxtLink>
             </div>
             <template v-else>
@@ -28,7 +28,7 @@
                     <div v-for="a in adverts" :key="a.id" class="my-advert-row">
                         <NuxtLink :to="`/advert/${a.id}`" class="row-img-wrap">
                             <img :src="mainImage(a)" :alt="a.title" class="row-img" loading="lazy" />
-                            <span v-if="a.soldAt" class="overlay-badge sold-badge">SPRZEDANE</span>
+                            <span v-if="a.soldAt" class="overlay-badge sold-badge">{{ $t('myAdverts.sold') }}</span>
                             <span v-else-if="a.badge" class="overlay-badge promo-badge">{{ a.badge }}</span>
                         </NuxtLink>
 
@@ -48,9 +48,9 @@
                                 <span v-if="a.favoriteCount" class="stat-chip">
                                     <v-icon icon="mdi-heart-outline" size="13" />{{ a.favoriteCount }}
                                 </span>
-                                <span v-if="a.isActive" class="status-chip status-active">Aktywne</span>
-                                <span v-else-if="a.isHidden" class="status-chip status-hidden">Ukryte</span>
-                                <span v-else class="status-chip status-inactive">Nieaktywne</span>
+                                <span v-if="a.isActive" class="status-chip status-active">{{ $t('myAdverts.statusActive') }}</span>
+                                <span v-else-if="a.isHidden" class="status-chip status-hidden">{{ $t('myAdverts.statusHidden') }}</span>
+                                <span v-else class="status-chip status-inactive">{{ $t('myAdverts.statusInactive') }}</span>
                             </div>
                         </div>
 

@@ -5,14 +5,14 @@
         <section class="cats-hero">
             <div class="container hero-inner">
                 <div class="hero-text">
-                    <div class="hero-eyebrow">KATEGORIE</div>
+                    <div class="hero-eyebrow">{{ $t('categories.heroEyebrow') }}</div>
                     <h1 class="hero-title">
-                        Znajdź auto idealne<br>
-                        <span>dla siebie</span>
+                        {{ $t('categories.heroTitleLine1') }}<br>
+                        <span>{{ $t('categories.heroTitleLine2') }}</span>
                     </h1>
                     <p class="hero-sub">
-                        Przeglądaj tysiące ogłoszeń w podziale na kategorie,<br>
-                        które Cię interesują.
+                        {{ $t('categories.heroSubLine1') }}<br>
+                        {{ $t('categories.heroSubLine2') }}
                     </p>
                 </div>
                 <div class="hero-img-wrap">
@@ -35,14 +35,14 @@
                     <input
                         v-model="searchText"
                         class="s-input"
-                        placeholder="Szukaj kategorii, np. SUV, BMW, Diesel..."
+                        :placeholder="$t('categories.searchPlaceholder')"
                     />
                     <button class="s-btn">
                         <v-icon icon="mdi-magnify" size="18" />
                     </button>
                 </div>
                 <div class="sort-wrap">
-                    <span class="sort-label">Sortuj:</span>
+                    <span class="sort-label">{{ $t('categories.sortLabel') }}</span>
                     <button class="sort-btn" @click="sortOpen = !sortOpen">
                         {{ sortLabel }}
                         <v-icon icon="mdi-chevron-down" size="16" />
@@ -84,7 +84,7 @@
                         <div class="cat-bottom">
                             <div class="cat-bottom-left">
                                 <div class="cat-name">{{ cat.name }}</div>
-                                <div class="cat-count">{{ cat.advertCount.toLocaleString('pl') }} ogłoszeń</div>
+                                <div class="cat-count">{{ $t('categories.advertCount', { count: cat.advertCount.toLocaleString('pl') }) }}</div>
                             </div>
                             <div class="cat-arrow">
                                 <v-icon icon="mdi-arrow-right" size="16" />
@@ -95,7 +95,7 @@
 
                 <div v-if="!filtered.length && !loading" class="empty-state">
                     <v-icon icon="mdi-magnify" size="40" class="empty-icon" />
-                    <p>Nie znaleziono kategorii pasujących do "<strong>{{ searchText }}</strong>"</p>
+                    <p>{{ $t('categories.emptyBefore') }}<strong>{{ searchText }}</strong>{{ $t('categories.emptyAfter') }}</p>
                 </div>
             </div>
         </div>
@@ -108,21 +108,22 @@ import { useCategories } from '~/composables/useCategories'
 import type { CategoryWithCount } from '~/types'
 
 const config = useRuntimeConfig()
+const { t } = useI18n()
 useHead({
-    title: 'Kategorie — CARIZO',
+    title: () => t('categories.metaTitle'),
     meta: [
-        { name: 'description', content: 'Przeglądaj ogłoszenia motoryzacyjne na CARIZO według kategorii: auta osobowe, SUV, motocykle, ciężarowe, części i więcej.' },
+        { name: 'description', content: () => t('categories.metaDescription') },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: `${config.public.siteUrl}/categories` },
-        { property: 'og:title', content: 'Kategorie — CARIZO' },
-        { property: 'og:description', content: 'Przeglądaj ogłoszenia motoryzacyjne na CARIZO według kategorii.' },
+        { property: 'og:title', content: () => t('categories.ogTitle') },
+        { property: 'og:description', content: () => t('categories.ogDescription') },
         { property: 'og:image', content: `${config.public.siteUrl}/og-image.jpg` },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
         { property: 'og:site_name', content: 'CARIZO' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'Kategorie — CARIZO' },
-        { name: 'twitter:description', content: 'Przeglądaj ogłoszenia motoryzacyjne na CARIZO według kategorii.' },
+        { name: 'twitter:title', content: () => t('categories.twitterTitle') },
+        { name: 'twitter:description', content: () => t('categories.twitterDescription') },
         { name: 'twitter:image', content: `${config.public.siteUrl}/og-image.jpg` },
     ],
     link: [{ rel: 'canonical', href: `${config.public.siteUrl}/categories` }]
@@ -135,14 +136,14 @@ const searchText = ref('')
 const sortBy = ref('popular')
 const sortOpen = ref(false)
 
-const sortOptions = [
-    { label: 'Popularne', value: 'popular' },
-    { label: 'Najwięcej ogłoszeń', value: 'count_desc' },
-    { label: 'Najmniej ogłoszeń', value: 'count_asc' },
-    { label: 'Alfabetycznie', value: 'alpha' },
-]
+const sortOptions = computed(() => [
+    { label: t('categories.sortPopular'), value: 'popular' },
+    { label: t('categories.sortCountDesc'), value: 'count_desc' },
+    { label: t('categories.sortCountAsc'), value: 'count_asc' },
+    { label: t('categories.sortAlpha'), value: 'alpha' },
+])
 
-const sortLabel = computed(() => sortOptions.find(o => o.value === sortBy.value)?.label ?? 'Popularne')
+const sortLabel = computed(() => sortOptions.value.find(o => o.value === sortBy.value)?.label ?? t('categories.sortPopular'))
 
 const fallbackImg = '/categories/auta-osobowe.jpg'
 

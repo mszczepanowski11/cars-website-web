@@ -4,9 +4,9 @@
     <!-- Hero -->
     <div class="onas-hero">
       <div class="onas-hero-inner">
-        <div class="onas-eyebrow">O NAS</div>
-        <h1>Stworzyliśmy CARIZO,<br><span class="accent">bo rynek zasługuje na więcej</span></h1>
-        <p class="onas-hero-desc">Jesteśmy zespołem pasjonatów motoryzacji i technologii, którzy postanowili zmienić sposób, w jaki Polacy kupują i sprzedają samochody.</p>
+        <div class="onas-eyebrow">{{ $t('about.eyebrow') }}</div>
+        <h1>{{ $t('about.heroTitleLine1') }}<br><span class="accent">{{ $t('about.heroTitleLine2') }}</span></h1>
+        <p class="onas-hero-desc">{{ $t('about.heroDesc') }}</p>
       </div>
     </div>
 
@@ -14,31 +14,31 @@
     <div class="onas-body">
       <div class="onas-story-wrap">
         <div class="onas-story">
-          <p>CARIZO powstało z jednego przekonania — transakcja samochodowa powinna być prosta, przejrzysta i bezpieczna dla obu stron. Stare portale ogłoszeniowe oferowały skany wyblakłych ogłoszeń z lat 90. My chcieliśmy czegoś więcej.</p>
-          <p>Budujemy narzędzia, które realnie pomagają: inteligentne wyszukiwanie, wyceny oparte na danych rynkowych, weryfikowane konta dealerów i bezpośredni kontakt bez pośredników. Każda funkcja jest przemyślana — od zdjęcia głównego po kalkulator raty finansowania.</p>
-          <p>Dzisiaj CARIZO to tysiące aktywnych ogłoszeń, sieć zweryfikowanych dealerów i rosnąca społeczność ludzi, dla których samochód to więcej niż środek transportu.</p>
+          <p>{{ $t('about.story1') }}</p>
+          <p>{{ $t('about.story2') }}</p>
+          <p>{{ $t('about.story3') }}</p>
           <NuxtLink to="/kontakt" class="onas-cta">
             <v-icon icon="mdi-email-outline" size="16" />
-            Napisz do nas
+            {{ $t('about.ctaWrite') }}
           </NuxtLink>
         </div>
 
         <div class="onas-stats">
           <div class="onas-stat">
             <div class="onas-stat-val">10k+</div>
-            <div class="onas-stat-label">Ogłoszeń</div>
+            <div class="onas-stat-label">{{ $t('about.statAdverts') }}</div>
           </div>
           <div class="onas-stat">
             <div class="onas-stat-val">500+</div>
-            <div class="onas-stat-label">Dealerów</div>
+            <div class="onas-stat-label">{{ $t('about.statDealers') }}</div>
           </div>
           <div class="onas-stat">
             <div class="onas-stat-val">98%</div>
-            <div class="onas-stat-label">Zadowolonych użytkowników</div>
+            <div class="onas-stat-label">{{ $t('about.statSatisfied') }}</div>
           </div>
           <div class="onas-stat">
             <div class="onas-stat-val">24/7</div>
-            <div class="onas-stat-label">Wsparcie</div>
+            <div class="onas-stat-label">{{ $t('about.statSupport') }}</div>
           </div>
         </div>
       </div>
@@ -48,29 +48,29 @@
     <div class="onas-values-section">
       <div class="onas-values-inner">
         <div class="onas-values-header">
-          <div class="onas-eyebrow">NASZE WARTOŚCI</div>
-          <h2>Co nas napędza</h2>
+          <div class="onas-eyebrow">{{ $t('about.valuesEyebrow') }}</div>
+          <h2>{{ $t('about.valuesTitle') }}</h2>
         </div>
         <div class="onas-values">
           <div class="onas-value">
             <div class="onas-value-icon"><v-icon icon="mdi-shield-check-outline" size="26" /></div>
-            <div class="onas-value-title">Bezpieczeństwo</div>
-            <div class="onas-value-desc">Weryfikujemy konta dealerów i monitorujemy ogłoszenia, żeby Twoja transakcja była bezpieczna od pierwszego kliknięcia.</div>
+            <div class="onas-value-title">{{ $t('about.valueSecurityTitle') }}</div>
+            <div class="onas-value-desc">{{ $t('about.valueSecurityDesc') }}</div>
           </div>
           <div class="onas-value">
             <div class="onas-value-icon"><v-icon icon="mdi-lightbulb-outline" size="26" /></div>
-            <div class="onas-value-title">Technologia</div>
-            <div class="onas-value-desc">Budujemy nowoczesne narzędzia, które oszczędzają czas i dają przewagę zarówno kupującym, jak i sprzedającym.</div>
+            <div class="onas-value-title">{{ $t('about.valueTechnologyTitle') }}</div>
+            <div class="onas-value-desc">{{ $t('about.valueTechnologyDesc') }}</div>
           </div>
           <div class="onas-value">
             <div class="onas-value-icon"><v-icon icon="mdi-handshake-outline" size="26" /></div>
-            <div class="onas-value-title">Transparentność</div>
-            <div class="onas-value-desc">Bez ukrytych opłat i sztuczek. Jasne ceny, uczciwe zasady i pełna historia ogłoszenia w jednym miejscu.</div>
+            <div class="onas-value-title">{{ $t('about.valueTransparencyTitle') }}</div>
+            <div class="onas-value-desc">{{ $t('about.valueTransparencyDesc') }}</div>
           </div>
           <div class="onas-value">
             <div class="onas-value-icon"><v-icon icon="mdi-car-heart" size="26" /></div>
-            <div class="onas-value-title">Pasja</div>
-            <div class="onas-value-desc">Sami jesteśmy fanami motoryzacji. CARIZO robimy tak, jak sami chcielibyśmy używać takiej platformy.</div>
+            <div class="onas-value-title">{{ $t('about.valuePassionTitle') }}</div>
+            <div class="onas-value-desc">{{ $t('about.valuePassionDesc') }}</div>
           </div>
         </div>
       </div>
@@ -79,15 +79,15 @@
     <!-- CTA bottom -->
     <div class="onas-bottom">
       <div class="onas-bottom-inner">
-        <h2>Masz pytania? <span>Porozmawiajmy.</span></h2>
-        <p>Nasz zespół chętnie odpowie na każde pytanie — o platformę, współpracę lub Twoje konto.</p>
+        <h2>{{ $t('about.bottomTitle') }} <span>{{ $t('about.bottomTitleAccent') }}</span></h2>
+        <p>{{ $t('about.bottomDesc') }}</p>
         <div class="onas-bottom-btns">
           <NuxtLink to="/kontakt" class="onas-btn-primary">
             <v-icon icon="mdi-email-outline" size="16" />
-            Skontaktuj się
+            {{ $t('about.bottomContact') }}
           </NuxtLink>
           <NuxtLink to="/adverts" class="onas-btn-secondary">
-            Przeglądaj ogłoszenia
+            {{ $t('about.bottomBrowse') }}
             <v-icon icon="mdi-arrow-right" size="16" />
           </NuxtLink>
         </div>
@@ -98,9 +98,10 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 useHead({
-  title: 'O nas — CARIZO',
-  meta: [{ name: 'description', content: 'Poznaj CARIZO — nowoczesną platformę motoryzacyjną stworzoną przez pasjonatów. Dowiedz się, kim jesteśmy i co nas napędza.' }],
+  title: t('about.metaTitle'),
+  meta: [{ name: 'description', content: t('about.metaDescription') }],
 })
 </script>
 

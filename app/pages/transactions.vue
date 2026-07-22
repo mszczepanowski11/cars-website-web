@@ -3,11 +3,11 @@
         <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
             <div class="page-header">
                 <div>
-                    <h1 class="page-title">Moje transakcje</h1>
-                    <p class="page-sub">Rezerwacje, oględziny i zakupy</p>
+                    <h1 class="page-title">{{ $t('transactions.title') }}</h1>
+                    <p class="page-sub">{{ $t('transactions.subtitle') }}</p>
                 </div>
                 <NuxtLink to="/dashboard" class="back-link">
-                    <v-icon icon="mdi-arrow-left" size="16" />Powrót do panelu
+                    <v-icon icon="mdi-arrow-left" size="16" />{{ $t('transactions.backToPanel') }}
                 </NuxtLink>
             </div>
 
@@ -17,7 +17,7 @@
 
             <div v-else-if="!transactions.length" class="empty-state">
                 <v-icon icon="mdi-handshake-outline" size="48" class="empty-icon" />
-                <p>Brak transakcji.</p>
+                <p>{{ $t('transactions.empty') }}</p>
             </div>
 
             <template v-else>
@@ -51,18 +51,18 @@
                                 @click="doCancel(tx)"
                             >
                                 <v-icon v-if="cancelLoading === tx.id" icon="mdi-loading" size="13" class="spin" />
-                                <span v-else>Anuluj</span>
+                                <span v-else>{{ $t('transactions.cancel') }}</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <div v-if="totalPages > 1" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="load(page - 1)">
+                    <button class="page-btn" :disabled="page === 1" :aria-label="$t('transactions.prevPage')" @click="load(page - 1)">
                         <v-icon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                    <button class="page-btn" :disabled="page >= totalPages" aria-label="Następna strona" @click="load(page + 1)">
+                    <button class="page-btn" :disabled="page >= totalPages" :aria-label="$t('transactions.nextPage')" @click="load(page + 1)">
                         <v-icon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
@@ -75,7 +75,8 @@
 import type { Transaction, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Transakcje — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: () => t('transactions.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getMyTransactions, cancelTransaction } = useTransactions()
 const { error: toastError } = useToast()
@@ -95,13 +96,13 @@ function typeIcon(t: string): string {
     return 'mdi-handshake-outline'
 }
 
-function typeLabel(t: string): string {
-    const map: Record<string, string> = { Reservation: 'Rezerwacja', Viewing: 'Oględziny', Purchase: 'Zakup' }
-    return map[t] ?? t
+function typeLabel(tp: string): string {
+    const map: Record<string, string> = { Reservation: t('transactions.typeReservation'), Viewing: t('transactions.typeViewing'), Purchase: t('transactions.typePurchase') }
+    return map[tp] ?? tp
 }
 
 function statusLabel(s: string): string {
-    const map: Record<string, string> = { Pending: 'Oczekuje', Confirmed: 'Potwierdzone', Cancelled: 'Anulowane', Completed: 'Zakończone' }
+    const map: Record<string, string> = { Pending: t('transactions.statusPending'), Confirmed: t('transactions.statusConfirmed'), Cancelled: t('transactions.statusCancelled'), Completed: t('transactions.statusCompleted') }
     return map[s] ?? s
 }
 
@@ -118,18 +119,18 @@ async function load(p: number = page.value) {
         total.value = r.totalCount
     } catch (e: any) {
         transactions.value = []
-        toastError(e?.data?.message ?? 'Nie udało się załadować transakcji.')
+        toastError(e?.data?.message ?? t('transactions.errLoad'))
     } finally { loading.value = false }
 }
 
 async function doCancel(tx: Transaction) {
-    if (!confirm(`Czy na pewno chcesz anulować tę transakcję?`)) return
+    if (!confirm(t('transactions.cancelConfirm'))) return
     cancelLoading.value = tx.id
     try {
         await cancelTransaction(tx.id)
         tx.status = 'Cancelled'
     } catch (e: any) {
-        toastError(e?.data?.message ?? 'Nie udało się anulować transakcji.')
+        toastError(e?.data?.message ?? t('transactions.errCancel'))
     } finally { cancelLoading.value = null }
 }
 
