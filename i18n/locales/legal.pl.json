@@ -1,1 +1,386 @@
-{}
+{
+  "terms": {
+    "metaTitle": "Regulamin — CARIZO",
+    "metaDescription": "Regulamin serwisu internetowego CARIZO dla klientów indywidualnych.",
+    "heroEyebrow": "Dokumenty prawne",
+    "heroTitle": "Regulamin",
+    "heroTitleAccent": "serwisu",
+    "lastUpdated": "Ostatnia aktualizacja: 04.07.2026",
+    "docTitle": "REGULAMIN SERWISU INTERNETOWEGO CARIZO (DLA KLIENTÓW INDYWIDUALNYCH)",
+    "glossaryTitle": "SŁOWNIK POJĘĆ",
+    "glossaryItems": [
+      "<strong>Administrator</strong> – Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej (CEIDG) prowadzonej przez Ministra właściwego do spraw finansów i gospodarki, pod numerem NIP: 9452331007, REGON: 544870688.",
+      "<strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.eu wraz ze wszystkimi jej podstronami i subdomenami.",
+      "<strong>Użytkownik Indywidualny (Użytkownik)</strong> – osoba fizyczna posiadająca pełną zdolność do czynności prawnych, będąca konsumentem w rozumieniu art. 22¹ Kodeksu cywilnego, korzystająca z zasobów Serwisu w celach niezwiązanych bezpośrednio z jej działalnością gospodarczą lub zawodową.",
+      "<strong>Przedsiębiorca na prawach Konsumenta</strong> – Użytkownik będący osobą fizyczną, zawierający z Administratorem umowę bezpośrednio związaną z prowadzoną przez niego działalnością gospodarczą, gdy z treści tej umowy wynika, że nie posiada ona dla niego charakteru zawodowego, wynikającego w szczególności z przedmiotu wykonywanej przez niego działalności gospodarczej, udostępnionego na podstawie przepisów o Centralnej Ewidencji i Informacji o Działalności Gospodarczej (CEIDG).",
+      "<strong>Konto</strong> – przydzielona danemu Użytkownikowi część Serwisu, zabezpieczona hasłem, umożliwiająca zarządzanie ogłoszeniami, usługami promowania oraz komunikacją wewnętrzną.",
+      "<strong>Ogłoszenie</strong> – sporządzone przez Użytkownika i publikowane w Serwisie zaproszenie do zawarcia umowy sprzedaży pojazdu mechanicznego lub części motoryzacyjnych, stanowiące informację handlową w rozumieniu przepisów prawa.",
+      "<strong>Cennik</strong> – zestawienie opłat za usługi odpłatne, w tym pakiety wyróżnień i promowania, publikowane w sposób jawny i bezpośrednio dostępny w Serwisie."
+    ],
+    "s1Title": "§1 Postanowienia ogólne i charakter usług",
+    "s1Items": [
+      "Niniejsze postanowienia stanowią wzorzec umowny określający zasady, warunki techniczne oraz prawne korzystania z Serwisu internetowego CARIZO, prawa i obowiązki Użytkowników Indywidualnych oraz zakres odpowiedzialności Administratora.",
+      "Serwis CARIZO jest internetową platformą o charakterze handlowym (marketplace), która udostępnia Użytkownikom przestrzeń teleinformatyczną oraz narzędzia techniczne do publikacji i przeglądania Ogłoszeń motoryzacyjnych.",
+      "<strong>Status prawny platformy:</strong> Administrator dostarcza wyłącznie usługi pośrednictwa cyfrowego (usługi hostingu). CARIZO nie jest salonem samochodowym, komisem, hurtownią, autoryzowanym dealerem ani stroną jakichkolwiek transakcji handlowych inicjowanych w Serwisie. Wszelkie umowy sprzedaży pojazdów lub części zawierane są bezpośrednio pomiędzy Użytkownikami, na ich własny koszt i ryzyko.",
+      "CARIZO nie bierze udziału w kontaktach pomiędzy Użytkownikami, nie uczestniczy w negocjacjach cenowych, nie pośredniczy w przekazywaniu środków finansowych za pojazdy ani nie gwarantuje, że opublikowanie Ogłoszenia doprowadzi do sfinalizowania transakcji sprzedaży.",
+      "Każdy Użytkownik z momentem rozpoczęcia korzystania z jakichkolwiek zasobów Serwisu (w tym samego przeglądania stron) potwierdza, że zapoznał się z niniejszymi zapisami i zobowiązuje się do ich bezwzględnego przestrzegania.",
+      "Z Serwisu w zakresie tworzenia Konta oraz publikacji Ogłoszeń mogą korzystać wyłącznie osoby, które ukończyły 18. rok życia i posiadają pełną zdolność do czynności prawnych. Przeglądanie Serwisu i subskrypcja newslettera są dozwolone dla osób, które ukończyły 16. rok życia.",
+      "Korzystając z Serwisu, Użytkownik zobowiązany jest do działania w sposób zgodny z prawem, dobrymi obyczajami oraz zasadami współżycia społecznego. Zabrania się dostarczania przez Użytkownika treści o charakterze bezprawnym, naruszających dobra osobiste osób trzecich lub zakłócających działanie infrastruktury IT Serwisu."
+    ],
+    "s2Title": "§2 Warunki techniczne i dostępność serwisu",
+    "s2Items": [
+      "Przeglądanie zasobów Serwisu, w tym wyszukiwanie, filtrowanie i przeglądanie opublikowanych Ogłoszeń, jest bezpłatne i nie wymaga posiadania Konta ani logowania.",
+      "Do korzystania z pełnej funkcjonalności Serwisu, w tym publikacji Ogłoszeń, zakupu usług dodatkowych oraz korzystania z wewnętrznego systemu komunikacji, niezbędne jest zarejestrowanie Konta, posiadanie aktywnego adresu e-mail oraz numeru telefonu komórkowego u polskiego operatora telekomunikacyjnego.",
+      "CARIZO dokłada wszelkich starań w celu zapewnienia stałego i nieprzerwanego działania Serwisu, jednakże zastrzega sobie prawo do wprowadzania przerw technicznych niezbędnych do konserwacji, aktualizacji lub rozbudowy systemu informatycznego.",
+      "CARIZO nie ponosi odpowiedzialności za szkody, utracone korzyści ani zakłócenia w funkcjonowaniu platformy powstałe w wyniku przerw technicznych lub awarii leżących po stronie zewnętrznych dostawców usług teleinformatycznych oraz operatorów hostingu."
+    ],
+    "s3Title": "§3 Zasady publikacji ogłoszeń i cennik",
+    "s3Items": [
+      "Dodawanie Ogłoszeń przez Użytkowników Indywidualnych w ich podstawowym wariancie jest bezpłatne.",
+      "CARIZO oferuje dodatkowe, odpłatne usługi zwiększające widoczność ofert (usługi promowania, podbicia, wyróżnienia na stronie głównej). Aktualny zakres tych usług, ich specyfikacja oraz ceny określane są w Cenniku dostępnym w Serwisie.",
+      "Standardowy czas publikacji Ogłoszenia wynosi 90 dni.",
+      "Po upływie 90 dni Ogłoszenie wygasa automatycznie i zostaje przeniesione do archiwum Konta Użytkownika. Użytkownik ma możliwość ponownej, ręcznej aktywacji Ogłoszenia z poziomu swojego Konta.",
+      "Serwis nie stosuje mechanizmów automatycznego odnawiania Ogłoszeń ani automatycznego pobierania opłat finansowych z kont bankowych lub kart Użytkownika bez jego wyraźnej, każdorazowej i uprzedniej zgody.",
+      "Ogłoszenie jest ściśle i nierozerwalnie przypisane do jednego, konkretnego pojazdu lub zestawu części zdefiniowanego w momencie jego utworzenia. Zabrania się zmiany przedmiotu Ogłoszenia w trakcie jego emisji (w tym poprzez edycję parametrów, opisu lub zdjęć w celu zaoferowania innego pojazdu w ramach tego samego ogłoszenia).",
+      "W przypadku intencjonalnego usunięcia Ogłoszenia przez Użytkownika przed zakończeniem standardowego lub przedłużonego okresu publikacji (np. w wyniku wcześniejszej sprzedaży pojazdu), wniesione opłaty za usługi promowania nie podlegają zwrotowi ani proporcjonalnemu rozliczeniu, z zastrzeżeniem praw konsumenckich opisanych w §6.",
+      "Płatności za odpłatne usługi promowania realizowane są za pośrednictwem zewnętrznego systemu płatności <strong>imoje</strong>, obsługiwanego przez <strong>ING Bank Śląski S.A.</strong> z siedzibą w Katowicach. Koszty płatności określone są w aktualnym cenniku operatora. CARIZO nie przechowuje danych kart płatniczych — są one przetwarzane wyłącznie przez ING Bank Śląski S.A.",
+      "Koszty dostawy towarów w transakcjach zawieranych pomiędzy Użytkownikami Serwisu są ustalane bezpośrednio między stronami transakcji (sprzedającym a kupującym). CARIZO, jako platforma pośrednicząca (marketplace C2C), nie jest stroną tych transakcji i nie pobiera opłat od kupujących z tytułu dostawy."
+    ],
+    "s4Title": "§4 Wymagania dotyczące treści ogłoszeń, parametrów i zdjęć",
+    "s4Items": [
+      "Podczas dodawania Ogłoszenia dotyczącego pojazdu Serwis zaleca podanie prawidłowego, autentycznego i kompletnego 17-znakowego numeru VIN (Vehicle Identification Number) — Ogłoszenia z podanym numerem VIN oznaczane są w Serwisie jako zweryfikowane i uwzględniane w mechanizmie plasowania ofert opisanym w §5. Podanie numeru VIN nie jest obowiązkowe, jednak jeżeli Użytkownik zdecyduje się go podać, ma obowiązek podania numeru prawidłowego, autentycznego i dotyczącego rzeczywiście oferowanego pojazdu — podanie nieprawidłowego, fałszywego lub cudzego numeru VIN stanowi naruszenie Regulaminu (§9). Podanie numeru rejestracyjnego pojazdu jest opcjonalne.",
+      "Użytkownik wprowadza wszelkie dane techniczne, opis oraz stan pojazdu samodzielnie i ponosi pełną odpowiedzialność za ich zgodność ze stanem faktycznym i prawnym pojazdu. Treść oferty musi odzwierciedlać rzeczywisty zamiar sprzedaży pojazdu.",
+      "W treści Ogłoszenia Użytkownik zobowiązany jest podać całkowitą, rzeczywistą cenę brutto pojazdu. Zabrania się podawania w polu „Cena” kwot rat leasingowych, rat kredytowych, kwot odstępnego lub cen rażąco zaniżonych w celu manipulacji wynikami wyszukiwania. Szczegóły dotyczące finansowania mogą być zawarte wyłącznie w polu opisu.",
+      "Przedmiotem jednego Ogłoszenia może być wyłącznie jeden konkretny pojazd. Niedozwolone jest oferowanie w treści jednego Ogłoszenia kilku pojazdów na wybór, zamianę lub prezentowanie ofert o charakterze ogólnym.",
+      "Opis pojazdu musi odnosić się wyłącznie do przedmiotu sprzedaży. Zabrania się stosowania tzw. spamu słów kluczowych (wpisywania nazw innych marek, modeli i haseł niezwiązanych z ofertą) oraz umieszczania odnośników (linków) przekierowujących do konkurencyjnych serwisów ogłoszeniowych.",
+      "Zdjęcia dodawane do Ogłoszenia muszą przedstawiać oferowany pojazd w jego aktualnym stanie faktycznym. Zabrania się:<ul><li>Używania zdjęć katalogowych, reklamowych (pochodzących od producentów) lub przerobionych cyfrowo;</li><li>Nakładania na zdjęcia dodatkowych elementów graficznych, takich jak numery telefonów, adresy e-mail, napisy promocyjne (np. „OKAZJA”, „PILNIE”, „ZOBACZ”);</li><li>Umieszczania na zdjęciach znaków wodnych lub logotypów innych serwisów internetowych.</li></ul>"
+    ],
+    "s5Title": "§5 System rekomendacji i mechanizm plasowania ofert",
+    "s5Items": [
+      "Ogłoszenia dodane przez Użytkownika są publikowane w Serwisie automatycznie po zatwierdzeniu formularza lub zaksięgowaniu opłaty za opcjonalne promowanie.",
+      "Kolejność wyświetlania Ogłoszeń w wynikach wyszukiwania (tzw. plasowanie domyślne / trafność) opiera się na zautomatyzowanym algorytmie uwzględniającym obiektywne kryteria techniczne. Głównymi parametrami decydującymi o pozycji Ogłoszenia na liście są:<ul><li>Korzystanie z aktywnych usług promowania (Ogłoszenia z płatnym wyróżnieniem pozycjonowane są wyżej);</li><li>Aktualność oferty: data publikacji, data ostatniej aktualizacji lub ponownej aktywacji z archiwum;</li><li>Stopień dopasowania do filtrów technicznych zdefiniowanych przez osobę przeglądającą Serwis (w tym: cena, rocznik, przebieg, moc silnika, pojemność silnika, rodzaj paliwa, typ nadwozia, stan pojazdu nowy/używany, dostępność wideo, obecność numeru VIN oraz lokalizacja geograficzna pojazdu).</li></ul>"
+    ],
+    "s6Title": "§6 Odstąpienie od umowy i procedura reklamacyjna",
+    "s6Items": [
+      "Kupującemu będącemu konsumentem oraz Przedsiębiorcy na prawach Konsumenta przysługuje prawo do pisemnego odstąpienia od zawartej umowy o świadczenie usług drogą elektroniczną (w tym umowy o prowadzenie Konta oraz umów o usługi promowania) bez podania przyczyny, w terminie 14 (słownie: czternastu) dni od daty zawarcia umowy, na podstawie ustawy z dnia 30 maja 2014 r. o prawach konsumenta (Dz.U. z 2014 r. poz. 827 ze zm.), poprzez złożenie jednoznacznego oświadczenia woli na adres e-mail: <strong>kontakt@carizo.eu</strong>.",
+      "Uprawnienie, o którym mowa w punkcie powyżej, przysługuje również osobie fizycznej – Przedsiębiorcy na prawach Konsumenta, zawierającej z Administratorem umowę bezpośrednio związaną z jej działalnością gospodarczą, gdy z treści tej umowy wynika, że nie posiada ona dla tej osoby charakteru zawodowego, wynikającego w szczególności z przedmiotu wykonywanej przez nią działalności gospodarczej, udostępnionego na podstawie przepisów o Centralnej Ewidencji i Informacji o Działalności Gospodarczej.",
+      "W przypadku zakupu odpłatnych usług promowania Ogłoszenia, których świadczenie — na wyraźne żądanie Użytkownika wyrażone poprzez aktywację opcji w panelu — rozpoczęło się przed upływem terminu do odstąpienia od umowy, Użytkownik traci prawo do odstąpienia od umowy z momentem pełnego wykonania usługi polegającej na emisji wyróżnienia przez CARIZO.",
+      "<strong>Koszty zwrotu przy odstąpieniu:</strong> Usługi świadczone przez CARIZO mają charakter wyłącznie cyfrowy (usługi teleinformatyczne) i nie obejmują dostawy żadnych towarów fizycznych. W związku z tym odstąpienie od umowy przez Kupującego, w tym Przedsiębiorcę na prawach Konsumenta, nie wiąże się z obowiązkiem zwrotu towaru ani z ponoszeniem kosztów przesyłki. Wszelkie koszty dostawy fizycznych towarów (np. pojazdów lub części) będących przedmiotem transakcji pomiędzy Użytkownikami Serwisu obciążają strony tej transakcji i są przez nie ustalane bezpośrednio.",
+      "<strong>Gwarancja producenta:</strong> CARIZO nie jest producentem ani sprzedawcą pojazdów mechanicznych ani części motoryzacyjnych. CARIZO świadczy wyłącznie usługi cyfrowe (publikacja ogłoszeń, usługi promowania). Gwarancji producenta na pojazdy lub części będące przedmiotem ogłoszeń udzielają odpowiednio ich producenci lub importerzy — Użytkownik (sprzedający) zobowiązany jest do przekazania kupującemu wszelkich dokumentów gwarancyjnych posiadanych do sprzedawanego pojazdu lub części. Odpłatne usługi CARIZO (pakiety promowania, emisja ogłoszeń) nie podlegają gwarancji producenta w rozumieniu art. 577 Kodeksu cywilnego.",
+      "Użytkownikowi, w tym Przedsiębiorcy na prawach Konsumenta, przysługuje prawo do złożenia reklamacji w przypadku niewykonania lub nienależytego wykonania usług o charakterze teleinformatycznym przez CARIZO (np. błędy techniczne w wyświetlaniu płatnego promowania, nieprawidłowe działanie Konta).",
+      "Reklamacje należy zgłaszać drogą elektroniczną na adres e-mail: <strong>kontakt@carizo.eu</strong>. Zgłoszenie powinno zawierać: identyfikator Konta lub ID Ogłoszenia, opis zaistniałego problemu technicznego oraz dane kontaktowe.",
+      "CARIZO rozpatruje reklamacje Użytkowników, w tym Przedsiębiorców na prawach Konsumenta, w nieprzekraczalnym, ustawowym terminie 14 dni od dnia ich prawidłowego otrzymania. Odpowiedź wysyłana jest na adres e-mail przypisany do Konta Użytkownika."
+    ],
+    "s7Title": "§7 Komunikacja w Serwisie oraz treści reklamowe",
+    "s7Items": [
+      "Kontakt pomiędzy Użytkownikami w celu przeprowadzenia transakcji odbywa się za pomocą danych udostępnionych przez sprzedawcę (numer telefonu, adres e-mail) oraz za pośrednictwem wewnętrznego systemu wiadomości (czatu) zintegrowanego z Serwisem.",
+      "CARIZO zastrzega sobie prawo do wyświetlania w ramach Serwisu reklam oraz ofert partnerów zewnętrznych, w szczególności z branży motoryzacyjnej, finansowej (leasing, kredyty), ubezpieczeniowej oraz dostawców raportów historii pojazdów."
+    ],
+    "s8Title": "§8 Prawa autorskie i licencje",
+    "s8Items": [
+      "Użytkownik oświadcza, że posiada pełne prawa, w tym autorskie prawa majątkowe, do materiałów fotograficznych oraz opisów umieszczanych w Ogłoszeniu.",
+      "Serwis automatycznie nakłada na zdjęcia publikowane przez Użytkowników znak wodny z logotypem „CARIZO” w celu przeciwdziałania nieuprawnionemu wykorzystywaniu fotografii przez podmioty trzecie.",
+      "Z momentem publikacji Ogłoszenia, Użytkownik udziela na rzecz CARIZO niewyłącznej, nieodpłatnej, nieograniczonej terytorialnie i czasowo licencji na wykorzystanie zdjęcia oraz opisów w celu prawidłowego funkcjonowania Serwisu, promocji platformy, prowadzenia działań marketingowych, a także prezentowania ofert w mediach społecznościowych oraz zewnętrznych materiałach reklamowych. Licencja obejmuje prawo do kadrowania, zmiany rozdzielczości oraz formatowania materiałów graficznych.",
+      "W przypadku, gdy jakikolwiek podmiot trzeci wystąpi z roszczeniami prawnymi lub finansowymi wobec CARIZO z tytułu naruszenia jego praw autorskich, praw własności przemysłowej lub dóbr osobistych poprzez treść lub zdjęcia zamieszczone w Ogłoszeniu przez Użytkownika, Użytkownik ten zobowiązuje się do pełnego zwolnienia CARIZO z odpowiedzialności oraz pokrycia wszelkich udokumentowanych kosztów obrony, sporów prawnych, kosztów zastępstwa procesowego oraz zasądzonych odszkodowań."
+    ],
+    "s9Title": "§9 Moderacja, blokady kont i zakaz automatyzacji",
+    "s9Items": [
+      "CARIZO nie prowadzi uprzedniej, obowiązkowej ręcznej weryfikacji (moderacji) każdego Ogłoszenia przed jego publikacją. Użytkownicy oraz organy zewnętrzne mają możliwość zgłaszania za pośrednictwem elektronicznego formularza interfejsu ofert naruszających prawo lub niniejsze warunki.",
+      "Każde zgłoszenie nielegalnych treści w rozumieniu art. 16 Aktu o usługach cyfrowych (DSA) powinno zawierać: precyzyjną lokalizację treści (link URL), uzasadnienie, dane zgłaszającego (z wyjątkiem zgłoszeń dotyczących przestępstw pedofilskich) oraz oświadczenie o działaniu w dobrej wierze.",
+      "CARIZO zastrzega sobie prawo do weryfikacji następczej, edycji, ukrycia lub całkowitego usunięcia Ogłoszenia, a także czasowego lub stałego zablokowania Konta Użytkownika w przypadku stwierdzenia:<ul><li>podawania nieprawdziwych danych osobowych lub kontaktowych,</li><li>publikowania duplikatów Ogłoszeń dotyczących tego samego pojazdu,</li><li>wprowadzenia nieprawidłowego, fałszywego lub cudzego numeru VIN,</li><li>manipulacji parametrami Ogłoszenia (w tym ceną i zdjęciami) opisanymi w §4,</li><li>uzasadnionego podejrzenia próby oszustwa (scam, phishing) lub działań na szkodę innych Użytkowników,</li><li>naruszania praw osób trzecich,</li><li>publikowania treści wulgarnych, obraźliwych lub niezgodnych z prawem.</li></ul>",
+      "Zabrania się korzystania z jakichkolwiek narzędzi automatycznych (w szczególności botów, skryptów, programów filtrujących lub tzw. web crawlerów/scraperów) w celu monitorowania, kopiowania, pobierania lub automatycznego agregowania zasobów Serwisu, w tym treści Ogłoszeń oraz danych kontaktowych Użytkowników, bez uprzedniej zgody CARIZO pod rygorem natychmiastowego zablokowania dostępu do Serwisu oraz podjęcia kroków prawnych.",
+      "W przypadku zastosowania blokady Konta lub usunięcia treści, CARIZO niezwłocznie powiadomi Użytkownika o podjętej decyzji wraz z uzasadnieniem drogą elektroniczną. Użytkownikowi przysługuje prawo do złożenia bezpłatnego odwołania od decyzji w terminie 14 dni za pośrednictwem adresu e-mail: <strong>kontakt@carizo.eu</strong>."
+    ],
+    "s10Title": "§10 Likwidacja Konta Użytkownika",
+    "s10Items": [
+      "Użytkownik ma prawo do rozwiązania umowy o świadczenie usług drogą elektroniczną w każdym czasie i bez podania przyczyny poprzez samodzielne usunięcie Konta z poziomu panelu użytkownika.",
+      "Usunięcie Konta skutkuje trwałym usunięciem lub anonimizacją danych osobowych Użytkownika, z wyjątkiem informacji, których obowiązek przechowywania wynika bezpośrednio z bezwzględnie obowiązujących przepisów prawa podatkowego i rachunkowego."
+    ],
+    "s11Title": "§11 Wyłączenie odpowiedzialności Administratora",
+    "s11Items": [
+      "CARIZO nie jest stroną transakcji ani umów cywilnoprawnych zawieranych pomiędzy Użytkownikami Serwisu. Pełną i wyłączną odpowiedzialność za treść Ogłoszenia, stan techniczny, prawny i faktyczny pojazdu, a także za prawidłowy przebieg i realizację transakcji ponoszą wyłącznie strony tej transakcji.",
+      "Wszelkie dodatkowe narzędzia udostępniane w przyszłości przez platformę (takie jak wzory umów kupna-sprzedaży w formacie PDF, usługi finansowe lub raporty historii pojazdów) mają charakter wyłącznie pomocniczy i orientacyjny. CARIZO nie ponosi odpowiedzialności za skutki prawne i finansowe wynikające z ich wykorzystania przez Użytkowników."
+    ],
+    "s12Title": "§12 Postanowienia końcowe",
+    "s12Items": [
+      "CARIZO zastrzega sobie prawo do zmiany niniejszych warunków z ważnych przyczyn technicznych, prawnych lub organizacyjnych. O zmianach zarejestrowani Użytkownicy zostaną powiadomieni drogą mailową z zachowaniem 14-dniowego okresu wypowiedzenia.",
+      "W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego, ustawy o prawach konsumenta oraz ustawy z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej.",
+      "<strong>Prawo właściwe:</strong> Niniejszy Regulamin oraz wszelkie stosunki prawne wynikające z korzystania z Serwisu podlegają prawu Rzeczypospolitej Polskiej.",
+      "<strong>Jurysdykcja:</strong> Wszelkie spory wynikłe z niniejszego Regulaminu lub z korzystania z Serwisu będą rozstrzygane przez właściwy sąd powszechny Rzeczypospolitej Polskiej. W stosunkach z konsumentami właściwy miejscowo jest sąd według siedziby pozwanego lub sąd miejsca zamieszkania konsumenta, według wyboru powoda. Konsumenci mogą korzystać z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń, w tym z platformy ODR dostępnej pod adresem: <a href='https://ec.europa.eu/consumers/odr' target='_blank' rel='noopener noreferrer'>ec.europa.eu/consumers/odr</a>. CARIZO informuje, że nie przystąpił do żadnego systemu pozasądowego rozwiązywania sporów konsumenckich w rozumieniu ustawy z dnia 23 września 2016 r. o pozasądowym rozwiązywaniu sporów konsumenckich (Dz. U. poz. 1823) — udział CARIZO w takim postępowaniu nie jest obowiązkowy. Konsument ma jednak prawo skorzystać z bezpłatnej pomocy powiatowych lub miejskich rzeczników praw konsumentów oraz Inspekcji Handlowej.",
+      "Treść niniejszych postanowień wchodzi w życie z dniem 04.07.2026. Ostatnia aktualizacja: 04.07.2026."
+    ],
+    "s13Title": "§13 Warunki dla Użytkowników Biznesowych (Rozporządzenie P2B 2019/1150)",
+    "s13Items": [
+      "Niniejszy paragraf ma zastosowanie do Użytkowników Biznesowych w rozumieniu Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2019/1150 z dnia 20 czerwca 2019 r. w sprawie propagowania sprawiedliwości i przejrzystości dla użytkowników biznesowych korzystających z usług pośrednictwa internetowego (Rozporządzenie P2B).",
+      "<strong>Plasowanie ofert — przejrzystość:</strong> Parametry główne determinujące pozycjonowanie ogłoszeń opisane są w §5 niniejszego Regulaminu. CARIZO nie stosuje zróżnicowanego traktowania własnych usług lub produktów względem usług Użytkowników Biznesowych.",
+      "<strong>Ograniczenie dostępu lub zawieszenie Konta:</strong> W przypadku podjęcia decyzji o zawieszeniu lub ograniczeniu dostępu do Serwisu dla Użytkownika Biznesowego, CARIZO poinformuje go o tej decyzji i jej uzasadnieniu przed jej wejściem w życie lub — jeżeli nie jest to możliwe — niezwłocznie po jej wejściu w życie. Użytkownik Biznesowy ma prawo złożenia bezpłatnego odwołania w terminie 14 dni na adres e-mail: <strong>kontakt@carizo.eu</strong>.",
+      "<strong>Wewnętrzny system rozpatrywania skarg:</strong> CARIZO zapewnia Użytkownikom Biznesowym dostęp do wewnętrznego systemu rozpatrywania skarg za pośrednictwem adresu e-mail: <strong>kontakt@carizo.eu</strong>. CARIZO dąży do rozpatrzenia każdej skargi w terminie 14 dni roboczych.",
+      "<strong>Mediacja:</strong> W przypadku braku porozumienia w ramach wewnętrznego systemu rozpatrywania skarg, CARIZO jest gotowe do rozważenia mediacji prowadzonej przez neutralnego mediatora. Strony mogą zwrócić się do Centrum Mediacji przy Konfederacji Lewiatan lub innego uzgodnionego mediatora.",
+      "<strong>Dane Użytkowników Biznesowych:</strong> Zasady przetwarzania danych osobowych Użytkowników Biznesowych opisane są w Polityce Prywatności dostępnej w Serwisie."
+    ],
+    "s14Title": "§14 Logowanie przez zewnętrznych dostawców tożsamości",
+    "s14Items": [
+      "Serwis umożliwia założenie Konta i logowanie się przy użyciu zewnętrznego dostawcy tożsamości (Facebook, Google). Konto założone w ten sposób podlega niniejszemu Regulaminowi na tych samych zasadach co Konto założone przy użyciu adresu e-mail i hasła.",
+      "Nowe Konto na podstawie danych z Facebooka jest zakładane wyłącznie po jednoznacznym potwierdzeniu przez Użytkownika ekranu zgody wyświetlanego przed utworzeniem Konta. Szczegóły dotyczące zakresu pobieranych danych oraz zasad ich usuwania opisane są w Polityce Prywatności (§2, §3 i §12).",
+      "Użytkownik może w każdej chwili odłączyć swoje Konto od Facebooka — z poziomu ustawień Konta w Serwisie lub z poziomu ustawień swojego konta Facebook (Facebook → Ustawienia → Aplikacje i strony internetowe). Odłączenie nie powoduje usunięcia Konta w CARIZO, jeżeli Użytkownik ustawił hasło niezależne od Facebooka.",
+      "Użytkownik odpowiada za posiadanie praw autorskich lub innych uprawnień do zdjęć i materiałów, które samodzielnie dodaje do ogłoszenia w Serwisie, niezależnie od źródła ich pozyskania (w tym zdjęć pierwotnie opublikowanych przez Użytkownika na Facebooku).",
+      "Opisy ogłoszeń, sugestie danych technicznych pojazdu oraz elementy graficzne generowane z wykorzystaniem sztucznej inteligencji na podstawie zdjęć dodanych przez Użytkownika mają charakter propozycji wymagającej zatwierdzenia przed publikacją. Za ostateczną treść opublikowanego ogłoszenia odpowiada Użytkownik publikujący."
+    ]
+  },
+  "termsB2b": {
+    "metaTitle": "Regulamin B2B — CARIZO",
+    "metaDescription": "Regulamin świadczenia usług dla klientów biznesowych serwisu CARIZO. Zgodny z Rozporządzeniem P2B (UE) 2019/1150 oraz Aktem o usługach cyfrowych (DSA).",
+    "heroEyebrow": "Dokumenty prawne",
+    "heroTitle": "Regulamin",
+    "heroTitleAccent": "B2B",
+    "lastUpdated": "Ostatnia aktualizacja: 04.07.2026",
+    "docTitle": "REGULAMIN ŚWIADCZENIA USŁUG DLA KLIENTÓW BIZNESOWYCH (B2B) – SERWIS CARIZO",
+    "glossaryTitle": "SŁOWNIK POJĘĆ",
+    "glossaryItems": [
+      "<strong>Administrator</strong> – Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej pod numerem NIP: 9452331007, REGON: 544870688.",
+      "<strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.eu wraz ze wszystkimi jej podstronami i subdomenami.",
+      "<strong>Użytkownik Biznesowy (Dealer)</strong> – przedsiębiorca (osoba fizyczna prowadząca działalność gospodarczą, osoba prawna lub jednostka organizacyjna nieposiadająca osobowości prawnej), korzystający z usług Serwisu w celach bezpośrednio związanych z jego działalnością gospodarczą lub zawodową (np. komis samochodowy, salon, autoryzowany dealer, wypożyczalnia pojazdów).",
+      "<strong>Konto Biznesowe</strong> – przydzielona danemu Użytkownikowi Biznesowemu, zabezpieczona hasłem, część przestrzeni teleinformatycznej Serwisu, umożliwiająca masowe zarządzanie Ogłoszeniami, weryfikację statystyk, zarządzanie Pakietami oraz obsługę rozliczeń finansowych.",
+      "<strong>Ogłoszenie</strong> – sporządzone przez Użytkownika Biznesowego zaproszenie do zawarcia umowy sprzedaży pojazdu lub części motoryzacyjnych, stanowiące informację handlową w rozumieniu przepisów prawa, publikowane w Serwisie.",
+      "<strong>Cennik</strong> – zestawienie opłat za usługi odpłatne, w tym pakiety wyróżnień, promowania oraz Pakiety Pre-Paid, publikowane w sposób jawny i bezpośrednio dostępny w Serwisie.",
+      "<strong>Pakiet Pre-Paid</strong> – usługa odpłatna polegająca na zakupie z góry określonej liczby Ogłoszeń oraz opcji ich promowania do wykorzystania w zdefiniowanym przedziale czasowym, zgodnie z aktualnym Cennikiem.",
+      "<strong>Rozporządzenie P2B</strong> – Rozporządzenie Parlamentu Europejskiego i Rady (UE) 2019/1150 z dnia 20 czerwca 2019 r. w sprawie propagowania sprawiedliwości i przejrzystości dla użytkowników biznesowych korzystających z usług pośrednictwa internetowego."
+    ],
+    "s1Title": "§1 Postanowienia ogólne i charakter usług (Warunki Ogólne)",
+    "s1Items": [
+      "Niniejsze postanowienia stanowią wzorzec umowny określający zasady, warunki techniczne oraz prawne komercyjnej współpracy pomiędzy Administratorem a Użytkownikami Biznesowymi w zakresie świadczenia usług drogą elektroniczną.",
+      "Serwis CARIZO jest internetową platformą o charakterze handlowym (marketplace), która udostępnia Użytkownikom Biznesowym przestrzeń teleinformatyczną oraz narzędzia techniczne do masowej publikacji Ogłoszeń motoryzacyjnych.",
+      "<strong>Status prawny platformy:</strong> Administrator dostarcza wyłącznie usługi pośrednictwa cyfrowego (usługi hostingu). CARIZO nie jest salonem samochodowym, komisem, hurtownią, autoryzowanym dealerem ani stroną jakichkolwiek transakcji handlowych handlu pojazdami. Wszelkie umowy sprzedaży pojazdów lub części zawierane są bezpośrednio pomiędzy Użytkownikami, na ich własny koszt i ryzyko.",
+      "CARIZO nie bierze udziału w kontaktach pomiędzy Użytkownikami, nie uczestniczy w negocjacjach cenowych, nie pośredniczy w przekazywaniu środków finansowych za pojazdy ani nie gwarantuje, że opublikowanie Ogłoszenia doprowadzi do sfinalizowania transakcji sprzedaży.",
+      "Relacja pomiędzy Serwisem a Dealerem opiera się na zasadzie czystego obrotu profesjonalnego (B2B). Strony wyłączają stosowanie jakichkolwiek przepisów prawa konsumenckiego, w tym przepisów dotyczących prawa do odstąpienia od umowy bez podania przyczyny.",
+      "Każdy Użytkownik Biznesowy z momentem rozpoczęcia korzystania z jakichkolwiek zasobów Serwisu przeznaczonych dla profesjonalistów potwierdza, że zapoznał się z niniejszymi zapisami i zobowiązuje się do ich bezwzględnego przestrzegania.",
+      "Korzystając z Serwisu, Użytkownik Biznesowy zobowiązany jest do działania w sposób zgodny z prawem, dobrymi obyczajami oraz zasadami współżycia społecznego. Zabrania się dostarczania przez Użytkownika Biznesowego treści o charakterze bezprawnym, naruszających dobra osobiste osób trzecich lub zakłócających działanie infrastruktury IT Serwisu."
+    ],
+    "s2Title": "§2 Dwuetapowa Procedura Rejestracji i Weryfikacji (Status Zweryfikowanego Dealera)",
+    "s2Intro": "W celu eliminacji prób oszustw rynkowych oraz zagwarantowania najwyższej jakości bazy ofert, proces zakładania Konta Biznesowego opiera się na dwuetapowym filtrze weryfikacyjnym:",
+    "s2Items": [
+      "<strong>Etap 1 – Weryfikacja Teleinformatyczna:</strong> Podmiot wypełnia formularz rejestracyjny, podając pełną firmę, numer NIP, adres e-mail oraz numer telefonu. System automatycznie odpytuje bazy rejestrowe (CEIDG lub KRS) w celu sprawdzenia statusu działalności. Warunkiem przejścia dalej jest autoryzacja numeru telefonu za pomocą jednorazowego kodu SMS oraz zatwierdzenie linku aktywacyjnego wysłanego na adres e-mail.",
+      "<strong>Etap 2 – Ręczna Weryfikacja i Akceptacja Administratora:</strong> Po pomyślnym ukończeniu Etapu 1, Konto Biznesowe pozostaje nieaktywne (brak możliwości publikacji). Administrator lub wyspecjalizowany moderator dokonuje manualnej oceny profilu działalności podmiotu.",
+      "<strong>Finalizacja:</strong> Po pozytywnej weryfikacji manualnej, Konto Biznesowe zostaje ostatecznie aktywowane, a podmiot uzyskuje publiczny status „Zweryfikowanego Dealera”. Administrator zastrzega sobie prawo do odmowy akceptacji konta bez podania przyczyny."
+    ],
+    "s3Title": "§3 Model Rozliczeń Pre-Paid i Program Startowy",
+    "s3Items": [
+      "Serwis CARIZO w relacjach komercyjnych stosuje wyłącznie system Pre-Paid (płatność z góry). Publikacja Ogłoszeń jest technicznie zablokowana do momentu zaksięgowania środków za wybrany pakiet.",
+      "Użytkownik Biznesowy dokonuje wyboru jednego z czterech dedykowanych wariantów subskrypcyjnych:<ol type='a'><li>Pakiet Start,</li><li>Pakiet Biznes,</li><li>Pakiet Premium,</li><li>Pakiet Enterprise.</li></ol>Szczegółowe limity, ceny oraz parametry techniczne poszczególnych wariantów określa aktualny Cennik dostępny w panelu Serwisu.",
+      "<strong>Program Startowy:</strong> W celu budowania płynności bazy ogłoszeniowej, nowo zarejestrowany Dealer ma prawo do jednorazowej aktywacji Programu Startowego. Program oferuje 3-miesięczny bezpłatny okres próbny z technicznym limitem wynoszącym maksymalnie 20 aktywnych Ogłoszeń jednocześnie. Po zakończeniu tego okresu lub w przypadku chęci przekroczenia limitu 20 ofert przed upływem 3 miesięcy, Dealer zobowiązany jest do zakupu jednego ze standardowych Pakietów Pre-Paid."
+    ],
+    "s4Title": "§4 Wymagania dotyczące treści Ogłoszeń, parametrów i zdjęć",
+    "s4Items": [
+      "Podczas dodawania Ogłoszenia dotyczącego pojazdu, Użytkownik Biznesowy ma obowiązek podania prawidłowego, autentycznego i kompletnego 17-znakowego numeru VIN (Vehicle Identification Number). Podanie numeru rejestracyjnego pojazdu jest opcjonalne.",
+      "Użytkownik Biznesowy wprowadza wszelkie dane techniczne, opis oraz stan pojazdu samodzielnie i ponosi pełną odpowiedzialność za ich zgodność ze stanem faktycznym i prawnym pojazdu. Treść oferty musi odzwierciedlać rzeczywisty zamiar sprzedaży pojazdu.",
+      "W treści Ogłoszenia Użytkownik Biznesowy zobowiązany jest podać całkowitą, rzeczywistą cenę brutto pojazdu. Zabrania się podawania w polu „Cena” kwot rat leasingowych, rat kredytowych, kwot odstępnego lub cen rażąco zaniżonych w celu manipulacji wynikami wyszukiwania. Szczegóły dotyczące finansowania mogą być zawarte wyłącznie w polu opisu.",
+      "Przedmiotem jednego Ogłoszenia może być wyłącznie jeden konkretny pojazd. Niedozwolone jest oferowanie w treści jednego Ogłoszenia kilku pojazdów na wybór, zamianę lub prezentowanie ofert o charakterze ogólnym. Ogłoszenie jest nierozerwalnie przypisane do auta zdefiniowanego na starcie, zabrania się zmiany przedmiotu Ogłoszenia w trakcie jego emisji.",
+      "Opis pojazdu musi odnosić się wyłącznie do przedmiotu sprzedaży. Zabrania się stosowania tzw. spamu słów kluczowych (wpisywania nazw innych marek, modeli i haseł niezwiązanych z ofertą) oraz umieszczania odnośników (linków) przekierowujących do konkurencyjnych serwisów ogłoszeniowych.",
+      "Zdjęcia dodawane do Ogłoszenia muszą przedstawiać oferowany pojazd w jego aktualnym stanie faktycznym. Zabrania się:<ol type='a'><li>Używania zdjęć katalogowych, reklamowych (pochodzących od producentów) lub przerobionych cyfrowo;</li><li>Nakładania na zdjęcia dodatkowych elementów graficznych, takich jak numery telefonów, adresy e-mail, napisy promocyjne (np. „OKAZJA”, „PILNIE”, „ZOBACZ”);</li><li>Umieszczania na zdjęciach znaków wodnych lub logotypów innych serwisów internetowych.</li></ol>"
+    ],
+    "s5Title": "§5 System rekomendacji i mechanizm plasowania ofert (Wymóg Omnibus)",
+    "s5Items": [
+      "Ogłoszenia dodane przez Użytkownika Biznesowego są publikowane w Serwisie automatycznie po zatwierdzeniu formularza lub zweryfikowaniu płatności za wybrany Pakiet Pre-Paid.",
+      "Kolejność wyświetlania Ogłoszeń w wynikach wyszukiwania (tzw. plasowanie domyślne / trafność) opiera się na zautomatyzowanym algorytmie uwzględniającym obiektywne kryteria techniczne. Głównymi parametrami decydującymi o pozycji Ogłoszenia na liście są:<ol type='a'><li>Korzystanie z aktywnych usług promowania (Ogłoszenia z płatnym wyróżnieniem pozycjonowane są wyżej);</li><li>Aktualność oferty: data publikacji, data ostatniej aktualizacji lub ponownej aktywacji z archiwum;</li><li>Stopień dopasowania do filtrów technicznych zdefiniowanych przez osobę przeglądającą Serwis (w tym: cena, rocznik, przebieg, moc silnika, pojemność silnika, rodzaj paliwa, typ nadwozia, stan pojazdu nowy/używany, dostępność wideo, obecność numeru VIN oraz lokalizacja geograficzna pojazdu).</li></ol>"
+    ],
+    "s6Title": "§6 Przymusowa Kwalifikacja Przedsiębiorców i Detekcja Kont Powiązanych",
+    "s6Items": [
+      "W celu ochrony integralności bazy danych oraz przeciwdziałania unikaniu opłat komercyjnych, Serwis odwołuje się do limitów dla Użytkowników Indywidualnych wynoszących: maksymalnie 2 aktywne ogłoszenia jednocześnie oraz maksymalnie 4 ogłoszenia w ciągu całego roku kalendarzowego.",
+      "<strong>Kwalifikacja jednostronna:</strong> Jeżeli aktywność użytkownika zarejestrowanego jako osoba prywatna wskazuje na zorganizowany, ciągły charakter zarobkowy (w szczególności poprzez przekroczenie limitów z ust. 1, seryjną sprzedaż aut czy oferowanie pojazdów o charakterze typowo handlowym), Administrator ma prawo do jego przymusowej kwalifikacji jako przedsiębiorcy.",
+      "<strong>Technologie detekcji:</strong> CARIZO stosuje zaawansowane algorytmy heurystyczne analizujące parametry techniczne w celu wykrywania użytkowników tworzących siatki powiązanych kont indywidualnych. Analizie podlegają: numery telefonów, adresy e-mail, adresy IP, cyfrowe odciski palców urządzeń (fingerprint przeglądarki), numery rachunków bankowych, dane płatników, a także podobieństwo fotografii i opisów.",
+      "<strong>Sankcje:</strong> W przypadku wykrycia procederu omijania limitów, Administrator ma prawo do natychmiastowego zawieszenia wszystkich Ogłoszeń na wszystkich powiązanych kontach, wezwania użytkownika do złożenia wyjaśnień oraz skierowania go do procedury przymusowej migracji na Konto Biznesowe."
+    ],
+    "s7Title": "§7 Komunikacja w Serwisie oraz treści reklamowe",
+    "s7Items": [
+      "Kontakt pomiędzy Użytkownikami w celu przeprowadzenia transakcji odbywa się za pomocą danych udostępnionych przez sprzedawcę (numer telefonu, adres e-mail) oraz za pośrednictwem wewnętrznego systemu wiadomości (czatu) zintegrowanego z Serwisem.",
+      "CARIZO zastrzega sobie prawo do wyświetlania w ramach Serwisu reklam oraz ofert partnerów zewnętrznych, w szczególności z branży motoryzacyjnej, finansowej (leasing, kredyty), ubezpieczeniowej oraz dostawców raportów historii pojazdów."
+    ],
+    "s8Title": "§8 Prawa autorskie i licencje",
+    "s8Items": [
+      "Użytkownik Biznesowy oświadcza, że posiada pełne prawa, w tym autorskie prawa majątkowe, do materiałów fotograficznych oraz opisów umieszczanych w Ogłoszeniu.",
+      "Serwis automatycznie nakłada na zdjęcia publikowane przez Użytkowników znak wodny z logotypem „CARIZO” w celu przeciwdziałania nieuprawnionemu wykorzystywaniu fotografii przez podmioty trzecie.",
+      "Z momentem publikacji Ogłoszenia, Użytkownik Biznesowy udziela na rzecz CARIZO niewyłącznej, nieodpłatnej, nieograniczonej terytorialnie i czasowo licencji na wykorzystanie zdjęcia oraz opisów w celu prawidłowego funkcjonowania Serwisu, promocji platformy, prowadzenia działań marketingowych, a także prezentowania ofert w mediach społecznościowych oraz zewnętrznych materiałach reklamowych. Licencja obejmuje prawo do kadrowania, zmiany rozdzielczości oraz formatowania materiałów graficznych.",
+      "W przypadku, gdy jakikolwiek podmiot trzeci wystąpi z roszczeniami prawnymi lub finansowymi wobec CARIZO z tytułu naruszenia jego praw autorskich, praw własności przemysłowej lub dóbr osobistych poprzez treść lub zdjęcia zamieszczone w Ogłoszeniu przez Użytkownika Biznesowego, Użytkownik ten zobowiązuje się do pełnego zwolnienia CARIZO z odpowiedzialności oraz pokrycia wszelkich udokumentowanych kosztów obrony, sporów prawnych, kosztów zastępstwa procesowego oraz zasądzonych odszkodowań."
+    ],
+    "s9Title": "§9 Moderacja, blokady kont i system rozpatrywania skarg (DSA / P2B)",
+    "s9Items": [
+      "CARIZO nie prowadzi uprzedniej, obowiązkowej ręcznej weryfikacji (moderacji) każdego Ogłoszenia przed jego publikacją. Użytkownicy oraz organy zewnętrzne mają możliwość zgłaszania za pośrednictwem elektronicznego formularza interfejsu ofert naruszających prawo lub niniejsze warunki.",
+      "Każde zgłoszenie nielegalnych treści w rozumieniu art. 16 Aktu o usługach cyfrowych (DSA) powinno zawierać: precyzyjną lokalizację treści (link URL), uzasadnienie, dane zgłaszającego (z wyjątkiem zgłoszeń dotyczących przestępstw pedofilskich) oraz oświadczenie o działaniu w dobrej wierze.",
+      "CARIZO zastrzega sobie prawo do weryfikacji następczej, edycji, ukrycia lub całkowitego usunięcia Ogłoszenia, a także czasowego lub stałego zablokowania Konta Biznesowego w przypadku stwierdzenia:<ol type='a'><li>podawania nieprawdziwych danych osobowych lub kontaktowych,</li><li>publikowania duplikatów Ogłoszeń dotyczących tego samego pojazdu,</li><li>wprowadzenia nieprawidłowego, fałszywego lub cudzego numeru VIN,</li><li>manipulacji parametrami Ogłoszenia (w tym ceną i zdjęciami) opisanymi w §4,</li><li>uzasadnionego podejrzenia próby oszustwa (scam, phishing) lub działań na szkodę innych Użytkowników,</li><li>naruszania praw osób trzecich,</li><li>publikowania treści wulgarnych, obraźliwych lub niezgodnych z prawem.</li></ol>",
+      "<strong>Rygor natychmiastowej blokady:</strong> Administrator stosuje procedurę natychmiastowego odcięcia dostępu do Serwisu oraz usunięcia wszystkich aktywnych ofert Dealera, bez zachowania okresów wyprzedzenia, w przypadku wykrycia incydentów polegających na:<ol type='a'><li>oferowaniu pojazdów pochodzących z przestępstwa,</li><li>celowym podawaniu fałszywych numerów VIN,</li><li>realizacji praktyk oszukańczych/wyłudzeń,</li><li>podszywaniu się pod inne podmioty lub publikowaniu ogłoszeń o charakterze widm (pojazdy nieistniejące).</li></ol>",
+      "Zabrania się korzystania z jakichkolwiek narzędzi automatycznych (w szczególności botów, skryptów, programów filtrujących lub tzw. web crawlerów/scraperów) w celu monitorowania, kopiowania, pobierania lub automatycznego agregowania zasobów Serwisu, w tym treści Ogłoszeń, bez uprzedniej zgody CARIZO pod rygorem natychmiastowego zablokowania dostępu do Serwisu oraz podjęcia kroków prawnych.",
+      "W przypadku zastosowania blokady Konta lub usunięcia treści, CARIZO niezwłocznie powiadomi Użytkownika Biznesowego o podjętej decyzji wraz z uzasadnieniem drogą elektroniczną. Zgodnie z wymogami Rozporządzenia P2B, CARIZO zapewnia bezpłatny, wewnętrzny system rozpatrywania skarg. Użytkownikowi Biznesowemu przysługuje prawo do złożenia odwołania w terminie 14 dni za pośrednictwem adresu e-mail: <strong>kontakt@carizo.eu</strong>. Odpowiedź na skargę wysyłana jest w terminie 14 dni."
+    ],
+    "s10Title": "§10 Rozwiązanie Umowy (Okres Wypowiedzenia)",
+    "s10Items": [
+      "W przypadku braku naruszeń prawa lub regulacji platformy, każda ze stron (zarówno Użytkownik Biznesowy, jak i Administrator) ma prawo do wypowiedzenia umowy o świadczenie usług drogą elektroniczną (zamknięcia Konta Biznesowego) bez podania przyczyny.",
+      "Okres wypowiedzenia umowy w obrocie B2B wynosi 15 dni i liczy się od dnia dostarczenia stosownego oświadczenia woli na adres e-mail drugiej strony.",
+      "W okresie wypowiedzenia Dealer nie ma możliwości zakupu nowych Pakietów Pre-Paid, a niewykorzystane środki za aktywne pakiety nie podlegają zwrotowi, ze względu na utrzymanie pełnej gotowości technicznej infrastruktury Serwisu.",
+      "Zamknięcie Konta Biznesowego skutkuje trwałym usunięciem lub anonimizacją danych, z wyjątkiem informacji, których obowiązek przechowywania wynika bezpośrednio z bezwzględnie obowiązujących przepisów prawa podatkowego i rachunkowego."
+    ],
+    "s11Title": "§11 Wyłączenie odpowiedzialności Administratora",
+    "s11Items": [
+      "CARIZO nie jest stroną transakcji ani umów cywilnoprawnych zawieranych pomiędzy Użytkownikami Serwisu. Pełną i wyłączną odpowiedzialność za treść Ogłoszenia, stan techniczny, prawny i faktyczny pojazdu, a także za prawidłowy przebieg i realizację transakcji ponoszą wyłącznie strony tej transakcji.",
+      "Wszelkie dodatkowe narzędzia udostępniane w przyszłości przez platformę (takie jak wzory umów kupna-sprzedaży w formacie PDF, usługi finansowe lub raporty historii pojazdów) mają charakter wyłącznie pomocniczy i orientacyjny. CARIZO nie ponosi odpowiedzialności za skutki prawne i finansowe wynikające z ich wykorzystania przez Użytkowników Biznesowych."
+    ],
+    "s12Title": "§12 Postanowienia końcowe",
+    "s12Items": [
+      "Prawem właściwym dla rozstrzygania sporów pomiędzy Administratorem a Użytkownikami Biznesowymi jest prawo polskie, a sądem wyłącznie właściwym – sąd powszechny właściwy dla siedziby Administratora.",
+      "Zmiany niniejszych postanowień wymagają powiadomienia Użytkowników Biznesowych na adres e-mail z zachowaniem minimum 15-dniowego okresu wyprzedzenia (zgodnie z art. 3 Rozporządzenia P2B), co umożliwia firmom dostosowanie operacyjne lub bezkosztowe usunięcie Konta przed wejściem modyfikacji w życie.",
+      "W sprawach nieuregulowanych zastosowanie mają przepisy Kodeksu cywilnego oraz ustawy z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej.",
+      "Treść niniejszych postanowień wchodzi w życie z dniem 04.07.2026."
+    ]
+  },
+  "privacy": {
+    "metaTitle": "Polityka prywatności — CARIZO",
+    "metaDescription": "Polityka prywatności i ochrony danych osobowych serwisu CARIZO zgodna z RODO.",
+    "heroEyebrow": "Dokumenty prawne",
+    "heroTitle": "Polityka",
+    "heroTitleAccent": "prywatności",
+    "lastUpdated": "Ostatnia aktualizacja: 04.07.2026",
+    "s1Title": "§1 Postanowienia ogólne i dane Administratora",
+    "s1Items": [
+      "Niniejsza Polityka Prywatności określa zasady, podstawy prawne, zakres oraz sposoby przetwarzania i ochrony danych osobowych Użytkowników korzystających z platformy internetowej CARIZO.",
+      "Administratorem danych osobowych w rozumieniu art. 4 pkt 7 Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO) jest Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem: ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej pod numerem NIP: 9452331007, REGON: 544870688 (dalej jako: „Administrator” lub „CARIZO”).",
+      "W celu zapewnienia najwyższego standardu ochrony danych, Administrator wyznaczył punkt kontaktowy, za pośrednictwem którego Użytkownik może zgłaszać wszelkie zapytania oraz realizować swoje prawa związane z prywatnością, dostępny pod adresem e-mail: <strong>kontakt@carizo.eu</strong>.",
+      "<strong>Inspektor Ochrony Danych (IOD/DPO):</strong> Administrator nie jest zobowiązany do wyznaczenia Inspektora Ochrony Danych w rozumieniu art. 37 RODO, gdyż przetwarzanie danych przez CARIZO nie stanowi działalności wymagającej regularnego i systematycznego monitorowania podmiotów danych na dużą skalę ani nie obejmuje przetwarzania danych szczególnych kategorii na dużą skalę. Wszelkie żądania dotyczące danych osobowych należy kierować bezpośrednio do Administratora na adres e-mail: <strong>kontakt@carizo.eu</strong>."
+    ],
+    "s2Title": "§2 Kategorie, źródła i metody uwierzytelniania przetwarzanych danych",
+    "s2Intro": "CARIZO przetwarza dane osobowe pozyskane bezpośrednio od Użytkowników podczas procedury rejestracji Konta, interakcji z interfejsem Serwisu, a także pakiety danych przekazywane za pośrednictwem zewnętrznych dostawców usług uwierzytelniających. Zakres oraz struktura przetwarzanych informacji są ściśle uwarunkowane wybraną przez Użytkownika metodą autoryzacji:",
+    "s2Items": [
+      "<strong>Użytkownik Przeglądający (Kupujący bez Konta):</strong><ul><li>Dane telemetryczne i sprzętowe: adres IP, identyfikatory urządzeń mobilnych, typ i konfiguracja przeglądarki internetowej, system operacyjny, rozdzielczość ekranu.</li><li>Dane behawioralne i analityczne: historia wyszukiwań pojazdów, parametry filtrowania (marka, model, przedział cenowy), czas spędzony na kartach konkretnych ogłoszeń, zdarzenia konwersji.</li><li>Dane lokalizacyjne: przybliżone położenie geograficzne (na poziomie miasta/województwa) wykorzystywane do celów sortowania odległości ofert.</li></ul>",
+      "<strong>Użytkownik Zarejestrowany – Dane zbierane w zależności od metody rejestracji i logowania:</strong><ul><li><strong>Klasyczna metoda uwierzytelniania (E-mail i Hasło):</strong> adres e-mail, imię i nazwisko, numer telefonu kontaktowego oraz hasło dostępu, które zostaje nieodwracalnie przekształcone metodami kryptograficznymi (haszowanie) i nie jest znane Administratorowi.</li><li><strong>Logowanie przez konto Google (Google Ireland Limited):</strong> unikalny identyfikator użytkownika (Google ID), adres e-mail, imię i nazwisko oraz informacja o zweryfikowaniu adresu e-mail przez Google.</li><li><strong>Logowanie przez konto Facebook (Meta Platforms Ireland Limited):</strong> unikalny identyfikator użytkownika w ekosystemie Meta (Facebook ID), adres e-mail oraz imię i nazwisko. CARIZO nie pobiera zdjęcia profilowego, listy znajomych ani innych danych dostępnych w ramach uprawnienia <code>public_profile</code> poza wymienionymi. Szczegóły dotyczące zgody i usuwania tych danych opisane są w §12.</li></ul>",
+      "<strong>Dane dodatkowe Sprzedawców (Indywidualnych i Biznesowych):</strong><ul><li><strong>Sprzedawca Prywatny:</strong> opis pojazdu, zdjęcia, żądana cena, lokalizacja pojazdu, numer VIN (opcjonalny, zalecany), treść konwersacji na wewnętrznym czacie.</li><li><strong>Klient Biznesowy:</strong> pełna firma (nazwa), adres stałego wykonywania działalności, numer NIP oraz numer REGON (weryfikowane w publicznych rejestrach CEIDG/KRS).</li></ul>",
+      "<strong>Dane pozyskane ze źródeł publicznie dostępnych (Klienci Biznesowi):</strong> Administrator może przetwarzać dane kontaktowe przedsiębiorców z branży motoryzacyjnej (komisy, dealerzy, warsztaty) pozyskane z publicznych rejestrów (CEIDG, KRS) oraz ogólnodostępnych źródeł internetowych. Zakres tych danych ogranicza się do: nazwy firmy, numeru NIP, adresu oraz publicznego numeru telefonu lub adresu e-mail."
+    ],
+    "s3Title": "§3 Cele, podstawy prawne oraz okresy przetwarzania danych",
+    "s3TableHeaders": ["Cel przetwarzania", "Podstawa prawna (RODO)", "Okres retencji"],
+    "s3TableRows": [
+      ["Świadczenie usług drogą elektroniczną: rejestracja Konta, publikacja Ogłoszeń, obsługa czatu.", "Art. 6 ust. 1 lit. b – niezbędność do wykonania umowy.", "Do momentu skutecznego usunięcia Konta."],
+      ["Obsługa i procesowanie płatności online.", "Art. 6 ust. 1 lit. b – niezbędność do wykonania umowy odpłatnej.", "Do finalizacji transakcji płatniczej."],
+      ["Wypełnienie obowiązków finansowo-księgowych (wystawianie faktur, archiwizacja).", "Art. 6 ust. 1 lit. c – obowiązek prawny wynikający z przepisów podatkowych i ustawy o rachunkowości.", "5 lat od końca roku kalendarzowego, w którym upłynął termin płatności zobowiązania podatkowego."],
+      ["Zapewnienie cyberbezpieczeństwa i ochrona platformy (anty-bot, anty-scam, analiza czatu).", "Art. 6 ust. 1 lit. f – prawnie uzasadniony interes CARIZO.", "24 miesiące od momentu rejestracji zdarzenia lub logu sieciowego."],
+      ["Analityka i statystyki (Google Analytics 4, Microsoft Clarity).", "Art. 6 ust. 1 lit. a – zgoda wyrażona przez baner cookies (CMP).", "Do momentu wycofania zgody lub wygaśnięcia plików cookies (maks. 24 miesiące)."],
+      ["Marketing bezpośredni (e-mail, SMS) i profilowanie (spersonalizowane rekomendacje).", "Art. 6 ust. 1 lit. a – dobrowolna, odrębna zgoda Użytkownika (wymagana dla komunikacji e-mail/SMS zgodnie z art. 172 Prawa komunikacji elektronicznej); dla profilowania onsite na podstawie lit. f – prawnie uzasadniony interes.", "Do momentu cofnięcia zgody lub wniesienia skutecznego sprzeciwu."],
+      ["Newsletter i powiadomienia Web-Push.", "Art. 6 ust. 1 lit. a – dobrowolna, odrębna zgoda.", "Do momentu cofnięcia zgody lub anulowania subskrypcji."],
+      ["Obsługa procedur moderacyjnych (DSA).", "Art. 6 ust. 1 lit. c – obowiązek prawny wynikający z Aktu o usługach cyfrowych.", "6 miesięcy od zakończenia procedury moderacyjnej."],
+      ["Ochrona prawna i windykacja roszczeń.", "Art. 6 ust. 1 lit. f – prawnie uzasadniony interes CARIZO.", "Do upływu terminów przedawnienia roszczeń; logi czatu i autoryzacyjnych SMS – do 3 lat od zakończenia konwersacji."]
+    ],
+    "s4Title": "§4 Zasady komunikacji, powiadomień oraz marketingu",
+    "s4Items": [
+      "<strong>Komunikacja Transakcyjna i Systemowa (niezbędna):</strong> CARIZO przekazuje Użytkownikom zarejestrowanym kluczowe informacje związane z realizacją usług za pośrednictwem e-mail, SMS lub natywnych powiadomień systemowych. Obejmuje:<ul><li>Aktualizacje statusu weryfikacji Konta.</li><li>Powiadomienia techniczne o aktywacji, zbliżającym się terminie zakończenia lub wygaśnięciu publikacji Ogłoszeń.</li><li>Wiadomości systemowe związane z bezpieczeństwem Konta oraz obsługą zgłoszeń. Z uwagi na techniczną niezbędność tych komunikatów, Użytkownik nie ma możliwości rezygnacji z ich otrzymywania bez jednoczesnego usunięcia Konta.</li></ul>",
+      "<strong>Interakcje pomiędzy Użytkownikami oraz badanie opinii:</strong><ul><li>Administrator może skontaktować się ze Sprzedawcą w celu potwierdzenia szczegółów transakcji bądź oględzin pojazdu zainicjowanych przez innego Użytkownika (prawnie uzasadniony interes, art. 6 ust. 1 lit. f RODO).</li><li>Administrator zastrzega sobie prawo do okazjonalnego kontaktu z Użytkownikami w celu przeprowadzenia ankiet satysfakcji i zbierania opinii o działaniu Serwisu.</li></ul>",
+      "<strong>Komunikacja Marketingowa (Opcjonalna):</strong> Pod warunkiem wyrażenia przez Użytkownika odrębnej, dobrowolnej zgody (art. 6 ust. 1 lit. a RODO), CARIZO może przesyłać informacje o charakterze handlowym z wykorzystaniem adresu e-mail (newsletter) lub numeru telefonu (kampanie SMS). Użytkownik zachowuje pełne prawo do cofnięcia tej zgody w każdym momencie.",
+      "<strong>Specjalne procedury dla zewnętrznych kontaktów B2B:</strong> W przypadku pozyskania danych kontaktowych przedsiębiorcy ze źródeł zewnętrznych, CARIZO zobowiązuje się do:<ul><li>Spełnienia obowiązku informacyjnego podczas pierwszego kontaktu.</li><li>Uzyskania wyraźnej zgody przed przesłaniem jakichkolwiek szczegółowych ofert handlowych drogą elektroniczną.</li><li>Zapewnienia natychmiastowej możliwości zgłoszenia sprzeciwu wobec dalszego kontaktu (opt-out).</li></ul>"
+    ],
+    "s5Title": "§5 Charakter i dobrowolność podania danych osobowych",
+    "s5Items": [
+      "Podanie danych osobowych w celu rejestracji Konta oraz publikacji Ogłoszeń (imię, nazwisko, adres e-mail, numer telefonu, a w przypadku firm – NIP i dane rejestrowe) ma charakter dobrowolny, lecz jest wymogiem umownym. Brak podania tych informacji uniemożliwia zawarcie umowy o świadczenie usług w Serwisie.",
+      "Podanie danych w celach marketingowych, subskrypcji newslettera lub wyrażenia zgody na opcjonalne pliki cookies ma charakter całkowicie dobrowolny i nie warunkuje możliwości korzystania z podstawowych, darmowych zasobów platformy CARIZO."
+    ],
+    "s6Title": "§6 Kategorie odbiorców danych i podmioty przetwarzające",
+    "s6Intro": "Administrator udostępnia dane Użytkowników dwóm kategoriom podmiotów zewnętrznych:",
+    "s6Items": [
+      "<strong>Podmioty Przetwarzające (na zlecenie CARIZO):</strong> podmioty, z którymi Administrator zawarł umowy powierzenia przetwarzania danych (art. 28 RODO): dostawcy infrastruktury chmurowej i hostingu, dostawcy systemów IT i CRM, zewnętrzne biuro rachunkowo-księgowe oraz podmioty świadczące wsparcie prawne.",
+      "<strong>Samodzielni Administratorzy (Odrębne podmioty prawne):</strong><ul><li><strong>Inni użytkownicy sieci:</strong> dane kontaktowe sprzedawcy (imię, telefon) są publicznie ujawniane w Ogłoszeniu w celu umożliwienia realizacji transakcji zakupu pojazdu.</li><li><strong>Dostawcy usług płatniczych:</strong> zewnętrzni operatorzy instytucji płatniczych obsługujący bramkę transakcyjną w Serwisie. CARIZO nie rejestruje, nie przetwarza ani nie przechowuje pełnych danych kart płatniczych Użytkowników.</li><li><strong>Partnerzy technologiczno-reklamowi:</strong> Google Ireland Limited (GA4, Google Ads, Google Maps), Meta Platforms Ireland Limited (Meta Pixel) oraz Microsoft Ireland Operations Limited (Clarity) – przetwarzający dane na własnych zasadach, o ile Użytkownik wyraził na to zgodę.</li><li><strong>Cloudinary (Cloudinary Inc., USA)</strong> — podmiot przetwarzający, któremu CARIZO powierza przechowywanie i przetwarzanie zdjęć ogłoszeń. Transfer danych do USA odbywa się na podstawie Standardowych Klauzul Umownych. Polityka prywatności: <a href='https://cloudinary.com/privacy' target='_blank' rel='noopener'>cloudinary.com/privacy</a>.</li><li><strong>iMoje / ING Bank Śląski S.A.</strong> — operator obsługi płatności elektronicznych. Dane niezbędne do realizacji transakcji (dane płatnika, kwota, identyfikator zamówienia) są przekazywane bezpośrednio operatorowi bramki płatniczej. CARIZO nie przechowuje danych kart płatniczych. Polityka prywatności: <a href='https://imoje.pl/polityka-prywatnosci' target='_blank' rel='noopener'>imoje.pl/polityka-prywatnosci</a>.</li><li><strong>Organy uprawnione:</strong> Sądy, Prokuratura, Policja, Prezes UODO lub UOKiK – wyłącznie na podstawie oficjalnego wezwania i w granicach obowiązujących przepisów prawa.</li></ul>"
+    ],
+    "s7Title": "§7 Międzynarodowe transfery danych (Poza Obszar EOG)",
+    "s7Intro": "Z uwagi na wykorzystanie narzędzi analitycznych i marketingowych dostarczanych przez podmioty z grupy kapitałowej Google, Meta oraz Microsoft, dane telemetryczne i identyfikatory reklamowe Użytkowników mogą być przekazywane do państw trzecich, w tym do Stanów Zjednoczonych Ameryki Północnej. Transfer ten realizowany jest w oparciu o:",
+    "s7Items": [
+      "Decyzję wykonawczą Komisji Europejskiej z dnia 10 lipca 2023 r. stwierdzającą odpowiedni stopień ochrony danych w ramach EU-US Data Privacy Framework, lub",
+      "Standardowe Klauzule Umowne (SCC) zatwierdzone przez Komisję Europejską, nakładające na podmioty spoza EOG obowiązek stosowania zabezpieczeń tożsamych z RODO."
+    ],
+    "s8Title": "§8 Profilowanie behawioralne i zautomatyzowane decyzje (Anty-Fraud)",
+    "s8Items": [
+      "W celu optymalizacji wrażeń Użytkownika oraz zwiększenia skuteczności sprzedaży pojazdów, CARIZO filtruje i analizuje aktywność Użytkowników (np. analizuje najczęściej wyszukiwane segmenty aut, lokalizacje czy przedziały cenowe), co stanowi profilowanie w rozumieniu RODO.",
+      "Procesy profilowania służą wyłącznie spersonalizowaniu treści reklamowych i rekomendacji wewnątrz Serwisu. Profilowanie ma charakter marketingowo-informacyjny i nie wywołuje wobec Użytkownika skutków prawnych.",
+      "W celu zapewnienia bezpieczeństwa Użytkowników i walki z oszustwami finansowymi, Serwis stosuje algorytmy automatycznie analizujące zachowania i parametry ogłoszeń. W przypadku wykrycia skrajnych anomalii bezpieczeństwa, system może podjąć zautomatyzowaną decyzję o zablokowaniu treści lub Konta. W każdym takim przypadku Użytkownikowi, zgodnie z art. 22 ust. 3 RODO, przysługuje prawo do zakwestionowania tej decyzji, wyrażenia własnego stanowiska oraz uzyskania interwencji ludzkiej za pośrednictwem punktu kontaktowego wskazanego w §1 ust. 3."
+    ],
+    "s9Title": "§9 Prawa osób, których dane dotyczą",
+    "s9Intro": "Każdemu Użytkownikowi, w granicach i na zasadach określonych w rozdziale III RODO, przysługują następujące uprawnienia:",
+    "s9Items": [
+      "<strong>Prawo dostępu do danych (Art. 15 RODO):</strong> Prawo do uzyskania potwierdzenia przetwarzania oraz otrzymania kopii danych.",
+      "<strong>Prawo do sprostowania danych (Art. 16 RODO):</strong> Prawo do niezwłocznego poprawienia nieprawidłowych lub nieaktualnych danych.",
+      "<strong>Prawo do usunięcia danych „prawo do bycia zapomnianym” (Art. 17 RODO):</strong> Żądanie usunięcia danych, jeżeli wygasła podstawa prawna ich przetwarzania lub wniesiono skuteczny sprzeciw.",
+      "<strong>Prawo do ograniczenia przetwarzania (Art. 18 RODO):</strong> Żądanie zablokowania operacji na danych na czas weryfikacji ich prawidłowości lub w trakcie sporu prawnego.",
+      "<strong>Prawo do przenoszenia danych (Art. 20 RODO):</strong> Prawo do otrzymania danych w ustrukturyzowanym, powszechnym formacie nadającym się do odczytu maszynowego.",
+      "<strong>Prawo do sprzeciwu (Art. 21 RODO):</strong> Możliwość wniesienia w dowolnym momencie sprzeciwu wobec przetwarzania danych opartego na prawnie uzasadnionym interesie CARIZO. Sprzeciw wobec marketingu bezpośredniego wiąże Administratora natychmiastowo i bezwarunkowo.",
+      "<strong>Prawo do cofnięcia zgody (Art. 7 ust. 3 RODO):</strong> Możliwość wycofania zgód marketingowych lub zgód na cookies w każdym momencie, bez wpływu na legalność przetwarzania przed wycofaniem.",
+      "<strong>Organ Nadzorczy i Prawo do Skargi (Art. 77 RODO):</strong> W przypadku uznania, że operacje przetwarzania danych osobowych przez CARIZO naruszają przepisy prawa, Użytkownik ma prawo wniesienia skargi do właściwego organu nadzorczego ochrony danych. W przypadku Rzeczypospolitej Polskiej właściwym organem jest:<span class='authority-box'><strong>Prezes Urzędu Ochrony Danych Osobowych</strong><br>ul. Stawki 2, 00-193 Warszawa<br><a href='https://uodo.gov.pl' target='_blank' rel='noopener noreferrer'>uodo.gov.pl</a></span>"
+    ],
+    "s10Title": "§10 Przetwarzanie danych osób małoletnich",
+    "s10Body": "Serwis CARIZO skierowany jest do osób, które ukończyły 18. rok życia (a w przypadku niektórych funkcjonalności o charakterze wyłącznie informacyjnym – co najmniej 16. rok życia). Administrator nie zbiera intencjonalnie ani nie przetwarza danych osobowych osób małoletnich poniżej tego wieku. W przypadku powzięcia informacji o przypadkowej rejestracji osoby małoletniej, Administrator podejmie natychmiastowe działania w celu usunięcia takiego Konta oraz powiązanych z nim zapisów informacyjnych.",
+    "s11Title": "§11 Bezpieczeństwo i postanowienia końcowe",
+    "s11Items": [
+      "CARIZO wdraża zaawansowane środki techniczne i organizacyjne (w tym szyfrowanie transmisji certyfikatami SSL/TLS, kryptograficzne haszowanie haseł, systemy kontroli dostępu do baz danych), gwarantujące poziom bezpieczeństwa adekwatny do ryzyka naruszenia praw lub wolności osób fizycznych.",
+      "Niniejsze zasady prywatności podlegają stałemu przeglądowi. O wszelkich zmianach strukturalnych w celach lub podstawach przetwarzania danych zarejestrowani Użytkownicy zostaną powiadomieni drogą mailową z 14-dniowym wyprzedzeniem.",
+      "Treść niniejszych regulacji wchodzi w życie z dniem 04.07.2026."
+    ],
+    "s12Title": "§12 Logowanie przez Facebook i usuwanie danych (Meta Data Deletion)",
+    "s12Items": [
+      "<strong>Meta jako odrębny administrator danych:</strong> W zakresie logowania przez Facebook, Meta Platforms Ireland Limited jest odrębnym, niezależnym administratorem danych po swojej stronie — decyduje samodzielnie o sposobie przetwarzania danych profilowych Użytkownika w ramach ekosystemu Meta. CARIZO odpowiada wyłącznie za dane faktycznie pobrane i zapisane w swojej bazie (Facebook ID, adres e-mail, imię i nazwisko). Polityka prywatności Meta dostępna jest pod adresem: <a href='https://www.facebook.com/privacy/policy/' target='_blank' rel='noopener'>facebook.com/privacy/policy</a>.",
+      "<strong>Podstawa prawna:</strong> Dane pobierane przy logowaniu przez Facebook przetwarzane są na podstawie art. 6 ust. 1 lit. b RODO — w celu zawarcia i wykonania umowy o świadczenie usług drogą elektroniczną (założenie i prowadzenie Konta).",
+      "<strong>Zgoda przed utworzeniem Konta:</strong> Nowe Konto na podstawie danych z Facebooka nie jest tworzone automatycznie — Użytkownik musi jednoznacznie potwierdzić ekran zgody wskazujący dokładny zakres pobieranych danych, zanim Konto zostanie utworzone. Fakt wyrażenia zgody jest rejestrowany wraz z datą, adresem IP oraz wersją niniejszej Polityki, zgodnie z zasadą rozliczalności (art. 5 ust. 2 RODO).",
+      "<strong>Mechanizm usuwania danych (Data Deletion Callback):</strong> Zgodnie z wymogami Meta Platform Terms, CARIZO obsługuje zautomatyzowane żądania usunięcia danych inicjowane bezpośrednio z poziomu ustawień Facebooka (Facebook → Ustawienia → Aplikacje i strony internetowe → Usuń). Po otrzymaniu takiego żądania CARIZO usuwa identyfikator Facebook powiązany z Kontem w ciągu maksymalnie kilku minut od jego otrzymania. Status realizacji żądania dostępny jest pod adresem <a href='/data-deletion-status'>carizo.eu/data-deletion-status</a> wraz z otrzymanym kodem potwierdzenia.",
+      "Usunięcie danych pochodzących z Facebooka nie powoduje automatycznego usunięcia całego Konta CARIZO, jeżeli Użytkownik posiada niezależne dane dostępowe (np. ustawione hasło) lub aktywne ogłoszenia — usunięcie samego Konta odbywa się na zasadach ogólnych opisanych w §9."
+    ]
+  },
+  "cookies": {
+    "metaTitle": "Polityka plików cookies — CARIZO",
+    "metaDescription": "Polityka plików cookies i technologii pokrewnych serwisu CARIZO zgodna z Prawem komunikacji elektronicznej i RODO.",
+    "ogDescription": "Polityka plików cookies serwisu CARIZO zgodna z Prawem komunikacji elektronicznej i RODO.",
+    "heroEyebrow": "Dokumenty prawne",
+    "heroTitle": "Polityka",
+    "heroTitleAccent": "plików cookies",
+    "lastUpdated": "Ostatnia aktualizacja: 04.07.2026",
+    "docTitle": "POLITYKA PLIKÓW COOKIES I TECHNOLOGII POKREWNYCH SERWISU CARIZO",
+    "glossaryTitle": "Słownik pojęć",
+    "glossaryItems": [
+      "<strong>Administrator</strong> – Wiktor Niezgoda prowadzący jednoosobową działalność gospodarczą pod firmą CARIZO Wiktor Niezgoda z siedzibą w Krakowie, pod adresem ul. Henryka Pachońskiego 7/60, 31-223 Kraków, wpisaną do Centralnej Ewidencji i Informacji o Działalności Gospodarczej pod numerem NIP: 9452331007, REGON: 544870688.",
+      "<strong>Serwis</strong> – platforma teleinformatyczna typu marketplace pośrednicząca w transakcjach motoryzacyjnych, dostępna pod adresem domenowym carizo.eu wraz ze wszystkimi jej podstronami i subdomenami.",
+      "<strong>Urządzenie Końcowe</strong> – telekomunikacyjne urządzenie końcowe (np. komputer, tablet, smartfon), za pośrednictwem którego Użytkownik uzyskuje dostęp do Serwisu.",
+      "<strong>Użytkownik</strong> – każda osoba fizyczna, osoba prawna lub jednostka organizacyjna nieposiadająca osobowości prawnej, korzystająca z zasobów Serwisu.",
+      "<strong>Pliki Cookies oraz technologie pokrewne</strong> – dane informatyczne, w tym unikalne pakiety tekstowo-numeryczne, unikalne identyfikatory alfanumeryczne urządzeń, skrypty programistyczne, znaczniki nawigacyjne (piksele śledzące i konwersji) oraz zasoby pamięci podręcznej przeglądarki (w tym technologie Local Storage oraz Session Storage), które są zapisywane, odczytywane i przechowywane na Urządzeniu Końcowym Użytkownika podczas interakcji z Serwisem."
+    ],
+    "s1Title": "§1 Podstawa prawna i zakres stosowania",
+    "s1Items": [
+      "Niniejsza Polityka stanowi realizację obowiązku informacyjnego nałożonego na Administratora przez art. 398 ustawy z dnia 12 lipca 2024 r. – Prawo komunikacji elektronicznej (Dz.U. 2024 poz. 1221 z późn. zm.) oraz art. 13 i 14 Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO).",
+      "Niniejsza Polityka określa zasady przechowywania i uzyskiwania dostępu do informacji na Urządzeniach Końcowych Użytkownika za pomocą Plików Cookies oraz technologii pokrewnych (w tym Local Storage, Session Storage oraz piksele konwersji), służących do optymalizacji działania Serwisu, celów analitycznych, zapewnienia bezpieczeństwa transakcji oraz targetowania behawioralnych kampanii reklamowych."
+    ],
+    "s2Title": "§2 Istota i rodzaje stosowanych technologii",
+    "s2Items": [
+      "Serwis wykorzystuje Pliki Cookies oraz technologie pokrewne w celu zapewnienia integralności sesji, ochrony przed nadużyciami, zbierania danych statystycznych oraz dostarczania treści reklamowych.",
+      "W ramach Serwisu stosowane są dwa podstawowe rodzaje Plików Cookies ze względu na czas ich retencji:<ul><li><strong>Cookies Sesyjne (Session Cookies):</strong> pliki o charakterze tymczasowym, przechowywane na Urządzeniu Końcowym wyłącznie do momentu zakończenia sesji danej przeglądarki lub opuszczenia Serwisu.</li><li><strong>Cookies Stałe (Persistent Cookies):</strong> pliki przechowywane na Urządzeniu Końcowym przez czas określony w parametrach samego pliku bądź do momentu ich intencjonalnego usunięcia przez Użytkownika. Zamknięcie przeglądarki nie powoduje ich automatycznego usunięcia.</li></ul>"
+    ],
+    "s3Title": "§3 Klasyfikacja plików Cookies według celu i czasu przetwarzania",
+    "s3Intro": "Zapisywanie i uzyskiwanie dostępu do danych za pośrednictwem Plików Cookies (z wyłączeniem plików niezbędnych) uwarunkowane jest uprzednim, świadomym, dobrowolnym i jednoznacznym wyrażeniem zgody przez Użytkownika za pośrednictwem Platformy Zarządzania Zgodami (CMP) wdrożonej w Serwisie.",
+    "s3TableHeaders": ["Kategoria", "Opis i cel przetwarzania", "Maks. okres przechowywania", "Podstawa prawna"],
+    "s3TableRows": [
+      ["<strong>Niezbędne</strong><br>(Techniczne, Bezpieczeństwa i Funkcjonalne)", "Umożliwiają prawidłowe wyświetlanie struktury Serwisu, obsługę logowania i utrzymanie sesji Użytkownika. Obejmują skrypty do wykrywania botów, zapobiegania fałszywym rejestracjom oraz ochrony przed scrapingiem danych. Zaliczają się tu również dane funkcjonalne niezbędne do świadczenia funkcji wyraźnie żądanych przez Użytkownika: zapamiętanie konfiguracji wybranej przez Użytkownika, sekcja „Ulubione ogłoszenia” oraz filtry i zapisane wyszukiwania pojazdów dla użytkowników niezalogowanych (Local Storage).", "Sesja: do 30 dni.<br>Zapamiętanie logowania: do 30 dni.<br>Preferencje i ulubione: do 12 miesięcy lub do usunięcia przez Użytkownika.<br>Zapis zgód CMP: do 12 miesięcy.", "Art. 398 ust. 2 pkt 2 Prawa komunikacji elektronicznej (techniczna niezbędność oraz niezbędność do świadczenia usługi wyraźnie żądanej przez Użytkownika)."],
+      ["<strong>Analityczne i Wydajnościowe</strong>", "Służą do agregowania zanonimizowanych danych o ruchu w Serwisie, badaniu unikalnych odsłon ogłoszeń, mapowaniu ścieżek poruszania się Użytkownika, identyfikacji błędów technicznych oraz mierzeniu konwersji procesów rejestracji i realizacji płatności.", "Zależnie od parametrów dostawców zewnętrznych (Google, Microsoft) – maksymalnie do 24 miesięcy. Nagrania sesji Microsoft Clarity: <strong>30 dni</strong>.", "Art. 6 ust. 1 lit. a RODO w zw. z art. 398 ust. 1 Prawa komunikacji elektronicznej."],
+      ["<strong>Reklamowe i Behawioralne</strong>", "Wykorzystywane do profilowania preferencji motoryzacyjnych Użytkownika na podstawie przeglądanych marek i segmentów pojazdów w celu wyświetlania spersonalizowanych komunikatów handlowych wewnątrz Serwisu oraz na stronach partnerów zewnętrznych.", "Zależnie od parametrów dostawców zewnętrznych – maksymalnie do 12 miesięcy.", "Art. 6 ust. 1 lit. a RODO (Zgoda na profilowanie i targetowanie)."]
+    ],
+    "s4Title": "§4 Integracja z podmiotami trzecimi i Google Consent Mode v2",
+    "s4Items": [
+      "W strukturze Serwisu zaimplementowano kody skryptów zewnętrznych dostawców technologicznych. Podmioty te mogą umieszczać własne Pliki Cookies w Urządzeniu Końcowym Użytkownika. Do autoryzowanych partnerów Serwisu należą:<ul><li><strong>Google Ireland Limited:</strong> Google Analytics 4 (analityka ruchu), Google Ads (zarządzanie kampaniami reklamowymi), Google Tag Manager (zarządzanie tagami technicznymi) oraz Google Maps (geolokalizacja i wyświetlanie map w Ogłoszeniach).</li><li><strong>Meta Platforms Ireland Limited:</strong> Meta Pixel w celu mierzenia skuteczności kampanii w mediach społecznościowych i prowadzenia działań remarketingowych.</li><li><strong>Microsoft Ireland Operations Limited:</strong> Microsoft Clarity służący do zaawansowanej analizy zachowań Użytkowników (mapy cieplne, nagrania sesji). Czas retencji nagrań sesji: <strong>30 dni</strong>.</li><li><strong>Dostawcy Systemów Komunikacyjnych:</strong> systemy obsługi newsletterów służące do przesyłania powiadomień o nowych ofertach.</li></ul>",
+      "Serwis posiada zaimplementowany standard <strong>Google Consent Mode v2</strong>. W zależności od decyzji Użytkownika podjętej w panelu CMP, Serwis przesyła do systemów Google precyzyjne parametry stanu zgody: <code>ad_storage</code>, <code>analytics_storage</code>, <code>ad_user_data</code> oraz <code>ad_personalization</code>.",
+      "W przypadku braku zgody Użytkownika na kategorie analityczne lub marketingowe, skrypty podmiotów trzecich są blokowane lub działają w trybie bezidentyfikatorowym (pingi bez ciasteczek), co uniemożliwia identyfikację tożsamości cyfrowej Użytkownika.",
+      "Administrator zastrzega sobie prawo do wdrożenia w przyszłości zewnętrznych sieci reklamowych (takich jak Google AdSense lub Google AdX) w celu automatyzacji monetyzacji powierzchni reklamowych Serwisu, o czym Użytkownicy zostaną poinformowani poprzez aktualizację niniejszego zestawienia."
+    ],
+    "s5Title": "§5 Sposób wyrażania, cofania i zmiany zgód na stosowanie Cookies",
+    "s5Items": [
+      "Podczas pierwszej sesji w Serwisie, przed załadowaniem jakichkolwiek opcjonalnych Plików Cookies, Użytkownikowi wyświetlany jest interaktywny baner zarządzania prywatnością (CMP) dostarczany przez certyfikowanego partnera.",
+      "Wyrażenie zgody na poszczególne lub wszystkie kategorie plików jest całkowicie dobrowolne. Użytkownik ma prawo w każdym czasie wycofać udzieloną zgodę ze skutkiem na przyszłość, bez ponoszenia jakichkolwiek kosztów.",
+      "Odwołanie lub modyfikacja zgody może nastąpić poprzez:<ul><li>Ponowne wywołanie panelu CMP za pośrednictwem linku „Ustawienia plików cookies” umieszczonego w stopce (footer) Serwisu.</li><li>Manualną modyfikację ustawień prywatności, subskrypcji newslettera oraz powiadomień Web-Push bezpośrednio w panelu Użytkownika (po zalogowaniu na Konto).</li><li>Manualną modyfikację ustawień poziomu prywatności bezpośrednio w przeglądarce internetowej Użytkownika.</li></ul>",
+      "Szczegółowe instrukcje dotyczące sposobów konfiguracji, blokowania oraz usuwania Plików Cookies udostępniane są przez producentów oprogramowania:<ul><li>Google Chrome: <a href='https://support.google.com/chrome/answer/95647' target='_blank' rel='noopener noreferrer'>Centrum Pomocy Google Chrome</a></li><li>Mozilla Firefox: <a href='https://support.mozilla.org/pl/kb/usuwanie-ciasteczek' target='_blank' rel='noopener noreferrer'>Centrum Pomocy Mozilla Firefox</a></li><li>Apple Safari: <a href='https://support.apple.com/pl-pl/guide/safari/sfri11471/mac' target='_blank' rel='noopener noreferrer'>Podręcznik Użytkownika Apple Safari</a></li><li>Microsoft Edge: <a href='https://support.microsoft.com/pl-pl/microsoft-edge/usuwanie-plik%C3%B3w-cookie-w-przegl%C4%85darce-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09' target='_blank' rel='noopener noreferrer'>Strona Wsparcia Microsoft Edge</a></li></ul>"
+    ],
+    "s6Title": "§6 Transfery danych poza Europejski Obszar Gospodarczy (EOG)",
+    "s6Body": "W związku z korzystaniem z rozwiązań technologicznych dostawców zlokalizowanych poza EOG, dane pozyskiwane za pośrednictwem Plików Cookies mogą być przekazywane do państw trzecich (w szczególności do Stanów Zjednoczonych Ameryki Północnej). Podstawą prawną takiego transferu jest decyzja Komisji Europejskiej stwierdzająca odpowiedni stopień ochrony danych osobowych (EU-US Data Privacy Framework) lub zastosowanie Standardowych Klauzul Umownych (SCC) zapewniających adekwatne środki bezpieczeństwa technicznego i organizacyjnego.",
+    "s7Title": "§7 Postanowienia końcowe",
+    "s7Items": [
+      "Niniejsza Polityka Plików Cookies funkcjonuje niezależnie od Polityki Prywatności Serwisu CARIZO, stanowiąc jej uszczegółowienie w zakresie technologii składowania informacji w Urządzeniach Końcowych.",
+      "Administrator zastrzega sobie prawo do wprowadzania modyfikacji w niniejszej Polityce w przypadku zmian w przepisach prawa lub wdrożenia nowych rozwiązań informatycznych w Serwisie. O zmianach Użytkownicy będą informowani poprzez publikację jednolitego tekstu na niniejszej podstronie.",
+      "Polityka wchodzi w życie z dniem 04.07.2026."
+    ]
+  }
+}

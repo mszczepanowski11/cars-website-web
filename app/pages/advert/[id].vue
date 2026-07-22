@@ -501,39 +501,39 @@
                             </div>
                             <div v-if="advert?.ownersCount !== undefined && advert?.ownersCount !== null" class="hist-item hi-info">
                                 <v-icon icon="mdi-account-multiple-outline" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Liczba właścicieli</div><div class="hi-value">{{ advert.ownersCount }}</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.ownersCount') }}</div><div class="hi-value">{{ advert.ownersCount }}</div></div>
                             </div>
                             <div v-if="advert?.registrationCountry && advert.registrationCountry !== 'PL'" class="hist-item hi-info">
                                 <v-icon icon="mdi-flag-outline" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Kraj rejestracji</div><div class="hi-value">{{ advert.registrationCountry }}</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.registrationCountry') }}</div><div class="hi-value">{{ advert.registrationCountry }}</div></div>
                             </div>
                             <div v-if="advert?.isImported" class="hist-item hi-info">
                                 <v-icon icon="mdi-earth" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Pojazd z importu</div><div v-if="advert.importCountry" class="hi-value">{{ advert.importCountry }}</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.imported') }}</div><div v-if="advert.importCountry" class="hi-value">{{ advert.importCountry }}</div></div>
                             </div>
                             <div v-if="advert?.hasServiceBook" class="hist-item hi-ok">
                                 <v-icon icon="mdi-book-check-outline" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Książka serwisowa</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.serviceBook') }}</div></div>
                             </div>
                             <div v-if="advert?.hasFullServiceHistory" class="hist-item hi-ok">
                                 <v-icon icon="mdi-check-decagram-outline" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Pełna historia serwisowa ASO</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.fullServiceHistory') }}</div></div>
                             </div>
                             <div v-if="advert?.nextInspection" class="hist-item hi-info">
                                 <v-icon icon="mdi-wrench-clock" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Następny przegląd</div><div class="hi-value">{{ advert.nextInspection }}</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.nextInspection') }}</div><div class="hi-value">{{ advert.nextInspection }}</div></div>
                             </div>
                             <div v-if="advert?.hasDamage" class="hist-item hi-warn">
                                 <v-icon icon="mdi-alert-outline" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Pojazd po szkodzie</div><div v-if="advert.damageDescription" class="hi-value">{{ advert.damageDescription }}</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.damaged') }}</div><div v-if="advert.damageDescription" class="hi-value">{{ advert.damageDescription }}</div></div>
                             </div>
                             <div v-if="advert?.hasDamage === false" class="hist-item hi-ok">
                                 <v-icon icon="mdi-shield-check-outline" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Bezwypadkowy</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.accidentFree') }}</div></div>
                             </div>
                             <div v-if="advert?.hasWarranty" class="hist-item hi-ok">
                                 <v-icon icon="mdi-certificate-outline" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Gwarancja aktywna</div><div v-if="advert.warrantyUntil" class="hi-value">do {{ advert.warrantyUntil }}</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.warrantyActive') }}</div><div v-if="advert.warrantyUntil" class="hi-value">{{ $t('advertDetail.history.until', { date: advert.warrantyUntil }) }}</div></div>
                             </div>
                             <!-- Legacy parsed history from description text -->
                             <div v-for="item in parsedHistory" :key="item.label" class="hist-item" :class="{ 'hi-ok': item.isCheck, 'hi-warn': item.isWarning, 'hi-info': !item.isCheck && !item.isWarning }">
@@ -543,8 +543,8 @@
                         </div>
                         <!-- VIN Report external links -->
                         <div class="vin-report-section">
-                            <div class="vrs-title"><v-icon icon="mdi-shield-search" size="15" />Sprawdź historię pojazdu</div>
-                            <p class="vrs-desc">Zamów raport VIN aby poznać pełną historię pojazdu, kolizje, przebieg z serwisów i więcej.</p>
+                            <div class="vrs-title"><v-icon icon="mdi-shield-search" size="15" />{{ $t('advertDetail.history.checkTitle') }}</div>
+                            <p class="vrs-desc">{{ $t('advertDetail.history.vinReportDesc') }}</p>
                             <div class="vrs-btns">
                                 <a href="https://autodna.pl" target="_blank" rel="noopener noreferrer" class="vrs-btn">
                                     <v-icon icon="mdi-file-search-outline" size="15" /> AutoDNA
@@ -559,7 +559,7 @@
 
                 <!-- SECTION 6: Opinie o sprzedawcy -->
                 <section class="pg-section" id="reviews-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-star-outline" size="17" />Opinie o sprzedawcy</h2>
+                    <h2 class="pg-section-title"><v-icon icon="mdi-star-outline" size="17" />{{ $t('advertDetail.sections.reviews') }}</h2>
                     <div class="tab-content">
                         <div v-if="reviewsLoading" class="loading-center"><v-icon icon="mdi-loading" size="26" class="spin" /></div>
                         <template v-else>
@@ -573,24 +573,24 @@
                                     <p class="rev-text">{{ r.content }}</p>
                                 </div>
                             </div>
-                            <p v-else class="empty-tab">Brak opinii o tym sprzedawcy.</p>
+                            <p v-else class="empty-tab">{{ $t('advertDetail.reviews.empty') }}</p>
                             <div v-if="canLeaveReview && !reviewSuccess" class="review-form">
-                                <div class="review-form-title">Wystaw opinię sprzedawcy</div>
+                                <div class="review-form-title">{{ $t('advertDetail.reviews.formTitle') }}</div>
                                 <div class="rev-rating-row">
                                     <button v-for="n in 5" :key="n" class="rev-star-btn" @click="reviewRating = n">
                                         <v-icon :icon="n <= reviewRating ? 'mdi-star' : 'mdi-star-outline'" size="22" :class="n <= reviewRating ? 'star-active' : 'star-empty'" />
                                     </button>
                                     <span class="rev-rating-label">{{ reviewRating }}/5</span>
                                 </div>
-                                <textarea v-model="reviewContent" class="rev-textarea" placeholder="Opisz swoje doświadczenia ze sprzedawcą..." rows="4" />
+                                <textarea v-model="reviewContent" class="rev-textarea" :placeholder="$t('advertDetail.reviews.placeholder')" rows="4" />
                                 <div v-if="reviewError" class="rev-error">{{ reviewError }}</div>
                                 <button class="rev-submit-btn" :disabled="reviewSubmitting || !reviewContent.trim()" @click="doSubmitReview">
                                     <v-icon v-if="reviewSubmitting" icon="mdi-loading" size="15" class="spin" />
                                     <v-icon v-else icon="mdi-send-outline" size="15" />
-                                    Wyślij opinię
+                                    {{ $t('advertDetail.reviews.submit') }}
                                 </button>
                             </div>
-                            <div v-else-if="reviewSuccess" class="review-success"><v-icon icon="mdi-check-circle-outline" size="18" />Dziękujemy za opinię!</div>
+                            <div v-else-if="reviewSuccess" class="review-success"><v-icon icon="mdi-check-circle-outline" size="18" />{{ $t('advertDetail.reviews.thanks') }}</div>
                         </template>
                     </div>
                 </section>
@@ -599,8 +599,8 @@
                 <!-- Similar section -->
                 <div class="similar-section">
                     <div class="section-head">
-                        <h2 class="section-heading">Podobne ogłoszenia</h2>
-                        <NuxtLink to="/adverts" class="see-all-link-nuxt">Zobacz wszystkie</NuxtLink>
+                        <h2 class="section-heading">{{ $t('advertDetail.similar.title') }}</h2>
+                        <NuxtLink to="/adverts" class="see-all-link-nuxt">{{ $t('advertDetail.similar.seeAll') }}</NuxtLink>
                     </div>
                     <div class="similar-grid">
                         <NuxtLink v-for="a in similar" :key="a.id" :to="`/advert/${a.id}`" class="sim-card">
@@ -624,7 +624,7 @@
             <aside class="main-right">
 
                 <div class="sidebar-card">
-                    <div class="card-title">Sprzedający</div>
+                    <div class="card-title">{{ $t('advertDetail.sidebar.seller') }}</div>
                     <div class="seller-info">
                         <div class="seller-avatar" :style="{ background: sellerAvatarColor }"><span>{{ sellerInitials }}</span></div>
                         <div class="seller-details">
@@ -632,7 +632,7 @@
                             <div class="seller-role">
                                 <span class="role-badge" :class="seller?.accountType === 'Business' ? 'role-dealer' : 'role-private'">
                                     <v-icon :icon="seller?.accountType === 'Business' ? 'mdi-domain' : 'mdi-account-outline'" size="11" />
-                                    {{ seller?.accountType === 'Business' ? 'Dealer / Firma' : 'Sprzedawca prywatny' }}
+                                    {{ seller?.accountType === 'Business' ? $t('advertDetail.sellerType.dealer') : $t('advertDetail.sellerType.private') }}
                                 </span>
                             </div>
                             <div v-if="sellerStats?.averageRating" class="seller-stars">
@@ -643,49 +643,49 @@
                             <div class="seller-meta-row">
                                 <span v-if="seller?.createdAt && new Date(seller.createdAt).getFullYear() >= 2020" class="seller-meta-item">
                                     <v-icon icon="mdi-calendar-outline" size="12" />
-                                    na CARIZO od {{ new Date(seller.createdAt).getFullYear() }} r.
+                                    {{ $t('advertDetail.sidebar.memberSince', { year: new Date(seller.createdAt).getFullYear() }) }}
                                 </span>
                             </div>
                         </div>
                     </div>
                     <div v-if="sellerStats" class="seller-stats">
-                        <div class="ss-item"><div class="ss-val">{{ sellerStats.activeAdverts ?? 0 }}</div><div class="ss-label">Aktywnych</div></div>
-                        <div class="ss-item"><div class="ss-val">{{ sellerStats.totalSold ?? 0 }}</div><div class="ss-label">Sprzedanych</div></div>
-                        <div class="ss-item"><div class="ss-val">{{ sellerStats.reviewCount ?? 0 }}</div><div class="ss-label">Opinii</div></div>
+                        <div class="ss-item"><div class="ss-val">{{ sellerStats.activeAdverts ?? 0 }}</div><div class="ss-label">{{ $t('advertDetail.sidebar.active') }}</div></div>
+                        <div class="ss-item"><div class="ss-val">{{ sellerStats.totalSold ?? 0 }}</div><div class="ss-label">{{ $t('advertDetail.sidebar.sold') }}</div></div>
+                        <div class="ss-item"><div class="ss-val">{{ sellerStats.reviewCount ?? 0 }}</div><div class="ss-label">{{ $t('advertDetail.sidebar.reviews') }}</div></div>
                     </div>
                     <button class="follow-seller-btn w-full" :class="{ following: isFollowingSeller }" @click="toggleFollowSeller">
                         <v-icon :icon="isFollowingSeller ? 'mdi-bell' : 'mdi-bell-outline'" size="15" />
-                        {{ isFollowingSeller ? 'Obserwujesz' : 'Obserwuj sprzedawcę' }}
+                        {{ isFollowingSeller ? $t('advertDetail.sidebar.following') : $t('advertDetail.sidebar.followSeller') }}
                     </button>
                     <transition name="fade-msg"><div v-if="followError" class="tx-error"><v-icon icon="mdi-alert-circle-outline" size="14" />{{ followError }}</div></transition>
                     <NuxtLink v-if="advert?.userId" :to="`/seller/${advert.userId}`" class="outline-btn w-full">
-                        <v-icon icon="mdi-car-multiple" size="15" />Wszystkie ogłoszenia
+                        <v-icon icon="mdi-car-multiple" size="15" />{{ $t('advertDetail.sidebar.allAdverts') }}
                         <span v-if="sellerStats?.activeAdverts" class="btn-count">{{ sellerStats.activeAdverts }}</span>
                     </NuxtLink>
                     <NuxtLink v-if="advert?.userId" :to="`/seller/${advert.userId}`" class="outline-btn w-full outline-btn--dim">
-                        <v-icon icon="mdi-account-outline" size="15" />Profil sprzedawcy
+                        <v-icon icon="mdi-account-outline" size="15" />{{ $t('advertDetail.sidebar.sellerProfile') }}
                     </NuxtLink>
                 </div>
 
                 <div class="sidebar-card">
-                    <div class="card-title"><v-icon icon="mdi-map-marker-outline" size="15" class="card-title-icon" />Lokalizacja</div>
+                    <div class="card-title"><v-icon icon="mdi-map-marker-outline" size="15" class="card-title-icon" />{{ $t('advertDetail.sidebar.location') }}</div>
                     <div v-if="advert?.city" class="location-addr"><v-icon icon="mdi-map-marker" size="16" class="loc-pin" /><span class="loc-city">{{ advert.city }}<template v-if="advert?.region">, {{ advert.region }}</template></span></div>
                     <div class="map-wrap">
                         <iframe v-if="mapSrc" :src="mapSrc" class="map-iframe" frameborder="0" loading="lazy" allowfullscreen />
                         <div v-else class="map-fallback">
                             <v-icon icon="mdi-map-marker" size="22" class="map-fallback-pin" />
-                            <span class="map-fallback-city">{{ advert?.city ?? 'Brak lokalizacji' }}<template v-if="advert?.region">, {{ advert.region }}</template></span>
-                            <span class="map-fallback-sub">Dokładna lokalizacja ustalana indywidualnie</span>
+                            <span class="map-fallback-city">{{ advert?.city ?? $t('advertDetail.sidebar.noLocation') }}<template v-if="advert?.region">, {{ advert.region }}</template></span>
+                            <span class="map-fallback-sub">{{ $t('advertDetail.sidebar.locationNote') }}</span>
                         </div>
                     </div>
                     <a v-if="advert?.city" :href="`https://www.google.com/maps/search/${encodeURIComponent((advert.city) + ', Polska')}`" target="_blank" rel="noopener noreferrer" class="outline-btn w-full">
-                        <v-icon icon="mdi-open-in-new" size="15" />Otwórz w Google Maps
+                        <v-icon icon="mdi-open-in-new" size="15" />{{ $t('advertDetail.sidebar.openMaps') }}
                     </a>
                 </div>
 
 
                 <div class="sidebar-report-row">
-                    <button class="report-advert-btn" @click="handleReport"><v-icon icon="mdi-flag-outline" size="13" />Zgłoś ogłoszenie</button>
+                    <button class="report-advert-btn" @click="handleReport"><v-icon icon="mdi-flag-outline" size="13" />{{ $t('advertDetail.sidebar.reportAdvert') }}</button>
                 </div>
 
             </aside>
@@ -697,13 +697,13 @@
     <Teleport to="body">
         <transition name="fade">
             <div v-if="lightboxOpen" class="lightbox-backdrop" @click.self="lightboxOpen = false">
-                <button class="lb-close" aria-label="Zamknij galerię" @click="lightboxOpen = false"><v-icon icon="mdi-close" size="22" /></button>
-                <button class="lb-arrow lb-prev" aria-label="Poprzednie zdjęcie" :disabled="lightboxIdx === 0" @click="lightboxIdx--"><v-icon icon="mdi-chevron-left" size="30" /></button>
-                <div class="lb-img-wrap"><img :src="allImages[lightboxIdx]?.url ?? placeholder" :alt="`${advert?.title ?? 'Zdjęcie'} ${lightboxIdx + 1} / ${allImages.length}`" class="lb-img" /></div>
-                <button class="lb-arrow lb-next" aria-label="Następne zdjęcie" :disabled="lightboxIdx === allImages.length - 1" @click="lightboxIdx++"><v-icon icon="mdi-chevron-right" size="30" /></button>
+                <button class="lb-close" :aria-label="$t('advertDetail.gallery.lightboxClose')" @click="lightboxOpen = false"><v-icon icon="mdi-close" size="22" /></button>
+                <button class="lb-arrow lb-prev" :aria-label="$t('advertDetail.gallery.prevPhoto')" :disabled="lightboxIdx === 0" @click="lightboxIdx--"><v-icon icon="mdi-chevron-left" size="30" /></button>
+                <div class="lb-img-wrap"><img :src="allImages[lightboxIdx]?.url ?? placeholder" :alt="`${advert?.title ?? $t('advertDetail.gallery.photo')} ${lightboxIdx + 1} / ${allImages.length}`" class="lb-img" /></div>
+                <button class="lb-arrow lb-next" :aria-label="$t('advertDetail.gallery.nextPhoto')" :disabled="lightboxIdx === allImages.length - 1" @click="lightboxIdx++"><v-icon icon="mdi-chevron-right" size="30" /></button>
                 <div class="lb-counter">{{ lightboxIdx + 1 }} / {{ allImages.length }}</div>
                 <div class="lb-thumbs">
-                    <div v-for="(img, i) in allImages" :key="i" class="lb-thumb" :class="{ 'lb-thumb-active': i === lightboxIdx }" @click="lightboxIdx = i"><img :src="img.url" :alt="`Miniatura ${i + 1}`" /></div>
+                    <div v-for="(img, i) in allImages" :key="i" class="lb-thumb" :class="{ 'lb-thumb-active': i === lightboxIdx }" @click="lightboxIdx = i"><img :src="img.url" :alt="$t('advertDetail.gallery.thumbAlt', { n: i + 1 })" /></div>
                 </div>
             </div>
         </transition>
@@ -719,7 +719,7 @@
                     <div class="compose-header">
                         <div class="compose-to">
                             <v-icon icon="mdi-message-text-outline" size="18" />
-                            <span>Wiadomość do <strong>{{ seller?.name }} {{ seller?.surname }}</strong></span>
+                            <span>{{ $t('advertDetail.compose.messageTo') }} <strong>{{ seller?.name }} {{ seller?.surname }}</strong></span>
                         </div>
                         <button class="compose-close" @click="composeOpen = false">
                             <v-icon icon="mdi-close" size="20" />
@@ -739,7 +739,7 @@
                         ref="composeRef"
                         v-model="composeDraft"
                         class="compose-textarea"
-                        placeholder="Napisz wiadomość..."
+                        :placeholder="$t('advertDetail.compose.placeholder')"
                         rows="3"
                     />
                     <div v-if="contactError" class="compose-error">
