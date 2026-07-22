@@ -8,12 +8,14 @@ const props = defineProps<{
     compact?: boolean
 }>()
 
+const { t } = useI18n()
+
 const items = computed(() => [
-    { key: 'vin',     label: 'VIN zweryfikowany',        icon: 'mdi-identifier',             verified: props.vinVerified },
-    { key: 'phone',   label: 'Numer telefonu',            icon: 'mdi-phone-check-outline',    verified: props.phoneVerified },
-    { key: 'service', label: 'Historia serwisowa',        icon: 'mdi-clipboard-check-outline',verified: props.serviceHistory },
-    { key: 'mileage', label: 'Przebieg zweryfikowany',    icon: 'mdi-speedometer-medium',     verified: props.mileageVerified },
-    { key: 'seller',  label: 'Sprzedawca zweryfikowany',  icon: 'mdi-account-check-outline',  verified: props.sellerVerified },
+    { key: 'vin',     label: t('cVerified.vinVerified'),     icon: 'mdi-identifier',             verified: props.vinVerified },
+    { key: 'phone',   label: t('cVerified.phoneNumber'),     icon: 'mdi-phone-check-outline',    verified: props.phoneVerified },
+    { key: 'service', label: t('cVerified.serviceHistory'),  icon: 'mdi-clipboard-check-outline',verified: props.serviceHistory },
+    { key: 'mileage', label: t('cVerified.mileageVerified'), icon: 'mdi-speedometer-medium',     verified: props.mileageVerified },
+    { key: 'seller',  label: t('cVerified.sellerVerified'),  icon: 'mdi-account-check-outline',  verified: props.sellerVerified },
 ])
 
 const anyVerified = computed(() => items.value.some(i => i.verified))

@@ -3,7 +3,7 @@
         <div class="ss-trigger" @click="toggle" :class="{ disabled, 'ss-trigger--filled': !!modelValue }">
             <v-icon v-if="prefixIcon" :icon="prefixIcon" size="15" class="ss-prefix-icon" />
             <span class="ss-value" :class="{ placeholder: !selectedLabel }">
-                {{ selectedLabel || placeholder }}
+                {{ selectedLabel || placeholder || $t('cSmartSelect.placeholderDefault') }}
             </span>
             <v-icon :icon="isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="ss-arrow" />
         </div>
@@ -16,7 +16,7 @@
                         ref="searchRef"
                         v-model="query"
                         class="ss-search"
-                        :placeholder="`Szukaj ${searchPlaceholder ?? ''}...`"
+                        :placeholder="$t('cSmartSelect.searchPlaceholder', { hint: searchPlaceholder ?? '' })"
                         @keydown.down.prevent="moveDown"
                         @keydown.up.prevent="moveUp"
                         @keydown.enter.prevent="selectHighlighted"
@@ -27,7 +27,7 @@
                     <div
                         v-if="!filtered.length"
                         class="ss-empty"
-                    >Brak wyników dla „{{ query }}"</div>
+                    >{{ $t('cSmartSelect.noResults', { query }) }}</div>
                     <div
                         v-for="(opt, i) in filtered"
                         :key="opt.value"
@@ -65,7 +65,6 @@ const props = withDefaults(defineProps<{
     // etc.) are valid options elsewhere and this filter would silently delete them.
     filterNumericLabels?: boolean
 }>(), {
-    placeholder: 'Wybierz',
     disabled: false,
     filterNumericLabels: false,
 })

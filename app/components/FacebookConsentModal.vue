@@ -6,26 +6,26 @@
                     <svg class="fb-consent-icon" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                     </svg>
-                    <h2 id="fb-consent-title">Tworzymy dla Ciebie konto CARIZO</h2>
+                    <h2 id="fb-consent-title">{{ $t('cFbConsent.title') }}</h2>
                     <p class="fb-consent-body">
-                        Na podstawie Twojego konta Facebook założymy konto CARIZO, korzystając wyłącznie z:
+                        {{ $t('cFbConsent.body') }}
                     </p>
                     <ul class="fb-consent-fields">
-                        <li><v-icon icon="mdi-account-outline" size="15" />{{ name || 'Twoje imię i nazwisko' }}</li>
+                        <li><v-icon icon="mdi-account-outline" size="15" />{{ name || $t('cFbConsent.namePlaceholder') }}</li>
                         <li><v-icon icon="mdi-email-outline" size="15" />{{ email }}</li>
                     </ul>
                     <p class="fb-consent-legal">
-                        Zakładając konto akceptujesz
-                        <NuxtLink to="/regulamin" target="_blank" class="fb-consent-link">Regulamin</NuxtLink>
-                        i
-                        <NuxtLink to="/polityka-prywatnosci" target="_blank" class="fb-consent-link">Politykę prywatności</NuxtLink>.
-                        Możesz w każdej chwili usunąć te dane — szczegóły w Polityce prywatności.
+                        {{ $t('cFbConsent.legalPrefix') }}
+                        <NuxtLink to="/regulamin" target="_blank" class="fb-consent-link">{{ $t('cFbConsent.linkTerms') }}</NuxtLink>
+                        {{ $t('cFbConsent.legalAnd') }}
+                        <NuxtLink to="/polityka-prywatnosci" target="_blank" class="fb-consent-link">{{ $t('cFbConsent.linkPrivacy') }}</NuxtLink>.
+                        {{ $t('cFbConsent.legalSuffix') }}
                     </p>
                     <div class="fb-consent-actions">
-                        <button type="button" class="fb-consent-btn fb-consent-btn--ghost" :disabled="loading" @click="$emit('cancel')">Anuluj</button>
+                        <button type="button" class="fb-consent-btn fb-consent-btn--ghost" :disabled="loading" @click="$emit('cancel')">{{ $t('cFbConsent.cancel') }}</button>
                         <button type="button" class="fb-consent-btn fb-consent-btn--primary" :disabled="loading" @click="$emit('confirm')">
                             <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-                            {{ loading ? 'Tworzenie konta...' : 'Utwórz konto' }}
+                            {{ loading ? $t('cFbConsent.creating') : $t('cFbConsent.createAccount') }}
                         </button>
                     </div>
                 </div>

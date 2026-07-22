@@ -3,11 +3,11 @@
         <div class="bf-type-switch">
             <button :class="['bf-type-btn', { active: form.type === 'personal' }]" @click="setType('personal')">
                 <v-icon icon="mdi-account-outline" size="16" />
-                Osoba prywatna
+                {{ $t('cBilling.typePersonal') }}
             </button>
             <button :class="['bf-type-btn', { active: form.type === 'business' }]" @click="setType('business')">
                 <v-icon icon="mdi-domain" size="16" />
-                Firma / VAT
+                {{ $t('cBilling.typeBusiness') }}
             </button>
         </div>
 
@@ -16,13 +16,13 @@
             <template v-if="form.type === 'personal'">
                 <div class="bf-row">
                     <div class="bf-field">
-                        <label class="bf-label">Imię <span class="req">*</span></label>
-                        <input v-model="form.firstName" class="bf-input" :class="{ error: errors.firstName }" placeholder="Jan" @blur="validate('firstName')" />
+                        <label class="bf-label">{{ $t('cBilling.firstName') }} <span class="req">*</span></label>
+                        <input v-model="form.firstName" class="bf-input" :class="{ error: errors.firstName }" :placeholder="$t('cBilling.placeholderFirstName')" @blur="validate('firstName')" />
                         <span v-if="errors.firstName" class="bf-error">{{ errors.firstName }}</span>
                     </div>
                     <div class="bf-field">
-                        <label class="bf-label">Nazwisko <span class="req">*</span></label>
-                        <input v-model="form.lastName" class="bf-input" :class="{ error: errors.lastName }" placeholder="Kowalski" @blur="validate('lastName')" />
+                        <label class="bf-label">{{ $t('cBilling.lastName') }} <span class="req">*</span></label>
+                        <input v-model="form.lastName" class="bf-input" :class="{ error: errors.lastName }" :placeholder="$t('cBilling.placeholderLastName')" @blur="validate('lastName')" />
                         <span v-if="errors.lastName" class="bf-error">{{ errors.lastName }}</span>
                     </div>
                 </div>
@@ -31,36 +31,36 @@
             <!-- Business -->
             <template v-else>
                 <div class="bf-field">
-                    <label class="bf-label">Nazwa firmy <span class="req">*</span></label>
-                    <input v-model="form.companyName" class="bf-input" :class="{ error: errors.companyName }" placeholder="Kowalski Sp. z o.o." @blur="validate('companyName')" />
+                    <label class="bf-label">{{ $t('cBilling.companyName') }} <span class="req">*</span></label>
+                    <input v-model="form.companyName" class="bf-input" :class="{ error: errors.companyName }" :placeholder="$t('cBilling.placeholderCompany')" @blur="validate('companyName')" />
                     <span v-if="errors.companyName" class="bf-error">{{ errors.companyName }}</span>
                 </div>
                 <div class="bf-row">
                     <div class="bf-field">
-                        <label class="bf-label">NIP <span class="req">*</span></label>
+                        <label class="bf-label">{{ $t('cBilling.nip') }} <span class="req">*</span></label>
                         <input v-model="form.nip" class="bf-input" :class="{ error: errors.nip }" placeholder="1234567890" maxlength="13" @blur="validate('nip')" />
                         <span v-if="errors.nip" class="bf-error">{{ errors.nip }}</span>
                     </div>
                     <div class="bf-field">
-                        <label class="bf-label">Kraj <span class="req">*</span></label>
-                        <input v-model="form.country" class="bf-input" :class="{ error: errors.country }" placeholder="Polska" @blur="validate('country')" />
+                        <label class="bf-label">{{ $t('cBilling.country') }} <span class="req">*</span></label>
+                        <input v-model="form.country" class="bf-input" :class="{ error: errors.country }" :placeholder="$t('cBilling.placeholderCountry')" @blur="validate('country')" />
                         <span v-if="errors.country" class="bf-error">{{ errors.country }}</span>
                     </div>
                 </div>
                 <div class="bf-field">
-                    <label class="bf-label">Adres (ulica i numer) <span class="req">*</span></label>
-                    <input v-model="form.street" class="bf-input" :class="{ error: errors.street }" placeholder="ul. Marszałkowska 1/2" @blur="validate('street')" />
+                    <label class="bf-label">{{ $t('cBilling.addressLabel') }} <span class="req">*</span></label>
+                    <input v-model="form.street" class="bf-input" :class="{ error: errors.street }" :placeholder="$t('cBilling.placeholderStreet')" @blur="validate('street')" />
                     <span v-if="errors.street" class="bf-error">{{ errors.street }}</span>
                 </div>
                 <div class="bf-row">
                     <div class="bf-field bf-field--sm">
-                        <label class="bf-label">Kod pocztowy <span class="req">*</span></label>
+                        <label class="bf-label">{{ $t('cBilling.postalCode') }} <span class="req">*</span></label>
                         <input v-model="form.postalCode" class="bf-input" :class="{ error: errors.postalCode }" placeholder="00-000" maxlength="6" @blur="validate('postalCode')" />
                         <span v-if="errors.postalCode" class="bf-error">{{ errors.postalCode }}</span>
                     </div>
                     <div class="bf-field">
-                        <label class="bf-label">Miasto <span class="req">*</span></label>
-                        <input v-model="form.city" class="bf-input" :class="{ error: errors.city }" placeholder="Warszawa" @blur="validate('city')" />
+                        <label class="bf-label">{{ $t('cBilling.city') }} <span class="req">*</span></label>
+                        <input v-model="form.city" class="bf-input" :class="{ error: errors.city }" :placeholder="$t('cBilling.placeholderCity')" @blur="validate('city')" />
                         <span v-if="errors.city" class="bf-error">{{ errors.city }}</span>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
 
             <!-- Email (shared) -->
             <div class="bf-field">
-                <label class="bf-label">E-mail do faktury <span class="req">*</span></label>
+                <label class="bf-label">{{ $t('cBilling.emailLabel') }} <span class="req">*</span></label>
                 <input v-model="form.email" class="bf-input" :class="{ error: errors.email }" type="email" placeholder="jan@example.com" @blur="validate('email')" />
                 <span v-if="errors.email" class="bf-error">{{ errors.email }}</span>
             </div>
@@ -76,7 +76,7 @@
 
         <div class="bf-note">
             <v-icon icon="mdi-information-outline" size="14" />
-            Faktura zostanie wygenerowana automatycznie po potwierdzeniu płatności i wysłana na podany adres e-mail.
+            {{ $t('cBilling.note') }}
         </div>
     </div>
 </template>
@@ -94,6 +94,8 @@ const emit = defineEmits<{
     'valid': [v: boolean]
 }>()
 
+const { t } = useI18n()
+
 const form = reactive<BillingData>({ ...props.modelValue })
 
 const errors = reactive<Record<string, string>>({})
@@ -107,23 +109,23 @@ function setType(t: BillingType) {
 function validate(field: string): boolean {
     delete errors[field]
     if (field === 'email') {
-        if (!form.email?.trim()) errors.email = 'Pole wymagane'
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Nieprawidłowy adres e-mail'
+        if (!form.email?.trim()) errors.email = t('cBilling.required')
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = t('cBilling.invalidEmail')
     }
     if (form.type === 'personal') {
-        if (field === 'firstName' && !form.firstName?.trim()) errors.firstName = 'Pole wymagane'
-        if (field === 'lastName' && !form.lastName?.trim()) errors.lastName = 'Pole wymagane'
+        if (field === 'firstName' && !form.firstName?.trim()) errors.firstName = t('cBilling.required')
+        if (field === 'lastName' && !form.lastName?.trim()) errors.lastName = t('cBilling.required')
     } else {
-        if (field === 'companyName' && !form.companyName?.trim()) errors.companyName = 'Pole wymagane'
+        if (field === 'companyName' && !form.companyName?.trim()) errors.companyName = t('cBilling.required')
         if (field === 'nip') {
             const nip = (form.nip ?? '').replace(/[-\s]/g, '')
-            if (!nip) errors.nip = 'Pole wymagane'
-            else if (!/^\d{10}$/.test(nip)) errors.nip = 'NIP musi mieć 10 cyfr'
+            if (!nip) errors.nip = t('cBilling.required')
+            else if (!/^\d{10}$/.test(nip)) errors.nip = t('cBilling.nipLength')
         }
-        if (field === 'street' && !form.street?.trim()) errors.street = 'Pole wymagane'
-        if (field === 'postalCode' && !form.postalCode?.trim()) errors.postalCode = 'Pole wymagane'
-        if (field === 'city' && !form.city?.trim()) errors.city = 'Pole wymagane'
-        if (field === 'country' && !form.country?.trim()) errors.country = 'Pole wymagane'
+        if (field === 'street' && !form.street?.trim()) errors.street = t('cBilling.required')
+        if (field === 'postalCode' && !form.postalCode?.trim()) errors.postalCode = t('cBilling.required')
+        if (field === 'city' && !form.city?.trim()) errors.city = t('cBilling.required')
+        if (field === 'country' && !form.country?.trim()) errors.country = t('cBilling.required')
     }
     return !errors[field]
 }

@@ -5,23 +5,23 @@
                 <div class="cp-items">
                     <div v-for="id in compared" :key="id" class="cp-item">
                         <span class="cp-id">#{{ id }}</span>
-                        <button class="cp-remove" :aria-label="`Usuń #${id} z porównania`" @click="toggle(id)">
+                        <button class="cp-remove" :aria-label="$t('cCompare.removeAria', { id })" @click="toggle(id)">
                             <v-icon icon="mdi-close" size="14" />
                         </button>
                     </div>
                     <div v-for="_ in (MAX_COMPARE - compared.length)" :key="'empty' + _" class="cp-item cp-item--empty">
                         <v-icon icon="mdi-plus" size="16" class="cp-plus" />
-                        <span>Dodaj</span>
+                        <span>{{ $t('cCompare.addEmpty') }}</span>
                     </div>
                 </div>
                 <div class="cp-actions">
                     <NuxtLink to="/compare" class="cp-btn-cmp">
                         <v-icon icon="mdi-compare" size="15" />
-                        Porównaj ({{ compared.length }})
+                        {{ $t('cCompare.compareBtn', { count: compared.length }) }}
                     </NuxtLink>
                     <button class="cp-btn-clear" @click="clear">
                         <v-icon icon="mdi-trash-can-outline" size="14" />
-                        Wyczyść
+                        {{ $t('cCompare.clear') }}
                     </button>
                 </div>
             </div>

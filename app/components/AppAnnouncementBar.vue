@@ -22,25 +22,25 @@ function dismiss() {
         <div class="ann-inner">
             <span class="ann-badge">
                 <v-icon icon="mdi-rocket-launch-outline" size="14" />
-                {{ isPremiereUpcoming ? 'NADCHODZI PREMIERA' : 'PREMIERA CARIZO' }}
+                {{ isPremiereUpcoming ? $t('cAnnounce.badgeUpcoming') : $t('cAnnounce.badgePremiere') }}
             </span>
             <span class="ann-text">
                 {{ isPremiereUpcoming
-                    ? 'Wyróżnienia i pakiety za darmo od 4 do 12 lipca!'
-                    : 'Wyróżnienia i pakiety za darmo przez czas trwania premiery!' }}
+                    ? $t('cAnnounce.textUpcoming')
+                    : $t('cAnnounce.textActive') }}
             </span>
             <span class="ann-countdown">
-                {{ isPremiereUpcoming ? 'Premiera za:' : 'Pozostało:' }}
-                <strong>{{ countdown.d }} {{ countdown.d === 1 ? 'dzień' : 'dni' }}</strong>
-                <strong>{{ pad(countdown.h) }} godz.</strong>
-                <strong>{{ pad(countdown.m) }} min.</strong>
-                <strong>{{ pad(countdown.s) }} sek.</strong>
+                {{ isPremiereUpcoming ? $t('cAnnounce.countdownUpcoming') : $t('cAnnounce.countdownActive') }}
+                <strong>{{ countdown.d }} {{ countdown.d === 1 ? $t('cAnnounce.daySingular') : $t('cAnnounce.dayPlural') }}</strong>
+                <strong>{{ pad(countdown.h) }} {{ $t('cAnnounce.hoursShort') }}</strong>
+                <strong>{{ pad(countdown.m) }} {{ $t('cAnnounce.minutesShort') }}</strong>
+                <strong>{{ pad(countdown.s) }} {{ $t('cAnnounce.secondsShort') }}</strong>
             </span>
             <NuxtLink to="/promote" class="ann-link">
-                Dowiedz się więcej
+                {{ $t('cAnnounce.learnMore') }}
                 <v-icon icon="mdi-chevron-right" size="14" />
             </NuxtLink>
-            <button class="ann-dismiss" @click="dismiss" title="Zamknij">
+            <button class="ann-dismiss" @click="dismiss" :title="$t('cAnnounce.close')">
                 <v-icon icon="mdi-close" size="16" />
             </button>
         </div>

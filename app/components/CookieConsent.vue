@@ -6,14 +6,14 @@
                     <div class="cookie-text">
                         <v-icon icon="mdi-cookie-outline" size="20" class="cookie-icon" />
                         <span>
-                            Używamy plików cookie do analizy ruchu i personalizacji reklam.
-                            <NuxtLink to="/polityka-cookies" class="cookie-link">Polityka cookies</NuxtLink>
+                            {{ $t('cCookie.barText') }}
+                            <NuxtLink to="/polityka-cookies" class="cookie-link">{{ $t('cCookie.policyLink') }}</NuxtLink>
                         </span>
                     </div>
                     <div class="cookie-actions">
-                        <button class="btn-reject" @click="rejectAll">Odrzuć wszystkie</button>
-                        <button class="btn-settings" @click="showPanel = true">Ustawienia</button>
-                        <button class="btn-accept" @click="acceptAll">Akceptuj wszystkie</button>
+                        <button class="btn-reject" @click="rejectAll">{{ $t('cCookie.rejectAll') }}</button>
+                        <button class="btn-settings" @click="showPanel = true">{{ $t('cCookie.settings') }}</button>
+                        <button class="btn-accept" @click="acceptAll">{{ $t('cCookie.acceptAll') }}</button>
                     </div>
                 </div>
             </div>
@@ -24,7 +24,7 @@
                 <div class="cookie-panel">
                     <div class="panel-header">
                         <v-icon icon="mdi-cookie-cog-outline" size="20" />
-                        <span>Ustawienia plików cookie</span>
+                        <span>{{ $t('cCookie.panelTitle') }}</span>
                         <button class="panel-close" @click="showPanel = false">
                             <v-icon icon="mdi-close" size="18" />
                         </button>
@@ -33,38 +33,38 @@
                     <div class="panel-categories">
                         <div class="category always-on">
                             <div class="category-header">
-                                <span class="category-name">Niezbędne</span>
-                                <span class="category-badge">Zawsze włączone</span>
+                                <span class="category-name">{{ $t('cCookie.catEssential') }}</span>
+                                <span class="category-badge">{{ $t('cCookie.alwaysOn') }}</span>
                             </div>
-                            <p class="category-desc">Wymagane do działania serwisu (sesja, autoryzacja, bezpieczeństwo).</p>
+                            <p class="category-desc">{{ $t('cCookie.catEssentialDesc') }}</p>
                         </div>
 
                         <div class="category">
                             <div class="category-header">
-                                <span class="category-name">Analityczne</span>
+                                <span class="category-name">{{ $t('cCookie.catAnalytics') }}</span>
                                 <label class="toggle">
                                     <input type="checkbox" v-model="prefs.analytics" />
                                     <span class="slider" />
                                 </label>
                             </div>
-                            <p class="category-desc">Google Analytics — pomaga nam mierzyć ruch i ulepszać serwis.</p>
+                            <p class="category-desc">{{ $t('cCookie.catAnalyticsDesc') }}</p>
                         </div>
 
                         <div class="category">
                             <div class="category-header">
-                                <span class="category-name">Marketingowe</span>
+                                <span class="category-name">{{ $t('cCookie.catMarketing') }}</span>
                                 <label class="toggle">
                                     <input type="checkbox" v-model="prefs.marketing" />
                                     <span class="slider" />
                                 </label>
                             </div>
-                            <p class="category-desc">Google Ads — umożliwiają wyświetlanie spersonalizowanych reklam.</p>
+                            <p class="category-desc">{{ $t('cCookie.catMarketingDesc') }}</p>
                         </div>
                     </div>
 
                     <div class="panel-actions">
-                        <button class="btn-reject" @click="rejectAll">Odrzuć wszystkie</button>
-                        <button class="btn-accept" @click="savePrefs">Zapisz ustawienia</button>
+                        <button class="btn-reject" @click="rejectAll">{{ $t('cCookie.rejectAll') }}</button>
+                        <button class="btn-accept" @click="savePrefs">{{ $t('cCookie.savePrefs') }}</button>
                     </div>
                 </div>
             </div>

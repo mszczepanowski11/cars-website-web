@@ -2,10 +2,10 @@
     <div v-if="definition.dataType === 'Number' || definition.dataType === 'Decimal'" class="dafl-group">
         <div class="dafl-label">{{ definition.labelPl }}<span v-if="definition.unit"> ({{ definition.unit }})</span></div>
         <div class="dafl-range">
-            <input :value="modelValue?.from ?? ''" type="number" class="dafl-range-input" placeholder="Od"
+            <input :value="modelValue?.from ?? ''" type="number" class="dafl-range-input" :placeholder="$t('cAttrFilter.rangeFrom')"
                 @input="emitRange(($event.target as HTMLInputElement).value, 'from')" />
             <span class="dafl-range-sep">–</span>
-            <input :value="modelValue?.to ?? ''" type="number" class="dafl-range-input" placeholder="Do"
+            <input :value="modelValue?.to ?? ''" type="number" class="dafl-range-input" :placeholder="$t('cAttrFilter.rangeTo')"
                 @input="emitRange(($event.target as HTMLInputElement).value, 'to')" />
         </div>
     </div>
