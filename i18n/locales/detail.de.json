@@ -1,1 +1,442 @@
-{}
+{
+  "advertDetail": {
+    "notFound": {
+      "serverErrorTitle": "Vorübergehendes Serverproblem",
+      "serverErrorDesc": "Das Inserat konnte nicht geladen werden. Aktualisiere die Seite bitte in einem Moment.",
+      "retry": "Erneut versuchen",
+      "title": "Inserat nicht gefunden",
+      "desc": "Dieses Inserat wurde möglicherweise entfernt, ist abgelaufen oder der Link ist ungültig.",
+      "browse": "Inserate durchsuchen"
+    },
+    "topbar": {
+      "back": "Zurück",
+      "favorite": "Favoriten",
+      "share": "Teilen",
+      "report": "Melden"
+    },
+    "share": {
+      "native": "Nativ",
+      "copied": "Kopiert!",
+      "copyLink": "Link kopieren",
+      "fallbackTitle": "CARIZO Inserat"
+    },
+    "qr": {
+      "alt": "QR-Code",
+      "scan": "Scannen zum Öffnen"
+    },
+    "gallery": {
+      "expand": "Galerie",
+      "prevPhoto": "Vorheriges Foto",
+      "nextPhoto": "Nächstes Foto",
+      "photo": "Foto",
+      "photoAlt": "Foto {n} – {title}",
+      "lightboxClose": "Galerie schließen",
+      "thumbAlt": "Miniaturbild {n}"
+    },
+    "price": {
+      "leasingIng": "ING Leasing",
+      "creditIng": "ING Kredit",
+      "fromPerMonth": "ab {amount} zł/Mon.",
+      "estimateNote": "* bei 10 % Anzahlung, geschätzt",
+      "negotiable": "Verhandelbar"
+    },
+    "analysis": {
+      "greatPrice": "Top-Preis",
+      "goodPrice": "Guter Preis",
+      "marketPrice": "Marktpreis",
+      "aboveAverage": "Über dem Durchschnitt",
+      "belowMarket": "{percent}% unter dem Marktpreis",
+      "belowAverage": "{percent}% unter dem Durchschnitt",
+      "inLine": "Marktgerecht",
+      "aboveAverageSub": "{percent}% über dem Durchschnitt"
+    },
+    "sellerType": {
+      "dealer": "Händler / Firma",
+      "private": "Privatverkäufer"
+    },
+    "age": {
+      "today": "heute",
+      "yesterday": "gestern",
+      "daysAgo": "vor {n} Tagen",
+      "weeksAgo": "vor {n} Wo.",
+      "monthsAgo": "vor {n} Mon.",
+      "yearsAgo": "vor {n} Jahren"
+    },
+    "trust": {
+      "vinVerified": "FIN verifiziert",
+      "vinUnverified": "FIN nicht verifiziert",
+      "serviceHistory": "Scheckheft",
+      "accidentFree": "Unfallfrei",
+      "verifiedSeller": "Verifizierter Verkäufer"
+    },
+    "sellerMini": {
+      "advertsCount": "{count} Inserate",
+      "profile": "Profil ›"
+    },
+    "cta": {
+      "showPhone": "Telefonnummer anzeigen",
+      "ownAdvertTitle": "Das ist dein Inserat – du kannst dir nicht selbst schreiben",
+      "opening": "Wird geöffnet...",
+      "ownAdvert": "Das ist dein Inserat",
+      "sendMessage": "Nachricht schreiben",
+      "ownAdvertNote": "Du kannst dir nicht selbst Nachrichten senden. Das ist dein Inserat.",
+      "scheduleViewing": "Besichtigung vereinbaren",
+      "reserve": "Auto reservieren",
+      "secureNote": "Transaktion abgesichert durch"
+    },
+    "specs": {
+      "mileage": "Kilometerstand",
+      "year": "Baujahr",
+      "fuel": "Kraftstoff",
+      "power": "Leistung",
+      "displacement": "Hubraum",
+      "gearbox": "Getriebe",
+      "body": "Karosserie",
+      "views": "Aufrufe"
+    },
+    "units": {
+      "hp": "PS"
+    },
+    "sections": {
+      "additionalData": "Zusätzliche Daten",
+      "description": "Beschreibung",
+      "documents": "Dokumente und Videos",
+      "techParams": "Technische Daten",
+      "features": "Ausstattung",
+      "history": "Fahrzeughistorie",
+      "reviews": "Verkäuferbewertungen"
+    },
+    "desc": {
+      "readMore": "Mehr lesen",
+      "collapse": "Beschreibung einklappen"
+    },
+    "docType": {
+      "pdf": "PDF-Dokument",
+      "video": "Video",
+      "image": "Bild",
+      "file": "Dokument"
+    },
+    "specGroups": {
+      "basic": "Grunddaten",
+      "engine": "Motor und Antrieb",
+      "consumption": "Kraftstoffverbrauch und Emissionen",
+      "detailed": "Detaildaten"
+    },
+    "spec": {
+      "brand": "Marke",
+      "model": "Modell",
+      "generation": "Generation",
+      "year": "Baujahr",
+      "mileage": "Kilometerstand",
+      "condition": "Fahrzeugzustand",
+      "conditionNew": "Neu",
+      "conditionUsed": "Gebraucht",
+      "bodyType": "Karosserieform",
+      "color": "Farbe",
+      "doors": "Anzahl der Türen",
+      "seats": "Anzahl der Sitze",
+      "fuelType": "Kraftstoffart",
+      "gearbox": "Getriebe",
+      "driveType": "Antrieb",
+      "power": "Leistung",
+      "displacement": "Hubraum",
+      "torque": "Drehmoment",
+      "acceleration": "Beschleunigung 0–100 km/h",
+      "fuelCity": "Verbrauch innerorts",
+      "fuelHighway": "Verbrauch außerorts",
+      "fuelCombined": "Verbrauch kombiniert",
+      "co2": "CO₂-Emissionen",
+      "euroNorm": "Abgasnorm",
+      "curbWeight": "Leergewicht",
+      "grossWeight": "Zulässiges Gesamtgewicht"
+    },
+    "history": {
+      "vinNumber": "FIN-Nummer",
+      "identified": "Identifiziert",
+      "firstRegistration": "Erstzulassung",
+      "ownersCount": "Anzahl der Vorbesitzer",
+      "registrationCountry": "Zulassungsland",
+      "imported": "Importfahrzeug",
+      "serviceBook": "Scheckheft",
+      "fullServiceHistory": "Vollständiges Scheckheft (Vertragswerkstatt)",
+      "nextInspection": "Nächste Inspektion",
+      "damaged": "Fahrzeug mit Schadenhistorie",
+      "accidentFree": "Unfallfrei",
+      "warrantyActive": "Garantie aktiv",
+      "until": "bis {date}",
+      "checkTitle": "Fahrzeughistorie prüfen",
+      "vinReportDesc": "Bestelle einen FIN-Report, um die vollständige Fahrzeughistorie, Unfälle, Kilometerstände aus Werkstätten und mehr zu erfahren."
+    },
+    "reviews": {
+      "empty": "Noch keine Bewertungen für diesen Verkäufer.",
+      "formTitle": "Verkäufer bewerten",
+      "placeholder": "Beschreibe deine Erfahrungen mit dem Verkäufer...",
+      "submit": "Bewertung senden",
+      "thanks": "Danke für deine Bewertung!"
+    },
+    "similar": {
+      "title": "Ähnliche Inserate",
+      "seeAll": "Alle ansehen"
+    },
+    "sidebar": {
+      "seller": "Verkäufer",
+      "memberSince": "auf CARIZO seit {year}",
+      "active": "Aktiv",
+      "sold": "Verkauft",
+      "reviews": "Bewertungen",
+      "following": "Du folgst",
+      "followSeller": "Verkäufer folgen",
+      "allAdverts": "Alle Inserate",
+      "sellerProfile": "Verkäuferprofil",
+      "location": "Standort",
+      "noLocation": "Kein Standort",
+      "locationNote": "Genauer Standort wird individuell vereinbart",
+      "openMaps": "In Google Maps öffnen",
+      "reportAdvert": "Inserat melden"
+    },
+    "compose": {
+      "messageTo": "Nachricht an",
+      "placeholder": "Nachricht schreiben...",
+      "sending": "Wird gesendet...",
+      "send": "Nachricht senden"
+    },
+    "modal": {
+      "time": "Uhrzeit",
+      "notePlaceholder": "Zusätzliche Informationen für den Verkäufer (optional)..."
+    },
+    "viewing": {
+      "submit": "Besichtigungsanfrage senden"
+    },
+    "reservation": {
+      "hint": "Wähle das Datum, bis zu dem du dieses Auto reservieren möchtest — der Verkäufer muss die Reservierung bestätigen.",
+      "submit": "Reservierungsanfrage senden"
+    },
+    "mobile": {
+      "call": "Anrufen",
+      "write": "Schreiben"
+    },
+    "messages": {
+      "reservationSent": "Reservierungsanfrage gesendet! Der Verkäufer wird benachrichtigt.",
+      "viewingSent": "Besichtigungsanfrage gesendet! Der Verkäufer wird sich bei dir melden."
+    },
+    "errors": {
+      "noConversationId": "Keine Gesprächs-ID in der Antwort.",
+      "sendMessageFailed": "Die Nachricht konnte nicht gesendet werden.",
+      "reserveFailed": "Das Auto konnte nicht reserviert werden.",
+      "viewingFailed": "Die Besichtigungsanfrage konnte nicht gesendet werden.",
+      "followFailed": "Der Folgen-Status konnte nicht aktualisiert werden.",
+      "reviewFailed": "Die Bewertung konnte nicht gesendet werden."
+    },
+    "suggestions": [
+      "Ist das Auto noch verfügbar?",
+      "Ist der Preis verhandelbar?",
+      "Wann kann ich das Fahrzeug besichtigen?",
+      "Hat das Auto ein vollständiges Scheckheft?",
+      "Ist ein Tausch möglich?"
+    ],
+    "pdf": {
+      "labelYear": "Baujahr",
+      "labelMileage": "Kilometerstand",
+      "labelFuel": "Kraftstoff",
+      "labelGearbox": "Getriebe",
+      "labelPower": "Leistung",
+      "labelBrandModel": "Marke / Modell",
+      "labelLocation": "Standort",
+      "descLabel": "Beschreibung:",
+      "generated": "Erstellt: {date} | {url}"
+    }
+  },
+  "seller": {
+    "defaultName": "Verkäufer",
+    "badges": {
+      "dealer": "Händler",
+      "verified": "Verifiziert"
+    },
+    "memberSince": "Auf CARIZO seit {year}",
+    "following": "Du folgst",
+    "follow": "Folgen",
+    "loginToMessage": "Melde dich an, um Nachrichten zu schreiben",
+    "openAdvertToMessage": "Öffne ein Inserat des Verkäufers, um eine Nachricht zu schreiben",
+    "message": "Schreiben",
+    "stats": {
+      "activeAdverts": "aktive Inserate",
+      "sold": "verkauft",
+      "reviews": "Bewertungen",
+      "avgRating": "Durchschnittsbewertung",
+      "responses": "Antwortrate"
+    },
+    "tabs": {
+      "adverts": "Inserate",
+      "reviews": "Bewertungen"
+    },
+    "emptyAdverts": "Keine aktiven Inserate",
+    "loadMore": "Mehr laden",
+    "emptyReviews": "Keine Bewertungen",
+    "verifiedPurchase": "Bestätigte Transaktion",
+    "loadMoreReviews": "Weitere Bewertungen laden",
+    "notFound": {
+      "title": "Verkäufer nicht gefunden",
+      "browse": "Inserate durchsuchen"
+    },
+    "seo": {
+      "fallbackTitle": "Verkäufer — CARIZO",
+      "description": "Sieh dir die Inserate des Verkäufers {name} auf CARIZO an — dem größten Automarktplatz in Polen."
+    },
+    "errors": {
+      "loadAdverts": "Die Inserate des Verkäufers konnten nicht geladen werden.",
+      "loadReviews": "Die Bewertungen konnten nicht geladen werden."
+    }
+  },
+  "events": {
+    "hero": {
+      "eyebrow": "Motorsport live",
+      "titleLead": "Kommende",
+      "titleAccent": "Veranstaltungen",
+      "sub": "Messen, Treffen, Ausstellungen und Automobilveranstaltungen in ganz Polen."
+    },
+    "filters": {
+      "all": "Alle",
+      "week": "Diese Woche",
+      "month": "Dieser Monat",
+      "featured": "Hervorgehoben"
+    },
+    "searchPlaceholder": "Veranstaltungen suchen...",
+    "addEvent": "Veranstaltung hinzufügen",
+    "error": {
+      "title": "Verbindungsfehler",
+      "desc": "Veranstaltungen konnten nicht geladen werden. Bitte versuche es erneut.",
+      "refresh": "Aktualisieren"
+    },
+    "empty": {
+      "title": "Keine Veranstaltungen",
+      "desc": "Es wurden keine kommenden Veranstaltungen gefunden."
+    },
+    "card": {
+      "featured": "HERVORGEHOBEN",
+      "event": "VERANSTALTUNG",
+      "until": "bis {date}",
+      "cancelAttend": "Absagen",
+      "willAttend": "Ich nehme teil",
+      "share": "Teilen",
+      "copied": "Kopiert!",
+      "copyLink": "Link kopieren",
+      "tickets": "Tickets",
+      "website": "Website"
+    },
+    "pagination": {
+      "prev": "Vorherige Seite",
+      "next": "Nächste Seite"
+    },
+    "seo": {
+      "title": "Automobilveranstaltungen — CARIZO",
+      "description": "Entdecke Automobiltreffen, Rallyes und Messen in Polen. Finde die nächste Veranstaltung und melde dich noch heute an.",
+      "ogDescription": "Automobiltreffen, Rallyes und Messen in Polen. Bleib auf dem Laufenden mit CARIZO.",
+      "twitterDescription": "Rallyes, Messen und Automobiltreffen in Polen — CARIZO."
+    }
+  },
+  "eventDetail": {
+    "featured": "Hervorgehoben",
+    "attending": "Ich nehme teil",
+    "willAttend": "Ich nehme teil",
+    "removeFav": "Aus Favoriten entfernen",
+    "addFav": "Zu Favoriten hinzufügen",
+    "buyTickets": "Tickets kaufen",
+    "website": "Website",
+    "descriptionTitle": "Beschreibung",
+    "shareTitle": "Teilen",
+    "copied": "Kopiert!",
+    "copyLink": "Link kopieren",
+    "details": {
+      "title": "Details",
+      "start": "Beginn",
+      "end": "Ende",
+      "location": "Standort",
+      "organizer": "Veranstalter"
+    },
+    "stats": {
+      "title": "Statistiken",
+      "views": "{count} Aufrufe",
+      "interested": "{count} Interessierte",
+      "attendees": "{count} Teilnehmer",
+      "shares": "{count} Mal geteilt"
+    },
+    "notFound": {
+      "title": "Veranstaltung nicht gefunden.",
+      "back": "Zurück zu den Veranstaltungen"
+    },
+    "seo": {
+      "fallbackTitle": "Veranstaltung — CARIZO",
+      "descFallback": "Automobilveranstaltung: {name}"
+    },
+    "errors": {
+      "updateAttend": "Die Teilnahme konnte nicht aktualisiert werden.",
+      "updateFav": "Die Favoriten konnten nicht aktualisiert werden.",
+      "copyLink": "Der Link konnte nicht kopiert werden.",
+      "load": "Die Veranstaltung konnte nicht geladen werden."
+    }
+  },
+  "addEvent": {
+    "hero": {
+      "eyebrowEdit": "Bearbeitung",
+      "eyebrowNew": "Neue Veranstaltung",
+      "titleEdit": "Bearbeiten",
+      "titleNew": "Hinzufügen",
+      "titleAccent": "Veranstaltung",
+      "sub": "Teile eine Automobilveranstaltung mit der CARIZO-Community."
+    },
+    "form": {
+      "name": "Name der Veranstaltung *",
+      "namePlaceholder": "z. B. Oldtimer-Treffen – Kraków 2025",
+      "description": "Beschreibung *",
+      "descriptionPlaceholder": "Beschreibe die Veranstaltung, das Programm, die Attraktionen...",
+      "startDate": "Startdatum und -uhrzeit *",
+      "endDate": "Enddatum und -uhrzeit *",
+      "city": "Stadt *",
+      "cityPlaceholder": "z. B. Kraków",
+      "address": "Adresse *",
+      "addressPlaceholder": "z. B. ul. Długa 5",
+      "organizerName": "Name des Veranstalters",
+      "organizerNamePlaceholder": "Oldtimer-Club Kleinpolen",
+      "organizerEmail": "E-Mail des Veranstalters",
+      "organizerEmailPlaceholder": "kontakt@beispiel.de",
+      "organizerPhone": "Telefon des Veranstalters",
+      "ticketsUrl": "Ticket-Link",
+      "websiteUrl": "Website",
+      "mainImage": "Hauptbild",
+      "imagePreviewAlt": "Vorschau des Hauptbilds der Veranstaltung",
+      "uploadClick": "Klicken, um ein Bild hinzuzufügen",
+      "uploadHint": "JPG, PNG, WebP — max. 10 MB"
+    },
+    "notice": {
+      "edit": "Änderungen werden nach dem Speichern sichtbar.",
+      "new": "Die Veranstaltung wird nach der Freigabe durch einen Administrator veröffentlicht."
+    },
+    "actions": {
+      "cancel": "Abbrechen",
+      "saving": "Wird gespeichert...",
+      "saveChanges": "Änderungen speichern",
+      "add": "Veranstaltung hinzufügen"
+    },
+    "errors": {
+      "imageFormat": "Erlaubte Bildformate: JPEG, PNG, WebP.",
+      "imageSize": "Das Bild darf {max} MB nicht überschreiten.",
+      "startRequired": "Gib ein Startdatum an.",
+      "endRequired": "Gib ein Enddatum an.",
+      "startInvalid": "Ungültiges Startdatum.",
+      "endInvalid": "Ungültiges Enddatum.",
+      "startYearInvalid": "Das Jahr des Startdatums ist ungültig.",
+      "endYearInvalid": "Das Jahr des Enddatums ist ungültig.",
+      "startInPast": "Das Startdatum darf nicht in der Vergangenheit liegen.",
+      "endBeforeStart": "Das Enddatum darf nicht vor dem Startdatum liegen.",
+      "nameRequired": "Gib einen Veranstaltungsnamen an.",
+      "nameTooShort": "Der Veranstaltungsname ist zu kurz (mindestens 5 Zeichen).",
+      "nameTooLong": "Der Veranstaltungsname ist zu lang (maximal 200 Zeichen).",
+      "descRequired": "Füge eine Veranstaltungsbeschreibung hinzu.",
+      "descTooShort": "Die Beschreibung ist zu kurz (mindestens 20 Zeichen).",
+      "cityRequired": "Gib eine Stadt an.",
+      "addressRequired": "Gib eine Adresse an.",
+      "generic": "Ein Fehler ist aufgetreten. Bitte versuche es erneut.",
+      "loadFailed": "Die Veranstaltungsdaten konnten nicht geladen werden."
+    }
+  }
+}

@@ -3,8 +3,8 @@
         <div class="container">
 
             <div class="page-hero">
-                <h1 class="page-title">Cennik</h1>
-                <p class="page-sub">Przejrzyste ceny bez ukrytych opłat</p>
+                <h1 class="page-title">{{ $t('pricing.title') }}</h1>
+                <p class="page-sub">{{ $t('pricing.subtitle') }}</p>
             </div>
 
             <!-- Tab switch -->
@@ -15,7 +15,7 @@
                     @click="tab = 'personal'"
                 >
                     <v-icon icon="mdi-account-outline" size="18" />
-                    Konto prywatne
+                    {{ $t('pricing.tabPersonal') }}
                 </button>
                 <button
                     class="tab-btn"
@@ -23,7 +23,7 @@
                     @click="tab = 'business'"
                 >
                     <v-icon icon="mdi-briefcase-outline" size="18" />
-                    Konto biznesowe
+                    {{ $t('pricing.tabBusiness') }}
                 </button>
             </div>
 
@@ -32,12 +32,12 @@
 
                 <div v-if="promoActive" class="promo-banner">
                     <v-icon icon="mdi-gift-outline" size="17" />
-                    Promocja startowa: wszystkie wyróżnienia i pakiety są teraz całkowicie darmowe!
+                    {{ $t('pricing.promoBanner') }}
                 </div>
 
                 <section class="price-section">
-                    <h2 class="section-title">Ogłoszenia</h2>
-                    <p class="section-sub">Dodawanie ogłoszeń dla kont prywatnych jest bezpłatne.</p>
+                    <h2 class="section-title">{{ $t('pricing.adsTitle') }}</h2>
+                    <p class="section-sub">{{ $t('pricing.adsSub') }}</p>
 
                     <div class="info-cards">
                         <div class="info-card info-card--free">
@@ -45,39 +45,39 @@
                                 <v-icon icon="mdi-car-outline" size="22" />
                             </div>
                             <div>
-                                <div class="info-card-title">Dodaj ogłoszenie</div>
-                                <div class="info-card-desc">Bezpłatnie — do 2 aktywnych i 4 w roku</div>
+                                <div class="info-card-title">{{ $t('pricing.addAdvert') }}</div>
+                                <div class="info-card-desc">{{ $t('pricing.addAdvertDesc') }}</div>
                             </div>
-                            <div class="info-card-price free">BEZPŁATNIE</div>
+                            <div class="info-card-price free">{{ $t('pricing.freeUpper') }}</div>
                         </div>
                         <div class="info-card">
                             <div class="info-card-icon">
                                 <v-icon icon="mdi-calendar-range" size="22" />
                             </div>
                             <div>
-                                <div class="info-card-title">Czas emisji ogłoszenia</div>
-                                <div class="info-card-desc">Po upływie można odświeżyć lub wyróżnić</div>
+                                <div class="info-card-title">{{ $t('pricing.emissionTime') }}</div>
+                                <div class="info-card-desc">{{ $t('pricing.emissionDesc') }}</div>
                             </div>
-                            <div class="info-card-price">90 dni</div>
+                            <div class="info-card-price">{{ $t('pricing.days90') }}</div>
                         </div>
                     </div>
 
                     <div class="limit-note">
                         <v-icon icon="mdi-information-outline" size="15" />
-                        Przekroczenie limitów konta prywatnego sugeruje działalność handlową i wymaga przejścia na konto biznesowe.
+                        {{ $t('pricing.limitNote') }}
                     </div>
                 </section>
 
                 <section class="price-section">
-                    <h2 class="section-title">Promowanie ogłoszeń</h2>
-                    <p class="section-sub">Wyróżnij swoją ofertę i dotrzyj do większej liczby kupujących.</p>
+                    <h2 class="section-title">{{ $t('pricing.promoteTitle') }}</h2>
+                    <p class="section-sub">{{ $t('pricing.promoteSubPersonal') }}</p>
 
                     <div class="promo-table">
                         <div class="promo-row promo-header">
-                            <span>Opcja</span>
-                            <span>7 dni</span>
-                            <span>14 dni</span>
-                            <span>30 dni</span>
+                            <span>{{ $t('pricing.colOption') }}</span>
+                            <span>{{ $t('pricing.col7') }}</span>
+                            <span>{{ $t('pricing.col14') }}</span>
+                            <span>{{ $t('pricing.col30') }}</span>
                         </div>
                         <div v-for="p in promoPlansPersonal" :key="p.key" class="promo-row" :class="`promo-row--${p.key}`">
                             <div class="promo-name-cell">
@@ -91,14 +91,14 @@
                                 <template v-if="price === '—'">—</template>
                                 <template v-else-if="promoActive">
                                     <span class="promo-price-crossed">{{ price }}</span>
-                                    <span class="promo-price-free">za darmo</span>
+                                    <span class="promo-price-free">{{ $t('pricing.forFreeLower') }}</span>
                                 </template>
                                 <template v-else>{{ price }}</template>
                             </span>
                         </div>
                     </div>
 
-                    <div class="vat-note">Wszystkie ceny zawierają podatek VAT (brutto).</div>
+                    <div class="vat-note">{{ $t('pricing.vatIncluded') }}</div>
                 </section>
 
             </div>
@@ -108,12 +108,12 @@
 
                 <div v-if="promoActive" class="promo-banner">
                     <v-icon icon="mdi-gift-outline" size="17" />
-                    Promocja startowa: wszystkie wyróżnienia i pakiety są teraz całkowicie darmowe!
+                    {{ $t('pricing.promoBanner') }}
                 </div>
 
                 <section class="price-section">
-                    <h2 class="section-title">Pakiety miesięczne</h2>
-                    <p class="section-sub">Miesięczna subskrypcja daje dostęp do większych limitów, dłuższej emisji i bezpłatnych wyróżnień.</p>
+                    <h2 class="section-title">{{ $t('pricing.monthlyPackagesTitle') }}</h2>
+                    <p class="section-sub">{{ $t('pricing.monthlyPackagesSub') }}</p>
 
                     <div class="b2b-grid">
                         <div
@@ -124,7 +124,7 @@
                         >
                             <div class="b2b-accent" />
                             <div v-if="plan.popular" class="b2b-popular">
-                                <v-icon icon="mdi-fire" size="11" />NAJPOPULARNIEJSZY
+                                <v-icon icon="mdi-fire" size="11" />{{ $t('pricing.mostPopular') }}
                             </div>
                             <div class="b2b-head">
                                 <div class="b2b-icon">
@@ -138,15 +138,15 @@
 
                             <div v-if="!plan.custom && promoActive" class="b2b-price-block">
                                 <div class="b2b-price-netto b2b-price-netto--crossed">{{ plan.priceNetto }}</div>
-                                <div class="b2b-price-brutto b2b-price-brutto--free">ZA DARMO</div>
+                                <div class="b2b-price-brutto b2b-price-brutto--free">{{ $t('pricing.forFreeUpper') }}</div>
                             </div>
                             <div v-else-if="!plan.custom" class="b2b-price-block">
-                                <div class="b2b-price-netto">{{ plan.priceNetto }} <span>netto / mies.</span></div>
-                                <div class="b2b-price-brutto">{{ plan.priceBrutto }} brutto (z VAT 23%)</div>
+                                <div class="b2b-price-netto">{{ plan.priceNetto }} <span>{{ $t('pricing.nettoPerMonth') }}</span></div>
+                                <div class="b2b-price-brutto">{{ plan.priceBrutto }} {{ $t('pricing.bruttoWithVat') }}</div>
                             </div>
                             <div v-else class="b2b-price-block">
-                                <div class="b2b-price-netto custom">Wycena indywidualna</div>
-                                <div class="b2b-price-brutto">Skontaktuj się z nami</div>
+                                <div class="b2b-price-netto custom">{{ $t('pricing.customPricing') }}</div>
+                                <div class="b2b-price-brutto">{{ $t('pricing.contactUsShort') }}</div>
                             </div>
 
                             <ul class="b2b-features">
@@ -157,31 +157,31 @@
                             </ul>
 
                             <NuxtLink v-if="!plan.custom" to="/pakiety" class="b2b-cta">
-                                Wybierz pakiet
+                                {{ $t('pricing.choosePackage') }}
                                 <v-icon icon="mdi-arrow-right" size="14" />
                             </NuxtLink>
                             <a v-else href="mailto:kontakt@carizo.eu" class="b2b-cta b2b-cta--contact">
-                                Skontaktuj się
+                                {{ $t('pricing.contact') }}
                                 <v-icon icon="mdi-email-outline" size="14" />
                             </a>
                         </div>
                     </div>
 
                     <div class="vat-note">
-                        Ceny netto powiększone o podatek VAT 23%. Faktura wystawiana automatycznie po każdej płatności.
+                        {{ $t('pricing.b2bVatNote') }}
                     </div>
                 </section>
 
                 <section class="price-section">
-                    <h2 class="section-title">Promowanie ogłoszeń</h2>
-                    <p class="section-sub">Ceny takie same jak dla kont prywatnych. Jako firma otrzymujesz fakturę VAT.</p>
+                    <h2 class="section-title">{{ $t('pricing.promoteTitle') }}</h2>
+                    <p class="section-sub">{{ $t('pricing.promoteSubBusiness') }}</p>
 
                     <div class="promo-table">
                         <div class="promo-row promo-header">
-                            <span>Opcja</span>
-                            <span>7 dni</span>
-                            <span>14 dni</span>
-                            <span>30 dni</span>
+                            <span>{{ $t('pricing.colOption') }}</span>
+                            <span>{{ $t('pricing.col7') }}</span>
+                            <span>{{ $t('pricing.col14') }}</span>
+                            <span>{{ $t('pricing.col30') }}</span>
                         </div>
                         <div v-for="p in promoPlansB2B" :key="p.key" class="promo-row" :class="`promo-row--${p.key}`">
                             <div class="promo-name-cell">
@@ -197,24 +197,24 @@
                                 </template>
                                 <template v-else-if="promoActive">
                                     <div class="promo-price-crossed">{{ col.brutto }}</div>
-                                    <div class="promo-price-free">za darmo</div>
+                                    <div class="promo-price-free">{{ $t('pricing.forFreeLower') }}</div>
                                 </template>
                                 <template v-else>
                                     <div class="promo-brutto">{{ col.brutto }}</div>
-                                    <div class="promo-netto">{{ col.netto }} netto</div>
+                                    <div class="promo-netto">{{ col.netto }} {{ $t('pricing.nettoSuffix') }}</div>
                                 </template>
                             </div>
                         </div>
                     </div>
 
-                    <div class="vat-note">Ceny brutto zawierają VAT 23%. Na każdą transakcję wystawiana jest faktura VAT.</div>
+                    <div class="vat-note">{{ $t('pricing.b2bVatNote2') }}</div>
                 </section>
 
             </div>
 
             <!-- ── FAQ ─────────────────────────────────────────────────────── -->
             <section class="faq-section">
-                <h2 class="section-title">Często zadawane pytania</h2>
+                <h2 class="section-title">{{ $t('pricing.faqTitle') }}</h2>
                 <div class="faq-grid">
                     <div v-for="q in faq" :key="q.q" class="faq-item">
                         <div class="faq-q">
@@ -231,9 +231,10 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 useHead({
-    title: 'Cennik — CARIZO',
-    meta: [{ name: 'description', content: 'Przejrzysty cennik CARIZO. Sprawdź ceny ogłoszeń, wyróżnień i pakietów biznesowych dla dealerów.' }],
+    title: t('pricing.metaTitle'),
+    meta: [{ name: 'description', content: t('pricing.metaDescription') }],
 })
 
 const tab = ref<'personal' | 'business'>('personal')
@@ -244,28 +245,28 @@ onMounted(() => {
     getPromoStatus().then(r => { promoActive.value = r.isFreePromoActive }).catch(() => {})
 })
 
-const promoPlansPersonal = [
+const promoPlansPersonal = computed(() => [
     {
-        key: 'refresh', icon: 'mdi-refresh', name: 'Odświeżenie',
-        hint: 'Powrót na górę listy wyników',
+        key: 'refresh', icon: 'mdi-refresh', name: t('pricing.plans.refresh.name'),
+        hint: t('pricing.plans.refresh.hint'),
         prices: ['4,99 zł', '—', '—'],
     },
     {
-        key: 'highlight', icon: 'mdi-star', name: 'Wyróżnienie',
-        hint: 'Czerwone obramowanie + etykieta WYRÓŻNIONE',
+        key: 'highlight', icon: 'mdi-star', name: t('pricing.plans.highlight.name'),
+        hint: t('pricing.plans.highlight.hint'),
         prices: ['14,99 zł', '24,99 zł', '39,99 zł'],
     },
     {
-        key: 'top', icon: 'mdi-crown', name: 'Oferta TOP',
-        hint: 'Widoczność na stronie głównej',
+        key: 'top', icon: 'mdi-crown', name: t('pricing.plans.top.name'),
+        hint: t('pricing.plans.top.hint'),
         prices: ['19,99 zł', '29,99 zł', '49,99 zł'],
     },
     {
-        key: 'premium', icon: 'mdi-diamond-outline', name: 'Premium',
-        hint: 'Maksymalna widoczność, priorytet nad TOP',
+        key: 'premium', icon: 'mdi-diamond-outline', name: t('pricing.plans.premium.name'),
+        hint: t('pricing.plans.premium.hint'),
         prices: ['29,99 zł', '44,99 zł', '79,99 zł'],
     },
-]
+])
 
 function toNetto(brutto: number) {
     return (brutto / 1.23).toFixed(2).replace('.', ',') + ' zł'
@@ -274,10 +275,10 @@ function toBrutto(brutto: number) {
     return brutto.toFixed(2).replace('.', ',') + ' zł'
 }
 
-const promoPlansB2B = [
+const promoPlansB2B = computed(() => [
     {
-        key: 'refresh', icon: 'mdi-refresh', name: 'Odświeżenie',
-        hint: 'Powrót na górę listy wyników',
+        key: 'refresh', icon: 'mdi-refresh', name: t('pricing.plans.refresh.name'),
+        hint: t('pricing.plans.refresh.hint'),
         cols: [
             { brutto: toBrutto(4.99), netto: toNetto(4.99) },
             { brutto: '—', netto: '' },
@@ -285,8 +286,8 @@ const promoPlansB2B = [
         ],
     },
     {
-        key: 'highlight', icon: 'mdi-star', name: 'Wyróżnienie',
-        hint: 'Czerwone obramowanie + etykieta WYRÓŻNIONE',
+        key: 'highlight', icon: 'mdi-star', name: t('pricing.plans.highlight.name'),
+        hint: t('pricing.plans.highlight.hint'),
         cols: [
             { brutto: toBrutto(14.99), netto: toNetto(14.99) },
             { brutto: toBrutto(24.99), netto: toNetto(24.99) },
@@ -294,8 +295,8 @@ const promoPlansB2B = [
         ],
     },
     {
-        key: 'top', icon: 'mdi-crown', name: 'Oferta TOP',
-        hint: 'Widoczność na stronie głównej',
+        key: 'top', icon: 'mdi-crown', name: t('pricing.plans.top.name'),
+        hint: t('pricing.plans.top.hint'),
         cols: [
             { brutto: toBrutto(19.99), netto: toNetto(19.99) },
             { brutto: toBrutto(29.99), netto: toNetto(29.99) },
@@ -303,93 +304,75 @@ const promoPlansB2B = [
         ],
     },
     {
-        key: 'premium', icon: 'mdi-diamond-outline', name: 'Premium',
-        hint: 'Maksymalna widoczność, priorytet nad TOP',
+        key: 'premium', icon: 'mdi-diamond-outline', name: t('pricing.plans.premium.name'),
+        hint: t('pricing.plans.premium.hint'),
         cols: [
             { brutto: toBrutto(29.99), netto: toNetto(29.99) },
             { brutto: toBrutto(44.99), netto: toNetto(44.99) },
             { brutto: toBrutto(79.99), netto: toNetto(79.99) },
         ],
     },
-]
+])
 
-const b2bPlans = [
+const b2bPlans = computed(() => [
     {
-        key: 'start', icon: 'mdi-rocket-launch-outline', name: 'Start',
+        key: 'start', icon: 'mdi-rocket-launch-outline', name: t('pricing.b2b.start.name'),
         badge: null, popular: false, custom: false,
         priceNetto: '99,00 zł', priceBrutto: '121,77 zł',
         features: [
-            '25 aktywnych ogłoszeń',
-            '90 dni emisji ogłoszenia',
-            '3 wyróżnienia miesięcznie',
-            'Faktura VAT automatycznie',
-            'Wsparcie e-mail',
+            t('pricing.b2b.start.f1'),
+            t('pricing.b2b.start.f2'),
+            t('pricing.b2b.start.f3'),
+            t('pricing.b2b.start.f4'),
+            t('pricing.b2b.start.f5'),
         ],
     },
     {
-        key: 'biznes', icon: 'mdi-briefcase-outline', name: 'Biznes',
-        badge: 'POLECANY', popular: true, custom: false,
+        key: 'biznes', icon: 'mdi-briefcase-outline', name: t('pricing.b2b.biznes.name'),
+        badge: t('pricing.b2b.biznes.badge'), popular: true, custom: false,
         priceNetto: '279,00 zł', priceBrutto: '343,17 zł',
         features: [
-            '75 aktywnych ogłoszeń',
-            '90 dni emisji ogłoszenia',
-            '10 wyróżnień miesięcznie',
-            'Faktura VAT automatycznie',
-            'Priorytetowe wsparcie',
+            t('pricing.b2b.biznes.f1'),
+            t('pricing.b2b.biznes.f2'),
+            t('pricing.b2b.biznes.f3'),
+            t('pricing.b2b.biznes.f4'),
+            t('pricing.b2b.biznes.f5'),
         ],
     },
     {
-        key: 'premium', icon: 'mdi-diamond-outline', name: 'Premium',
+        key: 'premium', icon: 'mdi-diamond-outline', name: t('pricing.b2b.premium.name'),
         badge: null, popular: false, custom: false,
         priceNetto: '599,00 zł', priceBrutto: '736,77 zł',
         features: [
-            '200 aktywnych ogłoszeń',
-            '90 dni emisji ogłoszenia',
-            '30 wyróżnień miesięcznie',
-            'Faktura VAT automatycznie',
-            'Dedykowany opiekun',
+            t('pricing.b2b.premium.f1'),
+            t('pricing.b2b.premium.f2'),
+            t('pricing.b2b.premium.f3'),
+            t('pricing.b2b.premium.f4'),
+            t('pricing.b2b.premium.f5'),
         ],
     },
     {
-        key: 'enterprise', icon: 'mdi-office-building-outline', name: 'Enterprise',
+        key: 'enterprise', icon: 'mdi-office-building-outline', name: t('pricing.b2b.enterprise.name'),
         badge: null, popular: false, custom: true,
         priceNetto: '', priceBrutto: '',
         features: [
-            'Nielimitowane ogłoszenia',
-            '90 dni emisji ogłoszenia',
-            'Nielimitowane wyróżnienia',
-            'Faktura VAT automatycznie',
-            'Dedykowany account manager',
+            t('pricing.b2b.enterprise.f1'),
+            t('pricing.b2b.enterprise.f2'),
+            t('pricing.b2b.enterprise.f3'),
+            t('pricing.b2b.enterprise.f4'),
+            t('pricing.b2b.enterprise.f5'),
         ],
     },
-]
+])
 
-const faq = [
-    {
-        q: 'Czy dodawanie ogłoszeń jest płatne?',
-        a: 'Dla kont prywatnych dodawanie ogłoszeń jest całkowicie bezpłatne (do 2 aktywnych i 4 w roku). Konta biznesowe mogą dodawać ogłoszenia w ramach swojego pakietu subskrypcyjnego.',
-    },
-    {
-        q: 'Jak działa Start Program dla nowych dealerów?',
-        a: 'Nowe konta biznesowe mogą aktywować bezpłatny 3-miesięczny okres próbny (Start Program) z limitem 20 aktywnych ogłoszeń. Po upływie próby konieczne jest wykupienie pakietu.',
-    },
-    {
-        q: 'Czy ceny zawierają VAT?',
-        a: 'Ceny ogłoszeń i wyróżnień podajemy w kwocie brutto (z VAT 23%). Dla kont biznesowych dodatkowo prezentujemy kwotę netto. Na każdą transakcję wystawiana jest faktura VAT.',
-    },
-    {
-        q: 'Jak długo aktywna jest subskrypcja?',
-        a: 'Pakiety biznesowe są rozliczane miesięcznie. Po zakupie subskrypcja jest aktywna przez 30 dni od daty płatności. Faktury generowane są automatycznie.',
-    },
-    {
-        q: 'Czy mogę zmienić pakiet w trakcie subskrypcji?',
-        a: 'Tak, upgrade pakietu możliwy jest w dowolnym momencie. Nowy pakiet aktywowany jest natychmiast po zaksięgowaniu płatności.',
-    },
-    {
-        q: 'Co się dzieje po wygaśnięciu pakietu?',
-        a: 'Po wygaśnięciu subskrypcji konto przechodzi na tryb podstawowy. Istniejące ogłoszenia pozostają aktywne do końca ich czasu emisji, jednak nie można dodawać nowych.',
-    },
-]
+const faq = computed(() => [
+    { q: t('pricing.faq.q1'), a: t('pricing.faq.a1') },
+    { q: t('pricing.faq.q2'), a: t('pricing.faq.a2') },
+    { q: t('pricing.faq.q3'), a: t('pricing.faq.a3') },
+    { q: t('pricing.faq.q4'), a: t('pricing.faq.a4') },
+    { q: t('pricing.faq.q5'), a: t('pricing.faq.a5') },
+    { q: t('pricing.faq.q6'), a: t('pricing.faq.a6') },
+])
 </script>
 
 <style lang="scss" scoped>

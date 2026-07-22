@@ -5,42 +5,42 @@
         <aside class="dash-sidebar">
             <nav class="dash-nav">
                 <button class="nav-item" :class="{ active: section === 'overview' }" @click="section = 'overview'">
-                    <v-icon icon="mdi-view-dashboard-outline" size="19" /><span>Podsumowanie</span>
+                    <v-icon icon="mdi-view-dashboard-outline" size="19" /><span>{{ $t('dashboard.navOverview') }}</span>
                 </button>
                 <NuxtLink to="/my-adverts" class="nav-item">
-                    <v-icon icon="mdi-card-text-outline" size="19" /><span>Moje ogłoszenia</span>
+                    <v-icon icon="mdi-card-text-outline" size="19" /><span>{{ $t('dashboard.navMyAdverts') }}</span>
                 </NuxtLink>
                 <NuxtLink to="/favorites" class="nav-item">
-                    <v-icon icon="mdi-heart-outline" size="19" /><span>Ulubione</span>
+                    <v-icon icon="mdi-heart-outline" size="19" /><span>{{ $t('dashboard.navFavorites') }}</span>
                 </NuxtLink>
                 <button class="nav-item" :class="{ active: section === 'searches' }" @click="section = 'searches'">
-                    <v-icon icon="mdi-magnify" size="19" /><span>Wyszukiwania</span>
+                    <v-icon icon="mdi-magnify" size="19" /><span>{{ $t('dashboard.navSearches') }}</span>
                     <span v-if="savedSearchNewCount > 0" class="nav-badge">{{ savedSearchNewCount }}</span>
                 </button>
                 <NuxtLink to="/messages" class="nav-item">
-                    <v-icon icon="mdi-email-outline" size="19" /><span>Wiadomości</span>
+                    <v-icon icon="mdi-email-outline" size="19" /><span>{{ $t('dashboard.navMessages') }}</span>
                     <span v-if="stats?.unreadMessages" class="nav-badge">{{ stats.unreadMessages }}</span>
                 </NuxtLink>
                 <button class="nav-item" :class="{ active: section === 'notifications' }" @click="goNotifications">
-                    <v-icon icon="mdi-bell-outline" size="19" /><span>Powiadomienia</span>
+                    <v-icon icon="mdi-bell-outline" size="19" /><span>{{ $t('dashboard.navNotifications') }}</span>
                     <span v-if="notifUnread > 0" class="nav-badge">{{ notifUnread }}</span>
                 </button>
                 <button class="nav-item" :class="{ active: section === 'reviews' }" @click="goReviews">
-                    <v-icon icon="mdi-star-outline" size="19" /><span>Opinie i oceny</span>
+                    <v-icon icon="mdi-star-outline" size="19" /><span>{{ $t('dashboard.navReviews') }}</span>
                 </button>
                 <NuxtLink to="/faktury" class="nav-item">
-                    <v-icon icon="mdi-receipt-text-outline" size="19" /><span>Faktury</span>
+                    <v-icon icon="mdi-receipt-text-outline" size="19" /><span>{{ $t('dashboard.navInvoices') }}</span>
                 </NuxtLink>
                 <div class="nav-divider" />
                 <button class="nav-item" :class="{ active: section === 'profile' }" @click="goProfile">
-                    <v-icon icon="mdi-account-outline" size="19" /><span>Dane osobowe</span>
+                    <v-icon icon="mdi-account-outline" size="19" /><span>{{ $t('dashboard.navPersonalData') }}</span>
                 </button>
                 <button class="nav-item" :class="{ active: section === 'settings' }" @click="goSettings">
-                    <v-icon icon="mdi-cog-outline" size="19" /><span>Ustawienia konta</span>
+                    <v-icon icon="mdi-cog-outline" size="19" /><span>{{ $t('dashboard.navAccountSettings') }}</span>
                 </button>
                 <div class="nav-divider" />
                 <button class="nav-item nav-danger" @click="authLogout">
-                    <v-icon icon="mdi-logout" size="19" /><span>Wyloguj się</span>
+                    <v-icon icon="mdi-logout" size="19" /><span>{{ $t('dashboard.navLogout') }}</span>
                 </button>
             </nav>
             <!-- B2B subscription widget -->
@@ -48,22 +48,22 @@
                 <div v-if="subscription" class="sub-info">
                     <div class="sub-label">
                         <v-icon :icon="subscription.isActive ? 'mdi-check-circle-outline' : 'mdi-briefcase-outline'" size="14" />
-                        Pakiet B2B
+                        {{ $t('dashboard.b2bPackage') }}
                     </div>
                     <div class="sub-tier">{{ subscription.tierName }}</div>
                     <div v-if="subscription.isActive" class="sub-quota">
-                        Wyróżnienia: {{ subscription.featuredQuotaUsed }}/{{ subscription.featuredQuotaPerMonth === -1 ? '∞' : subscription.featuredQuotaPerMonth }}
+                        {{ $t('dashboard.featured') }}: {{ subscription.featuredQuotaUsed }}/{{ subscription.featuredQuotaPerMonth === -1 ? '∞' : subscription.featuredQuotaPerMonth }}
                     </div>
                 </div>
                 <NuxtLink to="/pakiety" class="sub-btn">
-                    {{ subscription?.isActive ? 'Zmień pakiet' : 'Aktywuj pakiet' }}
+                    {{ subscription?.isActive ? $t('dashboard.changePackage') : $t('dashboard.activatePackage') }}
                 </NuxtLink>
             </div>
             <div v-else class="dash-promo">
                 <div class="promo-text">
-                    <div class="promo-title">Zwiększ zasięg<br>swoich ogłoszeń</div>
-                    <p class="promo-sub">Wyróżnij ogłoszenia i sprzedaj szybciej.</p>
-                    <NuxtLink to="/promote" class="promo-btn">Dowiedz się więcej</NuxtLink>
+                    <div class="promo-title">{{ $t('dashboard.promoTitle1') }}<br>{{ $t('dashboard.promoTitle2') }}</div>
+                    <p class="promo-sub">{{ $t('dashboard.promoSub') }}</p>
+                    <NuxtLink to="/promote" class="promo-btn">{{ $t('dashboard.promoBtn') }}</NuxtLink>
                 </div>
             </div>
         </aside>
@@ -71,27 +71,27 @@
         <!-- Mobile nav strip (visible only when sidebar is hidden) -->
         <nav class="dash-mobile-nav">
             <button :class="['dmn-item', { active: section === 'overview' }]" @click="section = 'overview'">
-                <v-icon icon="mdi-view-dashboard-outline" size="20" /><span>Panel</span>
+                <v-icon icon="mdi-view-dashboard-outline" size="20" /><span>{{ $t('dashboard.mnavPanel') }}</span>
             </button>
             <NuxtLink to="/my-adverts" class="dmn-item">
-                <v-icon icon="mdi-card-text-outline" size="20" /><span>Ogłoszenia</span>
+                <v-icon icon="mdi-card-text-outline" size="20" /><span>{{ $t('dashboard.mnavAdverts') }}</span>
             </NuxtLink>
             <NuxtLink to="/messages" class="dmn-item">
-                <v-icon icon="mdi-email-outline" size="20" /><span>Wiadomości</span>
+                <v-icon icon="mdi-email-outline" size="20" /><span>{{ $t('dashboard.mnavMessages') }}</span>
                 <span v-if="stats?.unreadMessages" class="dmn-badge">{{ stats.unreadMessages }}</span>
             </NuxtLink>
             <button :class="['dmn-item', { active: section === 'notifications' }]" @click="goNotifications">
-                <v-icon icon="mdi-bell-outline" size="20" /><span>Notif.</span>
+                <v-icon icon="mdi-bell-outline" size="20" /><span>{{ $t('dashboard.mnavNotif') }}</span>
                 <span v-if="notifUnread > 0" class="dmn-badge">{{ notifUnread }}</span>
             </button>
             <button :class="['dmn-item', { active: section === 'profile' }]" @click="goProfile">
-                <v-icon icon="mdi-account-outline" size="20" /><span>Profil</span>
+                <v-icon icon="mdi-account-outline" size="20" /><span>{{ $t('dashboard.mnavProfile') }}</span>
             </button>
             <button :class="['dmn-item', { active: section === 'settings' }]" @click="goSettings">
-                <v-icon icon="mdi-cog-outline" size="20" /><span>Ustawienia</span>
+                <v-icon icon="mdi-cog-outline" size="20" /><span>{{ $t('dashboard.mnavSettings') }}</span>
             </button>
             <button class="dmn-item dmn-item--danger" @click="authLogout">
-                <v-icon icon="mdi-logout" size="20" /><span>Wyloguj</span>
+                <v-icon icon="mdi-logout" size="20" /><span>{{ $t('dashboard.mnavLogout') }}</span>
             </button>
         </nav>
 
@@ -113,13 +113,13 @@
                                 <v-icon v-if="profile?.accountType === 'Business'" icon="mdi-check-decagram" size="18" class="verified-badge" />
                             </div>
                             <div class="profile-role">{{ profile?.accountType === 'Business' ? (profile.companyName ??
-                                'Dealer') : 'Użytkownik indywidualny' }}</div>
-                            <div class="profile-since">Członek od {{ memberSince }}</div>
+                                $t('dashboard.dealer')) : $t('dashboard.individualUser') }}</div>
+                            <div class="profile-since">{{ $t('dashboard.memberSince') }} {{ memberSince }}</div>
                         </div>
                     </div>
                     <div class="banner-tags">
                         <span v-if="profile?.accountType === 'Business'" class="btag btag-dealer">
-                            <v-icon icon="mdi-shield-check" size="13" />DEALER ZWERYFIKOWANY
+                            <v-icon icon="mdi-shield-check" size="13" />{{ $t('dashboard.verifiedDealer') }}
                         </span>
                         <span v-if="profile?.email" class="btag">
                             <v-icon icon="mdi-email-outline" size="13" />{{ profile.email }}
@@ -133,7 +133,7 @@
                         </span>
                     </div>
                     <button class="edit-profile-btn" @click="goProfile">
-                        <v-icon icon="mdi-pencil-outline" size="15" />Edytuj profil
+                        <v-icon icon="mdi-pencil-outline" size="15" />{{ $t('dashboard.editProfile') }}
                     </button>
                 </div>
 
@@ -142,40 +142,40 @@
                     <div class="stat-card">
                         <v-icon icon="mdi-car-outline" size="22" class="stat-icon" />
                         <div class="stat-num" v-count-up="stats?.totalAdverts ?? 0" />
-                        <div class="stat-label">Moje ogłoszenia</div>
-                        <div class="stat-sub green">{{ stats?.activeAdverts ?? 0 }} aktywnych</div>
+                        <div class="stat-label">{{ $t('dashboard.statMyAdverts') }}</div>
+                        <div class="stat-sub green">{{ stats?.activeAdverts ?? 0 }} {{ $t('dashboard.statActive') }}</div>
                     </div>
                     <div class="stat-card">
                         <v-icon icon="mdi-eye-outline" size="22" class="stat-icon" />
                         <div class="stat-num">{{ formatViews(stats?.totalViews ?? 0) }}</div>
-                        <div class="stat-label">Wyświetlenia</div>
-                        <div class="stat-sub">łącznie</div>
+                        <div class="stat-label">{{ $t('dashboard.statViews') }}</div>
+                        <div class="stat-sub">{{ $t('dashboard.statTotal') }}</div>
                     </div>
                     <div class="stat-card">
                         <v-icon icon="mdi-check-circle-outline" size="22" class="stat-icon" />
                         <div class="stat-num" v-count-up="stats?.totalSold ?? 0" />
-                        <div class="stat-label">Sprzedanych aut</div>
+                        <div class="stat-label">{{ $t('dashboard.statSold') }}</div>
                     </div>
                     <div class="stat-card">
                         <v-icon icon="mdi-heart-outline" size="22" class="stat-icon" />
                         <div class="stat-num" v-count-up="stats?.favoritesCount ?? 0" />
-                        <div class="stat-label">W ulubionych</div>
+                        <div class="stat-label">{{ $t('dashboard.statFavorites') }}</div>
                     </div>
                     <div class="stat-card">
                         <v-icon icon="mdi-star-outline" size="22" class="stat-icon" />
-                        <div class="stat-num">{{ stats?.averageRating ? stats.averageRating.toFixed(1) : 'Brak' }}</div>
-                        <div class="stat-label">Ocena sprzedawcy</div>
+                        <div class="stat-num">{{ stats?.averageRating ? stats.averageRating.toFixed(1) : $t('dashboard.none') }}</div>
+                        <div class="stat-label">{{ $t('dashboard.statRating') }}</div>
                         <div v-if="stats?.averageRating" class="stat-stars">
                             <v-icon v-for="n in 5" :key="n"
                                 :icon="n <= Math.round(stats.averageRating) ? 'mdi-star' : 'mdi-star-outline'"
                                 size="12" />
                         </div>
-                        <div v-if="stats?.reviewCount" class="stat-sub">{{ stats.reviewCount }} opinii</div>
+                        <div v-if="stats?.reviewCount" class="stat-sub">{{ stats.reviewCount }} {{ $t('dashboard.reviewsWord') }}</div>
                     </div>
                     <div class="stat-card">
                         <v-icon icon="mdi-account-multiple-outline" size="22" class="stat-icon" />
                         <div class="stat-num" v-count-up="stats?.followersCount ?? 0" />
-                        <div class="stat-label">Obserwujący</div>
+                        <div class="stat-label">{{ $t('dashboard.statFollowers') }}</div>
                     </div>
                 </div>
 
@@ -183,7 +183,7 @@
                 <div v-if="recentAdverts.length" class="recent-section">
                     <div class="recent-hd">
                         <v-icon icon="mdi-history" size="14" class="recent-hd-icon" />
-                        Ostatnio oglądane
+                        {{ $t('dashboard.recentlyViewed') }}
                     </div>
                     <div class="recent-strip">
                         <NuxtLink
@@ -220,10 +220,10 @@
                         <div class="tab-search">
                             <v-icon icon="mdi-magnify" size="18" class="ts-icon" />
                             <input v-model="advertSearch" class="ts-input"
-                                placeholder="Szukaj w moich ogłoszeniach..." />
+                                :placeholder="$t('dashboard.searchPlaceholder')" />
                         </div>
                         <NuxtLink to="/add-advert" class="btn-add-ad">
-                            <v-icon icon="mdi-plus" size="16" />Dodaj ogłoszenie
+                            <v-icon icon="mdi-plus" size="16" />{{ $t('dashboard.addAdvert') }}
                         </NuxtLink>
                     </div>
                     <div v-if="loading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" /></div>
@@ -232,7 +232,7 @@
                             <div class="adcard-img-wrap">
                                 <span class="adcard-badge" :class="advertBadgeClass(a)">{{ advertBadgeLabel(a) }}</span>
                                 <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" loading="lazy" />
-                                <button class="adcard-delete-btn" :disabled="deleteLoading === a.id" title="Usuń"
+                                <button class="adcard-delete-btn" :disabled="deleteLoading === a.id" :title="$t('dashboard.deleteTitle')"
                                     @click.stop="confirmDelete(a.id)">
                                     <v-icon v-if="deleteLoading === a.id" icon="mdi-loading" size="14" class="spin" />
                                     <v-icon v-else icon="mdi-delete-outline" size="14" />
@@ -251,10 +251,10 @@
                                 </NuxtLink>
                                 <div class="adcard-actions">
                                     <NuxtLink :to="`/add-advert?edit=${a.id}`" class="adcard-act">
-                                        <v-icon icon="mdi-pencil-outline" size="12" />Edytuj
+                                        <v-icon icon="mdi-pencil-outline" size="12" />{{ $t('dashboard.edit') }}
                                     </NuxtLink>
                                     <NuxtLink :to="`/promote-advert/${a.id}`" class="adcard-act adcard-act--promo">
-                                        <v-icon icon="mdi-star-outline" size="12" />Wyróżnij
+                                        <v-icon icon="mdi-star-outline" size="12" />{{ $t('dashboard.promote') }}
                                     </NuxtLink>
                                 </div>
                             </div>
@@ -262,13 +262,13 @@
                     </div>
                     <div v-else class="empty-state">
                         <v-icon icon="mdi-car-outline" size="36" class="empty-icon" />
-                        <p>Nie masz jeszcze żadnych ogłoszeń.</p>
-                        <NuxtLink to="/add-advert" class="btn-red-sm">+ Dodaj pierwsze ogłoszenie</NuxtLink>
+                        <p>{{ $t('dashboard.emptyAdverts') }}</p>
+                        <NuxtLink to="/add-advert" class="btn-red-sm">{{ $t('dashboard.addFirstAdvert') }}</NuxtLink>
                     </div>
                     <button v-if="myAdverts.length && myAdverts.length < advertTotal" class="show-more-btn"
                         :disabled="loadingMore" @click="loadMoreAdverts">
                         <v-icon v-if="loadingMore" icon="mdi-loading" size="16" class="spin" />
-                        <span v-else>Pokaż więcej</span>
+                        <span v-else>{{ $t('dashboard.showMore') }}</span>
                     </button>
 
                     <!-- Delete confirm modal -->
@@ -278,17 +278,16 @@
                                 @click.self="deleteConfirmId = null">
                                 <div class="confirm-modal">
                                     <div class="confirm-icon"><v-icon icon="mdi-delete-alert-outline" size="32" /></div>
-                                    <h3 class="confirm-title">Usuń ogłoszenie</h3>
-                                    <p class="confirm-sub">Czy na pewno chcesz usunąć to ogłoszenie? Tej operacji nie
-                                        można cofnąć.</p>
+                                    <h3 class="confirm-title">{{ $t('dashboard.deleteAdvertTitle') }}</h3>
+                                    <p class="confirm-sub">{{ $t('dashboard.deleteAdvertConfirm') }}</p>
                                     <div class="confirm-actions">
-                                        <button class="btn-cancel-modal" @click="deleteConfirmId = null">Anuluj</button>
+                                        <button class="btn-cancel-modal" @click="deleteConfirmId = null">{{ $t('dashboard.cancel') }}</button>
                                         <button class="btn-delete-modal" :disabled="deleteLoading !== null"
                                             @click="doDelete">
                                             <v-icon v-if="deleteLoading !== null" icon="mdi-loading" size="15"
                                                 class="spin" />
                                             <v-icon v-else icon="mdi-delete-outline" size="15" />
-                                            Usuń ogłoszenie
+                                            {{ $t('dashboard.deleteAdvertBtn') }}
                                         </button>
                                     </div>
                                 </div>
@@ -325,7 +324,7 @@
                         </div>
                         <div v-else class="empty-state">
                             <v-icon icon="mdi-star-outline" size="36" class="empty-icon" />
-                            <p>Nie masz jeszcze żadnych opinii.</p>
+                            <p>{{ $t('dashboard.emptyReviews') }}</p>
                         </div>
                     </template>
                 </div>
@@ -338,12 +337,12 @@
                         <div v-for="f in followers" :key="f.id" class="follower-card">
                             <div class="follower-avatar">{{ f.followerName?.[0] ?? '?' }}</div>
                             <div class="follower-name">{{ f.followerName }}</div>
-                            <div class="follower-since">od {{ formatDate(f.createdAt) }}</div>
+                            <div class="follower-since">{{ $t('dashboard.since') }} {{ formatDate(f.createdAt) }}</div>
                         </div>
                     </div>
                     <div v-else class="empty-state">
                         <v-icon icon="mdi-account-multiple-outline" size="36" class="empty-icon" />
-                        <p>Nie masz jeszcze obserwujących.</p>
+                        <p>{{ $t('dashboard.emptyFollowers') }}</p>
                     </div>
                 </div>
 
@@ -365,7 +364,7 @@
                                     {{ Number(fa.advertPrice).toLocaleString('pl') }} zł
                                     <span v-if="fa.priceChanged" class="price-changed">
                                         <v-icon icon="mdi-trending-down" size="14" />
-                                        Zmiana ceny
+                                        {{ $t('dashboard.priceChanged') }}
                                     </span>
                                 </div>
                             </div>
@@ -376,7 +375,7 @@
                     </div>
                     <div v-else class="empty-state">
                         <v-icon icon="mdi-bell-outline" size="36" class="empty-icon" />
-                        <p>Nie obserwujesz żadnych ogłoszeń.</p>
+                        <p>{{ $t('dashboard.emptyFollowing') }}</p>
                     </div>
                 </div>
             </template>
@@ -384,9 +383,9 @@
             <!-- ══ NOTIFICATIONS ═════════════════════════════════════════════ -->
             <template v-else-if="section === 'notifications'">
                 <div class="section-topbar">
-                    <h2 class="section-title">Powiadomienia</h2>
+                    <h2 class="section-title">{{ $t('dashboard.notificationsTitle') }}</h2>
                     <button v-if="notifUnread > 0" class="btn-outline-sm" @click="markAllRead">
-                        <v-icon icon="mdi-check-all" size="15" />Oznacz wszystkie jako przeczytane
+                        <v-icon icon="mdi-check-all" size="15" />{{ $t('dashboard.markAllRead') }}
                     </button>
                 </div>
                 <div v-if="notifsLoading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" /></div>
@@ -402,23 +401,23 @@
                             <div class="notif-time">{{ formatDate(n.createdAt) }}</div>
                         </div>
                         <div v-if="!n.isRead" class="notif-dot" />
-                        <button class="notif-del" aria-label="Usuń powiadomienie" @click.stop="deleteNotif(n.id)">
+                        <button class="notif-del" :aria-label="$t('dashboard.deleteNotifAria')" @click.stop="deleteNotif(n.id)">
                             <v-icon icon="mdi-close" size="14" />
                         </button>
                     </div>
                 </div>
                 <div v-else class="empty-state" style="margin-top:60px">
                     <v-icon icon="mdi-bell-off-outline" size="40" class="empty-icon" />
-                    <p>Brak powiadomień.</p>
+                    <p>{{ $t('dashboard.emptyNotifications') }}</p>
                 </div>
             </template>
 
             <!-- ══ SAVED SEARCHES ════════════════════════════════════════════ -->
             <template v-else-if="section === 'searches'">
                 <div class="section-topbar">
-                    <h2 class="section-title">Zapisane wyszukiwania</h2>
+                    <h2 class="section-title">{{ $t('dashboard.savedSearchesTitle') }}</h2>
                     <button class="btn-red-sm" @click="showNewSearchForm = !showNewSearchForm">
-                        <v-icon icon="mdi-plus" size="14" />Nowe wyszukiwanie
+                        <v-icon icon="mdi-plus" size="14" />{{ $t('dashboard.newSearch') }}
                     </button>
                 </div>
 
@@ -427,40 +426,40 @@
                     <div v-if="showNewSearchForm" class="new-search-form">
                         <div class="nsf-row">
                             <div class="nsf-field nsf-full">
-                                <label class="nsf-label">Nazwa *</label>
-                                <input v-model="newSearch.name" class="nsf-input" placeholder="np. BMW Kraków do 50 tys." />
+                                <label class="nsf-label">{{ $t('dashboard.searchName') }}</label>
+                                <input v-model="newSearch.name" class="nsf-input" :placeholder="$t('dashboard.searchNamePlaceholder')" />
                             </div>
                             <div class="nsf-field nsf-full">
-                                <label class="nsf-label">Szukaj frazy</label>
-                                <input v-model="newSearch.textSearch" class="nsf-input" placeholder="Marka, model..." />
+                                <label class="nsf-label">{{ $t('dashboard.searchPhrase') }}</label>
+                                <input v-model="newSearch.textSearch" class="nsf-input" :placeholder="$t('dashboard.searchPhrasePlaceholder')" />
                             </div>
                             <div class="nsf-field">
-                                <label class="nsf-label">Cena od (zł)</label>
+                                <label class="nsf-label">{{ $t('dashboard.priceFrom') }}</label>
                                 <input v-model="newSearch.priceFrom" type="number" class="nsf-input" placeholder="0" min="0" />
                             </div>
                             <div class="nsf-field">
-                                <label class="nsf-label">Cena do (zł)</label>
+                                <label class="nsf-label">{{ $t('dashboard.priceTo') }}</label>
                                 <input v-model="newSearch.priceTo" type="number" class="nsf-input" placeholder="∞" min="0" />
                             </div>
                             <div class="nsf-field">
-                                <label class="nsf-label">Rok od</label>
+                                <label class="nsf-label">{{ $t('dashboard.yearFrom') }}</label>
                                 <input v-model="newSearch.yearFrom" type="number" class="nsf-input" placeholder="2000" />
                             </div>
                             <div class="nsf-field">
-                                <label class="nsf-label">Rok do</label>
+                                <label class="nsf-label">{{ $t('dashboard.yearTo') }}</label>
                                 <input v-model="newSearch.yearTo" type="number" class="nsf-input" placeholder="2025" />
                             </div>
                         </div>
                         <label class="nsf-toggle">
                             <input v-model="newSearch.notifyOnNew" type="checkbox" class="nsf-checkbox" />
-                            <span>Powiadamiaj o nowych wynikach</span>
+                            <span>{{ $t('dashboard.notifyNewResults') }}</span>
                         </label>
                         <div v-if="searchSaveError" class="nsf-error">{{ searchSaveError }}</div>
                         <div class="nsf-actions">
-                            <button class="btn-ghost-sm" @click="showNewSearchForm = false">Anuluj</button>
+                            <button class="btn-ghost-sm" @click="showNewSearchForm = false">{{ $t('dashboard.cancel') }}</button>
                             <button class="btn-red-sm" :disabled="!newSearch.name.trim() || searchSaving" @click="createSearch">
                                 <v-icon v-if="searchSaving" icon="mdi-loading" size="13" class="spin" />
-                                Zapisz wyszukiwanie
+                                {{ $t('dashboard.saveSearch') }}
                             </button>
                         </div>
                     </div>
@@ -472,28 +471,28 @@
                         <div class="search-card-left">
                             <div class="search-name">{{ s.name }}</div>
                             <div class="search-criteria">{{ criteriaLabel(s.criteria) }}</div>
-                            <div class="search-created">Zapisano: {{ formatDate(s.createdAt) }}</div>
+                            <div class="search-created">{{ $t('dashboard.savedAt') }} {{ formatDate(s.createdAt) }}</div>
                         </div>
                         <div class="search-card-right">
-                            <span v-if="s.newResultsCount > 0" class="new-results-badge">{{ s.newResultsCount }} nowych</span>
+                            <span v-if="s.newResultsCount > 0" class="new-results-badge">{{ s.newResultsCount }} {{ $t('dashboard.newWord') }}</span>
                             <NuxtLink :to="searchUrl(s.criteria)" class="btn-search-run">
-                                <v-icon icon="mdi-magnify" size="14" />Szukaj
+                                <v-icon icon="mdi-magnify" size="14" />{{ $t('dashboard.search') }}
                             </NuxtLink>
-                            <button class="btn-icon-danger" aria-label="Usuń wyszukiwanie" @click="deleteSearch(s.id)"><v-icon icon="mdi-delete-outline" size="16" /></button>
+                            <button class="btn-icon-danger" :aria-label="$t('dashboard.deleteSearchAria')" @click="deleteSearch(s.id)"><v-icon icon="mdi-delete-outline" size="16" /></button>
                         </div>
                     </div>
                 </div>
                 <div v-else class="empty-state" style="margin-top:60px">
                     <v-icon icon="mdi-magnify" size="40" class="empty-icon" />
-                    <p>Nie masz żadnych zapisanych wyszukiwań.</p>
-                    <NuxtLink to="/adverts" class="btn-red-sm">Przejdź do wyszukiwarki</NuxtLink>
+                    <p>{{ $t('dashboard.emptySearches') }}</p>
+                    <NuxtLink to="/adverts" class="btn-red-sm">{{ $t('dashboard.goToSearch') }}</NuxtLink>
                 </div>
             </template>
 
             <!-- ══ REVIEWS SECTION ═══════════════════════════════════════════ -->
             <template v-else-if="section === 'reviews'">
                 <div class="section-topbar">
-                    <h2 class="section-title">Opinie i oceny</h2>
+                    <h2 class="section-title">{{ $t('dashboard.reviewsTitle') }}</h2>
                 </div>
                 <div v-if="stats?.averageRating" class="rating-summary">
                     <div class="rating-big">{{ stats.averageRating.toFixed(1) }}</div>
@@ -502,7 +501,7 @@
                             :icon="n <= Math.round(stats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="22"
                             class="star" />
                     </div>
-                    <div class="rating-count">{{ stats.reviewCount ?? 0 }} opinii</div>
+                    <div class="rating-count">{{ stats.reviewCount ?? 0 }} {{ $t('dashboard.reviewsWord') }}</div>
                 </div>
                 <div v-if="reviewsLoading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" />
                 </div>
@@ -527,104 +526,104 @@
                 </div>
                 <div v-else class="empty-state" style="margin-top:60px">
                     <v-icon icon="mdi-star-off-outline" size="40" class="empty-icon" />
-                    <p>Nie masz jeszcze żadnych opinii.</p>
+                    <p>{{ $t('dashboard.emptyReviews') }}</p>
                 </div>
             </template>
 
             <!-- ══ PROFILE ═══════════════════════════════════════════════════ -->
             <template v-else-if="section === 'profile'">
                 <div class="section-topbar">
-                    <h2 class="section-title">Dane osobowe</h2>
+                    <h2 class="section-title">{{ $t('dashboard.personalDataTitle') }}</h2>
                 </div>
                 <form class="profile-form" @submit.prevent="saveProfile">
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Imię *</label>
+                            <label>{{ $t('dashboard.firstName') }}</label>
                             <input v-model="profileForm.name" class="form-input" autocomplete="given-name" required />
                         </div>
                         <div class="form-group">
-                            <label>Nazwisko *</label>
+                            <label>{{ $t('dashboard.lastName') }}</label>
                             <input v-model="profileForm.surname" class="form-input" autocomplete="family-name" required />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Numer telefonu</label>
+                        <label>{{ $t('dashboard.phoneNumber') }}</label>
                         <input v-model="profileForm.phoneNumber" class="form-input" type="tel" inputmode="tel" autocomplete="tel" />
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Miasto</label>
-                            <input v-model="profileForm.city" class="form-input" autocomplete="address-level2" placeholder="np. Warszawa" />
+                            <label>{{ $t('dashboard.city') }}</label>
+                            <input v-model="profileForm.city" class="form-input" autocomplete="address-level2" :placeholder="$t('dashboard.cityPlaceholder')" />
                         </div>
                         <div class="form-group">
-                            <label>Województwo</label>
-                            <input v-model="profileForm.region" class="form-input" autocomplete="address-level1" placeholder="np. mazowieckie" />
+                            <label>{{ $t('dashboard.region') }}</label>
+                            <input v-model="profileForm.region" class="form-input" autocomplete="address-level1" :placeholder="$t('dashboard.regionPlaceholder')" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>O mnie</label>
+                        <label>{{ $t('dashboard.about') }}</label>
                         <textarea v-model="profileForm.about" class="form-textarea" rows="4" maxlength="500"
-                            placeholder="Opisz się krótko..." />
+                            :placeholder="$t('dashboard.aboutPlaceholder')" />
                         <div class="char-count">{{ (profileForm.about ?? '').length }} / 500</div>
                     </div>
                     <template v-if="profile?.accountType === 'Business'">
-                        <div class="form-section-title">Dane firmy</div>
+                        <div class="form-section-title">{{ $t('dashboard.companyData') }}</div>
                         <div class="form-group">
-                            <label>Nazwa firmy</label>
+                            <label>{{ $t('dashboard.companyName') }}</label>
                             <input v-model="profileForm.companyName" class="form-input" />
                         </div>
                         <div class="form-group">
-                            <label>NIP</label>
-                            <input v-model="profileForm.nip" class="form-input" placeholder="np. 1234567890" />
+                            <label>{{ $t('dashboard.nip') }}</label>
+                            <input v-model="profileForm.nip" class="form-input" :placeholder="$t('dashboard.nipPlaceholder')" />
                         </div>
-                        <div class="form-section-title">Dane do faktury</div>
+                        <div class="form-section-title">{{ $t('dashboard.invoiceData') }}</div>
                         <div class="form-group">
-                            <label>Ulica i numer</label>
-                            <input v-model="profileForm.street" class="form-input" placeholder="np. ul. Przykładowa 12/3" />
+                            <label>{{ $t('dashboard.street') }}</label>
+                            <input v-model="profileForm.street" class="form-input" :placeholder="$t('dashboard.streetPlaceholder')" />
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Kod pocztowy</label>
+                                <label>{{ $t('dashboard.postalCode') }}</label>
                                 <input v-model="profileForm.postalCode" class="form-input" placeholder="00-000" />
                             </div>
                             <div class="form-group">
-                                <label>Kraj</label>
-                                <input v-model="profileForm.country" class="form-input" placeholder="Polska" />
+                                <label>{{ $t('dashboard.country') }}</label>
+                                <input v-model="profileForm.country" class="form-input" :placeholder="$t('dashboard.countryPlaceholder')" />
                             </div>
                         </div>
                     </template>
                     <div v-if="profileSuccess" class="alert-success">
-                        <v-icon icon="mdi-check-circle-outline" size="16" />Dane zostały zapisane.
+                        <v-icon icon="mdi-check-circle-outline" size="16" />{{ $t('dashboard.dataSaved') }}
                     </div>
                     <div v-if="profileError" class="alert-error">
                         <v-icon icon="mdi-alert-circle-outline" size="16" />{{ profileError }}
                     </div>
                     <button type="submit" class="btn-red" :disabled="profileSaving">
                         <v-icon v-if="profileSaving" icon="mdi-loading" size="16" class="spin" />
-                        Zapisz zmiany
+                        {{ $t('dashboard.saveChanges') }}
                     </button>
                 </form>
 
-                <div class="form-section-title" style="padding:0 28px;margin-top:32px">Zmiana hasła</div>
+                <div class="form-section-title" style="padding:0 28px;margin-top:32px">{{ $t('dashboard.changePassword') }}</div>
                 <form class="profile-form" @submit.prevent="savePassword">
                     <div class="form-group">
-                        <label>Aktualne hasło *</label>
+                        <label>{{ $t('dashboard.currentPassword') }}</label>
                         <input v-model="passwordForm.currentPassword" type="password" class="form-input" required />
                     </div>
                     <div class="form-group">
-                        <label>Nowe hasło *</label>
+                        <label>{{ $t('dashboard.newPassword') }}</label>
                         <input v-model="passwordForm.newPassword" type="password" class="form-input" required
                             minlength="6" />
                     </div>
                     <div v-if="passwordSuccess" class="alert-success">
-                        <v-icon icon="mdi-check-circle-outline" size="16" />Hasło zostało zmienione.
+                        <v-icon icon="mdi-check-circle-outline" size="16" />{{ $t('dashboard.passwordChanged') }}
                     </div>
                     <div v-if="passwordError" class="alert-error">
                         <v-icon icon="mdi-alert-circle-outline" size="16" />{{ passwordError }}
                     </div>
                     <button type="submit" class="btn-outline" :disabled="passwordSaving">
                         <v-icon v-if="passwordSaving" icon="mdi-loading" size="16" class="spin" />
-                        Zmień hasło
+                        {{ $t('dashboard.changePasswordBtn') }}
                     </button>
                 </form>
             </template>
@@ -632,15 +631,15 @@
             <!-- ══ SETTINGS ══════════════════════════════════════════════════ -->
             <template v-else-if="section === 'settings'">
                 <div class="section-topbar">
-                    <h2 class="section-title">Ustawienia konta</h2>
+                    <h2 class="section-title">{{ $t('dashboard.accountSettingsTitle') }}</h2>
                 </div>
                 <div class="settings-form">
                     <div class="settings-group">
-                        <div class="settings-group-title">Powiadomienia e-mail</div>
+                        <div class="settings-group-title">{{ $t('dashboard.emailNotifications') }}</div>
                         <div class="setting-row">
                             <div class="setting-label">
-                                <div class="setting-name">Powiadomienia e-mail</div>
-                                <div class="setting-desc">Otrzymuj powiadomienia na adres e-mail</div>
+                                <div class="setting-name">{{ $t('dashboard.emailNotifications') }}</div>
+                                <div class="setting-desc">{{ $t('dashboard.emailNotifDesc') }}</div>
                             </div>
                             <button class="toggle-btn" :class="{ on: settingsForm.emailNotifications }"
                                 @click="settingsForm.emailNotifications = !settingsForm.emailNotifications">
@@ -649,8 +648,8 @@
                         </div>
                         <div class="setting-row">
                             <div class="setting-label">
-                                <div class="setting-name">Alerty o zmianach cen</div>
-                                <div class="setting-desc">Powiadamiaj gdy cena obserwowanego ogłoszenia się zmieni</div>
+                                <div class="setting-name">{{ $t('dashboard.priceAlerts') }}</div>
+                                <div class="setting-desc">{{ $t('dashboard.priceAlertsDesc') }}</div>
                             </div>
                             <button class="toggle-btn" :class="{ on: settingsForm.priceChangeAlerts }"
                                 @click="settingsForm.priceChangeAlerts = !settingsForm.priceChangeAlerts">
@@ -659,8 +658,8 @@
                         </div>
                         <div class="setting-row">
                             <div class="setting-label">
-                                <div class="setting-name">Powiadomienia o wiadomościach</div>
-                                <div class="setting-desc">Powiadamiaj o nowych wiadomościach e-mailem</div>
+                                <div class="setting-name">{{ $t('dashboard.messageNotif') }}</div>
+                                <div class="setting-desc">{{ $t('dashboard.messageNotifDesc') }}</div>
                             </div>
                             <button class="toggle-btn" :class="{ on: settingsForm.newMessageAlerts }"
                                 @click="settingsForm.newMessageAlerts = !settingsForm.newMessageAlerts">
@@ -669,8 +668,8 @@
                         </div>
                         <div class="setting-row">
                             <div class="setting-label">
-                                <div class="setting-name">Newsletter CARIZO</div>
-                                <div class="setting-desc">Otrzymuj oferty i aktualności motoryzacyjne</div>
+                                <div class="setting-name">{{ $t('dashboard.newsletter') }}</div>
+                                <div class="setting-desc">{{ $t('dashboard.newsletterDesc') }}</div>
                             </div>
                             <button class="toggle-btn" :class="{ on: settingsForm.newsletterSubscribed }"
                                 @click="settingsForm.newsletterSubscribed = !settingsForm.newsletterSubscribed">
@@ -679,18 +678,18 @@
                         </div>
                     </div>
                     <div v-if="settingsSuccess" class="alert-success">
-                        <v-icon icon="mdi-check-circle-outline" size="16" />Ustawienia zostały zapisane.
+                        <v-icon icon="mdi-check-circle-outline" size="16" />{{ $t('dashboard.settingsSaved') }}
                     </div>
                     <div v-if="settingsError" class="alert-error">
                         <v-icon icon="mdi-alert-circle-outline" size="16" />{{ settingsError }}
                     </div>
                     <button class="btn-red" :disabled="settingsSaving" @click="saveSettings">
                         <v-icon v-if="settingsSaving" icon="mdi-loading" size="16" class="spin" />
-                        Zapisz ustawienia
+                        {{ $t('dashboard.saveSettings') }}
                     </button>
 
                     <div v-if="notifPrefs.length" class="settings-group">
-                        <div class="settings-group-title">Kategorie powiadomień e-mail</div>
+                        <div class="settings-group-title">{{ $t('dashboard.emailNotifCategories') }}</div>
                         <div v-for="pref in notifPrefs" :key="pref.category" class="setting-row">
                             <div class="setting-label">
                                 <div class="setting-name">{{ pref.label }}</div>
@@ -704,10 +703,9 @@
                     </div>
 
                     <div class="danger-zone">
-                        <div class="danger-title">Strefa niebezpieczna</div>
-                        <div class="danger-desc">Usunięcie konta jest nieodwracalne. Wszystkie Twoje ogłoszenia i dane
-                            zostaną trwale usunięte.</div>
-                        <button class="btn-danger" @click="confirmDeleteAccount = true">Usuń konto</button>
+                        <div class="danger-title">{{ $t('dashboard.dangerZone') }}</div>
+                        <div class="danger-desc">{{ $t('dashboard.deleteAccountDesc') }}</div>
+                        <button class="btn-danger" @click="confirmDeleteAccount = true">{{ $t('dashboard.deleteAccount') }}</button>
                     </div>
                 </div>
             </template>
@@ -716,40 +714,39 @@
         <!-- Right sidebar -->
         <aside class="right-sidebar">
             <div class="rs-card">
-                <div class="rs-title">O mnie</div>
-                <p class="rs-about">{{ profile?.about || 'Brak opisu.' }}</p>
+                <div class="rs-title">{{ $t('dashboard.about') }}</div>
+                <p class="rs-about">{{ profile?.about || $t('dashboard.noDescription') }}</p>
                 <button class="rs-edit-link" @click="goProfile">
-                    <v-icon icon="mdi-pencil-outline" size="13" />Edytuj opis
+                    <v-icon icon="mdi-pencil-outline" size="13" />{{ $t('dashboard.editDescription') }}
                 </button>
             </div>
             <div class="rs-card">
-                <div class="rs-title">Lokalizacja</div>
+                <div class="rs-title">{{ $t('dashboard.location') }}</div>
                 <div class="rs-location" v-if="profile?.city">
                     <v-icon icon="mdi-map-marker-outline" size="15" class="loc-icon" />
                     {{ profile.city }}<template v-if="profile.region">, {{ profile.region }}</template>
                 </div>
-                <div class="rs-location" v-else><v-icon icon="mdi-map-marker-outline" size="15" class="loc-icon" />Nie
-                    podano
+                <div class="rs-location" v-else><v-icon icon="mdi-map-marker-outline" size="15" class="loc-icon" />{{ $t('dashboard.notProvided') }}
                 </div>
             </div>
             <div class="rs-card">
-                <div class="rs-title">Weryfikacje</div>
+                <div class="rs-title">{{ $t('dashboard.verifications') }}</div>
                 <div class="rs-verif-list">
                     <div class="verif-row">
-                        <div class="verif-left"><v-icon icon="mdi-phone-outline" size="15" class="verif-icon" />Telefon
+                        <div class="verif-left"><v-icon icon="mdi-phone-outline" size="15" class="verif-icon" />{{ $t('dashboard.phone') }}
                         </div>
-                        <span class="verif-ok">Zweryfikowany</span>
+                        <span class="verif-ok">{{ $t('dashboard.verified') }}</span>
                     </div>
                     <div class="verif-row">
-                        <div class="verif-left"><v-icon icon="mdi-email-outline" size="15" class="verif-icon" />E-mail
+                        <div class="verif-left"><v-icon icon="mdi-email-outline" size="15" class="verif-icon" />{{ $t('dashboard.email') }}
                         </div>
-                        <span class="verif-ok">Zweryfikowany</span>
+                        <span class="verif-ok">{{ $t('dashboard.verified') }}</span>
                     </div>
                     <div class="verif-row">
                         <div class="verif-left"><v-icon icon="mdi-shield-check-outline" size="15" class="verif-icon" />
-                            {{ profile?.accountType === 'Business' ? 'Dealer' : 'Konto' }}
+                            {{ profile?.accountType === 'Business' ? $t('dashboard.dealer') : $t('dashboard.account') }}
                         </div>
-                        <span class="verif-ok">Zweryfikowany</span>
+                        <span class="verif-ok">{{ $t('dashboard.verified') }}</span>
                     </div>
                 </div>
             </div>
@@ -761,13 +758,11 @@
                 <div v-if="confirmDeleteAccount" class="modal-backdrop" @click.self="confirmDeleteAccount = false">
                     <div class="confirm-modal">
                         <div class="confirm-icon"><v-icon icon="mdi-account-remove" size="32" /></div>
-                        <h3 class="confirm-title">Usuń konto</h3>
-                        <p class="confirm-sub">To działanie jest nieodwracalne. Wszystkie dane, ogłoszenia i historia
-                            zostaną
-                            trwale usunięte.</p>
+                        <h3 class="confirm-title">{{ $t('dashboard.deleteAccount') }}</h3>
+                        <p class="confirm-sub">{{ $t('dashboard.deleteAccountConfirm') }}</p>
                         <div class="confirm-actions">
-                            <button class="btn-cancel-modal" @click="confirmDeleteAccount = false">Anuluj</button>
-                            <button class="btn-delete-modal" @click="doDeleteAccount">Usuń konto</button>
+                            <button class="btn-cancel-modal" @click="confirmDeleteAccount = false">{{ $t('dashboard.cancel') }}</button>
+                            <button class="btn-delete-modal" @click="doDeleteAccount">{{ $t('dashboard.deleteAccount') }}</button>
                         </div>
                     </div>
                 </div>
@@ -780,7 +775,8 @@
 import type { CarAdvert, UserProfile, UserStats, Review, Notification, NotificationPreference, SavedSearch, FollowedAdvert, AccountSettings, UpdateProfileDto, SearchAdvertDto } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Panel użytkownika — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: () => t('dashboard.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { fetchProfile, fetchStats, updateProfile, updatePassword, fetchSettings, updateSettings, deleteAccount } = useUser()
 const { getMySubscription } = useSubscription()
@@ -822,12 +818,12 @@ const recentAdverts = ref<CarAdvert[]>([])
 
 // Tabs within overview
 const activeTab = ref('adverts')
-const overviewTabs = [
-    { key: 'adverts', label: 'Moje ogłoszenia' },
-    { key: 'reviews', label: 'Opinie' },
-    { key: 'followers', label: 'Obserwujący' },
-    { key: 'following', label: 'Obserwowane' },
-]
+const overviewTabs = computed(() => [
+    { key: 'adverts', label: t('dashboard.tabAdverts') },
+    { key: 'reviews', label: t('dashboard.tabReviews') },
+    { key: 'followers', label: t('dashboard.tabFollowers') },
+    { key: 'following', label: t('dashboard.tabFollowing') },
+])
 
 // Adverts
 const advertSearch = ref('')
@@ -912,10 +908,10 @@ function formatDate(d: string) {
 }
 
 function advertBadgeLabel(a: CarAdvert) {
-    if (!a.isActive) return 'WYGASŁO'
-    if (a.isHidden) return 'UKRYTE'
+    if (!a.isActive) return t('dashboard.badgeExpired')
+    if (a.isHidden) return t('dashboard.badgeHidden')
     if (a.badge) return a.badge
-    return 'AKTYWNE'
+    return t('dashboard.badgeActive')
 }
 
 function advertBadgeClass(a: CarAdvert) {
@@ -941,7 +937,7 @@ async function goReviews() {
         try {
             const r = await getMyReceivedReviews()
             receivedReviews.value = r.items
-        } catch { toastError('Nie udało się załadować opinii.') } finally { reviewsLoading.value = false }
+        } catch { toastError(t('dashboard.errLoadReviews')) } finally { reviewsLoading.value = false }
     }
 }
 
@@ -999,9 +995,9 @@ async function doDelete() {
         deleteConfirmId.value = null
         advertTotal.value = Math.max(0, advertTotal.value - 1)
         if (stats.value) stats.value.totalAdverts = Math.max(0, stats.value.totalAdverts - 1)
-        toastSuccess('Ogłoszenie zostało usunięte.')
+        toastSuccess(t('dashboard.advertDeleted'))
     } catch (e: any) {
-        toastError(e?.data?.message || e?.message || 'Nie udało się usunąć ogłoszenia.')
+        toastError(e?.data?.message || e?.message || t('dashboard.errDeleteAdvert'))
     } finally { deleteLoading.value = null }
 }
 
@@ -1011,7 +1007,7 @@ async function loadMoreAdverts() {
     try {
         const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>(`/api/proxy/api/listings/user?page=${advertPage.value}&pageSize=8`)
         myAdverts.value.push(...r.items)
-    } catch { toastError('Nie udało się załadować kolejnych ogłoszeń.') } finally { loadingMore.value = false }
+    } catch { toastError(t('dashboard.errLoadMore')) } finally { loadingMore.value = false }
 }
 
 async function markAllRead() {
@@ -1024,14 +1020,14 @@ async function onNotifClick(n: Notification) {
 }
 
 async function deleteNotif(id: number) {
-    try { await deleteNotification(id) } catch { toastError('Nie udało się usunąć powiadomienia.') }
+    try { await deleteNotification(id) } catch { toastError(t('dashboard.errDeleteNotif')) }
 }
 
 async function deleteSearch(id: number) {
     try {
         await deleteSavedSearch(id)
         savedSearches.value = savedSearches.value.filter(s => s.id !== id)
-    } catch { toastError('Nie udało się usunąć wyszukiwania.') }
+    } catch { toastError(t('dashboard.errDeleteSearch')) }
 }
 
 async function createSearch() {
@@ -1050,7 +1046,7 @@ async function createSearch() {
         Object.assign(newSearch, { name: '', textSearch: '', priceFrom: '', priceTo: '', yearFrom: '', yearTo: '', notifyOnNew: true })
         showNewSearchForm.value = false
     } catch (e: any) {
-        searchSaveError.value = e?.data?.message ?? 'Nie udało się zapisać wyszukiwania.'
+        searchSaveError.value = e?.data?.message ?? t('dashboard.errSaveSearch')
     } finally {
         searchSaving.value = false
     }
@@ -1063,7 +1059,7 @@ function criteriaLabel(criteria: SearchAdvertDto): string {
         parts.push(`${criteria.priceFrom ? criteria.priceFrom.toLocaleString('pl') + ' zł' : ''} – ${criteria.priceTo ? criteria.priceTo.toLocaleString('pl') + ' zł' : ''}`)
     }
     if (criteria.yearFrom || criteria.yearTo) parts.push(`${criteria.yearFrom ?? ''} – ${criteria.yearTo ?? ''}`)
-    return parts.join(' · ') || 'Wszystkie ogłoszenia'
+    return parts.join(' · ') || t('dashboard.allAdverts')
 }
 
 function searchUrl(criteria: SearchAdvertDto): string {
@@ -1125,7 +1121,7 @@ async function saveProfile() {
         profileSuccess.value = true
         setTimeout(() => profileSuccess.value = false, 3000)
     } catch (e: any) {
-        profileError.value = e?.data?.message ?? 'Nie udało się zapisać danych.'
+        profileError.value = e?.data?.message ?? t('dashboard.errSaveData')
     } finally { profileSaving.value = false }
 }
 
@@ -1140,7 +1136,7 @@ async function savePassword() {
         passwordForm.newPassword = ''
         setTimeout(() => passwordSuccess.value = false, 3000)
     } catch (e: any) {
-        passwordError.value = e?.data?.message ?? 'Nie udało się zmienić hasła. Sprawdź aktualne hasło.'
+        passwordError.value = e?.data?.message ?? t('dashboard.errChangePassword')
     } finally { passwordSaving.value = false }
 }
 
@@ -1153,7 +1149,7 @@ async function saveSettings() {
         settingsSuccess.value = true
         setTimeout(() => settingsSuccess.value = false, 3000)
     } catch (e: any) {
-        settingsError.value = e?.data?.message ?? 'Nie udało się zapisać ustawień.'
+        settingsError.value = e?.data?.message ?? t('dashboard.errSaveSettings')
     } finally { settingsSaving.value = false }
 }
 
@@ -1162,7 +1158,7 @@ async function doDeleteAccount() {
         await deleteAccount()
         await authLogout()
     } catch (e: any) {
-        toastError(e?.data?.message || 'Nie udało się usunąć konta. Spróbuj ponownie lub skontaktuj się z pomocą.')
+        toastError(e?.data?.message || t('dashboard.errDeleteAccount'))
     }
 }
 
@@ -1173,21 +1169,21 @@ watch(activeTab, async (tab) => {
         try {
             const r = await getMyReceivedReviews()
             receivedReviews.value = r.items
-        } catch { toastError('Nie udało się załadować opinii.') } finally { reviewsLoading.value = false }
+        } catch { toastError(t('dashboard.errLoadReviews')) } finally { reviewsLoading.value = false }
     }
     if (tab === 'followers' && followers.value.length === 0) {
         followersLoading.value = true
         try {
             const r = await getFollowers()
             followers.value = r.items
-        } catch { toastError('Nie udało się załadować obserwujących.') } finally { followersLoading.value = false }
+        } catch { toastError(t('dashboard.errLoadFollowers')) } finally { followersLoading.value = false }
     }
     if (tab === 'following' && followedAdverts.value.length === 0) {
         followingLoading.value = true
         try {
             const r = await getFollowedAdverts()
             followedAdverts.value = r.items
-        } catch { toastError('Nie udało się załadować obserwowanych ogłoszeń.') } finally { followingLoading.value = false }
+        } catch { toastError(t('dashboard.errLoadFollowing')) } finally { followingLoading.value = false }
     }
 })
 
@@ -1197,7 +1193,7 @@ watch(section, async (s) => {
         try {
             const r = await getSavedSearches()
             savedSearches.value = r.items
-        } catch { toastError('Nie udało się załadować zapisanych wyszukiwań.') } finally { searchesLoading.value = false }
+        } catch { toastError(t('dashboard.errLoadSearches')) } finally { searchesLoading.value = false }
     }
 })
 
@@ -1213,7 +1209,7 @@ onMounted(async () => {
         if (profile.value?.accountType === 'Business') {
             getMySubscription().then(s => { subscription.value = s }).catch(() => { })
         }
-    } catch { toastError('Nie udało się załadować danych profilu.') } finally { loading.value = false }
+    } catch { toastError(t('dashboard.errLoadProfile')) } finally { loading.value = false }
 
     // Recently viewed (from localStorage — fire after loading so it doesn't block)
     const ids = getRecentIds().slice(0, 5)

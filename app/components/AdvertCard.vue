@@ -5,6 +5,7 @@ const emit = defineEmits<{ quickView: [id: number] }>()
 const { isFavorite, toggleFavorite, isLoggedIn } = useFavorites()
 const { getImageUrl, placeholder } = useImageUrl()
 const { toggle: compareToggle, isCompared } = useCompare()
+const { t } = useI18n()
 
 const mainImage = computed(() => props.advert.images?.find(i => i.isMain) ?? props.advert.images?.[0])
 const mainImageUrl = computed(() => getImageUrl(mainImage.value?.url, placeholder))
@@ -47,9 +48,9 @@ const compatibilityCount = computed(() => {
 const gearboxShort = computed(() => {
     const n = props.advert.gearbox?.name ?? ''
     if (!n) return null
-    if (/automat/i.test(n)) return 'Automat'
-    if (/manual|meczn|ręczn/i.test(n)) return 'Manual'
-    if (/półautomat|semi/i.test(n)) return 'Półautomat'
+    if (/automat/i.test(n)) return t('cAdvertCard.gearboxAutomatic')
+    if (/manual|meczn|ręczn/i.test(n)) return t('cAdvertCard.gearboxManual')
+    if (/półautomat|semi/i.test(n)) return t('cAdvertCard.gearboxSemiAuto')
     if (/cvt|variat/i.test(n)) return 'CVT'
     return n.length > 10 ? n.slice(0, 9) + '…' : n
 })
@@ -66,7 +67,7 @@ const badgeText = computed(() => {
         PREMIUM: 'PREMIUM',
         VERIFIED: 'VERIFIED',
         DEALER: 'DEALER',
-        FEATURED: 'WYRÓŻNIONE',
+        FEATURED: t('cAdvertCard.badgeFeatured'),
         TOP: 'TOP',
     }
     return resolvedBadge.value ? (map[resolvedBadge.value] ?? resolvedBadge.value) : null
@@ -107,16 +108,16 @@ const monthlyRate = computed(() => {
                 <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" class="badge-icon" />
                 {{ badgeText }}
             </span>
-            <span v-if="isNew && !resolvedBadge" class="card-badge card-badge--new">NOWE</span>
+            <span v-if="isNew && !resolvedBadge" class="card-badge card-badge--new">{{ $t('cAdvertCard.badgeNew') }}</span>
             <div class="card-hover-actions">
-                <button class="card-action-btn" aria-label="Szybki podgląd" @click="onQuickView">
+                <button class="card-action-btn" :aria-label="$t('cAdvertCard.quickView')" @click="onQuickView">
                     <v-icon icon="mdi-eye-outline" size="16" />
                 </button>
-                <button v-if="!hideCompare" class="card-action-btn" :class="{ active: isCompared(advert.id) }" :aria-label="isCompared(advert.id) ? 'Usuń z porównania' : 'Dodaj do porównania'" @click="onCompare">
+                <button v-if="!hideCompare" class="card-action-btn" :class="{ active: isCompared(advert.id) }" :aria-label="isCompared(advert.id) ? $t('cAdvertCard.removeFromCompare') : $t('cAdvertCard.addToCompare')" @click="onCompare">
                     <v-icon icon="mdi-compare" size="16" />
                 </button>
             </div>
-            <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" :aria-label="isFavorite(advert.id) ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'" @click="toggleFav">
+            <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" :aria-label="isFavorite(advert.id) ? $t('cAdvertCard.removeFromFavorites') : $t('cAdvertCard.addToFavorites')" @click="toggleFav">
                 <v-icon :icon="isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
             </button>
         </div>
@@ -131,7 +132,7 @@ const monthlyRate = computed(() => {
                     <v-icon icon="mdi-cog-outline" size="14" class="mr-1" />{{ advert.bodySubtype }}
                 </span>
                 <span v-if="compatibilityCount > 0" class="meta-compat">
-                    <v-icon icon="mdi-car-multiple" size="14" class="mr-1" />pasuje do {{ compatibilityCount }} {{ compatibilityCount === 1 ? 'modelu' : 'modeli' }}
+                    <v-icon icon="mdi-car-multiple" size="14" class="mr-1" />{{ $t('cAdvertCard.compatFits') }} {{ compatibilityCount }} {{ compatibilityCount === 1 ? $t('cAdvertCard.compatModelSingular') : $t('cAdvertCard.compatModelPlural') }}
                 </span>
             </div>
             <!-- Standard vehicle meta -->
@@ -140,12 +141,12 @@ const monthlyRate = computed(() => {
                 <span><v-icon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–' }}</span>
                 <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage?.toLocaleString('pl-PL') ?? '—' }} km</span>
                 <span v-if="gearboxShort"><v-icon icon="mdi-car-shift-pattern" size="14" class="mr-1" />{{ gearboxShort }}</span>
-                <span v-if="advert.powerHP"><v-icon icon="mdi-engine-outline" size="14" class="mr-1" />{{ advert.powerHP }} KM</span>
+                <span v-if="advert.powerHP"><v-icon icon="mdi-engine-outline" size="14" class="mr-1" />{{ advert.powerHP }} {{ $t('cAdvertCard.powerUnit') }}</span>
             </div>
-            <div class="car-price">{{ advert.price?.toLocaleString('pl-PL') ?? 'Do negocjacji' }} {{ advert.price != null ? 'zł' : '' }}</div>
+            <div class="car-price">{{ advert.price?.toLocaleString('pl-PL') ?? $t('cAdvertCard.priceNegotiable') }} {{ advert.price != null ? 'zł' : '' }}</div>
             <div v-if="monthlyRate" class="car-monthly">
                 <v-icon icon="mdi-bank-outline" size="12" class="car-monthly-icon" />
-                od {{ monthlyRate.toLocaleString('pl') }} zł/mies.
+                {{ $t('cAdvertCard.monthlyFrom', { rate: monthlyRate.toLocaleString('pl') }) }}
                 <span class="car-monthly-label">ING leasing</span>
             </div>
             <div class="car-footer">

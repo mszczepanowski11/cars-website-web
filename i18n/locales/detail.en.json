@@ -1,1 +1,442 @@
-{}
+{
+  "advertDetail": {
+    "notFound": {
+      "serverErrorTitle": "Temporary server problem",
+      "serverErrorDesc": "We couldn't load the listing. Try refreshing the page in a moment.",
+      "retry": "Try again",
+      "title": "Listing not found",
+      "desc": "This listing may have been removed, expired, or the link is invalid.",
+      "browse": "Browse listings"
+    },
+    "topbar": {
+      "back": "Back",
+      "favorite": "Favorite",
+      "share": "Share",
+      "report": "Report"
+    },
+    "share": {
+      "native": "Native",
+      "copied": "Copied!",
+      "copyLink": "Copy link",
+      "fallbackTitle": "CARIZO listing"
+    },
+    "qr": {
+      "alt": "QR code",
+      "scan": "Scan to open"
+    },
+    "gallery": {
+      "expand": "Gallery",
+      "prevPhoto": "Previous photo",
+      "nextPhoto": "Next photo",
+      "photo": "Photo",
+      "photoAlt": "Photo {n} – {title}",
+      "lightboxClose": "Close gallery",
+      "thumbAlt": "Thumbnail {n}"
+    },
+    "price": {
+      "leasingIng": "ING Leasing",
+      "creditIng": "ING Loan",
+      "fromPerMonth": "from {amount} zł/mo",
+      "estimateNote": "* with a 10% down payment, estimated",
+      "negotiable": "Negotiable"
+    },
+    "analysis": {
+      "greatPrice": "Great price",
+      "goodPrice": "Good price",
+      "marketPrice": "Market price",
+      "aboveAverage": "Above average",
+      "belowMarket": "{percent}% below market price",
+      "belowAverage": "{percent}% below average",
+      "inLine": "In line with the market",
+      "aboveAverageSub": "{percent}% above average"
+    },
+    "sellerType": {
+      "dealer": "Dealer / Company",
+      "private": "Private seller"
+    },
+    "age": {
+      "today": "today",
+      "yesterday": "yesterday",
+      "daysAgo": "{n} days ago",
+      "weeksAgo": "{n} wk ago",
+      "monthsAgo": "{n} mo ago",
+      "yearsAgo": "{n} yr ago"
+    },
+    "trust": {
+      "vinVerified": "VIN verified",
+      "vinUnverified": "VIN unverified",
+      "serviceHistory": "Service history",
+      "accidentFree": "Accident-free",
+      "verifiedSeller": "Verified seller"
+    },
+    "sellerMini": {
+      "advertsCount": "{count} listings",
+      "profile": "Profile ›"
+    },
+    "cta": {
+      "showPhone": "Show phone number",
+      "ownAdvertTitle": "This is your listing – you can't message yourself",
+      "opening": "Opening...",
+      "ownAdvert": "This is your listing",
+      "sendMessage": "Send a message",
+      "ownAdvertNote": "You can't send messages to yourself. This is your listing.",
+      "scheduleViewing": "Schedule a viewing",
+      "reserve": "Reserve car",
+      "secureNote": "Transaction secured by"
+    },
+    "specs": {
+      "mileage": "Mileage",
+      "year": "Year of manufacture",
+      "fuel": "Fuel",
+      "power": "Power",
+      "displacement": "Displacement",
+      "gearbox": "Gearbox",
+      "body": "Body type",
+      "views": "Views"
+    },
+    "units": {
+      "hp": "HP"
+    },
+    "sections": {
+      "additionalData": "Additional data",
+      "description": "Description",
+      "documents": "Documents and videos",
+      "techParams": "Technical specifications",
+      "features": "Features",
+      "history": "Vehicle history",
+      "reviews": "Seller reviews"
+    },
+    "desc": {
+      "readMore": "Read more",
+      "collapse": "Collapse description"
+    },
+    "docType": {
+      "pdf": "PDF document",
+      "video": "Video",
+      "image": "Image",
+      "file": "Document"
+    },
+    "specGroups": {
+      "basic": "Basic data",
+      "engine": "Engine and drivetrain",
+      "consumption": "Fuel consumption and emissions",
+      "detailed": "Detailed data"
+    },
+    "spec": {
+      "brand": "Make",
+      "model": "Model",
+      "generation": "Generation",
+      "year": "Year of manufacture",
+      "mileage": "Mileage",
+      "condition": "Vehicle condition",
+      "conditionNew": "New",
+      "conditionUsed": "Used",
+      "bodyType": "Body type",
+      "color": "Color",
+      "doors": "Number of doors",
+      "seats": "Number of seats",
+      "fuelType": "Fuel type",
+      "gearbox": "Gearbox",
+      "driveType": "Drivetrain",
+      "power": "Power",
+      "displacement": "Engine displacement",
+      "torque": "Torque",
+      "acceleration": "Acceleration 0–100 km/h",
+      "fuelCity": "Urban consumption",
+      "fuelHighway": "Extra-urban consumption",
+      "fuelCombined": "Combined consumption",
+      "co2": "CO₂ emissions",
+      "euroNorm": "Emission standard",
+      "curbWeight": "Curb weight",
+      "grossWeight": "Gross vehicle weight"
+    },
+    "history": {
+      "vinNumber": "VIN number",
+      "identified": "Identified",
+      "firstRegistration": "First registration",
+      "ownersCount": "Number of owners",
+      "registrationCountry": "Country of registration",
+      "imported": "Imported vehicle",
+      "serviceBook": "Service book",
+      "fullServiceHistory": "Full authorized service history",
+      "nextInspection": "Next inspection",
+      "damaged": "Vehicle with damage history",
+      "accidentFree": "Accident-free",
+      "warrantyActive": "Warranty active",
+      "until": "until {date}",
+      "checkTitle": "Check the vehicle history",
+      "vinReportDesc": "Order a VIN report to learn the full vehicle history, collisions, mileage from service records and more."
+    },
+    "reviews": {
+      "empty": "No reviews for this seller yet.",
+      "formTitle": "Rate the seller",
+      "placeholder": "Describe your experience with the seller...",
+      "submit": "Submit review",
+      "thanks": "Thank you for your review!"
+    },
+    "similar": {
+      "title": "Similar listings",
+      "seeAll": "See all"
+    },
+    "sidebar": {
+      "seller": "Seller",
+      "memberSince": "on CARIZO since {year}",
+      "active": "Active",
+      "sold": "Sold",
+      "reviews": "Reviews",
+      "following": "Following",
+      "followSeller": "Follow seller",
+      "allAdverts": "All listings",
+      "sellerProfile": "Seller profile",
+      "location": "Location",
+      "noLocation": "No location",
+      "locationNote": "Exact location arranged individually",
+      "openMaps": "Open in Google Maps",
+      "reportAdvert": "Report listing"
+    },
+    "compose": {
+      "messageTo": "Message to",
+      "placeholder": "Write a message...",
+      "sending": "Sending...",
+      "send": "Send message"
+    },
+    "modal": {
+      "time": "Time",
+      "notePlaceholder": "Additional information for the seller (optional)..."
+    },
+    "viewing": {
+      "submit": "Send viewing request"
+    },
+    "reservation": {
+      "hint": "Choose the date until which you want to reserve this car — the seller must confirm the reservation.",
+      "submit": "Send reservation request"
+    },
+    "mobile": {
+      "call": "Call",
+      "write": "Message"
+    },
+    "messages": {
+      "reservationSent": "Reservation request sent! The seller will be notified.",
+      "viewingSent": "Viewing request sent! The seller will contact you."
+    },
+    "errors": {
+      "noConversationId": "No conversation ID in the response.",
+      "sendMessageFailed": "Failed to send the message.",
+      "reserveFailed": "Failed to reserve the car.",
+      "viewingFailed": "Failed to send the viewing request.",
+      "followFailed": "Failed to update following status.",
+      "reviewFailed": "Failed to submit the review."
+    },
+    "suggestions": [
+      "Is the car still available?",
+      "Is the price negotiable?",
+      "When can I view the vehicle?",
+      "Does the car have a full service history?",
+      "Is a trade-in possible?"
+    ],
+    "pdf": {
+      "labelYear": "Year",
+      "labelMileage": "Mileage",
+      "labelFuel": "Fuel",
+      "labelGearbox": "Gearbox",
+      "labelPower": "Power",
+      "labelBrandModel": "Make / Model",
+      "labelLocation": "Location",
+      "descLabel": "Description:",
+      "generated": "Generated: {date} | {url}"
+    }
+  },
+  "seller": {
+    "defaultName": "Seller",
+    "badges": {
+      "dealer": "Dealer",
+      "verified": "Verified"
+    },
+    "memberSince": "On CARIZO since {year}",
+    "following": "Following",
+    "follow": "Follow",
+    "loginToMessage": "Log in to send messages",
+    "openAdvertToMessage": "Open one of the seller's listings to send a message",
+    "message": "Message",
+    "stats": {
+      "activeAdverts": "active listings",
+      "sold": "sold",
+      "reviews": "reviews",
+      "avgRating": "average rating",
+      "responses": "response rate"
+    },
+    "tabs": {
+      "adverts": "Listings",
+      "reviews": "Reviews"
+    },
+    "emptyAdverts": "No active listings",
+    "loadMore": "Load more",
+    "emptyReviews": "No reviews",
+    "verifiedPurchase": "Verified transaction",
+    "loadMoreReviews": "Load more reviews",
+    "notFound": {
+      "title": "Seller not found",
+      "browse": "Browse listings"
+    },
+    "seo": {
+      "fallbackTitle": "Seller — CARIZO",
+      "description": "Check out listings from seller {name} on CARIZO — the largest automotive marketplace in Poland."
+    },
+    "errors": {
+      "loadAdverts": "Failed to load the seller's listings.",
+      "loadReviews": "Failed to load reviews."
+    }
+  },
+  "events": {
+    "hero": {
+      "eyebrow": "Automotive live",
+      "titleLead": "Upcoming",
+      "titleAccent": "events",
+      "sub": "Trade fairs, meetups, exhibitions and automotive events across Poland."
+    },
+    "filters": {
+      "all": "All",
+      "week": "This week",
+      "month": "This month",
+      "featured": "Featured"
+    },
+    "searchPlaceholder": "Search events...",
+    "addEvent": "Add event",
+    "error": {
+      "title": "Connection error",
+      "desc": "Failed to load events. Please try again.",
+      "refresh": "Refresh"
+    },
+    "empty": {
+      "title": "No events",
+      "desc": "No upcoming events were found."
+    },
+    "card": {
+      "featured": "FEATURED",
+      "event": "EVENT",
+      "until": "until {date}",
+      "cancelAttend": "Cancel attendance",
+      "willAttend": "I'll attend",
+      "share": "Share",
+      "copied": "Copied!",
+      "copyLink": "Copy link",
+      "tickets": "Tickets",
+      "website": "Website"
+    },
+    "pagination": {
+      "prev": "Previous page",
+      "next": "Next page"
+    },
+    "seo": {
+      "title": "Automotive events — CARIZO",
+      "description": "Browse automotive meetups, rallies and trade fairs in Poland. Find the nearest event and sign up today.",
+      "ogDescription": "Automotive meetups, rallies and trade fairs in Poland. Stay up to date with CARIZO.",
+      "twitterDescription": "Rallies, fairs and automotive meetups in Poland — CARIZO."
+    }
+  },
+  "eventDetail": {
+    "featured": "Featured",
+    "attending": "Attending",
+    "willAttend": "I'll attend",
+    "removeFav": "Remove from favorites",
+    "addFav": "Add to favorites",
+    "buyTickets": "Buy tickets",
+    "website": "Website",
+    "descriptionTitle": "Description",
+    "shareTitle": "Share",
+    "copied": "Copied!",
+    "copyLink": "Copy link",
+    "details": {
+      "title": "Details",
+      "start": "Start",
+      "end": "End",
+      "location": "Location",
+      "organizer": "Organizer"
+    },
+    "stats": {
+      "title": "Statistics",
+      "views": "{count} views",
+      "interested": "{count} interested",
+      "attendees": "{count} attendees",
+      "shares": "{count} shares"
+    },
+    "notFound": {
+      "title": "Event not found.",
+      "back": "Back to events"
+    },
+    "seo": {
+      "fallbackTitle": "Event — CARIZO",
+      "descFallback": "Automotive event: {name}"
+    },
+    "errors": {
+      "updateAttend": "Failed to update attendance.",
+      "updateFav": "Failed to update favorites.",
+      "copyLink": "Failed to copy the link.",
+      "load": "Failed to load the event."
+    }
+  },
+  "addEvent": {
+    "hero": {
+      "eyebrowEdit": "Editing",
+      "eyebrowNew": "New event",
+      "titleEdit": "Edit",
+      "titleNew": "Add",
+      "titleAccent": "event",
+      "sub": "Share an automotive event with the CARIZO community."
+    },
+    "form": {
+      "name": "Event name *",
+      "namePlaceholder": "e.g. Classic car meet – Kraków 2025",
+      "description": "Description *",
+      "descriptionPlaceholder": "Describe the event, program, attractions...",
+      "startDate": "Start date and time *",
+      "endDate": "End date and time *",
+      "city": "City *",
+      "cityPlaceholder": "e.g. Kraków",
+      "address": "Address *",
+      "addressPlaceholder": "e.g. 5 Długa St.",
+      "organizerName": "Organizer name",
+      "organizerNamePlaceholder": "Małopolska Classics Club",
+      "organizerEmail": "Organizer email",
+      "organizerEmailPlaceholder": "contact@example.com",
+      "organizerPhone": "Organizer phone",
+      "ticketsUrl": "Tickets link",
+      "websiteUrl": "Website",
+      "mainImage": "Main image",
+      "imagePreviewAlt": "Preview of the event's main image",
+      "uploadClick": "Click to add an image",
+      "uploadHint": "JPG, PNG, WebP — max 10 MB"
+    },
+    "notice": {
+      "edit": "Changes will be visible after saving.",
+      "new": "The event will be published after being approved by an administrator."
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "saveChanges": "Save changes",
+      "add": "Add event"
+    },
+    "errors": {
+      "imageFormat": "Allowed image formats: JPEG, PNG, WebP.",
+      "imageSize": "The image cannot exceed {max} MB.",
+      "startRequired": "Enter a start date.",
+      "endRequired": "Enter an end date.",
+      "startInvalid": "Invalid start date.",
+      "endInvalid": "Invalid end date.",
+      "startYearInvalid": "The start date year is invalid.",
+      "endYearInvalid": "The end date year is invalid.",
+      "startInPast": "The start date cannot be in the past.",
+      "endBeforeStart": "The end date cannot be earlier than the start date.",
+      "nameRequired": "Enter an event name.",
+      "nameTooShort": "The event name is too short (minimum 5 characters).",
+      "nameTooLong": "The event name is too long (maximum 200 characters).",
+      "descRequired": "Add an event description.",
+      "descTooShort": "The description is too short (minimum 20 characters).",
+      "cityRequired": "Enter a city.",
+      "addressRequired": "Enter an address.",
+      "generic": "An error occurred. Please try again.",
+      "loadFailed": "Failed to load the event data."
+    }
+  }
+}

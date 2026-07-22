@@ -2,7 +2,7 @@
     <div class="chat-wrap">
         <!-- Chat header -->
         <div class="chat-header">
-            <NuxtLink to="/messages" class="back-btn" aria-label="Wróć">
+            <NuxtLink to="/messages" class="back-btn" :aria-label="$t('conversation.back')">
                 <v-icon icon="mdi-arrow-left" size="20" />
             </NuxtLink>
 
@@ -29,10 +29,10 @@
 
             <!-- Actions -->
             <div class="header-actions">
-                <NuxtLink v-if="conversation" :to="`/advert/${conversation.advertId}`" class="hdr-action-btn" title="Zobacz ogłoszenie">
+                <NuxtLink v-if="conversation" :to="`/advert/${conversation.advertId}`" class="hdr-action-btn" :title="$t('conversation.viewAdvert')">
                     <v-icon icon="mdi-open-in-new" size="18" />
                 </NuxtLink>
-                <button class="hdr-action-btn" title="Więcej opcji" @click="showActions = !showActions">
+                <button class="hdr-action-btn" :title="$t('conversation.moreOptions')" @click="showActions = !showActions">
                     <v-icon icon="mdi-dots-vertical" size="18" />
                 </button>
 
@@ -42,15 +42,15 @@
                     <div class="act-menu">
                         <button class="act-item" @click="togglePin">
                             <v-icon :icon="conversation?.isPinned ? 'mdi-pin-off' : 'mdi-pin'" size="16" />
-                            {{ conversation?.isPinned ? 'Odepnij' : 'Przypnij' }}
+                            {{ conversation?.isPinned ? $t('conversation.unpin') : $t('conversation.pin') }}
                         </button>
                         <button class="act-item" @click="doMarkUnread">
                             <v-icon icon="mdi-email-mark-as-unread" size="16" />
-                            Oznacz jako nieprzeczytane
+                            {{ $t('conversation.markUnread') }}
                         </button>
                         <button class="act-item" @click="toggleArchive">
                             <v-icon :icon="conversation?.isArchived ? 'mdi-archive-arrow-up' : 'mdi-archive-arrow-down'" size="16" />
-                            {{ conversation?.isArchived ? 'Przywróć z archiwum' : 'Archiwizuj' }}
+                            {{ conversation?.isArchived ? $t('conversation.unarchive') : $t('conversation.archive') }}
                         </button>
                     </div>
                 </div>
@@ -78,12 +78,12 @@
             <template v-else>
                 <div v-if="loadError" class="no-messages">
                     <v-icon icon="mdi-alert-circle-outline" size="40" class="no-msg-icon" />
-                    <p>Nie udało się załadować wiadomości. <button class="retry-link" @click="loadAll">Spróbuj ponownie</button></p>
+                    <p>{{ $t('conversation.errLoadMessages') }} <button class="retry-link" @click="loadAll">{{ $t('conversation.retry') }}</button></p>
                 </div>
 
                 <div v-else-if="!messages.length" class="no-messages">
                     <v-icon icon="mdi-message-outline" size="40" class="no-msg-icon" />
-                    <p>Napisz pierwszą wiadomość</p>
+                    <p>{{ $t('conversation.writeFirst') }}</p>
                 </div>
 
                 <template v-for="(msg, idx) in messages" :key="msg.id">
@@ -137,8 +137,8 @@
         <!-- Load error -->
         <div v-if="loadError" class="load-error">
             <v-icon icon="mdi-wifi-off" size="16" />
-            Błąd ładowania.
-            <button class="retry-btn" @click="loadAll">Spróbuj</button>
+            {{ $t('conversation.loadError') }}
+            <button class="retry-btn" @click="loadAll">{{ $t('conversation.tryAgain') }}</button>
         </div>
 
         <!-- Input bar -->
@@ -149,7 +149,7 @@
                     v-model="draft"
                     ref="textareaRef"
                     class="msg-textarea"
-                    placeholder="Napisz wiadomość..."
+                    :placeholder="$t('conversation.inputPlaceholder')"
                     rows="1"
                     :disabled="sending"
                     @keydown.enter.exact.prevent="send"
@@ -158,7 +158,7 @@
                 <button
                     class="send-btn"
                     :disabled="sending || !draft.trim()"
-                    :title="sending ? 'Wysyłanie...' : 'Wyślij (Enter)'"
+                    :title="sending ? $t('conversation.sending') : $t('conversation.sendTitle')"
                     @click="send"
                 >
                     <v-icon v-if="sending" icon="mdi-loading" size="20" class="spin" />
@@ -177,6 +177,7 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 const route = useRoute()
 const emit = defineEmits<{ (e: 'conversation-updated'): void }>()
 const { error: toastError } = useToast()
+const { t } = useI18n()
 const conversationId = Number(route.params.conversationId)
 
 const conversation = ref<Conversation | null>(null)
@@ -248,7 +249,7 @@ async function send() {
         emit('conversation-updated')
     } catch (err: any) {
         const msg = err?.data?.message ?? err?.data?.statusMessage ?? err?.message
-        sendError.value = msg || 'Nie udało się wysłać. Spróbuj ponownie.'
+        sendError.value = msg || t('conversation.errSend')
     } finally {
         sending.value = false
     }
@@ -307,9 +308,9 @@ function formatDate(d: string) {
     const date = new Date(d)
     const now = new Date()
     const diff = now.getTime() - date.getTime()
-    if (diff < 86_400_000 && date.toDateString() === now.toDateString()) return 'Dzisiaj'
+    if (diff < 86_400_000 && date.toDateString() === now.toDateString()) return t('conversation.today')
     const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1)
-    if (date.toDateString() === yesterday.toDateString()) return 'Wczoraj'
+    if (date.toDateString() === yesterday.toDateString()) return t('conversation.yesterday')
     return date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
@@ -324,7 +325,7 @@ async function togglePin() {
         const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conversationId}/pin`, { method: 'PUT' })
         conversation.value = updated
         emit('conversation-updated')
-    } catch { toastError('Nie udało się przypiąć rozmowy.') }
+    } catch { toastError(t('conversation.errPin')) }
 }
 
 async function toggleArchive() {
@@ -334,7 +335,7 @@ async function toggleArchive() {
         const updated = await $fetch<Conversation>(`/api/proxy/api/Message/conversation/${conversationId}/archive`, { method: 'PUT' })
         conversation.value = updated
         emit('conversation-updated')
-    } catch { toastError('Nie udało się zarchiwizować rozmowy.') }
+    } catch { toastError(t('conversation.errArchive')) }
 }
 
 async function doMarkUnread() {
@@ -342,7 +343,7 @@ async function doMarkUnread() {
     try {
         await $fetch(`/api/proxy/api/Message/conversation/${conversationId}/mark-unread`, { method: 'PUT' })
         emit('conversation-updated')
-    } catch { toastError('Nie udało się oznaczyć jako nieprzeczytane.') }
+    } catch { toastError(t('conversation.errMarkUnread')) }
 }
 
 onMounted(() => {

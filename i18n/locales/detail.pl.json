@@ -1,1 +1,442 @@
-{}
+{
+  "advertDetail": {
+    "notFound": {
+      "serverErrorTitle": "Chwilowy problem z serwerem",
+      "serverErrorDesc": "Nie udało się wczytać ogłoszenia. Spróbuj odświeżyć stronę za chwilę.",
+      "retry": "Spróbuj ponownie",
+      "title": "Ogłoszenie nie istnieje",
+      "desc": "To ogłoszenie mogło zostać usunięte, wygasnąć lub link jest nieprawidłowy.",
+      "browse": "Przeglądaj ogłoszenia"
+    },
+    "topbar": {
+      "back": "Wróć",
+      "favorite": "Ulubione",
+      "share": "Udostępnij",
+      "report": "Zgłoś"
+    },
+    "share": {
+      "native": "Natywnie",
+      "copied": "Skopiowano!",
+      "copyLink": "Kopiuj link",
+      "fallbackTitle": "Ogłoszenie CARIZO"
+    },
+    "qr": {
+      "alt": "QR kod",
+      "scan": "Zeskanuj aby otworzyć"
+    },
+    "gallery": {
+      "expand": "Galeria",
+      "prevPhoto": "Poprzednie zdjęcie",
+      "nextPhoto": "Następne zdjęcie",
+      "photo": "Zdjęcie",
+      "photoAlt": "Zdjęcie {n} – {title}",
+      "lightboxClose": "Zamknij galerię",
+      "thumbAlt": "Miniatura {n}"
+    },
+    "price": {
+      "leasingIng": "Leasing ING",
+      "creditIng": "Kredyt ING",
+      "fromPerMonth": "od {amount} zł/mies.",
+      "estimateNote": "* przy 10% wpłaty własnej, szacunkowo",
+      "negotiable": "Do negocjacji"
+    },
+    "analysis": {
+      "greatPrice": "Świetna cena",
+      "goodPrice": "Dobra cena",
+      "marketPrice": "Cena rynkowa",
+      "aboveAverage": "Powyżej średniej",
+      "belowMarket": "{percent}% poniżej ceny rynkowej",
+      "belowAverage": "{percent}% poniżej średniej",
+      "inLine": "Zgodna z rynkiem",
+      "aboveAverageSub": "{percent}% powyżej średniej"
+    },
+    "sellerType": {
+      "dealer": "Dealer / Firma",
+      "private": "Sprzedawca prywatny"
+    },
+    "age": {
+      "today": "dzisiaj",
+      "yesterday": "wczoraj",
+      "daysAgo": "{n} dni temu",
+      "weeksAgo": "{n} tyg. temu",
+      "monthsAgo": "{n} mies. temu",
+      "yearsAgo": "{n} lat temu"
+    },
+    "trust": {
+      "vinVerified": "VIN zweryfikowany",
+      "vinUnverified": "VIN niezweryfikowany",
+      "serviceHistory": "Historia serwisowa",
+      "accidentFree": "Bezwypadkowy",
+      "verifiedSeller": "Zweryfikowany sprzedawca"
+    },
+    "sellerMini": {
+      "advertsCount": "{count} ogłoszeń",
+      "profile": "Profil ›"
+    },
+    "cta": {
+      "showPhone": "Pokaż numer telefonu",
+      "ownAdvertTitle": "To Twoje ogłoszenie – nie możesz pisać do samego siebie",
+      "opening": "Otwieranie...",
+      "ownAdvert": "To Twoje ogłoszenie",
+      "sendMessage": "Napisz wiadomość",
+      "ownAdvertNote": "Nie możesz wysyłać wiadomości do samego siebie. To Twoje ogłoszenie.",
+      "scheduleViewing": "Umów oględziny",
+      "reserve": "Zarezerwuj auto",
+      "secureNote": "Transakcja zabezpieczona przez"
+    },
+    "specs": {
+      "mileage": "Przebieg",
+      "year": "Rok produkcji",
+      "fuel": "Paliwo",
+      "power": "Moc",
+      "displacement": "Pojemność",
+      "gearbox": "Skrzynia",
+      "body": "Nadwozie",
+      "views": "Wyświetleń"
+    },
+    "units": {
+      "hp": "KM"
+    },
+    "sections": {
+      "additionalData": "Dane dodatkowe",
+      "description": "Opis",
+      "documents": "Dokumenty i filmy",
+      "techParams": "Parametry techniczne",
+      "features": "Wyposażenie",
+      "history": "Historia pojazdu",
+      "reviews": "Opinie o sprzedawcy"
+    },
+    "desc": {
+      "readMore": "Czytaj więcej",
+      "collapse": "Zwiń opis"
+    },
+    "docType": {
+      "pdf": "Dokument PDF",
+      "video": "Film",
+      "image": "Zdjęcie",
+      "file": "Dokument"
+    },
+    "specGroups": {
+      "basic": "Dane podstawowe",
+      "engine": "Silnik i napęd",
+      "consumption": "Zużycie paliwa i emisja",
+      "detailed": "Dane szczegółowe"
+    },
+    "spec": {
+      "brand": "Marka",
+      "model": "Model",
+      "generation": "Generacja",
+      "year": "Rok produkcji",
+      "mileage": "Przebieg",
+      "condition": "Stan pojazdu",
+      "conditionNew": "Nowy",
+      "conditionUsed": "Używany",
+      "bodyType": "Typ nadwozia",
+      "color": "Kolor",
+      "doors": "Liczba drzwi",
+      "seats": "Liczba miejsc",
+      "fuelType": "Rodzaj paliwa",
+      "gearbox": "Skrzynia biegów",
+      "driveType": "Napęd",
+      "power": "Moc",
+      "displacement": "Pojemność silnika",
+      "torque": "Moment obrotowy",
+      "acceleration": "Przyspieszenie 0–100 km/h",
+      "fuelCity": "Spalanie w mieście",
+      "fuelHighway": "Spalanie poza miastem",
+      "fuelCombined": "Spalanie mieszane",
+      "co2": "Emisja CO₂",
+      "euroNorm": "Norma emisji spalin",
+      "curbWeight": "Masa własna",
+      "grossWeight": "Dopuszczalna masa całkowita"
+    },
+    "history": {
+      "vinNumber": "Numer VIN",
+      "identified": "Zidentyfikowany",
+      "firstRegistration": "Pierwsza rejestracja",
+      "ownersCount": "Liczba właścicieli",
+      "registrationCountry": "Kraj rejestracji",
+      "imported": "Pojazd z importu",
+      "serviceBook": "Książka serwisowa",
+      "fullServiceHistory": "Pełna historia serwisowa ASO",
+      "nextInspection": "Następny przegląd",
+      "damaged": "Pojazd po szkodzie",
+      "accidentFree": "Bezwypadkowy",
+      "warrantyActive": "Gwarancja aktywna",
+      "until": "do {date}",
+      "checkTitle": "Sprawdź historię pojazdu",
+      "vinReportDesc": "Zamów raport VIN aby poznać pełną historię pojazdu, kolizje, przebieg z serwisów i więcej."
+    },
+    "reviews": {
+      "empty": "Brak opinii o tym sprzedawcy.",
+      "formTitle": "Wystaw opinię sprzedawcy",
+      "placeholder": "Opisz swoje doświadczenia ze sprzedawcą...",
+      "submit": "Wyślij opinię",
+      "thanks": "Dziękujemy za opinię!"
+    },
+    "similar": {
+      "title": "Podobne ogłoszenia",
+      "seeAll": "Zobacz wszystkie"
+    },
+    "sidebar": {
+      "seller": "Sprzedający",
+      "memberSince": "na CARIZO od {year} r.",
+      "active": "Aktywnych",
+      "sold": "Sprzedanych",
+      "reviews": "Opinii",
+      "following": "Obserwujesz",
+      "followSeller": "Obserwuj sprzedawcę",
+      "allAdverts": "Wszystkie ogłoszenia",
+      "sellerProfile": "Profil sprzedawcy",
+      "location": "Lokalizacja",
+      "noLocation": "Brak lokalizacji",
+      "locationNote": "Dokładna lokalizacja ustalana indywidualnie",
+      "openMaps": "Otwórz w Google Maps",
+      "reportAdvert": "Zgłoś ogłoszenie"
+    },
+    "compose": {
+      "messageTo": "Wiadomość do",
+      "placeholder": "Napisz wiadomość...",
+      "sending": "Wysyłanie...",
+      "send": "Wyślij wiadomość"
+    },
+    "modal": {
+      "time": "Godzina",
+      "notePlaceholder": "Dodatkowe informacje dla sprzedawcy (opcjonalnie)..."
+    },
+    "viewing": {
+      "submit": "Wyślij prośbę o oględziny"
+    },
+    "reservation": {
+      "hint": "Wybierz termin, do kiedy chcesz zarezerwować to auto — sprzedawca musi potwierdzić rezerwację.",
+      "submit": "Wyślij prośbę o rezerwację"
+    },
+    "mobile": {
+      "call": "Zadzwoń",
+      "write": "Napisz"
+    },
+    "messages": {
+      "reservationSent": "Prośba o rezerwację wysłana! Sprzedawca zostanie powiadomiony.",
+      "viewingSent": "Prośba o oględziny wysłana! Sprzedawca skontaktuje się z Tobą."
+    },
+    "errors": {
+      "noConversationId": "Brak ID rozmowy w odpowiedzi.",
+      "sendMessageFailed": "Nie udało się wysłać wiadomości.",
+      "reserveFailed": "Nie udało się zarezerwować auta.",
+      "viewingFailed": "Nie udało się wysłać prośby o oględziny.",
+      "followFailed": "Nie udało się zaktualizować obserwowania.",
+      "reviewFailed": "Nie udało się wysłać opinii."
+    },
+    "suggestions": [
+      "Czy auto jest jeszcze dostępne?",
+      "Czy cena jest do negocjacji?",
+      "Kiedy można obejrzeć pojazd?",
+      "Czy auto ma pełną historię serwisową?",
+      "Czy możliwa jest zamiana?"
+    ],
+    "pdf": {
+      "labelYear": "Rok",
+      "labelMileage": "Przebieg",
+      "labelFuel": "Paliwo",
+      "labelGearbox": "Skrzynia biegów",
+      "labelPower": "Moc",
+      "labelBrandModel": "Marka / Model",
+      "labelLocation": "Lokalizacja",
+      "descLabel": "Opis:",
+      "generated": "Wygenerowano: {date} | {url}"
+    }
+  },
+  "seller": {
+    "defaultName": "Sprzedawca",
+    "badges": {
+      "dealer": "Dealer",
+      "verified": "Zweryfikowany"
+    },
+    "memberSince": "Na CARIZO od {year}",
+    "following": "Obserwujesz",
+    "follow": "Obserwuj",
+    "loginToMessage": "Zaloguj się, aby pisać wiadomości",
+    "openAdvertToMessage": "Otwórz ogłoszenie sprzedawcy, by napisać wiadomość",
+    "message": "Napisz",
+    "stats": {
+      "activeAdverts": "aktywnych ogłoszeń",
+      "sold": "sprzedanych",
+      "reviews": "opinii",
+      "avgRating": "średnia ocena",
+      "responses": "odpowiedzi"
+    },
+    "tabs": {
+      "adverts": "Ogłoszenia",
+      "reviews": "Opinie"
+    },
+    "emptyAdverts": "Brak aktywnych ogłoszeń",
+    "loadMore": "Załaduj więcej",
+    "emptyReviews": "Brak opinii",
+    "verifiedPurchase": "Potwierdzona transakcja",
+    "loadMoreReviews": "Załaduj więcej opinii",
+    "notFound": {
+      "title": "Nie znaleziono sprzedawcy",
+      "browse": "Przeglądaj ogłoszenia"
+    },
+    "seo": {
+      "fallbackTitle": "Sprzedawca — CARIZO",
+      "description": "Sprawdź ogłoszenia sprzedawcy {name} na CARIZO — największej platformie motoryzacyjnej w Polsce."
+    },
+    "errors": {
+      "loadAdverts": "Nie udało się załadować ogłoszeń sprzedawcy.",
+      "loadReviews": "Nie udało się załadować opinii."
+    }
+  },
+  "events": {
+    "hero": {
+      "eyebrow": "Motoryzacja na żywo",
+      "titleLead": "Nadchodzące",
+      "titleAccent": "wydarzenia",
+      "sub": "Targi, zloty, wystawy i imprezy motoryzacyjne w całej Polsce."
+    },
+    "filters": {
+      "all": "Wszystkie",
+      "week": "Ten tydzień",
+      "month": "Ten miesiąc",
+      "featured": "Wyróżnione"
+    },
+    "searchPlaceholder": "Szukaj wydarzeń...",
+    "addEvent": "Dodaj wydarzenie",
+    "error": {
+      "title": "Błąd połączenia",
+      "desc": "Nie udało się załadować wydarzeń. Spróbuj ponownie.",
+      "refresh": "Odśwież"
+    },
+    "empty": {
+      "title": "Brak wydarzeń",
+      "desc": "Nie znaleziono żadnych nadchodzących wydarzeń."
+    },
+    "card": {
+      "featured": "WYRÓŻNIONE",
+      "event": "WYDARZENIE",
+      "until": "do {date}",
+      "cancelAttend": "Rezygnuję",
+      "willAttend": "Wezmę udział",
+      "share": "Udostępnij",
+      "copied": "Skopiowano!",
+      "copyLink": "Kopiuj link",
+      "tickets": "Bilety",
+      "website": "Strona"
+    },
+    "pagination": {
+      "prev": "Poprzednia strona",
+      "next": "Następna strona"
+    },
+    "seo": {
+      "title": "Wydarzenia motoryzacyjne — CARIZO",
+      "description": "Przeglądaj motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Znajdź najbliższe wydarzenie i zapisz się już dziś.",
+      "ogDescription": "Motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Bądź na bieżąco z CARIZO.",
+      "twitterDescription": "Zloty, targi i spotkania motoryzacyjne w Polsce — CARIZO."
+    }
+  },
+  "eventDetail": {
+    "featured": "Wyróżnione",
+    "attending": "Biorę udział",
+    "willAttend": "Wezmę udział",
+    "removeFav": "Usuń z ulubionych",
+    "addFav": "Dodaj do ulubionych",
+    "buyTickets": "Kup bilety",
+    "website": "Strona",
+    "descriptionTitle": "Opis",
+    "shareTitle": "Udostępnij",
+    "copied": "Skopiowano!",
+    "copyLink": "Kopiuj link",
+    "details": {
+      "title": "Szczegóły",
+      "start": "Początek",
+      "end": "Koniec",
+      "location": "Lokalizacja",
+      "organizer": "Organizator"
+    },
+    "stats": {
+      "title": "Statystyki",
+      "views": "{count} wyświetleń",
+      "interested": "{count} zainteresowanych",
+      "attendees": "{count} uczestników",
+      "shares": "{count} udostępnień"
+    },
+    "notFound": {
+      "title": "Nie znaleziono wydarzenia.",
+      "back": "Wróć do wydarzeń"
+    },
+    "seo": {
+      "fallbackTitle": "Wydarzenie — CARIZO",
+      "descFallback": "Wydarzenie motoryzacyjne: {name}"
+    },
+    "errors": {
+      "updateAttend": "Nie udało się zaktualizować obecności.",
+      "updateFav": "Nie udało się zaktualizować ulubionych.",
+      "copyLink": "Nie udało się skopiować linku.",
+      "load": "Nie udało się załadować wydarzenia."
+    }
+  },
+  "addEvent": {
+    "hero": {
+      "eyebrowEdit": "Edycja",
+      "eyebrowNew": "Nowe wydarzenie",
+      "titleEdit": "Edytuj",
+      "titleNew": "Dodaj",
+      "titleAccent": "wydarzenie",
+      "sub": "Podziel się wydarzeniem motoryzacyjnym ze społecznością CARIZO."
+    },
+    "form": {
+      "name": "Nazwa wydarzenia *",
+      "namePlaceholder": "np. Zlot klasyków – Kraków 2025",
+      "description": "Opis *",
+      "descriptionPlaceholder": "Opisz wydarzenie, program, atrakcje...",
+      "startDate": "Data i czas rozpoczęcia *",
+      "endDate": "Data i czas zakończenia *",
+      "city": "Miasto *",
+      "cityPlaceholder": "np. Kraków",
+      "address": "Adres *",
+      "addressPlaceholder": "np. ul. Długa 5",
+      "organizerName": "Nazwa organizatora",
+      "organizerNamePlaceholder": "Klub Klasyków Małopolska",
+      "organizerEmail": "Email organizatora",
+      "organizerEmailPlaceholder": "kontakt@przyklad.pl",
+      "organizerPhone": "Telefon organizatora",
+      "ticketsUrl": "Link do biletów",
+      "websiteUrl": "Strona internetowa",
+      "mainImage": "Zdjęcie główne",
+      "imagePreviewAlt": "Podgląd zdjęcia głównego wydarzenia",
+      "uploadClick": "Kliknij, aby dodać zdjęcie",
+      "uploadHint": "JPG, PNG, WebP — max 10 MB"
+    },
+    "notice": {
+      "edit": "Zmiany będą widoczne po zapisaniu.",
+      "new": "Wydarzenie zostanie opublikowane po akceptacji przez administratora."
+    },
+    "actions": {
+      "cancel": "Anuluj",
+      "saving": "Zapisywanie...",
+      "saveChanges": "Zapisz zmiany",
+      "add": "Dodaj wydarzenie"
+    },
+    "errors": {
+      "imageFormat": "Dozwolone formaty zdjęcia: JPEG, PNG, WebP.",
+      "imageSize": "Zdjęcie nie może przekraczać {max} MB.",
+      "startRequired": "Podaj datę rozpoczęcia.",
+      "endRequired": "Podaj datę zakończenia.",
+      "startInvalid": "Nieprawidłowa data rozpoczęcia.",
+      "endInvalid": "Nieprawidłowa data zakończenia.",
+      "startYearInvalid": "Rok daty rozpoczęcia jest nieprawidłowy.",
+      "endYearInvalid": "Rok daty zakończenia jest nieprawidłowy.",
+      "startInPast": "Data rozpoczęcia nie może być w przeszłości.",
+      "endBeforeStart": "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.",
+      "nameRequired": "Podaj nazwę wydarzenia.",
+      "nameTooShort": "Nazwa wydarzenia jest za krótka (minimum 5 znaków).",
+      "nameTooLong": "Nazwa wydarzenia jest za długa (maksimum 200 znaków).",
+      "descRequired": "Dodaj opis wydarzenia.",
+      "descTooShort": "Opis jest za krótki (minimum 20 znaków).",
+      "cityRequired": "Podaj miasto.",
+      "addressRequired": "Podaj adres.",
+      "generic": "Wystąpił błąd. Spróbuj ponownie.",
+      "loadFailed": "Nie udało się załadować danych wydarzenia."
+    }
+  }
+}

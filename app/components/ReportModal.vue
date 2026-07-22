@@ -4,16 +4,16 @@
             <div class="modal-header">
                 <div id="report-modal-title" class="modal-title">
                     <v-icon icon="mdi-flag-outline" size="18" class="modal-icon" />
-                    Zgłoś {{ targetType === 'Advert' ? 'ogłoszenie' : 'użytkownika' }}
+                    {{ targetType === 'Advert' ? $t('cReport.titleAdvert') : $t('cReport.titleUser') }}
                 </div>
-                <button class="modal-close" aria-label="Zamknij" @click="$emit('update:modelValue', false)">
+                <button class="modal-close" :aria-label="$t('cReport.close')" @click="$emit('update:modelValue', false)">
                     <v-icon icon="mdi-close" size="18" />
                 </button>
             </div>
 
             <div class="modal-body">
                 <div class="field-group">
-                    <label class="field-label">Powód zgłoszenia *</label>
+                    <label class="field-label">{{ $t('cReport.reasonLabel') }} *</label>
                     <div class="reason-grid">
                         <button
                             v-for="r in reasons"
@@ -29,13 +29,13 @@
                 </div>
 
                 <div class="field-group">
-                    <label class="field-label">Opis (opcjonalnie)</label>
+                    <label class="field-label">{{ $t('cReport.descLabel') }}</label>
                     <textarea
                         v-model="content"
                         class="field-textarea"
                         rows="4"
                         maxlength="2000"
-                        placeholder="Opisz problem dokładniej..."
+                        :placeholder="$t('cReport.descPlaceholder')"
                     />
                     <div class="char-count">{{ content.length }} / 2000</div>
                 </div>
@@ -47,12 +47,12 @@
 
                 <div v-if="success" class="modal-success">
                     <v-icon icon="mdi-check-circle-outline" size="15" />
-                    Zgłoszenie zostało wysłane. Dziękujemy!
+                    {{ $t('cReport.successMsg') }}
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn-cancel" @click="$emit('update:modelValue', false)">Anuluj</button>
+                <button class="btn-cancel" @click="$emit('update:modelValue', false)">{{ $t('cReport.cancel') }}</button>
                 <button
                     class="btn-submit"
                     :disabled="!selectedReason || loading || success"
@@ -60,7 +60,7 @@
                 >
                     <v-icon v-if="loading" icon="mdi-loading" size="15" class="spin" />
                     <v-icon v-else icon="mdi-flag" size="15" />
-                    Wyślij zgłoszenie
+                    {{ $t('cReport.submit') }}
                 </button>
             </div>
         </div>
@@ -79,19 +79,20 @@ const props = defineProps<{
 defineEmits<{ (e: 'update:modelValue', val: boolean): void }>()
 
 const { submitReport, loading, error } = useReports()
+const { t } = useI18n()
 const selectedReason = ref<ReportReason | ''>('')
 const content = ref('')
 const success = ref(false)
 
-const reasons: { value: ReportReason; label: string; icon: string }[] = [
-    { value: 'Fraud', label: 'Oszustwo', icon: 'mdi-shield-alert-outline' },
-    { value: 'FalseData', label: 'Fałszywe dane', icon: 'mdi-file-alert-outline' },
-    { value: 'InvalidVin', label: 'Nieprawidłowy VIN', icon: 'mdi-barcode-off' },
-    { value: 'DuplicateAdvert', label: 'Duplikat ogłoszenia', icon: 'mdi-content-copy' },
-    { value: 'InappropriateContent', label: 'Nieodpowiednia treść', icon: 'mdi-eye-off-outline' },
-    { value: 'Spam', label: 'Spam', icon: 'mdi-email-alert-outline' },
-    { value: 'Other', label: 'Inne', icon: 'mdi-dots-horizontal-circle-outline' },
-]
+const reasons = computed<{ value: ReportReason; label: string; icon: string }[]>(() => [
+    { value: 'Fraud', label: t('cReport.reasonFraud'), icon: 'mdi-shield-alert-outline' },
+    { value: 'FalseData', label: t('cReport.reasonFalseData'), icon: 'mdi-file-alert-outline' },
+    { value: 'InvalidVin', label: t('cReport.reasonInvalidVin'), icon: 'mdi-barcode-off' },
+    { value: 'DuplicateAdvert', label: t('cReport.reasonDuplicate'), icon: 'mdi-content-copy' },
+    { value: 'InappropriateContent', label: t('cReport.reasonInappropriate'), icon: 'mdi-eye-off-outline' },
+    { value: 'Spam', label: t('cReport.reasonSpam'), icon: 'mdi-email-alert-outline' },
+    { value: 'Other', label: t('cReport.reasonOther'), icon: 'mdi-dots-horizontal-circle-outline' },
+])
 
 async function submit() {
     if (!selectedReason.value) return

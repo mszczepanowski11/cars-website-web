@@ -18,9 +18,9 @@ export default defineNuxtConfig({
     locales: [
       // Multi-file per locale: base chrome (nav/footer/home/adverts/firmy) plus one fragment per
       // page-group. The module deep-merges them into a single message tree at build time.
-      { code: 'pl', language: 'pl-PL', name: 'Polski', files: ['pl.json', 'auth.pl.json', 'info.pl.json', 'commerce.pl.json', 'account.pl.json', 'detail.pl.json', 'legal.pl.json', 'components.pl.json'] },
-      { code: 'en', language: 'en-US', name: 'English', files: ['en.json', 'auth.en.json', 'info.en.json', 'commerce.en.json', 'account.en.json', 'detail.en.json', 'legal.en.json', 'components.en.json'] },
-      { code: 'de', language: 'de-DE', name: 'Deutsch', files: ['de.json', 'auth.de.json', 'info.de.json', 'commerce.de.json', 'account.de.json', 'detail.de.json', 'legal.de.json', 'components.de.json'] },
+      { code: 'pl', language: 'pl-PL', name: 'Polski', files: ['pl.json', 'auth.pl.json', 'info.pl.json', 'commerce.pl.json', 'account.pl.json', 'detail.pl.json', 'legal.pl.json', 'components.pl.json', 'addadvert.pl.json'] },
+      { code: 'en', language: 'en-US', name: 'English', files: ['en.json', 'auth.en.json', 'info.en.json', 'commerce.en.json', 'account.en.json', 'detail.en.json', 'legal.en.json', 'components.en.json', 'addadvert.en.json'] },
+      { code: 'de', language: 'de-DE', name: 'Deutsch', files: ['de.json', 'auth.de.json', 'info.de.json', 'commerce.de.json', 'account.de.json', 'detail.de.json', 'legal.de.json', 'components.de.json', 'addadvert.de.json'] },
     ],
     baseUrl: process.env.NUXT_PUBLIC_SITE_URL ?? 'https://carizo.eu',
     // Auto-detection OFF: the unprefixed URL (carizo.eu/) is always Polish, /en and /de are the

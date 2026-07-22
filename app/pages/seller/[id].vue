@@ -15,10 +15,10 @@
                         <div class="seller-identity">
                             <div class="seller-badges">
                                 <span v-if="seller.accountType === 'Business'" class="badge-business">
-                                    <v-icon icon="mdi-domain" size="12" /> Dealer
+                                    <v-icon icon="mdi-domain" size="12" /> {{ $t('seller.badges.dealer') }}
                                 </span>
                                 <span v-if="seller.isAdmin" class="badge-verified">
-                                    <v-icon icon="mdi-check-decagram" size="12" /> Verified
+                                    <v-icon icon="mdi-check-decagram" size="12" /> {{ $t('seller.badges.verified') }}
                                 </span>
                             </div>
                             <h1 class="seller-name">
@@ -31,7 +31,7 @@
                                 </span>
                                 <span class="meta-item">
                                     <v-icon icon="mdi-calendar-outline" size="14" />
-                                    Na CARIZO od {{ joinedYear }}
+                                    {{ $t('seller.memberSince', { year: joinedYear }) }}
                                 </span>
                             </div>
                             <div v-if="seller.about" class="seller-about">{{ seller.about }}</div>
@@ -39,11 +39,11 @@
                         <div class="seller-actions">
                             <button v-if="!isSelf" class="btn-follow" :class="{ following: isFollowing }" :disabled="followLoading" @click="toggleFollow">
                                 <v-icon :icon="isFollowing ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="16" />
-                                {{ isFollowing ? 'Obserwujesz' : 'Obserwuj' }}
+                                {{ isFollowing ? $t('seller.following') : $t('seller.follow') }}
                             </button>
-                            <button v-if="!isSelf" class="btn-message" :title="!isLoggedIn ? 'Zaloguj się, aby pisać wiadomości' : 'Otwórz ogłoszenie sprzedawcy, by napisać wiadomość'" @click="handleMessage">
+                            <button v-if="!isSelf" class="btn-message" :title="!isLoggedIn ? $t('seller.loginToMessage') : $t('seller.openAdvertToMessage')" @click="handleMessage">
                                 <v-icon icon="mdi-message-outline" size="16" />
-                                Napisz
+                                {{ $t('seller.message') }}
                             </button>
                         </div>
                     </div>
@@ -51,26 +51,26 @@
                     <div v-if="stats" class="seller-stats-row">
                         <div class="stat-pill">
                             <div class="stat-val">{{ stats.activeAdverts }}</div>
-                            <div class="stat-lbl">aktywnych ogłoszeń</div>
+                            <div class="stat-lbl">{{ $t('seller.stats.activeAdverts') }}</div>
                         </div>
                         <div class="stat-pill">
                             <div class="stat-val">{{ stats.totalSold }}</div>
-                            <div class="stat-lbl">sprzedanych</div>
+                            <div class="stat-lbl">{{ $t('seller.stats.sold') }}</div>
                         </div>
                         <div class="stat-pill">
                             <div class="stat-val">{{ stats.reviewCount }}</div>
-                            <div class="stat-lbl">opinii</div>
+                            <div class="stat-lbl">{{ $t('seller.stats.reviews') }}</div>
                         </div>
                         <div class="stat-pill highlight">
                             <div class="stat-val">
                                 <v-icon icon="mdi-star" size="14" class="star-ic" />
                                 {{ stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '—' }}
                             </div>
-                            <div class="stat-lbl">średnia ocena</div>
+                            <div class="stat-lbl">{{ $t('seller.stats.avgRating') }}</div>
                         </div>
                         <div class="stat-pill">
                             <div class="stat-val">{{ stats.responseRate > 0 ? `${Math.round(stats.responseRate)}%` : '—' }}</div>
-                            <div class="stat-lbl">odpowiedzi</div>
+                            <div class="stat-lbl">{{ $t('seller.stats.responses') }}</div>
                         </div>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                     </div>
                     <div v-else-if="!adverts.length" class="empty-state">
                         <v-icon icon="mdi-car-off" size="40" />
-                        <p>Brak aktywnych ogłoszeń</p>
+                        <p>{{ $t('seller.emptyAdverts') }}</p>
                     </div>
                     <div v-else class="adverts-grid">
                         <AdvertCard
@@ -107,7 +107,7 @@
                     </div>
                     <div v-if="advertsTotalCount > adverts.length" class="load-more-row">
                         <button class="btn-load-more" :disabled="advertsLoading" @click="loadMoreAdverts">
-                            Załaduj więcej
+                            {{ $t('seller.loadMore') }}
                         </button>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                     </div>
                     <div v-else-if="!reviews.length" class="empty-state">
                         <v-icon icon="mdi-star-off-outline" size="40" />
-                        <p>Brak opinii</p>
+                        <p>{{ $t('seller.emptyReviews') }}</p>
                     </div>
                     <div v-else class="reviews-list">
                         <div v-for="rev in reviews" :key="rev.id" class="review-card">
@@ -142,13 +142,13 @@
                             </div>
                             <p v-if="rev.content" class="rev-content">{{ rev.content }}</p>
                             <div v-if="rev.isVerifiedPurchase" class="rev-verified">
-                                <v-icon icon="mdi-check-circle-outline" size="13" /> Potwierdzona transakcja
+                                <v-icon icon="mdi-check-circle-outline" size="13" /> {{ $t('seller.verifiedPurchase') }}
                             </div>
                         </div>
                     </div>
                     <div v-if="reviewsTotalCount > reviews.length" class="load-more-row">
                         <button class="btn-load-more" :disabled="reviewsLoading" @click="loadMoreReviews">
-                            Załaduj więcej opinii
+                            {{ $t('seller.loadMoreReviews') }}
                         </button>
                     </div>
                 </div>
@@ -157,8 +157,8 @@
 
         <div v-else class="not-found">
             <v-icon icon="mdi-account-off-outline" size="64" />
-            <h2>Nie znaleziono sprzedawcy</h2>
-            <NuxtLink to="/adverts" class="btn-back">Przeglądaj ogłoszenia</NuxtLink>
+            <h2>{{ $t('seller.notFound.title') }}</h2>
+            <NuxtLink to="/adverts" class="btn-back">{{ $t('seller.notFound.browse') }}</NuxtLink>
         </div>
 
     </div>
@@ -167,6 +167,7 @@
 <script setup lang="ts">
 import type { UserProfile, UserStats, CarAdvert, Review, ReviewsResult, PagedResult } from '~/types'
 
+const { t } = useI18n()
 const route = useRoute()
 const sellerId = Number(route.params.id)
 
@@ -199,11 +200,11 @@ if (ssrSellerData.value) {
 const sellerConfig = useRuntimeConfig()
 useHead(computed(() => {
     const s = seller.value
-    if (!s) return { title: 'Sprzedawca — CARIZO' }
+    if (!s) return { title: t('seller.seo.fallbackTitle') }
     const displayName = s.accountType === 'Business' && s.companyName
         ? s.companyName
-        : [s.name, s.surname].filter(Boolean).join(' ') || 'Sprzedawca'
-    const desc = `Sprawdź ogłoszenia sprzedawcy ${displayName} na CARIZO — największej platformie motoryzacyjnej w Polsce.`
+        : [s.name, s.surname].filter(Boolean).join(' ') || t('seller.defaultName')
+    const desc = t('seller.seo.description', { name: displayName })
     const pageUrl = `${sellerConfig.public.siteUrl}/seller/${sellerId}`
     const ogImage = s.avatarUrl ?? `${sellerConfig.public.siteUrl}/og-image.jpg`
     return {
@@ -244,10 +245,10 @@ const activeTab = ref<'adverts' | 'reviews'>('adverts')
 const isSelf = computed(() => isLoggedIn.value && currentUserId.value === sellerId)
 
 const sellerDisplayName = computed(() => {
-    if (!seller.value) return 'Sprzedawca'
+    if (!seller.value) return t('seller.defaultName')
     if (seller.value.accountType === 'Business' && seller.value.companyName) return seller.value.companyName
     const parts = [seller.value.name, seller.value.surname].filter(Boolean)
-    return parts.length ? parts.join(' ') : 'Sprzedawca'
+    return parts.length ? parts.join(' ') : t('seller.defaultName')
 })
 
 const joinedYear = computed(() => {
@@ -256,8 +257,8 @@ const joinedYear = computed(() => {
 })
 
 const tabs = computed(() => [
-    { key: 'adverts', label: 'Ogłoszenia', count: advertsTotalCount.value || null },
-    { key: 'reviews', label: 'Opinie', count: reviewsTotalCount.value || null },
+    { key: 'adverts', label: t('seller.tabs.adverts'), count: advertsTotalCount.value || null },
+    { key: 'reviews', label: t('seller.tabs.reviews'), count: reviewsTotalCount.value || null },
 ])
 
 async function loadAdverts(reset = false) {
@@ -271,7 +272,7 @@ async function loadAdverts(reset = false) {
         adverts.value.push(...res.items)
         advertsTotalCount.value = res.totalCount
     } catch (e: any) {
-        toastError(e?.data?.message ?? 'Nie udało się załadować ogłoszeń sprzedawcy.')
+        toastError(e?.data?.message ?? t('seller.errors.loadAdverts'))
     } finally { advertsLoading.value = false }
 }
 
@@ -289,7 +290,7 @@ async function loadReviews(reset = false) {
         reviewsTotalCount.value = res.totalCount
         reviewsAvg.value = res.averageRating
     } catch (e: any) {
-        toastError(e?.data?.message ?? 'Nie udało się załadować opinii.')
+        toastError(e?.data?.message ?? t('seller.errors.loadReviews'))
     } finally { reviewsLoading.value = false }
 }
 

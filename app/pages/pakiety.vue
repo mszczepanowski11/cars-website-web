@@ -6,20 +6,20 @@
             <div class="hero-inner">
                 <div class="hero-badge">
                     <v-icon icon="mdi-briefcase-outline" size="14" />
-                    Pakiety B2B dla dealerów
+                    {{ $t('packages.heroBadge') }}
                 </div>
-                <h1 class="hero-title">Rozwiń swój salon.<br><span class="accent">Sprzedawaj więcej.</span></h1>
-                <p class="hero-desc">Jeden pakiet. Nielimitowane możliwości wystawiania. Faktury VAT co miesiąc.</p>
+                <h1 class="hero-title">{{ $t('packages.heroTitleLine1') }}<br><span class="accent">{{ $t('packages.heroTitleLine2') }}</span></h1>
+                <p class="hero-desc">{{ $t('packages.heroDesc') }}</p>
 
                 <div v-if="subscription?.isActive" class="current-plan-banner">
                     <v-icon icon="mdi-check-circle-outline" size="18" />
-                    Twój aktywny pakiet: <strong>{{ subscription.tierName }}</strong>
-                    <span v-if="subscription.expiresAt" class="exp-date">— ważny do {{ formatDate(subscription.expiresAt) }}</span>
+                    {{ $t('packages.activePackage') }} <strong>{{ subscription.tierName }}</strong>
+                    <span v-if="subscription.expiresAt" class="exp-date">{{ $t('packages.validUntil', { date: formatDate(subscription.expiresAt) }) }}</span>
                 </div>
 
                 <div v-if="promoActive" class="promo-banner">
                     <v-icon icon="mdi-gift-outline" size="17" />
-                    Promocja startowa: wszystkie pakiety są teraz całkowicie darmowe!
+                    {{ $t('packages.promoBanner') }}
                 </div>
             </div>
         </div>
@@ -28,17 +28,17 @@
         <div v-if="!subscription?.isStartProgram && !subscription?.isActive" class="start-program-banner">
             <div class="sp-inner">
                 <div class="sp-left">
-                    <div class="sp-label">Program Start</div>
-                    <div class="sp-title">3 miesiące bezpłatnie dla nowych dealerów</div>
-                    <div class="sp-desc">Do 20 aktywnych ogłoszeń · emisja 90 dni · 3 wyróżnienia/miesiąc · konto weryfikowane przez CARIZO</div>
+                    <div class="sp-label">{{ $t('packages.startProgramLabel') }}</div>
+                    <div class="sp-title">{{ $t('packages.startProgramTitle') }}</div>
+                    <div class="sp-desc">{{ $t('packages.startProgramDesc') }}</div>
                 </div>
                 <button class="sp-btn" :disabled="startLoading || !user" @click="activateStart">
-                    <template v-if="!user">Zaloguj się, aby aktywować</template>
+                    <template v-if="!user">{{ $t('packages.loginToActivate') }}</template>
                     <template v-else-if="startLoading">
                         <v-icon icon="mdi-loading" size="16" class="spin" />
-                        Aktywowanie…
+                        {{ $t('packages.activating') }}
                     </template>
-                    <template v-else>Aktywuj Program Start</template>
+                    <template v-else>{{ $t('packages.activateStartProgram') }}</template>
                 </button>
             </div>
         </div>
@@ -47,10 +47,10 @@
                 <div class="sp-left">
                     <div class="sp-label">
                         <v-icon icon="mdi-check-circle" size="14" />
-                        Program Start aktywny
+                        {{ $t('packages.startProgramActiveLabel') }}
                     </div>
-                    <div class="sp-title">Korzystasz z bezpłatnego okresu próbnego</div>
-                    <div class="sp-desc">Ważny do {{ formatDate(subscription.expiresAt) }} · Po zakończeniu wybierz pakiet płatny.</div>
+                    <div class="sp-title">{{ $t('packages.startProgramActiveTitle') }}</div>
+                    <div class="sp-desc">{{ $t('packages.startProgramActiveDesc', { date: formatDate(subscription.expiresAt) }) }}</div>
                 </div>
             </div>
         </div>
@@ -69,27 +69,27 @@
                     }"
                 >
                     <div v-if="plan.tier === 'Biznes'" class="popular-tag">
-                        <v-icon icon="mdi-fire" size="13" /> Najpopularniejszy
+                        <v-icon icon="mdi-fire" size="13" /> {{ $t('packages.mostPopular') }}
                     </div>
 
                     <div class="plan-header">
                         <div class="plan-name">
                             {{ plan.name }}
-                            <span v-if="promoActive && !plan.isCustom" class="plan-badge-free">ZA DARMO</span>
+                            <span v-if="promoActive && !plan.isCustom" class="plan-badge-free">{{ $t('packages.forFreeUpper') }}</span>
                         </div>
                         <div v-if="!plan.isCustom && promoActive" class="plan-price">
                             <span class="price-amount price-amount--crossed">{{ formatPrice(plan.nettoPrice) }} zł</span>
-                            <span class="price-amount price-amount--free">za darmo</span>
+                            <span class="price-amount price-amount--free">{{ $t('packages.forFreeLower') }}</span>
                         </div>
                         <div v-else-if="!plan.isCustom" class="plan-price">
                             <span class="price-amount">{{ formatPrice(plan.nettoPrice) }}</span>
-                            <span class="price-unit">zł netto/mies.</span>
+                            <span class="price-unit">{{ $t('packages.nettoPerMonth') }}</span>
                         </div>
                         <div v-else class="plan-price plan-price--custom">
-                            <span class="price-amount">Wycena</span>
-                            <span class="price-unit">indywidualna</span>
+                            <span class="price-amount">{{ $t('packages.priceCustom') }}</span>
+                            <span class="price-unit">{{ $t('packages.priceCustomUnit') }}</span>
                         </div>
-                        <div v-if="!plan.isCustom && !promoActive" class="price-brutto">{{ formatPrice(plan.bruttoPrice) }} zł brutto (+23% VAT)</div>
+                        <div v-if="!plan.isCustom && !promoActive" class="price-brutto">{{ $t('packages.bruttoWithVat', { price: formatPrice(plan.bruttoPrice) }) }}</div>
                     </div>
 
                     <ul class="plan-features">
@@ -102,27 +102,27 @@
                     <div class="plan-stats">
                         <div class="stat">
                             <v-icon icon="mdi-car-multiple" size="15" />
-                            <span>{{ plan.maxActiveAds >= 999999 ? '∞' : plan.maxActiveAds }} ogłoszeń</span>
+                            <span>{{ $t('packages.adsCount', { count: plan.maxActiveAds >= 999999 ? '∞' : plan.maxActiveAds }) }}</span>
                         </div>
                         <div class="stat">
                             <v-icon icon="mdi-calendar-clock" size="15" />
-                            <span>Emisja {{ plan.emissionDays }} dni</span>
+                            <span>{{ $t('packages.emissionDays', { days: plan.emissionDays }) }}</span>
                         </div>
                         <div class="stat">
                             <v-icon icon="mdi-star-outline" size="15" />
-                            <span>{{ plan.featuredQuotaPerMonth >= 999999 ? '∞' : plan.featuredQuotaPerMonth }} wyróżnień/mies.</span>
+                            <span>{{ $t('packages.featuredPerMonth', { count: plan.featuredQuotaPerMonth >= 999999 ? '∞' : plan.featuredQuotaPerMonth }) }}</span>
                         </div>
                     </div>
 
                     <template v-if="subscription?.tier === plan.tier && subscription?.isActive">
                         <button class="plan-btn plan-btn--active" disabled>
                             <v-icon icon="mdi-check-circle-outline" size="16" />
-                            Aktywny pakiet
+                            {{ $t('packages.activePackageBtn') }}
                         </button>
                     </template>
                     <template v-else-if="plan.isCustom">
                         <a href="mailto:kontakt@carizo.eu" class="plan-btn plan-btn--contact">
-                            Skontaktuj się
+                            {{ $t('packages.contact') }}
                         </a>
                     </template>
                     <template v-else>
@@ -132,14 +132,14 @@
                             :disabled="buyLoading === plan.tier || !user"
                             @click="buyPlan(plan)"
                         >
-                            <template v-if="!user">Zaloguj się</template>
+                            <template v-if="!user">{{ $t('packages.login') }}</template>
                             <template v-else-if="buyLoading === plan.tier">
                                 <v-icon icon="mdi-loading" size="16" class="spin" />
-                                Przekierowanie…
+                                {{ $t('packages.redirecting') }}
                             </template>
-                            <template v-else-if="promoActive">Aktywuj za darmo</template>
+                            <template v-else-if="promoActive">{{ $t('packages.activateForFree') }}</template>
                             <template v-else>
-                                {{ subscription?.isActive ? 'Zmień pakiet' : 'Wybierz pakiet' }}
+                                {{ subscription?.isActive ? $t('packages.changePackage') : $t('packages.choosePackage') }}
                             </template>
                         </button>
                     </template>
@@ -150,7 +150,7 @@
         <!-- FAQ -->
         <div class="faq-section">
             <div class="faq-inner">
-                <h2 class="faq-title">Najczęstsze pytania</h2>
+                <h2 class="faq-title">{{ $t('packages.faqTitle') }}</h2>
                 <div class="faq-list">
                     <div v-for="(item, i) in faq" :key="i" class="faq-item" @click="toggleFaq(i)">
                         <div class="faq-q">
@@ -174,6 +174,7 @@
 <script setup lang="ts">
 import { useSubscription, type SubscriptionPlan, type SubscriptionStatus } from '~/composables/useSubscription'
 
+const { t } = useI18n()
 const { fetchProfile } = useUser()
 const user = ref(false)
 const { getPlans, getMySubscription, activateStartProgram, buySubscription } = useSubscription()
@@ -187,32 +188,14 @@ const buyLoading = ref<string | null>(null)
 const openFaq = ref<number | null>(null)
 const toast = ref<{ msg: string; type: 'success' | 'error' } | null>(null)
 
-const faq = [
-    {
-        q: 'Czym jest Program Start?',
-        a: 'Program Start to bezpłatny 3-miesięczny okres próbny dla nowych dealerów zarejestrowanych na CARIZO. Obejmuje do 20 aktywnych ogłoszeń z emisją 90 dni i 3 wyróżnieniami miesięcznie. Można aktywować tylko raz na konto.',
-    },
-    {
-        q: 'Kiedy zostanę obciążony za pakiet?',
-        a: 'Opłata jest pobierana natychmiast po wyborze pakietu. Kolejne miesiące możesz przedłużyć ręcznie — nie ma automatycznego odnawiania.',
-    },
-    {
-        q: 'Czy otrzymam fakturę VAT?',
-        a: 'Tak. Faktura VAT jest wystawiana automatycznie po zaksięgowaniu każdej płatności i dostępna w panelu „Faktury".',
-    },
-    {
-        q: 'Co się stanie po wygaśnięciu pakietu?',
-        a: 'Twoje ogłoszenia pozostają widoczne do upłynięcia ich indywidualnego czasu emisji. Nie będziesz mógł jednak dodawać nowych ogłoszeń ponad limit dla kont bez subskrypcji (5 aktywnych).',
-    },
-    {
-        q: 'Jak działa limit wyróżnień?',
-        a: 'Limit wyróżnień odnawia się co miesiąc. Wyróżnienie to usługa dostępna w opcjach promowania ogłoszenia — wyróżnione oferty wyświetlają się wyżej w wynikach wyszukiwania.',
-    },
-    {
-        q: 'Czym jest pakiet Enterprise?',
-        a: 'Enterprise to oferta dla dużych sieci dealerskich wymagających indywidualnych warunków umowy, SLA i API. Skontaktuj się z nami pod adresem kontakt@carizo.eu.',
-    },
-]
+const faq = computed(() => [
+    { q: t('packages.faq.q1'), a: t('packages.faq.a1') },
+    { q: t('packages.faq.q2'), a: t('packages.faq.a2') },
+    { q: t('packages.faq.q3'), a: t('packages.faq.a3') },
+    { q: t('packages.faq.q4'), a: t('packages.faq.a4') },
+    { q: t('packages.faq.q5'), a: t('packages.faq.a5') },
+    { q: t('packages.faq.q6'), a: t('packages.faq.a6') },
+])
 
 function formatPrice(n: number) {
     return n.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -240,7 +223,7 @@ async function activateStart() {
         showToast(res.message, 'success')
         subscription.value = await getMySubscription()
     } catch (e: any) {
-        showToast(e?.data?.message ?? 'Nie udało się aktywować Programu Start.', 'error')
+        showToast(e?.data?.message ?? t('packages.toastStartError'), 'error')
     } finally {
         startLoading.value = false
     }
@@ -252,7 +235,7 @@ async function buyPlan(plan: SubscriptionPlan) {
     try {
         const result: any = await buySubscription(plan.tier)
         if (result?.adminActivated) {
-            showToast('Pakiet aktywowany!', 'success')
+            showToast(t('packages.toastPackageActivated'), 'success')
             subscription.value = await getMySubscription()
         } else if (result?.paymentUrl && result?.formFields) {
             // Create and submit iMoje form
@@ -270,7 +253,7 @@ async function buyPlan(plan: SubscriptionPlan) {
             form.submit()
         }
     } catch (e: any) {
-        showToast(e?.data?.message ?? 'Nie udało się zainicjować płatności.', 'error')
+        showToast(e?.data?.message ?? t('packages.toastPaymentError'), 'error')
         buyLoading.value = null
     }
 }
@@ -284,7 +267,7 @@ onMounted(async () => {
     getPromoStatus().then(r => { promoActive.value = r.isFreePromoActive }).catch(() => {})
 })
 
-useHead({ title: 'Pakiety B2B – CARIZO', meta: [{ name: 'description', content: 'Wybierz pakiet subskrypcyjny dla dealerów samochodowych. Dodawaj nieograniczone ogłoszenia, korzystaj z wyróżnień i rozwijaj sprzedaż.' }] })
+useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content: t('packages.metaDescription') }] })
 </script>
 
 <style lang="scss" scoped>

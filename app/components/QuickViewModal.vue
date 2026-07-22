@@ -2,12 +2,12 @@
     <Teleport to="body">
         <Transition name="qv-fade">
             <div v-if="modelValue" class="qv-overlay" @click.self="$emit('update:modelValue', false)">
-                <div class="qv-modal" role="dialog" aria-modal="true" aria-label="Szybki podgląd ogłoszenia">
-                    <button class="qv-close" aria-label="Zamknij podgląd" @click="$emit('update:modelValue', false)">
+                <div class="qv-modal" role="dialog" aria-modal="true" :aria-label="$t('cQuickView.dialogLabel')">
+                    <button class="qv-close" :aria-label="$t('cQuickView.closeAria')" @click="$emit('update:modelValue', false)">
                         <v-icon icon="mdi-close" size="20" />
                     </button>
 
-                    <div v-if="loading" class="qv-loading" role="status" aria-label="Ładowanie ogłoszenia">
+                    <div v-if="loading" class="qv-loading" role="status" :aria-label="$t('cQuickView.loadingAria')">
                         <v-icon icon="mdi-loading" size="32" class="spin" />
                     </div>
 
@@ -18,7 +18,7 @@
                                 <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" />
                                 {{ badgeLabel }}
                             </span>
-                            <span v-if="isNew" class="qv-badge qv-badge--new">NOWE</span>
+                            <span v-if="isNew" class="qv-badge qv-badge--new">{{ $t('cQuickView.badgeNew') }}</span>
                         </div>
                         <div class="qv-body">
                             <h2 class="qv-title">{{ advert.title }}</h2>
@@ -28,7 +28,7 @@
                                 <span class="qv-chip"><v-icon icon="mdi-speedometer" size="13" />{{ Number(advert.mileage).toLocaleString('pl') }} km</span>
                                 <span v-if="advert.fuelType" class="qv-chip"><v-icon icon="mdi-gas-station-outline" size="13" />{{ advert.fuelType.name }}</span>
                                 <span v-if="advert.gearbox" class="qv-chip"><v-icon icon="mdi-cog-outline" size="13" />{{ advert.gearbox.name }}</span>
-                                <span v-if="advert.engineVersion?.horsepower" class="qv-chip"><v-icon icon="mdi-lightning-bolt" size="13" />{{ advert.engineVersion.horsepower }} KM</span>
+                                <span v-if="advert.engineVersion?.horsepower" class="qv-chip"><v-icon icon="mdi-lightning-bolt" size="13" />{{ advert.engineVersion.horsepower }} {{ $t('cQuickView.powerUnit') }}</span>
                             </div>
                             <p v-if="advert.description" class="qv-desc">{{ advert.description.slice(0, 200) }}{{ advert.description.length > 200 ? '…' : '' }}</p>
                             <div class="qv-location" v-if="advert.city">
@@ -37,7 +37,7 @@
                             <div class="qv-actions">
                                 <NuxtLink :to="`/advert/${advert.id}`" class="qv-btn-primary" @click="$emit('update:modelValue', false)">
                                     <v-icon icon="mdi-arrow-right-circle-outline" size="16" />
-                                    Zobacz ogłoszenie
+                                    {{ $t('cQuickView.viewAdvert') }}
                                 </NuxtLink>
                             </div>
                         </div>
@@ -54,6 +54,7 @@ const props = defineProps<{ modelValue: boolean; advertId: number | null }>()
 const emit = defineEmits<{ 'update:modelValue': [boolean] }>()
 
 const { getImageUrl, placeholder } = useImageUrl()
+const { t } = useI18n()
 const advert = ref<CarAdvert | null>(null)
 const loading = ref(false)
 
@@ -70,7 +71,7 @@ const resolvedBadge = computed(() => {
 })
 
 const badgeLabel = computed(() => {
-    const map: Record<string, string> = { PREMIUM: 'PREMIUM', TOP: 'TOP', FEATURED: 'WYRÓŻNIONE', DEALER: 'DEALER', VERIFIED: 'VERIFIED' }
+    const map: Record<string, string> = { PREMIUM: 'PREMIUM', TOP: 'TOP', FEATURED: t('cQuickView.badgeFeatured'), DEALER: 'DEALER', VERIFIED: 'VERIFIED' }
     return resolvedBadge.value ? (map[resolvedBadge.value] ?? resolvedBadge.value) : null
 })
 

@@ -11,52 +11,52 @@
                 <div class="icon-wrap icon-success">
                     <v-icon icon="mdi-check-circle" size="52" />
                 </div>
-                <h1 class="return-title">Płatność zakończona<br>pomyślnie!</h1>
+                <h1 class="return-title">{{ $t('paymentReturn.successTitleLine1') }}<br>{{ $t('paymentReturn.successTitleLine2') }}</h1>
                 <p class="return-desc">
                     <template v-if="eventId">
-                        Twoje wydarzenie zostało wyróżnione.<br>
+                        {{ $t('paymentReturn.successDescEvent') }}<br>
                     </template>
                     <template v-else>
-                        Twoje ogłoszenie zostało objęte promocją.<br>
+                        {{ $t('paymentReturn.successDescAdvert') }}<br>
                     </template>
-                    Faktura zostanie wysłana na Twój adres e-mail.
+                    {{ $t('paymentReturn.successDescInvoice') }}
                 </p>
 
                 <!-- Invoice info -->
                 <div class="invoice-status invoice-pending">
                     <v-icon icon="mdi-receipt-outline" size="16" />
-                    Faktura zbiorcza zostanie wygenerowana 1. dnia następnego miesiąca i wysłana na Twój e-mail.
+                    {{ $t('paymentReturn.invoicePending') }}
                 </div>
                 <div v-if="latestInvoice" class="invoice-status invoice-ready">
                     <v-icon icon="mdi-receipt-check-outline" size="16" />
-                    Faktura {{ latestInvoice.invoiceNumber }} jest gotowa
+                    {{ $t('paymentReturn.invoiceReady', { number: latestInvoice.invoiceNumber }) }}
                     <button class="inv-dl-btn" :disabled="pdfLoading" @click="downloadInvoicePdf">
                         <v-icon v-if="pdfLoading" icon="mdi-loading" size="14" class="spin" />
                         <v-icon v-else icon="mdi-file-pdf-box" size="14" />
-                        Pobierz PDF
+                        {{ $t('paymentReturn.downloadPdf') }}
                     </button>
                 </div>
 
                 <div class="return-actions">
                     <NuxtLink v-if="eventId" :to="`/wydarzenie/${eventId}`" class="btn-red">
                         <v-icon icon="mdi-calendar-star" size="17" />
-                        Zobacz wydarzenie
+                        {{ $t('paymentReturn.seeEvent') }}
                     </NuxtLink>
                     <NuxtLink v-else-if="advertId" :to="`/advert/${advertId}`" class="btn-red">
                         <v-icon icon="mdi-eye-outline" size="17" />
-                        Zobacz ogłoszenie
+                        {{ $t('paymentReturn.seeAdvert') }}
                     </NuxtLink>
                     <NuxtLink v-if="eventId" to="/wydarzenia" class="btn-outline">
                         <v-icon icon="mdi-calendar-outline" size="15" />
-                        Wszystkie wydarzenia
+                        {{ $t('paymentReturn.allEvents') }}
                     </NuxtLink>
                     <NuxtLink v-else to="/my-adverts" class="btn-outline">
                         <v-icon icon="mdi-car-outline" size="15" />
-                        Moje ogłoszenia
+                        {{ $t('paymentReturn.myAdverts') }}
                     </NuxtLink>
                     <NuxtLink to="/faktury" class="btn-ghost">
                         <v-icon icon="mdi-receipt-outline" size="15" />
-                        Moje faktury
+                        {{ $t('paymentReturn.myInvoices') }}
                     </NuxtLink>
                 </div>
             </template>
@@ -66,33 +66,33 @@
                 <div class="icon-wrap icon-cancel">
                     <v-icon icon="mdi-close-circle" size="52" />
                 </div>
-                <h1 class="return-title">Płatność anulowana</h1>
+                <h1 class="return-title">{{ $t('paymentReturn.cancelTitle') }}</h1>
                 <p class="return-desc">
                     <template v-if="eventId">
-                        Płatność została anulowana. Twoje wydarzenie nie zostało wyróżnione.<br>
+                        {{ $t('paymentReturn.cancelDescEvent') }}<br>
                     </template>
                     <template v-else>
-                        Płatność została anulowana. Twoje ogłoszenie nie zostało objęte promocją.<br>
+                        {{ $t('paymentReturn.cancelDescAdvert') }}<br>
                     </template>
-                    Możesz spróbować ponownie w dowolnym momencie.
+                    {{ $t('paymentReturn.cancelDescRetry') }}
                 </p>
                 <div class="return-actions">
                     <NuxtLink v-if="eventId" :to="`/promote-event/${eventId}`" class="btn-red">
                         <v-icon icon="mdi-refresh" size="17" />
-                        Spróbuj ponownie
+                        {{ $t('paymentReturn.tryAgain') }}
                     </NuxtLink>
                     <NuxtLink v-else-if="advertId" :to="`/promote-advert/${advertId}`" class="btn-red">
                         <v-icon icon="mdi-refresh" size="17" />
-                        Spróbuj ponownie
+                        {{ $t('paymentReturn.tryAgain') }}
                     </NuxtLink>
                     <NuxtLink v-if="eventId" to="/wydarzenia" class="btn-outline">
-                        Wszystkie wydarzenia
+                        {{ $t('paymentReturn.allEvents') }}
                     </NuxtLink>
                     <NuxtLink v-else to="/my-adverts" class="btn-outline">
-                        Moje ogłoszenia
+                        {{ $t('paymentReturn.myAdverts') }}
                     </NuxtLink>
                     <NuxtLink to="/" class="btn-ghost">
-                        Strona główna
+                        {{ $t('paymentReturn.homepage') }}
                     </NuxtLink>
                 </div>
             </template>
@@ -102,21 +102,21 @@
                 <div class="icon-wrap icon-pending">
                     <v-icon icon="mdi-clock-outline" size="52" class="pending-spin" />
                 </div>
-                <h1 class="return-title">Przetwarzamy płatność</h1>
+                <h1 class="return-title">{{ $t('paymentReturn.pendingTitle') }}</h1>
                 <p class="return-desc">
-                    Potwierdzenie zostanie wysłane na Twój adres e-mail.<br>
-                    Może to potrwać kilka minut.
+                    {{ $t('paymentReturn.pendingDescLine1') }}<br>
+                    {{ $t('paymentReturn.pendingDescLine2') }}
                 </p>
                 <div class="return-actions">
                     <NuxtLink to="/my-adverts" class="btn-red">
                         <v-icon icon="mdi-car-outline" size="17" />
-                        Moje ogłoszenia
+                        {{ $t('paymentReturn.myAdverts') }}
                     </NuxtLink>
                 </div>
             </template>
 
             <div class="return-footer">
-                Potrzebujesz pomocy? Skontaktuj się z <NuxtLink to="/pomoc" class="footer-link">obsługą CARIZO</NuxtLink>
+                {{ $t('paymentReturn.footerHelp') }} <NuxtLink to="/pomoc" class="footer-link">{{ $t('paymentReturn.footerLink') }}</NuxtLink>
             </div>
         </div>
     </div>
@@ -125,7 +125,8 @@
 <script setup lang="ts">
 import type { MonthlyInvoice } from '~/types'
 
-useHead({ title: 'Status płatności — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: t('paymentReturn.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 const { getMyInvoices, generatePdf } = useInvoices()
 
@@ -163,7 +164,7 @@ async function downloadInvoicePdf() {
     if (!latestInvoice.value) return
     pdfLoading.value = true
     try { await generatePdf(latestInvoice.value) }
-    catch { useToast().error('Nie udało się pobrać faktury PDF. Spróbuj ponownie.') }
+    catch { useToast().error(t('paymentReturn.pdfError')) }
     finally { pdfLoading.value = false }
 }
 

@@ -2,9 +2,9 @@
     <div class="my-events-page">
         <div class="page-hero">
             <div class="container">
-                <div class="hero-eyebrow">Twoje konto</div>
-                <h1>Moje <span>wydarzenia</span></h1>
-                <p>Zarządzaj wydarzeniami, które dodałeś do CARIZO.</p>
+                <div class="hero-eyebrow">{{ $t('myEvents.eyebrow') }}</div>
+                <h1>{{ $t('myEvents.titlePart1') }} <span>{{ $t('myEvents.titlePart2') }}</span></h1>
+                <p>{{ $t('myEvents.subtitle') }}</p>
             </div>
         </div>
 
@@ -12,11 +12,11 @@
 
             <div class="top-bar">
                 <div class="top-bar-left">
-                    <span class="events-count">{{ totalCount }} {{ totalCount === 1 ? 'wydarzenie' : totalCount < 5 ? 'wydarzenia' : 'wydarzeń' }}</span>
+                    <span class="events-count">{{ totalCount }} {{ totalCount === 1 ? $t('myEvents.eventOne') : totalCount < 5 ? $t('myEvents.eventFew') : $t('myEvents.eventMany') }}</span>
                 </div>
                 <NuxtLink to="/dodaj-wydarzenie" class="btn-add">
                     <v-icon icon="mdi-plus" size="18" />
-                    Dodaj wydarzenie
+                    {{ $t('myEvents.addEvent') }}
                 </NuxtLink>
             </div>
 
@@ -28,11 +28,11 @@
             <!-- Empty -->
             <div v-else-if="!events.length" class="empty-state">
                 <v-icon icon="mdi-calendar-plus-outline" size="56" class="empty-icon" />
-                <div class="empty-title">Brak wydarzeń</div>
-                <div class="empty-sub">Nie dodałeś jeszcze żadnych wydarzeń.</div>
+                <div class="empty-title">{{ $t('myEvents.emptyTitle') }}</div>
+                <div class="empty-sub">{{ $t('myEvents.emptySub') }}</div>
                 <NuxtLink to="/dodaj-wydarzenie" class="btn-add-first">
                     <v-icon icon="mdi-plus" size="16" />
-                    Dodaj pierwsze wydarzenie
+                    {{ $t('myEvents.addFirst') }}
                 </NuxtLink>
             </div>
 
@@ -41,7 +41,7 @@
                 <div v-for="ev in events" :key="ev.id" class="event-row">
                     <div class="ev-thumb-wrap">
                         <img :src="getEventImageUrl(ev)" :alt="ev.name" class="ev-thumb" />
-                        <span v-if="ev.isFeatured" class="thumb-crown" title="Wyróżnione">
+                        <span v-if="ev.isFeatured" class="thumb-crown" :title="$t('myEvents.featured')">
                             <v-icon icon="mdi-crown" size="13" />
                         </span>
                     </div>
@@ -51,19 +51,19 @@
                             <span><v-icon icon="mdi-calendar" size="13" />{{ formatDate(ev.startDate) }}</span>
                             <span><v-icon icon="mdi-map-marker-outline" size="13" />{{ ev.city }}</span>
                             <span v-if="ev.interestedCount">
-                                <v-icon icon="mdi-account-check-outline" size="13" />{{ ev.interestedCount }} zainteresowanych
+                                <v-icon icon="mdi-account-check-outline" size="13" />{{ ev.interestedCount }} {{ $t('myEvents.interested') }}
                             </span>
                         </div>
                     </div>
                     <span class="ev-status" :class="`status-${ev.status?.toLowerCase()}`">{{ statusLabel(ev.status) }}</span>
                     <div class="ev-actions">
-                        <NuxtLink :to="`/wydarzenie/${ev.id}`" class="btn-view" :aria-label="`Podgląd: ${ev.name}`">
+                        <NuxtLink :to="`/wydarzenie/${ev.id}`" class="btn-view" :aria-label="$t('myEvents.previewAria', { name: ev.name })">
                             <v-icon icon="mdi-eye-outline" size="16" />
                         </NuxtLink>
-                        <NuxtLink :to="`/dodaj-wydarzenie?id=${ev.id}`" class="btn-edit" :aria-label="`Edytuj: ${ev.name}`">
+                        <NuxtLink :to="`/dodaj-wydarzenie?id=${ev.id}`" class="btn-edit" :aria-label="$t('myEvents.editAria', { name: ev.name })">
                             <v-icon icon="mdi-pencil-outline" size="16" />
                         </NuxtLink>
-                        <button @click="confirmDelete(ev.id)" class="btn-delete" :aria-label="`Usuń: ${ev.name}`">
+                        <button @click="confirmDelete(ev.id)" class="btn-delete" :aria-label="$t('myEvents.deleteAria', { name: ev.name })">
                             <v-icon icon="mdi-delete-outline" size="16" />
                         </button>
                     </div>
@@ -72,11 +72,11 @@
 
             <!-- Pagination -->
             <div v-if="totalCount > pageSize" class="pagination">
-                <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)">
+                <button class="page-btn" :disabled="page === 1" :aria-label="$t('myEvents.prevPage')" @click="goPage(page - 1)">
                     <v-icon icon="mdi-chevron-left" size="18" />
                 </button>
                 <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                <button class="page-btn" :disabled="page >= totalPages" aria-label="Następna strona" @click="goPage(page + 1)">
+                <button class="page-btn" :disabled="page >= totalPages" :aria-label="$t('myEvents.nextPage')" @click="goPage(page + 1)">
                     <v-icon icon="mdi-chevron-right" size="18" />
                 </button>
             </div>
@@ -89,13 +89,13 @@
                 <div v-if="deleteId !== null" class="modal-backdrop" @click.self="deleteId = null">
                     <div class="confirm-modal">
                         <v-icon icon="mdi-calendar-remove" size="36" class="del-icon" />
-                        <h3>Usuń wydarzenie</h3>
-                        <p>Tej operacji nie można cofnąć.</p>
+                        <h3>{{ $t('myEvents.deleteTitle') }}</h3>
+                        <p>{{ $t('myEvents.deleteConfirm') }}</p>
                         <div class="confirm-actions">
-                            <button class="btn-cancel-modal" @click="deleteId = null">Anuluj</button>
+                            <button class="btn-cancel-modal" @click="deleteId = null">{{ $t('myEvents.cancel') }}</button>
                             <button class="btn-delete-confirm" :disabled="deleting" @click="doDelete">
                                 <v-icon v-if="deleting" icon="mdi-loading" size="14" class="spin" />
-                                Usuń
+                                {{ $t('myEvents.delete') }}
                             </button>
                         </div>
                     </div>
@@ -109,7 +109,8 @@
 import type { CarEvent, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Moje wydarzenia — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: () => t('myEvents.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { getMyEvents, deleteMyEvent } = useEvents()
 const { getImageUrl } = useImageUrl()
@@ -136,10 +137,10 @@ function formatDate(d: string): string {
 
 function statusLabel(s: string): string {
     const map: Record<string, string> = {
-        Pending: 'Oczekuje',
-        Published: 'Opublikowane',
-        Rejected: 'Odrzucone',
-        Archived: 'Archiwum',
+        Pending: t('myEvents.statusPending'),
+        Published: t('myEvents.statusPublished'),
+        Rejected: t('myEvents.statusRejected'),
+        Archived: t('myEvents.statusArchived'),
     }
     return map[s] ?? s
 }
@@ -153,7 +154,7 @@ async function fetchEvents() {
     } catch (e: any) {
         events.value = []
         totalCount.value = 0
-        toastError(e?.data?.message ?? 'Nie udało się załadować wydarzeń.')
+        toastError(e?.data?.message ?? t('myEvents.errLoad'))
     } finally {
         loading.value = false
     }
@@ -177,9 +178,9 @@ async function doDelete() {
         events.value = events.value.filter(e => e.id !== deleteId.value)
         totalCount.value = Math.max(0, totalCount.value - 1)
         deleteId.value = null
-        toastSuccess('Wydarzenie zostało usunięte.')
+        toastSuccess(t('myEvents.deletedSuccess'))
     } catch (err: any) {
-        toastError(err?.data?.message || 'Nie udało się usunąć wydarzenia. Spróbuj ponownie.')
+        toastError(err?.data?.message || t('myEvents.errDelete'))
     } finally {
         deleting.value = false
     }

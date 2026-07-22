@@ -3,26 +3,27 @@
         <div class="confirm-card">
             <template v-if="status === 'loading'">
                 <v-progress-circular indeterminate color="#8B0D1D" size="48" />
-                <p class="confirm-text">Potwierdzanie zapisu…</p>
+                <p class="confirm-text">{{ $t('newsletterConfirm.loadingText') }}</p>
             </template>
             <template v-else-if="status === 'success'">
                 <v-icon icon="mdi-check-circle-outline" size="56" color="#4CAF50" />
-                <h1 class="confirm-title">Zapis potwierdzony!</h1>
-                <p class="confirm-text">Dziękujemy! Twój adres e-mail został potwierdzony. Będziesz otrzymywać najnowsze ogłoszenia i aktualności CARIZO.</p>
-                <NuxtLink to="/" class="confirm-btn">Przejdź do serwisu</NuxtLink>
+                <h1 class="confirm-title">{{ $t('newsletterConfirm.successTitle') }}</h1>
+                <p class="confirm-text">{{ $t('newsletterConfirm.successText') }}</p>
+                <NuxtLink to="/" class="confirm-btn">{{ $t('newsletterConfirm.successBtn') }}</NuxtLink>
             </template>
             <template v-else>
                 <v-icon icon="mdi-alert-circle-outline" size="56" color="#8B0D1D" />
-                <h1 class="confirm-title">Link wygasł</h1>
-                <p class="confirm-text">Ten link potwierdzający jest nieważny lub wygasł. Spróbuj zapisać się ponownie.</p>
-                <NuxtLink to="/" class="confirm-btn">Wróć do strony głównej</NuxtLink>
+                <h1 class="confirm-title">{{ $t('newsletterConfirm.errorTitle') }}</h1>
+                <p class="confirm-text">{{ $t('newsletterConfirm.errorText') }}</p>
+                <NuxtLink to="/" class="confirm-btn">{{ $t('newsletterConfirm.errorBtn') }}</NuxtLink>
             </template>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Potwierdzenie zapisu — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: () => t('newsletterConfirm.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const route = useRoute()
 const status = ref<'loading' | 'success' | 'error'>('loading')

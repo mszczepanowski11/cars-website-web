@@ -14,7 +14,7 @@
                 </div>
                 <div class="hero-content container">
                     <span v-if="event.isFeatured" class="featured-chip">
-                        <v-icon icon="mdi-crown" size="13" /> Wyróżnione
+                        <v-icon icon="mdi-crown" size="13" /> {{ $t('eventDetail.featured') }}
                     </span>
                     <h1 class="hero-title">{{ event.name }}</h1>
                     <div class="hero-meta">
@@ -36,29 +36,29 @@
                         <div class="action-bar">
                             <button class="btn-attend" :class="{ active: isInterested }" @click="toggleAttend">
                                 <v-icon :icon="isInterested ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="17" />
-                                {{ isInterested ? 'Biorę udział' : 'Wezmę udział' }}
+                                {{ isInterested ? $t('eventDetail.attending') : $t('eventDetail.willAttend') }}
                                 <span v-if="localInterestedCount" class="attend-count">{{ localInterestedCount }}</span>
                             </button>
-                            <button class="btn-fav" :class="{ active: isFavorite }" :aria-label="isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'" @click="toggleFavorite">
+                            <button class="btn-fav" :class="{ active: isFavorite }" :aria-label="isFavorite ? $t('eventDetail.removeFav') : $t('eventDetail.addFav')" @click="toggleFavorite">
                                 <v-icon :icon="isFavorite ? 'mdi-heart' : 'mdi-heart-outline'" size="17" />
                             </button>
                             <a v-if="event.ticketsUrl" :href="event.ticketsUrl" target="_blank" rel="noopener noreferrer" class="btn-ticket">
-                                <v-icon icon="mdi-ticket-outline" size="16" />Kup bilety
+                                <v-icon icon="mdi-ticket-outline" size="16" />{{ $t('eventDetail.buyTickets') }}
                             </a>
                             <a v-if="event.websiteUrl" :href="event.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn-web">
-                                <v-icon icon="mdi-web" size="16" />Strona
+                                <v-icon icon="mdi-web" size="16" />{{ $t('eventDetail.website') }}
                             </a>
                         </div>
 
                         <!-- Description -->
                         <div class="section-block">
-                            <h2 class="block-title">Opis</h2>
+                            <h2 class="block-title">{{ $t('eventDetail.descriptionTitle') }}</h2>
                             <p class="event-desc">{{ event.description }}</p>
                         </div>
 
                         <!-- Share -->
                         <div class="section-block">
-                            <h2 class="block-title">Udostępnij</h2>
+                            <h2 class="block-title">{{ $t('eventDetail.shareTitle') }}</h2>
                             <div class="share-btns">
                                 <a :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`" target="_blank" rel="noopener noreferrer" class="share-btn share-fb">
                                     <v-icon icon="mdi-facebook" size="18" />Facebook
@@ -74,7 +74,7 @@
                                 </a>
                                 <button class="share-btn share-copy" @click="copyLink">
                                     <v-icon :icon="copied ? 'mdi-check' : 'mdi-link-variant'" size="18" />
-                                    {{ copied ? 'Skopiowano!' : 'Kopiuj link' }}
+                                    {{ copied ? $t('eventDetail.copied') : $t('eventDetail.copyLink') }}
                                 </button>
                             </div>
                         </div>
@@ -85,25 +85,25 @@
 
                         <!-- Details card -->
                         <div class="sidebar-card">
-                            <h3 class="card-title">Szczegóły</h3>
+                            <h3 class="card-title">{{ $t('eventDetail.details.title') }}</h3>
                             <div class="detail-item">
                                 <v-icon icon="mdi-calendar-start" size="16" class="di-icon" />
                                 <div>
-                                    <div class="di-label">Początek</div>
+                                    <div class="di-label">{{ $t('eventDetail.details.start') }}</div>
                                     <div class="di-val">{{ formatDate(event.startDate) }}</div>
                                 </div>
                             </div>
                             <div v-if="event.endDate && event.endDate !== event.startDate" class="detail-item">
                                 <v-icon icon="mdi-calendar-end" size="16" class="di-icon" />
                                 <div>
-                                    <div class="di-label">Koniec</div>
+                                    <div class="di-label">{{ $t('eventDetail.details.end') }}</div>
                                     <div class="di-val">{{ formatDate(event.endDate) }}</div>
                                 </div>
                             </div>
                             <div class="detail-item">
                                 <v-icon icon="mdi-map-marker" size="16" class="di-icon" />
                                 <div>
-                                    <div class="di-label">Lokalizacja</div>
+                                    <div class="di-label">{{ $t('eventDetail.details.location') }}</div>
                                     <div class="di-val">{{ event.city }}</div>
                                     <div v-if="event.address" class="di-sub">{{ event.address }}</div>
                                 </div>
@@ -117,7 +117,7 @@
                             <div v-if="event.organizerName" class="detail-item">
                                 <v-icon icon="mdi-account-tie-outline" size="16" class="di-icon" />
                                 <div>
-                                    <div class="di-label">Organizator</div>
+                                    <div class="di-label">{{ $t('eventDetail.details.organizer') }}</div>
                                     <div class="di-val">{{ event.organizerName }}</div>
                                     <div v-if="event.organizerEmail" class="di-sub">{{ event.organizerEmail }}</div>
                                     <div v-if="event.organizerPhone" class="di-sub">{{ event.organizerPhone }}</div>
@@ -127,22 +127,22 @@
 
                         <!-- Stats card -->
                         <div class="sidebar-card">
-                            <h3 class="card-title">Statystyki</h3>
+                            <h3 class="card-title">{{ $t('eventDetail.stats.title') }}</h3>
                             <div class="stat-row">
                                 <v-icon icon="mdi-eye-outline" size="15" class="stat-icon" />
-                                <span>{{ (event.viewCount ?? 0).toLocaleString('pl') }} wyświetleń</span>
+                                <span>{{ $t('eventDetail.stats.views', { count: (event.viewCount ?? 0).toLocaleString(locale) }) }}</span>
                             </div>
                             <div class="stat-row">
                                 <v-icon icon="mdi-account-check-outline" size="15" class="stat-icon" />
-                                <span>{{ localInterestedCount.toLocaleString('pl') }} zainteresowanych</span>
+                                <span>{{ $t('eventDetail.stats.interested', { count: localInterestedCount.toLocaleString(locale) }) }}</span>
                             </div>
                             <div class="stat-row">
                                 <v-icon icon="mdi-account-group-outline" size="15" class="stat-icon" />
-                                <span>{{ (event.attendingCount ?? 0).toLocaleString('pl') }} uczestników</span>
+                                <span>{{ $t('eventDetail.stats.attendees', { count: (event.attendingCount ?? 0).toLocaleString(locale) }) }}</span>
                             </div>
                             <div class="stat-row">
                                 <v-icon icon="mdi-share-variant-outline" size="15" class="stat-icon" />
-                                <span>{{ (event.shareCount ?? 0).toLocaleString('pl') }} udostępnień</span>
+                                <span>{{ $t('eventDetail.stats.shares', { count: (event.shareCount ?? 0).toLocaleString(locale) }) }}</span>
                             </div>
                         </div>
 
@@ -153,8 +153,8 @@
 
         <div v-else class="not-found">
             <v-icon icon="mdi-calendar-off-outline" size="52" class="nf-icon" />
-            <p>Nie znaleziono wydarzenia.</p>
-            <NuxtLink to="/wydarzenia" class="back-link">Wróć do wydarzeń</NuxtLink>
+            <p>{{ $t('eventDetail.notFound.title') }}</p>
+            <NuxtLink to="/wydarzenia" class="back-link">{{ $t('eventDetail.notFound.back') }}</NuxtLink>
         </div>
 
     </div>
@@ -163,6 +163,7 @@
 <script setup lang="ts">
 import type { CarEvent } from '~/types'
 
+const { t, locale } = useI18n()
 const route = useRoute()
 const eventId = Number(route.params.id)
 
@@ -222,7 +223,7 @@ async function toggleAttend() {
         localInterestedCount.value = was
             ? localInterestedCount.value + 1
             : Math.max(0, localInterestedCount.value - 1)
-        toastError('Nie udało się zaktualizować obecności.')
+        toastError(t('eventDetail.errors.updateAttend'))
     }
 }
 
@@ -235,7 +236,7 @@ async function toggleFavorite() {
         else await addEventFavourite(eventId)
     } catch {
         isFavorite.value = was
-        toastError('Nie udało się zaktualizować ulubionych.')
+        toastError(t('eventDetail.errors.updateFav'))
     }
 }
 
@@ -245,15 +246,15 @@ async function copyLink() {
         copied.value = true
         setTimeout(() => { copied.value = false }, 2000)
     } catch {
-        toastError('Nie udało się skopiować linku.')
+        toastError(t('eventDetail.errors.copyLink'))
     }
 }
 
 const eventConfig = useRuntimeConfig()
 useHead(computed(() => {
     const e = event.value
-    if (!e) return { title: 'Wydarzenie — CARIZO' }
-    const desc = e.description?.slice(0, 160) ?? `Wydarzenie motoryzacyjne: ${e.name}`
+    if (!e) return { title: t('eventDetail.seo.fallbackTitle') }
+    const desc = e.description?.slice(0, 160) ?? t('eventDetail.seo.descFallback', { name: e.name })
     const img = mainImageUrl.value?.startsWith('http') ? mainImageUrl.value : `${eventConfig.public.siteUrl}${mainImageUrl.value}`
     const pageUrl = `${eventConfig.public.siteUrl}/wydarzenie/${eventId}`
     return {
@@ -284,7 +285,7 @@ onMounted(async () => {
         localInterestedCount.value = event.value.interestedCount ?? 0
     } catch {
         event.value = null
-        toastError('Nie udało się załadować wydarzenia.')
+        toastError(t('eventDetail.errors.load'))
     } finally {
         loading.value = false
     }

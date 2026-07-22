@@ -25,7 +25,7 @@
 
         <select v-else-if="definition.dataType === 'Select'" :value="modelValue?.valueText ?? ''"
             class="daf-input" @change="emitText(($event.target as HTMLSelectElement).value)">
-            <option value="">— wybierz —</option>
+            <option value="">{{ $t('cAttrField.selectPlaceholder') }}</option>
             <option v-for="o in options" :key="o" :value="o">{{ o }}</option>
         </select>
 
@@ -41,7 +41,7 @@
             @input="emitDate(($event.target as HTMLInputElement).value)" />
 
         <input v-else-if="definition.dataType === 'File'" :value="modelValue?.valueText ?? ''"
-            class="daf-input" type="text" placeholder="Link do pliku (URL)"
+            class="daf-input" type="text" :placeholder="$t('cAttrField.filePlaceholder')"
             @input="emitText(($event.target as HTMLInputElement).value)" />
 
         <div v-if="hint" class="daf-hint">{{ hint }}</div>

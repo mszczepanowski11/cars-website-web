@@ -28,8 +28,8 @@
                 <span class="advert-title">{{ conv.advertTitle }}</span>
             </div>
             <div class="conv-preview">
-                <span v-if="conv.lastMessageIsMine" class="preview-mine">Ty: </span>
-                <span>{{ conv.lastMessageContent || 'Zacznij rozmowę' }}</span>
+                <span v-if="conv.lastMessageIsMine" class="preview-mine">{{ $t('cConversation.previewMine') }}</span>
+                <span>{{ conv.lastMessageContent || $t('cConversation.startConversation') }}</span>
             </div>
         </div>
 
@@ -45,15 +45,15 @@
             <div v-if="showMenu" class="ctx-menu" :style="menuStyle" @click.stop>
                 <button class="ctx-item" @click="emit('pin'); showMenu = false">
                     <v-icon :icon="conv.isPinned ? 'mdi-pin-off' : 'mdi-pin'" size="16" />
-                    {{ conv.isPinned ? 'Odepnij' : 'Przypnij' }}
+                    {{ conv.isPinned ? $t('cConversation.unpin') : $t('cConversation.pin') }}
                 </button>
                 <button class="ctx-item" @click="emit('mark-unread'); showMenu = false">
                     <v-icon icon="mdi-email-mark-as-unread" size="16" />
-                    Oznacz jako nieprzeczytane
+                    {{ $t('cConversation.markUnread') }}
                 </button>
                 <button class="ctx-item" @click="emit('archive'); showMenu = false">
                     <v-icon :icon="conv.isArchived ? 'mdi-archive-arrow-up' : 'mdi-archive-arrow-down'" size="16" />
-                    {{ conv.isArchived ? 'Przywróć' : 'Archiwizuj' }}
+                    {{ conv.isArchived ? $t('cConversation.unarchive') : $t('cConversation.archive') }}
                 </button>
             </div>
         </Teleport>
@@ -71,6 +71,8 @@ const emit = defineEmits<{
     (e: 'mark-unread'): void
 }>()
 
+const { t } = useI18n()
+
 const showMenu = ref(false)
 const menuStyle = ref('')
 
@@ -83,7 +85,7 @@ const timeLabel = computed(() => {
     const d = new Date(props.conv.lastMessageAt)
     const now = new Date()
     const diff = now.getTime() - d.getTime()
-    if (diff < 60_000) return 'teraz'
+    if (diff < 60_000) return t('cConversation.timeNow')
     if (diff < 3_600_000) return `${Math.floor(diff / 60_000)} min`
     if (diff < 86_400_000) return d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })
     if (diff < 7 * 86_400_000) return d.toLocaleDateString('pl-PL', { weekday: 'short' })

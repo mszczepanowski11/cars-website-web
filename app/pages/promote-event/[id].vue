@@ -4,31 +4,31 @@
         <div class="promo-topbar">
             <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" />
             <div class="promo-steps">
-                <span class="ps done"><v-icon icon="mdi-check" size="14" />Wydarzenie</span>
+                <span class="ps done"><v-icon icon="mdi-check" size="14" />{{ $t('promoteEvent.stepEvent') }}</span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ done: step > 1, active: step === 1 }">
-                    <v-icon :icon="step > 1 ? 'mdi-check' : 'mdi-star-outline'" size="14" />Promocja
+                    <v-icon :icon="step > 1 ? 'mdi-check' : 'mdi-star-outline'" size="14" />{{ $t('promoteEvent.stepPromo') }}
                 </span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ done: step > 2, active: step === 2 }">
-                    <v-icon :icon="step > 2 ? 'mdi-check' : 'mdi-receipt-outline'" size="14" />Faktura
+                    <v-icon :icon="step > 2 ? 'mdi-check' : 'mdi-receipt-outline'" size="14" />{{ $t('promoteEvent.stepInvoice') }}
                 </span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ active: step === 3 }">
-                    <v-icon icon="mdi-check-circle-outline" size="14" />Płatność
+                    <v-icon icon="mdi-check-circle-outline" size="14" />{{ $t('promoteEvent.stepPayment') }}
                 </span>
             </div>
             <NuxtLink :to="`/wydarzenie/${eventId}`" class="skip-link">
-                Pomiń wyróżnienie
+                {{ $t('promoteEvent.skipFeature') }}
                 <v-icon icon="mdi-arrow-right" size="15" />
             </NuxtLink>
         </div>
 
         <div class="promo-body">
             <div class="promo-hero">
-                <div class="hero-badge"><v-icon icon="mdi-calendar-star" size="18" />Wyróżnij wydarzenie</div>
-                <h1>Dotrzyj do więcej uczestników</h1>
-                <p>Wyróżnione wydarzenia pojawiają się na górze listy i stronie głównej CARIZO.</p>
+                <div class="hero-badge"><v-icon icon="mdi-calendar-star" size="18" />{{ $t('promoteEvent.heroBadge') }}</div>
+                <h1>{{ $t('promoteEvent.heroTitle') }}</h1>
+                <p>{{ $t('promoteEvent.heroDesc') }}</p>
             </div>
 
             <div v-if="event" class="event-preview">
@@ -44,7 +44,7 @@
                 </div>
                 <div class="ep-badge" :class="{ active: event.isFeatured }">
                     <v-icon :icon="event.isFeatured ? 'mdi-star' : 'mdi-star-outline'" size="14" />
-                    {{ event.isFeatured ? 'Wyróżnione' : 'Zwykłe' }}
+                    {{ event.isFeatured ? $t('promoteEvent.featured') : $t('promoteEvent.regular') }}
                 </div>
             </div>
 
@@ -54,10 +54,10 @@
                     class="plan-card"
                     :class="{ selected: selectedDays === plan.days, 'plan-popular': plan.popular }"
                     @click="selectedDays = plan.days">
-                    <div v-if="plan.popular" class="popular-badge">NAJPOPULARNIEJSZE</div>
+                    <div v-if="plan.popular" class="popular-badge">{{ $t('promoteEvent.mostPopular') }}</div>
                     <div class="plan-header">
                         <div class="plan-icon"><v-icon :icon="plan.icon" size="26" /></div>
-                        <div class="plan-name">{{ plan.days }} dni</div>
+                        <div class="plan-name">{{ $t('promoteEvent.daysLabel', { days: plan.days }) }}</div>
                     </div>
                     <div class="plan-price">
                         <strong>{{ getDisplayPrice(plan.days).toFixed(2) }} zł</strong>
@@ -73,33 +73,33 @@
             <!-- STEP 1: Summary + CTA -->
             <div v-if="step === 1" class="promo-footer">
                 <div class="summary-paid">
-                    <div class="summary-name">Wyróżnienie wydarzenia – {{ selectedDays }} dni</div>
+                    <div class="summary-name">{{ $t('promoteEvent.summaryTitle', { days: selectedDays }) }}</div>
                     <div class="summary-price">
                         <span v-if="couponResult?.isValid" class="price-original">{{ selectedPrice.toFixed(2) }} zł</span>
                         <span>{{ finalPrice.toFixed(2) }} zł</span>
                     </div>
                     <div v-if="couponResult?.isValid" class="coupon-applied">
                         <v-icon icon="mdi-tag-outline" size="14" />
-                        Rabat zastosowany
+                        {{ $t('promoteEvent.discountApplied') }}
                     </div>
                 </div>
                 <div class="coupon-row">
                     <div class="coupon-input-wrap">
-                        <input v-model="couponCode" class="coupon-input" placeholder="Kod rabatowy (opcjonalnie)" :disabled="couponLoading" @keyup.enter="applyCoupon" />
+                        <input v-model="couponCode" class="coupon-input" :placeholder="$t('promoteEvent.couponPlaceholder')" :disabled="couponLoading" @keyup.enter="applyCoupon" />
                         <button class="coupon-btn" :disabled="!couponCode || couponLoading" @click="applyCoupon">
                             <v-icon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
-                            <span v-else>Zastosuj</span>
+                            <span v-else>{{ $t('promoteEvent.apply') }}</span>
                         </button>
                     </div>
                     <div v-if="couponError" class="coupon-error">{{ couponError }}</div>
                 </div>
                 <div class="footer-actions">
                     <NuxtLink :to="`/wydarzenie/${eventId}`" class="btn-skip">
-                        <v-icon icon="mdi-arrow-left" size="15" />Wróć
+                        <v-icon icon="mdi-arrow-left" size="15" />{{ $t('promoteEvent.back') }}
                     </NuxtLink>
                     <button class="btn-pay" @click="goToBilling">
                         <v-icon icon="mdi-receipt-outline" size="16" />
-                        Dane do faktury
+                        {{ $t('promoteEvent.invoiceData') }}
                         <v-icon icon="mdi-arrow-right" size="15" />
                     </button>
                 </div>
@@ -110,9 +110,9 @@
             <div v-else-if="step === 2" class="billing-step">
                 <h2 class="billing-step-title">
                     <v-icon icon="mdi-receipt-outline" size="20" />
-                    Dane do faktury
+                    {{ $t('promoteEvent.invoiceData') }}
                 </h2>
-                <p class="billing-step-sub">Faktura zostanie automatycznie wygenerowana i wysłana na podany e-mail po potwierdzeniu płatności.</p>
+                <p class="billing-step-sub">{{ $t('promoteEvent.invoiceStepSub') }}</p>
 
                 <BillingDataForm
                     v-model="billingData"
@@ -123,33 +123,33 @@
 
                 <div class="billing-order-summary">
                     <div class="bos-row">
-                        <span>Promocja</span>
-                        <span>Wyróżnienie wydarzenia – {{ selectedDays }} dni</span>
+                        <span>{{ $t('promoteEvent.promoRow') }}</span>
+                        <span>{{ $t('promoteEvent.summaryTitle', { days: selectedDays }) }}</span>
                     </div>
                     <div v-if="couponResult?.isValid" class="bos-row bos-discount">
-                        <span>Rabat</span>
+                        <span>{{ $t('promoteEvent.discount') }}</span>
                         <span>-{{ (selectedPrice - finalPrice).toFixed(2) }} zł</span>
                     </div>
                     <div class="bos-row bos-net">
-                        <span>Kwota netto</span>
+                        <span>{{ $t('promoteEvent.nettoAmount') }}</span>
                         <span>{{ (finalPrice / 1.23).toFixed(2) }} zł</span>
                     </div>
                     <div class="bos-row bos-vat">
-                        <span>VAT (23%)</span>
+                        <span>{{ $t('promoteEvent.vat23') }}</span>
                         <span>{{ (finalPrice - finalPrice / 1.23).toFixed(2) }} zł</span>
                     </div>
                     <div class="bos-row bos-total">
-                        <span>Do zapłaty</span>
+                        <span>{{ $t('promoteEvent.toPay') }}</span>
                         <strong>{{ finalPrice.toFixed(2) }} zł</strong>
                     </div>
                 </div>
 
                 <div class="footer-actions">
-                    <button class="btn-skip" @click="step = 1"><v-icon icon="mdi-arrow-left" size="15" />Wróć</button>
+                    <button class="btn-skip" @click="step = 1"><v-icon icon="mdi-arrow-left" size="15" />{{ $t('promoteEvent.back') }}</button>
                     <button class="btn-pay" :disabled="paying" @click="initiatePayment">
                         <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
                         <v-icon v-else icon="mdi-credit-card-outline" size="16" />
-                        Zapłać {{ finalPrice.toFixed(2) }} zł przez ING
+                        {{ $t('promoteEvent.payViaIng', { price: finalPrice.toFixed(2) }) }}
                     </button>
                 </div>
                 <div v-if="actionError" class="action-error"><v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
@@ -162,6 +162,7 @@
 import type { CouponValidation, BillingData, UserProfile } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+const { t } = useI18n()
 useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
@@ -225,23 +226,23 @@ function submitImojeForm(result: { paymentUrl: string, formFields?: Record<strin
     }
 }
 
-const plans = [
+const plans = computed(() => [
     {
         days: 7, popular: false, icon: 'mdi-star-outline',
-        desc: 'Wydarzenie wyróżnione przez tydzień.',
-        feats: ['Pozycja TOP w wynikach', 'Oznaczenie WYRÓŻNIONE', 'Więcej uczestników'],
+        desc: t('promoteEvent.plans.d7.desc'),
+        feats: [t('promoteEvent.plans.d7.f1'), t('promoteEvent.plans.d7.f2'), t('promoteEvent.plans.d7.f3')],
     },
     {
         days: 14, popular: true, icon: 'mdi-star',
-        desc: 'Dwa tygodnie maksymalnej widoczności.',
-        feats: ['Pozycja TOP w wynikach', 'Sekcja polecane na stronie głównej', '3× więcej wyświetleń'],
+        desc: t('promoteEvent.plans.d14.desc'),
+        feats: [t('promoteEvent.plans.d14.f1'), t('promoteEvent.plans.d14.f2'), t('promoteEvent.plans.d14.f3')],
     },
     {
         days: 30, popular: false, icon: 'mdi-crown-outline',
-        desc: 'Miesiąc wyróżnienia – idealne dla dużych wydarzeń.',
-        feats: ['Wszystko z 14 dni', 'Najlepsza cena na dzień', 'Priorytetowe wsparcie'],
+        desc: t('promoteEvent.plans.d30.desc'),
+        feats: [t('promoteEvent.plans.d30.f1'), t('promoteEvent.plans.d30.f2'), t('promoteEvent.plans.d30.f3')],
     },
-]
+])
 
 const apiPrices = ref<Record<number, number>>({})
 
@@ -299,9 +300,9 @@ async function applyCoupon() {
     try {
         const r = await validateCoupon(couponCode.value.trim(), selectedPrice.value)
         couponResult.value = r
-        if (!r.isValid) couponError.value = r.message ?? 'Nieprawidłowy kod rabatowy.'
+        if (!r.isValid) couponError.value = r.message ?? t('promoteEvent.couponInvalidCode')
     } catch (e: any) {
-        couponError.value = e?.data?.message ?? 'Nie udało się zastosować kuponu.'
+        couponError.value = e?.data?.message ?? t('promoteEvent.couponApplyError')
     } finally {
         couponLoading.value = false
     }
@@ -313,7 +314,7 @@ function goToBilling() {
 
 async function initiatePayment() {
     if (!billingFormRef.value?.validateAll()) {
-        actionError.value = 'Uzupełnij dane do faktury.'
+        actionError.value = t('promoteEvent.fillBilling')
         return
     }
     paying.value = true
@@ -332,7 +333,7 @@ async function initiatePayment() {
         const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
         submitImojeForm(result)
     } catch (e: any) {
-        actionError.value = e?.data?.message ?? 'Błąd podczas inicjowania płatności.'
+        actionError.value = e?.data?.message ?? t('promoteEvent.paymentInitError')
     } finally {
         paying.value = false
     }
