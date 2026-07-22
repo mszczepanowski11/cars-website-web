@@ -3,17 +3,17 @@
         <div class="container">
             <div class="page-header">
                 <NuxtLink to="/adverts" class="back-link">
-                    <v-icon icon="mdi-chevron-left" size="18" />Wróć do ogłoszeń
+                    <v-icon icon="mdi-chevron-left" size="18" />{{ $t('compare.backToAdverts') }}
                 </NuxtLink>
-                <h1 class="page-title">Porównywarka ogłoszeń</h1>
+                <h1 class="page-title">{{ $t('compare.title') }}</h1>
             </div>
 
             <div v-if="!compared.length" class="empty-compare">
                 <v-icon icon="mdi-compare-remove" size="64" class="empty-icon" />
-                <h2>Brak ogłoszeń do porównania</h2>
-                <p>Przejdź do listy ogłoszeń i dodaj do porównywarki klikając ikonę <v-icon icon="mdi-compare" size="16" /></p>
+                <h2>{{ $t('compare.emptyTitle') }}</h2>
+                <p>{{ $t('compare.emptyDesc') }} <v-icon icon="mdi-compare" size="16" /></p>
                 <NuxtLink to="/adverts" class="btn-red">
-                    <v-icon icon="mdi-car-multiple" size="16" />Przeglądaj ogłoszenia
+                    <v-icon icon="mdi-car-multiple" size="16" />{{ $t('compare.browseAdverts') }}
                 </NuxtLink>
             </div>
 
@@ -24,7 +24,7 @@
                     <div v-for="a in loadedAdverts" :key="a.id" class="cmp-advert-header">
                         <div class="cmp-header-img-wrap">
                             <img :src="getMainImg(a)" :alt="a.title" class="cmp-header-img" loading="lazy" />
-                            <button class="cmp-remove-btn" @click="toggle(a.id)" title="Usuń z porównania">
+                            <button class="cmp-remove-btn" @click="toggle(a.id)" :title="$t('compare.removeFromCompare')">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
                             <span v-if="a.badge" :class="['cmp-advert-badge', `cmp-badge--${a.badge.toLowerCase()}`]">{{ a.badge }}</span>
@@ -51,9 +51,9 @@
                     <div v-for="a in loadedAdverts" :key="a.id + 'action'" class="cmp-val-cell cmp-action-cell">
                         <NuxtLink :to="`/advert/${a.id}`" class="cmp-see-btn">
                             <v-icon icon="mdi-arrow-right-circle-outline" size="15" />
-                            Szczegóły
+                            {{ $t('compare.details') }}
                         </NuxtLink>
-                        <button v-if="isLoggedIn" class="cmp-fav-btn" :class="{ active: isFavorite(a.id) }" @click.prevent="toggleFavorite(a.id)" :title="isFavorite(a.id) ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'">
+                        <button v-if="isLoggedIn" class="cmp-fav-btn" :class="{ active: isFavorite(a.id) }" @click.prevent="toggleFavorite(a.id)" :title="isFavorite(a.id) ? $t('compare.removeFromFavorites') : $t('compare.addToFavorites')">
                             <v-icon :icon="isFavorite(a.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="15" />
                         </button>
                     </div>
@@ -70,7 +70,8 @@
 <script setup lang="ts">
 import type { CarAdvert } from '~/types'
 
-useHead({ title: 'Porównywarka — CARIZO' })
+const { t } = useI18n()
+useHead({ title: t('compare.metaTitle') })
 useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { compared, toggle } = useCompare()
@@ -94,29 +95,29 @@ interface SpecRow {
     bestFn?: (vals: (string | number | undefined | null)[]) => string | number | null
 }
 
-const specRows: SpecRow[] = [
-    { key: 'year',        label: 'Rok produkcji',   get: a => a.year,
+const specRows = computed<SpecRow[]>(() => [
+    { key: 'year',        label: t('compare.specYear'),        get: a => a.year,
                                                       bestFn: vals => Math.max(...(vals.filter(v => v != null) as number[])) },
-    { key: 'mileage',     label: 'Przebieg',         get: a => a.mileage ? `${Number(a.mileage).toLocaleString('pl')} km` : null },
-    { key: 'price',       label: 'Cena',             get: a => a.price ? `${Number(a.price).toLocaleString('pl')} zł` : null },
-    { key: 'power',       label: 'Moc',              get: a => (a.powerHP ?? a.engineVersion?.horsepower ?? a.engineVersion?.powerHP) ? `${a.powerHP ?? a.engineVersion?.horsepower ?? a.engineVersion?.powerHP} KM` : null,
+    { key: 'mileage',     label: t('compare.specMileage'),     get: a => a.mileage ? `${Number(a.mileage).toLocaleString('pl')} km` : null },
+    { key: 'price',       label: t('compare.specPrice'),       get: a => a.price ? `${Number(a.price).toLocaleString('pl')} zł` : null },
+    { key: 'power',       label: t('compare.specPower'),       get: a => (a.powerHP ?? a.engineVersion?.horsepower ?? a.engineVersion?.powerHP) ? `${a.powerHP ?? a.engineVersion?.horsepower ?? a.engineVersion?.powerHP} KM` : null,
                                                       bestFn: vals => { const nums = vals.map(v => parseInt(String(v ?? '0'))).filter(n => !isNaN(n) && n > 0); return nums.length ? Math.max(...nums) : null } },
-    { key: 'engine',      label: 'Pojemność',        get: a => (a.engineSize ?? a.engineVersion?.displacement) ? `${a.engineSize ?? a.engineVersion?.displacement} cm³` : null },
-    { key: 'fuel',        label: 'Paliwo',           get: a => a.fuelType?.name },
-    { key: 'gearbox',     label: 'Skrzynia',         get: a => a.gearbox?.name },
-    { key: 'body',        label: 'Nadwozie',         get: a => a.bodyType?.name },
-    { key: 'drive',       label: 'Napęd',            get: a => a.driveType?.name ?? null },
-    { key: 'color',       label: 'Kolor',            get: a => a.color?.name ?? null },
-    { key: 'doors',       label: 'Liczba drzwi',     get: a => a.doorCount ?? null },
-    { key: 'seats',       label: 'Liczba miejsc',    get: a => a.seatsCount ?? null },
-    { key: 'condition',   label: 'Stan',             get: a => a.condition === 'new' ? 'Nowe' : a.condition === 'used' ? 'Używane' : null },
-    { key: 'damage',      label: 'Bezwypadkowy',     get: a => a.hasDamage === false ? '✓ Bezwypadkowy' : a.hasDamage === true ? '✗ Po wypadku' : null },
-    { key: 'warranty',    label: 'Gwarancja',        get: a => a.hasWarranty ? '✓ Tak' : null },
-    { key: 'servicebook', label: 'Książka serwis.',  get: a => a.hasServiceBook ? '✓ Tak' : null },
-    { key: 'brand',       label: 'Marka',            get: a => a.brand?.name },
-    { key: 'model',       label: 'Model',            get: a => a.model?.name },
-    { key: 'city',        label: 'Lokalizacja',      get: a => a.city ?? null },
-]
+    { key: 'engine',      label: t('compare.specEngine'),      get: a => (a.engineSize ?? a.engineVersion?.displacement) ? `${a.engineSize ?? a.engineVersion?.displacement} cm³` : null },
+    { key: 'fuel',        label: t('compare.specFuel'),        get: a => a.fuelType?.name },
+    { key: 'gearbox',     label: t('compare.specGearbox'),     get: a => a.gearbox?.name },
+    { key: 'body',        label: t('compare.specBody'),        get: a => a.bodyType?.name },
+    { key: 'drive',       label: t('compare.specDrive'),       get: a => a.driveType?.name ?? null },
+    { key: 'color',       label: t('compare.specColor'),       get: a => a.color?.name ?? null },
+    { key: 'doors',       label: t('compare.specDoors'),       get: a => a.doorCount ?? null },
+    { key: 'seats',       label: t('compare.specSeats'),       get: a => a.seatsCount ?? null },
+    { key: 'condition',   label: t('compare.specCondition'),   get: a => a.condition === 'new' ? t('compare.conditionNew') : a.condition === 'used' ? t('compare.conditionUsed') : null },
+    { key: 'damage',      label: t('compare.specDamage'),      get: a => a.hasDamage === false ? t('compare.noDamage') : a.hasDamage === true ? t('compare.hasDamage') : null },
+    { key: 'warranty',    label: t('compare.specWarranty'),    get: a => a.hasWarranty ? t('compare.yes') : null },
+    { key: 'servicebook', label: t('compare.specServicebook'), get: a => a.hasServiceBook ? t('compare.yes') : null },
+    { key: 'brand',       label: t('compare.specBrand'),       get: a => a.brand?.name },
+    { key: 'model',       label: t('compare.specModel'),       get: a => a.model?.name },
+    { key: 'city',        label: t('compare.specCity'),        get: a => a.city ?? null },
+])
 
 function isBest(row: SpecRow, a: CarAdvert): boolean {
     if (!row.bestFn) return false

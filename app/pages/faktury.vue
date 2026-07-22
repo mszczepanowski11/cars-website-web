@@ -3,19 +3,19 @@
         <div class="container">
             <div class="page-header">
                 <div>
-                    <h1 class="page-title">Faktury i płatności</h1>
-                    <p class="page-sub">Historia Twoich zakupów i faktur w CARIZO</p>
+                    <h1 class="page-title">{{ $t('invoices.title') }}</h1>
+                    <p class="page-sub">{{ $t('invoices.subtitle') }}</p>
                 </div>
             </div>
 
             <div class="inv-tabs">
                 <button class="inv-tab" :class="{ active: tab === 'invoices' }" @click="tab = 'invoices'">
                     <v-icon icon="mdi-receipt-outline" size="16" />
-                    Faktury ({{ invoicesTotal }})
+                    {{ $t('invoices.tabInvoices') }} ({{ invoicesTotal }})
                 </button>
                 <button class="inv-tab" :class="{ active: tab === 'payments' }" @click="tab = 'payments'">
                     <v-icon icon="mdi-credit-card-outline" size="16" />
-                    Historia płatności ({{ paymentsTotal }})
+                    {{ $t('invoices.tabPayments') }} ({{ paymentsTotal }})
                 </button>
             </div>
 
@@ -23,16 +23,16 @@
             <div v-if="tab === 'invoices'">
                 <div v-if="invoicesLoading" class="loading-state">
                     <v-icon icon="mdi-loading" size="32" class="spin" />
-                    Wczytuję faktury...
+                    {{ $t('invoices.loadingInvoices') }}
                 </div>
 
                 <div v-else-if="invoices.length === 0" class="empty-state">
                     <v-icon icon="mdi-receipt-text-outline" size="48" />
-                    <div class="empty-title">Brak faktur</div>
-                    <p class="empty-sub">Faktury pojawiają się tutaj po dokonaniu płatności. Faktury zbiorcze generowane są automatycznie 1-go każdego miesiąca za miesiąc poprzedni.</p>
+                    <div class="empty-title">{{ $t('invoices.noInvoicesTitle') }}</div>
+                    <p class="empty-sub">{{ $t('invoices.noInvoicesSub') }}</p>
                     <NuxtLink to="/my-adverts" class="btn-red">
                         <v-icon icon="mdi-car-outline" size="16" />
-                        Moje ogłoszenia
+                        {{ $t('invoices.myAdverts') }}
                     </NuxtLink>
                 </div>
 
@@ -52,25 +52,25 @@
 
                         <div class="inv-amounts">
                             <div class="inv-amount-item">
-                                <span class="ia-label">Netto</span>
+                                <span class="ia-label">{{ $t('invoices.netto') }}</span>
                                 <span class="ia-val">{{ fmtAmt(inv.netAmount) }} zł</span>
                             </div>
                             <div class="inv-amount-item">
-                                <span class="ia-label">VAT ({{ inv.vatRate }}%)</span>
+                                <span class="ia-label">{{ $t('invoices.vatRate', { rate: inv.vatRate }) }}</span>
                                 <span class="ia-val">{{ fmtAmt(inv.vatAmount) }} zł</span>
                             </div>
                             <div class="inv-amount-item inv-amount-total">
-                                <span class="ia-label">Brutto</span>
+                                <span class="ia-label">{{ $t('invoices.brutto') }}</span>
                                 <span class="ia-val-total">{{ fmtAmt(inv.totalAmount) }} zł</span>
                             </div>
                         </div>
 
                         <div v-if="expandedInv === inv.id" class="inv-items">
-                            <div class="inv-items-title">Pozycje faktury ({{ inv.items.length }})</div>
+                            <div class="inv-items-title">{{ $t('invoices.invoiceItems', { count: inv.items.length }) }}</div>
                             <div v-for="item in inv.items" :key="item.id" class="inv-item-row">
                                 <div class="iir-desc">
                                     <span class="iir-type">{{ item.serviceDescription || serviceLabel(item.serviceType) }}</span>
-                                    <span v-if="item.durationDays" class="iir-dur">{{ item.durationDays }} dni</span>
+                                    <span v-if="item.durationDays" class="iir-dur">{{ $t('invoices.durationDays', { days: item.durationDays }) }}</span>
                                 </div>
                                 <div class="iir-date">{{ fmtDate(item.createdAt) }}</div>
                                 <div class="iir-amount">{{ fmtAmt(item.amount) }} zł</div>
@@ -78,11 +78,11 @@
                         </div>
 
                         <div v-if="expandedInv === inv.id && (inv.companyName || inv.street)" class="inv-billing">
-                            <div class="inv-billing-title">Dane nabywcy</div>
+                            <div class="inv-billing-title">{{ $t('invoices.buyerData') }}</div>
                             <div class="inv-billing-data">
                                 <template v-if="inv.companyName">
                                     <div>{{ inv.companyName }}</div>
-                                    <div v-if="inv.nip">NIP: {{ inv.nip }}</div>
+                                    <div v-if="inv.nip">{{ $t('invoices.nipLabel', { nip: inv.nip }) }}</div>
                                 </template>
                                 <template v-else>
                                     <div>{{ inv.userName }}</div>
@@ -97,23 +97,23 @@
                         <div class="inv-card-actions">
                             <button class="inv-action-btn" @click="expandedInv = expandedInv === inv.id ? null : inv.id">
                                 <v-icon :icon="expandedInv === inv.id ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="15" />
-                                {{ expandedInv === inv.id ? 'Zwiń' : 'Szczegóły' }}
+                                {{ expandedInv === inv.id ? $t('invoices.collapse') : $t('invoices.details') }}
                             </button>
                             <button class="inv-action-btn" :disabled="pdfLoadingId === inv.id" @click="downloadPdf(inv)">
                                 <v-icon v-if="pdfLoadingId === inv.id" icon="mdi-loading" size="15" class="spin" />
                                 <v-icon v-else icon="mdi-file-pdf-box" size="15" style="color:#e53935" />
-                                Pobierz PDF
+                                {{ $t('invoices.downloadPdf') }}
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <div v-if="invoicesTotalPages > 1" class="pagination">
-                    <button class="page-btn" :disabled="invoicesPage === 1" aria-label="Poprzednia strona" @click="invoicesPage--; loadInvoices()">
+                    <button class="page-btn" :disabled="invoicesPage === 1" :aria-label="$t('invoices.prevPage')" @click="invoicesPage--; loadInvoices()">
                         <v-icon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ invoicesPage }} / {{ invoicesTotalPages }}</span>
-                    <button class="page-btn" :disabled="invoicesPage === invoicesTotalPages" aria-label="Następna strona" @click="invoicesPage++; loadInvoices()">
+                    <button class="page-btn" :disabled="invoicesPage === invoicesTotalPages" :aria-label="$t('invoices.nextPage')" @click="invoicesPage++; loadInvoices()">
                         <v-icon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
@@ -123,28 +123,28 @@
             <div v-else-if="tab === 'payments'">
                 <div v-if="paymentsLoading" class="loading-state">
                     <v-icon icon="mdi-loading" size="32" class="spin" />
-                    Wczytuję płatności...
+                    {{ $t('invoices.loadingPayments') }}
                 </div>
 
                 <div v-else-if="payments.length === 0" class="empty-state">
                     <v-icon icon="mdi-credit-card-off-outline" size="48" />
-                    <div class="empty-title">Brak płatności</div>
-                    <p class="empty-sub">Historia Twoich płatności pojawi się tutaj po pierwszej transakcji.</p>
+                    <div class="empty-title">{{ $t('invoices.noPaymentsTitle') }}</div>
+                    <p class="empty-sub">{{ $t('invoices.noPaymentsSub') }}</p>
                 </div>
 
                 <div v-else class="payments-table-wrap">
                     <div class="pt-header">
-                        <span>Data</span>
-                        <span>Usługa</span>
-                        <span>Okres</span>
-                        <span>Kwota</span>
-                        <span>Status</span>
-                        <span>ID transakcji</span>
+                        <span>{{ $t('invoices.colDate') }}</span>
+                        <span>{{ $t('invoices.colService') }}</span>
+                        <span>{{ $t('invoices.colPeriod') }}</span>
+                        <span>{{ $t('invoices.colAmount') }}</span>
+                        <span>{{ $t('invoices.colStatus') }}</span>
+                        <span>{{ $t('invoices.colTxId') }}</span>
                     </div>
                     <div v-for="p in payments" :key="p.id" class="pt-row">
                         <span class="pt-date">{{ fmtDate(p.createdAt) }}</span>
                         <span class="pt-service">{{ p.serviceDescription || serviceLabel(p.serviceType) }}</span>
-                        <span class="pt-dur">{{ p.durationDays ? p.durationDays + ' dni' : '—' }}</span>
+                        <span class="pt-dur">{{ p.durationDays ? $t('invoices.durationDays', { days: p.durationDays }) : '—' }}</span>
                         <span class="pt-amount">{{ fmtAmt(p.amount) }} zł</span>
                         <span class="pt-status" :class="`pstatus-${p.status.toLowerCase()}`">
                             <v-icon :icon="paymentStatusIcon(p.status)" size="13" />
@@ -155,11 +155,11 @@
                 </div>
 
                 <div v-if="paymentsTotalPages > 1" class="pagination">
-                    <button class="page-btn" :disabled="paymentsPage === 1" aria-label="Poprzednia strona" @click="paymentsPage--; loadPayments()">
+                    <button class="page-btn" :disabled="paymentsPage === 1" :aria-label="$t('invoices.prevPage')" @click="paymentsPage--; loadPayments()">
                         <v-icon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ paymentsPage }} / {{ paymentsTotalPages }}</span>
-                    <button class="page-btn" :disabled="paymentsPage === paymentsTotalPages" aria-label="Następna strona" @click="paymentsPage++; loadPayments()">
+                    <button class="page-btn" :disabled="paymentsPage === paymentsTotalPages" :aria-label="$t('invoices.nextPage')" @click="paymentsPage++; loadPayments()">
                         <v-icon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
@@ -172,7 +172,8 @@
 import type { MonthlyInvoice, PaymentRecord, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Faktury i płatności — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: t('invoices.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const tab = ref<'invoices' | 'payments'>('invoices')
 
@@ -201,7 +202,7 @@ async function loadInvoices() {
         invoicesTotal.value = r.totalCount
     } catch (e: any) {
         invoices.value = []
-        toastError(e?.data?.message ?? 'Nie udało się załadować faktur.')
+        toastError(e?.data?.message ?? t('invoices.loadInvoicesError'))
     } finally { invoicesLoading.value = false }
 }
 
@@ -215,7 +216,7 @@ async function loadPayments() {
         paymentsTotal.value = r.totalCount
     } catch (e: any) {
         payments.value = []
-        toastError(e?.data?.message ?? 'Nie udało się załadować płatności.')
+        toastError(e?.data?.message ?? t('invoices.loadPaymentsError'))
     } finally { paymentsLoading.value = false }
 }
 
@@ -231,7 +232,7 @@ async function downloadPdf(inv: MonthlyInvoice) {
         document.body.appendChild(a); a.click()
         document.body.removeChild(a); URL.revokeObjectURL(url)
     } catch {
-        toastError('Nie udało się pobrać PDF. Spróbuj ponownie.')
+        toastError(t('invoices.pdfError'))
     } finally {
         pdfLoadingId.value = null
     }

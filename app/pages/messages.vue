@@ -3,16 +3,16 @@
         <!-- Sidebar -->
         <aside class="msg-sidebar" :class="{ 'sidebar-hidden': activeConvId }">
             <div class="sidebar-head">
-                <h1 class="sidebar-title">Wiadomości</h1>
+                <h1 class="sidebar-title">{{ $t('messages.title') }}</h1>
                 <div class="search-wrap">
                     <v-icon icon="mdi-magnify" size="18" class="search-icon" />
                     <input
                         v-model="search"
                         class="search-input"
-                        placeholder="Szukaj konwersacji..."
+                        :placeholder="$t('messages.searchPlaceholder')"
                         type="text"
                     />
-                    <button v-if="search" class="search-clear" aria-label="Wyczyść wyszukiwanie" @click="search = ''">
+                    <button v-if="search" class="search-clear" :aria-label="$t('messages.clearSearch')" @click="search = ''">
                         <v-icon icon="mdi-close" size="14" />
                     </button>
                 </div>
@@ -43,8 +43,8 @@
 
                 <div v-else-if="loadError" class="list-empty">
                     <v-icon icon="mdi-wifi-off" size="40" class="empty-icon" />
-                    <p>Błąd połączenia</p>
-                    <button class="retry-link" @click="load">Spróbuj ponownie</button>
+                    <p>{{ $t('messages.connectionError') }}</p>
+                    <button class="retry-link" @click="load">{{ $t('messages.retry') }}</button>
                 </div>
 
                 <template v-else>
@@ -52,7 +52,7 @@
                     <template v-if="pinnedList.length && activeTab !== 'archived'">
                         <div class="section-label">
                             <v-icon icon="mdi-pin" size="12" />
-                            Przypięte
+                            {{ $t('messages.pinned') }}
                         </div>
                         <ConversationItem
                             v-for="conv in pinnedList"
