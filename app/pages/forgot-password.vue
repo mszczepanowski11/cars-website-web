@@ -2,20 +2,20 @@
     <div class="auth-bg">
         <div class="auth-card">
             <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
-            <h2>Resetowanie hasła</h2>
-            <p class="auth-sub">Podaj adres email, a wyślemy Ci link do ustawienia nowego hasła.</p>
+            <h2>{{ $t('forgotPassword.heading') }}</h2>
+            <p class="auth-sub">{{ $t('forgotPassword.subtitle') }}</p>
 
             <template v-if="!sent">
                 <form @submit.prevent="submit" class="auth-form">
                     <div class="field-group">
-                        <label class="field-label">Adres email</label>
+                        <label class="field-label">{{ $t('forgotPassword.emailLabel') }}</label>
                         <div class="field-input-wrap">
                             <v-icon icon="mdi-email-outline" size="16" class="field-icon" />
                             <input
                                 v-model="email"
                                 type="email"
                                 class="field-input"
-                                placeholder="twoj@email.pl"
+                                :placeholder="$t('forgotPassword.emailPlaceholder')"
                                 required
                                 autocomplete="email"
                             />
@@ -37,7 +37,7 @@
                     <button type="submit" class="btn-submit" :disabled="loading">
                         <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
                         <v-icon v-else icon="mdi-email-arrow-right-outline" size="16" />
-                        {{ loading ? 'Wysyłanie...' : 'Wyślij link resetujący' }}
+                        {{ loading ? $t('forgotPassword.sending') : $t('forgotPassword.submit') }}
                     </button>
                 </form>
             </template>
@@ -48,8 +48,7 @@
                         <v-icon icon="mdi-email-check-outline" size="52" />
                     </div>
                     <p class="success-text">
-                        Jeśli konto z adresem <strong>{{ email }}</strong> istnieje, wysłaliśmy na nie email z linkiem
-                        do resetowania hasła. Sprawdź również folder SPAM.
+                        {{ $t('forgotPassword.successTextBefore') }}<strong>{{ email }}</strong>{{ $t('forgotPassword.successTextAfter') }}
                     </p>
                 </div>
             </template>
@@ -57,7 +56,7 @@
             <p class="auth-link">
                 <NuxtLink to="/login">
                     <v-icon icon="mdi-arrow-left" size="14" />
-                    Wróć do logowania
+                    {{ $t('forgotPassword.backToLogin') }}
                 </NuxtLink>
             </p>
         </div>
@@ -65,7 +64,8 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Przypomnij hasło — CARIZO' })
+const { t } = useI18n()
+useHead({ title: () => t('forgotPassword.metaTitle') })
 useSeoMeta({ robots: 'noindex, nofollow' })
 const runtimeConfig = useRuntimeConfig()
 

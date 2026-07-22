@@ -2,15 +2,15 @@
     <div class="auth-bg">
         <div class="auth-card">
             <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
-            <h2>Nowe hasło</h2>
-            <p class="auth-sub">Ustaw nowe hasło dla swojego konta.</p>
+            <h2>{{ $t('resetPassword.heading') }}</h2>
+            <p class="auth-sub">{{ $t('resetPassword.subtitle') }}</p>
 
             <template v-if="!tokenPresent">
                 <div class="error-msg">
                     <v-icon icon="mdi-alert-circle-outline" size="16" />
-                    Link do resetowania hasła jest nieprawidłowy lub wygasł. Wyślij prośbę ponownie.
+                    {{ $t('resetPassword.invalidToken') }}
                 </div>
-                <NuxtLink to="/forgot-password" class="btn-primary">Wyślij nowy link</NuxtLink>
+                <NuxtLink to="/forgot-password" class="btn-primary">{{ $t('resetPassword.sendNewLink') }}</NuxtLink>
             </template>
 
             <template v-else-if="success">
@@ -19,23 +19,23 @@
                         <v-icon icon="mdi-check-circle-outline" size="52" />
                     </div>
                     <p class="success-text">
-                        Hasło zostało zmienione. Możesz się teraz zalogować używając nowego hasła.
+                        {{ $t('resetPassword.successText') }}
                     </p>
-                    <NuxtLink to="/login" class="btn-primary">Zaloguj się</NuxtLink>
+                    <NuxtLink to="/login" class="btn-primary">{{ $t('resetPassword.login') }}</NuxtLink>
                 </div>
             </template>
 
             <template v-else>
                 <form @submit.prevent="submit" class="auth-form">
                     <div class="field-group">
-                        <label class="field-label">Nowe hasło</label>
+                        <label class="field-label">{{ $t('resetPassword.newPasswordLabel') }}</label>
                         <div class="field-input-wrap">
                             <v-icon icon="mdi-lock-outline" size="16" class="field-icon" />
                             <input
                                 v-model="password"
                                 :type="showPass ? 'text' : 'password'"
                                 class="field-input"
-                                placeholder="Minimum 8 znaków"
+                                :placeholder="$t('resetPassword.newPasswordPlaceholder')"
                                 required
                                 autocomplete="new-password"
                             />
@@ -53,20 +53,20 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label">Powtórz hasło</label>
+                        <label class="field-label">{{ $t('resetPassword.confirmLabel') }}</label>
                         <div class="field-input-wrap" :class="{ 'field-input-wrap--error': passwordConfirm && password !== passwordConfirm }">
                             <v-icon icon="mdi-lock-check-outline" size="16" class="field-icon" />
                             <input
                                 v-model="passwordConfirm"
                                 type="password"
                                 class="field-input"
-                                placeholder="Powtórz nowe hasło"
+                                :placeholder="$t('resetPassword.confirmPlaceholder')"
                                 required
                                 autocomplete="new-password"
                             />
                         </div>
                         <span v-if="passwordConfirm && password !== passwordConfirm" class="field-error">
-                            <v-icon icon="mdi-close-circle-outline" size="12" />Hasła nie są identyczne.
+                            <v-icon icon="mdi-close-circle-outline" size="12" />{{ $t('resetPassword.passwordMismatch') }}
                         </span>
                     </div>
 
@@ -78,7 +78,7 @@
                     <button type="submit" class="btn-submit" :disabled="loading || (!!passwordConfirm && password !== passwordConfirm)">
                         <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
                         <v-icon v-else icon="mdi-lock-reset" size="16" />
-                        {{ loading ? 'Zmienianie...' : 'Zmień hasło' }}
+                        {{ loading ? $t('resetPassword.changing') : $t('resetPassword.submit') }}
                     </button>
                 </form>
             </template>
@@ -86,7 +86,7 @@
             <p class="auth-link">
                 <NuxtLink to="/login">
                     <v-icon icon="mdi-arrow-left" size="14" />
-                    Wróć do logowania
+                    {{ $t('resetPassword.backToLogin') }}
                 </NuxtLink>
             </p>
         </div>
@@ -94,7 +94,8 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Ustaw nowe hasło — CARIZO' })
+const { t } = useI18n()
+useHead({ title: () => t('resetPassword.metaTitle') })
 useSeoMeta({ robots: 'noindex, nofollow' })
 
 const route = useRoute()
@@ -121,13 +122,13 @@ const strengthLevel = computed(() => {
 })
 
 const strengthWidth = computed(() => `${strengthLevel.value * 25}%`)
-const strengthLabel = computed(() => ['', 'Bardzo słabe', 'Słabe', 'Dobre', 'Silne'][strengthLevel.value] ?? '')
+const strengthLabel = computed(() => ['', t('resetPassword.strengthVeryWeak'), t('resetPassword.strengthWeak'), t('resetPassword.strengthGood'), t('resetPassword.strengthStrong')][strengthLevel.value] ?? '')
 
 async function submit() {
     validationError.value = ''
     apiError.value = ''
-    if (password.value !== passwordConfirm.value) { validationError.value = 'Hasła nie są identyczne.'; return }
-    if (password.value.length < 8) { validationError.value = 'Hasło musi mieć co najmniej 8 znaków.'; return }
+    if (password.value !== passwordConfirm.value) { validationError.value = t('resetPassword.passwordMismatch'); return }
+    if (password.value.length < 8) { validationError.value = t('resetPassword.valLength'); return }
     loading.value = true
     try {
         await $fetch('/api/proxy/api/Auth/reset-password', {
@@ -136,7 +137,7 @@ async function submit() {
         })
         success.value = true
     } catch (e: any) {
-        apiError.value = e?.data?.statusMessage ?? e?.data?.message ?? 'Link wygasł lub jest nieprawidłowy. Wyślij nową prośbę.'
+        apiError.value = e?.data?.statusMessage ?? e?.data?.message ?? t('resetPassword.apiErrorFallback')
     } finally {
         loading.value = false
     }
