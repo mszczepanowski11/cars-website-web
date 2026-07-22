@@ -249,7 +249,8 @@
   "seller": {
     "defaultName": "Verkäufer",
     "badges": {
-      "dealer": "Händler"
+      "dealer": "Händler",
+      "verified": "Verifiziert"
     },
     "memberSince": "Auf CARIZO seit {year}",
     "following": "Du folgst",

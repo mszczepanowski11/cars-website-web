@@ -2,9 +2,9 @@
     <div class="events-page">
         <div class="page-hero">
             <div class="container">
-                <div class="hero-eyebrow">Motoryzacja na żywo</div>
-                <h1 class="hero-title">Nadchodzące <span>wydarzenia</span></h1>
-                <p class="hero-sub">Targi, zloty, wystawy i imprezy motoryzacyjne w całej Polsce.</p>
+                <div class="hero-eyebrow">{{ $t('events.hero.eyebrow') }}</div>
+                <h1 class="hero-title">{{ $t('events.hero.titleLead') }} <span>{{ $t('events.hero.titleAccent') }}</span></h1>
+                <p class="hero-sub">{{ $t('events.hero.sub') }}</p>
             </div>
         </div>
 
@@ -25,11 +25,11 @@
             <div class="search-row">
                 <div class="search-box">
                     <v-icon icon="mdi-magnify" size="20" class="s-icon" />
-                    <input v-model="search" class="s-input" placeholder="Szukaj wydarzeń..." @input="onSearch" />
+                    <input v-model="search" class="s-input" :placeholder="$t('events.searchPlaceholder')" @input="onSearch" />
                 </div>
                 <NuxtLink to="/dodaj-wydarzenie" class="btn-add-event">
                     <v-icon icon="mdi-plus" size="18" />
-                    Dodaj wydarzenie
+                    {{ $t('events.addEvent') }}
                 </NuxtLink>
             </div>
 
@@ -41,19 +41,19 @@
             <!-- Error -->
             <div v-else-if="fetchError" class="empty-state">
                 <v-icon icon="mdi-alert-circle-outline" size="52" class="empty-icon" color="#c0392b" />
-                <div class="empty-title">Błąd połączenia</div>
-                <div class="empty-sub">Nie udało się załadować wydarzeń. Spróbuj ponownie.</div>
+                <div class="empty-title">{{ $t('events.error.title') }}</div>
+                <div class="empty-sub">{{ $t('events.error.desc') }}</div>
                 <button class="btn-retry" @click="fetchEvents">
                     <v-icon icon="mdi-refresh" size="16" />
-                    Odśwież
+                    {{ $t('events.error.refresh') }}
                 </button>
             </div>
 
             <!-- Empty -->
             <div v-else-if="!events.length" class="empty-state">
                 <v-icon icon="mdi-calendar-remove-outline" size="52" class="empty-icon" />
-                <div class="empty-title">Brak wydarzeń</div>
-                <div class="empty-sub">Nie znaleziono żadnych nadchodzących wydarzeń.</div>
+                <div class="empty-title">{{ $t('events.empty.title') }}</div>
+                <div class="empty-sub">{{ $t('events.empty.desc') }}</div>
             </div>
 
             <!-- Grid -->
@@ -62,9 +62,9 @@
                     <div class="card-img-wrap">
                         <img :src="getEventImageUrl(ev)" :alt="ev.name" />
                         <span v-if="ev.isFeatured" class="event-badge event-badge--featured">
-                            <v-icon icon="mdi-crown" size="10" /> WYRÓŻNIONE
+                            <v-icon icon="mdi-crown" size="10" /> {{ $t('events.card.featured') }}
                         </span>
-                        <span v-else class="event-badge">WYDARZENIE</span>
+                        <span v-else class="event-badge">{{ $t('events.card.event') }}</span>
                         <div class="date-chip">
                             <v-icon icon="mdi-calendar" size="12" />
                             {{ formatDate(ev.startDate) }}
@@ -79,7 +79,7 @@
                             </span>
                             <span v-if="ev.endDate && ev.endDate !== ev.startDate">
                                 <v-icon icon="mdi-calendar-end" size="14" class="meta-icon" />
-                                do {{ formatDate(ev.endDate) }}
+                                {{ $t('events.card.until', { date: formatDate(ev.endDate) }) }}
                             </span>
                         </div>
                         <p class="event-desc">{{ ev.description?.slice(0, 120) }}{{ (ev.description?.length ?? 0) > 120 ? '...' : '' }}</p>
@@ -99,13 +99,13 @@
                                     class="btn-attend"
                                     :class="{ active: attendedIds.has(ev.id) }"
                                     @click.stop="toggleAttend(ev)"
-                                    :title="attendedIds.has(ev.id) ? 'Rezygnuję' : 'Wezmę udział'"
+                                    :title="attendedIds.has(ev.id) ? $t('events.card.cancelAttend') : $t('events.card.willAttend')"
                                 >
                                     <v-icon :icon="attendedIds.has(ev.id) ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="15" />
                                 </button>
                                 <!-- Share -->
                                 <div class="share-wrap">
-                                    <button class="btn-share" @click.stop="toggleShare(ev.id)" title="Udostępnij">
+                                    <button class="btn-share" @click.stop="toggleShare(ev.id)" :title="$t('events.card.share')">
                                         <v-icon icon="mdi-share-variant-outline" size="15" />
                                     </button>
                                     <div v-if="sharePopupId === ev.id" class="share-popup" @click.stop>
@@ -123,18 +123,18 @@
                                         </a>
                                         <button class="share-item" @click="copyLink(ev.id)">
                                             <v-icon :icon="copiedId === ev.id ? 'mdi-check' : 'mdi-link-variant'" size="16" />
-                                            {{ copiedId === ev.id ? 'Skopiowano!' : 'Kopiuj link' }}
+                                            {{ copiedId === ev.id ? $t('events.card.copied') : $t('events.card.copyLink') }}
                                         </button>
                                     </div>
                                 </div>
                                 <!-- External links -->
                                 <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener noreferrer" class="btn-ticket" @click.stop>
                                     <v-icon icon="mdi-ticket-outline" size="14" />
-                                    Bilety
+                                    {{ $t('events.card.tickets') }}
                                 </a>
                                 <a v-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn-web" @click.stop>
                                     <v-icon icon="mdi-web" size="14" />
-                                    Strona
+                                    {{ $t('events.card.website') }}
                                 </a>
                             </div>
                         </div>
@@ -144,11 +144,11 @@
 
             <!-- Pagination -->
             <div v-if="totalCount > pageSize" class="pagination">
-                <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="changePage(page - 1)">
+                <button class="page-btn" :disabled="page === 1" :aria-label="$t('events.pagination.prev')" @click="changePage(page - 1)">
                     <v-icon icon="mdi-chevron-left" size="18" />
                 </button>
                 <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                <button class="page-btn" :disabled="page >= totalPages" aria-label="Następna strona" @click="changePage(page + 1)">
+                <button class="page-btn" :disabled="page >= totalPages" :aria-label="$t('events.pagination.next')" @click="changePage(page + 1)">
                     <v-icon icon="mdi-chevron-right" size="18" />
                 </button>
             </div>
@@ -163,21 +163,22 @@
 <script setup lang="ts">
 import type { CarEvent, PagedResult } from '~/types'
 
+const { t } = useI18n()
 const wydarzeniaConfig = useRuntimeConfig()
 useSeoMeta({
-    title: 'Wydarzenia motoryzacyjne — CARIZO',
-    description: 'Przeglądaj motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Znajdź najbliższe wydarzenie i zapisz się już dziś.',
+    title: () => t('events.seo.title'),
+    description: () => t('events.seo.description'),
     ogType: 'website',
     ogUrl: `${wydarzeniaConfig.public.siteUrl}/wydarzenia`,
-    ogTitle: 'Wydarzenia motoryzacyjne — CARIZO',
-    ogDescription: 'Motoryzacyjne spotkania, zloty i targi motoryzacyjne w Polsce. Bądź na bieżąco z CARIZO.',
+    ogTitle: () => t('events.seo.title'),
+    ogDescription: () => t('events.seo.ogDescription'),
     ogImage: `${wydarzeniaConfig.public.siteUrl}/og-image.jpg`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
-    twitterTitle: 'Wydarzenia motoryzacyjne — CARIZO',
-    twitterDescription: 'Zloty, targi i spotkania motoryzacyjne w Polsce — CARIZO.',
+    twitterTitle: () => t('events.seo.title'),
+    twitterDescription: () => t('events.seo.twitterDescription'),
     twitterImage: `${wydarzeniaConfig.public.siteUrl}/og-image.jpg`,
 })
 useHead({ link: [{ rel: 'canonical', href: `${wydarzeniaConfig.public.siteUrl}/wydarzenia` }] })
@@ -196,12 +197,12 @@ const pageSize = 12
 const totalCount = ref(0)
 const activeFilter = ref<'all' | 'week' | 'month' | 'featured'>('all')
 
-const filterTabs = [
-    { key: 'all',      label: 'Wszystkie',     icon: null },
-    { key: 'week',     label: 'Ten tydzień',   icon: 'mdi-calendar-week' },
-    { key: 'month',    label: 'Ten miesiąc',   icon: 'mdi-calendar-month' },
-    { key: 'featured', label: 'Wyróżnione',    icon: 'mdi-crown' },
-] as const
+const filterTabs = computed(() => [
+    { key: 'all',      label: t('events.filters.all'),      icon: null },
+    { key: 'week',     label: t('events.filters.week'),     icon: 'mdi-calendar-week' },
+    { key: 'month',    label: t('events.filters.month'),    icon: 'mdi-calendar-month' },
+    { key: 'featured', label: t('events.filters.featured'), icon: 'mdi-crown' },
+])
 
 const attendedIds = ref(new Set<number>())
 const interestCounts = ref(new Map<number, number>())

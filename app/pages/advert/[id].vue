@@ -4,20 +4,20 @@
         <div class="anf-inner">
             <template v-if="advertFetchError && advertFetchError >= 500">
                 <v-icon icon="mdi-alert-circle-outline" size="64" class="anf-icon" />
-                <h1 class="anf-title">Chwilowy problem z serwerem</h1>
-                <p class="anf-desc">Nie udało się wczytać ogłoszenia. Spróbuj odświeżyć stronę za chwilę.</p>
+                <h1 class="anf-title">{{ $t('advertDetail.notFound.serverErrorTitle') }}</h1>
+                <p class="anf-desc">{{ $t('advertDetail.notFound.serverErrorDesc') }}</p>
                 <button type="button" class="anf-btn" @click="() => { if (typeof window !== 'undefined') window.location.reload() }">
                     <v-icon icon="mdi-refresh" size="18" />
-                    Spróbuj ponownie
+                    {{ $t('advertDetail.notFound.retry') }}
                 </button>
             </template>
             <template v-else>
                 <v-icon icon="mdi-car-off" size="64" class="anf-icon" />
-                <h1 class="anf-title">Ogłoszenie nie istnieje</h1>
-                <p class="anf-desc">To ogłoszenie mogło zostać usunięte, wygasnąć lub link jest nieprawidłowy.</p>
+                <h1 class="anf-title">{{ $t('advertDetail.notFound.title') }}</h1>
+                <p class="anf-desc">{{ $t('advertDetail.notFound.desc') }}</p>
                 <NuxtLink to="/adverts" class="anf-btn">
                     <v-icon icon="mdi-magnify" size="18" />
-                    Przeglądaj ogłoszenia
+                    {{ $t('advertDetail.notFound.browse') }}
                 </NuxtLink>
             </template>
         </div>
@@ -30,7 +30,7 @@
                 <div class="topbar-left">
                     <NuxtLink to="/adverts" class="back-link">
                         <v-icon icon="mdi-chevron-left" size="18" />
-                        Wróć
+                        {{ $t('advertDetail.topbar.back') }}
                     </NuxtLink>
                     <div v-if="advert" class="topbar-crumbs">
                         <span class="crumb">{{ advert.brand?.name }}</span>
@@ -45,21 +45,21 @@
                 <div class="topbar-actions">
                     <button class="icon-action" @click="toggleFav">
                         <v-icon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="17" :class="{ 'heart-active': isFav }" />
-                        <span class="ia-label">Ulubione</span>
+                        <span class="ia-label">{{ $t('advertDetail.topbar.favorite') }}</span>
                     </button>
                     <div class="share-wrap" v-click-outside="() => shareOpen = false">
                         <button class="icon-action" @click="shareOpen = !shareOpen">
                             <v-icon icon="mdi-share-variant-outline" size="17" />
-                            <span class="ia-label">Udostępnij</span>
+                            <span class="ia-label">{{ $t('advertDetail.topbar.share') }}</span>
                         </button>
                         <div v-if="shareOpen" class="share-dropdown">
-                            <button class="share-opt" @click="doShareNative"><v-icon icon="mdi-share-outline" size="15" /> Natywnie</button>
+                            <button class="share-opt" @click="doShareNative"><v-icon icon="mdi-share-outline" size="15" /> {{ $t('advertDetail.share.native') }}</button>
                             <button class="share-opt" @click="doShareFacebook"><v-icon icon="mdi-facebook" size="15" /> Facebook</button>
                             <button class="share-opt" @click="doShareX"><v-icon icon="mdi-twitter" size="15" /> X / Twitter</button>
                             <button class="share-opt" @click="doShareWhatsApp"><v-icon icon="mdi-whatsapp" size="15" /> WhatsApp</button>
                             <button class="share-opt" @click="doCopyLink">
                                 <v-icon :icon="linkCopied ? 'mdi-check' : 'mdi-link-variant'" size="15" />
-                                {{ linkCopied ? 'Skopiowano!' : 'Kopiuj link' }}
+                                {{ linkCopied ? $t('advertDetail.share.copied') : $t('advertDetail.share.copyLink') }}
                             </button>
                         </div>
                     </div>
@@ -70,13 +70,13 @@
                     <div class="qr-wrap" @mouseenter="generateQR">
                         <button class="icon-action"><v-icon icon="mdi-qrcode" size="17" /><span class="ia-label">QR</span></button>
                         <div v-if="qrDataUrl" class="qr-popup">
-                            <img :src="qrDataUrl" alt="QR kod" width="120" height="120" />
-                            <span>Zeskanuj aby otworzyć</span>
+                            <img :src="qrDataUrl" :alt="$t('advertDetail.qr.alt')" width="120" height="120" />
+                            <span>{{ $t('advertDetail.qr.scan') }}</span>
                         </div>
                     </div>
                     <button class="icon-action" @click="handleReport">
                         <v-icon icon="mdi-flag-outline" size="17" />
-                        <span class="ia-label">Zgłoś</span>
+                        <span class="ia-label">{{ $t('advertDetail.topbar.report') }}</span>
                     </button>
                 </div>
             </div>
@@ -109,7 +109,7 @@
                                 {{ activeImg + 1 }} / {{ allImages.length }}
                             </span>
                             <button class="photo-expand-btn" @click.stop="openLightbox(activeImg)">
-                                <v-icon icon="mdi-fullscreen" size="15" /> Galeria
+                                <v-icon icon="mdi-fullscreen" size="15" /> {{ $t('advertDetail.gallery.expand') }}
                             </button>
                         </div>
                         <button class="photo-fav-btn" :class="{ active: isFav }" @click.stop="toggleFav">
@@ -118,13 +118,13 @@
                         <template v-if="hasImages && allImages.length > 1">
                             <button
                                 class="photo-nav-arrow photo-nav-prev"
-                                aria-label="Poprzednie zdjęcie"
+                                :aria-label="$t('advertDetail.gallery.prevPhoto')"
                                 :disabled="activeImg === 0"
                                 @click.stop="activeImg--"
                             ><v-icon icon="mdi-chevron-left" size="22" /></button>
                             <button
                                 class="photo-nav-arrow photo-nav-next"
-                                aria-label="Następne zdjęcie"
+                                :aria-label="$t('advertDetail.gallery.nextPhoto')"
                                 :disabled="activeImg === allImages.length - 1"
                                 @click.stop="activeImg++"
                             ><v-icon icon="mdi-chevron-right" size="22" /></button>
@@ -138,7 +138,7 @@
                             :class="{ 'thumb-active': i === activeImg }"
                             @click="activeImg = i"
                         >
-                            <img :src="img.url" :alt="`Zdjęcie ${i + 1} – ${advert?.title ?? ''}`" loading="lazy" />
+                            <img :src="img.url" :alt="$t('advertDetail.gallery.photoAlt', { n: i + 1, title: advert?.title ?? '' })" loading="lazy" />
                             <div v-if="i === 5 && allImages.length > 6" class="thumb-more">+{{ allImages.length - 6 }}</div>
                         </button>
                     </div>
@@ -157,7 +157,7 @@
                         <span v-if="advert?.mileage" class="i-chip"><v-icon icon="mdi-speedometer" size="12" />{{ Number(advert.mileage).toLocaleString('pl') }} km</span>
                         <span v-if="advert?.fuelType" class="i-chip"><v-icon icon="mdi-gas-station-outline" size="12" />{{ advert.fuelType.name }}</span>
                         <span v-if="advert?.gearbox" class="i-chip"><v-icon icon="mdi-cog-outline" size="12" />{{ advert.gearbox.name }}</span>
-                        <span v-if="advert?.powerHP || advert?.engineVersion?.horsepower" class="i-chip i-chip--power"><v-icon icon="mdi-lightning-bolt" size="12" />{{ advert?.powerHP ?? advert?.engineVersion?.horsepower }} KM</span>
+                        <span v-if="advert?.powerHP || advert?.engineVersion?.horsepower" class="i-chip i-chip--power"><v-icon icon="mdi-lightning-bolt" size="12" />{{ advert?.powerHP ?? advert?.engineVersion?.horsepower }} {{ $t('advertDetail.units.hp') }}</span>
                         <span v-if="advert?.driveType" class="i-chip"><v-icon icon="mdi-car-traction-control" size="12" />{{ advert.driveType.name }}</span>
                         <span v-if="advert?.color" class="i-chip">
                             <span class="i-chip-color-dot" :style="{ background: advert.color.hexCode }" />
@@ -172,24 +172,24 @@
                                 <div class="pme-item">
                                     <div class="pme-label">
                                         <div class="pme-ing-dot ing-leasing" />
-                                        Leasing ING
+                                        {{ $t('advertDetail.price.leasingIng') }}
                                     </div>
-                                    <div class="pme-val">od {{ Math.round(Number(advert.price) * 0.9 * 0.0075 * Math.pow(1.0075, 48) / (Math.pow(1.0075, 48) - 1)).toLocaleString('pl') }} zł/mies.</div>
+                                    <div class="pme-val">{{ $t('advertDetail.price.fromPerMonth', { amount: Math.round(Number(advert.price) * 0.9 * 0.0075 * Math.pow(1.0075, 48) / (Math.pow(1.0075, 48) - 1)).toLocaleString('pl') }) }}</div>
                                 </div>
                                 <div class="pme-item">
                                     <div class="pme-label">
                                         <div class="pme-ing-dot ing-credit" />
-                                        Kredyt ING
+                                        {{ $t('advertDetail.price.creditIng') }}
                                     </div>
-                                    <div class="pme-val">od {{ Math.round(Number(advert.price) * 0.9 * 0.00749 * Math.pow(1.00749, 60) / (Math.pow(1.00749, 60) - 1)).toLocaleString('pl') }} zł/mies.</div>
+                                    <div class="pme-val">{{ $t('advertDetail.price.fromPerMonth', { amount: Math.round(Number(advert.price) * 0.9 * 0.00749 * Math.pow(1.00749, 60) / (Math.pow(1.00749, 60) - 1)).toLocaleString('pl') }) }}</div>
                                 </div>
                             </div>
-                            <div class="pme-note">* przy 10% wpłaty własnej, szacunkowo</div>
+                            <div class="pme-note">{{ $t('advertDetail.price.estimateNote') }}</div>
                         </div>
                         <div class="price-badges-row">
-                            <span v-if="isNegotiable" class="nego-badge"><v-icon icon="mdi-handshake-outline" size="12" />Do negocjacji</span>
-                            <span class="seller-type-chip" :class="sellerTypeLabel.includes('Dealer') ? 'chip-dealer' : 'chip-private'">
-                                <v-icon :icon="sellerTypeLabel.includes('Dealer') ? 'mdi-store-outline' : 'mdi-account-outline'" size="11" />
+                            <span v-if="isNegotiable" class="nego-badge"><v-icon icon="mdi-handshake-outline" size="12" />{{ $t('advertDetail.price.negotiable') }}</span>
+                            <span class="seller-type-chip" :class="isSellerDealer ? 'chip-dealer' : 'chip-private'">
+                                <v-icon :icon="isSellerDealer ? 'mdi-store-outline' : 'mdi-account-outline'" size="11" />
                                 {{ sellerTypeLabel }}
                             </span>
                             <span v-if="priceAnalysis" class="price-analysis-badge" :class="priceAnalysis.cls">
@@ -218,19 +218,19 @@
                         <div class="vtb-items">
                             <div class="vtb-item" :class="advert?.vin ? 'vtb-ok' : 'vtb-pending'">
                                 <v-icon :icon="advert?.vin ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
-                                <span>VIN {{ advert?.vin ? 'zweryfikowany' : 'niezweryfikowany' }}</span>
+                                <span>{{ advert?.vin ? $t('advertDetail.trust.vinVerified') : $t('advertDetail.trust.vinUnverified') }}</span>
                             </div>
                             <div class="vtb-item" :class="advert?.hasFullServiceHistory ? 'vtb-ok' : 'vtb-pending'">
                                 <v-icon :icon="advert?.hasFullServiceHistory ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
-                                <span>Historia serwisowa</span>
+                                <span>{{ $t('advertDetail.trust.serviceHistory') }}</span>
                             </div>
                             <div class="vtb-item" :class="!advert?.hasDamage ? 'vtb-ok' : 'vtb-warn'">
                                 <v-icon :icon="!advert?.hasDamage ? 'mdi-check-circle' : 'mdi-alert-circle'" size="14" />
-                                <span>Bezwypadkowy</span>
+                                <span>{{ $t('advertDetail.trust.accidentFree') }}</span>
                             </div>
                             <div class="vtb-item" :class="seller?.accountType === 'Business' ? 'vtb-ok' : 'vtb-pending'">
                                 <v-icon :icon="seller?.accountType === 'Business' ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
-                                <span>Zweryfikowany sprzedawca</span>
+                                <span>{{ $t('advertDetail.trust.verifiedSeller') }}</span>
                             </div>
                         </div>
                     </div>
@@ -246,10 +246,10 @@
                                     <v-icon v-for="n in 5" :key="n" :icon="n <= Math.round(sellerStats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="11" class="star" />
                                     <span class="sma-rating">{{ sellerStats.averageRating.toFixed(1) }}</span>
                                 </span>
-                                <span class="sma-cnt">{{ sellerStats?.activeAdverts ?? 0 }} ogłoszeń</span>
+                                <span class="sma-cnt">{{ $t('advertDetail.sellerMini.advertsCount', { count: sellerStats?.activeAdverts ?? 0 }) }}</span>
                             </div>
                         </div>
-                        <NuxtLink v-if="advert?.userId" :to="`/seller/${advert.userId}`" class="sma-link">Profil ›</NuxtLink>
+                        <NuxtLink v-if="advert?.userId" :to="`/seller/${advert.userId}`" class="sma-link">{{ $t('advertDetail.sellerMini.profile') }}</NuxtLink>
                     </div>
 
                     <div class="info-divider" />
@@ -258,26 +258,26 @@
                     <div class="cta-stack">
                         <button v-if="seller?.phoneNumber" class="cta-phone" @click="showPhone = !showPhone">
                             <v-icon icon="mdi-phone-outline" size="17" />
-                            {{ showPhone ? seller.phoneNumber : 'Pokaż numer telefonu' }}
+                            {{ showPhone ? seller.phoneNumber : $t('advertDetail.cta.showPhone') }}
                         </button>
-                        <button class="cta-message" :disabled="contactLoading || isOwnAdvert" :title="isOwnAdvert ? 'To Twoje ogłoszenie – nie możesz pisać do samego siebie' : undefined" @click="contactSeller">
+                        <button class="cta-message" :disabled="contactLoading || isOwnAdvert" :title="isOwnAdvert ? $t('advertDetail.cta.ownAdvertTitle') : undefined" @click="contactSeller">
                             <v-icon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
                             <v-icon v-else-if="isOwnAdvert" icon="mdi-message-off-outline" size="17" />
                             <v-icon v-else icon="mdi-message-text-outline" size="17" />
-                            {{ contactLoading ? 'Otwieranie...' : isOwnAdvert ? 'To Twoje ogłoszenie' : 'Napisz wiadomość' }}
+                            {{ contactLoading ? $t('advertDetail.cta.opening') : isOwnAdvert ? $t('advertDetail.cta.ownAdvert') : $t('advertDetail.cta.sendMessage') }}
                         </button>
                         <p v-if="isOwnAdvert" class="own-advert-note">
                             <v-icon icon="mdi-information-outline" size="13" />
-                            Nie możesz wysyłać wiadomości do samego siebie. To Twoje ogłoszenie.
+                            {{ $t('advertDetail.cta.ownAdvertNote') }}
                         </p>
                         <template v-if="!isOwnAdvert">
                             <button class="cta-viewing" @click="showViewingPicker = true">
                                 <v-icon icon="mdi-calendar-outline" size="17" />
-                                Umów oględziny
+                                {{ $t('advertDetail.cta.scheduleViewing') }}
                             </button>
                             <button class="cta-reserve" @click="showReservationPicker = true">
                                 <v-icon icon="mdi-bookmark-outline" size="17" />
-                                Zarezerwuj auto
+                                {{ $t('advertDetail.cta.reserve') }}
                             </button>
                         </template>
                     </div>
@@ -294,7 +294,7 @@
 
                     <div class="secure-note-sm">
                         <v-icon icon="mdi-shield-check-outline" size="13" class="secure-icon-sm" />
-                        Transakcja zabezpieczona przez <span class="nowrap-brand">CARI<span class="red-text">ZO</span></span>
+                        {{ $t('advertDetail.cta.secureNote') }} <span class="nowrap-brand">CARI<span class="red-text">ZO</span></span>
                     </div>
                 </div>
             </div>
@@ -305,35 +305,35 @@
             <div class="container specs-bar-inner">
                 <div v-if="advert?.mileage" class="spec-item">
                     <v-icon icon="mdi-speedometer" size="22" class="spi-icon" />
-                    <div><div class="spi-val">{{ Number(advert.mileage).toLocaleString('pl') }} km</div><div class="spi-lbl">Przebieg</div></div>
+                    <div><div class="spi-val">{{ Number(advert.mileage).toLocaleString('pl') }} km</div><div class="spi-lbl">{{ $t('advertDetail.specs.mileage') }}</div></div>
                 </div>
                 <div v-if="advert?.year" class="spec-item">
                     <v-icon icon="mdi-calendar-outline" size="22" class="spi-icon" />
-                    <div><div class="spi-val">{{ advert.year }}</div><div class="spi-lbl">Rok produkcji</div></div>
+                    <div><div class="spi-val">{{ advert.year }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.year') }}</div></div>
                 </div>
                 <div v-if="advert?.fuelType" class="spec-item">
                     <v-icon icon="mdi-gas-station-outline" size="22" class="spi-icon" />
-                    <div><div class="spi-val">{{ advert.fuelType.name }}</div><div class="spi-lbl">Paliwo</div></div>
+                    <div><div class="spi-val">{{ advert.fuelType.name }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.fuel') }}</div></div>
                 </div>
                 <div v-if="advert?.engineVersion?.horsepower" class="spec-item">
                     <v-icon icon="mdi-lightning-bolt" size="22" class="spi-icon" />
-                    <div><div class="spi-val">{{ advert.engineVersion.horsepower }} KM</div><div class="spi-lbl">Moc</div></div>
+                    <div><div class="spi-val">{{ advert.engineVersion.horsepower }} {{ $t('advertDetail.units.hp') }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.power') }}</div></div>
                 </div>
                 <div v-if="advert?.engineVersion?.displacement" class="spec-item">
                     <v-icon icon="mdi-engine-outline" size="22" class="spi-icon" />
-                    <div><div class="spi-val">{{ advert.engineVersion.displacement }} cm³</div><div class="spi-lbl">Pojemność</div></div>
+                    <div><div class="spi-val">{{ advert.engineVersion.displacement }} cm³</div><div class="spi-lbl">{{ $t('advertDetail.specs.displacement') }}</div></div>
                 </div>
                 <div v-if="advert?.gearbox" class="spec-item">
                     <v-icon icon="mdi-cog-outline" size="22" class="spi-icon" />
-                    <div><div class="spi-val">{{ advert.gearbox.name }}</div><div class="spi-lbl">Skrzynia</div></div>
+                    <div><div class="spi-val">{{ advert.gearbox.name }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.gearbox') }}</div></div>
                 </div>
                 <div v-if="advert?.bodyType" class="spec-item">
                     <v-icon icon="mdi-car-outline" size="22" class="spi-icon" />
-                    <div><div class="spi-val">{{ advert.bodyType.name }}</div><div class="spi-lbl">Nadwozie</div></div>
+                    <div><div class="spi-val">{{ advert.bodyType.name }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.body') }}</div></div>
                 </div>
                 <div v-if="advert?.viewCount" class="spec-item spec-item--dim">
                     <v-icon icon="mdi-eye-outline" size="22" class="spi-icon spi-icon--dim" />
-                    <div><div class="spi-val spi-val--dim">{{ Number(advert.viewCount).toLocaleString('pl') }}</div><div class="spi-lbl">Wyświetleń</div></div>
+                    <div><div class="spi-val spi-val--dim">{{ Number(advert.viewCount).toLocaleString('pl') }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.views') }}</div></div>
                 </div>
             </div>
         </div>
@@ -347,7 +347,7 @@
                 <!-- Extra tech chips from description -->
                 <transition name="fade">
                     <div v-if="parsedTechData.length" class="tech-chips-section">
-                        <div class="tcs-title"><v-icon icon="mdi-clipboard-list-outline" size="14" />Dane dodatkowe</div>
+                        <div class="tcs-title"><v-icon icon="mdi-clipboard-list-outline" size="14" />{{ $t('advertDetail.sections.additionalData') }}</div>
                         <div class="tech-chips-grid">
                             <div v-for="item in parsedTechData" :key="item.label" class="tech-chip" :class="{ 'chip-bool': item.isCheck && !item.value.includes(' ') }">
                                 <span class="tc-label">{{ item.label }}</span>
@@ -362,13 +362,13 @@
 
                 <!-- SECTION 1: Opis -->
                 <section v-if="parsedUserDesc" class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-text-box-outline" size="17" />Opis</h2>
+                    <h2 class="pg-section-title"><v-icon icon="mdi-text-box-outline" size="17" />{{ $t('advertDetail.sections.description') }}</h2>
                     <div class="tab-content">
                         <div class="desc-body">
                             <p ref="descRef" class="desc-text" :class="{ clamped: !showFullDesc }">{{ parsedUserDesc }}</p>
                             <div v-if="descIsOverflowing" class="desc-toggle">
                                 <button @click="showFullDesc = !showFullDesc; checkDescOverflow()" class="read-more-btn">
-                                    {{ showFullDesc ? 'Zwiń opis' : 'Czytaj więcej' }}
+                                    {{ showFullDesc ? $t('advertDetail.desc.collapse') : $t('advertDetail.desc.readMore') }}
                                     <v-icon :icon="showFullDesc ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" />
                                 </button>
                             </div>
@@ -378,7 +378,7 @@
 
                 <!-- SECTION: Dokumenty i filmy (Faza 8 of the category/attribute restructure) -->
                 <section v-if="advert?.documents?.length" class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-file-video-outline" size="17" />Dokumenty i filmy</h2>
+                    <h2 class="pg-section-title"><v-icon icon="mdi-file-video-outline" size="17" />{{ $t('advertDetail.sections.documents') }}</h2>
                     <div class="docs-grid">
                         <div v-for="doc in advert.documents" :key="doc.id" class="doc-card">
                             <template v-if="doc.type === 'Video' && youtubeEmbedIdFor(doc.url)">
@@ -405,56 +405,56 @@
 
                 <!-- SECTION 2: Parametry techniczne -->
                 <section class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-cog-outline" size="17" />Parametry techniczne</h2>
+                    <h2 class="pg-section-title"><v-icon icon="mdi-cog-outline" size="17" />{{ $t('advertDetail.sections.techParams') }}</h2>
                     <div class="spec-table">
                         <div class="spec-section">
-                            <div class="spec-section-title">Dane podstawowe</div>
+                            <div class="spec-section-title">{{ $t('advertDetail.specGroups.basic') }}</div>
                             <div class="spec-rows">
-                                <div v-if="advert?.brand" class="spec-row"><span class="sr-label">Marka</span><span class="sr-val">{{ advert.brand.name }}</span></div>
-                                <div v-if="advert?.model" class="spec-row"><span class="sr-label">Model</span><span class="sr-val">{{ advert.model.name }}</span></div>
-                                <div v-if="advert?.generation" class="spec-row"><span class="sr-label">Generacja</span><span class="sr-val">{{ generationLabel(advert.generation) }}</span></div>
-                                <div v-if="advert?.year" class="spec-row"><span class="sr-label">Rok produkcji</span><span class="sr-val">{{ advert.year }}</span></div>
-                                <div v-if="advert?.mileage" class="spec-row"><span class="sr-label">Przebieg</span><span class="sr-val">{{ Number(advert.mileage).toLocaleString('pl') }} km</span></div>
-                                <div v-if="advert?.condition" class="spec-row"><span class="sr-label">Stan pojazdu</span><span class="sr-val">{{ advert.condition === 'new' ? 'Nowy' : 'Używany' }}</span></div>
-                                <div v-if="advert?.bodyType" class="spec-row"><span class="sr-label">Typ nadwozia</span><span class="sr-val">{{ advert.bodyType.name }}</span></div>
+                                <div v-if="advert?.brand" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.brand') }}</span><span class="sr-val">{{ advert.brand.name }}</span></div>
+                                <div v-if="advert?.model" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.model') }}</span><span class="sr-val">{{ advert.model.name }}</span></div>
+                                <div v-if="advert?.generation" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.generation') }}</span><span class="sr-val">{{ generationLabel(advert.generation) }}</span></div>
+                                <div v-if="advert?.year" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.year') }}</span><span class="sr-val">{{ advert.year }}</span></div>
+                                <div v-if="advert?.mileage" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.mileage') }}</span><span class="sr-val">{{ Number(advert.mileage).toLocaleString('pl') }} km</span></div>
+                                <div v-if="advert?.condition" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.condition') }}</span><span class="sr-val">{{ advert.condition === 'new' ? $t('advertDetail.spec.conditionNew') : $t('advertDetail.spec.conditionUsed') }}</span></div>
+                                <div v-if="advert?.bodyType" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.bodyType') }}</span><span class="sr-val">{{ advert.bodyType.name }}</span></div>
                                 <div v-if="advert?.color" class="spec-row">
-                                    <span class="sr-label">Kolor</span>
+                                    <span class="sr-label">{{ $t('advertDetail.spec.color') }}</span>
                                     <span class="sr-val sr-val--color">
                                         <span class="color-dot" :style="{ background: advert.color.hexCode }" />
                                         {{ advert.color.name }}
                                     </span>
                                 </div>
-                                <div v-if="advert?.doorCount" class="spec-row"><span class="sr-label">Liczba drzwi</span><span class="sr-val">{{ advert.doorCount }}</span></div>
-                                <div v-if="advert?.seatsCount" class="spec-row"><span class="sr-label">Liczba miejsc</span><span class="sr-val">{{ advert.seatsCount }}</span></div>
+                                <div v-if="advert?.doorCount" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.doors') }}</span><span class="sr-val">{{ advert.doorCount }}</span></div>
+                                <div v-if="advert?.seatsCount" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.seats') }}</span><span class="sr-val">{{ advert.seatsCount }}</span></div>
                                 <div v-if="advert?.vin" class="spec-row"><span class="sr-label">VIN</span><span class="sr-val sr-val--mono">{{ advert.vin }}</span></div>
                             </div>
                         </div>
                         <div class="spec-section">
-                            <div class="spec-section-title">Silnik i napęd</div>
+                            <div class="spec-section-title">{{ $t('advertDetail.specGroups.engine') }}</div>
                             <div class="spec-rows">
-                                <div v-if="advert?.fuelType" class="spec-row"><span class="sr-label">Rodzaj paliwa</span><span class="sr-val">{{ advert.fuelType.name }}</span></div>
-                                <div v-if="advert?.gearbox" class="spec-row"><span class="sr-label">Skrzynia biegów</span><span class="sr-val">{{ advert.gearbox.name }}</span></div>
-                                <div v-if="advert?.driveType" class="spec-row"><span class="sr-label">Napęd</span><span class="sr-val">{{ advert.driveType.name }}</span></div>
-                                <div v-if="advert?.powerHP || advert?.engineVersion?.horsepower" class="spec-row"><span class="sr-label">Moc</span><span class="sr-val">{{ advert.powerHP ?? advert.engineVersion?.horsepower }} KM{{ advert.powerKW ? ` / ${advert.powerKW} kW` : '' }}</span></div>
-                                <div v-if="advert?.engineSize || advert?.engineVersion?.displacement" class="spec-row"><span class="sr-label">Pojemność silnika</span><span class="sr-val">{{ (advert.engineSize ?? advert.engineVersion?.displacement)?.toLocaleString('pl') }} cm³</span></div>
-                                <div v-if="advert?.torque" class="spec-row"><span class="sr-label">Moment obrotowy</span><span class="sr-val">{{ advert.torque }} Nm</span></div>
-                                <div v-if="advert?.acceleration" class="spec-row"><span class="sr-label">Przyspieszenie 0–100 km/h</span><span class="sr-val">{{ advert.acceleration }} s</span></div>
+                                <div v-if="advert?.fuelType" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.fuelType') }}</span><span class="sr-val">{{ advert.fuelType.name }}</span></div>
+                                <div v-if="advert?.gearbox" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.gearbox') }}</span><span class="sr-val">{{ advert.gearbox.name }}</span></div>
+                                <div v-if="advert?.driveType" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.driveType') }}</span><span class="sr-val">{{ advert.driveType.name }}</span></div>
+                                <div v-if="advert?.powerHP || advert?.engineVersion?.horsepower" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.power') }}</span><span class="sr-val">{{ advert.powerHP ?? advert.engineVersion?.horsepower }} {{ $t('advertDetail.units.hp') }}{{ advert.powerKW ? ` / ${advert.powerKW} kW` : '' }}</span></div>
+                                <div v-if="advert?.engineSize || advert?.engineVersion?.displacement" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.displacement') }}</span><span class="sr-val">{{ (advert.engineSize ?? advert.engineVersion?.displacement)?.toLocaleString('pl') }} cm³</span></div>
+                                <div v-if="advert?.torque" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.torque') }}</span><span class="sr-val">{{ advert.torque }} Nm</span></div>
+                                <div v-if="advert?.acceleration" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.acceleration') }}</span><span class="sr-val">{{ advert.acceleration }} s</span></div>
                             </div>
                         </div>
                         <div v-if="advert?.fuelConsumptionCombined || advert?.co2Emission || advert?.euroNorm || advert?.curbWeight" class="spec-section">
-                            <div class="spec-section-title">Zużycie paliwa i emisja</div>
+                            <div class="spec-section-title">{{ $t('advertDetail.specGroups.consumption') }}</div>
                             <div class="spec-rows">
-                                <div v-if="advert?.fuelConsumptionCity" class="spec-row"><span class="sr-label">Spalanie w mieście</span><span class="sr-val">{{ advert.fuelConsumptionCity }} l/100km</span></div>
-                                <div v-if="advert?.fuelConsumptionHighway" class="spec-row"><span class="sr-label">Spalanie poza miastem</span><span class="sr-val">{{ advert.fuelConsumptionHighway }} l/100km</span></div>
-                                <div v-if="advert?.fuelConsumptionCombined" class="spec-row"><span class="sr-label">Spalanie mieszane</span><span class="sr-val">{{ advert.fuelConsumptionCombined }} l/100km</span></div>
-                                <div v-if="advert?.co2Emission" class="spec-row"><span class="sr-label">Emisja CO₂</span><span class="sr-val">{{ advert.co2Emission }} g/km</span></div>
-                                <div v-if="advert?.euroNorm" class="spec-row"><span class="sr-label">Norma emisji spalin</span><span class="sr-val">{{ advert.euroNorm }}</span></div>
-                                <div v-if="advert?.curbWeight" class="spec-row"><span class="sr-label">Masa własna</span><span class="sr-val">{{ advert.curbWeight?.toLocaleString('pl') }} kg</span></div>
-                                <div v-if="advert?.grossWeight" class="spec-row"><span class="sr-label">Dopuszczalna masa całkowita</span><span class="sr-val">{{ advert.grossWeight?.toLocaleString('pl') }} kg</span></div>
+                                <div v-if="advert?.fuelConsumptionCity" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.fuelCity') }}</span><span class="sr-val">{{ advert.fuelConsumptionCity }} l/100km</span></div>
+                                <div v-if="advert?.fuelConsumptionHighway" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.fuelHighway') }}</span><span class="sr-val">{{ advert.fuelConsumptionHighway }} l/100km</span></div>
+                                <div v-if="advert?.fuelConsumptionCombined" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.fuelCombined') }}</span><span class="sr-val">{{ advert.fuelConsumptionCombined }} l/100km</span></div>
+                                <div v-if="advert?.co2Emission" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.co2') }}</span><span class="sr-val">{{ advert.co2Emission }} g/km</span></div>
+                                <div v-if="advert?.euroNorm" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.euroNorm') }}</span><span class="sr-val">{{ advert.euroNorm }}</span></div>
+                                <div v-if="advert?.curbWeight" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.curbWeight') }}</span><span class="sr-val">{{ advert.curbWeight?.toLocaleString('pl') }} kg</span></div>
+                                <div v-if="advert?.grossWeight" class="spec-row"><span class="sr-label">{{ $t('advertDetail.spec.grossWeight') }}</span><span class="sr-val">{{ advert.grossWeight?.toLocaleString('pl') }} kg</span></div>
                             </div>
                         </div>
                         <div v-if="parsedTechData.length" class="spec-section">
-                            <div class="spec-section-title">Dane szczegółowe</div>
+                            <div class="spec-section-title">{{ $t('advertDetail.specGroups.detailed') }}</div>
                             <div class="spec-rows">
                                 <div v-for="item in parsedTechData" :key="item.label" class="spec-row">
                                     <span class="sr-label">{{ item.label }}</span>
@@ -470,7 +470,7 @@
 
                 <!-- SECTION 3: Wyposażenie -->
                 <section v-if="Object.keys(featureGroups).length" class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-check-all" size="17" />Wyposażenie <span class="eq-total-badge">{{ advert?.features?.length ?? 0 }}</span></h2>
+                    <h2 class="pg-section-title"><v-icon icon="mdi-check-all" size="17" />{{ $t('advertDetail.sections.features') }} <span class="eq-total-badge">{{ advert?.features?.length ?? 0 }}</span></h2>
                     <div v-for="(group, cat) in featureGroups" :key="cat" class="eq-group">
                         <div class="eq-cat-label">
                             <v-icon :icon="featureGroupIcon(String(cat))" size="13" class="eq-cat-icon" />
@@ -486,18 +486,18 @@
 
                 <!-- SECTION 4: Historia pojazdu -->
                 <section v-if="hasHistoryData" class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-history" size="17" />Historia pojazdu</h2>
+                    <h2 class="pg-section-title"><v-icon icon="mdi-history" size="17" />{{ $t('advertDetail.sections.history') }}</h2>
                     <div class="tab-content">
                         <div v-if="advert?.vin" class="hist-vin-block">
                             <v-icon icon="mdi-barcode-scan" size="16" class="hv-icon" />
-                            <div><div class="hv-label">Numer VIN</div><div class="hv-val">{{ advert.vin }}</div></div>
-                            <span class="hv-verified"><v-icon icon="mdi-check-circle" size="13" />Zidentyfikowany</span>
+                            <div><div class="hv-label">{{ $t('advertDetail.history.vinNumber') }}</div><div class="hv-val">{{ advert.vin }}</div></div>
+                            <span class="hv-verified"><v-icon icon="mdi-check-circle" size="13" />{{ $t('advertDetail.history.identified') }}</span>
                         </div>
                         <!-- Structured history data -->
                         <div class="hist-items-grid">
                             <div v-if="advert?.firstRegistrationDate" class="hist-item hi-info">
                                 <v-icon icon="mdi-calendar-check-outline" size="18" class="hi-icon" />
-                                <div class="hi-body"><div class="hi-label">Pierwsza rejestracja</div><div class="hi-value">{{ advert.firstRegistrationDate }}</div></div>
+                                <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.firstRegistration') }}</div><div class="hi-value">{{ advert.firstRegistrationDate }}</div></div>
                             </div>
                             <div v-if="advert?.ownersCount !== undefined && advert?.ownersCount !== null" class="hist-item hi-info">
                                 <v-icon icon="mdi-account-multiple-outline" size="18" class="hi-icon" />
