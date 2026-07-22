@@ -1804,25 +1804,47 @@
                         </div>
                     </div>
 
-                    <!-- Location -->
+                    <!-- Location (global cascade: kraj → region → miasto z bazy) -->
                     <div class="form-section-subhead">Lokalizacja</div>
                     <div class="fields-grid">
                         <div class="field">
-                            <label class="flabel">Województwo <span class="req">*</span></label>
+                            <label class="flabel">Kraj <span class="req">*</span></label>
                             <div class="select-wrap">
-                                <select v-model="form.region" class="fselect">
-                                    <option :value="null" disabled>Wybierz województwo</option>
-                                    <option v-for="v in voivodeships" :key="v" :value="v">{{ v }}</option>
+                                <select v-model="geoCountry" class="fselect" @change="onGeoCountryChange">
+                                    <option value="" disabled>Wybierz kraj</option>
+                                    <option v-for="c in geoCountries" :key="c.iso2" :value="c.iso2">{{ c.nativeName || c.name }}</option>
                                 </select>
                                 <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field" v-if="geoHasRegions">
+                            <label class="flabel">Region / województwo <span class="req">*</span></label>
+                            <div class="select-wrap">
+                                <select v-model="geoRegionId" class="fselect" @change="onGeoRegionChange">
+                                    <option :value="null" disabled>Wybierz region</option>
+                                    <option v-for="r in geoRegions" :key="r.id" :value="r.id">{{ r.name }}</option>
+                                </select>
+                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                            </div>
+                        </div>
+                        <div class="field geo-city-field">
                             <label class="flabel">Miasto <span class="req">*</span></label>
                             <div class="input-icon-wrap">
                                 <v-icon icon="mdi-map-marker-outline" class="input-prefix" size="16" />
-                                <input v-model="form.city" type="text" class="finput has-prefix" placeholder="np. Warszawa" />
+                                <input
+                                    v-model="citySearch" type="text" class="finput has-prefix"
+                                    placeholder="Zacznij pisać nazwę miasta…" autocomplete="off"
+                                    :disabled="!geoCountry"
+                                    @input="onCitySearch" @focus="onCitySearch" @blur="onCityBlur" />
                             </div>
+                            <ul v-if="citySuggestOpen && citySuggestions.length" class="geo-suggest">
+                                <li v-for="c in citySuggestions" :key="c.id" @mousedown.prevent="pickCity(c)">
+                                    <v-icon icon="mdi-map-marker-outline" size="13" />{{ c.name }}
+                                </li>
+                            </ul>
+                            <p v-if="geoCountry && citySearch.length >= 2 && !cityLoading && !citySuggestions.length" class="fhint">
+                                Brak miasta na liście — wybierz najbliższe większe miasto.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -2985,8 +3007,17 @@ const attributeValues = reactive<Record<number, AttrValue | null>>({})
 async function loadAttributeDefinitions(categoryId: number | null = form.categoryId, subtypeId: number | null = form.vehicleSubtypeId) {
     if (!categoryId) { attributeDefinitions.value = []; return }
     try {
+        // Pass the whole selected chain so the "inteligentny formularz" returns vehicle-specific
+        // fields (e.g. BMW → xDrive/Head-Up Display) on top of the category/subtype-wide ones.
         attributeDefinitions.value = await $fetch<AttrDef[]>('/api/proxy/api/Attributes', {
-            query: { categoryId, subtypeId: subtypeId ?? undefined },
+            query: {
+                categoryId,
+                subtypeId: subtypeId ?? undefined,
+                brandId: form.brandId ?? undefined,
+                modelId: form.modelId ?? undefined,
+                generationId: form.generationId ?? undefined,
+                trimId: form.trimId ?? undefined,
+            },
         })
     } catch {
         attributeDefinitions.value = []
@@ -3027,6 +3058,90 @@ const WOJEWODZTWA: SelectOption[] = [
     { value: '26', label: 'Świętokrzyskie' }, { value: '28', label: 'Warmińsko-mazurskie' },
     { value: '30', label: 'Wielkopolskie' }, { value: '32', label: 'Zachodniopomorskie' },
 ]
+
+// --- Global location cascade (Faza 0): kraj → region → miasto z bazy /api/geo/*. Zastępuje
+// zaszyte na sztywno województwa i wolny wpis miasta. form.region/form.city pozostają nazwami
+// (string) dla zgodności z payloadem zapisu; dokładamy tylko źródło danych z bazy. ---
+const geo = useGeo()
+const geoCountries = ref<GeoCountry[]>([])
+const geoCountry = ref<string>('PL')
+const geoRegions = ref<GeoRegion[]>([])
+const geoRegionId = ref<number | null>(null)
+const geoHasRegions = computed(() => geoRegions.value.length > 0)
+const citySearch = ref('')
+const citySuggestions = ref<GeoCity[]>([])
+const citySuggestOpen = ref(false)
+const cityLoading = ref(false)
+let cityDebounce: ReturnType<typeof setTimeout> | null = null
+
+async function loadGeoRegions() {
+    geoRegions.value = geoCountry.value ? await geo.loadRegions(geoCountry.value) : []
+    // Pre-select region matching an already-filled form.region (edit / profile prefill).
+    if (form.region) {
+        const match = geoRegions.value.find(r => r.name === form.region)
+        geoRegionId.value = match ? match.id : null
+    }
+}
+
+async function onGeoCountryChange() {
+    geoRegionId.value = null
+    form.region = null
+    form.city = ''
+    citySearch.value = ''
+    citySuggestions.value = []
+    await loadGeoRegions()
+}
+
+function onGeoRegionChange() {
+    const r = geoRegions.value.find(x => x.id === geoRegionId.value)
+    form.region = r ? r.name : null   // keep the human-readable name in the saved payload
+    // reset city when region changes so an out-of-region city can't linger
+    form.city = ''
+    citySearch.value = ''
+    citySuggestions.value = []
+}
+
+function onCitySearch() {
+    citySuggestOpen.value = true
+    if (cityDebounce) clearTimeout(cityDebounce)
+    const q = citySearch.value.trim()
+    // keep form.city in sync with the raw text so a manual clear empties it
+    form.city = q
+    if (!geoCountry.value || q.length < 2) { citySuggestions.value = []; return }
+    cityLoading.value = true
+    cityDebounce = setTimeout(async () => {
+        citySuggestions.value = await geo.loadCities(geoCountry.value, { region: geoRegionId.value, q, limit: 12 })
+        cityLoading.value = false
+    }, 220)
+}
+
+function pickCity(c: GeoCity) {
+    citySearch.value = c.name
+    form.city = c.name
+    citySuggestOpen.value = false
+    citySuggestions.value = []
+}
+
+function onCityBlur() {
+    // let the mousedown on a suggestion fire first, then close
+    setTimeout(() => { citySuggestOpen.value = false }, 120)
+}
+
+// Late prefill: on edit the advert loads after mount, filling form.city/region asynchronously.
+watch(() => form.city, (v) => { if (v && !citySearch.value) citySearch.value = v })
+watch(() => form.region, () => {
+    if (form.region && geoRegions.value.length && geoRegionId.value == null) {
+        const m = geoRegions.value.find(r => r.name === form.region)
+        if (m) geoRegionId.value = m.id
+    }
+})
+
+onMounted(async () => {
+    geoCountries.value = await geo.loadCountries()
+    if (!geoCountries.value.some(c => c.iso2 === geoCountry.value)) geoCountry.value = geoCountries.value[0]?.iso2 ?? 'PL'
+    if (form.city) citySearch.value = form.city
+    await loadGeoRegions()
+})
 
 const selectedFiles = ref<File[]>([])
 const previews = ref<string[]>([])
@@ -4224,6 +4339,9 @@ function removeCompatibility(idx: number) {
 }
 
 watch(() => form.vehicleSubtypeId, () => { loadAttributeDefinitions() })
+// Re-fetch vehicle-specific attributes whenever the brand/model/generation/version chain changes,
+// so the form live-adapts to the picked vehicle (BMW → xDrive, Golf GTI → DSG, ...).
+watch(() => [form.brandId, form.modelId, form.generationId, form.trimId], () => { loadAttributeDefinitions() })
 
 watch(() => form.engineVersionId, (newId) => {
     if (!newId) { resetEngineLocks(); return }
@@ -5717,6 +5835,37 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
 }
+
+/* Global city autocomplete (Faza 0 geo cascade) */
+.geo-city-field { position: relative; }
+.geo-suggest {
+    position: absolute;
+    z-index: 40;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 5px;
+    list-style: none;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #0d0d0d;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+.geo-suggest li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    font-size: 14px;
+    color: $text-muted;
+    cursor: pointer;
+}
+.geo-suggest li:hover { background: rgba(255, 255, 255, 0.06); color: $text; }
+.geo-suggest .v-icon { color: $text-dim; }
 
 .input-prefix {
     position: absolute;

@@ -2,11 +2,11 @@
     <div class="help-page">
         <div class="page-hero">
             <div class="container">
-                <div class="hero-eyebrow">Centrum pomocy</div>
-                <h1>Jak możemy <span>pomóc?</span></h1>
+                <div class="hero-eyebrow">{{ $t('help.heroEyebrow') }}</div>
+                <h1>{{ $t('help.heroTitleBefore') }} <span>{{ $t('help.heroTitleHighlight') }}</span></h1>
                 <div class="hero-search">
                     <v-icon icon="mdi-magnify" size="20" class="hs-icon" />
-                    <input v-model="query" class="hs-input" placeholder="Szukaj w centrum pomocy..." />
+                    <input v-model="query" class="hs-input" :placeholder="$t('help.searchPlaceholder')" />
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
 
             <div v-if="filteredGroups.length === 0" class="no-results">
                 <v-icon icon="mdi-help-circle-outline" size="40" />
-                <p>Brak wyników dla „{{ query }}"</p>
+                <p>{{ $t('help.noResults', { query }) }}</p>
             </div>
 
             <div v-for="group in filteredGroups" :key="group.key" class="faq-group">
@@ -56,10 +56,10 @@
             <div class="contact-cta">
                 <div class="cc-icon"><v-icon icon="mdi-headset" size="32" /></div>
                 <div>
-                    <div class="cc-title">Nie znalazłeś odpowiedzi?</div>
-                    <div class="cc-sub">Skontaktuj się z naszym zespołem wsparcia.</div>
+                    <div class="cc-title">{{ $t('help.contactCtaTitle') }}</div>
+                    <div class="cc-sub">{{ $t('help.contactCtaSub') }}</div>
                 </div>
-                <a href="mailto:kontakt@carizo.eu" class="btn-contact">Napisz do nas</a>
+                <a href="mailto:kontakt@carizo.eu" class="btn-contact">{{ $t('help.contactCtaBtn') }}</a>
             </div>
 
         </div>
@@ -68,20 +68,21 @@
 
 <script setup lang="ts">
 const pomocConfig = useRuntimeConfig()
+const { t, tm, rt } = useI18n()
 useSeoMeta({
-    title: 'Pomoc — CARIZO',
-    description: 'Centrum pomocy CARIZO — znajdź odpowiedzi na najczęstsze pytania dotyczące sprzedaży, zakupu i bezpieczeństwa transakcji.',
+    title: () => t('help.metaTitle'),
+    description: () => t('help.metaDescription'),
     ogType: 'website',
     ogUrl: `${pomocConfig.public.siteUrl}/pomoc`,
-    ogTitle: 'Centrum pomocy — CARIZO',
-    ogDescription: 'FAQ i wskazówki dla kupujących i sprzedających na platformie CARIZO.',
+    ogTitle: () => t('help.ogTitle'),
+    ogDescription: () => t('help.ogDescription'),
     ogImage: `${pomocConfig.public.siteUrl}/og-image.jpg`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
-    twitterTitle: 'Centrum pomocy — CARIZO',
-    twitterDescription: 'FAQ i wskazówki dla kupujących i sprzedających na platformie CARIZO.',
+    twitterTitle: () => t('help.twitterTitle'),
+    twitterDescription: () => t('help.twitterDescription'),
     twitterImage: `${pomocConfig.public.siteUrl}/og-image.jpg`,
 })
 useHead({ link: [{ rel: 'canonical', href: `${pomocConfig.public.siteUrl}/pomoc` }] })
@@ -94,66 +95,26 @@ function toggle(key: string) {
     openKey.value = openKey.value === key ? null : key
 }
 
-const categories = [
-    { key: 'konto', label: 'Konto', icon: 'mdi-account-outline' },
-    { key: 'ogloszenia', label: 'Ogłoszenia', icon: 'mdi-car-outline' },
-    { key: 'platnosci', label: 'Płatności', icon: 'mdi-credit-card-outline' },
-    { key: 'bezpieczenstwo', label: 'Bezpieczeństwo', icon: 'mdi-shield-outline' },
-]
+const categories = computed(() => [
+    { key: 'konto', label: t('help.catKonto'), icon: 'mdi-account-outline' },
+    { key: 'ogloszenia', label: t('help.catOgloszenia'), icon: 'mdi-car-outline' },
+    { key: 'platnosci', label: t('help.catPlatnosci'), icon: 'mdi-credit-card-outline' },
+    { key: 'bezpieczenstwo', label: t('help.catBezpieczenstwo'), icon: 'mdi-shield-outline' },
+])
 
-const groups = [
-    {
-        key: 'konto',
-        label: 'Konto i rejestracja',
-        icon: 'mdi-account-circle-outline',
-        faqs: [
-            { q: 'Jak założyć konto w CARIZO?', a: 'Kliknij przycisk „Zarejestruj się" w prawym górnym rogu strony. Wypełnij formularz podając imię, adres e-mail i hasło. Po rejestracji otrzymasz e-mail z linkiem aktywacyjnym.' },
-            { q: 'Zapomniałem hasła – co zrobić?', a: 'Na stronie logowania kliknij „Zapomniałem hasła". Podaj swój adres e-mail, a my wyślemy Ci link do resetowania hasła.' },
-            { q: 'Jak zmienić dane konta?', a: 'Przejdź do <strong>Ustawień konta</strong> dostępnych w panelu użytkownika. Możesz tam zmienić imię, numer telefonu, adres i inne dane.' },
-            { q: 'Jak usunąć konto?', a: 'Możesz to zrobić w Ustawieniach konta → sekcja „Strefa niebezpieczna". Pamiętaj, że usunięcie konta jest nieodwracalne i spowoduje usunięcie wszystkich Twoich ogłoszeń.' },
-            { q: 'Czym różni się konto osobiste od firmowego?', a: 'Konto firmowe (Business) pozwala na dodawanie większej liczby ogłoszeń, wyświetlanie logo firmy, zarządzanie wieloma ogłoszeniami z jednego panelu oraz wystawianie faktur VAT.' },
-        ]
-    },
-    {
-        key: 'ogloszenia',
-        label: 'Ogłoszenia',
-        icon: 'mdi-car-outline',
-        faqs: [
-            { q: 'Jak dodać ogłoszenie?', a: 'Kliknij „Dodaj ogłoszenie" w menu. Wypełnij dane pojazdu w formularzu: marka, model, rok, przebieg, cena i opis. Dodaj co najmniej 3 zdjęcia. Kliknij „Opublikuj".' },
-            { q: 'Ile kosztuje dodanie ogłoszenia?', a: 'Podstawowe ogłoszenie jest <strong>bezpłatne</strong>. Płatne są jedynie pakiety promocji (TOP, Premium, Wyróżnienie), które zwiększają widoczność oferty.' },
-            { q: 'Jak długo ogłoszenie jest aktywne?', a: 'Standardowe ogłoszenie jest aktywne przez <strong>90 dni</strong>. Po tym czasie możesz je odświeżyć (płatna opcja) lub opublikować ponownie.' },
-            { q: 'Mogę edytować opublikowane ogłoszenie?', a: 'Tak, możesz edytować ogłoszenie w dowolnym momencie z poziomu panelu „Moje ogłoszenia". Zmiany będą widoczne natychmiast.' },
-            { q: 'Jak oznaczyć auto jako sprzedane?', a: 'W panelu „Moje ogłoszenia" kliknij przycisk z ikoną uścisku dłoni (handshake) przy ogłoszeniu. Potwierdź w oknie dialogowym. Ogłoszenie zniknie z wyników wyszukiwania.' },
-            { q: 'Ile zdjęć mogę dodać?', a: 'Możesz dodać do 20 zdjęć do jednego ogłoszenia. Pierwsze zdjęcie będzie zdjęciem głównym widocznym w wynikach wyszukiwania. Zalecamy dodanie minimum 8 zdjęć.' },
-        ]
-    },
-    {
-        key: 'platnosci',
-        label: 'Płatności i faktury',
-        icon: 'mdi-credit-card-outline',
-        faqs: [
-            { q: 'Jakie metody płatności akceptujecie?', a: 'Akceptujemy: karty Visa i Mastercard, BLIK, przelewy bankowe online oraz inne metody dostępne przez system ING IMOJE.' },
-            { q: 'Czy moje dane płatnicze są bezpieczne?', a: 'Tak. Płatności obsługuje ING IMOJE – certyfikowany operator płatności. CARIZO nie przechowuje danych kart płatniczych.' },
-            { q: 'Jak pobrać fakturę?', a: 'Faktury dostępne są w sekcji „Faktury" w panelu użytkownika. Kliknij przycisk pobierania przy wybranej fakturze, aby ją zapisać w formacie HTML lub PDF.' },
-            { q: 'Czy mogę anulować transakcję?', a: 'Możesz anulować transakcję ze statusem „Oczekująca" z poziomu sekcji „Transakcje". Transakcji już zrealizowanych nie można anulować – w takim przypadku skontaktuj się z pomocą techniczną.' },
-            { q: 'Kiedy płatność za promocję zostaje aktywowana?', a: 'Promocja jest aktywowana natychmiast po potwierdzeniu płatności przez system płatności (zazwyczaj w ciągu kilku sekund).' },
-        ]
-    },
-    {
-        key: 'bezpieczenstwo',
-        label: 'Bezpieczeństwo i oszustwa',
-        icon: 'mdi-shield-outline',
-        faqs: [
-            { q: 'Jak rozpoznać fałszywe ogłoszenie?', a: 'Czerwone flagi: cena znacznie poniżej rynkowej, brak zdjęć lub zdjęcia z internetu, sprzedający prosi o przelew przed oględzinami, brak możliwości kontaktu telefonicznego, prośby o płatności przez komunikatory.' },
-            { q: 'Jak bezpiecznie sfinalizować transakcję?', a: 'Zawsze <strong>obejrzyj auto osobiście</strong> przed zakupem. Spotkaj się w bezpiecznym miejscu. Nie płać z góry bez sprawdzenia pojazdu. Sprawdź historię pojazdu przez CEPiK lub inne serwisy.' },
-            { q: 'Jak zgłosić podejrzane ogłoszenie?', a: 'Na stronie ogłoszenia kliknij przycisk „Zgłoś" (ikona flagi). Opisz problem i wyślij zgłoszenie. Nasz zespół weryfikuje zgłoszenia w ciągu 24 godzin.' },
-            { q: 'Czy CARIZO weryfikuje sprzedawców?', a: 'Sprzedawcy mogą uzyskać status VERIFIED po przejściu procesu weryfikacji tożsamości. Ogłoszenia od zweryfikowanych sprzedawców oznaczone są specjalną odznaką.' },
-        ]
-    },
-]
+function faqsFrom(key: string) {
+    return (tm(key) as any[]).map(f => ({ q: rt(f.q), a: rt(f.a) }))
+}
+
+const groups = computed(() => [
+    { key: 'konto', label: t('help.groupKontoLabel'), icon: 'mdi-account-circle-outline', faqs: faqsFrom('help.groupKontoFaqs') },
+    { key: 'ogloszenia', label: t('help.groupOgloszeniaLabel'), icon: 'mdi-car-outline', faqs: faqsFrom('help.groupOgloszeniaFaqs') },
+    { key: 'platnosci', label: t('help.groupPlatnosciLabel'), icon: 'mdi-credit-card-outline', faqs: faqsFrom('help.groupPlatnosciFaqs') },
+    { key: 'bezpieczenstwo', label: t('help.groupBezpieczenstwoLabel'), icon: 'mdi-shield-outline', faqs: faqsFrom('help.groupBezpieczenstwoFaqs') },
+])
 
 const filteredGroups = computed(() => {
-    let result = groups
+    let result = groups.value
     if (activeCategory.value) {
         result = result.filter(g => g.key === activeCategory.value)
     }

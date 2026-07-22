@@ -50,6 +50,27 @@
                         <option v-for="s in formSubtypes" :key="s.id" :value="s.id">{{ s.name }}</option>
                     </select>
                     <input v-model="form.key" class="afc-input" placeholder="Klucz (np. tire_width)" />
+                </div>
+                <div class="afc-scope">
+                    <span class="afc-scope-label"><v-icon icon="mdi-filter-variant" size="13" /> Zakres pojazdu (opcjonalnie — puste = dla wszystkich):</span>
+                    <div class="afc-fields">
+                        <select v-model="form.brandId" class="afc-select" @change="onScopeBrandChange">
+                            <option value="">Każda marka</option>
+                            <option v-for="b in scopeBrands" :key="b.id" :value="b.id">{{ b.name }}</option>
+                        </select>
+                        <select v-model="form.modelId" class="afc-select" :disabled="!form.brandId" @change="onScopeModelChange">
+                            <option value="">Każdy model</option>
+                            <option v-for="m in scopeModels" :key="m.id" :value="m.id">{{ m.name }}</option>
+                        </select>
+                        <select v-model="form.generationId" class="afc-select" :disabled="!form.modelId" @change="onScopeGenerationChange">
+                            <option value="">Każda generacja</option>
+                            <option v-for="g in scopeGenerations" :key="g.id" :value="g.id">{{ g.name }}</option>
+                        </select>
+                        <select v-model="form.trimId" class="afc-select" :disabled="!form.generationId">
+                            <option value="">Każda wersja</option>
+                            <option v-for="t in scopeTrims" :key="t.id" :value="t.id">{{ t.name }}</option>
+                        </select>
+                    </div>
                     <input v-model="form.labelPl" class="afc-input" placeholder="Etykieta (np. Szerokość opony)" />
                     <select v-model="form.dataType" class="afc-select">
                         <option v-for="t in DATA_TYPES" :key="t" :value="t">{{ t }}</option>
@@ -79,7 +100,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th><th>Kategoria</th><th>Podtyp</th><th>Klucz</th><th>Etykieta</th>
+                            <th>ID</th><th>Kategoria</th><th>Podtyp</th><th>Zakres pojazdu</th><th>Klucz</th><th>Etykieta</th>
                             <th>Typ</th><th>Jedn.</th><th>Wym.</th><th>Filtr.</th><th>Użycia</th><th>Aktywne</th><th>Akcje</th>
                         </tr>
                     </thead>
@@ -88,6 +109,7 @@
                             <td class="td-id">#{{ d.id }}</td>
                             <td class="td-dim">{{ d.vehicleCategoryName }}</td>
                             <td class="td-dim">{{ d.vehicleSubtypeName ?? '—' }}</td>
+                            <td class="td-scope"><span v-if="scopeSummary(d)" class="scope-badge">{{ scopeSummary(d) }}</span><span v-else class="td-dim">—</span></td>
                             <td class="td-name">{{ d.key }}</td>
                             <td class="td-dim">{{ d.labelPl }}</td>
                             <td><span class="cat-badge">{{ d.dataType }}</span></td>
@@ -126,10 +148,24 @@ const saving = ref(false)
 const formSubtypes = ref<any[]>([])
 const optionsRaw = ref('')
 
+// "Inteligentny formularz" scope selectors — cascading Brand → Model → Generation → Version.
+// Each level empty = "any", matching the wildcard scoping the API applies. Names are cached so the
+// table can render a readable badge without a round-trip per row.
+const scopeBrands = ref<any[]>([])
+const scopeModels = ref<any[]>([])
+const scopeGenerations = ref<any[]>([])
+const scopeTrims = ref<any[]>([])
+const scopeNameCache = reactive({
+    brand: {} as Record<number, string>, model: {} as Record<number, string>,
+    generation: {} as Record<number, string>, trim: {} as Record<number, string>,
+})
+
 const emptyForm = () => ({
     id: null as number | null,
     vehicleCategoryId: '' as number | '',
     vehicleSubtypeId: '' as number | '',
+    brandId: '' as number | '', modelId: '' as number | '',
+    generationId: '' as number | '', trimId: '' as number | '',
     key: '', labelPl: '', dataType: 'Text', unit: '',
     isRequired: false, isFilterable: false, isSearchable: false, isActive: true,
     sortOrder: 0,
@@ -161,22 +197,84 @@ async function loadSubtypesForForm() {
     formSubtypes.value = await $fetch<any[]>(`/api/proxy/api/Taxonomy/vehicle-subtypes/category/${form.vehicleCategoryId}`).catch(() => [])
 }
 
+function cacheNames(kind: 'brand' | 'model' | 'generation' | 'trim', items: any[]) {
+    for (const it of items) if (it?.id != null) scopeNameCache[kind][it.id] = it.name
+}
+
+async function loadScopeBrands() {
+    scopeBrands.value = await $fetch<any[]>('/api/proxy/api/Taxonomy/brands').catch(() => [])
+    cacheNames('brand', scopeBrands.value)
+}
+async function loadScopeModels() {
+    scopeModels.value = form.brandId
+        ? await $fetch<any[]>(`/api/proxy/api/Taxonomy/brands/${form.brandId}/models`).catch(() => [])
+        : []
+    cacheNames('model', scopeModels.value)
+}
+async function loadScopeGenerations() {
+    scopeGenerations.value = form.modelId
+        ? await $fetch<any[]>(`/api/proxy/api/Taxonomy/models/${form.modelId}/generations`).catch(() => [])
+        : []
+    cacheNames('generation', scopeGenerations.value)
+}
+async function loadScopeTrims() {
+    scopeTrims.value = form.generationId
+        ? await $fetch<any[]>(`/api/proxy/api/Taxonomy/trims/generation/${form.generationId}`).catch(() => [])
+        : []
+    cacheNames('trim', scopeTrims.value)
+}
+
+// Selecting a broader level clears everything narrower so an impossible scope (e.g. model of the
+// wrong brand) can never be submitted.
+async function onScopeBrandChange() {
+    form.modelId = ''; form.generationId = ''; form.trimId = ''
+    scopeModels.value = []; scopeGenerations.value = []; scopeTrims.value = []
+    await loadScopeModels()
+}
+async function onScopeModelChange() {
+    form.generationId = ''; form.trimId = ''
+    scopeGenerations.value = []; scopeTrims.value = []
+    await loadScopeGenerations()
+}
+async function onScopeGenerationChange() {
+    form.trimId = ''
+    scopeTrims.value = []
+    await loadScopeTrims()
+}
+
+function scopeSummary(d: any): string {
+    const parts: string[] = []
+    if (d.brandId) parts.push(d.brandName ?? scopeNameCache.brand[d.brandId] ?? `#${d.brandId}`)
+    if (d.modelId) parts.push(d.modelName ?? scopeNameCache.model[d.modelId] ?? `#${d.modelId}`)
+    if (d.generationId) parts.push(d.generationName ?? scopeNameCache.generation[d.generationId] ?? `#${d.generationId}`)
+    if (d.trimId) parts.push(d.trimName ?? scopeNameCache.trim[d.trimId] ?? `#${d.trimId}`)
+    return parts.join(' › ')
+}
+
 function openCreateForm() {
     Object.assign(form, emptyForm())
     optionsRaw.value = ''
     formSubtypes.value = []
+    scopeModels.value = []; scopeGenerations.value = []; scopeTrims.value = []
     showForm.value = true
 }
 
 function openEditForm(d: any) {
     Object.assign(form, {
         id: d.id, vehicleCategoryId: d.vehicleCategoryId, vehicleSubtypeId: d.vehicleSubtypeId ?? '',
+        brandId: d.brandId ?? '', modelId: d.modelId ?? '', generationId: d.generationId ?? '', trimId: d.trimId ?? '',
         key: d.key, labelPl: d.labelPl, dataType: d.dataType, unit: d.unit ?? '',
         isRequired: d.isRequired, isFilterable: d.isFilterable, isSearchable: d.isSearchable, isActive: d.isActive,
         sortOrder: d.sortOrder,
     })
     optionsRaw.value = d.optionsJson ? (JSON.parse(d.optionsJson) as string[]).join(', ') : ''
     loadSubtypesForForm()
+    // Rebuild the cascade so the saved brand/model/generation/version show as selected.
+    scopeModels.value = []; scopeGenerations.value = []; scopeTrims.value = []
+    Promise.resolve()
+        .then(() => form.brandId ? loadScopeModels() : null)
+        .then(() => form.modelId ? loadScopeGenerations() : null)
+        .then(() => form.generationId ? loadScopeTrims() : null)
     showForm.value = true
 }
 
@@ -189,6 +287,8 @@ async function saveForm() {
         const options = optionsRaw.value.split(',').map(s => s.trim()).filter(Boolean)
         const body = {
             vehicleCategoryId: form.vehicleCategoryId, vehicleSubtypeId: form.vehicleSubtypeId || null,
+            brandId: form.brandId || null, modelId: form.modelId || null,
+            generationId: form.generationId || null, trimId: form.trimId || null,
             key: form.key, labelPl: form.labelPl, dataType: form.dataType, unit: form.unit || null,
             optionsJson: options.length ? JSON.stringify(options) : null,
             isRequired: form.isRequired, isFilterable: form.isFilterable, isSearchable: form.isSearchable,
@@ -214,6 +314,8 @@ async function toggleActive(d: any, event: Event) {
             method: 'PUT',
             body: {
                 vehicleCategoryId: d.vehicleCategoryId, vehicleSubtypeId: d.vehicleSubtypeId,
+                brandId: d.brandId ?? null, modelId: d.modelId ?? null,
+                generationId: d.generationId ?? null, trimId: d.trimId ?? null,
                 key: d.key, labelPl: d.labelPl, dataType: d.dataType, unit: d.unit,
                 optionsJson: d.optionsJson, isRequired: d.isRequired, isFilterable: d.isFilterable,
                 isSearchable: d.isSearchable, isActive: checked, sortOrder: d.sortOrder,
@@ -242,7 +344,7 @@ async function deleteDefinition(d: any) {
 }
 
 onMounted(async () => {
-    await Promise.all([loadVehicleCategories(), loadDefinitions()])
+    await Promise.all([loadVehicleCategories(), loadDefinitions(), loadScopeBrands()])
 })
 </script>
 
@@ -282,6 +384,21 @@ onMounted(async () => {
     font-size: 13px; padding: 8px 12px; cursor: pointer; font-family: 'Inter', sans-serif;
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
+.afc-scope {
+    border: 1px dashed rgba(255,255,255,0.12); border-radius: $r-sm;
+    padding: 10px 12px; margin-bottom: 10px; background: rgba(255,255,255,0.015);
+    .afc-fields { margin-bottom: 0; }
+}
+.afc-scope-label {
+    display: flex; align-items: center; gap: 5px; font-size: 11px; color: $text-dim;
+    margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.3px; font-weight: 600;
+}
+.td-scope { max-width: 220px; white-space: normal; }
+.scope-badge {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 5px;
+    background: rgba($red, 0.1); color: rgba($red, 0.85); border: 1px solid rgba($red, 0.22); line-height: 1.4;
+}
+
 .afc-cats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
 .afc-check { display: flex; align-items: center; gap: 6px; font-size: 12px; color: $text-muted; cursor: pointer; }
 .afc-actions { display: flex; gap: 10px; }

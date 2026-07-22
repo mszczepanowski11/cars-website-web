@@ -13,17 +13,17 @@
                 <div class="hfs-left-inner">
                     <div class="hfs-eyebrow">
                         <span class="eyebrow-dot" />
-                        Platforma motoryzacyjna premium
+                        {{ $t('hero.eyebrow') }}
                     </div>
                     <h1 class="hfs-title">
-                        Kupuj pewniej.<br>
-                        <span class="title-accent">Sprzedaj&nbsp;szybciej.</span>
+{{ $t('hero.titleLine1') }}<br>
+                        <span class="title-accent">{{ $t('hero.titleLine2') }}</span>
                     </h1>
                     <ul class="hfs-features">
-                        <li><v-icon icon="mdi-shield-check-outline" size="16" class="hfs-feat-icon" />Zweryfikowane ogłoszenia</li>
-                        <li><v-icon icon="mdi-file-document-outline" size="16" class="hfs-feat-icon" />Historia pojazdu</li>
-                        <li><v-icon icon="mdi-cpu-64-bit" size="16" class="hfs-feat-icon" />Inteligentna wycena AI</li>
-                        <li><v-icon icon="mdi-account-tie-outline" size="16" class="hfs-feat-icon" />Profesjonalni sprzedawcy w jednym miejscu</li>
+                        <li><v-icon icon="mdi-shield-check-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat1') }}</li>
+                        <li><v-icon icon="mdi-file-document-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat2') }}</li>
+                        <li><v-icon icon="mdi-cpu-64-bit" size="16" class="hfs-feat-icon" />{{ $t('hero.feat3') }}</li>
+                        <li><v-icon icon="mdi-account-tie-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat4') }}</li>
                     </ul>
                     <div class="hfs-links">
                         <NuxtLink to="/adverts" class="hfs-link hfs-link--primary">
@@ -68,44 +68,44 @@
                 <!-- Level 1: Primary row -->
                 <div class="hs-primary">
                     <div v-if="currentSearchConfig.hasBrand" class="hsp-field">
-                        <label class="hsp-label">{{ currentSearchConfig.brandLabel ?? 'Marka' }}</label>
+                        <label class="hsp-label">{{ currentSearchConfig.brandLabel ?? $t('search.brand') }}</label>
                         <select v-model="searchBrandId" class="hsp-select" @change="onBrandChange">
-                            <option :value="null">Wszystkie marki</option>
+                            <option :value="null">{{ $t('search.allBrands') }}</option>
                             <option v-for="b in filterBrands.filter(b => b.name && !/^\d+$/.test(b.name))" :key="b.id" :value="b.id">{{ b.name }}</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.hasBrand && currentSearchConfig.hasModel" class="hsp-field">
-                        <label class="hsp-label">Model</label>
+                        <label class="hsp-label">{{ $t('search.model') }}</label>
                         <select v-model="searchModelId" class="hsp-select" :disabled="!searchBrandId" @change="onModelChange">
                             <option :value="null">{{ searchBrandId ? 'Wszystkie modele' : 'Wybierz markę' }}</option>
                             <option v-for="m in searchModels" :key="m.id" :value="m.id">{{ m.name }}</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.subtypes?.length" class="hsp-field">
-                        <label class="hsp-label">{{ currentSearchConfig.subtypeLabel ?? 'Typ' }}</label>
+                        <label class="hsp-label">{{ currentSearchConfig.subtypeLabel ?? $t('search.type') }}</label>
                         <select v-model="searchSubtype" class="hsp-select">
-                            <option value="">Wszystkie</option>
+                            <option value="">{{ $t('search.all') }}</option>
                             <option v-for="s in currentSearchConfig.subtypes" :key="s" :value="s">{{ s }}</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.hasPartCategory" class="hsp-field">
-                        <label class="hsp-label">Kategoria części</label>
+                        <label class="hsp-label">{{ $t('search.partCategory') }}</label>
                         <select v-model="searchPartCategory" class="hsp-select">
-                            <option :value="null">Wszystkie kategorie</option>
+                            <option :value="null">{{ $t('search.allCategories') }}</option>
                             <option v-for="pc in partCategories" :key="pc.id" :value="pc.id">{{ pc.name }}</option>
                         </select>
                     </div>
                     <div class="hsp-field hsp-range">
-                        <label class="hsp-label">Cena (PLN)</label>
+                        <label class="hsp-label">{{ $t('search.price') }}</label>
                         <div class="hsp-range-row">
-                            <input v-model="searchPriceFrom" type="number" class="hsp-input" placeholder="Od" min="0" />
+                            <input v-model="searchPriceFrom" type="number" class="hsp-input" :placeholder="$t('search.from')" min="0" />
                             <span class="hsp-sep">—</span>
-                            <input v-model="searchPriceTo" type="number" class="hsp-input" placeholder="Do" min="0" />
+                            <input v-model="searchPriceTo" type="number" class="hsp-input" :placeholder="$t('search.to')" min="0" />
                         </div>
                     </div>
                     <button class="hsp-search-btn" @click="doSearch">
                         <v-icon icon="mdi-magnify" size="18" />
-                        Szukaj
+                        {{ $t('search.searchBtn') }}
                     </button>
                 </div>
 
@@ -113,7 +113,7 @@
                 <div class="hs-more-row">
                     <button class="hs-more-btn" @click="showMoreFilters = !showMoreFilters">
                         <v-icon icon="mdi-tune-variant" size="15" />
-                        Więcej filtrów
+                        {{ $t('search.moreFilters') }}
                         <span v-if="homeAdvancedCount" class="hs-more-badge">{{ homeAdvancedCount }}</span>
                         <v-icon :icon="showMoreFilters ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="15" />
                     </button>
@@ -125,7 +125,7 @@
                         <div class="hse-grid">
 
                             <div v-if="currentSearchConfig.hasBodyType && bodyTypes.length" class="hse-field">
-                                <label class="hse-label">Nadwozie</label>
+                                <label class="hse-label">{{ $t('search.bodyType') }}</label>
                                 <select v-model="searchBodyTypeId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
                                     <option v-for="bt in bodyTypes" :key="bt.id" :value="bt.id">{{ bt.name }}</option>
@@ -133,7 +133,7 @@
                             </div>
 
                             <div v-if="currentSearchConfig.hasEngineSize" class="hse-field hse-range">
-                                <label class="hse-label">Pojemność (cm³)</label>
+                                <label class="hse-label">{{ $t('search.engineSize') }}</label>
                                 <div class="hse-range-row">
                                     <input v-model="searchEngineSizeFrom" type="number" class="hse-input" placeholder="Od" min="0" />
                                     <span class="hse-sep">—</span>
@@ -142,7 +142,7 @@
                             </div>
 
                             <div v-if="currentSearchConfig.hasFuel && fuelTypes.length" class="hse-field">
-                                <label class="hse-label">Paliwo</label>
+                                <label class="hse-label">{{ $t('search.fuel') }}</label>
                                 <select v-model="searchFuelId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
                                     <option v-for="f in fuelTypes" :key="f.id" :value="f.id">{{ f.name }}</option>
@@ -150,7 +150,7 @@
                             </div>
 
                             <div v-if="currentSearchConfig.hasFuel && gearboxes.length" class="hse-field">
-                                <label class="hse-label">Skrzynia biegów</label>
+                                <label class="hse-label">{{ $t('search.gearbox') }}</label>
                                 <select v-model="searchGearboxId" class="hse-select">
                                     <option :value="null">Wszystkie</option>
                                     <option v-for="g in gearboxes" :key="g.id" :value="g.id">{{ g.name }}</option>

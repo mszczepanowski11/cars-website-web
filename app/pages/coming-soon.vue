@@ -2,8 +2,8 @@
     <div class="cs-root">
         <div class="cs-card">
             <img src="/carizo-logo.svg" alt="CARIZO" class="cs-logo" />
-            <h1 class="cs-title">Już <span>wkrótce</span></h1>
-            <p class="cs-sub">Pracujemy nad czymś wyjątkowym. Wróć niebawem.</p>
+            <h1 class="cs-title">{{ $t('comingSoon.titleBefore') }} <span>{{ $t('comingSoon.titleHighlight') }}</span></h1>
+            <p class="cs-sub">{{ $t('comingSoon.sub') }}</p>
 
             <form v-if="needsPassword" class="cs-form" @submit.prevent="submit">
                 <div class="cs-input-wrap" :class="{ shake: shaking }">
@@ -11,7 +11,7 @@
                         ref="inputRef"
                         v-model="password"
                         type="password"
-                        placeholder="Hasło dostępu"
+                        :placeholder="$t('comingSoon.passwordPlaceholder')"
                         class="cs-input"
                         autocomplete="current-password"
                     />
@@ -20,7 +20,7 @@
                         <span v-else class="cs-spinner" />
                     </button>
                 </div>
-                <p v-if="error" class="cs-error">Nieprawidłowe hasło</p>
+                <p v-if="error" class="cs-error">{{ $t('comingSoon.errorInvalid') }}</p>
             </form>
         </div>
     </div>
@@ -28,8 +28,9 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: false })
+const { t } = useI18n()
 useSeoMeta({ robots: 'noindex, nofollow' })
-useHead({ title: 'CARIZO – Już wkrótce' })
+useHead({ title: t('comingSoon.metaTitle') })
 
 const route = useRoute()
 const router = useRouter()

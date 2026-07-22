@@ -4,20 +4,20 @@
 
             <div class="page-header">
                 <div class="page-header-left">
-                    <h1 class="page-title">Ulubione ogłoszenia</h1>
+                    <h1 class="page-title">{{ $t('favorites.title') }}</h1>
                     <p v-if="!loading" class="page-sub">
-                        {{ total > 0 ? `${total} zapisanych ogłoszeń` : 'Brak zapisanych ogłoszeń' }}
+                        {{ total > 0 ? $t('favorites.savedCount', { count: total }) : $t('favorites.noneSaved') }}
                     </p>
                 </div>
                 <div v-if="total > 0" class="page-header-right">
                     <div class="sort-wrap">
                         <v-icon icon="mdi-sort" size="15" class="sort-icon" />
                         <select v-model="sortBy" class="sort-select" @change="load(1)">
-                            <option value="">Najnowsze</option>
-                            <option value="price_asc">Cena: rosnąco</option>
-                            <option value="price_desc">Cena: malejąco</option>
-                            <option value="year_desc">Rok: najnowszy</option>
-                            <option value="mileage_asc">Przebieg: najmniejszy</option>
+                            <option value="">{{ $t('favorites.sortNewest') }}</option>
+                            <option value="price_asc">{{ $t('favorites.sortPriceAsc') }}</option>
+                            <option value="price_desc">{{ $t('favorites.sortPriceDesc') }}</option>
+                            <option value="year_desc">{{ $t('favorites.sortYearDesc') }}</option>
+                            <option value="mileage_asc">{{ $t('favorites.sortMileageAsc') }}</option>
                         </select>
                     </div>
                 </div>
@@ -37,17 +37,17 @@
                     <div class="empty-icon-wrap">
                         <v-icon icon="mdi-heart-outline" size="40" />
                     </div>
-                    <h2 class="empty-title">Nie masz jeszcze ulubionych</h2>
-                    <p class="empty-sub">Przeglądaj ogłoszenia i klikaj serce, aby zapisywać te, które Cię interesują.</p>
+                    <h2 class="empty-title">{{ $t('favorites.emptyTitle') }}</h2>
+                    <p class="empty-sub">{{ $t('favorites.emptySub') }}</p>
                     <NuxtLink to="/adverts" class="btn-browse">
                         <v-icon icon="mdi-car-multiple" size="16" />
-                        Przeglądaj ogłoszenia
+                        {{ $t('favorites.browse') }}
                     </NuxtLink>
                 </div>
 
                 <!-- Pagination -->
                 <div v-if="totalPages > 1" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="load(page - 1)">
+                    <button class="page-btn" :disabled="page === 1" :aria-label="$t('favorites.prevPage')" @click="load(page - 1)">
                         <v-icon icon="mdi-chevron-left" size="18" />
                     </button>
                     <button
@@ -58,7 +58,7 @@
                         :disabled="p === '...'"
                         @click="p !== '...' && load(Number(p))"
                     >{{ p }}</button>
-                    <button class="page-btn" :disabled="page >= totalPages" aria-label="Następna strona" @click="load(page + 1)">
+                    <button class="page-btn" :disabled="page >= totalPages" :aria-label="$t('favorites.nextPage')" @click="load(page + 1)">
                         <v-icon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
@@ -72,8 +72,9 @@
 import type { CarAdvert, PagedResult } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
+const { t } = useI18n()
 useSeoMeta({ robots: 'noindex, nofollow' })
-useHead({ title: 'Ulubione — CARIZO' })
+useHead({ title: () => t('favorites.metaTitle') })
 
 const adverts = ref<CarAdvert[]>([])
 const total = ref(0)

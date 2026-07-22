@@ -2,14 +2,14 @@
   <div class="dir-page">
     <section class="dir-hero">
       <div class="dir-hero-inner">
-        <div class="dir-eyebrow">Baza firm motoryzacyjnych</div>
-        <h1 class="dir-title">Firmy w CARIZO</h1>
-        <p class="dir-sub">Komisy, dealerzy, warsztaty, transport i więcej — jedna przeszukiwalna baza branży.</p>
+        <div class="dir-eyebrow">{{ $t('firmy.eyebrow') }}</div>
+        <h1 class="dir-title">{{ $t('firmy.title') }}</h1>
+        <p class="dir-sub">{{ $t('firmy.sub') }}</p>
 
         <form class="dir-search" @submit.prevent="applySearch">
           <v-icon icon="mdi-magnify" size="20" class="dir-search-icon" />
-          <input v-model="qInput" type="text" placeholder="Szukaj firmy po nazwie…" class="dir-search-input" />
-          <button type="submit" class="dir-search-btn">Szukaj</button>
+          <input v-model="qInput" type="text" :placeholder="$t('firmy.searchPlaceholder')" class="dir-search-input" />
+          <button type="submit" class="dir-search-btn">{{ $t('firmy.searchBtn') }}</button>
         </form>
       </div>
     </section>
@@ -19,9 +19,9 @@
         <!-- Filters -->
         <aside class="dir-filters">
           <div v-if="countryFacets.length > 1" class="dir-filter-block">
-            <h3 class="dir-filter-h">Kraj</h3>
+            <h3 class="dir-filter-h">{{ $t('firmy.country') }}</h3>
             <button class="dir-facet" :class="{ active: !activeCountry }" @click="setCountry(null)">
-              <span>Wszystkie kraje</span>
+              <span>{{ $t('firmy.allCountries') }}</span>
             </button>
             <button
               v-for="c in countryFacets" :key="c.value"
@@ -33,11 +33,11 @@
           </div>
 
           <div class="dir-filter-block">
-            <h3 class="dir-filter-h">Kategoria</h3>
+            <h3 class="dir-filter-h">{{ $t('firmy.category') }}</h3>
             <button
               class="dir-facet" :class="{ active: !activeCategory }"
               @click="setCategory(null)">
-              <span>Wszystkie</span>
+              <span>{{ $t('firmy.all') }}</span>
               <span class="dir-facet-count">{{ totalAll }}</span>
             </button>
             <button
@@ -53,11 +53,11 @@
         <!-- Results -->
         <div class="dir-results">
           <div class="dir-results-head">
-            <span v-if="!pending">Znaleziono <strong>{{ total.toLocaleString('pl') }}</strong> {{ pluralFirm(total) }}</span>
-            <span v-else>Ładowanie…</span>
+            <span v-if="!pending">{{ $t('firmy.found') }} <strong>{{ total.toLocaleString('pl') }}</strong> {{ pluralFirm(total) }}</span>
+            <span v-else>{{ $t('firmy.loading') }}</span>
             <div class="dir-viewtoggle">
-              <button :class="{ active: view === 'list' }" @click="view = 'list'"><v-icon icon="mdi-format-list-bulleted" size="16" /> Lista</button>
-              <button :class="{ active: view === 'map' }" @click="view = 'map'"><v-icon icon="mdi-map-outline" size="16" /> Mapa</button>
+              <button :class="{ active: view === 'list' }" @click="view = 'list'"><v-icon icon="mdi-format-list-bulleted" size="16" /> {{ $t('firmy.list') }}</button>
+              <button :class="{ active: view === 'map' }" @click="view = 'map'"><v-icon icon="mdi-map-outline" size="16" /> {{ $t('firmy.map') }}</button>
             </div>
           </div>
 
@@ -73,8 +73,8 @@
 
           <div v-else-if="items.length === 0" class="dir-empty">
             <v-icon icon="mdi-office-building-outline" size="44" />
-            <p>Brak firm dla wybranych filtrów.</p>
-            <button v-if="activeCategory || activeCountry || q" class="dir-reset" @click="resetAll">Wyczyść filtry</button>
+            <p>{{ $t('firmy.empty') }}</p>
+            <button v-if="activeCategory || activeCountry || q" class="dir-reset" @click="resetAll">{{ $t('firmy.clearFilters') }}</button>
           </div>
 
           <ul v-else class="dir-list">
@@ -86,7 +86,7 @@
                 <div class="dir-card-body">
                   <div class="dir-card-name">
                     {{ co.name }}
-                    <span v-if="co.status === 'unverified'" class="dir-badge" title="Dane niezweryfikowane">niezweryfikowana</span>
+                    <span v-if="co.status === 'unverified'" class="dir-badge">{{ $t('firmy.unverified') }}</span>
                   </div>
                   <div class="dir-card-meta">
                     <span class="dir-card-cat">{{ categoryLabel(co.category) }}</span>
@@ -102,11 +102,11 @@
           <!-- Pagination -->
           <div v-if="totalPages > 1" class="dir-pager">
             <button class="dir-pager-btn" :disabled="page <= 1" @click="goPage(page - 1)">
-              <v-icon icon="mdi-chevron-left" size="18" /> Poprzednia
+              <v-icon icon="mdi-chevron-left" size="18" /> {{ $t('firmy.prev') }}
             </button>
-            <span class="dir-pager-info">Strona {{ page }} z {{ totalPages }}</span>
+            <span class="dir-pager-info">{{ $t('firmy.pageOf', { page, total: totalPages }) }}</span>
             <button class="dir-pager-btn" :disabled="page >= totalPages" @click="goPage(page + 1)">
-              Następna <v-icon icon="mdi-chevron-right" size="18" />
+              {{ $t('firmy.next') }} <v-icon icon="mdi-chevron-right" size="18" />
             </button>
           </div>
           </template>

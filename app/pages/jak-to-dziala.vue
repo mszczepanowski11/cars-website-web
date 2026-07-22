@@ -2,16 +2,16 @@
     <div class="htw-page">
         <div class="page-hero">
             <div class="container">
-                <div class="hero-eyebrow">Przewodnik</div>
-                <h1>Jak to <span>działa?</span></h1>
-                <p>Sprzedawaj i kupuj auta w kilku prostych krokach.</p>
+                <div class="hero-eyebrow">{{ $t('howItWorks.heroEyebrow') }}</div>
+                <h1>{{ $t('howItWorks.heroTitleBefore') }} <span>{{ $t('howItWorks.heroTitleHighlight') }}</span></h1>
+                <p>{{ $t('howItWorks.heroDesc') }}</p>
             </div>
         </div>
 
         <div class="container page-body">
 
             <div class="section-title-row">
-                <h2 class="section-h2">Chcę <span>sprzedać</span> auto</h2>
+                <h2 class="section-h2">{{ $t('howItWorks.sellTitleBefore') }} <span>{{ $t('howItWorks.sellTitleHighlight') }}</span> {{ $t('howItWorks.sellTitleAfter') }}</h2>
             </div>
             <div class="steps-grid">
                 <div v-for="(s, i) in sellSteps" :key="i" class="step-card">
@@ -23,7 +23,7 @@
             </div>
 
             <div class="section-title-row" style="margin-top: 72px;">
-                <h2 class="section-h2">Chcę <span>kupić</span> auto</h2>
+                <h2 class="section-h2">{{ $t('howItWorks.buyTitleBefore') }} <span>{{ $t('howItWorks.buyTitleHighlight') }}</span> {{ $t('howItWorks.buyTitleAfter') }}</h2>
             </div>
             <div class="steps-grid">
                 <div v-for="(s, i) in buySteps" :key="i" class="step-card">
@@ -35,7 +35,7 @@
             </div>
 
             <div class="faq-section">
-                <h2 class="section-h2">Często zadawane <span>pytania</span></h2>
+                <h2 class="section-h2">{{ $t('howItWorks.faqTitleBefore') }} <span>{{ $t('howItWorks.faqTitleHighlight') }}</span></h2>
                 <div class="faq-list">
                     <div v-for="(faq, i) in faqs" :key="i" class="faq-item">
                         <button class="faq-q" :class="{ open: openFaq === i }" @click="openFaq = openFaq === i ? null : i">
@@ -50,8 +50,8 @@
             </div>
 
             <div class="cta-row">
-                <NuxtLink to="/register" class="btn-cta">Zarejestruj się za darmo</NuxtLink>
-                <NuxtLink to="/adverts" class="btn-cta-outline">Przeglądaj ogłoszenia</NuxtLink>
+                <NuxtLink to="/register" class="btn-cta">{{ $t('howItWorks.ctaRegister') }}</NuxtLink>
+                <NuxtLink to="/adverts" class="btn-cta-outline">{{ $t('howItWorks.ctaBrowse') }}</NuxtLink>
             </div>
 
         </div>
@@ -60,48 +60,33 @@
 
 <script setup lang="ts">
 const jakConfig = useRuntimeConfig()
+const { t, tm, rt } = useI18n()
 useSeoMeta({
-    title: 'Jak to działa — CARIZO',
-    description: 'Dowiedz się jak sprzedawać i kupować samochody na CARIZO. Prosta rejestracja, bezpieczne ogłoszenia i bezpośredni kontakt ze sprzedającym.',
+    title: () => t('howItWorks.metaTitle'),
+    description: () => t('howItWorks.metaDescription'),
     ogType: 'website',
     ogUrl: `${jakConfig.public.siteUrl}/jak-to-dziala`,
-    ogTitle: 'Jak to działa — CARIZO',
-    ogDescription: 'Sprzedaj lub kup samochód w kilku prostych krokach. Zarejestruj się za darmo na CARIZO.',
+    ogTitle: () => t('howItWorks.ogTitle'),
+    ogDescription: () => t('howItWorks.ogDescription'),
     ogImage: `${jakConfig.public.siteUrl}/og-image.jpg`,
     ogImageWidth: '1200',
     ogImageHeight: '630',
     ogSiteName: 'CARIZO',
     twitterCard: 'summary_large_image',
-    twitterTitle: 'Jak to działa — CARIZO',
-    twitterDescription: 'Sprzedaj lub kup samochód w kilku prostych krokach na CARIZO.',
+    twitterTitle: () => t('howItWorks.twitterTitle'),
+    twitterDescription: () => t('howItWorks.twitterDescription'),
     twitterImage: `${jakConfig.public.siteUrl}/og-image.jpg`,
 })
 useHead({ link: [{ rel: 'canonical', href: `${jakConfig.public.siteUrl}/jak-to-dziala` }] })
 
 const openFaq = ref<number | null>(null)
 
-const sellSteps = [
-    { icon: 'mdi-account-plus-outline', title: 'Utwórz konto', desc: 'Rejestracja jest darmowa i zajmuje mniej niż minutę. Możesz wybrać konto osobiste lub firmowe.' },
-    { icon: 'mdi-car-info', title: 'Dodaj ogłoszenie', desc: 'Wypełnij formularz z danymi pojazdu, dodaj zdjęcia i ustal cenę. System podpowie Ci rynkową wycenę.' },
-    { icon: 'mdi-star-outline', title: 'Opcjonalnie: promuj', desc: 'Zwiększ widoczność ogłoszenia wybierając pakiet TOP, Premium lub Wyróżnienie. Lub opublikuj za darmo.' },
-    { icon: 'mdi-handshake-outline', title: 'Finalizuj transakcję', desc: 'Odbieraj zapytania, prowadź negocjacje i finalizuj sprzedaż bezpośrednio z kupującym.' },
-]
+const sellIcons = ['mdi-account-plus-outline', 'mdi-car-info', 'mdi-star-outline', 'mdi-handshake-outline']
+const buyIcons = ['mdi-magnify', 'mdi-heart-outline', 'mdi-message-outline', 'mdi-calendar-check-outline']
 
-const buySteps = [
-    { icon: 'mdi-magnify', title: 'Szukaj', desc: 'Skorzystaj z rozbudowanej wyszukiwarki z filtrami marki, modelu, ceny, przebiegu i wielu innych parametrów.' },
-    { icon: 'mdi-heart-outline', title: 'Obserwuj', desc: 'Zapisuj ulubione ogłoszenia i ustawiaj alerty cenowe, aby nie przegapić okazji.' },
-    { icon: 'mdi-message-outline', title: 'Skontaktuj się', desc: 'Napisz do sprzedającego przez wbudowany komunikator lub zadzwoń bezpośrednio ze strony ogłoszenia.' },
-    { icon: 'mdi-calendar-check-outline', title: 'Umów oględziny', desc: 'Zarezerwuj termin oględzin bezpośrednio w serwisie i bezpiecznie sfinalizuj transakcję.' },
-]
-
-const faqs = [
-    { q: 'Czy zamieszczenie ogłoszenia jest bezpłatne?', a: 'Tak, podstawowe ogłoszenie jest całkowicie bezpłatne. Płatne są jedynie opcje promocji zwiększające widoczność.' },
-    { q: 'Jak długo ogłoszenie jest widoczne?', a: 'Standardowe ogłoszenie jest aktywne przez 90 dni. Możesz je przedłużyć lub odświeżyć (opcja płatna).' },
-    { q: 'Czy CARIZO weryfikuje ogłoszenia?', a: 'Tak, ogłoszenia przechodzą weryfikację systemu. Ogłoszenia oznaczone jako VERIFIED zostały dodatkowo sprawdzone przez nasz zespół.' },
-    { q: 'Jak działa system płatności?', a: 'Płatności obsługuje ING IMOJE – bezpieczny system płatności online. Akceptujemy karty Visa/Mastercard, BLIK, przelewy bankowe i inne metody.' },
-    { q: 'Mogę usunąć ogłoszenie przed wygaśnięciem?', a: 'Tak, możesz usunąć lub ukryć ogłoszenie w każdej chwili z poziomu panelu „Moje ogłoszenia".' },
-    { q: 'Co zrobić gdy sprzedam auto?', a: 'Oznacz ogłoszenie jako sprzedane przyciskiem „Oznacz jako sprzedane" w panelu użytkownika. Ogłoszenie zniknie z wyników wyszukiwania.' },
-]
+const sellSteps = computed(() => (tm('howItWorks.sellSteps') as any[]).map((s, i) => ({ icon: sellIcons[i], title: rt(s.title), desc: rt(s.desc) })))
+const buySteps = computed(() => (tm('howItWorks.buySteps') as any[]).map((s, i) => ({ icon: buyIcons[i], title: rt(s.title), desc: rt(s.desc) })))
+const faqs = computed(() => (tm('howItWorks.faqs') as any[]).map(f => ({ q: rt(f.q), a: rt(f.a) })))
 </script>
 
 <style lang="scss" scoped>
