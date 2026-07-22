@@ -8,8 +8,8 @@
                 <div class="icon-wrap icon-loading">
                     <v-icon icon="mdi-loading" size="48" class="spin" />
                 </div>
-                <h1 class="verify-title">Weryfikacja konta...</h1>
-                <p class="verify-desc">Prosimy czekać.</p>
+                <h1 class="verify-title">{{ $t('verifyEmail.loadingTitle') }}</h1>
+                <p class="verify-desc">{{ $t('verifyEmail.loadingDesc') }}</p>
             </template>
 
             <!-- Success -->
@@ -17,18 +17,18 @@
                 <div class="icon-wrap icon-success">
                     <v-icon icon="mdi-check-circle" size="52" />
                 </div>
-                <h1 class="verify-title">Email zweryfikowany!</h1>
+                <h1 class="verify-title">{{ $t('verifyEmail.successTitle') }}</h1>
                 <p class="verify-desc">
-                    Twoje konto zostało pomyślnie aktywowane.<br>
-                    Możesz teraz się zalogować i korzystać z CARIZO.
+                    {{ $t('verifyEmail.successDescLine1') }}<br>
+                    {{ $t('verifyEmail.successDescLine2') }}
                 </p>
                 <div class="verify-actions">
                     <NuxtLink to="/login" class="btn-red">
                         <v-icon icon="mdi-login" size="17" />
-                        Zaloguj się
+                        {{ $t('verifyEmail.login') }}
                     </NuxtLink>
                     <NuxtLink to="/" class="btn-ghost">
-                        Strona główna
+                        {{ $t('verifyEmail.home') }}
                     </NuxtLink>
                 </div>
             </template>
@@ -38,36 +38,37 @@
                 <div class="icon-wrap icon-error">
                     <v-icon icon="mdi-close-circle" size="52" />
                 </div>
-                <h1 class="verify-title">Link wygasł lub jest nieprawidłowy</h1>
+                <h1 class="verify-title">{{ $t('verifyEmail.errorTitle') }}</h1>
                 <p class="verify-desc">
-                    Link weryfikacyjny wygasł (ważny 24 godziny) lub jest nieprawidłowy.<br>
-                    Możesz poprosić o nowy link.
+                    {{ $t('verifyEmail.errorDescLine1') }}<br>
+                    {{ $t('verifyEmail.errorDescLine2') }}
                 </p>
                 <div class="verify-resend">
-                    <input v-model="resendEmail" class="resend-input" type="email" placeholder="Twój adres e-mail" />
+                    <input v-model="resendEmail" class="resend-input" type="email" :placeholder="$t('verifyEmail.resendPlaceholder')" />
                     <button class="btn-red" :disabled="resending" @click="resend">
                         <v-icon v-if="resending" icon="mdi-loading" size="15" class="spin" />
                         <v-icon v-else icon="mdi-email-outline" size="15" />
-                        Wyślij ponownie
+                        {{ $t('verifyEmail.resendBtn') }}
                     </button>
                     <p v-if="resendMessage" class="resend-msg">{{ resendMessage }}</p>
                 </div>
                 <div class="verify-actions">
                     <NuxtLink to="/login" class="btn-ghost">
-                        Wróć do logowania
+                        {{ $t('verifyEmail.backToLogin') }}
                     </NuxtLink>
                 </div>
             </template>
 
             <div class="verify-footer">
-                Potrzebujesz pomocy? <NuxtLink to="/pomoc" class="footer-link">Skontaktuj się z obsługą</NuxtLink>
+                {{ $t('verifyEmail.footerText') }}<NuxtLink to="/pomoc" class="footer-link">{{ $t('verifyEmail.footerLink') }}</NuxtLink>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Weryfikacja email — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: () => t('verifyEmail.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 
 const status = ref<'loading' | 'success' | 'error'>('loading')
@@ -95,9 +96,9 @@ async function resend() {
             method: 'POST',
             body: { email: resendEmail.value }
         })
-        resendMessage.value = 'Jeśli konto istnieje i nie jest zweryfikowane, wysłaliśmy nowy link.'
+        resendMessage.value = t('verifyEmail.resendMsgSuccess')
     } catch {
-        resendMessage.value = 'Nie udało się wysłać. Spróbuj ponownie.'
+        resendMessage.value = t('verifyEmail.resendMsgError')
     } finally {
         resending.value = false
     }

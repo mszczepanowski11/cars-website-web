@@ -5,29 +5,30 @@
 
             <div v-if="loading" class="status-state">
                 <v-icon icon="mdi-loading" size="28" class="spin" />
-                <p>Sprawdzanie statusu...</p>
+                <p>{{ $t('dataDeletion.loading') }}</p>
             </div>
 
             <div v-else-if="status?.completed" class="status-state status-state--ok">
                 <v-icon icon="mdi-check-circle-outline" size="36" />
-                <h2>Dane zostały usunięte</h2>
-                <p>Twoje dane pochodzące z konta Facebook (identyfikator konta) zostały usunięte z CARIZO.</p>
-                <p class="status-code">Kod potwierdzenia: <code>{{ status.confirmationCode }}</code></p>
+                <h2>{{ $t('dataDeletion.okTitle') }}</h2>
+                <p>{{ $t('dataDeletion.okDesc') }}</p>
+                <p class="status-code">{{ $t('dataDeletion.confirmCode') }} <code>{{ status.confirmationCode }}</code></p>
             </div>
 
             <div v-else class="status-state status-state--error">
                 <v-icon icon="mdi-alert-circle-outline" size="36" />
-                <h2>Nie znaleziono żądania</h2>
-                <p>Ten link do statusu usunięcia danych jest nieprawidłowy lub wygasł.</p>
+                <h2>{{ $t('dataDeletion.errorTitle') }}</h2>
+                <p>{{ $t('dataDeletion.errorDesc') }}</p>
             </div>
 
-            <NuxtLink to="/" class="back-link">Wróć na stronę główną</NuxtLink>
+            <NuxtLink to="/" class="back-link">{{ $t('dataDeletion.backHome') }}</NuxtLink>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Status usunięcia danych — CARIZO', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+const { t } = useI18n()
+useHead({ title: () => t('dataDeletion.metaTitle'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 const route = useRoute()
 const loading = ref(true)
 const status = ref<{ confirmationCode: string; requestedAt: string; completed: boolean } | null>(null)
