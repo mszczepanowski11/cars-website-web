@@ -2459,14 +2459,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
-            { key: 'bodyVariant', label: 'Zabudowa / typ', type: 'select', required: true,
-              options: [
-                { value: 'furgon', label: 'Furgon' }, { value: 'skrzyniowy', label: 'Skrzyniowy' },
-                { value: 'wywrotka', label: 'Wywrotka' }, { value: 'izoterma', label: 'Izoterma' },
-                { value: 'chlodnia', label: 'Chłodnia' }, { value: 'busa', label: 'Bus osobowo-towarowy' },
-                { value: 'kontener', label: 'Kontener' }, { value: 'minibus', label: 'Minibus / Mikrobus' },
-                { value: 'specjalny', label: 'Specjalny / zabudowa niestandardowa' },
-              ] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 1000' },
             { key: 'gvw', label: 'DMC (dopuszczalna masa całkowita)', type: 'number', unit: 'kg', placeholder: 'np. 3500' },
             { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 2000' },
@@ -2498,14 +2490,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
-            { key: 'truckType', label: 'Typ pojazdu', type: 'select', required: true,
-              options: [
-                { value: 'ciagnik', label: 'Ciągnik siodłowy' }, { value: 'skrzyniowy', label: 'Skrzyniowy' },
-                { value: 'wywrotka', label: 'Wywrotka' }, { value: 'chlodnia', label: 'Chłodnia' },
-                { value: 'izoterma', label: 'Izoterma' }, { value: 'cysterna', label: 'Cysterna' },
-                { value: 'hakowiec', label: 'Hakowiec / Kontenerowiec' }, { value: 'betonomieszarka', label: 'Betonomieszarka' },
-                { value: 'dzwig', label: 'Dźwig / HDS' }, { value: 'specjalny', label: 'Specjalny' },
-              ] },
             { key: 'axles', label: 'Liczba osi', type: 'select', required: true,
               options: [{ value: '2', label: '2 osie' }, { value: '3', label: '3 osie' },
                         { value: '4', label: '4 osie' }, { value: '5+', label: '5+ osi' }] },
@@ -2589,15 +2573,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
-            { key: 'trailerType', label: 'Typ przyczepy', type: 'select', required: true,
-              options: [
-                { value: 'naczepa-plandeka', label: 'Naczepa plandeka' }, { value: 'naczepa-chlodnia', label: 'Naczepa chłodnia' },
-                { value: 'polnaczepa', label: 'Półnaczepa skrzyniowa' }, { value: 'laweta', label: 'Laweta / autotransporter' },
-                { value: 'wywrotka', label: 'Przyczepa wywrotka' }, { value: 'chlodnia', label: 'Przyczepa chłodnia' },
-                { value: 'platforma', label: 'Naczepa platforma / niskopodwozie' }, { value: 'tandem', label: 'Tandem / dwuosiowa' },
-                { value: 'cysterna', label: 'Cysterna' }, { value: 'lekka', label: 'Przyczepa lekka (osobowa)' },
-                { value: 'kempingowa', label: 'Kempingowa / karavan' }, { value: 'inne', label: 'Inne' },
-              ] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
             { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
             { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 6000' },
@@ -2624,18 +2599,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         showVinSection: false,
         showHistorySection: false,
         extraFields: [
-            { key: 'machineType', label: 'Typ maszyny / urządzenia', type: 'select', required: true,
-              options: [
-                { value: 'ciagnik', label: 'Ciągnik rolniczy' }, { value: 'kombajn-zbozowy', label: 'Kombajn zbożowy' },
-                { value: 'kombajn-ziemniaczany', label: 'Kombajn ziemniaczany' }, { value: 'kombajn-buraczkowy', label: 'Kombajn buraczkowy' },
-                { value: 'siewnik', label: 'Siewnik zbożowy / punktowy' }, { value: 'plug', label: 'Pług' },
-                { value: 'glebogryzarka', label: 'Glebogryzarka' }, { value: 'opryskiwacz', label: 'Opryskiwacz' },
-                { value: 'prasa', label: 'Prasa rolnicza (baler)' }, { value: 'ladowacz', label: 'Ładowacz czołowy (TUR)' },
-                { value: 'rozsiewacz', label: 'Rozsiewacz nawozów' }, { value: 'rozrzutnik', label: 'Rozrzutnik obornika' },
-                { value: 'agregat', label: 'Agregat uprawowy' }, { value: 'sadzarka', label: 'Sadzarka do ziemniaków' },
-                { value: 'kopaczka', label: 'Kopaczka do ziemniaków' }, { value: 'beczkowoz', label: 'Beczkowóz / wóz asenizacyjny' },
-                { value: 'sieczkarnia', label: 'Sieczkarnia polowa' }, { value: 'inne', label: 'Inne' },
-              ] },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona / na części' }] },
             { key: 'workingWidth', label: 'Szerokość robocza', type: 'number', unit: 'm', placeholder: 'np. 6.0' },
@@ -2659,26 +2622,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         showVinSection: false,
         showHistorySection: false,
         extraFields: [
-            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
-              options: [
-                { value: 'koparka-gasienicowa', label: 'Koparka gąsienicowa' },
-                { value: 'koparka-kolowa', label: 'Koparka kołowa' },
-                { value: 'koparka-ladowarka', label: 'Koparko-ładowarka' },
-                { value: 'minieksawator', label: 'Minieksawator / minikoparko-ładowarka' },
-                { value: 'ladowarka', label: 'Ładowarka kołowa' },
-                { value: 'ladowarka-teleskopowa', label: 'Ładowarka teleskopowa' },
-                { value: 'wozek-widlowy', label: 'Wózek widłowy' },
-                { value: 'dzwig-mobilny', label: 'Dźwig mobilny (samojezdny)' },
-                { value: 'dzwig-wieze', label: 'Dźwig wieżowy' },
-                { value: 'platforma-nosna', label: 'Platforma nożycowa / wznośna' },
-                { value: 'walec', label: 'Walec drogowy' },
-                { value: 'finisher', label: 'Finisher / rozkładarka asfaltu' },
-                { value: 'betonomieszarka', label: 'Betonomieszarka' },
-                { value: 'pompa-betonu', label: 'Pompa do betonu' },
-                { value: 'spycharka', label: 'Spycharka / buldożer' },
-                { value: 'wiertnica', label: 'Wiertnica / palownica' },
-                { value: 'inne', label: 'Inne' },
-              ] },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona / na części' }] },
             { key: 'operatingWeight', label: 'Masa robocza maszyny', type: 'number', unit: 'kg', placeholder: 'np. 20000' },
@@ -2702,16 +2645,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         showVinSection: false,
         showHistorySection: false,
         extraFields: [
-            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
-              options: [
-                { value: 'wozek-widlowy', label: 'Wózek widłowy' }, { value: 'wozek-teleskopowy', label: 'Wózek teleskopowy' },
-                { value: 'koparka', label: 'Koparka' }, { value: 'koparka-ladowarka', label: 'Koparko-ładowarka' },
-                { value: 'ladowarka', label: 'Ładowarka' }, { value: 'dzwig', label: 'Dźwig / Żuraw' },
-                { value: 'platforma', label: 'Platforma nożycowa / wznośna' }, { value: 'walec', label: 'Walec drogowy' },
-                { value: 'betonomieszarka', label: 'Betoniarka / Betonomieszarka' }, { value: 'miniescavator', label: 'Minieksawator' },
-                { value: 'agregat-prad', label: 'Agregat prądotwórczy' }, { value: 'sprężarka', label: 'Sprężarka powietrza' },
-                { value: 'inne', label: 'Inne maszyny przemysłowe' },
-              ] },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
             // Faza 4: liftCapacity/workingHeight/hasAC/hasCabin migrated to AttributeDefinition.
@@ -2736,10 +2669,10 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
 
     // ── Kategorie dodane w ramach rozszerzenia 10 -> 17 ──────────────────────
     // Rodzaj (np. "Jacht żaglowy", "Naczepa chłodnia") wybiera się przez sekcję
-    // "Rodzaj pojazdu" zasilaną prawdziwymi VehicleSubtype, nie przez extraFields — w
-    // odróżnieniu od starszych kategorii (przyczepy/rolnicze/budowlane/maszyny), które mają
-    // ten sam wybór zdublowany jako wolnotekstowy select. extraFields tu ograniczone do
-    // pól bez naturalnego miejsca gdzie indziej.
+    // "Rodzaj pojazdu" zasilaną prawdziwymi VehicleSubtype, nie przez extraFields - tak samo
+    // jak przyczepy/rolnicze/budowlane/maszyny/ciezarowe/dostawcze od czasu usunięcia ich
+    // zdublowanych wolnotekstowych selectów (bodyVariant/trailerType/machineType/truckType).
+    // extraFields tu ograniczone do pól bez naturalnego miejsca gdzie indziej.
     'lodzie-i-jachty': {
         fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
         required: ['year', 'price'],
@@ -3953,11 +3886,18 @@ async function onCategory(catId: number) {
         modelTextInput.value = ''
         form.featureIds = []
     }
-    // Load subtypes for this category
-    try {
-        subtypes.value = await fetchVehicleSubtypes(catId)
-    } catch {
+    // Load subtypes for this category - skipped for categories that already have their own
+    // BodyType select (today just auta-osobowe): VehicleSubtype there duplicates the same
+    // "body shape" concept BodyType already covers, and BodyType is the mechanism search
+    // filters and listing display actually read, so it stays canonical for cars.
+    if (categoryConfig.value.fields.includes('bodyType')) {
         subtypes.value = []
+    } else {
+        try {
+            subtypes.value = await fetchVehicleSubtypes(catId)
+        } catch {
+            subtypes.value = []
+        }
     }
     // Reload brands filtered by category (fall back to all brands only on a genuine fetch error,
     // not merely because the category has zero mapped brands - an empty result is still correct).
@@ -4733,10 +4673,6 @@ async function submit() {
             if (extras.cargoHeight != null) cleanEdit.cargoHeight = Number(extras.cargoHeight)
             if (extras.hasTachograph != null) cleanEdit.hasTachograph = Boolean(extras.hasTachograph)
             if (extras.hasRetarder != null) cleanEdit.hasRetarder = Boolean(extras.hasRetarder)
-            if (extras.bodyVariant) cleanEdit.bodySubtype = extras.bodyVariant
-            if (extras.trailerType) cleanEdit.bodySubtype = extras.trailerType
-            if (extras.machineType) cleanEdit.bodySubtype = extras.machineType
-            if (extras.truckType) cleanEdit.bodySubtype = extras.truckType
             if (extras.seatsCount != null) cleanEdit.seatsCount = Number(extras.seatsCount)
             if (extras.torque != null) cleanEdit.torque = Number(extras.torque)
             if (extras.co2 != null) cleanEdit.co2Emission = Number(extras.co2)
@@ -4748,8 +4684,16 @@ async function submit() {
                 cleanEdit.colorFinish = extras.colorFinish
                 cleanEdit.metallicPaint = extras.colorFinish === 'metallic' || extras.colorFinish === 'pearl'
             }
-            // Subtype and subtype-specific fields
-            if (form.vehicleSubtypeId != null) cleanEdit.vehicleSubtypeId = form.vehicleSubtypeId
+            // Subtype and subtype-specific fields. bodySubtype (a plain string, kept for the
+            // AdvertCard badge and the free-text search filter) mirrors the chosen VehicleSubtype's
+            // name instead of asking the same "what kind of vehicle is this" question twice via a
+            // separate hardcoded select (dostawcze/ciezarowe/przyczepy/rolnicze/budowlane/maszyny
+            // used to have both).
+            if (form.vehicleSubtypeId != null) {
+                cleanEdit.vehicleSubtypeId = form.vehicleSubtypeId
+                const st = subtypes.value.find(s => s.id === form.vehicleSubtypeId)
+                if (st) cleanEdit.bodySubtype = st.name
+            }
             if (extras.operatingWeight != null) cleanEdit.operatingWeightKg = extras.operatingWeight
             if (extras.workingWidth != null) cleanEdit.workingWidthCm = extras.workingWidth
             if (extras.maxDiggingDepth != null) cleanEdit.maxDiggingDepthM = extras.maxDiggingDepth
@@ -4863,10 +4807,6 @@ async function submit() {
             if (extras.cargoHeight != null) cleanBody.cargoHeight = Number(extras.cargoHeight)
             if (extras.hasTachograph != null) cleanBody.hasTachograph = Boolean(extras.hasTachograph)
             if (extras.hasRetarder != null) cleanBody.hasRetarder = Boolean(extras.hasRetarder)
-            if (extras.bodyVariant) cleanBody.bodySubtype = extras.bodyVariant
-            if (extras.trailerType) cleanBody.bodySubtype = extras.trailerType
-            if (extras.machineType) cleanBody.bodySubtype = extras.machineType
-            if (extras.truckType) cleanBody.bodySubtype = extras.truckType
             if (extras.seatsCount != null) cleanBody.seatsCount = Number(extras.seatsCount)
             if (extras.torque != null) cleanBody.torque = Number(extras.torque)
             if (extras.co2 != null) cleanBody.co2Emission = Number(extras.co2)
@@ -4878,8 +4818,16 @@ async function submit() {
                 cleanBody.colorFinish = extras.colorFinish
                 cleanBody.metallicPaint = extras.colorFinish === 'metallic' || extras.colorFinish === 'pearl'
             }
-            // Subtype and subtype-specific fields
-            if (form.vehicleSubtypeId != null) cleanBody.vehicleSubtypeId = form.vehicleSubtypeId
+            // Subtype and subtype-specific fields. bodySubtype (a plain string, kept for the
+            // AdvertCard badge and the free-text search filter) mirrors the chosen VehicleSubtype's
+            // name instead of asking the same "what kind of vehicle is this" question twice via a
+            // separate hardcoded select (dostawcze/ciezarowe/przyczepy/rolnicze/budowlane/maszyny
+            // used to have both).
+            if (form.vehicleSubtypeId != null) {
+                cleanBody.vehicleSubtypeId = form.vehicleSubtypeId
+                const st = subtypes.value.find(s => s.id === form.vehicleSubtypeId)
+                if (st) cleanBody.bodySubtype = st.name
+            }
             if (extras.operatingWeight != null) cleanBody.operatingWeightKg = extras.operatingWeight
             if (extras.workingWidth != null) cleanBody.workingWidthCm = extras.workingWidth
             if (extras.maxDiggingDepth != null) cleanBody.maxDiggingDepthM = extras.maxDiggingDepth
@@ -5211,7 +5159,11 @@ onMounted(async () => {
         // that point) never get reloaded for the restored category, leaving the equipment step
         // permanently stuck on "this category doesn't need an equipment list".
         if (form.categoryId) {
-            try { subtypes.value = await fetchVehicleSubtypes(form.categoryId) } catch { subtypes.value = [] }
+            if (categoryConfig.value.fields.includes('bodyType')) {
+                subtypes.value = []
+            } else {
+                try { subtypes.value = await fetchVehicleSubtypes(form.categoryId) } catch { subtypes.value = [] }
+            }
             await loadContextFeatures()
         }
         const queries = promoPlans.flatMap(p => p.days.map(d => ({ key: p.key, days: d })))
