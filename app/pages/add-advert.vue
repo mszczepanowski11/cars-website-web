@@ -1426,21 +1426,23 @@
                             </label>
                         </div>
 
-                        <!-- Accident free -->
-                        <div class="verified-item" :class="{ 'verified-item--filled': history.isAccidentFree }">
+                        <!-- Accident free - mirrors history.hasDamage from the "Historia i VIN" step (not a
+                             separate field): toggling here flips that same value, so this stays in sync with
+                             whatever was answered there instead of tracking its own, never-saved state. -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': !history.hasDamage }">
                             <div class="vi-header">
-                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.isAccidentFree }">
-                                    <v-icon :icon="history.isAccidentFree ? 'mdi-check' : 'mdi-shield-car'" size="18" />
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': !history.hasDamage }">
+                                    <v-icon :icon="!history.hasDamage ? 'mdi-check' : 'mdi-shield-car'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">Bezwypadkowy</div>
                                     <div class="vi-desc">Pojazd nie brał udziału w żadnych kolizjach ani wypadkach</div>
                                 </div>
-                                <div v-if="history.isAccidentFree" class="vi-badge">+3 pkt</div>
+                                <div v-if="!history.hasDamage" class="vi-badge">+3 pkt</div>
                             </div>
                             <label class="toggle-row" style="margin-top:12px">
                                 <span class="toggle-label">Pojazd jest bezwypadkowy</span>
-                                <div class="toggle-switch" :class="{ active: history.isAccidentFree }" @click="history.isAccidentFree = !history.isAccidentFree">
+                                <div class="toggle-switch" :class="{ active: !history.hasDamage }" @click="history.hasDamage = !history.hasDamage">
                                     <div class="toggle-knob" />
                                 </div>
                             </label>
@@ -1571,10 +1573,10 @@
                         </div>
                         <div>
                             <div class="cvs-title">CARIZO VERIFIED</div>
-                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length }} z 9 punktów potwierdzonych</div>
+                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, !history.hasDamage, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length }} z 9 punktów potwierdzonych</div>
                         </div>
                         <div class="cvs-score">
-                            {{ Math.round([form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length / 9 * 100) }}%
+                            {{ Math.round([form.vin, history.isFirstOwner, !history.hasDamage, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length / 9 * 100) }}%
                         </div>
                     </div>
                 </div>
@@ -2436,7 +2438,9 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
               ] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 1000' },
             { key: 'gvw', label: 'DMC (dopuszczalna masa całkowita)', type: 'number', unit: 'kg', placeholder: 'np. 3500' },
+            { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 2000' },
             { key: 'loadingLength', label: 'Długość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 3.5' },
+            { key: 'cargoHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 1.9' },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
             { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
               options: [
@@ -2476,6 +2480,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
                         { value: '4', label: '4 osie' }, { value: '5+', label: '5+ osi' }] },
             { key: 'gvw', label: 'DMC (tony)', type: 'number', unit: 't', placeholder: 'np. 26' },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 18000' },
+            { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 8000' },
+            { key: 'cargoHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 2.7' },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
             { key: 'euroNorm', label: 'Norma EURO', type: 'select',
               options: [{ value: 'euro3', label: 'Euro 3' }, { value: 'euro4', label: 'Euro 4' },
@@ -2563,7 +2569,9 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
               ] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
             { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
+            { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 6000' },
             { key: 'length', label: 'Długość całkowita', type: 'number', unit: 'm', placeholder: 'np. 13.6' },
+            { key: 'cargoHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 2.7' },
             { key: 'axles', label: 'Liczba osi', type: 'select',
               options: [{ value: '1', label: '1 oś' }, { value: '2', label: '2 osie' }, { value: '3', label: '3 osie' }, { value: '4+', label: '4+ osi' }] },
             // Faza 4: width/height/hasHydraulics/hasLift/hasBrakes migrated to AttributeDefinition.
@@ -2814,6 +2822,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
               options: [{ value: '1', label: '1 oś' }, { value: '2', label: '2 osie' }, { value: '3', label: '3 osie' }, { value: '4+', label: '4+ osi' }] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
             { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
+            { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 7000' },
+            { key: 'cargoHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 2.7' },
         ],
     },
 
@@ -3557,7 +3567,6 @@ const history = reactive({
     warrantyUntil: '',
     registrationCountry: 'PL',
     isFirstOwner: false,
-    isAccidentFree: false,
     servicedAtASO: false,
     isGaraged: false,
     keyCount: null as number | null,
@@ -4008,6 +4017,10 @@ function validateStep(step: number): string | null {
         if (cfg.fields.includes('year') && !form.year) return 'Podaj rok produkcji.'
         if (cfg.required.includes('fuelType') && !form.fuelTypeId) return 'Wybierz rodzaj paliwa.'
         if (cfg.required.includes('mileage') && !form.mileage && form.mileage !== 0) return `Podaj ${cfg.mileageLabel ?? 'przebieg'}.`
+        // "Rodzaj pojazdu" renders with a required `*` whenever this category has subtypes
+        // (see the `v-if="subtypes.length > 0"` block above) - validation was missing here, so a
+        // seller could submit with the field left blank despite the asterisk.
+        if (subtypes.value.length > 0 && !form.vehicleSubtypeId) return 'Wybierz rodzaj pojazdu.'
         // Validate extra required fields
         for (const ef of (cfg.extraFields ?? [])) {
             if (ef.required && !extras[ef.key] && extras[ef.key] !== false) {
@@ -4676,6 +4689,8 @@ async function submit() {
             if (extras.axles != null) cleanEdit.axleCount = Number(extras.axles)
             if (extras.loadingLength != null) cleanEdit.cargoLength = Number(extras.loadingLength)
             if (extras.length != null) cleanEdit.cargoLength = Number(extras.length)
+            if (extras.curbWeight != null) cleanEdit.curbWeight = Number(extras.curbWeight)
+            if (extras.cargoHeight != null) cleanEdit.cargoHeight = Number(extras.cargoHeight)
             if (extras.hasTachograph != null) cleanEdit.hasTachograph = Boolean(extras.hasTachograph)
             if (extras.hasRetarder != null) cleanEdit.hasRetarder = Boolean(extras.hasRetarder)
             if (extras.bodyVariant) cleanEdit.bodySubtype = extras.bodyVariant
@@ -4804,6 +4819,8 @@ async function submit() {
             if (extras.axles != null) cleanBody.axleCount = Number(extras.axles)
             if (extras.loadingLength != null) cleanBody.cargoLength = Number(extras.loadingLength)
             if (extras.length != null) cleanBody.cargoLength = Number(extras.length)
+            if (extras.curbWeight != null) cleanBody.curbWeight = Number(extras.curbWeight)
+            if (extras.cargoHeight != null) cleanBody.cargoHeight = Number(extras.cargoHeight)
             if (extras.hasTachograph != null) cleanBody.hasTachograph = Boolean(extras.hasTachograph)
             if (extras.hasRetarder != null) cleanBody.hasRetarder = Boolean(extras.hasRetarder)
             if (extras.bodyVariant) cleanBody.bodySubtype = extras.bodyVariant
