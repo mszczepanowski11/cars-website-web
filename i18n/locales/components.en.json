@@ -96,7 +96,8 @@
     },
     "cAttrField": {
         "selectPlaceholder": "— select —",
-        "filePlaceholder": "File link (URL)"
+        "filePlaceholder": "File link (URL)",
+        "loadingBrands": "Loading brands..."
     },
     "cAttrFilter": {
         "rangeFrom": "From",
