@@ -3073,6 +3073,15 @@ const citySearch = ref('')
 const citySuggestions = ref<GeoCity[]>([])
 const citySuggestOpen = ref(false)
 const cityLoading = ref(false)
+const geoCityId = ref<number | null>(null)
+const geoCurrencies = ref<GeoCurrency[]>([])
+// Numeric ids the backend actually stores (Advert.CountryId/CurrencyId) - geoCountry above stays
+// the ISO2 string because that's what the /api/geo/regions|cities endpoints key off of.
+const geoCountryId = computed(() => geoCountries.value.find(c => c.iso2 === geoCountry.value)?.id ?? null)
+const geoCurrencyId = computed(() => {
+    const iso = geoCountries.value.find(c => c.iso2 === geoCountry.value)?.defaultCurrency
+    return iso ? (geoCurrencies.value.find(c => c.iso === iso)?.id ?? null) : null
+})
 let cityDebounce: ReturnType<typeof setTimeout> | null = null
 
 async function loadGeoRegions() {
@@ -3090,6 +3099,7 @@ async function onGeoCountryChange() {
     form.city = ''
     citySearch.value = ''
     citySuggestions.value = []
+    geoCityId.value = null
     await loadGeoRegions()
 }
 
@@ -3100,6 +3110,7 @@ function onGeoRegionChange() {
     form.city = ''
     citySearch.value = ''
     citySuggestions.value = []
+    geoCityId.value = null
 }
 
 function onCitySearch() {
@@ -3108,6 +3119,7 @@ function onCitySearch() {
     const q = citySearch.value.trim()
     // keep form.city in sync with the raw text so a manual clear empties it
     form.city = q
+    geoCityId.value = null // free-typed text no longer matches whatever suggestion was picked before
     if (!geoCountry.value || q.length < 2) { citySuggestions.value = []; return }
     cityLoading.value = true
     cityDebounce = setTimeout(async () => {
@@ -3119,6 +3131,7 @@ function onCitySearch() {
 function pickCity(c: GeoCity) {
     citySearch.value = c.name
     form.city = c.name
+    geoCityId.value = c.id
     citySuggestOpen.value = false
     citySuggestions.value = []
 }
@@ -3129,7 +3142,7 @@ function onCityBlur() {
 }
 
 onMounted(async () => {
-    geoCountries.value = await geo.loadCountries()
+    ;[geoCountries.value, geoCurrencies.value] = await Promise.all([geo.loadCountries(), geo.loadCurrencies()])
     if (!geoCountries.value.some(c => c.iso2 === geoCountry.value)) geoCountry.value = geoCountries.value[0]?.iso2 ?? 'PL'
     if (form.city) citySearch.value = form.city
     await loadGeoRegions()
@@ -4625,6 +4638,12 @@ async function submit() {
                 if (v === null || v === '' || k === 'categoryId') continue
                 cleanEdit[k] = v
             }
+            // Global location cascade (Etap 1/3): structured ids alongside the free-text
+            // city/region already copied in from `rawEdit` above.
+            if (geoCountryId.value) cleanEdit.countryId = geoCountryId.value
+            if (geoRegionId.value) cleanEdit.regionId = geoRegionId.value
+            if (geoCityId.value) cleanEdit.cityId = geoCityId.value
+            if (geoCurrencyId.value) cleanEdit.currencyId = geoCurrencyId.value
             cleanEdit.featureIds = (form.featureIds?.length ? form.featureIds : [])
             cleanEdit.attributeValues = Object.values(attributeValues).filter((v): v is AttrValue => v != null)
             cleanEdit.compatibilities = form.compatibilities.map(c => ({
@@ -4742,6 +4761,12 @@ async function submit() {
             ]
             const cleanBody: Record<string, unknown> = {}
             if (form.categoryId) cleanBody.vehicleCategoryId = form.categoryId
+            // Global location cascade (Etap 1/3): structured ids alongside the free-text
+            // city/region already in ADVERT_FIELDS below.
+            if (geoCountryId.value) cleanBody.countryId = geoCountryId.value
+            if (geoRegionId.value) cleanBody.regionId = geoRegionId.value
+            if (geoCityId.value) cleanBody.cityId = geoCityId.value
+            if (geoCurrencyId.value) cleanBody.currencyId = geoCurrencyId.value
             for (const key of ADVERT_FIELDS) {
                 const v = (form as any)[key]
                 if (v === null || v === undefined || v === '') continue
@@ -5024,6 +5049,14 @@ onMounted(async () => {
             form.vin = advert.vin ?? ''
             form.city = advert.city ?? ''
             form.region = advert.region ?? null
+            // Global location cascade (Etap 1/3): geoCountries is already loaded by the geo
+            // cascade's own onMounted, which Vue runs before this one (declared earlier).
+            if (advert.countryId) {
+                const c = geoCountries.value.find(gc => gc.id === advert.countryId)
+                if (c) { geoCountry.value = c.iso2; await loadGeoRegions() }
+            }
+            if (advert.regionId) geoRegionId.value = advert.regionId
+            if (advert.cityId) geoCityId.value = advert.cityId
             form.isNegotiable = advert.isNegotiable ?? false
             form.sellerType = advert.sellerType ?? 'private'
             form.power = advert.powerHP ?? (advert as any).power ?? advert.engineVersion?.horsepower ?? null
