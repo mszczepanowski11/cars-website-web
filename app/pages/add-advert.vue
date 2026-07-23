@@ -5037,6 +5037,11 @@ onMounted(async () => {
     if (isEdit.value && editId.value) {
         try {
             const advert = await $fetch<CarAdvert>(`/api/proxy/api/listings/${editId.value}`)
+            // categoryId drives categoryConfig (CATEGORY_CONFIGS lookup) - without it, edit mode
+            // silently falls back to DEFAULT_CAT_CONFIG, which has no extraFields at all, so the
+            // entire "Szczegóły ogłoszenia" section (curb weight, colorFinish, "Rodzaj pojazdu",
+            // everything) never rendered when editing any existing advert, regardless of category.
+            form.categoryId = advert.categoryId ?? null
             form.title = advert.title ?? ''
             form.description = advert.description ?? ''
             form.price = advert.price ?? null
@@ -5054,6 +5059,14 @@ onMounted(async () => {
             form.vin = advert.vin ?? ''
             form.city = advert.city ?? ''
             form.region = advert.region ?? null
+            // VehicleSubtype ("Rodzaj pojazdu"), same skip rule as onCategory(): categories that
+            // already have their own BodyType field (today just auta-osobowe) don't also show it.
+            if (categoryConfig.value.fields.includes('bodyType')) {
+                subtypes.value = []
+            } else if (form.categoryId) {
+                try { subtypes.value = await fetchVehicleSubtypes(form.categoryId) } catch { subtypes.value = [] }
+            }
+            form.vehicleSubtypeId = advert.vehicleSubtypeId ?? null
             // Global location cascade (Etap 1/3): geoCountries is already loaded by the geo
             // cascade's own onMounted, which Vue runs before this one (declared earlier).
             if (advert.countryId) {
@@ -5088,6 +5101,39 @@ onMounted(async () => {
             if (advert.seatsCount) extras.seatsCount = String(Math.min(advert.seatsCount, 9))
             if (advert.driveType) extras.driveType = advert.driveType.slug
             if (advert.color) extras.color = advert.color.id ?? advert.color.name
+            // Restore the remaining category-specific extras (the forward mapping lives in
+            // submit()'s "Map extras -> structured API fields" section) - previously only
+            // extras.condition/doors/seatsCount/driveType/color were restored here, so every
+            // other field (payload, weights, fuel/emission figures, colorFinish, subtype-specific
+            // fields...) silently reverted to blank the moment an existing advert was opened for
+            // editing, even though the value was still sitting in the database untouched.
+            if (advert.grossWeight != null) extras.gvw = advert.grossWeight
+            if (advert.payload != null) extras.payload = advert.payload
+            if (advert.axleCount != null) {
+                // 'axles' is a bucketed select ('2'/'3'/'4+'...) backed by a plain int column -
+                // match the exact option first, else fall back to whichever option ends in '+'.
+                const axlesField = categoryConfig.value.extraFields?.find(ef => ef.key === 'axles')
+                const bucket = axlesField?.options?.find(o => o.value === String(advert.axleCount))
+                    ?? axlesField?.options?.find(o => o.value.endsWith('+') && advert.axleCount! >= parseInt(o.value))
+                if (bucket) extras.axles = bucket.value
+            }
+            if (advert.cargoLength != null) { extras.loadingLength = advert.cargoLength; extras.length = advert.cargoLength }
+            if (advert.curbWeight != null) extras.curbWeight = advert.curbWeight
+            if (advert.cargoHeight != null) extras.cargoHeight = advert.cargoHeight
+            if (advert.hasTachograph != null) extras.hasTachograph = advert.hasTachograph
+            if (advert.hasRetarder != null) extras.hasRetarder = advert.hasRetarder
+            if (advert.torque != null) extras.torque = advert.torque
+            if (advert.co2Emission != null) extras.co2 = advert.co2Emission
+            if (advert.fuelConsumptionCity != null) extras.fuelConsumptionCity = advert.fuelConsumptionCity
+            if (advert.fuelConsumptionHighway != null) extras.fuelConsumptionHwy = advert.fuelConsumptionHighway
+            if (advert.fuelConsumptionCombined != null) extras.fuelConsumptionMix = advert.fuelConsumptionCombined
+            if (advert.euroNorm) extras.euroNorm = advert.euroNorm
+            if ((advert as any).colorFinish) extras.colorFinish = (advert as any).colorFinish
+            if ((advert as any).operatingWeightKg != null) extras.operatingWeight = (advert as any).operatingWeightKg
+            if ((advert as any).workingWidthCm != null) extras.workingWidth = (advert as any).workingWidthCm
+            if ((advert as any).maxDiggingDepthM != null) extras.maxDiggingDepth = (advert as any).maxDiggingDepthM
+            if ((advert as any).bucketCapacityL != null) extras.bucketCapacity = (advert as any).bucketCapacityL
+            if ((advert as any).tankCapacityL != null) extras.tankCapacity = (advert as any).tankCapacityL
             // Restore history
             if (advert.ownersCount !== undefined) history.ownersCount = advert.ownersCount ?? null
             history.isImported = advert.isImported ?? false
@@ -5131,9 +5177,7 @@ onMounted(async () => {
                 trims.value = loadedTrims
                 engines.value = loadedEngines
             }
-            // Faza 3: load AttributeDefinitions for this advert's actual category/subtype
-            // (form.categoryId itself is intentionally left untouched here - it drives the legacy
-            // CATEGORY_CONFIGS lookup, and changing its edit-mode behavior is out of scope) and
+            // Faza 3: load AttributeDefinitions for this advert's actual category/subtype and
             // pre-fill any previously saved AttributeValue rows.
             await loadAttributeDefinitions(advert.categoryId ?? null, advert.vehicleSubtypeId ?? null)
             try {
