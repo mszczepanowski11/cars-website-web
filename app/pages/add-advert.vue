@@ -3013,11 +3013,22 @@ function isLightHex(hex?: string | null): boolean {
     return (0.299 * r + 0.587 * g + 0.114 * b) > 175
 }
 // The full CarColor catalog has 16 entries - too many to scan at a glance in a picker. Show only
-// the 10 most common car colors; a rarer one already saved on the advert being edited (extras.color)
-// still gets shown so opening it for edit never looks like the color silently reset.
-const POPULAR_COLOR_NAMES = ['Biały', 'Czarny', 'Srebrny', 'Szary', 'Czerwony', 'Niebieski', 'Granatowy', 'Zielony', 'Brązowy', 'Beżowy']
+// the most common car colors (still 14 of 16 - only the genuinely rare fioletowy/turkusowy are
+// dropped); a rarer one already saved on the advert being edited (extras.color) still gets shown
+// so opening it for edit never looks like the color silently reset.
+// Matched diacritic/case-insensitively: production's carcolors rows have been through a couple of
+// Windows -> Linux MySQL migrations in this project's history, and a name like "Brązowy" silently
+// failing a plain === against this literal (differing only in how "ą" happens to be encoded) would
+// just make that color vanish from the list with no error anywhere - happened here already.
+function normalizeColorName(s: string): string {
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
+}
+const POPULAR_COLOR_NAMES = [
+    'Biały', 'Czarny', 'Srebrny', 'Szary', 'Czerwony', 'Niebieski', 'Granatowy', 'Zielony',
+    'Brązowy', 'Beżowy', 'Żółty', 'Złoty', 'Bordowy', 'Pomarańczowy',
+].map(normalizeColorName)
 const visibleColors = computed(() => {
-    const popular = colors.value.filter(c => POPULAR_COLOR_NAMES.includes(c.name))
+    const popular = colors.value.filter(c => POPULAR_COLOR_NAMES.includes(normalizeColorName(c.name)))
     const selected = extras.color
     if (selected != null && !popular.some(c => c.id === selected || c.name === selected)) {
         const extra = colors.value.find(c => c.id === selected || c.name === selected)
