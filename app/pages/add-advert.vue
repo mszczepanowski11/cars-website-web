@@ -485,12 +485,18 @@
 
                         <!-- Gearbox (not for machinery/trailers/parts/motorcycles) -->
                         <div v-if="isFieldVisible('gearbox')" class="field">
-                            <label class="flabel">Skrzynia biegów</label>
+                            <label class="flabel">
+                                Skrzynia biegów
+                                <button v-if="engineLocked.gearboxType" type="button" class="field-locked-badge" @click="unlockEngineField('gearboxType')">
+                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                </button>
+                            </label>
                             <SmartSelect
                                 v-model="form.gearboxId"
                                 :options="gearboxOptions"
                                 placeholder="Wybierz skrzynię biegów"
                                 prefix-icon="mdi-car-shift-pattern"
+                                :disabled="engineLocked.gearboxType"
                             />
                         </div>
 
@@ -3036,6 +3042,37 @@ const visibleColors = computed(() => {
     }
     return popular
 })
+
+// Resolve extras.driveType (either a manual-select value like 'fwd'/'rwd'/'awd'/'4wd', or an
+// engine-auto-filled value like 'FWD'/'quattro' straight off EngineVersion.DriveType) to a real
+// DriveType.Id. Neither DriveType nor Gearbox actually has a Slug column in the database - the
+// previous `driveTypes.find(d => d.slug === ...)` always failed silently, so submitting never
+// actually set driveTypeId from the auto-filled value, only from whatever it happened to already
+// be. Matched against DriveType.Name's parenthesized code (e.g. "Tylny (RWD)") case-insensitively.
+const DRIVE_TYPE_ALIASES: Record<string, string> = { quattro: 'awd' }
+function resolveDriveTypeId(value: string): number | undefined {
+    const code = (DRIVE_TYPE_ALIASES[value.toLowerCase()] ?? value).toLowerCase()
+    return driveTypes.value.find(d => d.name.toLowerCase().includes(`(${code})`))?.id
+}
+// Same issue for Gearbox - and extras.gearboxType (set by the engine-version watcher) was never
+// even read anywhere before this, so an engine's known gearbox never made it into form.gearboxId
+// at all. Gearbox.Name isn't consistently parenthesized like DriveType's, so map to an exact name
+// instead of a substring search (a naive "automatyczna" substring search would also match
+// "Półautomatyczna", which contains it).
+const GEARBOX_TYPE_TO_NAME: Record<string, string> = {
+    manual: 'Manualna',
+    automatic: 'Automatyczna',
+    eautomatic: 'Automatyczna',
+    dsg: 'Automatyczna (DSG/DCT)',
+    powershift: 'Automatyczna (DSG/DCT)',
+    cvt: 'CVT',
+}
+function resolveGearboxId(value: string): number | undefined {
+    const name = GEARBOX_TYPE_TO_NAME[value.toLowerCase()]
+    if (!name) return undefined
+    return gearboxes.value.find(g => g.name.toLowerCase() === name.toLowerCase())?.id
+}
+
 const allFeatures = ref<Feature[]>([])
 const featuresLoaded = ref(false)
 const featuresLoadFailed = ref(false)
@@ -4402,8 +4439,21 @@ watch(() => form.engineVersionId, (newId) => {
     if (engine.euroNorm)              { extras.euroNorm    = engine.euroNorm;       engineLocked.euroNorm    = true }
     if (engine.acceleration0100 != null) { extras.acceleration = engine.acceleration0100; engineLocked.acceleration = true }
     if (engine.topSpeedKmh != null)   { extras.topSpeed    = engine.topSpeedKmh;   engineLocked.topSpeed    = true }
-    if (engine.driveType)             { extras.driveType   = engine.driveType;      engineLocked.driveType   = true }
-    if (engine.gearboxType)           { extras.gearboxType = engine.gearboxType;    engineLocked.gearboxType = true }
+    // extras.driveType is also the manual "Napęd" select's own v-model, whose options use
+    // lowercase values ('fwd'/'rwd'/'awd'/'4wd') - normalize (and fold brand-specific AWD names
+    // like "quattro" via DRIVE_TYPE_ALIASES) so the dropdown actually shows the auto-filled value
+    // as selected instead of silently holding a value none of its options match.
+    if (engine.driveType) {
+        extras.driveType = (DRIVE_TYPE_ALIASES[engine.driveType.toLowerCase()] ?? engine.driveType).toLowerCase()
+        engineLocked.driveType = true
+    }
+    // form.gearboxId (not extras.gearboxType) is the field actually submitted - it's a standard
+    // dropdown, not an extraField - so the resolved id has to land there directly, the same way
+    // fuelTypeId does above. Previously this set extras.gearboxType, which nothing ever read.
+    if (engine.gearboxType) {
+        const gbId = resolveGearboxId(engine.gearboxType)
+        if (gbId) { form.gearboxId = gbId; engineLocked.gearboxType = true }
+    }
     if (engine.cylinders != null)     { extras.cylinders   = engine.cylinders;      engineLocked.cylinders   = true }
 })
 
@@ -4676,8 +4726,8 @@ async function submit() {
             if (extras.condition) cleanEdit.condition = extras.condition
             if (extras.doors) cleanEdit.doorCount = Number(extras.doors)
             if (extras.driveType) {
-                const dt = driveTypes.value.find(d => d.slug === extras.driveType)
-                if (dt) cleanEdit.driveTypeId = dt.id
+                const dtId = resolveDriveTypeId(extras.driveType)
+                if (dtId) cleanEdit.driveTypeId = dtId
             }
             if (extras.color) {
                 if (typeof extras.color === 'number') {
@@ -4810,8 +4860,8 @@ async function submit() {
             if (extras.condition) cleanBody.condition = extras.condition
             if (extras.doors) cleanBody.doorCount = Number(extras.doors)
             if (extras.driveType) {
-                const dt = driveTypes.value.find(d => d.slug === extras.driveType)
-                if (dt) cleanBody.driveTypeId = dt.id
+                const dtId = resolveDriveTypeId(extras.driveType)
+                if (dtId) cleanBody.driveTypeId = dtId
             }
             if (extras.color) {
                 if (typeof extras.color === 'number') {

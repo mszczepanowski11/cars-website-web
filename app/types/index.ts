@@ -1,10 +1,18 @@
 export interface TaxonomyItem { id: number; name: string }
 export interface SelectOption { value: number | string; label: string; icon?: string; meta?: string }
-export interface Generation extends TaxonomyItem { yearFrom: number; yearTo: number }
-export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number; fuelTypeId?: number; fuelTypeName?: string; fuelConsumptionCity?: number; fuelConsumptionHighway?: number; fuelConsumptionCombined?: number; trimId?: number | null; torqueNm?: number | null; co2EmissionGkm?: number | null; euroNorm?: string | null; acceleration0100?: number | null; topSpeedKmh?: number | null; driveType?: string | null; gearboxType?: string | null; cylinders?: number | null }
+export interface Generation extends TaxonomyItem {
+    yearFrom: number; yearTo: number
+    // Physical dimensions (audit §5/§6) - shared by every advert of this generation.
+    lengthMm?: number | null; widthMm?: number | null; heightMm?: number | null
+    wheelbaseMm?: number | null; trunkCapacityL?: number | null
+    defaultSeatsCount?: number | null; defaultDoorsCount?: number | null
+}
+export interface EngineVersion { id: number; name: string; engineName: string; displacement?: number; horsepower?: number; powerHP?: number; powerKW?: number; fuelTypeId?: number; fuelTypeName?: string; fuelConsumptionCity?: number; fuelConsumptionHighway?: number; fuelConsumptionCombined?: number; trimId?: number | null; torqueNm?: number | null; co2EmissionGkm?: number | null; euroNorm?: string | null; acceleration0100?: number | null; topSpeedKmh?: number | null; driveType?: string | null; gearboxType?: string | null; cylinders?: number | null; engineCode?: string | null }
 export interface AdvertImage { id: number; url: string; isMain: boolean }
 export interface Feature { id: number; name: string; category: { id: number; name: string; vehicleCategoryId?: number | null } }
-export interface DriveType { id: number; name: string; slug: string }
+// DriveType has no Slug column in the database - matching add-advert.vue's resolveDriveTypeId()
+// against `name` (e.g. "Tylny (RWD)"), not a slug that was never actually returned by the API.
+export interface DriveType { id: number; name: string }
 export interface VehicleSubtype { id: number; name: string; slug?: string | null }
 export interface PartCategory { id: number; name: string; namePl?: string | null; sortOrder?: number }
 export interface PartSubcategory { id: number; name: string; partCategoryId: number; sortOrder?: number }
