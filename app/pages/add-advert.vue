@@ -3128,15 +3128,6 @@ function onCityBlur() {
     setTimeout(() => { citySuggestOpen.value = false }, 120)
 }
 
-// Late prefill: on edit the advert loads after mount, filling form.city/region asynchronously.
-watch(() => form.city, (v) => { if (v && !citySearch.value) citySearch.value = v })
-watch(() => form.region, () => {
-    if (form.region && geoRegions.value.length && geoRegionId.value == null) {
-        const m = geoRegions.value.find(r => r.name === form.region)
-        if (m) geoRegionId.value = m.id
-    }
-})
-
 onMounted(async () => {
     geoCountries.value = await geo.loadCountries()
     if (!geoCountries.value.some(c => c.iso2 === geoCountry.value)) geoCountry.value = geoCountries.value[0]?.iso2 ?? 'PL'
@@ -3445,6 +3436,21 @@ const form = reactive({
     // Faza 8 of the category/attribute restructure
     hasHomologation: false,
     homologationType: null as string | null,
+})
+
+// Late prefill: on edit the advert loads after mount, filling form.city/region asynchronously.
+// Must stay below `form`'s declaration above - watch()'s getter runs synchronously once as soon
+// as this call executes (regardless of the `immediate` option) to establish its reactive
+// dependencies, so referencing `form` here while it was still declared further down the file
+// threw "Cannot access 'form' before initialization" in the production build (Vue's <script setup>
+// compiler preserves source order 1:1 in the compiled setup(), so this is a real TDZ violation, not
+// a bundler quirk - it just happened not to surface visibly in dev).
+watch(() => form.city, (v) => { if (v && !citySearch.value) citySearch.value = v })
+watch(() => form.region, () => {
+    if (form.region && geoRegions.value.length && geoRegionId.value == null) {
+        const m = geoRegions.value.find(r => r.name === form.region)
+        if (m) geoRegionId.value = m.id
+    }
 })
 
 // Faza 8: additional documents/videos beyond the primary YouTube link + PDF brochure above -
