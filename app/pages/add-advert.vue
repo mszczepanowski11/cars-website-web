@@ -620,7 +620,7 @@
                                                 <span class="ef-color-card-label">Dowolny</span>
                                             </button>
                                             <button
-                                                v-for="col in colors"
+                                                v-for="col in visibleColors"
                                                 :key="col.id"
                                                 class="ef-color-card"
                                                 :class="{ active: extras[ef.key] === col.id }"
@@ -3012,6 +3012,19 @@ function isLightHex(hex?: string | null): boolean {
     const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16)
     return (0.299 * r + 0.587 * g + 0.114 * b) > 175
 }
+// The full CarColor catalog has 16 entries - too many to scan at a glance in a picker. Show only
+// the 10 most common car colors; a rarer one already saved on the advert being edited (extras.color)
+// still gets shown so opening it for edit never looks like the color silently reset.
+const POPULAR_COLOR_NAMES = ['Biały', 'Czarny', 'Srebrny', 'Szary', 'Czerwony', 'Niebieski', 'Granatowy', 'Zielony', 'Brązowy', 'Beżowy']
+const visibleColors = computed(() => {
+    const popular = colors.value.filter(c => POPULAR_COLOR_NAMES.includes(c.name))
+    const selected = extras.color
+    if (selected != null && !popular.some(c => c.id === selected || c.name === selected)) {
+        const extra = colors.value.find(c => c.id === selected || c.name === selected)
+        if (extra) popular.push(extra)
+    }
+    return popular
+})
 const allFeatures = ref<Feature[]>([])
 const featuresLoaded = ref(false)
 const featuresLoadFailed = ref(false)
