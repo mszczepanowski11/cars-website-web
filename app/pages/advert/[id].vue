@@ -166,7 +166,10 @@
                     </div>
 
                     <div class="price-area">
-                        <div class="price-big">{{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' zł' : '—' }}</div>
+                        <div class="price-big">
+                            {{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' ' + (advert.currency ?? 'zł') : '—' }}
+                            <span v-if="advert?.priceEur != null && advert.currency !== 'EUR'" class="price-eur">≈ {{ Math.round(advert.priceEur).toLocaleString('pl') }} €</span>
+                        </div>
                         <div v-if="advert?.price && Number(advert.price) > 5000" class="price-monthly-estimate">
                             <div class="pme-row">
                                 <div class="pme-item">
@@ -2137,6 +2140,15 @@ onUnmounted(() => {
     margin-bottom: 0;
 
     @include respond-to(sm) { font-size: 28px; }
+}
+
+.price-eur {
+    color: $text-dim;
+    font-size: 16px;
+    font-weight: 500;
+    margin-left: 8px;
+
+    @include respond-to(sm) { font-size: 13px; }
 }
 
 .price-badges-row {

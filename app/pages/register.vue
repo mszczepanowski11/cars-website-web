@@ -358,6 +358,9 @@ async function submit() {
         validationError.value = 'Podaj prawidłowy numer telefonu (min. 9 cyfr).'
         return
     }
+    // Backend now requires E.164 (+<country code><number>) - default to Poland's +48 when the
+    // user didn't type a leading '+', same assumption the rest of the app makes for the PL market.
+    const normalizedPhone = phoneNumber.value.trim().startsWith('+') ? `+${phoneDigits}` : `+48${phoneDigits}`
     if (accountType.value === 'Business') {
         if (!businessSubType.value) {
             validationError.value = 'Wybierz typ konta biznesowego (Dealer / Komis / Firma).'
@@ -377,7 +380,7 @@ async function submit() {
         name: name.value,
         surname: surname.value,
         email: email.value,
-        phonenumber: phoneNumber.value,
+        phonenumber: normalizedPhone,
         password: password.value,
         dateOfBirth: dateOfBirth.value,
         accountType: accountType.value,

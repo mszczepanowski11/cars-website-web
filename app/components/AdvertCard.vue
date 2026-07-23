@@ -143,7 +143,10 @@ const monthlyRate = computed(() => {
                 <span v-if="gearboxShort"><v-icon icon="mdi-car-shift-pattern" size="14" class="mr-1" />{{ gearboxShort }}</span>
                 <span v-if="advert.powerHP"><v-icon icon="mdi-engine-outline" size="14" class="mr-1" />{{ advert.powerHP }} {{ $t('cAdvertCard.powerUnit') }}</span>
             </div>
-            <div class="car-price">{{ advert.price?.toLocaleString('pl-PL') ?? $t('cAdvertCard.priceNegotiable') }} {{ advert.price != null ? 'zł' : '' }}</div>
+            <div class="car-price">
+                {{ advert.price?.toLocaleString('pl-PL') ?? $t('cAdvertCard.priceNegotiable') }} {{ advert.price != null ? (advert.currency ?? 'zł') : '' }}
+                <span v-if="advert.priceEur != null && advert.currency !== 'EUR'" class="car-price-eur">≈ {{ Math.round(advert.priceEur).toLocaleString('pl-PL') }} €</span>
+            </div>
             <div v-if="monthlyRate" class="car-monthly">
                 <v-icon icon="mdi-bank-outline" size="12" class="car-monthly-icon" />
                 {{ $t('cAdvertCard.monthlyFrom', { rate: monthlyRate.toLocaleString('pl') }) }}
@@ -331,6 +334,13 @@ const monthlyRate = computed(() => {
     font-size: 22px;
     font-weight: 800;
     margin-bottom: 4px;
+}
+
+.car-price-eur {
+    color: $text-dim;
+    font-size: 13px;
+    font-weight: 500;
+    margin-left: 6px;
 }
 
 .car-monthly {

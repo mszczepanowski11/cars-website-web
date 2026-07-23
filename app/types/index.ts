@@ -15,6 +15,12 @@ export interface CarAdvert {
     id: number; userId: number; title: string; description: string
     price: number; year: number; mileage: number
     city?: string; region?: string
+    // Global location cascade (Etap 1/3 of the globalization roadmap) - structured ids
+    // alongside the free-text city/region above.
+    countryId?: number | null; regionId?: number | null; cityId?: number | null
+    postalCode?: string | null; addressLine?: string | null
+    latitude?: number | null; longitude?: number | null
+    currencyId?: number | null; priceEur?: number | null; priceEurAsOf?: string | null
     brand: TaxonomyItem | null; model: TaxonomyItem | null
     generation: Generation | null; engineVersion: EngineVersion | null
     fuelType: TaxonomyItem | null; gearbox: TaxonomyItem | null; bodyType: TaxonomyItem | null
