@@ -96,7 +96,8 @@
     },
     "cAttrField": {
         "selectPlaceholder": "— auswählen —",
-        "filePlaceholder": "Datei-Link (URL)"
+        "filePlaceholder": "Datei-Link (URL)",
+        "loadingBrands": "Marken werden geladen..."
     },
     "cAttrFilter": {
         "rangeFrom": "Von",

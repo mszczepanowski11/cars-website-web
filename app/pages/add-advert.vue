@@ -2969,9 +2969,10 @@ const subtypes = ref<VehicleSubtype[]>([])
 // alongside the legacy extraFields/SUBTYPE_EXTRA_FIELDS system (Faza 4 migrates the latter away).
 interface AttrDef {
     id: number
+    vehicleCategoryId: number
     key: string
     labelPl: string
-    dataType: 'Text' | 'Number' | 'Decimal' | 'Boolean' | 'Select' | 'MultiSelect' | 'Date' | 'File'
+    dataType: 'Text' | 'Number' | 'Decimal' | 'Boolean' | 'Select' | 'MultiSelect' | 'Date' | 'File' | 'BrandReference'
     unit?: string | null
     optionsJson?: string | null
     isRequired: boolean

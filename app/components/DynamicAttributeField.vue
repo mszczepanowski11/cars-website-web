@@ -29,6 +29,16 @@
             <option v-for="o in options" :key="o" :value="o">{{ o }}</option>
         </select>
 
+        <!-- Same free-text storage as Select (one ValueText string) - but the option list comes
+             from the live Brand catalog for this definition's own category (e.g. opony -> Michelin/
+             Continental/...) instead of a fixed OptionsJson array, so adding a manufacturer through
+             the admin panel shows up here immediately with no redeploy. -->
+        <select v-else-if="definition.dataType === 'BrandReference'" :value="modelValue?.valueText ?? ''"
+            class="daf-input" :disabled="brandsLoading" @change="emitText(($event.target as HTMLSelectElement).value)">
+            <option value="">{{ brandsLoading ? $t('cAttrField.loadingBrands') : $t('cAttrField.selectPlaceholder') }}</option>
+            <option v-for="b in brandOptions" :key="b.id" :value="b.name">{{ b.name }}</option>
+        </select>
+
         <div v-else-if="definition.dataType === 'MultiSelect'" class="daf-multiselect">
             <label v-for="o in options" :key="o" class="daf-check">
                 <input type="checkbox" :value="o" :checked="selectedMulti.includes(o)" @change="toggleMulti(o)" />
@@ -55,9 +65,10 @@
 // valueText/valueNumber/valueBool/valueDate) so the parent can post the array straight through.
 interface AttributeDefinitionLite {
     id: number
+    vehicleCategoryId?: number
     key: string
     labelPl: string
-    dataType: 'Text' | 'Number' | 'Decimal' | 'Boolean' | 'Select' | 'MultiSelect' | 'Date' | 'File'
+    dataType: 'Text' | 'Number' | 'Decimal' | 'Boolean' | 'Select' | 'MultiSelect' | 'Date' | 'File' | 'BrandReference'
     unit?: string | null
     optionsJson?: string | null
     isRequired: boolean
@@ -77,6 +88,24 @@ const options = computed<string[]>(() => {
     if (!props.definition.optionsJson) return []
     try { return JSON.parse(props.definition.optionsJson) } catch { return [] }
 })
+
+// BrandReference: fetch the Brand catalog scoped to this definition's own category (e.g. the
+// tire brands already linked to "opony" via BrandVehicleCategories) instead of a static list.
+const { fetchBrandsByCategory } = useTaxonomy()
+const brandOptions = ref<{ id: number; name: string }[]>([])
+const brandsLoading = ref(false)
+watch(() => [props.definition.dataType, props.definition.vehicleCategoryId], async ([dataType, categoryId]) => {
+    if (dataType !== 'BrandReference' || !categoryId) { brandOptions.value = []; return }
+    brandsLoading.value = true
+    try {
+        brandOptions.value = (await fetchBrandsByCategory(Number(categoryId)))
+            .slice().sort((a, b) => a.name.localeCompare(b.name, 'pl'))
+    } catch {
+        brandOptions.value = []
+    } finally {
+        brandsLoading.value = false
+    }
+}, { immediate: true })
 
 // MultiSelect stores its selections as a comma-joined string in valueText (kept as a single
 // AdvertAttributeValue row rather than one row per selected option - simplest shape that still
