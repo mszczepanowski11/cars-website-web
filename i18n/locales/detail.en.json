@@ -398,7 +398,7 @@
       "organizerName": "Organizer name",
       "organizerNamePlaceholder": "Małopolska Classics Club",
       "organizerEmail": "Organizer email",
-      "organizerEmailPlaceholder": "contact@example.com",
+      "organizerEmailPlaceholder": "contact{'@'}example.com",
       "organizerPhone": "Organizer phone",
       "ticketsUrl": "Tickets link",
       "websiteUrl": "Website",

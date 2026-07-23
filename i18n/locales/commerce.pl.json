@@ -115,7 +115,7 @@
       "q5": "Jak działa limit wyróżnień?",
       "a5": "Limit wyróżnień odnawia się co miesiąc. Wyróżnienie to usługa dostępna w opcjach promowania ogłoszenia — wyróżnione oferty wyświetlają się wyżej w wynikach wyszukiwania.",
       "q6": "Czym jest pakiet Enterprise?",
-      "a6": "Enterprise to oferta dla dużych sieci dealerskich wymagających indywidualnych warunków umowy, SLA i API. Skontaktuj się z nami pod adresem kontakt@carizo.eu."
+      "a6": "Enterprise to oferta dla dużych sieci dealerskich wymagających indywidualnych warunków umowy, SLA i API. Skontaktuj się z nami pod adresem kontakt{'@'}carizo.eu."
     },
     "toastStartError": "Nie udało się aktywować Programu Start.",
     "toastPackageActivated": "Pakiet aktywowany!",

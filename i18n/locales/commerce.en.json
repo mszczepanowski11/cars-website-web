@@ -115,7 +115,7 @@
       "q5": "How does the promotion limit work?",
       "a5": "The promotion limit renews every month. A promotion is a service available in the listing promotion options — promoted offers appear higher in search results.",
       "q6": "What is the Enterprise package?",
-      "a6": "Enterprise is an offer for large dealer networks requiring individual contract terms, SLA and API. Contact us at kontakt@carizo.eu."
+      "a6": "Enterprise is an offer for large dealer networks requiring individual contract terms, SLA and API. Contact us at kontakt{'@'}carizo.eu."
     },
     "toastStartError": "Could not activate the Start Program.",
     "toastPackageActivated": "Package activated!",
