@@ -115,7 +115,7 @@
       "q5": "Wie funktioniert das Hervorhebungslimit?",
       "a5": "Das Hervorhebungslimit erneuert sich jeden Monat. Eine Hervorhebung ist ein Service, der in den Optionen zur Anzeigenbewerbung verfügbar ist — hervorgehobene Angebote erscheinen weiter oben in den Suchergebnissen.",
       "q6": "Was ist das Enterprise-Paket?",
-      "a6": "Enterprise ist ein Angebot für große Händlernetzwerke, die individuelle Vertragsbedingungen, SLA und API benötigen. Kontaktieren Sie uns unter kontakt@carizo.eu."
+      "a6": "Enterprise ist ein Angebot für große Händlernetzwerke, die individuelle Vertragsbedingungen, SLA und API benötigen. Kontaktieren Sie uns unter kontakt{'@'}carizo.eu."
     },
     "toastStartError": "Das Start-Programm konnte nicht aktiviert werden.",
     "toastPackageActivated": "Paket aktiviert!",

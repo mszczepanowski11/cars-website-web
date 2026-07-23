@@ -29,6 +29,11 @@ export default defineNuxtConfig({
     // enabled later once per-language content is complete.
     detectBrowserLanguage: false,
     bundle: { optimizeTranslationDirective: false },
+    // strictMessage defaults to true and hard-fails the build on any HTML tag in a translation
+    // string (its heuristic against accidental XSS via v-html'd messages) - several legal/detail/
+    // info strings intentionally use <strong> for emphasis and are rendered through v-html at the
+    // call site, so this needs to be a non-fatal warning instead of a build breaker.
+    compilation: { strictMessage: false },
   },
 
   image: {

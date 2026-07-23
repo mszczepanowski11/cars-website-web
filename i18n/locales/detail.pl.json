@@ -398,7 +398,7 @@
       "organizerName": "Nazwa organizatora",
       "organizerNamePlaceholder": "Klub Klasyków Małopolska",
       "organizerEmail": "Email organizatora",
-      "organizerEmailPlaceholder": "kontakt@przyklad.pl",
+      "organizerEmailPlaceholder": "kontakt{'@'}przyklad.pl",
       "organizerPhone": "Telefon organizatora",
       "ticketsUrl": "Link do biletów",
       "websiteUrl": "Strona internetowa",

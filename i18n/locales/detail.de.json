@@ -398,7 +398,7 @@
       "organizerName": "Name des Veranstalters",
       "organizerNamePlaceholder": "Oldtimer-Club Kleinpolen",
       "organizerEmail": "E-Mail des Veranstalters",
-      "organizerEmailPlaceholder": "kontakt@beispiel.de",
+      "organizerEmailPlaceholder": "kontakt{'@'}beispiel.de",
       "organizerPhone": "Telefon des Veranstalters",
       "ticketsUrl": "Ticket-Link",
       "websiteUrl": "Website",
