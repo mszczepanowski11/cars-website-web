@@ -608,32 +608,50 @@
 
                                     <!-- Color picker -->
                                     <div v-else-if="ef.type === 'color-picker'" :class="['field', ef.fullWidth ? 'full-width' : '']">
-                                        <div class="ef-color-label">
-                                            <span>{{ ef.label }}</span>
-                                            <span v-if="extras[ef.key]" class="ef-color-name">
-                                                {{ colors.find(c => c.id === extras[ef.key])?.name }}
-                                            </span>
-                                        </div>
-                                        <div class="ef-color-swatches">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="ef-color-grid">
                                             <button
-                                                class="ef-color-swatch ef-color-swatch--clear"
+                                                class="ef-color-card ef-color-card--clear"
                                                 :class="{ active: !extras[ef.key] }"
-                                                title="Nie określono"
                                                 type="button"
                                                 @click="extras[ef.key] = null"
                                             >
-                                                <v-icon icon="mdi-close" size="10" />
+                                                <span class="ef-color-dot ef-color-dot--clear"><v-icon icon="mdi-close" size="13" /></span>
+                                                <span class="ef-color-card-label">Dowolny</span>
                                             </button>
                                             <button
                                                 v-for="col in colors"
                                                 :key="col.id"
-                                                class="ef-color-swatch"
+                                                class="ef-color-card"
                                                 :class="{ active: extras[ef.key] === col.id }"
-                                                :style="{ background: col.hexCode || '#888' }"
-                                                :title="col.name"
                                                 type="button"
                                                 @click="extras[ef.key] = extras[ef.key] === col.id ? null : col.id"
-                                            />
+                                            >
+                                                <span class="ef-color-dot" :style="{ background: col.hexCode || '#888', color: isLightHex(col.hexCode) ? '#111' : '#fff' }">
+                                                    <v-icon v-if="extras[ef.key] === col.id" icon="mdi-check" size="14" />
+                                                </span>
+                                                <span class="ef-color-card-label">{{ col.name }}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Finish picker (paint finish: metallic/pearl/matte/...) -->
+                                    <div v-else-if="ef.type === 'finish-picker'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="ef-finish-grid">
+                                            <button
+                                                v-for="opt in ef.options"
+                                                :key="opt.value"
+                                                class="ef-finish-card"
+                                                :class="{ active: extras[ef.key] === opt.value }"
+                                                type="button"
+                                                @click="extras[ef.key] = extras[ef.key] === opt.value ? null : opt.value"
+                                            >
+                                                <span class="ef-finish-swatch" :style="{ background: FINISH_SWATCHES[opt.value] }">
+                                                    <v-icon v-if="extras[ef.key] === opt.value" icon="mdi-check" size="16" />
+                                                </span>
+                                                <span class="ef-finish-card-label">{{ opt.label }}</span>
+                                            </button>
                                         </div>
                                     </div>
 
@@ -1426,21 +1444,23 @@
                             </label>
                         </div>
 
-                        <!-- Accident free -->
-                        <div class="verified-item" :class="{ 'verified-item--filled': history.isAccidentFree }">
+                        <!-- Accident free - mirrors history.hasDamage from the "Historia i VIN" step (not a
+                             separate field): toggling here flips that same value, so this stays in sync with
+                             whatever was answered there instead of tracking its own, never-saved state. -->
+                        <div class="verified-item" :class="{ 'verified-item--filled': !history.hasDamage }">
                             <div class="vi-header">
-                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.isAccidentFree }">
-                                    <v-icon :icon="history.isAccidentFree ? 'mdi-check' : 'mdi-shield-car'" size="18" />
+                                <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': !history.hasDamage }">
+                                    <v-icon :icon="!history.hasDamage ? 'mdi-check' : 'mdi-shield-car'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">Bezwypadkowy</div>
                                     <div class="vi-desc">Pojazd nie brał udziału w żadnych kolizjach ani wypadkach</div>
                                 </div>
-                                <div v-if="history.isAccidentFree" class="vi-badge">+3 pkt</div>
+                                <div v-if="!history.hasDamage" class="vi-badge">+3 pkt</div>
                             </div>
                             <label class="toggle-row" style="margin-top:12px">
                                 <span class="toggle-label">Pojazd jest bezwypadkowy</span>
-                                <div class="toggle-switch" :class="{ active: history.isAccidentFree }" @click="history.isAccidentFree = !history.isAccidentFree">
+                                <div class="toggle-switch" :class="{ active: !history.hasDamage }" @click="history.hasDamage = !history.hasDamage">
                                     <div class="toggle-knob" />
                                 </div>
                             </label>
@@ -1571,10 +1591,10 @@
                         </div>
                         <div>
                             <div class="cvs-title">CARIZO VERIFIED</div>
-                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length }} z 9 punktów potwierdzonych</div>
+                            <div class="cvs-desc">{{ [form.vin, history.isFirstOwner, !history.hasDamage, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length }} z 9 punktów potwierdzonych</div>
                         </div>
                         <div class="cvs-score">
-                            {{ Math.round([form.vin, history.isFirstOwner, history.isAccidentFree, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length / 9 * 100) }}%
+                            {{ Math.round([form.vin, history.isFirstOwner, !history.hasDamage, history.hasServiceBook, history.servicedAtASO, history.ownersCount !== null, history.isGaraged, history.keyCount !== null, history.insuranceUntil].filter(Boolean).length / 9 * 100) }}%
                         </div>
                     </div>
                 </div>
@@ -2324,7 +2344,7 @@ const { analyzePhoto: analyzePhotoLocal } = usePhotoAnalysis()
 interface ExtraField {
     key: string
     label: string
-    type: 'number' | 'select' | 'text' | 'boolean' | 'radio' | 'color-picker'
+    type: 'number' | 'select' | 'text' | 'boolean' | 'radio' | 'color-picker' | 'finish-picker'
     options?: { value: string; label: string }[]
     unit?: string
     placeholder?: string
@@ -2371,6 +2391,19 @@ interface CatFieldConfig {
     detailsStepDesc?: string
 }
 
+// Visual preview swatch for each paint-finish option (extraField type: finish-picker) - a small
+// CSS gradient standing in for how each finish actually looks, since "Metalik" vs "Perłowy" vs
+// "Matowy" reads as three interchangeable words otherwise.
+const FINISH_SWATCHES: Record<string, string> = {
+    solid: 'linear-gradient(135deg, #4a4a4a, #6b6b6b)',
+    metallic: 'linear-gradient(135deg, #8e9aa3 0%, #d8dee2 30%, #6b7680 55%, #c7d0d4 80%, #838f98 100%)',
+    pearl: 'linear-gradient(135deg, #f3e9f7 0%, #d9c7e8 25%, #f5f0fa 50%, #c9b8dd 75%, #efe4f4 100%)',
+    matte: 'linear-gradient(135deg, #3a3a3d, #4d4d50)',
+    bicolor: 'linear-gradient(115deg, #1a1a1a 0% 48%, #8B0D1D 52% 100%)',
+    chrome: 'linear-gradient(135deg, #cfd8dc 0%, #ffffff 20%, #78909c 45%, #eceff1 65%, #607d8b 85%, #ffffff 100%)',
+    multicolor: 'linear-gradient(115deg, #e63946 0%, #f4a261 20%, #e9c46a 40%, #2a9d8f 60%, #264653 80%, #8B0D1D 100%)',
+}
+
 const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'auta-osobowe': {
         fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price', 'bodyType'],
@@ -2393,7 +2426,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'seatsCount', label: 'Liczba miejsc', type: 'select',
               options: [{ value: '2', label: '2' }, { value: '4', label: '4' }, { value: '5', label: '5' }, { value: '7', label: '7' }, { value: '8', label: '8' }, { value: '9', label: '9+' }] },
             { key: 'color', label: 'Kolor nadwozia', type: 'color-picker', fullWidth: true },
-            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
+            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'finish-picker', fullWidth: true,
               options: [
                 { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
                 { value: 'pearl', label: 'Perłowy / efekt perły' }, { value: 'matte', label: 'Matowy' },
@@ -2426,19 +2459,13 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
-            { key: 'bodyVariant', label: 'Zabudowa / typ', type: 'select', required: true,
-              options: [
-                { value: 'furgon', label: 'Furgon' }, { value: 'skrzyniowy', label: 'Skrzyniowy' },
-                { value: 'wywrotka', label: 'Wywrotka' }, { value: 'izoterma', label: 'Izoterma' },
-                { value: 'chlodnia', label: 'Chłodnia' }, { value: 'busa', label: 'Bus osobowo-towarowy' },
-                { value: 'kontener', label: 'Kontener' }, { value: 'minibus', label: 'Minibus / Mikrobus' },
-                { value: 'specjalny', label: 'Specjalny / zabudowa niestandardowa' },
-              ] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 1000' },
             { key: 'gvw', label: 'DMC (dopuszczalna masa całkowita)', type: 'number', unit: 'kg', placeholder: 'np. 3500' },
+            { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 2000' },
             { key: 'loadingLength', label: 'Długość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 3.5' },
+            { key: 'cargoHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 1.9' },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
-            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
+            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'finish-picker', fullWidth: true,
               options: [
                 { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
                 { value: 'pearl', label: 'Perłowy' }, { value: 'matte', label: 'Matowy' },
@@ -2463,19 +2490,13 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
-            { key: 'truckType', label: 'Typ pojazdu', type: 'select', required: true,
-              options: [
-                { value: 'ciagnik', label: 'Ciągnik siodłowy' }, { value: 'skrzyniowy', label: 'Skrzyniowy' },
-                { value: 'wywrotka', label: 'Wywrotka' }, { value: 'chlodnia', label: 'Chłodnia' },
-                { value: 'izoterma', label: 'Izoterma' }, { value: 'cysterna', label: 'Cysterna' },
-                { value: 'hakowiec', label: 'Hakowiec / Kontenerowiec' }, { value: 'betonomieszarka', label: 'Betonomieszarka' },
-                { value: 'dzwig', label: 'Dźwig / HDS' }, { value: 'specjalny', label: 'Specjalny' },
-              ] },
             { key: 'axles', label: 'Liczba osi', type: 'select', required: true,
               options: [{ value: '2', label: '2 osie' }, { value: '3', label: '3 osie' },
                         { value: '4', label: '4 osie' }, { value: '5+', label: '5+ osi' }] },
             { key: 'gvw', label: 'DMC (tony)', type: 'number', unit: 't', placeholder: 'np. 26' },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 18000' },
+            { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 8000' },
+            { key: 'cargoHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 2.7' },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
             { key: 'euroNorm', label: 'Norma EURO', type: 'select',
               options: [{ value: 'euro3', label: 'Euro 3' }, { value: 'euro4', label: 'Euro 4' },
@@ -2530,7 +2551,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
-            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
+            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'finish-picker', fullWidth: true,
               options: [
                 { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
                 { value: 'matte', label: 'Matowy' }, { value: 'multicolor', label: 'Wielobarwny / racing livery' },
@@ -2552,18 +2573,11 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         extraFields: [
             { key: 'condition', label: 'Stan', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
-            { key: 'trailerType', label: 'Typ przyczepy', type: 'select', required: true,
-              options: [
-                { value: 'naczepa-plandeka', label: 'Naczepa plandeka' }, { value: 'naczepa-chlodnia', label: 'Naczepa chłodnia' },
-                { value: 'polnaczepa', label: 'Półnaczepa skrzyniowa' }, { value: 'laweta', label: 'Laweta / autotransporter' },
-                { value: 'wywrotka', label: 'Przyczepa wywrotka' }, { value: 'chlodnia', label: 'Przyczepa chłodnia' },
-                { value: 'platforma', label: 'Naczepa platforma / niskopodwozie' }, { value: 'tandem', label: 'Tandem / dwuosiowa' },
-                { value: 'cysterna', label: 'Cysterna' }, { value: 'lekka', label: 'Przyczepa lekka (osobowa)' },
-                { value: 'kempingowa', label: 'Kempingowa / karavan' }, { value: 'inne', label: 'Inne' },
-              ] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
             { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
+            { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 6000' },
             { key: 'length', label: 'Długość całkowita', type: 'number', unit: 'm', placeholder: 'np. 13.6' },
+            { key: 'cargoHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 2.7' },
             { key: 'axles', label: 'Liczba osi', type: 'select',
               options: [{ value: '1', label: '1 oś' }, { value: '2', label: '2 osie' }, { value: '3', label: '3 osie' }, { value: '4+', label: '4+ osi' }] },
             // Faza 4: width/height/hasHydraulics/hasLift/hasBrakes migrated to AttributeDefinition.
@@ -2585,18 +2599,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         showVinSection: false,
         showHistorySection: false,
         extraFields: [
-            { key: 'machineType', label: 'Typ maszyny / urządzenia', type: 'select', required: true,
-              options: [
-                { value: 'ciagnik', label: 'Ciągnik rolniczy' }, { value: 'kombajn-zbozowy', label: 'Kombajn zbożowy' },
-                { value: 'kombajn-ziemniaczany', label: 'Kombajn ziemniaczany' }, { value: 'kombajn-buraczkowy', label: 'Kombajn buraczkowy' },
-                { value: 'siewnik', label: 'Siewnik zbożowy / punktowy' }, { value: 'plug', label: 'Pług' },
-                { value: 'glebogryzarka', label: 'Glebogryzarka' }, { value: 'opryskiwacz', label: 'Opryskiwacz' },
-                { value: 'prasa', label: 'Prasa rolnicza (baler)' }, { value: 'ladowacz', label: 'Ładowacz czołowy (TUR)' },
-                { value: 'rozsiewacz', label: 'Rozsiewacz nawozów' }, { value: 'rozrzutnik', label: 'Rozrzutnik obornika' },
-                { value: 'agregat', label: 'Agregat uprawowy' }, { value: 'sadzarka', label: 'Sadzarka do ziemniaków' },
-                { value: 'kopaczka', label: 'Kopaczka do ziemniaków' }, { value: 'beczkowoz', label: 'Beczkowóz / wóz asenizacyjny' },
-                { value: 'sieczkarnia', label: 'Sieczkarnia polowa' }, { value: 'inne', label: 'Inne' },
-              ] },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona / na części' }] },
             { key: 'workingWidth', label: 'Szerokość robocza', type: 'number', unit: 'm', placeholder: 'np. 6.0' },
@@ -2620,26 +2622,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         showVinSection: false,
         showHistorySection: false,
         extraFields: [
-            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
-              options: [
-                { value: 'koparka-gasienicowa', label: 'Koparka gąsienicowa' },
-                { value: 'koparka-kolowa', label: 'Koparka kołowa' },
-                { value: 'koparka-ladowarka', label: 'Koparko-ładowarka' },
-                { value: 'minieksawator', label: 'Minieksawator / minikoparko-ładowarka' },
-                { value: 'ladowarka', label: 'Ładowarka kołowa' },
-                { value: 'ladowarka-teleskopowa', label: 'Ładowarka teleskopowa' },
-                { value: 'wozek-widlowy', label: 'Wózek widłowy' },
-                { value: 'dzwig-mobilny', label: 'Dźwig mobilny (samojezdny)' },
-                { value: 'dzwig-wieze', label: 'Dźwig wieżowy' },
-                { value: 'platforma-nosna', label: 'Platforma nożycowa / wznośna' },
-                { value: 'walec', label: 'Walec drogowy' },
-                { value: 'finisher', label: 'Finisher / rozkładarka asfaltu' },
-                { value: 'betonomieszarka', label: 'Betonomieszarka' },
-                { value: 'pompa-betonu', label: 'Pompa do betonu' },
-                { value: 'spycharka', label: 'Spycharka / buldożer' },
-                { value: 'wiertnica', label: 'Wiertnica / palownica' },
-                { value: 'inne', label: 'Inne' },
-              ] },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona / na części' }] },
             { key: 'operatingWeight', label: 'Masa robocza maszyny', type: 'number', unit: 'kg', placeholder: 'np. 20000' },
@@ -2663,16 +2645,6 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
         showVinSection: false,
         showHistorySection: false,
         extraFields: [
-            { key: 'machineType', label: 'Typ maszyny', type: 'select', required: true,
-              options: [
-                { value: 'wozek-widlowy', label: 'Wózek widłowy' }, { value: 'wozek-teleskopowy', label: 'Wózek teleskopowy' },
-                { value: 'koparka', label: 'Koparka' }, { value: 'koparka-ladowarka', label: 'Koparko-ładowarka' },
-                { value: 'ladowarka', label: 'Ładowarka' }, { value: 'dzwig', label: 'Dźwig / Żuraw' },
-                { value: 'platforma', label: 'Platforma nożycowa / wznośna' }, { value: 'walec', label: 'Walec drogowy' },
-                { value: 'betonomieszarka', label: 'Betoniarka / Betonomieszarka' }, { value: 'miniescavator', label: 'Minieksawator' },
-                { value: 'agregat-prad', label: 'Agregat prądotwórczy' }, { value: 'sprężarka', label: 'Sprężarka powietrza' },
-                { value: 'inne', label: 'Inne maszyny przemysłowe' },
-              ] },
             { key: 'condition', label: 'Stan maszyny', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używana' }, { value: 'new', label: 'Nowa' }, { value: 'damaged', label: 'Uszkodzona' }] },
             // Faza 4: liftCapacity/workingHeight/hasAC/hasCabin migrated to AttributeDefinition.
@@ -2697,10 +2669,10 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
 
     // ── Kategorie dodane w ramach rozszerzenia 10 -> 17 ──────────────────────
     // Rodzaj (np. "Jacht żaglowy", "Naczepa chłodnia") wybiera się przez sekcję
-    // "Rodzaj pojazdu" zasilaną prawdziwymi VehicleSubtype, nie przez extraFields — w
-    // odróżnieniu od starszych kategorii (przyczepy/rolnicze/budowlane/maszyny), które mają
-    // ten sam wybór zdublowany jako wolnotekstowy select. extraFields tu ograniczone do
-    // pól bez naturalnego miejsca gdzie indziej.
+    // "Rodzaj pojazdu" zasilaną prawdziwymi VehicleSubtype, nie przez extraFields - tak samo
+    // jak przyczepy/rolnicze/budowlane/maszyny/ciezarowe/dostawcze od czasu usunięcia ich
+    // zdublowanych wolnotekstowych selectów (bodyVariant/trailerType/machineType/truckType).
+    // extraFields tu ograniczone do pól bez naturalnego miejsca gdzie indziej.
     'lodzie-i-jachty': {
         fields: ['brand', 'model', 'year', 'engine', 'power', 'mileage', 'price'],
         required: ['year', 'price'],
@@ -2814,6 +2786,8 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
               options: [{ value: '1', label: '1 oś' }, { value: '2', label: '2 osie' }, { value: '3', label: '3 osie' }, { value: '4+', label: '4+ osi' }] },
             { key: 'payload', label: 'Ładowność', type: 'number', unit: 'kg', placeholder: 'np. 24000' },
             { key: 'gvw', label: 'DMC', type: 'number', unit: 'kg', placeholder: 'np. 39000' },
+            { key: 'curbWeight', label: 'Masa własna', type: 'number', unit: 'kg', placeholder: 'np. 7000' },
+            { key: 'cargoHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 2.7' },
         ],
     },
 
@@ -3029,6 +3003,15 @@ const gearboxes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
 const driveTypes = ref<DriveType[]>([])
 const colors = ref<CarColor[]>([])
+// The check icon on a selected color swatch is white by default - invisible on light colors
+// (biały, żółty, beżowy...). Pick a dark icon instead whenever the swatch itself is light.
+function isLightHex(hex?: string | null): boolean {
+    if (!hex) return false
+    const h = hex.replace('#', '')
+    if (h.length !== 6) return false
+    const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16)
+    return (0.299 * r + 0.587 * g + 0.114 * b) > 175
+}
 const allFeatures = ref<Feature[]>([])
 const featuresLoaded = ref(false)
 const featuresLoadFailed = ref(false)
@@ -3557,7 +3540,6 @@ const history = reactive({
     warrantyUntil: '',
     registrationCountry: 'PL',
     isFirstOwner: false,
-    isAccidentFree: false,
     servicedAtASO: false,
     isGaraged: false,
     keyCount: null as number | null,
@@ -3904,11 +3886,18 @@ async function onCategory(catId: number) {
         modelTextInput.value = ''
         form.featureIds = []
     }
-    // Load subtypes for this category
-    try {
-        subtypes.value = await fetchVehicleSubtypes(catId)
-    } catch {
+    // Load subtypes for this category - skipped for categories that already have their own
+    // BodyType select (today just auta-osobowe): VehicleSubtype there duplicates the same
+    // "body shape" concept BodyType already covers, and BodyType is the mechanism search
+    // filters and listing display actually read, so it stays canonical for cars.
+    if (categoryConfig.value.fields.includes('bodyType')) {
         subtypes.value = []
+    } else {
+        try {
+            subtypes.value = await fetchVehicleSubtypes(catId)
+        } catch {
+            subtypes.value = []
+        }
     }
     // Reload brands filtered by category (fall back to all brands only on a genuine fetch error,
     // not merely because the category has zero mapped brands - an empty result is still correct).
@@ -4008,6 +3997,10 @@ function validateStep(step: number): string | null {
         if (cfg.fields.includes('year') && !form.year) return 'Podaj rok produkcji.'
         if (cfg.required.includes('fuelType') && !form.fuelTypeId) return 'Wybierz rodzaj paliwa.'
         if (cfg.required.includes('mileage') && !form.mileage && form.mileage !== 0) return `Podaj ${cfg.mileageLabel ?? 'przebieg'}.`
+        // "Rodzaj pojazdu" renders with a required `*` whenever this category has subtypes
+        // (see the `v-if="subtypes.length > 0"` block above) - validation was missing here, so a
+        // seller could submit with the field left blank despite the asterisk.
+        if (subtypes.value.length > 0 && !form.vehicleSubtypeId) return 'Wybierz rodzaj pojazdu.'
         // Validate extra required fields
         for (const ef of (cfg.extraFields ?? [])) {
             if (ef.required && !extras[ef.key] && extras[ef.key] !== false) {
@@ -4676,12 +4669,10 @@ async function submit() {
             if (extras.axles != null) cleanEdit.axleCount = Number(extras.axles)
             if (extras.loadingLength != null) cleanEdit.cargoLength = Number(extras.loadingLength)
             if (extras.length != null) cleanEdit.cargoLength = Number(extras.length)
+            if (extras.curbWeight != null) cleanEdit.curbWeight = Number(extras.curbWeight)
+            if (extras.cargoHeight != null) cleanEdit.cargoHeight = Number(extras.cargoHeight)
             if (extras.hasTachograph != null) cleanEdit.hasTachograph = Boolean(extras.hasTachograph)
             if (extras.hasRetarder != null) cleanEdit.hasRetarder = Boolean(extras.hasRetarder)
-            if (extras.bodyVariant) cleanEdit.bodySubtype = extras.bodyVariant
-            if (extras.trailerType) cleanEdit.bodySubtype = extras.trailerType
-            if (extras.machineType) cleanEdit.bodySubtype = extras.machineType
-            if (extras.truckType) cleanEdit.bodySubtype = extras.truckType
             if (extras.seatsCount != null) cleanEdit.seatsCount = Number(extras.seatsCount)
             if (extras.torque != null) cleanEdit.torque = Number(extras.torque)
             if (extras.co2 != null) cleanEdit.co2Emission = Number(extras.co2)
@@ -4693,8 +4684,16 @@ async function submit() {
                 cleanEdit.colorFinish = extras.colorFinish
                 cleanEdit.metallicPaint = extras.colorFinish === 'metallic' || extras.colorFinish === 'pearl'
             }
-            // Subtype and subtype-specific fields
-            if (form.vehicleSubtypeId != null) cleanEdit.vehicleSubtypeId = form.vehicleSubtypeId
+            // Subtype and subtype-specific fields. bodySubtype (a plain string, kept for the
+            // AdvertCard badge and the free-text search filter) mirrors the chosen VehicleSubtype's
+            // name instead of asking the same "what kind of vehicle is this" question twice via a
+            // separate hardcoded select (dostawcze/ciezarowe/przyczepy/rolnicze/budowlane/maszyny
+            // used to have both).
+            if (form.vehicleSubtypeId != null) {
+                cleanEdit.vehicleSubtypeId = form.vehicleSubtypeId
+                const st = subtypes.value.find(s => s.id === form.vehicleSubtypeId)
+                if (st) cleanEdit.bodySubtype = st.name
+            }
             if (extras.operatingWeight != null) cleanEdit.operatingWeightKg = extras.operatingWeight
             if (extras.workingWidth != null) cleanEdit.workingWidthCm = extras.workingWidth
             if (extras.maxDiggingDepth != null) cleanEdit.maxDiggingDepthM = extras.maxDiggingDepth
@@ -4804,12 +4803,10 @@ async function submit() {
             if (extras.axles != null) cleanBody.axleCount = Number(extras.axles)
             if (extras.loadingLength != null) cleanBody.cargoLength = Number(extras.loadingLength)
             if (extras.length != null) cleanBody.cargoLength = Number(extras.length)
+            if (extras.curbWeight != null) cleanBody.curbWeight = Number(extras.curbWeight)
+            if (extras.cargoHeight != null) cleanBody.cargoHeight = Number(extras.cargoHeight)
             if (extras.hasTachograph != null) cleanBody.hasTachograph = Boolean(extras.hasTachograph)
             if (extras.hasRetarder != null) cleanBody.hasRetarder = Boolean(extras.hasRetarder)
-            if (extras.bodyVariant) cleanBody.bodySubtype = extras.bodyVariant
-            if (extras.trailerType) cleanBody.bodySubtype = extras.trailerType
-            if (extras.machineType) cleanBody.bodySubtype = extras.machineType
-            if (extras.truckType) cleanBody.bodySubtype = extras.truckType
             if (extras.seatsCount != null) cleanBody.seatsCount = Number(extras.seatsCount)
             if (extras.torque != null) cleanBody.torque = Number(extras.torque)
             if (extras.co2 != null) cleanBody.co2Emission = Number(extras.co2)
@@ -4821,8 +4818,16 @@ async function submit() {
                 cleanBody.colorFinish = extras.colorFinish
                 cleanBody.metallicPaint = extras.colorFinish === 'metallic' || extras.colorFinish === 'pearl'
             }
-            // Subtype and subtype-specific fields
-            if (form.vehicleSubtypeId != null) cleanBody.vehicleSubtypeId = form.vehicleSubtypeId
+            // Subtype and subtype-specific fields. bodySubtype (a plain string, kept for the
+            // AdvertCard badge and the free-text search filter) mirrors the chosen VehicleSubtype's
+            // name instead of asking the same "what kind of vehicle is this" question twice via a
+            // separate hardcoded select (dostawcze/ciezarowe/przyczepy/rolnicze/budowlane/maszyny
+            // used to have both).
+            if (form.vehicleSubtypeId != null) {
+                cleanBody.vehicleSubtypeId = form.vehicleSubtypeId
+                const st = subtypes.value.find(s => s.id === form.vehicleSubtypeId)
+                if (st) cleanBody.bodySubtype = st.name
+            }
             if (extras.operatingWeight != null) cleanBody.operatingWeightKg = extras.operatingWeight
             if (extras.workingWidth != null) cleanBody.workingWidthCm = extras.workingWidth
             if (extras.maxDiggingDepth != null) cleanBody.maxDiggingDepthM = extras.maxDiggingDepth
@@ -5154,7 +5159,11 @@ onMounted(async () => {
         // that point) never get reloaded for the restored category, leaving the equipment step
         // permanently stuck on "this category doesn't need an equipment list".
         if (form.categoryId) {
-            try { subtypes.value = await fetchVehicleSubtypes(form.categoryId) } catch { subtypes.value = [] }
+            if (categoryConfig.value.fields.includes('bodyType')) {
+                subtypes.value = []
+            } else {
+                try { subtypes.value = await fetchVehicleSubtypes(form.categoryId) } catch { subtypes.value = [] }
+            }
             await loadContextFeatures()
         }
         const queries = promoPlans.flatMap(p => p.days.map(d => ({ key: p.key, days: d })))
@@ -7243,67 +7252,120 @@ onBeforeUnmount(() => {
     &:hover { background: rgba($red, 0.2); }
 }
 
-// Color picker (extraField type: color-picker)
-.ef-color-label {
+// Color picker (extraField type: color-picker) - a scrollable card grid, each swatch paired
+// with its name so the choice reads at a glance instead of relying on a hover tooltip.
+.ef-color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 8px;
+    padding: 4px 0 0;
+}
+
+.ef-color-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    font-weight: 600;
-    color: $text-dim;
-    letter-spacing: 0.2px;
-}
-
-.ef-color-name {
-    font-size: 10px;
-    font-weight: 500;
-    color: $red;
-    text-transform: none;
-    letter-spacing: 0;
-}
-
-.ef-color-swatches {
-    display: flex;
-    flex-wrap: wrap;
     gap: 7px;
-    padding: 4px 0;
-}
-
-.ef-color-swatch {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    border: 2px solid transparent;
+    padding: 10px 6px 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid $border;
+    border-radius: $r-sm;
     cursor: pointer;
-    padding: 0;
-    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
     outline: none;
 
-    &:hover { transform: scale(1.18); }
+    &:hover { border-color: rgba($red, 0.35); background: rgba(255,255,255,0.05); transform: translateY(-1px); }
 
     &.active {
         border-color: $red;
-        box-shadow: 0 0 0 2px rgba($red, 0.35);
-        transform: scale(1.12);
+        background: rgba($red, 0.08);
+        box-shadow: 0 0 0 1px rgba($red, 0.35);
     }
 
-    &--clear {
-        background: rgba(255,255,255,0.06);
-        border-color: rgba(255,255,255,0.12);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $text-dim;
+    &--clear .ef-color-dot { background: rgba(255,255,255,0.06); }
+}
 
-        &.active {
-            border-color: $red;
-            color: $red;
-            box-shadow: 0 0 0 2px rgba($red, 0.35);
-        }
+.ef-color-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.35);
+    flex-shrink: 0;
 
-        &:hover { transform: scale(1.1); color: $text; }
+    &--clear { color: $text-dim; }
+}
+
+.ef-color-card-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: $text-muted;
+    text-align: center;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ef-color-card.active .ef-color-card-label { color: $text; }
+
+// Finish picker (extraField type: finish-picker) - same card language as the color grid, but
+// each swatch is a small gradient standing in for the finish's actual look (metallic sheen,
+// pearl shimmer, matte flatness, etc.) instead of a flat color.
+.ef-finish-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+    padding: 4px 0 0;
+}
+
+.ef-finish-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 8px 9px;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid $border;
+    border-radius: $r-sm;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    outline: none;
+
+    &:hover { border-color: rgba($red, 0.35); background: rgba(255,255,255,0.05); transform: translateY(-1px); }
+
+    &.active {
+        border-color: $red;
+        background: rgba($red, 0.08);
+        box-shadow: 0 0 0 1px rgba($red, 0.35);
     }
 }
+
+.ef-finish-swatch {
+    width: 100%;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.35);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.ef-finish-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-muted;
+    text-align: center;
+    line-height: 1.25;
+}
+
+.ef-finish-card.active .ef-finish-card-label { color: $text; }
 
 .radio-group {
     display: flex;
