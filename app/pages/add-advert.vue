@@ -608,32 +608,50 @@
 
                                     <!-- Color picker -->
                                     <div v-else-if="ef.type === 'color-picker'" :class="['field', ef.fullWidth ? 'full-width' : '']">
-                                        <div class="ef-color-label">
-                                            <span>{{ ef.label }}</span>
-                                            <span v-if="extras[ef.key]" class="ef-color-name">
-                                                {{ colors.find(c => c.id === extras[ef.key])?.name }}
-                                            </span>
-                                        </div>
-                                        <div class="ef-color-swatches">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="ef-color-grid">
                                             <button
-                                                class="ef-color-swatch ef-color-swatch--clear"
+                                                class="ef-color-card ef-color-card--clear"
                                                 :class="{ active: !extras[ef.key] }"
-                                                title="Nie określono"
                                                 type="button"
                                                 @click="extras[ef.key] = null"
                                             >
-                                                <v-icon icon="mdi-close" size="10" />
+                                                <span class="ef-color-dot ef-color-dot--clear"><v-icon icon="mdi-close" size="13" /></span>
+                                                <span class="ef-color-card-label">Dowolny</span>
                                             </button>
                                             <button
                                                 v-for="col in colors"
                                                 :key="col.id"
-                                                class="ef-color-swatch"
+                                                class="ef-color-card"
                                                 :class="{ active: extras[ef.key] === col.id }"
-                                                :style="{ background: col.hexCode || '#888' }"
-                                                :title="col.name"
                                                 type="button"
                                                 @click="extras[ef.key] = extras[ef.key] === col.id ? null : col.id"
-                                            />
+                                            >
+                                                <span class="ef-color-dot" :style="{ background: col.hexCode || '#888', color: isLightHex(col.hexCode) ? '#111' : '#fff' }">
+                                                    <v-icon v-if="extras[ef.key] === col.id" icon="mdi-check" size="14" />
+                                                </span>
+                                                <span class="ef-color-card-label">{{ col.name }}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Finish picker (paint finish: metallic/pearl/matte/...) -->
+                                    <div v-else-if="ef.type === 'finish-picker'" :class="['field', ef.fullWidth ? 'full-width' : '']">
+                                        <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
+                                        <div class="ef-finish-grid">
+                                            <button
+                                                v-for="opt in ef.options"
+                                                :key="opt.value"
+                                                class="ef-finish-card"
+                                                :class="{ active: extras[ef.key] === opt.value }"
+                                                type="button"
+                                                @click="extras[ef.key] = extras[ef.key] === opt.value ? null : opt.value"
+                                            >
+                                                <span class="ef-finish-swatch" :style="{ background: FINISH_SWATCHES[opt.value] }">
+                                                    <v-icon v-if="extras[ef.key] === opt.value" icon="mdi-check" size="16" />
+                                                </span>
+                                                <span class="ef-finish-card-label">{{ opt.label }}</span>
+                                            </button>
                                         </div>
                                     </div>
 
@@ -2326,7 +2344,7 @@ const { analyzePhoto: analyzePhotoLocal } = usePhotoAnalysis()
 interface ExtraField {
     key: string
     label: string
-    type: 'number' | 'select' | 'text' | 'boolean' | 'radio' | 'color-picker'
+    type: 'number' | 'select' | 'text' | 'boolean' | 'radio' | 'color-picker' | 'finish-picker'
     options?: { value: string; label: string }[]
     unit?: string
     placeholder?: string
@@ -2373,6 +2391,19 @@ interface CatFieldConfig {
     detailsStepDesc?: string
 }
 
+// Visual preview swatch for each paint-finish option (extraField type: finish-picker) - a small
+// CSS gradient standing in for how each finish actually looks, since "Metalik" vs "Perłowy" vs
+// "Matowy" reads as three interchangeable words otherwise.
+const FINISH_SWATCHES: Record<string, string> = {
+    solid: 'linear-gradient(135deg, #4a4a4a, #6b6b6b)',
+    metallic: 'linear-gradient(135deg, #8e9aa3 0%, #d8dee2 30%, #6b7680 55%, #c7d0d4 80%, #838f98 100%)',
+    pearl: 'linear-gradient(135deg, #f3e9f7 0%, #d9c7e8 25%, #f5f0fa 50%, #c9b8dd 75%, #efe4f4 100%)',
+    matte: 'linear-gradient(135deg, #3a3a3d, #4d4d50)',
+    bicolor: 'linear-gradient(115deg, #1a1a1a 0% 48%, #8B0D1D 52% 100%)',
+    chrome: 'linear-gradient(135deg, #cfd8dc 0%, #ffffff 20%, #78909c 45%, #eceff1 65%, #607d8b 85%, #ffffff 100%)',
+    multicolor: 'linear-gradient(115deg, #e63946 0%, #f4a261 20%, #e9c46a 40%, #2a9d8f 60%, #264653 80%, #8B0D1D 100%)',
+}
+
 const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
     'auta-osobowe': {
         fields: ['brand', 'model', 'generation', 'year', 'fuelType', 'engine', 'power', 'gearbox', 'mileage', 'price', 'bodyType'],
@@ -2395,7 +2426,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'seatsCount', label: 'Liczba miejsc', type: 'select',
               options: [{ value: '2', label: '2' }, { value: '4', label: '4' }, { value: '5', label: '5' }, { value: '7', label: '7' }, { value: '8', label: '8' }, { value: '9', label: '9+' }] },
             { key: 'color', label: 'Kolor nadwozia', type: 'color-picker', fullWidth: true },
-            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
+            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'finish-picker', fullWidth: true,
               options: [
                 { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
                 { value: 'pearl', label: 'Perłowy / efekt perły' }, { value: 'matte', label: 'Matowy' },
@@ -2442,7 +2473,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'loadingLength', label: 'Długość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 3.5' },
             { key: 'cargoHeight', label: 'Wysokość przestrzeni ładunkowej', type: 'number', unit: 'm', placeholder: 'np. 1.9' },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
-            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
+            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'finish-picker', fullWidth: true,
               options: [
                 { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
                 { value: 'pearl', label: 'Perłowy' }, { value: 'matte', label: 'Matowy' },
@@ -2536,7 +2567,7 @@ const CATEGORY_CONFIGS: Record<string, CatFieldConfig> = {
             { key: 'condition', label: 'Stan pojazdu', type: 'radio', required: true,
               options: [{ value: 'used', label: 'Używany' }, { value: 'new', label: 'Nowy' }, { value: 'damaged', label: 'Uszkodzony' }] },
             { key: 'color', label: 'Kolor', type: 'color-picker', fullWidth: true },
-            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'radio',
+            { key: 'colorFinish', label: 'Wykończenie lakieru', type: 'finish-picker', fullWidth: true,
               options: [
                 { value: 'solid', label: 'Pełny (solid)' }, { value: 'metallic', label: 'Metalik' },
                 { value: 'matte', label: 'Matowy' }, { value: 'multicolor', label: 'Wielobarwny / racing livery' },
@@ -3039,6 +3070,15 @@ const gearboxes = ref<TaxonomyItem[]>([])
 const bodyTypes = ref<TaxonomyItem[]>([])
 const driveTypes = ref<DriveType[]>([])
 const colors = ref<CarColor[]>([])
+// The check icon on a selected color swatch is white by default - invisible on light colors
+// (biały, żółty, beżowy...). Pick a dark icon instead whenever the swatch itself is light.
+function isLightHex(hex?: string | null): boolean {
+    if (!hex) return false
+    const h = hex.replace('#', '')
+    if (h.length !== 6) return false
+    const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16)
+    return (0.299 * r + 0.587 * g + 0.114 * b) > 175
+}
 const allFeatures = ref<Feature[]>([])
 const featuresLoaded = ref(false)
 const featuresLoadFailed = ref(false)
@@ -7260,67 +7300,120 @@ onBeforeUnmount(() => {
     &:hover { background: rgba($red, 0.2); }
 }
 
-// Color picker (extraField type: color-picker)
-.ef-color-label {
+// Color picker (extraField type: color-picker) - a scrollable card grid, each swatch paired
+// with its name so the choice reads at a glance instead of relying on a hover tooltip.
+.ef-color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 8px;
+    padding: 4px 0 0;
+}
+
+.ef-color-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    font-weight: 600;
-    color: $text-dim;
-    letter-spacing: 0.2px;
-}
-
-.ef-color-name {
-    font-size: 10px;
-    font-weight: 500;
-    color: $red;
-    text-transform: none;
-    letter-spacing: 0;
-}
-
-.ef-color-swatches {
-    display: flex;
-    flex-wrap: wrap;
     gap: 7px;
-    padding: 4px 0;
-}
-
-.ef-color-swatch {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    border: 2px solid transparent;
+    padding: 10px 6px 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid $border;
+    border-radius: $r-sm;
     cursor: pointer;
-    padding: 0;
-    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
     outline: none;
 
-    &:hover { transform: scale(1.18); }
+    &:hover { border-color: rgba($red, 0.35); background: rgba(255,255,255,0.05); transform: translateY(-1px); }
 
     &.active {
         border-color: $red;
-        box-shadow: 0 0 0 2px rgba($red, 0.35);
-        transform: scale(1.12);
+        background: rgba($red, 0.08);
+        box-shadow: 0 0 0 1px rgba($red, 0.35);
     }
 
-    &--clear {
-        background: rgba(255,255,255,0.06);
-        border-color: rgba(255,255,255,0.12);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $text-dim;
+    &--clear .ef-color-dot { background: rgba(255,255,255,0.06); }
+}
 
-        &.active {
-            border-color: $red;
-            color: $red;
-            box-shadow: 0 0 0 2px rgba($red, 0.35);
-        }
+.ef-color-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.35);
+    flex-shrink: 0;
 
-        &:hover { transform: scale(1.1); color: $text; }
+    &--clear { color: $text-dim; }
+}
+
+.ef-color-card-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: $text-muted;
+    text-align: center;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ef-color-card.active .ef-color-card-label { color: $text; }
+
+// Finish picker (extraField type: finish-picker) - same card language as the color grid, but
+// each swatch is a small gradient standing in for the finish's actual look (metallic sheen,
+// pearl shimmer, matte flatness, etc.) instead of a flat color.
+.ef-finish-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+    padding: 4px 0 0;
+}
+
+.ef-finish-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 8px 9px;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid $border;
+    border-radius: $r-sm;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    outline: none;
+
+    &:hover { border-color: rgba($red, 0.35); background: rgba(255,255,255,0.05); transform: translateY(-1px); }
+
+    &.active {
+        border-color: $red;
+        background: rgba($red, 0.08);
+        box-shadow: 0 0 0 1px rgba($red, 0.35);
     }
 }
+
+.ef-finish-swatch {
+    width: 100%;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.35);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.ef-finish-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-muted;
+    text-align: center;
+    line-height: 1.25;
+}
+
+.ef-finish-card.active .ef-finish-card-label { color: $text; }
 
 .radio-group {
     display: flex;
