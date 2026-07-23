@@ -67,6 +67,32 @@
               </dl>
             </div>
 
+            <div v-if="company.branches?.length" class="cp-card">
+              <h2 class="cp-card-h">Oddziały <span class="cp-count">{{ company.branches.length }}</span></h2>
+              <div class="cp-branches">
+                <div v-for="b in company.branches" :key="b.id" class="cp-branch">
+                  <div class="cp-branch-name">
+                    <v-icon icon="mdi-office-building-outline" size="16" />
+                    {{ b.name || (b.isPrimary ? 'Siedziba główna' : 'Oddział') }}
+                  </div>
+                  <div v-if="branchAddress(b)" class="cp-branch-row">
+                    <v-icon icon="mdi-map-marker-outline" size="15" />{{ branchAddress(b) }}
+                  </div>
+                  <div v-for="p in b.phones" :key="p.number" class="cp-branch-row">
+                    <v-icon icon="mdi-phone-outline" size="15" />
+                    <a :href="`tel:${p.number}`">{{ p.number }}</a>
+                    <span v-if="p.label" class="cp-branch-phone-label">({{ p.label }})</span>
+                  </div>
+                  <div v-if="b.openingHours?.length" class="cp-branch-hours">
+                    <div v-for="h in sortedHours(b.openingHours)" :key="h.dayOfWeek" class="cp-branch-hours-row">
+                      <span class="cp-branch-day">{{ WEEKDAY_LABELS[h.dayOfWeek] }}</span>
+                      <span>{{ h.isClosed ? 'Zamknięte' : `${h.openTime?.slice(0, 5)} – ${h.closeTime?.slice(0, 5)}` }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div v-if="listings.length" class="cp-card">
               <h2 class="cp-card-h">Ogłoszenia tej firmy <span class="cp-count">{{ listingsTotal }}</span></h2>
               <ul class="cp-listings">
@@ -118,13 +144,40 @@
 </template>
 
 <script setup lang="ts">
+interface CompanyPhone { number: string; label?: string | null }
+interface CompanyOpeningHour {
+  dayOfWeek: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday'
+  isClosed: boolean; openTime?: string | null; closeTime?: string | null
+}
+interface CompanyBranch {
+  id: number; name?: string | null; isPrimary: boolean
+  countryIso2?: string | null; regionName?: string | null; cityName?: string | null
+  postalCode?: string | null; addressLine?: string | null
+  latitude?: number | null; longitude?: number | null; timeZone?: string | null
+  phones: CompanyPhone[]; openingHours: CompanyOpeningHour[]
+}
+
 interface DirCompanyDetail {
   publicId: string; slug: string; name: string; category: string;
   countryCode?: string | null; city?: string | null; address?: string | null;
   postalCode?: string | null; phone?: string | null; email?: string | null;
   website?: string | null; profileUrl?: string | null; language?: string | null;
   description?: string | null; linked?: boolean; availableLanguages?: string[];
+  contactLanguages?: string[]; branches?: CompanyBranch[];
   status: string; createdAt: string; updatedAt: string;
+}
+
+const WEEKDAY_LABELS: Record<string, string> = {
+  Monday: 'Poniedziałek', Tuesday: 'Wtorek', Wednesday: 'Środa', Thursday: 'Czwartek',
+  Friday: 'Piątek', Saturday: 'Sobota', Sunday: 'Niedziela',
+}
+function branchAddress(b: CompanyBranch): string {
+  return [b.addressLine, [b.postalCode, b.cityName].filter(Boolean).join(' ')].filter(Boolean).join(', ')
+}
+// Monday-first week order (Polish convention), regardless of the order hours were saved in.
+const WEEKDAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+function sortedHours(hours: CompanyOpeningHour[]): CompanyOpeningHour[] {
+  return [...hours].sort((a, b) => WEEKDAY_ORDER.indexOf(a.dayOfWeek) - WEEKDAY_ORDER.indexOf(b.dayOfWeek))
 }
 
 const route = useRoute()
@@ -259,6 +312,16 @@ useHead(() => ({
 .cp-dl dt { color: $text-muted; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
 .cp-dl dd { margin: 0; color: $text; font-size: 15px; a { color: $red; text-decoration: none; &:hover { text-decoration: underline; } } }
 .cp-nocontact { grid-column: 1 / -1; color: $text-muted; font-style: italic; }
+
+.cp-branches { display: flex; flex-direction: column; gap: 16px; }
+.cp-branch { border: 1px solid $border; border-radius: 10px; padding: 14px 16px; }
+.cp-branch-name { display: flex; align-items: center; gap: 6px; font-weight: 700; color: $text; margin-bottom: 8px; }
+.cp-branch-row { display: flex; align-items: center; gap: 6px; color: $text-muted; font-size: 14px; margin-top: 4px;
+  a { color: $red; text-decoration: none; &:hover { text-decoration: underline; } } }
+.cp-branch-phone-label { color: $text-muted; font-size: 12.5px; }
+.cp-branch-hours { margin-top: 8px; padding-top: 8px; border-top: 1px dashed $border; }
+.cp-branch-hours-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: $text-muted; padding: 2px 0; }
+.cp-branch-day { color: $text; font-weight: 600; }
 
 .cp-claim { display: flex; align-items: center; gap: 14px; background: rgba($red, .08); border: 1px solid rgba($red, .2); border-radius: 12px; padding: 16px 18px;
   strong { color: $text; } p { margin: 2px 0 0; color: $text-muted; font-size: 13.5px; }
