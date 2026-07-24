@@ -4458,7 +4458,53 @@ watch(() => form.engineVersionId, (newId) => {
     if (engine.cylinders != null)     { extras.cylinders   = engine.cylinders;      engineLocked.cylinders   = true }
 })
 
-function generateAiDescription() {
+// Resolves one AttributeDefinition-driven value (opony/felgi/łodzie/przyczepy/... - see Faza 4 of
+// the category/attribute restructure) to a plain display string, the same way DynamicAttributeField
+// renders it, so the AI prompt sees "Producent: Michelin" / "Szerokość: 205 mm" instead of a raw id.
+function formatAttrValue(def: AttrDef, v: AttrValue): string | null {
+    if (v.valueBool != null) return v.valueBool ? 'Tak' : null
+    if (v.valueText != null && v.valueText !== '') return v.valueText
+    if (v.valueNumber != null) return `${v.valueNumber}${def.unit ? ' ' + def.unit : ''}`
+    if (v.valueDate) return v.valueDate.slice(0, 10)
+    return null
+}
+
+// Category-agnostic detail map for the AI description prompt: legacy per-category extraFields
+// (CATEGORY_CONFIGS) + the newer AttributeDefinition/attributeValues fields (opony/felgi/boats/
+// trailers/...), exactly the same sources buildDescription() already draws its "Dane techniczne"
+// section from - so whatever fields the seller actually filled in for THIS category are what gets
+// described, nothing assumed from a fixed car-shaped field list.
+function buildAiDetails(): Record<string, string> {
+    const details: Record<string, string> = {}
+
+    for (const field of (categoryConfig.value.extraFields ?? [])) {
+        const val = extras[field.key]
+        if (val === null || val === undefined || val === '' || val === false) continue
+        if (field.type === 'boolean') { details[field.label] = 'Tak'; continue }
+        if (field.type === 'radio' || field.type === 'select') {
+            details[field.label] = String(field.options?.find(o => o.value === val)?.label ?? val)
+            continue
+        }
+        if (field.type === 'color-picker') {
+            details[field.label] = String(colors.value.find(c => c.id === val)?.name ?? val)
+            continue
+        }
+        details[field.label] = `${val}${field.unit ? ' ' + field.unit : ''}`
+    }
+
+    for (const def of attributeDefinitions.value) {
+        const v = attributeValues[def.id]
+        if (!v) continue
+        const formatted = formatAttrValue(def, v)
+        if (formatted != null) details[def.labelPl] = formatted
+    }
+
+    if (form.price) details['Cena'] = `${form.price} zł`
+
+    return details
+}
+
+async function generateAiDescription() {
     aiDescLoading.value = true
     aiDescError.value = ''
 
@@ -4466,66 +4512,37 @@ function generateAiDescription() {
     const model = modelName.value || modelTextInput.value || ''
     const gen = generationLabel(generations.value.find((g: any) => g.id === form.generationId))
     const year = form.year
-    const mileage = form.mileage
-    const fuel = fuelTypeName.value || ''
-    const power = form.power
-    const capacity = form.engineCapacity
-    const gearbox = (gearboxes.value.find((g: any) => g.id === form.gearboxId)?.name ?? '') as string
-    const owners = history.ownersCount
-    const serviceBook = history.hasServiceBook
-    const fullHistory = history.hasFullServiceHistory
-    const featCount = form.featureIds.length
 
-    const parts: string[] = []
+    // Only vehicle-shaped categories have a meaningful brand/model/generation identity - for opony/
+    // felgi/akcesoria/etc. this stays empty and the category name alone (sent as `categoryName`)
+    // plus `details` (below) carry what the item actually is.
+    const itemLabel = [brand, model, gen, year ? `(${year})` : ''].filter(Boolean).join(' ')
 
-    // Intro
-    const carLabel = [brand, model, gen, year ? `(${year})` : ''].filter(Boolean).join(' ')
-    if (carLabel) {
-        parts.push(`Sprzedam ${carLabel}.`)
+    const details = buildAiDetails()
+    if (form.mileage != null && form.mileage > 0) details['Przebieg'] = `${form.mileage.toLocaleString('pl-PL')} km`
+    if (fuelTypeName.value) details['Paliwo'] = fuelTypeName.value
+    if (form.power) details['Moc'] = `${form.power} KM`
+    if (form.featureIds.length) details['Wyposażenie dodatkowe'] = `${form.featureIds.length} pozycji`
+    if (history.hasFullServiceHistory) details['Historia serwisowa'] = 'Pełna, udokumentowana'
+    else if (history.hasServiceBook) details['Książka serwisowa'] = 'Tak'
+    if (history.ownersCount != null && history.ownersCount > 0) details['Liczba właścicieli'] = String(history.ownersCount)
+
+    try {
+        const result = await $fetch<{ description: string }>('/api/ai/description', {
+            method: 'POST',
+            body: {
+                categoryName: selectedCategory.value?.name ?? '',
+                itemLabel,
+                details,
+                history: form.description?.trim() || undefined,
+            },
+        })
+        form.description = result.description?.trim() ?? ''
+    } catch (e: any) {
+        aiDescError.value = e?.data?.statusMessage || 'Nie udało się wygenerować opisu. Spróbuj ponownie.'
+    } finally {
+        aiDescLoading.value = false
     }
-
-    // Technical block
-    const techParts: string[] = []
-    if (fuel) techParts.push(`silnik ${fuel.toLowerCase()}`)
-    if (capacity) techParts.push(`${capacity} cm³`)
-    if (power) techParts.push(`${power} KM`)
-    const gearboxLower = gearbox.toLowerCase()
-    if (gearboxLower) {
-        const gearLabel = gearboxLower.includes('automat') || gearboxLower.includes('auto') ? 'skrzynia automatyczna' : 'skrzynia manualna'
-        techParts.push(gearLabel)
-    }
-    if (techParts.length) {
-        parts.push(`Pojazd wyposażony w ${techParts.join(', ')}.`)
-    }
-
-    // Mileage
-    if (mileage != null && mileage > 0) {
-        parts.push(`Przebieg wynosi ${mileage.toLocaleString('pl-PL')} km.`)
-    }
-
-    // Service history
-    if (fullHistory) {
-        parts.push('Samochód posiada pełną udokumentowaną historię serwisową — wszystkie przeglądy wykonywane terminowo w autoryzowanym serwisie.')
-    } else if (serviceBook) {
-        parts.push('Do pojazdu dołączona jest książka serwisowa z wpisami.')
-    }
-
-    // Owners
-    if (owners != null && owners > 0) {
-        const ownerLabel = owners === 1 ? 'jednego właściciela' : `${owners} właścicieli`
-        parts.push(`Auto było w rękach ${ownerLabel}.`)
-    }
-
-    // Equipment
-    if (featCount > 0) {
-        parts.push(`Pojazd posiada ${featCount} pozycji wyposażenia dodatkowego — pełna lista widoczna w ogłoszeniu.`)
-    }
-
-    // Closing
-    parts.push('Samochód do jazdy, bez ukrytych wad. Możliwość oględzin i jazdy próbnej po wcześniejszym umówieniu. Cena do negocjacji.')
-
-    form.description = parts.join(' ')
-    aiDescLoading.value = false
 }
 
 // Serialize category extras + history + seller info into description
