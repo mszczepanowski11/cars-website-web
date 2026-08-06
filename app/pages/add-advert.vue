@@ -4097,7 +4097,9 @@ function validateStep(step: number): string | null {
     if (key === 'description') {
         if (!form.price || form.price <= 0) return 'Podaj cenę pojazdu (musi być większa od 0).'
         if (form.price > 10_000_000) return 'Cena wydaje się nieprawidłowa (>10 000 000 zł).'
-        if (!form.region) return 'Wybierz województwo.'
+        // Region wymagany tylko gdy pole jest widoczne (kraj ma podział administracyjny). Bez tego
+        // kraje bez regionów / błąd /api/geo/regions blokowały publikację na zawsze (audyt C1).
+        if (geoHasRegions.value && !form.region) return 'Wybierz region.'
         if (!form.city?.trim()) return 'Podaj miasto.'
         if (!form.description?.trim()) return 'Dodaj opis ogłoszenia.'
         if (form.description.trim().length < 30) return 'Opis jest za krótki — opisz pojazd dokładniej (minimum 30 znaków).'
