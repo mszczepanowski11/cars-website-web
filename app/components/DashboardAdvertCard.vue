@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CarAdvert } from '~/types'
 const props = defineProps<{ advert: CarAdvert; status?: string }>()
-const { getImageUrl } = useImageUrl()
+const { getImageUrl, onImageError } = useImageUrl()
 const mainImage = computed(() => props.advert.images?.find(i => i.isMain) ?? props.advert.images?.[0])
 const mainImageUrl = computed(() => getImageUrl(mainImage.value?.url))
 const statusColor = computed(() => {
@@ -18,6 +18,7 @@ const statusColor = computed(() => {
                 :src="mainImageUrl"
                 :alt="advert.title"
                 loading="lazy"
+                @error="onImageError"
             />
             <span v-if="status" class="status-badge" :style="{ background: statusColor }">{{ status }}</span>
         </div>

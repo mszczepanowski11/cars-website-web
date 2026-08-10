@@ -53,5 +53,14 @@ export const useImageUrl = () => {
         return url
     }
 
-    return { getImageUrl, placeholder }
+    // Bind to a plain <img @error="onImageError">: when the source 404s or fails to decode,
+    // swap it to the branded car-silhouette placeholder instead of leaving a broken-image box
+    // with raw alt text. Guarded so a (hypothetical) placeholder failure can't loop.
+    function onImageError(e: Event) {
+        const el = e.target as HTMLImageElement | null
+        if (!el || el.src.endsWith(placeholder)) return
+        el.src = placeholder
+    }
+
+    return { getImageUrl, placeholder, onImageError }
 }

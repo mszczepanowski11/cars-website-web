@@ -9,6 +9,12 @@ const { t } = useI18n()
 
 const mainImage = computed(() => props.advert.images?.find(i => i.isMain) ?? props.advert.images?.[0])
 const mainImageUrl = computed(() => getImageUrl(mainImage.value?.url, placeholder))
+// getImageUrl only falls back to the placeholder when the URL is absent. A URL that is present
+// but 404s / fails to decode would otherwise render as a broken-image box with the raw alt text.
+// Track load failures and swap to the branded car-silhouette placeholder instead.
+const imgFailed = ref(false)
+watch(mainImageUrl, () => { imgFailed.value = false })
+const displayImageUrl = computed(() => (imgFailed.value ? placeholder : mainImageUrl.value))
 
 // Date.now() called directly here would return a different real-world instant during SSR
 // vs. client hydration (a network round-trip apart) - for any advert whose createdAt sits
@@ -96,13 +102,14 @@ const monthlyRate = computed(() => {
         <div class="card-img-wrap">
             <NuxtImg
                 provider="carizo"
-                :src="mainImageUrl"
+                :src="displayImageUrl"
                 :alt="advert.title"
                 loading="lazy"
                 width="420"
                 height="200"
                 format="auto"
                 quality="75"
+                @error="imgFailed = true"
             />
             <span v-if="resolvedBadge" :class="['card-badge', `card-badge--${resolvedBadge.toLowerCase()}`]">
                 <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" class="badge-icon" />
