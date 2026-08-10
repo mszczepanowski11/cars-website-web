@@ -577,9 +577,13 @@
         <div class="container main-layout">
             <div class="content">
                 <div class="results-hd">
-                    <p class="result-count">
+                    <!-- When the search genuinely returns nothing, the dedicated .no-results block below
+                         carries the messaging; a bare "Znaleziono 0 ogłoszeń" header on top of it is
+                         redundant and reads as an error, so hide the count line in that case. -->
+                    <p v-if="loading || total > 0" class="result-count">
                         {{ $t('adverts.found') }} <strong>{{ total.toLocaleString(locale) }}</strong> {{ $t('adverts.foundSuffix') }}
                     </p>
+                    <p v-else class="result-count result-count--empty">{{ $t('adverts.noResults') }}</p>
                     <div class="sort-wrap">
                         <v-icon icon="mdi-sort" size="16" class="sort-icon" />
                         <select v-model="f.sortBy" class="sort-select" @change="load(1)">

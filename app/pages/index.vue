@@ -233,7 +233,7 @@
         </section>
 
         <!-- ─── Stats strip ──────────────────────────────────────────── -->
-        <div class="stats-strip">
+        <div v-if="showStatsStrip" class="stats-strip">
             <div class="container">
                 <div class="sstrip-inner">
                     <template v-for="(stat, i) in visibleStats" :key="stat.key">
@@ -838,12 +838,21 @@ const feats = [
 const countUpRefs = ref<Record<string, Element>>({})
 const { observe: countUpObserve } = useCountUp()
 
-const visibleStats = computed(() => [
+const allStats = computed(() => [
     { key: 'activeAdverts', icon: 'mdi-shield-check-outline',  label: 'Zweryfikowanych ogłoszeń', value: homeStats.value.activeAdverts },
     { key: 'soldVehicles',  icon: 'mdi-car-outline',           label: 'Sprzedanych pojazdów',     value: homeStats.value.soldVehicles  },
     { key: 'totalUsers',    icon: 'mdi-account-group-outline', label: 'Użytkowników w Polsce',    value: homeStats.value.totalUsers    },
     { key: 'events',        icon: 'mdi-calendar-star',         label: 'Wydarzeń motoryzacyjnych',  value: homeStats.value.events        },
 ])
+
+// A brand-new platform legitimately has zeros for some counters. Advertising "0 Sprzedanych
+// pojazdów" / "0 Użytkowników" reads as a dead site and hurts trust, so once stats have loaded
+// we only surface counters with a real (>0) value. While loading we keep the full set so the
+// skeletons render in a stable layout. If nothing is > 0 the whole strip hides (guarded below).
+const visibleStats = computed(() =>
+    statsLoading.value ? allStats.value : allStats.value.filter(s => s.value > 0)
+)
+const showStatsStrip = computed(() => statsLoading.value || visibleStats.value.length > 0)
 
 // ─── Search section ──────────────────────────────────────────────────────────
 

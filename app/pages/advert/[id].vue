@@ -102,7 +102,7 @@
                                 {{ advert.badge }}
                             </span>
                         </div>
-                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" width="1200" height="750" fetchpriority="high" />
+                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" width="1200" height="750" fetchpriority="high" @error="onImageError" />
                         <div class="photo-bottom-bar">
                             <span v-if="hasImages" class="photo-count-pill">
                                 <v-icon icon="mdi-image-multiple-outline" size="13" />
@@ -138,7 +138,7 @@
                             :class="{ 'thumb-active': i === activeImg }"
                             @click="activeImg = i"
                         >
-                            <img :src="img.url" :alt="$t('advertDetail.gallery.photoAlt', { n: i + 1, title: advert?.title ?? '' })" loading="lazy" />
+                            <img :src="img.url" :alt="$t('advertDetail.gallery.photoAlt', { n: i + 1, title: advert?.title ?? '' })" loading="lazy" @error="onImageError" />
                             <div v-if="i === 5 && allImages.length > 6" class="thumb-more">+{{ allImages.length - 6 }}</div>
                         </button>
                     </div>
@@ -609,7 +609,7 @@
                         <NuxtLink v-for="a in similar" :key="a.id" :to="`/advert/${a.id}`" class="sim-card">
                             <div class="sim-img-wrap">
                                 <span v-if="a.isVerified" class="sim-verified">VERIFIED</span>
-                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" />
+                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" @error="onImageError" />
                                 <button class="sim-fav" @click.prevent="toggleFavorite(a.id)"><v-icon :icon="isFavorite(a.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="17" /></button>
                             </div>
                             <div class="sim-body">
@@ -702,11 +702,11 @@
             <div v-if="lightboxOpen" class="lightbox-backdrop" @click.self="lightboxOpen = false">
                 <button class="lb-close" :aria-label="$t('advertDetail.gallery.lightboxClose')" @click="lightboxOpen = false"><v-icon icon="mdi-close" size="22" /></button>
                 <button class="lb-arrow lb-prev" :aria-label="$t('advertDetail.gallery.prevPhoto')" :disabled="lightboxIdx === 0" @click="lightboxIdx--"><v-icon icon="mdi-chevron-left" size="30" /></button>
-                <div class="lb-img-wrap"><img :src="allImages[lightboxIdx]?.url ?? placeholder" :alt="`${advert?.title ?? $t('advertDetail.gallery.photo')} ${lightboxIdx + 1} / ${allImages.length}`" class="lb-img" /></div>
+                <div class="lb-img-wrap"><img :src="allImages[lightboxIdx]?.url ?? placeholder" :alt="`${advert?.title ?? $t('advertDetail.gallery.photo')} ${lightboxIdx + 1} / ${allImages.length}`" class="lb-img" @error="onImageError" /></div>
                 <button class="lb-arrow lb-next" :aria-label="$t('advertDetail.gallery.nextPhoto')" :disabled="lightboxIdx === allImages.length - 1" @click="lightboxIdx++"><v-icon icon="mdi-chevron-right" size="30" /></button>
                 <div class="lb-counter">{{ lightboxIdx + 1 }} / {{ allImages.length }}</div>
                 <div class="lb-thumbs">
-                    <div v-for="(img, i) in allImages" :key="i" class="lb-thumb" :class="{ 'lb-thumb-active': i === lightboxIdx }" @click="lightboxIdx = i"><img :src="img.url" :alt="$t('advertDetail.gallery.thumbAlt', { n: i + 1 })" /></div>
+                    <div v-for="(img, i) in allImages" :key="i" class="lb-thumb" :class="{ 'lb-thumb-active': i === lightboxIdx }" @click="lightboxIdx = i"><img :src="img.url" :alt="$t('advertDetail.gallery.thumbAlt', { n: i + 1 })" @error="onImageError" /></div>
                 </div>
             </div>
         </transition>
@@ -900,7 +900,7 @@ async function doCopyLink() {
 }
 
 const { isFavorite, toggleFavorite, fetchFavoriteIds, isLoggedIn } = useFavorites()
-const { getImageUrl, placeholder } = useImageUrl()
+const { getImageUrl, placeholder, onImageError } = useImageUrl()
 const { startConversation } = useMessages()
 const { createTransaction } = useTransactions()
 const { followSeller, unfollowSeller, isFollowingSeller: checkFollowingSeller } = useFollow()
