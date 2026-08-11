@@ -6,19 +6,28 @@ export default defineEventHandler(async (event) => {
 
     const body = await readBody(event)
     if (!body || typeof body !== 'object') throw createError({ statusCode: 400, statusMessage: 'Invalid body' })
-    const brand = typeof body.brand === 'string' ? body.brand.slice(0, 100) : ''
-    const model = typeof body.model === 'string' ? body.model.slice(0, 100) : ''
-    const year = typeof body.year === 'number' ? body.year : null
-    const fuel = typeof body.fuel === 'string' ? body.fuel.slice(0, 50) : ''
-    const mileage = typeof body.mileage === 'number' ? body.mileage : null
-    const power = typeof body.power === 'number' ? body.power : null
-    const features = Array.isArray(body.features) ? (body.features as string[]).slice(0, 10).map(f => String(f).slice(0, 60)) : []
+
+    // Category-agnostic shape: `categoryName` says what's being sold ("Opony", "Łodzie i jachty",
+    // "Auta osobowe", ...), `details` is a flat label->value map the caller already resolved from
+    // whatever fields apply to THAT category (brand/model/year for cars, producent/rozmiar for
+    // opony, hullMaterial/lengthM for boats, ...). Nothing here assumes "vehicle" - that was the bug
+    // reported: picking "Opony" and generating a description still talked about selling a car.
+    const categoryName = typeof body.categoryName === 'string' ? body.categoryName.slice(0, 100) : ''
+    const itemLabel = typeof body.itemLabel === 'string' ? body.itemLabel.slice(0, 150) : ''
+    const rawDetails = body.details && typeof body.details === 'object' ? body.details as Record<string, unknown> : {}
+    const details: Record<string, string> = {}
+    for (const [key, value] of Object.entries(rawDetails).slice(0, 30)) {
+        if (value === null || value === undefined || value === '') continue
+        details[String(key).slice(0, 60)] = String(value).slice(0, 200)
+    }
     const history = typeof body.history === 'string' ? body.history.slice(0, 500) : ''
+
+    const detailLines = Object.entries(details).map(([label, value]) => `${label}: ${value}`)
 
     const config = useRuntimeConfig()
     const apiKey = (config as any).anthropicApiKey || process.env.ANTHROPIC_API_KEY || ''
     if (!apiKey) {
-        return { description: generateTemplate(brand, model, year, fuel, mileage, power) }
+        return { description: generateTemplate(categoryName, itemLabel, detailLines) }
     }
 
     try {
@@ -34,33 +43,30 @@ export default defineEventHandler(async (event) => {
                 max_tokens: 1024,
                 messages: [{
                     role: 'user',
-                    content: `Napisz profesjonalny opis ogłoszenia sprzedaży pojazdu po polsku (300-500 słów):
-Marka: ${brand || 'nieznana'}
-Model: ${model || 'nieznany'}
-Rok: ${year || 'nieznany'}
-Paliwo: ${fuel || 'nieznane'}
-Przebieg: ${mileage ? mileage + ' km' : 'nieznany'}
-Moc: ${power ? power + ' KM' : 'nieznana'}
-Wyposażenie: ${features?.slice(0, 10).join(', ') || 'standardowe'}
-Historia: ${history || 'brak danych'}
+                    content: `Napisz profesjonalny, przekonujący opis ogłoszenia sprzedaży po polsku (300-500 słów).
+Kategoria ogłoszenia: ${categoryName || 'nieznana'}${itemLabel ? `\nPrzedmiot: ${itemLabel}` : ''}
+${detailLines.length ? detailLines.join('\n') : 'Brak dodatkowych danych.'}
+${history ? `Historia/dodatkowe informacje: ${history}` : ''}
 
-Napisz przekonujący, szczery opis który zachęci kupujących. Nie używaj nawiasów kwadratowych ani szablonów.`
+Ważne: opis musi pasować do TEJ konkretnej kategorii i tych danych - nie zakładaj, że to samochód,
+chyba że kategoria lub dane na to wyraźnie wskazują (np. "Opony"/"Felgi" to części, nie pojazd;
+"Łodzie i jachty" to łódź, nie auto; itd.). Nie używaj nawiasów kwadratowych ani placeholderów.`
                 }]
             })
         })
         const data = await response.json()
-        return { description: data.content?.[0]?.text ?? generateTemplate(brand, model, year, fuel, mileage, power) }
+        return { description: data.content?.[0]?.text ?? generateTemplate(categoryName, itemLabel, detailLines) }
     } catch {
-        return { description: generateTemplate(brand, model, year, fuel, mileage, power) }
+        return { description: generateTemplate(categoryName, itemLabel, detailLines) }
     }
 })
 
-function generateTemplate(brand: string, model: string, year: number, fuel: string, mileage: number, power: number): string {
-    return `Oferuję na sprzedaż ${brand || 'pojazd'} ${model || ''} z ${year || 'roku'}. Pojazd jest w bardzo dobrym stanie technicznym i wizualnym.
+function generateTemplate(categoryName: string, itemLabel: string, detailLines: string[]): string {
+    const subject = itemLabel || categoryName || 'przedmiot'
+    const detailsBlock = detailLines.length ? `\n\n${detailLines.join('\n')}` : ''
+    return `Oferuję na sprzedaż: ${subject}.${detailsBlock}
 
-${mileage ? `Przebieg wynosi ${mileage.toLocaleString('pl')} km.` : ''} ${fuel ? `Napęd: ${fuel}.` : ''} ${power ? `Moc silnika: ${power} KM.` : ''}
-
-Pojazd był regularnie serwisowany i dbany. Możliwość oglądania i jazdy próbnej. Cena do negocjacji dla poważnych kupujących.
+Stan bardzo dobry, zgodny z opisem. Możliwość oględzin przed zakupem. Cena do negocjacji dla poważnych kupujących.
 
 Kontakt telefoniczny lub przez wiadomość na portalu.`
 }

@@ -1,0 +1,34 @@
+# CTO audit finding: Dockerfile did `COPY . .` with no .dockerignore, pulling .git history,
+# local .env files, and dev build output into the build context - a secret-leakage risk the
+# moment `docker build` runs with a stray .env sitting in the working directory, plus a slower
+# build from an unnecessarily large context.
+
+# Build artifacts (rebuilt fresh inside the image, never copied from host)
+.output
+.nuxt
+.nitro
+.cache
+dist
+
+# Dependencies (installed fresh inside the image)
+node_modules
+
+# VCS / editor / OS
+.git
+.gitignore
+.fleet
+.idea
+.DS_Store
+
+# Logs
+logs
+*.log
+
+# Secrets - never let a local .env end up in the build context or image layers
+.env
+.env.*
+!.env.example
+
+# Claude/CI-local files not needed at build/runtime
+.claude/
+.github/
