@@ -31,6 +31,9 @@
                 <NuxtLink to="/faktury" class="nav-item">
                     <v-icon icon="mdi-receipt-text-outline" size="19" /><span>{{ $t('dashboard.navInvoices') }}</span>
                 </NuxtLink>
+                <NuxtLink to="/zespol" class="nav-item">
+                    <v-icon icon="mdi-account-group-outline" size="19" /><span>{{ $t('team.title') }}</span>
+                </NuxtLink>
                 <div class="nav-divider" />
                 <button class="nav-item" :class="{ active: section === 'profile' }" @click="goProfile">
                     <v-icon icon="mdi-account-outline" size="19" /><span>{{ $t('dashboard.navPersonalData') }}</span>
