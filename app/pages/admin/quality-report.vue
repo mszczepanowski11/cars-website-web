@@ -187,6 +187,14 @@
                     :items="report.partAdvertsMissingStructuredCategory"
                     :columns="[{ key: 'id', label: 'ID' }, { key: 'title', label: 'Tytuł' }, { key: 'createdAt', label: 'Data dodania', type: 'date' }]"
                 />
+
+                <!-- Section: Cross-source duplicate adverts (VIN/fuzzy match, see PartnerImportService) -->
+                <ReportSection
+                    title="Ogłoszenia oznaczone jako duplikaty (max 100)"
+                    icon="mdi-content-duplicate"
+                    :items="report.duplicateAdverts"
+                    :columns="[{ key: 'id', label: 'ID' }, { key: 'title', label: 'Tytuł' }, { key: 'duplicateOfId', label: 'Duplikat ogłoszenia #' }, { key: 'duplicateMatchReason', label: 'Powód dopasowania' }, { key: 'partnerCompanyName', label: 'Partner' }, { key: 'createdAt', label: 'Data', type: 'date' }]"
+                />
             </template>
         </main>
     </div>
@@ -221,6 +229,7 @@ const summaryItems = computed(() => {
         { key: 'categoriesWithoutFeatureCategories', label: 'Kategorie bez wyposażenia', count: s.categoriesWithoutFeatureCategoriesCount },
         { key: 'categoriesWithoutSubtypes',          label: 'Kategorie bez podtypów',    count: s.categoriesWithoutSubtypesCount          },
         { key: 'partAdvertsMissingStructuredCategory', label: 'Części bez kategorii', count: s.partAdvertsMissingStructuredCategoryCount },
+        { key: 'duplicateAdverts',         label: 'Ogłoszenia-duplikaty',           count: s.duplicateAdvertsCount         },
     ]
 })
 
