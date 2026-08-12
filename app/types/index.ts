@@ -550,3 +550,24 @@ export interface MonthlyInvoice {
     sellerAddress?: string
     sellerNip?: string
 }
+
+// Owner+Member company accounts (CTO audit Etap 3)
+export type CompanyMembershipStatusType = 'Pending' | 'Active' | 'Removed'
+
+export interface CompanyMember {
+    membershipId: number
+    memberId?: number
+    email: string
+    name?: string
+    surname?: string
+    status: CompanyMembershipStatusType
+    createdAt: string
+    acceptedAt?: string
+}
+
+export interface MyCompanyContext {
+    isOwner: boolean
+    isMember: boolean
+    ownerId?: number
+    ownerCompanyName?: string
+}
