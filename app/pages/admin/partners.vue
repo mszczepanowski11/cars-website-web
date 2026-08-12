@@ -77,27 +77,44 @@
             </div>
 
             <div v-if="showForm" class="add-form-card">
-                <div class="afc-title">Nowy partner</div>
+                <div class="afc-title">{{ editingId ? `Edytuj partnera #${editingId}` : 'Nowy partner' }}</div>
                 <div class="afc-fields">
                     <input v-model="form.companyName" class="afc-input" placeholder="Nazwa firmy" />
                     <input v-model="form.contactEmail" class="afc-input" placeholder="E-mail kontaktowy" />
                 </div>
-                <div class="afc-fields">
-                    <input v-model="userSearch" class="afc-input afc-input--wide" placeholder="Szukaj konta firmowego po e-mailu..." @input="debouncedUserSearch" />
-                </div>
-                <div v-if="userResults.length" class="user-results">
-                    <div v-for="u in userResults" :key="u.id" class="user-result"
-                         :class="{ selected: form.linkedUserId === u.id }" @click="selectUser(u)">
-                        {{ u.email }} <span class="td-dim">#{{ u.id }}</span>
+                <template v-if="!editingId">
+                    <div class="afc-fields">
+                        <input v-model="userSearch" class="afc-input afc-input--wide" placeholder="Szukaj konta firmowego po e-mailu..." @input="debouncedUserSearch" />
                     </div>
+                    <div v-if="userResults.length" class="user-results">
+                        <div v-for="u in userResults" :key="u.id" class="user-result"
+                             :class="{ selected: form.linkedUserId === u.id }" @click="selectUser(u)">
+                            {{ u.email }} <span class="td-dim">#{{ u.id }}</span>
+                        </div>
+                    </div>
+                    <div v-if="form.linkedUserId" class="selected-user">
+                        Powiązane konto: <strong>{{ selectedUserEmail }}</strong> (#{{ form.linkedUserId }})
+                    </div>
+                </template>
+                <div class="afc-section-label">Pull-feed (opcjonalnie) — dla partnerów bez własnego oprogramowania wysyłającego, synchronizowany automatycznie co 6h</div>
+                <div class="afc-fields">
+                    <input v-model="form.feedUrl" class="afc-input afc-input--wide" placeholder="https://partner.pl/export/feed.xml" />
                 </div>
-                <div v-if="form.linkedUserId" class="selected-user">
-                    Powiązane konto: <strong>{{ selectedUserEmail }}</strong> (#{{ form.linkedUserId }})
+                <div class="afc-fields">
+                    <select v-model="form.feedFormat" class="afc-input afc-select">
+                        <option :value="null">Format nieznany / brak feedu</option>
+                        <option value="Xml">XML</option>
+                        <option value="Csv">CSV</option>
+                    </select>
+                    <label class="afc-checkbox">
+                        <input type="checkbox" v-model="form.autoSyncEnabled" />
+                        Automatyczna synchronizacja co 6h
+                    </label>
                 </div>
                 <div class="afc-actions">
                     <button class="btn-confirm" :disabled="!canSave || saving" @click="saveForm">
                         <v-icon v-if="saving" icon="mdi-loading" size="13" class="spin" />
-                        Utwórz partnera
+                        {{ editingId ? 'Zapisz zmiany' : 'Utwórz partnera' }}
                     </button>
                     <button class="btn-cancel" @click="closeForm">Anuluj</button>
                 </div>
@@ -108,7 +125,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th><th>Firma</th><th>Kontakt</th><th>Konto</th><th>Ostatni import</th><th>Aktywny</th><th>Akcje</th>
+                            <th>ID</th><th>Firma</th><th>Kontakt</th><th>Konto</th><th>Feed</th><th>Ostatni import</th><th>Aktywny</th><th>Akcje</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -118,9 +135,19 @@
                                 <td class="td-name">{{ p.companyName }}</td>
                                 <td class="td-dim">{{ p.contactEmail }}</td>
                                 <td class="td-dim">{{ p.linkedUserEmail }}</td>
+                                <td class="td-dim">
+                                    <span v-if="!p.feedUrl" class="td-dim">— (push-only)</span>
+                                    <span v-else class="feed-badge" :class="{ 'feed-badge--off': !p.autoSyncEnabled }" :title="p.feedUrl">
+                                        <v-icon icon="mdi-sync" size="12" />{{ p.feedFormat }}{{ p.autoSyncEnabled ? '' : ' (wyłączony)' }}
+                                    </span>
+                                </td>
                                 <td class="td-dim">{{ p.lastImportAt ? formatDate(p.lastImportAt) : '—' }}</td>
                                 <td><input type="checkbox" :checked="p.isActive" @change="toggleActive(p, $event)" /></td>
                                 <td>
+                                    <button class="btn-action" @click="openEditForm(p)"><v-icon icon="mdi-pencil-outline" size="13" />Edytuj</button>
+                                    <button v-if="p.feedUrl" class="btn-action" :disabled="syncingId === p.id" @click="syncNow(p)">
+                                        <v-icon :icon="syncingId === p.id ? 'mdi-loading' : 'mdi-cloud-sync-outline'" size="13" :class="{ spin: syncingId === p.id }" />Synchronizuj teraz
+                                    </button>
                                     <button class="btn-action" @click="regenerateKey(p)"><v-icon icon="mdi-key-outline" size="13" />Nowy klucz</button>
                                     <button class="btn-action" @click="toggleLogs(p)"><v-icon icon="mdi-history" size="13" />Historia</button>
                                     <button class="btn-action btn-delete" @click="deletePartner(p)"><v-icon icon="mdi-delete-outline" size="13" />Usuń</button>
@@ -171,6 +198,9 @@ interface Partner {
     isActive: boolean
     createdAt: string
     lastImportAt: string | null
+    feedUrl: string | null
+    feedFormat: string | null
+    autoSyncEnabled: boolean
 }
 interface ImportLog {
     id: number
@@ -208,9 +238,14 @@ const userResults = ref<{ id: number; email: string }[]>([])
 const selectedUserEmail = ref('')
 const expandedLogs = ref<number | null>(null)
 const logsByPartner = reactive<Record<number, ImportLog[]>>({})
+const editingId = ref<number | null>(null)
+const syncingId = ref<number | null>(null)
 
-const form = reactive({ companyName: '', contactEmail: '', linkedUserId: null as number | null })
-const canSave = computed(() => !!form.companyName && !!form.contactEmail && !!form.linkedUserId)
+const form = reactive({
+    companyName: '', contactEmail: '', linkedUserId: null as number | null,
+    feedUrl: '', feedFormat: null as string | null, autoSyncEnabled: true,
+})
+const canSave = computed(() => !!form.companyName && !!form.contactEmail && (editingId.value !== null || !!form.linkedUserId))
 
 function formatDate(d: string) {
     return new Date(d).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -274,15 +309,29 @@ async function rejectSignup(s: SignupRequest) {
 }
 
 function openCreateForm() {
+    editingId.value = null
     form.companyName = ''
     form.contactEmail = ''
     form.linkedUserId = null
+    form.feedUrl = ''
+    form.feedFormat = null
+    form.autoSyncEnabled = true
     userSearch.value = ''
     userResults.value = []
     selectedUserEmail.value = ''
     showForm.value = true
 }
-function closeForm() { showForm.value = false }
+function openEditForm(p: Partner) {
+    editingId.value = p.id
+    form.companyName = p.companyName
+    form.contactEmail = p.contactEmail
+    form.linkedUserId = p.linkedUserId
+    form.feedUrl = p.feedUrl ?? ''
+    form.feedFormat = p.feedFormat
+    form.autoSyncEnabled = p.autoSyncEnabled
+    showForm.value = true
+}
+function closeForm() { showForm.value = false; editingId.value = null }
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 function debouncedUserSearch() {
@@ -311,31 +360,71 @@ async function saveForm() {
     if (!canSave.value) return
     saving.value = true
     try {
-        const resp = await $fetch<{ partnerId: number; apiKey: string }>('/api/proxy/api/admin/partners', {
-            method: 'POST',
-            body: { companyName: form.companyName, contactEmail: form.contactEmail, linkedUserId: form.linkedUserId },
-        })
-        newApiKey.value = resp.apiKey
-        await loadPartners()
-        closeForm()
-        toastSuccess('Partner został utworzony.')
+        if (editingId.value !== null) {
+            const current = partners.value.find(x => x.id === editingId.value)
+            await $fetch(`/api/proxy/api/admin/partners/${editingId.value}`, {
+                method: 'PUT',
+                body: {
+                    companyName: form.companyName, contactEmail: form.contactEmail,
+                    isActive: current?.isActive ?? true,
+                    feedUrl: form.feedUrl || null, feedFormat: form.feedUrl ? form.feedFormat : null,
+                    autoSyncEnabled: form.autoSyncEnabled,
+                },
+            })
+            await loadPartners()
+            closeForm()
+            toastSuccess('Zmiany zapisane.')
+        } else {
+            const resp = await $fetch<{ partnerId: number; apiKey: string }>('/api/proxy/api/admin/partners', {
+                method: 'POST',
+                body: {
+                    companyName: form.companyName, contactEmail: form.contactEmail, linkedUserId: form.linkedUserId,
+                    feedUrl: form.feedUrl || null, feedFormat: form.feedUrl ? form.feedFormat : null,
+                    autoSyncEnabled: form.autoSyncEnabled,
+                },
+            })
+            newApiKey.value = resp.apiKey
+            await loadPartners()
+            closeForm()
+            toastSuccess('Partner został utworzony.')
+        }
     } catch (e: any) {
-        toastError(e?.data?.message ?? 'Nie udało się utworzyć partnera.')
+        toastError(e?.data?.message ?? (editingId.value !== null ? 'Nie udało się zapisać zmian.' : 'Nie udało się utworzyć partnera.'))
     } finally { saving.value = false }
 }
 
 async function toggleActive(p: Partner, event: Event) {
     const checked = (event.target as HTMLInputElement).checked
     try {
+        // Sends the partner's full current state, not just isActive - UpdatePartnerDto also
+        // carries feedUrl/feedFormat/autoSyncEnabled, and a partial body would silently reset
+        // those to their DTO defaults (null feed, autoSync on) on every activate/deactivate.
         await $fetch(`/api/proxy/api/admin/partners/${p.id}`, {
             method: 'PUT',
-            body: { companyName: p.companyName, contactEmail: p.contactEmail, isActive: checked },
+            body: {
+                companyName: p.companyName, contactEmail: p.contactEmail, isActive: checked,
+                feedUrl: p.feedUrl, feedFormat: p.feedFormat, autoSyncEnabled: p.autoSyncEnabled,
+            },
         })
         p.isActive = checked
         toastSuccess(`Partner "${p.companyName}" ${checked ? 'aktywowany' : 'dezaktywowany'}.`)
     } catch (e: any) {
         toastError(e?.data?.message ?? 'Nie udało się zmienić statusu.')
     }
+}
+
+async function syncNow(p: Partner) {
+    syncingId.value = p.id
+    try {
+        const log = await $fetch<ImportLog>(`/api/proxy/api/admin/partners/${p.id}/sync-now`, { method: 'POST' })
+        toastSuccess(`Synchronizacja "${p.companyName}": ${log.itemsCreated} utworzonych, ${log.itemsUpdated} zaktualizowanych, ${log.itemsFailed} błędów.`)
+        await loadPartners()
+        if (expandedLogs.value === p.id) {
+            logsByPartner[p.id] = await $fetch<ImportLog[]>(`/api/proxy/api/admin/partners/${p.id}/import-logs`)
+        }
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Synchronizacja nie powiodła się.')
+    } finally { syncingId.value = null }
 }
 
 async function regenerateKey(p: Partner) {
@@ -443,6 +532,9 @@ onMounted(() => {
     &:focus { border-color: rgba($red, 0.4); }
     &--wide { min-width: 100%; }
 }
+.afc-section-label { font-size: 11px; font-weight: 600; color: $text-dim; text-transform: uppercase; letter-spacing: 0.3px; margin: 14px 0 8px; }
+.afc-select { flex: 0 0 auto; min-width: 220px; cursor: pointer; }
+.afc-checkbox { display: flex; align-items: center; gap: 6px; font-size: 12px; color: $text-muted; cursor: pointer; }
 .user-results { margin-bottom: 10px; border: 1px solid $border; border-radius: $r-sm; overflow: hidden; }
 .user-result {
     padding: 8px 12px; font-size: 13px; color: $text-muted; cursor: pointer;
@@ -475,6 +567,12 @@ onMounted(() => {
 .td-id { color: $text-dim; font-size: 12px; }
 .td-name { color: $text; font-weight: 500; }
 .td-dim { font-size: 12px; color: $text-dim; }
+
+.feed-badge {
+    display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600;
+    color: #5bc07a; text-transform: uppercase; letter-spacing: 0.3px; cursor: help;
+    &--off { color: $text-dim; }
+}
 
 .logs-cell { background: #0a0a0a; white-space: normal; }
 .logs-table {
