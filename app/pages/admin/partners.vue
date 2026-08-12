@@ -150,11 +150,12 @@
                                     </button>
                                     <button class="btn-action" @click="regenerateKey(p)"><v-icon icon="mdi-key-outline" size="13" />Nowy klucz</button>
                                     <button class="btn-action" @click="toggleLogs(p)"><v-icon icon="mdi-history" size="13" />Historia</button>
+                                    <button class="btn-action" @click="toggleMapping(p)"><v-icon icon="mdi-transit-connection-variant" size="13" />Mapowanie</button>
                                     <button class="btn-action btn-delete" @click="deletePartner(p)"><v-icon icon="mdi-delete-outline" size="13" />Usuń</button>
                                 </td>
                             </tr>
                             <tr v-if="expandedLogs === p.id">
-                                <td colspan="7" class="logs-cell">
+                                <td colspan="8" class="logs-cell">
                                     <div v-if="!logsByPartner[p.id]" class="td-dim">Ładowanie historii...</div>
                                     <div v-else-if="!logsByPartner[p.id].length" class="td-dim">Brak importów.</div>
                                     <table v-else class="logs-table">
@@ -172,6 +173,49 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                </td>
+                            </tr>
+                            <tr v-if="expandedMapping === p.id">
+                                <td colspan="8" class="logs-cell">
+                                    <div v-if="!mappingByPartner[p.id]" class="td-dim">Ładowanie mapowań...</div>
+                                    <div v-else class="mapping-panel">
+                                        <p class="mapping-hint">
+                                            Jeśli feed partnera używa własnych nazw pól/kategorii (np. „CenaNetto" zamiast „Price",
+                                            „Osobowe" zamiast „auta-osobowe"), zmapuj je tutaj zamiast pisać nowy kod importu.
+                                            Puste pole = użyj domyślnej nazwy CARIZO.
+                                        </p>
+
+                                        <div class="mapping-section-title">Mapowanie pól (nazwa elementu XML / kolumny CSV)</div>
+                                        <div class="mapping-rows">
+                                            <div v-for="row in mappingByPartner[p.id].fields" :key="row.ourField" class="mapping-row">
+                                                <span class="mapping-our-field">{{ row.ourField }}</span>
+                                                <input v-model="row.sourcePath" class="afc-input" :placeholder="`domyślnie: ${row.ourField}`" />
+                                            </div>
+                                        </div>
+
+                                        <div class="mapping-section-title">Mapowanie wartości (kategoria / marka / paliwo / skrzynia / stan)</div>
+                                        <div class="mapping-rows">
+                                            <div v-for="(row, idx) in mappingByPartner[p.id].values" :key="idx" class="mapping-row mapping-row--value">
+                                                <select v-model="row.field" class="afc-input afc-select">
+                                                    <option v-for="f in valueFieldOptions" :key="f" :value="f">{{ f }}</option>
+                                                </select>
+                                                <input v-model="row.externalValue" class="afc-input" placeholder="wartość partnera, np. Osobowe" />
+                                                <v-icon icon="mdi-arrow-right" size="14" />
+                                                <input v-model="row.internalValue" class="afc-input" placeholder="wartość CARIZO, np. auta-osobowe" />
+                                                <button class="btn-action btn-delete" @click="mappingByPartner[p.id].values.splice(idx, 1)"><v-icon icon="mdi-close" size="13" /></button>
+                                            </div>
+                                            <button class="btn-action" @click="mappingByPartner[p.id].values.push({ field: 'Category', externalValue: '', internalValue: '' })">
+                                                <v-icon icon="mdi-plus" size="13" />Dodaj mapowanie wartości
+                                            </button>
+                                        </div>
+
+                                        <div class="afc-actions" style="margin-top: 14px;">
+                                            <button class="btn-confirm" :disabled="savingMapping" @click="saveMapping(p)">
+                                                <v-icon v-if="savingMapping" icon="mdi-loading" size="13" class="spin" />
+                                                Zapisz mapowania
+                                            </button>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </template>
@@ -212,6 +256,21 @@ interface ImportLog {
     itemsFailed: number
 }
 
+interface FieldMappingRow { ourField: string; sourcePath: string }
+interface ValueMappingRow { field: string; externalValue: string; internalValue: string }
+interface PartnerMappings { fields: FieldMappingRow[]; values: ValueMappingRow[] }
+
+// Must match PartnerFieldMapping.FieldNames / PartnerValueMapping.FieldNames on the backend.
+const MAPPABLE_FIELDS = [
+    'ExternalId', 'Title', 'Description', 'Price', 'Category', 'VehicleSubtype',
+    'Brand', 'Model', 'Year', 'Mileage', 'FuelType', 'Gearbox', 'PowerHP', 'Vin',
+    'City', 'Region', 'Condition', 'PartCategory', 'PartSubcategory', 'CatalogNumber',
+    'OemNumber', 'PartManufacturer', 'Compatibility', 'AxleCount', 'Payload',
+    'CargoLength', 'CargoHeight', 'Volume', 'OperatingWeightKg', 'WorkingWidthCm',
+    'MaxDiggingDepthM', 'BucketCapacityL', 'TankCapacityL',
+]
+const valueFieldOptions = ['Category', 'Brand', 'FuelType', 'Gearbox', 'Condition']
+
 interface SignupRequest {
     id: number
     companyName: string
@@ -240,6 +299,9 @@ const expandedLogs = ref<number | null>(null)
 const logsByPartner = reactive<Record<number, ImportLog[]>>({})
 const editingId = ref<number | null>(null)
 const syncingId = ref<number | null>(null)
+const expandedMapping = ref<number | null>(null)
+const mappingByPartner = reactive<Record<number, PartnerMappings>>({})
+const savingMapping = ref(false)
 
 const form = reactive({
     companyName: '', contactEmail: '', linkedUserId: null as number | null,
@@ -461,6 +523,47 @@ async function toggleLogs(p: Partner) {
     }
 }
 
+async function toggleMapping(p: Partner) {
+    if (expandedMapping.value === p.id) { expandedMapping.value = null; return }
+    expandedMapping.value = p.id
+    if (!mappingByPartner[p.id]) {
+        try {
+            const [fields, values] = await Promise.all([
+                $fetch<{ ourField: string; sourcePath: string }[]>(`/api/proxy/api/admin/partners/${p.id}/field-mappings`),
+                $fetch<{ field: string; externalValue: string; internalValue: string }[]>(`/api/proxy/api/admin/partners/${p.id}/value-mappings`),
+            ])
+            const bySource = new Map(fields.map(f => [f.ourField, f.sourcePath]))
+            mappingByPartner[p.id] = {
+                fields: MAPPABLE_FIELDS.map(ourField => ({ ourField, sourcePath: bySource.get(ourField) ?? '' })),
+                values: values.map(v => ({ ...v })),
+            }
+        } catch (e: any) {
+            toastError(e?.data?.message ?? 'Nie udało się załadować mapowań.')
+            expandedMapping.value = null
+        }
+    }
+}
+
+async function saveMapping(p: Partner) {
+    const m = mappingByPartner[p.id]
+    if (!m) return
+    savingMapping.value = true
+    try {
+        await $fetch(`/api/proxy/api/admin/partners/${p.id}/field-mappings`, {
+            method: 'PUT',
+            body: m.fields.filter(f => f.sourcePath.trim()).map(f => ({ ourField: f.ourField, sourcePath: f.sourcePath.trim() })),
+        })
+        await $fetch(`/api/proxy/api/admin/partners/${p.id}/value-mappings`, {
+            method: 'PUT',
+            body: m.values.filter(v => v.externalValue.trim() && v.internalValue.trim())
+                .map(v => ({ field: v.field, externalValue: v.externalValue.trim(), internalValue: v.internalValue.trim() })),
+        })
+        toastSuccess('Mapowania zapisane.')
+    } catch (e: any) {
+        toastError(e?.data?.message ?? 'Nie udało się zapisać mapowań.')
+    } finally { savingMapping.value = false }
+}
+
 async function copyKey() {
     try {
         await navigator.clipboard.writeText(newApiKey.value)
@@ -573,6 +676,18 @@ onMounted(() => {
     color: #5bc07a; text-transform: uppercase; letter-spacing: 0.3px; cursor: help;
     &--off { color: $text-dim; }
 }
+
+.mapping-panel { padding: 4px 0; }
+.mapping-hint { font-size: 12px; color: $text-dim; line-height: 1.6; margin: 0 0 16px; max-width: 720px; }
+.mapping-section-title { font-size: 11px; font-weight: 700; color: $text-dim; text-transform: uppercase; letter-spacing: 0.3px; margin: 0 0 8px; }
+.mapping-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+.mapping-row {
+    display: grid; grid-template-columns: 140px 1fr; gap: 10px; align-items: center;
+    &--value { display: flex; grid-template-columns: unset; }
+}
+.mapping-our-field { font-size: 12px; color: $text-muted; font-family: monospace; }
+.mapping-row--value .afc-input { flex: 1; min-width: 140px; }
+.mapping-row--value select.afc-select { flex: 0 0 130px; min-width: 130px; }
 
 .logs-cell { background: #0a0a0a; white-space: normal; }
 .logs-table {
