@@ -139,7 +139,18 @@
                         <p>Zaznacz typ pojazdu — formularz dostosuje się do wybranej kategorii.</p>
                     </div>
 
-                    <!-- CEPiK autofill shortcut -->
+                    <!--
+                        CEPiK autofill shortcut - WYCOFANE Z UI (audyt CTO Etap 2, pozycja "zweryfikować
+                        CEPiK wobec żywego API albo wycofać z eksponowanego UI"). CEPIK_API_TOKEN nigdy
+                        nie był skonfigurowany w produkcji, więc request/response envelope w
+                        CepikService.cs (nagłówek Bearer, JSON:API, nazwy pól kebab-case) jest wyłącznie
+                        założeniem z dokumentacji, nigdy nie zweryfikowanym wobec żywej odpowiedzi CEPiK -
+                        patrz obszerny komentarz na górze tego pliku. Pokazywanie tego jako gotowej,
+                        wiarygodnej funkcji ryzykowałoby wpisanie sprzedającemu złych danych pojazdu pod
+                        szyldem "pochodzi z CEPiK". Backend (CepikController/CepikService) zostaje
+                        nietknięty i już dziś gracefully zwraca "not_configured" - to jest wyłącznie
+                        wycofanie z widoku, nie usunięcie kodu. Przywróć ten blok dopiero po realnym
+                        tokenie i ręcznej weryfikacji odpowiedzi na żywym VIN.
                     <div class="cepik-panel">
                         <button type="button" class="cepik-toggle-btn" @click="cepikOpen = !cepikOpen">
                             <v-icon icon="mdi-database-search-outline" size="18" />
@@ -177,6 +188,7 @@
                     </div>
 
                     <div class="cepik-or-divider"><span>lub wybierz kategorię i wypełnij formularz ręcznie</span></div>
+                    -->
 
                     <!-- Category -->
                     <div class="field full-width" style="margin-bottom: 16px;">
