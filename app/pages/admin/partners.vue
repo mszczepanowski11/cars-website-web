@@ -137,9 +137,14 @@
                                 <td class="td-dim">{{ p.linkedUserEmail }}</td>
                                 <td class="td-dim">
                                     <span v-if="!p.feedUrl" class="td-dim">— (push-only)</span>
-                                    <span v-else class="feed-badge" :class="{ 'feed-badge--off': !p.autoSyncEnabled }" :title="p.feedUrl">
-                                        <v-icon icon="mdi-sync" size="12" />{{ p.feedFormat }}{{ p.autoSyncEnabled ? '' : ' (wyłączony)' }}
-                                    </span>
+                                    <template v-else>
+                                        <span class="feed-badge" :class="{ 'feed-badge--off': !p.autoSyncEnabled }" :title="p.feedUrl">
+                                            <v-icon icon="mdi-sync" size="12" />{{ p.feedFormat }}{{ p.autoSyncEnabled ? '' : ' (wyłączony)' }}
+                                        </span>
+                                        <span v-if="p.consecutiveSyncFailures > 0" class="health-badge" :title="p.lastSyncError ?? ''">
+                                            <v-icon icon="mdi-alert-circle-outline" size="12" />{{ p.consecutiveSyncFailures }}× nieudana synchronizacja
+                                        </span>
+                                    </template>
                                 </td>
                                 <td class="td-dim">{{ p.lastImportAt ? formatDate(p.lastImportAt) : '—' }}</td>
                                 <td><input type="checkbox" :checked="p.isActive" @change="toggleActive(p, $event)" /></td>
@@ -245,6 +250,9 @@ interface Partner {
     feedUrl: string | null
     feedFormat: string | null
     autoSyncEnabled: boolean
+    consecutiveSyncFailures: number
+    lastSyncError: string | null
+    lastSyncAttemptAt: string | null
 }
 interface ImportLog {
     id: number
@@ -675,6 +683,10 @@ onMounted(() => {
     display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600;
     color: #5bc07a; text-transform: uppercase; letter-spacing: 0.3px; cursor: help;
     &--off { color: $text-dim; }
+}
+.health-badge {
+    display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600;
+    color: $red; margin-top: 3px; cursor: help;
 }
 
 .mapping-panel { padding: 4px 0; }
