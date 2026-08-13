@@ -214,7 +214,22 @@
     "soldSuccess": "Die Anzeige wurde als verkauft markiert.",
     "errGeneric": "Ein Fehler ist aufgetreten. Bitte versuche es erneut.",
     "publishedSuccess": "Die Anzeige wurde veröffentlicht.",
-    "deletedSuccess": "Die Anzeige wurde gelöscht."
+    "deletedSuccess": "Die Anzeige wurde gelöscht.",
+    "selectAllOnPage": "Alle auf dieser Seite auswählen",
+    "selectedCount": "Ausgewählt: {count}",
+    "bulkActivate": "Aktivieren",
+    "bulkDeactivate": "Deaktivieren",
+    "bulkMarkSold": "Als verkauft markieren",
+    "bulkRenew": "Erneuern",
+    "bulkDelete": "Löschen",
+    "bulkDeleteConfirm": "Möchtest du wirklich {count} ausgewählte Inserate löschen?",
+    "bulkMarkSoldConfirm": "Möchtest du wirklich {count} ausgewählte Inserate als verkauft markieren?",
+    "bulkResultSuccess": "{count} Inserate aktualisiert.",
+    "bulkResultPartial": "{succeeded} von {total} Inseraten aktualisiert. {failed} fehlgeschlagen.",
+    "bulkError": "Massenaktion konnte nicht ausgeführt werden.",
+    "exportCsv": "CSV exportieren",
+    "exportCsvError": "CSV-Export fehlgeschlagen.",
+    "clearSelection": "Auswahl aufheben"
   },
   "transactions": {
     "metaTitle": "Transaktionen — CARIZO",
