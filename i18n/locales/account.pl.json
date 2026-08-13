@@ -214,7 +214,22 @@
     "soldSuccess": "Ogłoszenie zostało oznaczone jako sprzedane.",
     "errGeneric": "Wystąpił błąd. Spróbuj ponownie.",
     "publishedSuccess": "Ogłoszenie zostało opublikowane.",
-    "deletedSuccess": "Ogłoszenie zostało usunięte."
+    "deletedSuccess": "Ogłoszenie zostało usunięte.",
+    "selectAllOnPage": "Zaznacz wszystkie na stronie",
+    "selectedCount": "Zaznaczono: {count}",
+    "bulkActivate": "Aktywuj",
+    "bulkDeactivate": "Dezaktywuj",
+    "bulkMarkSold": "Oznacz jako sprzedane",
+    "bulkRenew": "Odnów",
+    "bulkDelete": "Usuń",
+    "bulkDeleteConfirm": "Czy na pewno chcesz usunąć {count} zaznaczonych ogłoszeń?",
+    "bulkMarkSoldConfirm": "Czy na pewno chcesz oznaczyć {count} zaznaczonych ogłoszeń jako sprzedane?",
+    "bulkResultSuccess": "Zaktualizowano {count} ogłoszeń.",
+    "bulkResultPartial": "Zaktualizowano {succeeded} z {total} ogłoszeń. {failed} nie powiodło się.",
+    "bulkError": "Nie udało się wykonać akcji masowej.",
+    "exportCsv": "Eksportuj CSV",
+    "exportCsvError": "Nie udało się wyeksportować CSV.",
+    "clearSelection": "Wyczyść zaznaczenie"
   },
   "transactions": {
     "metaTitle": "Transakcje — CARIZO",

@@ -214,7 +214,22 @@
     "soldSuccess": "The listing has been marked as sold.",
     "errGeneric": "An error occurred. Please try again.",
     "publishedSuccess": "The listing has been published.",
-    "deletedSuccess": "The listing has been deleted."
+    "deletedSuccess": "The listing has been deleted.",
+    "selectAllOnPage": "Select all on this page",
+    "selectedCount": "Selected: {count}",
+    "bulkActivate": "Activate",
+    "bulkDeactivate": "Deactivate",
+    "bulkMarkSold": "Mark as sold",
+    "bulkRenew": "Renew",
+    "bulkDelete": "Delete",
+    "bulkDeleteConfirm": "Are you sure you want to delete {count} selected adverts?",
+    "bulkMarkSoldConfirm": "Are you sure you want to mark {count} selected adverts as sold?",
+    "bulkResultSuccess": "Updated {count} adverts.",
+    "bulkResultPartial": "Updated {succeeded} of {total} adverts. {failed} failed.",
+    "bulkError": "Failed to perform the bulk action.",
+    "exportCsv": "Export CSV",
+    "exportCsvError": "Failed to export CSV.",
+    "clearSelection": "Clear selection"
   },
   "transactions": {
     "metaTitle": "Transactions — CARIZO",

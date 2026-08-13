@@ -3,10 +3,35 @@
         <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
             <div class="page-header">
                 <h1 class="page-title">{{ $t('myAdverts.title') }}</h1>
-                <NuxtLink to="/add-advert" class="btn-add-top">
-                    <v-icon icon="mdi-plus" size="17" />
-                    {{ $t('myAdverts.addAdvert') }}
-                </NuxtLink>
+                <div class="header-actions">
+                    <button class="btn-export" :disabled="exporting" @click="exportCsv">
+                        <v-icon v-if="exporting" icon="mdi-loading" size="16" class="spin" />
+                        <v-icon v-else icon="mdi-download-outline" size="16" />
+                        {{ $t('myAdverts.exportCsv') }}
+                    </button>
+                    <NuxtLink to="/add-advert" class="btn-add-top">
+                        <v-icon icon="mdi-plus" size="17" />
+                        {{ $t('myAdverts.addAdvert') }}
+                    </NuxtLink>
+                </div>
+            </div>
+
+            <div v-if="adverts.length" class="bulk-bar">
+                <label class="bulk-select-all">
+                    <input type="checkbox" :checked="allOnPageSelected" @change="toggleSelectAll" />
+                    {{ $t('myAdverts.selectAllOnPage') }}
+                </label>
+                <template v-if="selectedIds.size > 0">
+                    <span class="bulk-count">{{ $t('myAdverts.selectedCount', { count: selectedIds.size }) }}</span>
+                    <div class="bulk-actions">
+                        <button class="bulk-btn" :disabled="bulkLoading" @click="runBulkAction('activate')">{{ $t('myAdverts.bulkActivate') }}</button>
+                        <button class="bulk-btn" :disabled="bulkLoading" @click="runBulkAction('deactivate')">{{ $t('myAdverts.bulkDeactivate') }}</button>
+                        <button class="bulk-btn" :disabled="bulkLoading" @click="runBulkAction('renew')">{{ $t('myAdverts.bulkRenew') }}</button>
+                        <button class="bulk-btn" :disabled="bulkLoading" @click="runBulkAction('markSold')">{{ $t('myAdverts.bulkMarkSold') }}</button>
+                        <button class="bulk-btn bulk-btn-danger" :disabled="bulkLoading" @click="runBulkAction('delete')">{{ $t('myAdverts.bulkDelete') }}</button>
+                        <button class="bulk-btn-clear" :disabled="bulkLoading" @click="clearSelection">{{ $t('myAdverts.clearSelection') }}</button>
+                    </div>
+                </template>
             </div>
 
             <div v-if="loading" class="loading-center">
@@ -25,7 +50,14 @@
             </div>
             <template v-else>
                 <div class="my-adverts-list">
-                    <div v-for="a in adverts" :key="a.id" class="my-advert-row">
+                    <div v-for="a in adverts" :key="a.id" class="my-advert-row" :class="{ 'row-selected': selectedIds.has(a.id) }">
+                        <input
+                            type="checkbox"
+                            class="row-checkbox"
+                            :checked="selectedIds.has(a.id)"
+                            :aria-label="`Zaznacz: ${a.title}`"
+                            @change="toggleSelect(a.id)"
+                        />
                         <NuxtLink :to="`/advert/${a.id}`" class="row-img-wrap">
                             <img :src="mainImage(a)" :alt="a.title" class="row-img" loading="lazy" />
                             <span v-if="a.soldAt" class="overlay-badge sold-badge">{{ $t('myAdverts.sold') }}</span>
@@ -209,6 +241,34 @@ const deleteAdvert = ref<CarAdvert | null>(null)
 const deleteLoading = ref<number | null>(null)
 const markSoldOnDelete = ref(true)
 const reactivateLoading = ref<number | null>(null)
+const { t } = useI18n()
+
+const selectedIds = ref<Set<number>>(new Set())
+const bulkLoading = ref(false)
+const exporting = ref(false)
+
+const allOnPageSelected = computed(() =>
+    adverts.value.length > 0 && adverts.value.every(a => selectedIds.value.has(a.id))
+)
+
+function toggleSelect(id: number) {
+    const next = new Set(selectedIds.value)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    selectedIds.value = next
+}
+
+function toggleSelectAll() {
+    if (allOnPageSelected.value) {
+        selectedIds.value = new Set()
+    } else {
+        selectedIds.value = new Set(adverts.value.map(a => a.id))
+    }
+}
+
+function clearSelection() {
+    selectedIds.value = new Set()
+}
 
 function mainImage(a: CarAdvert): string {
     const img = a.images?.find(i => i.isMain) ?? a.images?.[0]
@@ -244,6 +304,7 @@ function expiryClass(dateStr: string): string {
 async function load(p: number = page.value) {
     page.value = p
     loading.value = true
+    selectedIds.value = new Set()
     try {
         const r = await $fetch<PagedResult<CarAdvert>>(
             `/api/proxy/api/listings/user?page=${p}&pageSize=${pageSize}`
@@ -319,6 +380,57 @@ async function doDelete() {
     finally { deleteLoading.value = null }
 }
 
+type BulkAction = 'activate' | 'deactivate' | 'delete' | 'markSold' | 'renew'
+
+async function runBulkAction(action: BulkAction) {
+    const ids = Array.from(selectedIds.value)
+    if (ids.length === 0) return
+
+    if (action === 'delete' && !confirm(t('myAdverts.bulkDeleteConfirm', { count: ids.length }))) return
+    if (action === 'markSold' && !confirm(t('myAdverts.bulkMarkSoldConfirm', { count: ids.length }))) return
+
+    bulkLoading.value = true
+    try {
+        const result = await $fetch<{ succeeded: number[]; failed: { id: number; error: string }[] }>(
+            '/api/proxy/api/Advert/bulk',
+            { method: 'POST', body: { ids, action } }
+        )
+        if (result.failed.length === 0) {
+            toastSuccess(t('myAdverts.bulkResultSuccess', { count: result.succeeded.length }))
+        } else {
+            toastError(t('myAdverts.bulkResultPartial', {
+                succeeded: result.succeeded.length,
+                total: ids.length,
+                failed: result.failed.length,
+            }))
+        }
+        await load(page.value)
+    } catch (err: any) {
+        toastError(err?.data?.message ?? t('myAdverts.bulkError'))
+    } finally {
+        bulkLoading.value = false
+    }
+}
+
+async function exportCsv() {
+    exporting.value = true
+    try {
+        const blob = await $fetch<Blob>('/api/proxy/api/Advert/export/csv', { responseType: 'blob' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `ogloszenia-${new Date().toISOString().slice(0, 10)}.csv`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+    } catch {
+        toastError(t('myAdverts.exportCsvError'))
+    } finally {
+        exporting.value = false
+    }
+}
+
 onMounted(async () => {
     await load(1)
 })
@@ -347,6 +459,12 @@ onMounted(async () => {
     color: $text;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .btn-add-top {
     display: inline-flex;
     align-items: center;
@@ -363,6 +481,95 @@ onMounted(async () => {
     cursor: pointer;
     transition: opacity 0.2s;
     &:hover { opacity: 0.88; }
+}
+
+.btn-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: transparent;
+    color: $text-muted;
+    border: 1px solid $border;
+    border-radius: $r-md;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    padding: 11px 18px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    &:hover:not(:disabled) { border-color: $text-dim; color: $text; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.bulk-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: #0a0a0a;
+    border: 1px solid $border;
+    border-radius: $r-md;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+
+.bulk-select-all {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: $text-dim;
+    cursor: pointer;
+    white-space: nowrap;
+    input { cursor: pointer; }
+}
+
+.bulk-count {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text;
+    white-space: nowrap;
+}
+
+.bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.bulk-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    &:hover:not(:disabled) { background: rgba(255,255,255,0.08); color: $text; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.bulk-btn-danger {
+    color: #e55;
+    border-color: rgba(220,50,50,0.3);
+    &:hover:not(:disabled) { background: rgba(220,50,50,0.12); color: #e55; }
+}
+
+.bulk-btn-clear {
+    background: transparent;
+    border: none;
+    color: $text-dark;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    padding: 7px 4px;
+    text-decoration: underline;
+    &:hover:not(:disabled) { color: $text-dim; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
 .loading-center {
@@ -445,9 +652,19 @@ onMounted(async () => {
 
     &:hover { border-color: rgba($red, 0.2); }
 
+    &.row-selected { border-color: rgba($red, 0.4); background: #0d0808; }
+
     @include respond-to(sm) {
         flex-wrap: wrap;
     }
+}
+
+.row-checkbox {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: $red;
 }
 
 .row-img-wrap {
