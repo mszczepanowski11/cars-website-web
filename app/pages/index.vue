@@ -624,21 +624,21 @@ import type { CarAdvert, CarEvent, PagedResult, TaxonomyItem, PartCategory, Cate
 const config = useRuntimeConfig()
 const siteUrl = config.public.siteUrl as string
 useHead({
-    title: 'CARIZO — Kupuj pewniej. Sprzedaj szybciej.',
+    title: 'CARIZO — Kupuj pewniej. Sprzedawaj szybciej.',
     meta: [
-        { name: 'description', content: 'Kupuj i sprzedawaj samochody, motocykle, ciężarówki, maszyny, łodzie, kampery i wiele więcej. Zweryfikowane ogłoszenia, inteligentne narzędzia AI i profesjonalni sprzedawcy. CARIZO – Kupuj pewniej. Sprzedaj szybciej.' },
+        { name: 'description', content: 'Kupuj i sprzedawaj samochody, motocykle, ciężarówki, maszyny, łodzie, kampery i wiele więcej. Zweryfikowane ogłoszenia, inteligentne narzędzia AI i profesjonalni sprzedawcy. CARIZO – Kupuj pewniej. Sprzedawaj szybciej.' },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: siteUrl },
-        { property: 'og:title', content: 'CARIZO — Kupuj pewniej. Sprzedaj szybciej.' },
+        { property: 'og:title', content: 'CARIZO — Kupuj pewniej. Sprzedawaj szybciej.' },
         { property: 'og:description', content: 'Kupuj i sprzedawaj samochody, motocykle, ciężarówki, maszyny, łodzie, kampery i wiele więcej. Zweryfikowane ogłoszenia, inteligentne narzędzia AI i profesjonalni sprzedawcy.' },
         { property: 'og:image', content: `${siteUrl}/og-image.jpg` },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
-        { property: 'og:image:alt', content: 'CARIZO — Kupuj pewniej. Sprzedaj szybciej.' },
+        { property: 'og:image:alt', content: 'CARIZO — Kupuj pewniej. Sprzedawaj szybciej.' },
         { property: 'og:site_name', content: 'CARIZO' },
         { property: 'og:locale', content: 'pl_PL' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'CARIZO — Kupuj pewniej. Sprzedaj szybciej.' },
+        { name: 'twitter:title', content: 'CARIZO — Kupuj pewniej. Sprzedawaj szybciej.' },
         { name: 'twitter:description', content: 'Kupuj i sprzedawaj samochody, motocykle, ciężarówki, maszyny, łodzie, kampery i wiele więcej na CARIZO.' },
         { name: 'twitter:image', content: `${siteUrl}/og-image.jpg` },
     ],
@@ -1278,7 +1278,7 @@ onMounted(async () => {
 .hfs-fade {
     position: absolute;
     inset: 0;
-    // Eases off faster than before through the 25-55% band, where the "Sprzedaj szybciej."
+    // Eases off faster than before through the 25-55% band, where the "Sprzedawaj szybciej."
     // headline actually sits — the old curve stayed dark almost all the way across the text,
     // so how much of the photo's light showed through behind any given letter came down to
     // where that letter happened to land relative to the steep 28-55% drop, not the text
