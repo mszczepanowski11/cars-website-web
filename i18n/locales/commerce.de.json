@@ -14,7 +14,7 @@
     "freeUpper": "KOSTENLOS",
     "emissionTime": "Anzeigenlaufzeit",
     "emissionDesc": "Nach Ablauf können Sie sie auffrischen oder hervorheben",
-    "days90": "90 Tage",
+    "days90": "35 Tage",
     "limitNote": "Das Überschreiten der Limits für Privatkonten deutet auf gewerbliche Tätigkeit hin und erfordert den Wechsel zu einem Geschäftskonto.",
     "promoteTitle": "Anzeigen hervorheben",
     "promoteSubPersonal": "Heben Sie Ihr Angebot hervor und erreichen Sie mehr Käufer.",
@@ -46,10 +46,10 @@
       "premium": { "name": "Premium", "hint": "Maximale Sichtbarkeit, Vorrang vor TOP" }
     },
     "b2b": {
-      "start": { "name": "Start", "f1": "25 aktive Anzeigen", "f2": "90 Tage Anzeigenlaufzeit", "f3": "3 Hervorhebungen pro Monat", "f4": "Automatische MwSt.-Rechnung", "f5": "E-Mail-Support" },
-      "biznes": { "name": "Business", "badge": "EMPFOHLEN", "f1": "75 aktive Anzeigen", "f2": "90 Tage Anzeigenlaufzeit", "f3": "10 Hervorhebungen pro Monat", "f4": "Automatische MwSt.-Rechnung", "f5": "Priorisierter Support" },
-      "premium": { "name": "Premium", "f1": "200 aktive Anzeigen", "f2": "90 Tage Anzeigenlaufzeit", "f3": "30 Hervorhebungen pro Monat", "f4": "Automatische MwSt.-Rechnung", "f5": "Persönlicher Berater" },
-      "enterprise": { "name": "Enterprise", "f1": "Unbegrenzte Anzeigen", "f2": "90 Tage Anzeigenlaufzeit", "f3": "Unbegrenzte Hervorhebungen", "f4": "Automatische MwSt.-Rechnung", "f5": "Dedizierter Account Manager" }
+      "start": { "name": "Start", "f1": "25 aktive Anzeigen", "f2": "35 Tage Anzeigenlaufzeit", "f3": "3 Hervorhebungen pro Monat", "f4": "Automatische MwSt.-Rechnung", "f5": "E-Mail-Support" },
+      "biznes": { "name": "Business", "badge": "EMPFOHLEN", "f1": "75 aktive Anzeigen", "f2": "35 Tage Anzeigenlaufzeit", "f3": "10 Hervorhebungen pro Monat", "f4": "Automatische MwSt.-Rechnung", "f5": "Priorisierter Support" },
+      "premium": { "name": "Premium", "f1": "200 aktive Anzeigen", "f2": "35 Tage Anzeigenlaufzeit", "f3": "30 Hervorhebungen pro Monat", "f4": "Automatische MwSt.-Rechnung", "f5": "Persönlicher Berater" },
+      "enterprise": { "name": "Enterprise", "f1": "Unbegrenzte Anzeigen", "f2": "35 Tage Anzeigenlaufzeit", "f3": "Unbegrenzte Hervorhebungen", "f4": "Automatische MwSt.-Rechnung", "f5": "Dedizierter Account Manager" }
     },
     "faq": {
       "q1": "Ist das Aufgeben von Anzeigen kostenpflichtig?",
@@ -78,7 +78,7 @@
     "promoBanner": "Startaktion: Alle Pakete sind jetzt völlig kostenlos!",
     "startProgramLabel": "Start-Programm",
     "startProgramTitle": "3 Monate kostenlos für neue Händler",
-    "startProgramDesc": "Bis zu 20 aktive Anzeigen · 90 Tage Laufzeit · 3 Hervorhebungen/Monat · von CARIZO verifiziertes Konto",
+    "startProgramDesc": "Bis zu 20 aktive Anzeigen · 35 Tage Laufzeit · 3 Hervorhebungen/Monat · von CARIZO verifiziertes Konto",
     "loginToActivate": "Zum Aktivieren anmelden",
     "activating": "Wird aktiviert…",
     "activateStartProgram": "Start-Programm aktivieren",
@@ -105,7 +105,7 @@
     "faqTitle": "Häufig gestellte Fragen",
     "faq": {
       "q1": "Was ist das Start-Programm?",
-      "a1": "Das Start-Programm ist eine kostenlose 3-monatige Testphase für neue, bei CARIZO registrierte Händler. Es umfasst bis zu 20 aktive Anzeigen mit 90 Tagen Laufzeit und 3 Hervorhebungen pro Monat. Es kann nur einmal pro Konto aktiviert werden.",
+      "a1": "Das Start-Programm ist eine kostenlose 3-monatige Testphase für neue, bei CARIZO registrierte Händler. Es umfasst bis zu 20 aktive Anzeigen mit 35 Tagen Laufzeit und 3 Hervorhebungen pro Monat. Es kann nur einmal pro Konto aktiviert werden.",
       "q2": "Wann werde ich für das Paket belastet?",
       "a2": "Die Gebühr wird sofort nach Auswahl eines Pakets erhoben. Weitere Monate können Sie manuell verlängern — es gibt keine automatische Verlängerung.",
       "q3": "Erhalte ich eine MwSt.-Rechnung?",
@@ -229,7 +229,7 @@
     "freeBadge": "KOSTENLOS",
     "freeDesc": "Standardanzeige in den Suchergebnissen.",
     "freeFeat1": "Sichtbar in den Ergebnissen",
-    "freeFeat2": "90 Tage aktiv",
+    "freeFeat2": "35 Tage aktiv",
     "freeFeat3": "Keine Hervorhebung",
     "forFreeUpper": "KOSTENLOS",
     "forFreeLower": "kostenlos",

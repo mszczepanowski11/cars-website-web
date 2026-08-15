@@ -2000,7 +2000,7 @@
                             <div class="pp-desc">Standardowe ogłoszenie w wynikach wyszukiwania.</div>
                             <ul class="pp-feats">
                                 <li><v-icon icon="mdi-check" size="13" />Widoczne w wynikach</li>
-                                <li><v-icon icon="mdi-check" size="13" />90 dni aktywności</li>
+                                <li><v-icon icon="mdi-check" size="13" />35 dni aktywności</li>
                                 <li class="pp-feat-no"><v-icon icon="mdi-close" size="13" />Brak wyróżnienia</li>
                             </ul>
                             <div class="pp-sel-bar" />
@@ -3325,31 +3325,31 @@ const couponResult = ref<CouponValidation | null>(null)
 const promoPlans = [
     {
         key: 'Featured', name: 'Wyróżnienie', icon: 'mdi-star-outline',
-        priceFrom: 14.99, popular: false, defaultDays: 7, days: [7, 14, 30],
+        priceFrom: 9.99, popular: false, defaultDays: 7, days: [7, 14, 30],
         desc: 'Ogłoszenie wyróżnione w wynikach wyszukiwania.',
         feats: ['Wyróżniony kolor ramki', 'Oznaczenie WYRÓŻNIONE', '2× więcej wyświetleń'],
-        prices: { 7: 14.99, 14: 24.99, 30: 39.99 } as Record<number, number>,
+        prices: { 7: 9.99, 14: 14.99, 30: 24.99 } as Record<number, number>,
     },
     {
         key: 'Top', name: 'TOP', icon: 'mdi-crown-outline',
-        priceFrom: 19.99, popular: true, defaultDays: 7, days: [7, 14, 30],
+        priceFrom: 14.99, popular: true, defaultDays: 7, days: [7, 14, 30],
         desc: 'Ogłoszenie na szczycie wyników wyszukiwania.',
         feats: ['Pozycja TOP w wynikach', 'Baner reklamowy', '5× więcej wyświetleń'],
-        prices: { 7: 19.99, 14: 29.99, 30: 49.99 } as Record<number, number>,
+        prices: { 7: 14.99, 14: 24.99, 30: 39.99 } as Record<number, number>,
     },
     {
         key: 'Premium', name: 'Premium', icon: 'mdi-diamond-outline',
-        priceFrom: 29.99, popular: false, defaultDays: 7, days: [7, 14, 30],
+        priceFrom: 24.99, popular: false, defaultDays: 7, days: [7, 14, 30],
         desc: 'Maksymalna widoczność i priorytetowe pozycjonowanie.',
         feats: ['Wszystko z TOP', 'Sekcja polecane ogłoszenia', 'Priorytetowe wsparcie'],
-        prices: { 7: 29.99, 14: 44.99, 30: 79.99 } as Record<number, number>,
+        prices: { 7: 24.99, 14: 39.99, 30: 59.99 } as Record<number, number>,
     },
     {
         key: 'Refresh', name: 'Odświeżenie', icon: 'mdi-refresh',
-        priceFrom: 4.99, popular: false, defaultDays: 1, days: [1],
+        priceFrom: 2.99, popular: false, defaultDays: 1, days: [1],
         desc: 'Przesuń ogłoszenie na górę listy – jednorazowo.',
         feats: ['Awans na szczyt listy', 'Nowa data publikacji'],
-        prices: { 1: 4.99 } as Record<number, number>,
+        prices: { 1: 2.99 } as Record<number, number>,
     },
 ]
 

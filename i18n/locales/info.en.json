@@ -65,7 +65,7 @@
     ],
     "faqs": [
       { "q": "Is posting a listing free?", "a": "Yes, a basic listing is completely free. Only the promotion options that increase visibility are paid." },
-      { "q": "How long is a listing visible?", "a": "A standard listing is active for 90 days. You can extend or refresh it (paid option)." },
+      { "q": "How long is a listing visible?", "a": "A standard listing is active for 35 days. You can extend or refresh it (paid option)." },
       { "q": "Does CARIZO verify listings?", "a": "Yes, listings go through system verification. Listings marked as VERIFIED have additionally been checked by our team." },
       { "q": "How does the payment system work?", "a": "Payments are handled by ING IMOJE – a secure online payment system. We accept Visa/Mastercard cards, BLIK, bank transfers and other methods." },
       { "q": "Can I remove a listing before it expires?", "a": "Yes, you can remove or hide a listing at any time from the „My listings\" panel." },
@@ -161,7 +161,7 @@
     "groupOgloszeniaFaqs": [
       { "q": "How do I add a listing?", "a": "Click „Add listing\" in the menu. Fill in the vehicle details in the form: make, model, year, mileage, price and description. Add at least 3 photos. Click „Publish\"." },
       { "q": "How much does adding a listing cost?", "a": "A basic listing is <strong>free</strong>. Only the promotion packages (TOP, Premium, Featured) that increase the offer's visibility are paid." },
-      { "q": "How long is a listing active?", "a": "A standard listing is active for <strong>90 days</strong>. After that time you can refresh it (paid option) or publish it again." },
+      { "q": "How long is a listing active?", "a": "A standard listing is active for <strong>35 days</strong>. After that time you can refresh it (paid option) or publish it again." },
       { "q": "Can I edit a published listing?", "a": "Yes, you can edit a listing at any time from the „My listings\" panel. Changes are visible immediately." },
       { "q": "How do I mark a car as sold?", "a": "In the „My listings\" panel, click the handshake icon button next to the listing. Confirm in the dialog. The listing will disappear from search results." },
       { "q": "How many photos can I add?", "a": "You can add up to 20 photos to a single listing. The first photo will be the main photo shown in search results. We recommend adding at least 8 photos." }
