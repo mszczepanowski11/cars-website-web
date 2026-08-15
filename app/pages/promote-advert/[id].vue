@@ -270,31 +270,31 @@ function submitImojeForm(result: { paymentUrl: string, formFields?: Record<strin
 const plans = computed(() => [
     {
         key: 'Featured', name: t('promoteAdvert.plans.featured.name'), icon: 'mdi-star-outline',
-        priceFrom: 14.99, popular: false, defaultDays: 7, days: [7, 14, 30],
+        priceFrom: 9.99, popular: false, defaultDays: 7, days: [7, 14, 30],
         desc: t('promoteAdvert.plans.featured.desc'),
         feats: [t('promoteAdvert.plans.featured.f1'), t('promoteAdvert.plans.featured.f2'), t('promoteAdvert.plans.featured.f3')],
-        prices: { 7: 14.99, 14: 24.99, 30: 39.99 } as Record<number, number>,
+        prices: { 7: 9.99, 14: 14.99, 30: 24.99 } as Record<number, number>,
     },
     {
         key: 'Top', name: t('promoteAdvert.plans.top.name'), icon: 'mdi-crown-outline',
-        priceFrom: 19.99, popular: true, defaultDays: 7, days: [7, 14, 30],
+        priceFrom: 14.99, popular: true, defaultDays: 7, days: [7, 14, 30],
         desc: t('promoteAdvert.plans.top.desc'),
         feats: [t('promoteAdvert.plans.top.f1'), t('promoteAdvert.plans.top.f2'), t('promoteAdvert.plans.top.f3')],
-        prices: { 7: 19.99, 14: 29.99, 30: 49.99 } as Record<number, number>,
+        prices: { 7: 14.99, 14: 24.99, 30: 39.99 } as Record<number, number>,
     },
     {
         key: 'Premium', name: t('promoteAdvert.plans.premium.name'), icon: 'mdi-diamond-outline',
-        priceFrom: 29.99, popular: false, defaultDays: 7, days: [7, 14, 30],
+        priceFrom: 24.99, popular: false, defaultDays: 7, days: [7, 14, 30],
         desc: t('promoteAdvert.plans.premium.desc'),
         feats: [t('promoteAdvert.plans.premium.f1'), t('promoteAdvert.plans.premium.f2'), t('promoteAdvert.plans.premium.f3')],
-        prices: { 7: 29.99, 14: 44.99, 30: 79.99 } as Record<number, number>,
+        prices: { 7: 24.99, 14: 39.99, 30: 59.99 } as Record<number, number>,
     },
     {
         key: 'Refresh', name: t('promoteAdvert.plans.refresh.name'), icon: 'mdi-refresh',
-        priceFrom: 4.99, popular: false, defaultDays: 1, days: [1],
+        priceFrom: 2.99, popular: false, defaultDays: 1, days: [1],
         desc: t('promoteAdvert.plans.refresh.desc'),
         feats: [t('promoteAdvert.plans.refresh.f1'), t('promoteAdvert.plans.refresh.f2')],
-        prices: { 1: 4.99 } as Record<number, number>,
+        prices: { 1: 2.99 } as Record<number, number>,
     },
 ])
 

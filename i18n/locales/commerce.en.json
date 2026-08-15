@@ -14,7 +14,7 @@
     "freeUpper": "FREE",
     "emissionTime": "Listing display time",
     "emissionDesc": "After it expires you can refresh or promote it",
-    "days90": "90 days",
+    "days90": "35 days",
     "limitNote": "Exceeding private account limits indicates commercial activity and requires switching to a business account.",
     "promoteTitle": "Promoting listings",
     "promoteSubPersonal": "Highlight your offer and reach more buyers.",
@@ -46,10 +46,10 @@
       "premium": { "name": "Premium", "hint": "Maximum visibility, priority over TOP" }
     },
     "b2b": {
-      "start": { "name": "Start", "f1": "25 active listings", "f2": "90 days listing display", "f3": "3 promotions per month", "f4": "Automatic VAT invoice", "f5": "Email support" },
-      "biznes": { "name": "Business", "badge": "RECOMMENDED", "f1": "75 active listings", "f2": "90 days listing display", "f3": "10 promotions per month", "f4": "Automatic VAT invoice", "f5": "Priority support" },
-      "premium": { "name": "Premium", "f1": "200 active listings", "f2": "90 days listing display", "f3": "30 promotions per month", "f4": "Automatic VAT invoice", "f5": "Dedicated advisor" },
-      "enterprise": { "name": "Enterprise", "f1": "Unlimited listings", "f2": "90 days listing display", "f3": "Unlimited promotions", "f4": "Automatic VAT invoice", "f5": "Dedicated account manager" }
+      "start": { "name": "Start", "f1": "25 active listings", "f2": "35 days listing display", "f3": "3 promotions per month", "f4": "Automatic VAT invoice", "f5": "Email support" },
+      "biznes": { "name": "Business", "badge": "RECOMMENDED", "f1": "75 active listings", "f2": "35 days listing display", "f3": "10 promotions per month", "f4": "Automatic VAT invoice", "f5": "Priority support" },
+      "premium": { "name": "Premium", "f1": "200 active listings", "f2": "35 days listing display", "f3": "30 promotions per month", "f4": "Automatic VAT invoice", "f5": "Dedicated advisor" },
+      "enterprise": { "name": "Enterprise", "f1": "Unlimited listings", "f2": "35 days listing display", "f3": "Unlimited promotions", "f4": "Automatic VAT invoice", "f5": "Dedicated account manager" }
     },
     "faq": {
       "q1": "Is adding listings paid?",
@@ -78,7 +78,7 @@
     "promoBanner": "Launch promotion: all packages are now completely free!",
     "startProgramLabel": "Start Program",
     "startProgramTitle": "3 months free for new dealers",
-    "startProgramDesc": "Up to 20 active listings · 90 days display · 3 promotions/month · account verified by CARIZO",
+    "startProgramDesc": "Up to 20 active listings · 35 days display · 3 promotions/month · account verified by CARIZO",
     "loginToActivate": "Log in to activate",
     "activating": "Activating…",
     "activateStartProgram": "Activate Start Program",
@@ -105,7 +105,7 @@
     "faqTitle": "Frequently asked questions",
     "faq": {
       "q1": "What is the Start Program?",
-      "a1": "The Start Program is a free 3-month trial for new dealers registered on CARIZO. It includes up to 20 active listings with 90 days display and 3 promotions per month. It can be activated only once per account.",
+      "a1": "The Start Program is a free 3-month trial for new dealers registered on CARIZO. It includes up to 20 active listings with 35 days display and 3 promotions per month. It can be activated only once per account.",
       "q2": "When will I be charged for the package?",
       "a2": "The charge is taken immediately after you select a package. You can extend subsequent months manually — there is no automatic renewal.",
       "q3": "Will I receive a VAT invoice?",
@@ -229,7 +229,7 @@
     "freeBadge": "FREE",
     "freeDesc": "Standard listing in the search results.",
     "freeFeat1": "Visible in results",
-    "freeFeat2": "90 days of activity",
+    "freeFeat2": "35 days of activity",
     "freeFeat3": "No promotion",
     "forFreeUpper": "FOR FREE",
     "forFreeLower": "for free",

@@ -249,22 +249,22 @@ const promoPlansPersonal = computed(() => [
     {
         key: 'refresh', icon: 'mdi-refresh', name: t('pricing.plans.refresh.name'),
         hint: t('pricing.plans.refresh.hint'),
-        prices: ['4,99 zł', '—', '—'],
+        prices: ['2,99 zł', '—', '—'],
     },
     {
         key: 'highlight', icon: 'mdi-star', name: t('pricing.plans.highlight.name'),
         hint: t('pricing.plans.highlight.hint'),
-        prices: ['14,99 zł', '24,99 zł', '39,99 zł'],
+        prices: ['9,99 zł', '14,99 zł', '24,99 zł'],
     },
     {
         key: 'top', icon: 'mdi-crown', name: t('pricing.plans.top.name'),
         hint: t('pricing.plans.top.hint'),
-        prices: ['19,99 zł', '29,99 zł', '49,99 zł'],
+        prices: ['14,99 zł', '24,99 zł', '39,99 zł'],
     },
     {
         key: 'premium', icon: 'mdi-diamond-outline', name: t('pricing.plans.premium.name'),
         hint: t('pricing.plans.premium.hint'),
-        prices: ['29,99 zł', '44,99 zł', '79,99 zł'],
+        prices: ['24,99 zł', '39,99 zł', '59,99 zł'],
     },
 ])
 
@@ -280,7 +280,7 @@ const promoPlansB2B = computed(() => [
         key: 'refresh', icon: 'mdi-refresh', name: t('pricing.plans.refresh.name'),
         hint: t('pricing.plans.refresh.hint'),
         cols: [
-            { brutto: toBrutto(4.99), netto: toNetto(4.99) },
+            { brutto: toBrutto(2.99), netto: toNetto(2.99) },
             { brutto: '—', netto: '' },
             { brutto: '—', netto: '' },
         ],
@@ -289,27 +289,27 @@ const promoPlansB2B = computed(() => [
         key: 'highlight', icon: 'mdi-star', name: t('pricing.plans.highlight.name'),
         hint: t('pricing.plans.highlight.hint'),
         cols: [
+            { brutto: toBrutto(9.99), netto: toNetto(9.99) },
             { brutto: toBrutto(14.99), netto: toNetto(14.99) },
             { brutto: toBrutto(24.99), netto: toNetto(24.99) },
-            { brutto: toBrutto(39.99), netto: toNetto(39.99) },
         ],
     },
     {
         key: 'top', icon: 'mdi-crown', name: t('pricing.plans.top.name'),
         hint: t('pricing.plans.top.hint'),
         cols: [
-            { brutto: toBrutto(19.99), netto: toNetto(19.99) },
-            { brutto: toBrutto(29.99), netto: toNetto(29.99) },
-            { brutto: toBrutto(49.99), netto: toNetto(49.99) },
+            { brutto: toBrutto(14.99), netto: toNetto(14.99) },
+            { brutto: toBrutto(24.99), netto: toNetto(24.99) },
+            { brutto: toBrutto(39.99), netto: toNetto(39.99) },
         ],
     },
     {
         key: 'premium', icon: 'mdi-diamond-outline', name: t('pricing.plans.premium.name'),
         hint: t('pricing.plans.premium.hint'),
         cols: [
-            { brutto: toBrutto(29.99), netto: toNetto(29.99) },
-            { brutto: toBrutto(44.99), netto: toNetto(44.99) },
-            { brutto: toBrutto(79.99), netto: toNetto(79.99) },
+            { brutto: toBrutto(24.99), netto: toNetto(24.99) },
+            { brutto: toBrutto(39.99), netto: toNetto(39.99) },
+            { brutto: toBrutto(59.99), netto: toNetto(59.99) },
         ],
     },
 ])

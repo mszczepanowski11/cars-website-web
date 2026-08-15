@@ -14,7 +14,7 @@
     "freeUpper": "BEZPŁATNIE",
     "emissionTime": "Czas emisji ogłoszenia",
     "emissionDesc": "Po upływie można odświeżyć lub wyróżnić",
-    "days90": "90 dni",
+    "days90": "35 dni",
     "limitNote": "Przekroczenie limitów konta prywatnego sugeruje działalność handlową i wymaga przejścia na konto biznesowe.",
     "promoteTitle": "Promowanie ogłoszeń",
     "promoteSubPersonal": "Wyróżnij swoją ofertę i dotrzyj do większej liczby kupujących.",
@@ -46,10 +46,10 @@
       "premium": { "name": "Premium", "hint": "Maksymalna widoczność, priorytet nad TOP" }
     },
     "b2b": {
-      "start": { "name": "Start", "f1": "25 aktywnych ogłoszeń", "f2": "90 dni emisji ogłoszenia", "f3": "3 wyróżnienia miesięcznie", "f4": "Faktura VAT automatycznie", "f5": "Wsparcie e-mail" },
-      "biznes": { "name": "Biznes", "badge": "POLECANY", "f1": "75 aktywnych ogłoszeń", "f2": "90 dni emisji ogłoszenia", "f3": "10 wyróżnień miesięcznie", "f4": "Faktura VAT automatycznie", "f5": "Priorytetowe wsparcie" },
-      "premium": { "name": "Premium", "f1": "200 aktywnych ogłoszeń", "f2": "90 dni emisji ogłoszenia", "f3": "30 wyróżnień miesięcznie", "f4": "Faktura VAT automatycznie", "f5": "Dedykowany opiekun" },
-      "enterprise": { "name": "Enterprise", "f1": "Nielimitowane ogłoszenia", "f2": "90 dni emisji ogłoszenia", "f3": "Nielimitowane wyróżnienia", "f4": "Faktura VAT automatycznie", "f5": "Dedykowany account manager" }
+      "start": { "name": "Start", "f1": "25 aktywnych ogłoszeń", "f2": "35 dni emisji ogłoszenia", "f3": "3 wyróżnienia miesięcznie", "f4": "Faktura VAT automatycznie", "f5": "Wsparcie e-mail" },
+      "biznes": { "name": "Biznes", "badge": "POLECANY", "f1": "75 aktywnych ogłoszeń", "f2": "35 dni emisji ogłoszenia", "f3": "10 wyróżnień miesięcznie", "f4": "Faktura VAT automatycznie", "f5": "Priorytetowe wsparcie" },
+      "premium": { "name": "Premium", "f1": "200 aktywnych ogłoszeń", "f2": "35 dni emisji ogłoszenia", "f3": "30 wyróżnień miesięcznie", "f4": "Faktura VAT automatycznie", "f5": "Dedykowany opiekun" },
+      "enterprise": { "name": "Enterprise", "f1": "Nielimitowane ogłoszenia", "f2": "35 dni emisji ogłoszenia", "f3": "Nielimitowane wyróżnienia", "f4": "Faktura VAT automatycznie", "f5": "Dedykowany account manager" }
     },
     "faq": {
       "q1": "Czy dodawanie ogłoszeń jest płatne?",
@@ -78,7 +78,7 @@
     "promoBanner": "Promocja startowa: wszystkie pakiety są teraz całkowicie darmowe!",
     "startProgramLabel": "Program Start",
     "startProgramTitle": "3 miesiące bezpłatnie dla nowych dealerów",
-    "startProgramDesc": "Do 20 aktywnych ogłoszeń · emisja 90 dni · 3 wyróżnienia/miesiąc · konto weryfikowane przez CARIZO",
+    "startProgramDesc": "Do 20 aktywnych ogłoszeń · emisja 35 dni · 3 wyróżnienia/miesiąc · konto weryfikowane przez CARIZO",
     "loginToActivate": "Zaloguj się, aby aktywować",
     "activating": "Aktywowanie…",
     "activateStartProgram": "Aktywuj Program Start",
@@ -105,7 +105,7 @@
     "faqTitle": "Najczęstsze pytania",
     "faq": {
       "q1": "Czym jest Program Start?",
-      "a1": "Program Start to bezpłatny 3-miesięczny okres próbny dla nowych dealerów zarejestrowanych na CARIZO. Obejmuje do 20 aktywnych ogłoszeń z emisją 90 dni i 3 wyróżnieniami miesięcznie. Można aktywować tylko raz na konto.",
+      "a1": "Program Start to bezpłatny 3-miesięczny okres próbny dla nowych dealerów zarejestrowanych na CARIZO. Obejmuje do 20 aktywnych ogłoszeń z emisją 35 dni i 3 wyróżnieniami miesięcznie. Można aktywować tylko raz na konto.",
       "q2": "Kiedy zostanę obciążony za pakiet?",
       "a2": "Opłata jest pobierana natychmiast po wyborze pakietu. Kolejne miesiące możesz przedłużyć ręcznie — nie ma automatycznego odnawiania.",
       "q3": "Czy otrzymam fakturę VAT?",
@@ -229,7 +229,7 @@
     "freeBadge": "DARMOWE",
     "freeDesc": "Standardowe ogłoszenie w wynikach wyszukiwania.",
     "freeFeat1": "Widoczne w wynikach",
-    "freeFeat2": "90 dni aktywności",
+    "freeFeat2": "35 dni aktywności",
     "freeFeat3": "Brak wyróżnienia",
     "forFreeUpper": "ZA DARMO",
     "forFreeLower": "za darmo",

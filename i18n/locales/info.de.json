@@ -65,7 +65,7 @@
     ],
     "faqs": [
       { "q": "Ist das Aufgeben einer Anzeige kostenlos?", "a": "Ja, eine Basisanzeige ist völlig kostenlos. Kostenpflichtig sind nur die Werbeoptionen, die die Sichtbarkeit erhöhen." },
-      { "q": "Wie lange ist eine Anzeige sichtbar?", "a": "Eine Standardanzeige ist 90 Tage lang aktiv. Du kannst sie verlängern oder auffrischen (kostenpflichtige Option)." },
+      { "q": "Wie lange ist eine Anzeige sichtbar?", "a": "Eine Standardanzeige ist 35 Tage lang aktiv. Du kannst sie verlängern oder auffrischen (kostenpflichtige Option)." },
       { "q": "Überprüft CARIZO die Anzeigen?", "a": "Ja, Anzeigen durchlaufen eine Systemprüfung. Als VERIFIED gekennzeichnete Anzeigen wurden zusätzlich von unserem Team geprüft." },
       { "q": "Wie funktioniert das Zahlungssystem?", "a": "Die Zahlungen werden von ING IMOJE abgewickelt – einem sicheren Online-Zahlungssystem. Wir akzeptieren Visa/Mastercard-Karten, BLIK, Banküberweisungen und andere Methoden." },
       { "q": "Kann ich eine Anzeige vor Ablauf löschen?", "a": "Ja, du kannst eine Anzeige jederzeit über das Panel „Meine Anzeigen\" löschen oder ausblenden." },
@@ -161,7 +161,7 @@
     "groupOgloszeniaFaqs": [
       { "q": "Wie gebe ich eine Anzeige auf?", "a": "Klicke im Menü auf „Anzeige aufgeben\". Fülle die Fahrzeugdaten im Formular aus: Marke, Modell, Baujahr, Kilometerstand, Preis und Beschreibung. Füge mindestens 3 Fotos hinzu. Klicke auf „Veröffentlichen\"." },
       { "q": "Wie viel kostet das Aufgeben einer Anzeige?", "a": "Eine Basisanzeige ist <strong>kostenlos</strong>. Kostenpflichtig sind nur die Werbepakete (TOP, Premium, Hervorhebung), die die Sichtbarkeit des Angebots erhöhen." },
-      { "q": "Wie lange ist eine Anzeige aktiv?", "a": "Eine Standardanzeige ist <strong>90 Tage</strong> lang aktiv. Danach kannst du sie auffrischen (kostenpflichtige Option) oder erneut veröffentlichen." },
+      { "q": "Wie lange ist eine Anzeige aktiv?", "a": "Eine Standardanzeige ist <strong>35 Tage</strong> lang aktiv. Danach kannst du sie auffrischen (kostenpflichtige Option) oder erneut veröffentlichen." },
       { "q": "Kann ich eine veröffentlichte Anzeige bearbeiten?", "a": "Ja, du kannst eine Anzeige jederzeit über das Panel „Meine Anzeigen\" bearbeiten. Änderungen sind sofort sichtbar." },
       { "q": "Wie markiere ich ein Auto als verkauft?", "a": "Klicke im Panel „Meine Anzeigen\" auf die Schaltfläche mit dem Handschlag-Symbol (Handshake) neben der Anzeige. Bestätige im Dialogfenster. Die Anzeige verschwindet aus den Suchergebnissen." },
       { "q": "Wie viele Fotos kann ich hinzufügen?", "a": "Du kannst bis zu 20 Fotos zu einer einzelnen Anzeige hinzufügen. Das erste Foto ist das Hauptfoto, das in den Suchergebnissen angezeigt wird. Wir empfehlen, mindestens 8 Fotos hinzuzufügen." }
