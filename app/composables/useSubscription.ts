@@ -19,6 +19,7 @@ export interface SubscriptionStatus {
     isStartProgram: boolean
     isVerifiedDealer: boolean
     maxActiveAds: number
+    activeAdsCount: number
     emissionDays: number
     featuredQuotaPerMonth: number
     featuredQuotaUsed: number

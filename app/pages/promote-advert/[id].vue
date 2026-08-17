@@ -180,11 +180,17 @@
 
                 <div class="footer-actions">
                     <button class="btn-skip" @click="step = 1"><v-icon icon="mdi-arrow-left" size="15" />{{ $t('promoteAdvert.back') }}</button>
-                    <button class="btn-pay" :disabled="paying" @click="initiatePayment">
+                    <button v-if="quotaAvailable" class="btn-pay btn-quota" :disabled="paying" @click="initiatePayment(true)">
+                        <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
+                        <v-icon v-else icon="mdi-ticket-percent-outline" size="16" />
+                        {{ $t('promoteAdvert.activateFromQuota', { count: subscriptionStatus?.featuredQuotaRemaining }) }}
+                    </button>
+                    <button class="btn-pay" :disabled="paying" @click="initiatePayment(false)">
                         <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
                         <v-icon v-else-if="promoActive" icon="mdi-gift-outline" size="16" />
                         <v-icon v-else icon="mdi-credit-card-outline" size="16" />
                         <template v-if="promoActive">{{ $t('promoteAdvert.activateForFree') }}</template>
+                        <template v-else-if="quotaAvailable">{{ $t('promoteAdvert.payAnywayIng', { price: finalPrice.toFixed(2) }) }}</template>
                         <template v-else>{{ $t('promoteAdvert.payViaIng', { price: finalPrice.toFixed(2) }) }}</template>
                     </button>
                 </div>
@@ -226,9 +232,22 @@ const userProfile = ref<UserProfile | null>(null)
 
 const { validateCoupon } = useCoupons()
 const { getPrice, getPromoStatus } = usePayment()
+const { getMySubscription } = useSubscription()
 const { error: toastError } = useToast()
 
 const promoActive = ref(false)
+
+// Package quota (e.g. "10 wyróżnień/miesiąc" for Biznes): a seller who already pays for a
+// subscription that includes boosts shouldn't be routed through Imoje again for one covered by
+// that quota - offer "activate from package" as an alternative to paying. Only Top/Premium/
+// Featured are quota-eligible (the package quota only ever covered "wyróżnienia", not Refresh).
+const subscriptionStatus = ref<Awaited<ReturnType<typeof getMySubscription>> | null>(null)
+const quotaAvailable = computed(() => {
+    if (promoActive.value || !subscriptionStatus.value?.isActive) return false
+    if (!['Featured', 'Top', 'Premium'].includes(selected.value)) return false
+    const remaining = subscriptionStatus.value.featuredQuotaRemaining
+    return remaining === -1 || remaining > 0
+})
 
 // InitiatePaymentDto only has flat BillingName/BillingNip/BillingStreet/BillingPostalCode/
 // BillingCity properties - a nested { billing: {...} } object is silently dropped by the
@@ -244,8 +263,8 @@ function mapBillingFields(bd: BillingData) {
     }
 }
 
-function submitImojeForm(result: { paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }) {
-    if (result.adminActivated) {
+function submitImojeForm(result: { paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean, quotaActivated?: boolean }) {
+    if (result.adminActivated || result.quotaActivated) {
         navigateTo(`/payment/return?status=success&advertId=${advertId.value}`)
         return
     }
@@ -323,6 +342,7 @@ const billingFinalPrice = computed(() => promoActive.value ? 0 : finalPrice.valu
 
 onMounted(async () => {
     getPromoStatus().then(r => { promoActive.value = r.isFreePromoActive }).catch(() => {})
+    getMySubscription().then(s => { subscriptionStatus.value = s }).catch(() => {})
 
     // Verify ownership before showing promotion options
     try {
@@ -407,7 +427,7 @@ function goToBilling() {
     step.value = 2
 }
 
-async function initiatePayment() {
+async function initiatePayment(useQuota = false) {
     if (!selectedPlan.value || !selectedPrice.value) return
     // Validate billing form
     if (!billingFormRef.value?.validateAll()) {
@@ -426,13 +446,14 @@ async function initiatePayment() {
             advertId: advertId.value,
             serviceType: selectedPlan.value.key,
             durationDays: selectedDays.value,
+            useQuota,
             ...mapBillingFields(billingData.value),
             returnUrl: `${window.location.origin}/payment/return?status=success&advertId=${advertId.value}`,
             cancelUrl: `${window.location.origin}/payment/return?status=cancel&advertId=${advertId.value}`,
         }
         if (couponResult.value?.isValid && couponCode.value) body.couponCode = couponCode.value
 
-        const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
+        const result = await $fetch<{ paymentUrl: string, formFields?: Record<string, string>, adminActivated?: boolean, quotaActivated?: boolean }>('/api/proxy/api/Payment/initiate', { method: 'POST', body })
         submitImojeForm(result)
     } catch (e: any) {
         actionError.value = e?.data?.message ?? t('promoteAdvert.paymentInitError')
@@ -559,6 +580,8 @@ async function initiatePayment() {
     &:hover:not(:disabled) { opacity: 0.88; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
+
+.btn-quota { background: #4caf50; }
 
 .action-error { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #e55; margin-top: 8px; width: 100%; }
 

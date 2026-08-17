@@ -55,7 +55,7 @@
       "q1": "Czy dodawanie ogłoszeń jest płatne?",
       "a1": "Dla kont prywatnych dodawanie ogłoszeń jest całkowicie bezpłatne (do 2 aktywnych i 4 w roku). Konta biznesowe mogą dodawać ogłoszenia w ramach swojego pakietu subskrypcyjnego.",
       "q2": "Jak działa Start Program dla nowych dealerów?",
-      "a2": "Nowe konta biznesowe mogą aktywować bezpłatny 3-miesięczny okres próbny (Start Program) z limitem 20 aktywnych ogłoszeń. Po upływie próby konieczne jest wykupienie pakietu.",
+      "a2": "Nowe konta biznesowe mogą aktywować bezpłatny 3-miesięczny okres próbny (Start Program) z limitem 10 aktywnych ogłoszeń. Po upływie próby konieczne jest wykupienie pakietu.",
       "q3": "Czy ceny zawierają VAT?",
       "a3": "Ceny ogłoszeń i wyróżnień podajemy w kwocie brutto (z VAT 23%). Dla kont biznesowych dodatkowo prezentujemy kwotę netto. Na każdą transakcję wystawiana jest faktura VAT.",
       "q4": "Jak długo aktywna jest subskrypcja?",
@@ -78,7 +78,7 @@
     "promoBanner": "Promocja startowa: wszystkie pakiety są teraz całkowicie darmowe!",
     "startProgramLabel": "Program Start",
     "startProgramTitle": "3 miesiące bezpłatnie dla nowych dealerów",
-    "startProgramDesc": "Do 20 aktywnych ogłoszeń · emisja 35 dni · 3 wyróżnienia/miesiąc · konto weryfikowane przez CARIZO",
+    "startProgramDesc": "Do 10 aktywnych ogłoszeń · emisja 35 dni · 3 wyróżnienia/miesiąc · konto weryfikowane przez CARIZO",
     "loginToActivate": "Zaloguj się, aby aktywować",
     "activating": "Aktywowanie…",
     "activateStartProgram": "Aktywuj Program Start",
@@ -105,7 +105,7 @@
     "faqTitle": "Najczęstsze pytania",
     "faq": {
       "q1": "Czym jest Program Start?",
-      "a1": "Program Start to bezpłatny 3-miesięczny okres próbny dla nowych dealerów zarejestrowanych na CARIZO. Obejmuje do 20 aktywnych ogłoszeń z emisją 35 dni i 3 wyróżnieniami miesięcznie. Można aktywować tylko raz na konto.",
+      "a1": "Program Start to bezpłatny 3-miesięczny okres próbny dla nowych dealerów zarejestrowanych na CARIZO. Obejmuje do 10 aktywnych ogłoszeń z emisją 35 dni i 3 wyróżnieniami miesięcznie. Można aktywować tylko raz na konto.",
       "q2": "Kiedy zostanę obciążony za pakiet?",
       "a2": "Opłata jest pobierana natychmiast po wyborze pakietu. Kolejne miesiące możesz przedłużyć ręcznie — nie ma automatycznego odnawiania.",
       "q3": "Czy otrzymam fakturę VAT?",
@@ -254,6 +254,8 @@
     "toPay": "Do zapłaty",
     "activateForFree": "Aktywuj za darmo",
     "payViaIng": "Zapłać {price} zł przez ING",
+    "payAnywayIng": "Zapłać {price} zł przez ING",
+    "activateFromQuota": "Aktywuj z pakietu (zostało {count})",
     "plans": {
       "featured": {
         "name": "Wyróżnienie",

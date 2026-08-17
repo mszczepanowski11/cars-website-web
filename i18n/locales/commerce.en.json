@@ -55,7 +55,7 @@
       "q1": "Is adding listings paid?",
       "a1": "For private accounts, adding listings is completely free (up to 2 active and 4 per year). Business accounts can add listings within their subscription package.",
       "q2": "How does the Start Program work for new dealers?",
-      "a2": "New business accounts can activate a free 3-month trial (Start Program) with a limit of 20 active listings. After the trial ends, a package purchase is required.",
+      "a2": "New business accounts can activate a free 3-month trial (Start Program) with a limit of 10 active listings. After the trial ends, a package purchase is required.",
       "q3": "Do the prices include VAT?",
       "a3": "Prices for listings and promotions are shown as gross amounts (incl. 23% VAT). For business accounts we additionally show the net amount. A VAT invoice is issued for every transaction.",
       "q4": "How long is the subscription active?",
@@ -78,7 +78,7 @@
     "promoBanner": "Launch promotion: all packages are now completely free!",
     "startProgramLabel": "Start Program",
     "startProgramTitle": "3 months free for new dealers",
-    "startProgramDesc": "Up to 20 active listings · 35 days display · 3 promotions/month · account verified by CARIZO",
+    "startProgramDesc": "Up to 10 active listings · 35 days display · 3 promotions/month · account verified by CARIZO",
     "loginToActivate": "Log in to activate",
     "activating": "Activating…",
     "activateStartProgram": "Activate Start Program",
@@ -105,7 +105,7 @@
     "faqTitle": "Frequently asked questions",
     "faq": {
       "q1": "What is the Start Program?",
-      "a1": "The Start Program is a free 3-month trial for new dealers registered on CARIZO. It includes up to 20 active listings with 35 days display and 3 promotions per month. It can be activated only once per account.",
+      "a1": "The Start Program is a free 3-month trial for new dealers registered on CARIZO. It includes up to 10 active listings with 35 days display and 3 promotions per month. It can be activated only once per account.",
       "q2": "When will I be charged for the package?",
       "a2": "The charge is taken immediately after you select a package. You can extend subsequent months manually — there is no automatic renewal.",
       "q3": "Will I receive a VAT invoice?",
@@ -254,6 +254,8 @@
     "toPay": "To pay",
     "activateForFree": "Activate for free",
     "payViaIng": "Pay {price} PLN via ING",
+    "payAnywayIng": "Pay {price} PLN via ING",
+    "activateFromQuota": "Activate from package ({count} left)",
     "plans": {
       "featured": {
         "name": "Highlight",
