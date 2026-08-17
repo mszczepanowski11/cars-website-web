@@ -55,7 +55,7 @@
       "q1": "Ist das Aufgeben von Anzeigen kostenpflichtig?",
       "a1": "Für Privatkonten ist das Aufgeben von Anzeigen völlig kostenlos (bis zu 2 aktive und 4 pro Jahr). Geschäftskonten können Anzeigen im Rahmen ihres Abo-Pakets aufgeben.",
       "q2": "Wie funktioniert das Start-Programm für neue Händler?",
-      "a2": "Neue Geschäftskonten können eine kostenlose 3-monatige Testphase (Start-Programm) mit einem Limit von 20 aktiven Anzeigen aktivieren. Nach Ablauf der Testphase ist der Kauf eines Pakets erforderlich.",
+      "a2": "Neue Geschäftskonten können eine kostenlose 3-monatige Testphase (Start-Programm) mit einem Limit von 10 aktiven Anzeigen aktivieren. Nach Ablauf der Testphase ist der Kauf eines Pakets erforderlich.",
       "q3": "Enthalten die Preise die Mehrwertsteuer?",
       "a3": "Die Preise für Anzeigen und Hervorhebungen werden als Bruttobeträge (inkl. 23% MwSt.) angegeben. Für Geschäftskonten zeigen wir zusätzlich den Nettobetrag an. Für jede Transaktion wird eine MwSt.-Rechnung ausgestellt.",
       "q4": "Wie lange ist das Abo aktiv?",
@@ -78,7 +78,7 @@
     "promoBanner": "Startaktion: Alle Pakete sind jetzt völlig kostenlos!",
     "startProgramLabel": "Start-Programm",
     "startProgramTitle": "3 Monate kostenlos für neue Händler",
-    "startProgramDesc": "Bis zu 20 aktive Anzeigen · 35 Tage Laufzeit · 3 Hervorhebungen/Monat · von CARIZO verifiziertes Konto",
+    "startProgramDesc": "Bis zu 10 aktive Anzeigen · 35 Tage Laufzeit · 3 Hervorhebungen/Monat · von CARIZO verifiziertes Konto",
     "loginToActivate": "Zum Aktivieren anmelden",
     "activating": "Wird aktiviert…",
     "activateStartProgram": "Start-Programm aktivieren",
@@ -105,7 +105,7 @@
     "faqTitle": "Häufig gestellte Fragen",
     "faq": {
       "q1": "Was ist das Start-Programm?",
-      "a1": "Das Start-Programm ist eine kostenlose 3-monatige Testphase für neue, bei CARIZO registrierte Händler. Es umfasst bis zu 20 aktive Anzeigen mit 35 Tagen Laufzeit und 3 Hervorhebungen pro Monat. Es kann nur einmal pro Konto aktiviert werden.",
+      "a1": "Das Start-Programm ist eine kostenlose 3-monatige Testphase für neue, bei CARIZO registrierte Händler. Es umfasst bis zu 10 aktive Anzeigen mit 35 Tagen Laufzeit und 3 Hervorhebungen pro Monat. Es kann nur einmal pro Konto aktiviert werden.",
       "q2": "Wann werde ich für das Paket belastet?",
       "a2": "Die Gebühr wird sofort nach Auswahl eines Pakets erhoben. Weitere Monate können Sie manuell verlängern — es gibt keine automatische Verlängerung.",
       "q3": "Erhalte ich eine MwSt.-Rechnung?",
@@ -254,6 +254,8 @@
     "toPay": "Zu zahlen",
     "activateForFree": "Kostenlos aktivieren",
     "payViaIng": "{price} PLN über ING zahlen",
+    "payAnywayIng": "{price} PLN über ING zahlen",
+    "activateFromQuota": "Aus Paket aktivieren (noch {count})",
     "plans": {
       "featured": {
         "name": "Hervorheben",

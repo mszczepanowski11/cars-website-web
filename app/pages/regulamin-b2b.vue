@@ -66,7 +66,7 @@
                             </ol>
                             Szczegółowe limity, ceny oraz parametry techniczne poszczególnych wariantów określa aktualny Cennik dostępny w panelu Serwisu.
                         </li>
-                        <li><strong>Program Startowy:</strong> W celu budowania płynności bazy ogłoszeniowej, nowo zarejestrowany Dealer ma prawo do jednorazowej aktywacji Programu Startowego. Program oferuje 3-miesięczny bezpłatny okres próbny z technicznym limitem wynoszącym maksymalnie 20 aktywnych Ogłoszeń jednocześnie. Po zakończeniu tego okresu lub w przypadku chęci przekroczenia limitu 20 ofert przed upływem 3 miesięcy, Dealer zobowiązany jest do zakupu jednego ze standardowych Pakietów Pre-Paid.</li>
+                        <li><strong>Program Startowy:</strong> W celu budowania płynności bazy ogłoszeniowej, nowo zarejestrowany Dealer ma prawo do jednorazowej aktywacji Programu Startowego. Program oferuje 3-miesięczny bezpłatny okres próbny z technicznym limitem wynoszącym maksymalnie 10 aktywnych Ogłoszeń jednocześnie. Po zakończeniu tego okresu lub w przypadku chęci przekroczenia limitu 10 ofert przed upływem 3 miesięcy, Dealer zobowiązany jest do zakupu jednego ze standardowych Pakietów Pre-Paid.</li>
                     </ol>
                 </section>
 

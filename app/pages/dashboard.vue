@@ -54,8 +54,14 @@
                         {{ $t('dashboard.b2bPackage') }}
                     </div>
                     <div class="sub-tier">{{ subscription.tierName }}</div>
+                    <div class="sub-quota">
+                        {{ $t('dashboard.adsLabel') }}: {{ subscription.activeAdsCount }}/{{ subscription.maxActiveAds === -1 ? '∞' : subscription.maxActiveAds }}
+                    </div>
                     <div v-if="subscription.isActive" class="sub-quota">
                         {{ $t('dashboard.featured') }}: {{ subscription.featuredQuotaUsed }}/{{ subscription.featuredQuotaPerMonth === -1 ? '∞' : subscription.featuredQuotaPerMonth }}
+                    </div>
+                    <div v-if="subscription.isActive && subscriptionDaysLeft !== null" class="sub-quota">
+                        {{ $t('dashboard.daysLeftLabel') }}: {{ subscriptionDaysLeft }}
                     </div>
                 </div>
                 <NuxtLink to="/pakiety" class="sub-btn">
@@ -784,6 +790,11 @@ useHead({ title: () => t('dashboard.metaTitle'), meta: [{ name: 'robots', conten
 const { fetchProfile, fetchStats, updateProfile, updatePassword, fetchSettings, updateSettings, deleteAccount } = useUser()
 const { getMySubscription } = useSubscription()
 const subscription = ref<Awaited<ReturnType<typeof getMySubscription>> | null>(null)
+const subscriptionDaysLeft = computed(() => {
+    if (!subscription.value?.expiresAt) return null
+    const ms = new Date(subscription.value.expiresAt).getTime() - Date.now()
+    return Math.max(0, Math.ceil(ms / 86_400_000))
+})
 const { getMyReceivedReviews } = useReviews()
 const { notifications: allNotifications, unreadCount: notifUnread, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, getPreferences, updatePreference } = useNotifications()
 const { getFollowedAdverts, getFollowers } = useFollow()
