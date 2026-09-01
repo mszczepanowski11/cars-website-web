@@ -279,3 +279,42 @@ body.has-compare-panel {
 }
 
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dostępność i czytelność na telefonie (audyt spójności)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// iOS automatycznie przybliża stronę, gdy użytkownik wchodzi w pole formularza
+// o czcionce mniejszej niż 16px. Wcześniej rozwiązywano to blokadą zoomu w meta
+// viewport, co odbierało możliwość powiększania osobom słabowidzącym. Ustawienie
+// 16px na samych polach usuwa przyczynę, więc zoom mógł zostać przywrócony.
+// Dotyczy wyłącznie telefonów — na desktopie pola zachowują swoje rozmiary.
+@media (max-width: $bp-mobile) {
+    input,
+    select,
+    textarea,
+    .v-field__input {
+        font-size: $fs-input;
+    }
+
+    // Cele dotykowe: wytyczne Apple i Google mówią o minimum 44px. Dotyczy tylko
+    // elementów sterujących, nie linków w tekście ciągłym.
+    button,
+    [role="button"],
+    .btn,
+    a.btn {
+        min-height: $touch-min;
+    }
+}
+
+// Użytkownicy, którzy wyłączyli animacje w systemie, nie powinni ich dostawać.
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

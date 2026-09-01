@@ -56,7 +56,12 @@ export default defineNuxtConfig({
         // field is focused (its default behavior for any input with font-size below 16px) —
         // without this, tapping a field on add-advert visibly zooms/shifts the page instead of
         // staying full-screen and centered.
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
+        // Audyt dostępności: blokada zoomu (maximum-scale=1, user-scalable=no) była
+        // obejściem auto-przybliżania na iOS, które uruchamia się, gdy pole formularza
+        // ma czcionkę mniejszą niż 16px. Leczyła skutek kosztem osób słabowidzących,
+        // które nie mogły powiększyć strony. Prawdziwa przyczyna jest usunięta w
+        // main.scss (pola mają teraz $fs-input = 16px), więc zoom może wrócić.
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'google-site-verification', content: 'M-Xj_zIclGdrERVKvxc9I_1Zlp7Wb93dgzUL-N7x0ks' },
         { name: 'theme-color', content: '#050505' },
       ],

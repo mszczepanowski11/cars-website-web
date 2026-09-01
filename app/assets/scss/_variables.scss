@@ -37,3 +37,96 @@ $header-total:  123px;
 
 $mobile-cta-height:     68px;   // advert detail bottom action bar (phone + message)
 $compare-panel-height:  62px;   // compare panel bottom bar
+// ─────────────────────────────────────────────────────────────────────────────
+// SYSTEM PROJEKTOWY CARIZO — warstwa tokenów (audyt spójności)
+// ─────────────────────────────────────────────────────────────────────────────
+// Audyt wykazał, że system CZĘŚCIOWO istnieje (zmienne wyżej są używane w 75 z 81
+// plików), ale obok niego żyje 157 unikalnych kolorów, 48 rozmiarów tekstu, 254
+// deklaracje paddingu i 12 breakpointów wpisanych na sztywno. Poniższe tokeny
+// domykają brakujące warstwy. Są DODAWANE, nie zmieniają żadnej istniejącej
+// wartości — dzięki temu można migrować stronę po stronie bez ryzyka regresji.
+
+// ── Kolory marki ─────────────────────────────────────────────────────────────
+// Audyt: czerwień marki $red (#8B0D1D) występuje 13×, podczas gdy spoza systemu
+// #e55 użyto 83×, a #cc1020 16×. Poniższe aliasy nazywają te warianty, żeby dało
+// się je świadomie ujednolicić zamiast mnożyć kolejne odcienie.
+$red-bright:  #cc1020;   // jaśniejszy akcent na ciemnym tle (był #cc1020)
+$red-hot:     #ee5555;   // stan hover / sygnał (był #e55)
+
+// ── Kolory semantyczne ───────────────────────────────────────────────────────
+// Jedno źródło prawdy dla komunikatów. Wartości wzięte z faktycznie dominujących
+// w kodzie, żeby migracja nie zmieniała wyglądu.
+$success:     #4caf50;
+$warning:     #ff9800;
+$danger:      #e53935;
+$info:        #2196f3;
+$premium:     #f5a623;   // złoto: wyróżnienia / TOP / Premium
+
+// ── Skala odstępów (4px) ─────────────────────────────────────────────────────
+// Zastępuje 254 unikalne deklaracje paddingu. Każdy nowy odstęp MUSI pochodzić
+// z tej skali — to jedyny sposób, żeby siatka przestała się rozjeżdżać.
+$s-1:  4px;
+$s-2:  8px;
+$s-3:  12px;
+$s-4:  16px;
+$s-5:  20px;
+$s-6:  24px;
+$s-8:  32px;
+$s-10: 40px;
+$s-12: 48px;
+$s-16: 64px;
+
+// ── Skala typografii ─────────────────────────────────────────────────────────
+// Audyt: 48 unikalnych rozmiarów, a dominują 13px (350×), 12px (302×) i 11px
+// (235×) — tekst na portalu jest po prostu ZA MAŁY jak na serwis premium.
+// $fs-base to 15px: czytelnie, ale bez skokowego przebudowania układów.
+// $fs-input to 16px, bo poniżej tej wartości iOS automatycznie przybliża stronę
+// przy wejściu w pole — to była prawdziwa przyczyna zablokowania zoomu.
+$fs-xs:    11px;   // wyłącznie etykiety/plakietki, nigdy tekst ciągły
+$fs-sm:    13px;
+$fs-base:  15px;
+$fs-md:    16px;
+$fs-input: 16px;
+$fs-lg:    18px;
+$fs-xl:    22px;
+$fs-2xl:   28px;
+$fs-3xl:   34px;
+$fs-4xl:   48px;
+
+// ── Grubości ─────────────────────────────────────────────────────────────────
+$fw-normal:   400;
+$fw-medium:   500;
+$fw-semibold: 600;
+$fw-bold:     700;
+$fw-black:    900;
+
+// ── Promienie: uzupełnienie istniejącej skali ────────────────────────────────
+// $r-sm/md/lg/xl są już używane 442×. Brakowało wartości dla drobnych elementów
+// (plakietki, znaczniki) i pigułek — stąd 8px/6px/4px wpisywane na sztywno.
+$r-xs:   6px;
+$r-pill: 999px;
+
+// ── Breakpointy: UJEDNOLICENIE ───────────────────────────────────────────────
+// To był realny błąd, nie kosmetyka. Tokeny deklarowały 600/780/1100px, ale w
+// kodzie najczęściej używane jest 768px (14×), a 780px NIE WYSTĘPUJE ANI RAZU.
+// Do tego 480/700/720/820/860/900/960/1200px jako jednorazowe — łącznie 12
+// różnych progów. Dlatego układ „przeskakuje" w różnych miejscach na różnych
+// podstronach. Poniżej jeden zestaw, zgodny z tym, co realnie dominuje w kodzie.
+$bp-phone:   480px;   // mały telefon
+$bp-mobile:  768px;   // telefon / granica układu jednokolumnowego (dominujące)
+$bp-tablet:  1024px;  // tablet
+$bp-laptop:  1280px;  // laptop
+$bp-wide:    1450px;  // = $container-max
+
+// ── Cele dotykowe ────────────────────────────────────────────────────────────
+// Minimalny rozmiar elementu klikalnego na telefonie (wytyczne Apple/Google).
+$touch-min: 44px;
+
+// ── Cienie ───────────────────────────────────────────────────────────────────
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+$shadow-md: 0 4px 14px rgba(0, 0, 0, .35);
+$shadow-lg: 0 10px 30px rgba(0, 0, 0, .45);
+
+// ── Przejścia ────────────────────────────────────────────────────────────────
+$t-fast: .15s ease;
+$t-base: .25s ease;
