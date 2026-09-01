@@ -87,17 +87,21 @@
                         </div>
 
                         <div class="row-right">
+                            <!-- Sam licznik "za 18 dni" nie pozwala zaplanowac odswiezenia ani
+                                 sprawdzic, czy emisja skonczy sie w weekend. Dokladna data jest
+                                 podana obok, a nie w dymku, bo na telefonie dymki nie dzialaja. -->
                             <div v-if="a.expiresAt && !a.soldAt" class="expiry-info" :class="expiryClass(a.expiresAt)">
                                 <v-icon icon="mdi-clock-outline" size="14" />
-                                {{ expiryText(a.expiresAt) }}
+                                <span class="expiry-rel">{{ expiryText(a.expiresAt) }}</span>
+                                <span class="expiry-abs">{{ expiryDate(a.expiresAt) }}</span>
                             </div>
 
                             <div class="row-actions">
                                 <NuxtLink :to="advertPath(a)" class="act-btn" :aria-label="`Podgląd: ${a.title}`">
-                                    <v-icon icon="mdi-eye-outline" size="15" />
+                                    <v-icon icon="mdi-eye-outline" size="15" /><span class="act-label">Podgląd</span>
                                 </NuxtLink>
                                 <NuxtLink :to="`/add-advert?edit=${a.id}`" class="act-btn" :aria-label="`Edytuj: ${a.title}`">
-                                    <v-icon icon="mdi-pencil-outline" size="15" />
+                                    <v-icon icon="mdi-pencil-outline" size="15" /><span class="act-label">Edytuj</span>
                                 </NuxtLink>
                                 <NuxtLink
                                     v-if="!a.soldAt && a.isActive"
@@ -105,7 +109,7 @@
                                     class="act-btn act-promote"
                                     :aria-label="`Wyróżnij: ${a.title}`"
                                 >
-                                    <v-icon icon="mdi-star-outline" size="15" />
+                                    <v-icon icon="mdi-star-outline" size="15" /><span class="act-label">Wyróżnij</span>
                                 </NuxtLink>
                                 <button
                                     v-if="!a.soldAt && !a.isActive"
@@ -115,7 +119,7 @@
                                     @click="reactivateAdvert(a)"
                                 >
                                     <v-icon v-if="reactivateLoading === a.id" icon="mdi-loading" size="15" class="spin" />
-                                    <v-icon v-else icon="mdi-refresh" size="15" />
+                                    <v-icon v-else icon="mdi-refresh" size="15" /><span class="act-label">Wznów</span>
                                 </button>
                                 <button
                                     v-if="!a.soldAt && (a.isActive || a.isHidden)"
@@ -125,7 +129,7 @@
                                     @click="markAsSold(a)"
                                 >
                                     <v-icon v-if="soldLoading === a.id" icon="mdi-loading" size="15" class="spin" />
-                                    <v-icon v-else icon="mdi-handshake-outline" size="15" />
+                                    <v-icon v-else icon="mdi-handshake-outline" size="15" /><span class="act-label">Sprzedane</span>
                                 </button>
                                 <button
                                     class="act-btn act-delete"
@@ -134,7 +138,7 @@
                                     @click="openDeleteModal(a)"
                                 >
                                     <v-icon v-if="deleteLoading === a.id" icon="mdi-loading" size="15" class="spin" />
-                                    <v-icon v-else icon="mdi-trash-can-outline" size="15" />
+                                    <v-icon v-else icon="mdi-trash-can-outline" size="15" /><span class="act-label">Usuń</span>
                                 </button>
                             </div>
                         </div>
@@ -290,6 +294,14 @@ function expiryText(dateStr: string): string {
     if (days === 0) return 'Wygasa dziś'
     if (days === 1) return 'Wygasa jutro'
     return `Wygasa za ${days} dni`
+}
+
+// Dokladna data zakonczenia emisji. Wlasciciel prosil o nia wprost obok licznika
+// dni - "Pozostalo 18 dni" nie mowi, KIEDY dokladnie ogloszenie zniknie.
+function expiryDate(dateStr: string): string {
+    const d = new Date(dateStr)
+    if (Number.isNaN(d.getTime())) return ''
+    return d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 function expiryClass(dateStr: string): string {
@@ -748,6 +760,30 @@ onMounted(async () => {
     gap: 4px;
     font-size: 12px;
     color: $text-dim;
+}
+
+// Same ikony zmuszaly uzytkownika do zgadywania, co robi kazdy przycisk.
+// Etykieta jest widoczna od tabletu w gore; na waskim telefonie zostaje sama
+// ikona (z aria-label), zeby rzad akcji nie zawijal sie w kilka linii.
+.act-label {
+    margin-left: $s-1;
+    font-size: $fs-xs;
+    font-weight: $fw-semibold;
+    letter-spacing: .01em;
+}
+
+@media (max-width: $bp-mobile) {
+    .act-label { display: none; }
+}
+
+.expiry-rel { font-weight: $fw-semibold; }
+
+.expiry-abs {
+    display: block;
+    font-size: $fs-xs;
+    color: $text-dim;
+    font-weight: $fw-normal;
+    margin-top: 2px;
 }
 
 .status-chip {
