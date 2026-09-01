@@ -91,7 +91,7 @@ const monthlyRate = computed(() => {
 
 <template>
     <NuxtLink
-        :to="`/advert/${advert.id}`"
+        :to="advertPath(advert)"
         class="car-card"
         :class="{
             'car-card--featured': resolvedBadge === 'FEATURED',

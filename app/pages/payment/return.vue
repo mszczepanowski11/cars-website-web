@@ -42,7 +42,7 @@
                         <v-icon icon="mdi-calendar-star" size="17" />
                         {{ $t('paymentReturn.seeEvent') }}
                     </NuxtLink>
-                    <NuxtLink v-else-if="advertId" :to="`/advert/${advertId}`" class="btn-red">
+                    <NuxtLink v-else-if="advertId" :to="`/ogloszenia/${advertId}`" class="btn-red">
                         <v-icon icon="mdi-eye-outline" size="17" />
                         {{ $t('paymentReturn.seeAdvert') }}
                     </NuxtLink>

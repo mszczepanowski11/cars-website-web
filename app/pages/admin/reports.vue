@@ -76,7 +76,7 @@
                                 <td class="td-reason">{{ r.reason }}</td>
                                 <td>{{ r.reportedByName ?? '—' }}</td>
                                 <td>
-                                    <NuxtLink v-if="r.targetAdvertId" :to="`/advert/${r.targetAdvertId}`" class="target-link">
+                                    <NuxtLink v-if="r.targetAdvertId" :to="`/ogloszenia/${r.targetAdvertId}`" class="target-link">
                                         Ogłoszenie #{{ r.targetAdvertId }}
                                     </NuxtLink>
                                     <span v-else-if="r.targetUserId">Użytkownik #{{ r.targetUserId }}</span>

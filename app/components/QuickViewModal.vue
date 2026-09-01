@@ -35,7 +35,7 @@
                                 <v-icon icon="mdi-map-marker-outline" size="14" />{{ advert.city }}
                             </div>
                             <div class="qv-actions">
-                                <NuxtLink :to="`/advert/${advert.id}`" class="qv-btn-primary" @click="$emit('update:modelValue', false)">
+                                <NuxtLink :to="advertPath(advert)" class="qv-btn-primary" @click="$emit('update:modelValue', false)">
                                     <v-icon icon="mdi-arrow-right-circle-outline" size="16" />
                                     {{ $t('cQuickView.viewAdvert') }}
                                 </NuxtLink>

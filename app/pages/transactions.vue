@@ -28,7 +28,7 @@
                         </div>
                         <div class="tx-body">
                             <div class="tx-title">
-                                <NuxtLink :to="`/advert/${tx.advertId}`" class="tx-advert-link">{{ tx.advertTitle }}</NuxtLink>
+                                <NuxtLink :to="`/ogloszenia/${tx.advertId}`" class="tx-advert-link">{{ tx.advertTitle }}</NuxtLink>
                             </div>
                             <div class="tx-meta">
                                 <span class="tx-type-label">{{ typeLabel(tx.type) }}</span>

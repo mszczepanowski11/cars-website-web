@@ -122,6 +122,14 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: process.env.NODE_ENV !== 'production' },
 
+  // Logika budowania przyjaznych adresów ogłoszeń jest współdzielona przez kod
+  // przeglądarki (linki na kartach) i serwerowy (sitemap, obrazy OG). Alias daje
+  // jedną, jednoznaczną ścieżkę importu dla obu stron - import względny nie
+  // rozwiązywał się po zbudowaniu warstwy serwerowej.
+  alias: {
+    '~shared': fileURLToPath(new URL('./shared', import.meta.url)).replace(/\\/g, '/'),
+  },
+
   css: ['~/assets/scss/main.scss', '@mdi/font/css/materialdesignicons.min.css'],
 
   vite: {

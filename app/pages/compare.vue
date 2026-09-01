@@ -29,7 +29,7 @@
                             </button>
                             <span v-if="a.badge" :class="['cmp-advert-badge', `cmp-badge--${a.badge.toLowerCase()}`]">{{ a.badge }}</span>
                         </div>
-                        <NuxtLink :to="`/advert/${a.id}`" class="cmp-advert-title">{{ a.title }}</NuxtLink>
+                        <NuxtLink :to="advertPath(a)" class="cmp-advert-title">{{ a.title }}</NuxtLink>
                         <div class="cmp-advert-price">
                             {{ Number(a.price).toLocaleString('pl') }} zł
                             <span v-if="a.color?.hexCode" class="cmp-color-dot"
@@ -49,7 +49,7 @@
                     <!-- Actions row -->
                     <div class="cmp-label-cell" />
                     <div v-for="a in loadedAdverts" :key="a.id + 'action'" class="cmp-val-cell cmp-action-cell">
-                        <NuxtLink :to="`/advert/${a.id}`" class="cmp-see-btn">
+                        <NuxtLink :to="advertPath(a)" class="cmp-see-btn">
                             <v-icon icon="mdi-arrow-right-circle-outline" size="15" />
                             {{ $t('compare.details') }}
                         </NuxtLink>

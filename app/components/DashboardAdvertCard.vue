@@ -12,7 +12,7 @@ const statusColor = computed(() => {
 </script>
 
 <template>
-    <NuxtLink :to="`/advert/${advert.id}`" class="dash-card">
+    <NuxtLink :to="advertPath(advert)" class="dash-card">
         <div class="dash-card-img-wrap">
             <img
                 :src="mainImageUrl"

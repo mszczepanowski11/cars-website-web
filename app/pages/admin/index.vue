@@ -151,7 +151,7 @@
                                     <td><span class="action-chip" :class="actionClass(log.actionType)">{{
                                             actionLabel(log.actionType) }}</span></td>
                                     <td class="log-target">
-                                        <NuxtLink v-if="log.targetAdvertId" :to="`/advert/${log.targetAdvertId}`"
+                                        <NuxtLink v-if="log.targetAdvertId" :to="`/ogloszenia/${log.targetAdvertId}`"
                                             class="target-link">
                                             Ogłoszenie #{{ log.targetAdvertId }}
                                         </NuxtLink>
