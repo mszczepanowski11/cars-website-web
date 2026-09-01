@@ -1,3 +1,4 @@
+import { advertPath } from '~shared/advertSlug'
 export interface SitemapUrl {
     loc: string
     lastmod?: string
@@ -72,7 +73,17 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
         let page = 1
         const PAGE_SIZE = 100
         while (true) {
-            const advertsRes = await $fetch<{ items: Array<{ id: number; userId?: number; updatedAt?: string; createdAt?: string }>; totalCount: number }>(
+            // Pola marki/modelu/roku/miasta są pobierane, bo mapa strony musi zawierać
+            // adresy KANONICZNE. Gdyby wskazywała krótką postać "/ogloszenia/{id}",
+            // wyszukiwarka dostawałaby przy każdym wpisie przekierowanie 301 zamiast
+            // strony docelowej - to marnuje budżet indeksowania i osłabia sygnał SEO.
+            const advertsRes = await $fetch<{ items: Array<{
+                id: number; userId?: number; updatedAt?: string; createdAt?: string
+                title?: string; year?: number; city?: string
+                brand?: { name?: string } | null
+                model?: { name?: string } | null
+                generation?: { name?: string } | null
+            }>; totalCount: number }>(
                 `${apiBase}/api/Advert/search`,
                 { method: 'POST', body: { page, pageSize: PAGE_SIZE } }
             ).catch(() => null)
@@ -81,7 +92,7 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
 
             for (const ad of advertsRes.items) {
                 dynamicUrls.push({
-                    loc: `/advert/${ad.id}`,
+                    loc: advertPath(ad),
                     lastmod: (ad.updatedAt ?? ad.createdAt ?? '').split('T')[0] || undefined,
                     priority: '0.8',
                     changefreq: 'weekly',

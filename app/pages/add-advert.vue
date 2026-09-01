@@ -16,7 +16,7 @@
                     Gratulujemy — życzymy szybkiej sprzedaży!
                 </p>
                 <div class="success-actions">
-                    <NuxtLink v-if="publishedAdvertId" :to="`/advert/${publishedAdvertId}`" class="sact-btn sact-btn--primary">
+                    <NuxtLink v-if="publishedAdvertId" :to="`/ogloszenia/${publishedAdvertId}`" class="sact-btn sact-btn--primary">
                         <v-icon icon="mdi-arrow-right-circle-outline" size="18" />
                         Zobacz swoje ogłoszenie
                     </NuxtLink>

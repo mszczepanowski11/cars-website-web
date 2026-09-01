@@ -198,7 +198,7 @@
                         <NuxtLink
                             v-for="a in recentAdverts"
                             :key="a.id"
-                            :to="`/advert/${a.id}`"
+                            :to="advertPath(a)"
                             class="recent-mini-card"
                         >
                             <img
@@ -248,7 +248,7 @@
                                 </button>
                             </div>
                             <div class="adcard-body">
-                                <NuxtLink :to="`/advert/${a.id}`" class="adcard-link-area">
+                                <NuxtLink :to="advertPath(a)" class="adcard-link-area">
                                     <div class="adcard-title">{{ a.brand?.name }} {{ a.model?.name }}</div>
                                     <div class="adcard-meta">{{ a.year }} • {{ a.fuelType?.name ?? '—' }} • {{
                                         Number(a.mileage).toLocaleString('pl') }} km</div>
@@ -377,7 +377,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <NuxtLink :to="`/advert/${fa.advertId}`" class="follow-advert-link">
+                            <NuxtLink :to="`/ogloszenia/${fa.advertId}`" class="follow-advert-link">
                                 <v-icon icon="mdi-arrow-right" size="18" />
                             </NuxtLink>
                         </div>
@@ -1030,7 +1030,7 @@ async function markAllRead() {
 
 async function onNotifClick(n: Notification) {
     if (!n.isRead) await markAsRead(n.id)
-    if (n.advertId) navigateTo(`/advert/${n.advertId}`)
+    if (n.advertId) navigateTo(`/ogloszenia/${n.advertId}`)
 }
 
 async function deleteNotif(id: number) {

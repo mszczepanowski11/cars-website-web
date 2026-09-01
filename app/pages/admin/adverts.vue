@@ -81,7 +81,7 @@
                                 </td>
                                 <td>
                                     <div class="action-row">
-                                        <NuxtLink :to="`/advert/${a.id}`" class="btn-action btn-view" target="_blank" :aria-label="`Podgląd: ${a.title}`">
+                                        <NuxtLink :to="advertPath(a)" class="btn-action btn-view" target="_blank" :aria-label="`Podgląd: ${a.title}`">
                                             <v-icon icon="mdi-eye-outline" size="13" />
                                         </NuxtLink>
                                         <NuxtLink :to="`/add-advert?edit=${a.id}`" class="btn-action btn-edit" :aria-label="`Edytuj: ${a.title}`">

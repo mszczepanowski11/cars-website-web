@@ -322,7 +322,7 @@ function handleMessage() {
     // Messaging requires an advert context — scroll to adverts tab or use first available advert
     const firstAdvert = adverts.value[0]
     if (firstAdvert) {
-        navigateTo(`/advert/${firstAdvert.id}`)
+        navigateTo(advertPath(firstAdvert))
     } else {
         navigateTo('/messages')
     }

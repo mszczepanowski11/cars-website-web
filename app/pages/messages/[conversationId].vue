@@ -13,7 +13,7 @@
                 </div>
                 <div class="header-info">
                     <div class="hdr-name">{{ conversation.otherUserName }}</div>
-                    <NuxtLink :to="`/advert/${conversation.advertId}`" class="hdr-advert">
+                    <NuxtLink :to="`/ogloszenia/${conversation.advertId}`" class="hdr-advert">
                         <v-icon icon="mdi-car" size="12" />
                         {{ conversation.advertTitle }}
                     </NuxtLink>
@@ -29,7 +29,7 @@
 
             <!-- Actions -->
             <div class="header-actions">
-                <NuxtLink v-if="conversation" :to="`/advert/${conversation.advertId}`" class="hdr-action-btn" :title="$t('conversation.viewAdvert')">
+                <NuxtLink v-if="conversation" :to="`/ogloszenia/${conversation.advertId}`" class="hdr-action-btn" :title="$t('conversation.viewAdvert')">
                     <v-icon icon="mdi-open-in-new" size="18" />
                 </NuxtLink>
                 <button class="hdr-action-btn" :title="$t('conversation.moreOptions')" @click="showActions = !showActions">
@@ -59,7 +59,7 @@
 
         <!-- Advert card strip -->
         <div v-if="conversation" class="advert-strip">
-            <NuxtLink :to="`/advert/${conversation.advertId}`" class="advert-strip-inner">
+            <NuxtLink :to="`/ogloszenia/${conversation.advertId}`" class="advert-strip-inner">
                 <img v-if="conversation.advertThumbnail" :src="conversation.advertThumbnail" class="strip-thumb" :alt="conversation.advertTitle" loading="lazy" />
                 <div v-else class="strip-thumb-placeholder"><v-icon icon="mdi-car" size="16" /></div>
                 <span class="strip-title">{{ conversation.advertTitle }}</span>

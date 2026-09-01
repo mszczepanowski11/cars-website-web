@@ -97,7 +97,7 @@
               <h2 class="cp-card-h">Ogłoszenia tej firmy <span class="cp-count">{{ listingsTotal }}</span></h2>
               <ul class="cp-listings">
                 <li v-for="ad in listings" :key="ad.id">
-                  <NuxtLink :to="`/advert/${ad.id}`" class="cp-listing">
+                  <NuxtLink :to="advertPath(ad)" class="cp-listing">
                     <div class="cp-listing-img">
                       <img :src="getImageUrl(ad.imageUrl, undefined, { width: 160, height: 120 })" :alt="ad.title" loading="lazy" width="80" height="60" />
                       <span v-if="ad.badge" class="cp-listing-badge">{{ ad.badge }}</span>

@@ -1,3 +1,4 @@
+import { advertPath } from '~shared/advertSlug'
 // Normalizes a raw CarAdvertResponseDto (as returned by the .NET API) into the flat shape the
 // ad-card template needs. Every field is derived defensively - adverts entered before the
 // taxonomy rebuild (or added manually without a matched EngineVersion) may be missing any of
@@ -70,6 +71,6 @@ export function buildAdCardData(advert: any, siteUrl: string): AdCardData {
         powerLabel: powerLabel(advert),
         driveLabel: shortDriveLabel(advert.driveType?.name),
         photoUrl: photo,
-        ctaUrl: `${siteUrl.replace(/\/$/, '')}/advert/${advert.id}`,
+        ctaUrl: `${siteUrl.replace(/\/$/, '')}${advertPath(advert)}`,
     }
 }

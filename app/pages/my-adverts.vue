@@ -58,14 +58,14 @@
                             :aria-label="`Zaznacz: ${a.title}`"
                             @change="toggleSelect(a.id)"
                         />
-                        <NuxtLink :to="`/advert/${a.id}`" class="row-img-wrap">
+                        <NuxtLink :to="advertPath(a)" class="row-img-wrap">
                             <img :src="mainImage(a)" :alt="a.title" class="row-img" loading="lazy" />
                             <span v-if="a.soldAt" class="overlay-badge sold-badge">{{ $t('myAdverts.sold') }}</span>
                             <span v-else-if="a.badge" class="overlay-badge promo-badge">{{ a.badge }}</span>
                         </NuxtLink>
 
                         <div class="row-body">
-                            <NuxtLink :to="`/advert/${a.id}`" class="row-title">{{ a.title }}</NuxtLink>
+                            <NuxtLink :to="advertPath(a)" class="row-title">{{ a.title }}</NuxtLink>
                             <div class="row-meta">
                                 <span class="row-price">{{ formatPrice(a.price) }} zł</span>
                                 <span class="row-sep">·</span>
@@ -93,7 +93,7 @@
                             </div>
 
                             <div class="row-actions">
-                                <NuxtLink :to="`/advert/${a.id}`" class="act-btn" :aria-label="`Podgląd: ${a.title}`">
+                                <NuxtLink :to="advertPath(a)" class="act-btn" :aria-label="`Podgląd: ${a.title}`">
                                     <v-icon icon="mdi-eye-outline" size="15" />
                                 </NuxtLink>
                                 <NuxtLink :to="`/add-advert?edit=${a.id}`" class="act-btn" :aria-label="`Edytuj: ${a.title}`">
