@@ -4,7 +4,14 @@ export const useTaxonomy = () => {
   return {
     fetchBrands: () => $fetch<TaxonomyItem[]>('/api/proxy/api/Taxonomy/brands'),
     fetchBrandsByCategory: (categoryId: number) => $fetch<TaxonomyItem[]>(`/api/proxy/api/Taxonomy/brands/category/${categoryId}`),
-    fetchModels: (brandId: number) => $fetch<TaxonomyItem[]>(`/api/proxy/api/Taxonomy/brands/${brandId}/models`),
+    // Taksonomia Etap 3: categoryId is optional. Passing it filters out models explicitly scoped
+    // to another category, so picking "Motocykle" then BMW no longer lists Seria 3 and X5.
+    // Models with no category mapping still come back for every category, so nothing that used to
+    // be selectable disappears.
+    fetchModels: (brandId: number, categoryId?: number | null) => $fetch<TaxonomyItem[]>(
+        `/api/proxy/api/Taxonomy/brands/${brandId}/models`,
+        categoryId ? { query: { categoryId } } : undefined,
+    ),
     fetchGenerations: (modelId: number) => $fetch<Generation[]>(`/api/proxy/api/Taxonomy/models/${modelId}/generations`),
     fetchEngines: (generationId: number) => $fetch<EngineVersion[]>(`/api/proxy/api/Taxonomy/generations/${generationId}/engines`),
     fetchTrims: (generationId: number) => $fetch<TaxonomyItem[]>(`/api/proxy/api/Taxonomy/trims/generation/${generationId}`),

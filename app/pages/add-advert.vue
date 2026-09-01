@@ -4322,7 +4322,7 @@ async function onBrand() {
     models.value = []; generations.value = []; trims.value = []; engines.value = []
     if (form.brandId) {
         modelsLoading.value = true
-        const result = await fetchModels(form.brandId)
+        const result = await fetchModels(form.brandId, form.categoryId)
         if (seq === _brandSeq) { models.value = result; modelsLoading.value = false }
     }
     if (seq !== _brandSeq) return
@@ -5273,7 +5273,7 @@ onMounted(async () => {
             form.homologationType = advert.homologationType ?? null
             documents.value = (advert.documents ?? []).map(d => ({ url: d.url, type: d.type, label: d.label ?? '' }))
             existingImages.value = advert.images ?? []
-            if (form.brandId) models.value = await fetchModels(form.brandId)
+            if (form.brandId) models.value = await fetchModels(form.brandId, form.categoryId)
             if (form.modelId) generations.value = await fetchGenerations(form.modelId)
             if (form.generationId) {
                 const [loadedTrims, loadedEngines] = await Promise.all([

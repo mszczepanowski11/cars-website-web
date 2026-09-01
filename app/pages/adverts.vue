@@ -66,7 +66,7 @@
                             <label class="fp-label">{{ $t('adverts.model') }}</label>
                             <div class="fp-select-wrap">
                                 <v-icon icon="mdi-car-settings" size="14" class="fp-field-icon" />
-                                <select v-model="f.modelId" class="fp-select" :disabled="!f.brandId">
+                                <select v-model="f.modelId" class="fp-select" :disabled="!f.brandId" @change="onModelChange">
                                     <option :value="null">{{ $t('adverts.allModels') }}</option>
                                     <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
                                 </select>
@@ -921,6 +921,14 @@ async function loadCategoryScopedFilters(categoryId: number | null, subtypeId: n
     clearAttrFilters()
 }
 
+// The model select had no change handler, so a generationId inherited from the URL survived a
+// model change and every search then asked for "ModelId=A AND GenerationId=B(from another model)",
+// which silently returns zero results with no explanation. Mirrors index.vue's cascade.
+function onModelChange() {
+    f.generationId = null
+    load(1)
+}
+
 function onCategoryChange() {
     // v-model already wrote the newly picked option into f.categoryId before this
     // handler runs, so just react to it here - do not re-derive/toggle it.
@@ -1016,7 +1024,7 @@ async function onBrandChange() {
     f.modelId = null
     f.generationId = null
     models.value = []
-    if (f.brandId) models.value = await fetchModels(f.brandId)
+    if (f.brandId) models.value = await fetchModels(f.brandId, f.categoryId)
     load(1)
 }
 
@@ -1101,7 +1109,7 @@ const { data: taxoData } = await useAsyncData('taxonomy', async () => {
         fetchDriveTypes().catch(() => [] as DriveType[]),
         fetchColors().catch(() => [] as CarColor[]),
         fetchCategories().catch(() => [] as CategoryWithCount[]),
-        f.brandId ? fetchModels(f.brandId).catch(() => [] as TaxonomyItem[]) : Promise.resolve([] as TaxonomyItem[]),
+        f.brandId ? fetchModels(f.brandId, f.categoryId).catch(() => [] as TaxonomyItem[]) : Promise.resolve([] as TaxonomyItem[]),
         fetchPartCategories().catch(() => [] as PartCategory[]),
     ])
     return { brands: b, fuelTypes: ft, bodyTypes: bt, gearboxes: gb, driveTypes: dt, colors: c, categories: cats, initialModels: m, partCategories: pc }
