@@ -70,7 +70,7 @@
                     <div class="qr-wrap" @mouseenter="generateQR">
                         <button class="icon-action"><v-icon icon="mdi-qrcode" size="17" /><span class="ia-label">QR</span></button>
                         <div v-if="qrDataUrl" class="qr-popup">
-                            <img :src="qrDataUrl" :alt="$t('advertDetail.qr.alt')" width="120" height="120" />
+                            <img :src="qrDataUrl" :alt="$t('advertDetail.qr.alt')" width="120" height="120" loading="lazy" decoding="async" />
                             <span>{{ $t('advertDetail.qr.scan') }}</span>
                         </div>
                     </div>
@@ -102,7 +102,7 @@
                                 {{ advert.badge }}
                             </span>
                         </div>
-                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" width="1200" height="750" fetchpriority="high" @error="onImageError" />
+                        <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" width="1200" height="750" fetchpriority="high" decoding="async" @error="onImageError" />
                         <div class="photo-bottom-bar">
                             <span v-if="hasImages" class="photo-count-pill">
                                 <v-icon icon="mdi-image-multiple-outline" size="13" />
@@ -138,7 +138,21 @@
                             :class="{ 'thumb-active': i === activeImg }"
                             @click="activeImg = i"
                         >
-                            <img :src="img.url" :alt="$t('advertDetail.gallery.photoAlt', { n: i + 1, title: advert?.title ?? '' })" loading="lazy" @error="onImageError" />
+                            <!-- NuxtImg zamiast surowego <img loading="lazy" decoding="async" >: serwuje WebP/AVIF i skaluje do
+                                 realnego rozmiaru miniatury zamiast pobierac pelne zdjecie.
+                                 Jawne wymiary rezerwuja miejsce, wiec uklad nie skacze. -->
+                            <NuxtImg
+                                provider="carizo"
+                                :src="img.url"
+                                :alt="$t('advertDetail.gallery.photoAlt', { n: i + 1, title: advert?.title ?? '' })"
+                                loading="lazy"
+                                decoding="async"
+                                width="160"
+                                height="110"
+                                format="auto"
+                                quality="70"
+                                @error="onImageError"
+                            />
                             <div v-if="i === 5 && allImages.length > 6" class="thumb-more">+{{ allImages.length - 6 }}</div>
                         </button>
                     </div>
@@ -609,7 +623,18 @@
                         <NuxtLink v-for="a in similar" :key="a.id" :to="advertPath(a)" class="sim-card">
                             <div class="sim-img-wrap">
                                 <span v-if="a.isVerified" class="sim-verified">VERIFIED</span>
-                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" @error="onImageError" />
+                                <NuxtImg
+                                    provider="carizo"
+                                    :src="getImageUrl(a.images?.find(i => i.isMain)?.url)"
+                                    :alt="a.title"
+                                    loading="lazy"
+                                    decoding="async"
+                                    width="300"
+                                    height="190"
+                                    format="auto"
+                                    quality="72"
+                                    @error="onImageError"
+                                />
                                 <button class="sim-fav" @click.prevent="toggleFavorite(a.id)"><v-icon :icon="isFavorite(a.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="17" /></button>
                             </div>
                             <div class="sim-body">
@@ -702,11 +727,11 @@
             <div v-if="lightboxOpen" class="lightbox-backdrop" @click.self="lightboxOpen = false">
                 <button class="lb-close" :aria-label="$t('advertDetail.gallery.lightboxClose')" @click="lightboxOpen = false"><v-icon icon="mdi-close" size="22" /></button>
                 <button class="lb-arrow lb-prev" :aria-label="$t('advertDetail.gallery.prevPhoto')" :disabled="lightboxIdx === 0" @click="lightboxIdx--"><v-icon icon="mdi-chevron-left" size="30" /></button>
-                <div class="lb-img-wrap"><img :src="allImages[lightboxIdx]?.url ?? placeholder" :alt="`${advert?.title ?? $t('advertDetail.gallery.photo')} ${lightboxIdx + 1} / ${allImages.length}`" class="lb-img" @error="onImageError" /></div>
+                <div class="lb-img-wrap"><img :src="allImages[lightboxIdx]?.url ?? placeholder" :alt="`${advert?.title ?? $t('advertDetail.gallery.photo')} ${lightboxIdx + 1} / ${allImages.length}`" class="lb-img" @error="onImageError" loading="lazy" decoding="async" /></div>
                 <button class="lb-arrow lb-next" :aria-label="$t('advertDetail.gallery.nextPhoto')" :disabled="lightboxIdx === allImages.length - 1" @click="lightboxIdx++"><v-icon icon="mdi-chevron-right" size="30" /></button>
                 <div class="lb-counter">{{ lightboxIdx + 1 }} / {{ allImages.length }}</div>
                 <div class="lb-thumbs">
-                    <div v-for="(img, i) in allImages" :key="i" class="lb-thumb" :class="{ 'lb-thumb-active': i === lightboxIdx }" @click="lightboxIdx = i"><img :src="img.url" :alt="$t('advertDetail.gallery.thumbAlt', { n: i + 1 })" @error="onImageError" /></div>
+                    <div v-for="(img, i) in allImages" :key="i" class="lb-thumb" :class="{ 'lb-thumb-active': i === lightboxIdx }" @click="lightboxIdx = i"><img :src="img.url" :alt="$t('advertDetail.gallery.thumbAlt', { n: i + 1 })" @error="onImageError" loading="lazy" decoding="async" /></div>
                 </div>
             </div>
         </transition>
@@ -1165,7 +1190,7 @@ const allImages = computed(() => {
 
 // This is the page's LCP (largest contentful paint) element - request a display-appropriate
 // size straight from the raw source rather than reusing allImages' full-size proxy URL, and
-// mark fetchpriority="high" on the <img> below so the browser starts downloading it immediately.
+// mark fetchpriority="high" on the <img loading="lazy" decoding="async" > below so the browser starts downloading it immediately.
 const mainImg = computed(() => {
     const raw = advert.value?.images?.length ? advert.value.images[activeImg.value]?.url : null
     return getImageUrl(raw, placeholder, { width: 1200, quality: 80, format: 'auto' })

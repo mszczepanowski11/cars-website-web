@@ -23,7 +23,7 @@
                     <div class="cmp-label-cell" />
                     <div v-for="a in loadedAdverts" :key="a.id" class="cmp-advert-header">
                         <div class="cmp-header-img-wrap">
-                            <img :src="getMainImg(a)" :alt="a.title" class="cmp-header-img" loading="lazy" />
+                            <img :src="getMainImg(a)" :alt="a.title" class="cmp-header-img" loading="lazy" decoding="async" />
                             <button class="cmp-remove-btn" @click="toggle(a.id)" :title="$t('compare.removeFromCompare')">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>

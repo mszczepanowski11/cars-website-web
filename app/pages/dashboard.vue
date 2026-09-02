@@ -205,8 +205,7 @@
                                 :src="getImageUrl(a.images?.find(i => i.isMain)?.url)"
                                 class="recent-mini-img"
                                 :alt="a.title"
-                                loading="lazy"
-                            />
+                                loading="lazy" decoding="async" />
                             <div class="recent-mini-body">
                                 <div class="recent-mini-name">{{ a.brand?.name }} {{ a.model?.name }}</div>
                                 <div class="recent-mini-price">{{ Number(a.price).toLocaleString('pl') }} zł</div>
@@ -240,7 +239,7 @@
                         <div v-for="a in filteredAdverts" :key="a.id" class="advert-card">
                             <div class="adcard-img-wrap">
                                 <span class="adcard-badge" :class="advertBadgeClass(a)">{{ advertBadgeLabel(a) }}</span>
-                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" loading="lazy" />
+                                <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" loading="lazy" decoding="async" />
                                 <button class="adcard-delete-btn" :disabled="deleteLoading === a.id" :title="$t('dashboard.deleteTitle')"
                                     @click.stop="confirmDelete(a.id)">
                                     <v-icon v-if="deleteLoading === a.id" icon="mdi-loading" size="14" class="spin" />
@@ -361,7 +360,7 @@
                             class="spin" /></div>
                     <div v-else-if="followedAdverts.length" class="advert-follow-list">
                         <div v-for="fa in followedAdverts" :key="fa.id" class="follow-advert-row">
-                            <img :src="getImageUrl(fa.mainImageUrl)" class="follow-advert-img" :alt="fa.advertTitle" loading="lazy" />
+                            <img :src="getImageUrl(fa.mainImageUrl)" class="follow-advert-img" :alt="fa.advertTitle" loading="lazy" decoding="async" />
                             <div class="follow-advert-info">
                                 <div class="follow-advert-title">{{ fa.advertTitle }}</div>
                                 <div class="follow-advert-meta">

@@ -99,7 +99,7 @@
                 <li v-for="ad in listings" :key="ad.id">
                   <NuxtLink :to="advertPath(ad)" class="cp-listing">
                     <div class="cp-listing-img">
-                      <img :src="getImageUrl(ad.imageUrl, undefined, { width: 160, height: 120 })" :alt="ad.title" loading="lazy" width="80" height="60" />
+                      <img :src="getImageUrl(ad.imageUrl, undefined, { width: 160, height: 120 })" :alt="ad.title" loading="lazy" width="80" height="60" decoding="async" />
                       <span v-if="ad.badge" class="cp-listing-badge">{{ ad.badge }}</span>
                     </div>
                     <div class="cp-listing-body">

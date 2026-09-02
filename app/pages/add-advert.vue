@@ -6,7 +6,7 @@
                 <div class="success-confetti">
                     <span v-for="i in 12" :key="i" class="confetti-dot" :style="{ '--i': i }" />
                 </div>
-                <img src="/carizo-logo.svg" alt="CARIZO" class="success-logo" />
+                <img src="/carizo-logo.svg" alt="CARIZO" class="success-logo" loading="lazy" decoding="async" />
                 <div class="success-icon-wrap">
                     <v-icon icon="mdi-check-circle" size="52" class="success-icon" />
                 </div>
@@ -42,7 +42,7 @@
         <!-- Top bar -->
         <div class="top-bar">
             <div class="top-left">
-                <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" />
+                <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" loading="lazy" decoding="async" />
                 <button class="back-btn" @click="navigateTo('/dashboard')">
                     <v-icon icon="mdi-arrow-left" size="16" />
                     Wróć do panelu
@@ -1155,7 +1155,7 @@
                     >
                         <!-- Existing images (edit mode) -->
                         <div v-for="img in existingImages" :key="`ex-${img.id}`" class="img-thumb img-thumb--existing">
-                            <img :src="getImageUrl(img.url)" :alt="`Zdjęcie pojazdu ${img.id}`" loading="lazy" />
+                            <img :src="getImageUrl(img.url)" :alt="`Zdjęcie pojazdu ${img.id}`" loading="lazy" decoding="async" />
                             <button type="button" class="img-remove"
                                 :disabled="deletingImageId === img.id"
                                 @click="deleteExistingImage(img.id)">
@@ -1177,7 +1177,7 @@
                             @dragleave="dragOverIdx = null"
                             @drop.prevent="reorderPhoto(i)"
                         >
-                            <img :src="preview" :alt="`Zdjęcie ${i + 1}`" />
+                            <img :src="preview" :alt="`Zdjęcie ${i + 1}`" loading="lazy" decoding="async" />
                             <button type="button" class="img-remove" :aria-label="`Usuń zdjęcie ${i + 1}`" @click="removeImage(i)">
                                 <v-icon icon="mdi-close" size="14" />
                             </button>
@@ -1205,7 +1205,7 @@
                         </div>
                         <div v-for="(preview, index) in previews" :key="`ai-${index}`" class="photo-ai-item">
                             <div class="photo-ai-thumb">
-                                <img :src="preview" :alt="`Podgląd zdjęcia ${index + 1} do analizy AI`" />
+                                <img :src="preview" :alt="`Podgląd zdjęcia ${index + 1} do analizy AI`" loading="lazy" decoding="async" />
                                 <span class="photo-ai-num">{{ index + 1 }}</span>
                             </div>
                             <div class="photo-ai-content">
@@ -2082,7 +2082,7 @@
                     </div>
                     <div class="preview-card">
                         <div class="prev-img-wrap">
-                            <img v-if="previews.length" :src="previews[0]" class="prev-main-img" alt="Zdjęcie główne" />
+                            <img v-if="previews.length" :src="previews[0]" class="prev-main-img" alt="Zdjęcie główne" loading="lazy" decoding="async" />
                             <div v-else class="prev-img-placeholder">
                                 <v-icon icon="mdi-image-outline" size="48" />
                                 <span>Brak zdjęć</span>
@@ -2286,8 +2286,7 @@
                     <div class="preview-img-wrap">
                         <img
                             :src="previews[0] ?? '/car-placeholder.svg'"
-                            alt=""
-                        />
+                            alt="" loading="lazy" decoding="async" />
                     </div>
                     <div class="preview-details">
                         <div class="preview-car-name">{{ previewTitle }}</div>
@@ -2325,7 +2324,7 @@
                     </div>
                     <div class="pm-body">
                         <div class="pm-img-wrap">
-                            <img :src="previews[0] ?? '/car-placeholder.svg'" class="pm-img" alt="" />
+                            <img :src="previews[0] ?? '/car-placeholder.svg'" class="pm-img" alt="" loading="lazy" decoding="async" />
                             <div class="pm-img-count" v-if="previews.length > 1">+{{ previews.length - 1 }} zdjęć</div>
                         </div>
                         <div class="pm-content">

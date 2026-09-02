@@ -62,7 +62,7 @@
                                 <td class="td-id">#{{ a.id }}</td>
                                 <td>
                                     <div class="advert-cell">
-                                        <img :src="getImageUrl(a.mainImageUrl)" class="advert-thumb" :alt="a.title" loading="lazy" />
+                                        <img :src="getImageUrl(a.mainImageUrl)" class="advert-thumb" :alt="a.title" loading="lazy" decoding="async" />
                                         <div>
                                             <div class="advert-title">{{ a.title }}</div>
                                             <div class="advert-meta">{{ a.brand ?? '' }} {{ a.model ?? '' }} {{ a.year ?? '' }}</div>

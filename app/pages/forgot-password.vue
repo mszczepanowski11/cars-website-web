@@ -1,7 +1,7 @@
 <template>
     <div class="auth-bg">
         <div class="auth-card">
-            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
+            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" loading="lazy" decoding="async" /></NuxtLink>
             <h2>{{ $t('forgotPassword.heading') }}</h2>
             <p class="auth-sub">{{ $t('forgotPassword.subtitle') }}</p>
 

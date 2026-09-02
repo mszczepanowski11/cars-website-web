@@ -73,7 +73,7 @@
                     <div class="form-group full">
                         <label class="form-label">{{ $t('addEvent.form.mainImage') }}</label>
                         <div class="upload-area" :class="{ 'has-img': previewUrl }" @click="triggerUpload">
-                            <img v-if="previewUrl" :src="previewUrl" class="img-preview" :alt="$t('addEvent.form.imagePreviewAlt')" />
+                            <img v-if="previewUrl" :src="previewUrl" class="img-preview" :alt="$t('addEvent.form.imagePreviewAlt')" loading="lazy" decoding="async" />
                             <div v-else class="upload-placeholder">
                                 <v-icon icon="mdi-image-plus-outline" size="40" class="upload-icon" />
                                 <span>{{ $t('addEvent.form.uploadClick') }}</span>

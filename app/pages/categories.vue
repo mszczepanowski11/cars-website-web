@@ -73,8 +73,7 @@
                             :src="catImages[cat.slug] ?? fallbackImg"
                             :alt="cat.name"
                             class="cat-bg-img"
-                            loading="lazy"
-                        />
+                            loading="lazy" decoding="async" />
                         <div class="cat-gradient" />
                         <div class="cat-top">
                             <div class="cat-icon-wrap">

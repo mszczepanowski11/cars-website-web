@@ -59,7 +59,7 @@
                             @change="toggleSelect(a.id)"
                         />
                         <NuxtLink :to="advertPath(a)" class="row-img-wrap">
-                            <img :src="mainImage(a)" :alt="a.title" class="row-img" loading="lazy" />
+                            <img :src="mainImage(a)" :alt="a.title" class="row-img" loading="lazy" decoding="async" />
                             <span v-if="a.soldAt" class="overlay-badge sold-badge">{{ $t('myAdverts.sold') }}</span>
                             <span v-else-if="a.badge" class="overlay-badge promo-badge">{{ a.badge }}</span>
                         </NuxtLink>

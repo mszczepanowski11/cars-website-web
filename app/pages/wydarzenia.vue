@@ -60,7 +60,7 @@
             <div v-else class="events-grid">
                 <div v-for="ev in events" :key="ev.id" class="event-card" @click="navigateTo(`/wydarzenie/${ev.id}`)">
                     <div class="card-img-wrap">
-                        <img :src="getEventImageUrl(ev)" :alt="ev.name" />
+                        <img :src="getEventImageUrl(ev)" :alt="ev.name" loading="lazy" decoding="async" />
                         <span v-if="ev.isFeatured" class="event-badge event-badge--featured">
                             <v-icon icon="mdi-crown" size="10" /> {{ $t('events.card.featured') }}
                         </span>

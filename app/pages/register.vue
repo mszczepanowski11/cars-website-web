@@ -4,7 +4,7 @@
         <!-- Success screen after registration -->
         <Transition name="success-fade">
             <div v-if="registrationSuccess" class="reg-success">
-                <img src="/carizo-logo.svg" alt="CARIZO" class="reg-success-logo" />
+                <img src="/carizo-logo.svg" alt="CARIZO" class="reg-success-logo" loading="lazy" decoding="async" />
                 <div class="reg-success-icon email-icon">
                     <v-icon icon="mdi-email-check-outline" size="44" />
                 </div>
@@ -31,7 +31,7 @@
         </Transition>
 
         <div v-if="!registrationSuccess" class="auth-card">
-            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
+            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" loading="lazy" decoding="async" /></NuxtLink>
             <h2>{{ $t('register.heading') }}</h2>
             <p class="auth-sub">{{ $t('register.subtitle') }}</p>
 
