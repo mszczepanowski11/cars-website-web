@@ -285,14 +285,14 @@ async function subscribeNewsletter() {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #4caf50;
+  color: $success;
   font-size: 13px;
   font-weight: 600;
 }
 
 .fn-err {
   font-size: 12px;
-  color: #e55;
+  color: $danger;
   margin: 0;
   width: 100%;
 }

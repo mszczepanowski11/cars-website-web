@@ -155,7 +155,7 @@ const filteredGroups = computed(() => {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 12px 16px;
@@ -189,7 +189,7 @@ const filteredGroups = computed(() => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: 999px;
     color: $text-muted;
@@ -228,7 +228,7 @@ const filteredGroups = computed(() => {
 .faq-list { max-width: 800px; display: flex; flex-direction: column; gap: 6px; }
 
 .faq-item {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;
@@ -272,7 +272,7 @@ const filteredGroups = computed(() => {
     display: flex;
     align-items: center;
     gap: 20px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 28px 32px;

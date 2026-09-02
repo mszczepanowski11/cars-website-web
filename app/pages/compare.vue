@@ -214,7 +214,7 @@ onMounted(fetchAdverts)
 }
 
 .cmp-label-cell {
-    background: #080808;
+    background: $bg;
     border-right: 1px solid $border;
     border-bottom: 1px solid $border;
     padding: 14px 16px;
@@ -227,7 +227,7 @@ onMounted(fetchAdverts)
 }
 
 .cmp-advert-header {
-    background: #0a0a0a;
+    background: $card-alt;
     border-right: 1px solid $border;
     border-bottom: 1px solid $border;
     padding: 16px;
@@ -282,7 +282,7 @@ onMounted(fetchAdverts)
 }
 
 .cmp-val-cell {
-    background: #070707;
+    background: $bg;
     border-right: 1px solid $border;
     border-bottom: 1px solid $border;
     padding: 12px 16px;
@@ -293,7 +293,7 @@ onMounted(fetchAdverts)
     min-width: 200px;
 
     &.cmp-val--best {
-        color: #4ade80;
+        color: $success;
         background: rgba(#14532d, 0.25);
         font-weight: 600;
     }
@@ -348,7 +348,7 @@ onMounted(fetchAdverts)
     border-radius: 4px;
     text-transform: uppercase;
 
-    &.cmp-badge--top     { background: rgba(#f5a623, 0.18); color: #f5a623; border: 1px solid rgba(#f5a623, 0.4); }
+    &.cmp-badge--top     { background: rgba($premium, 0.18); color: $premium; border: 1px solid rgba($premium, 0.4); }
     &.cmp-badge--premium { background: $red; color: white; }
     &.cmp-badge--featured { background: rgba($red, 0.18); color: #ff6b6b; border: 1px solid rgba($red, 0.4); }
 }

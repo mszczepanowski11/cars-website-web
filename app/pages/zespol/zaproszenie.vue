@@ -67,7 +67,7 @@ onMounted(async () => {
 .invite-card {
     max-width: 440px;
     margin: 0 auto;
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 48px 32px;
@@ -78,8 +78,8 @@ onMounted(async () => {
     gap: 14px;
 
     .v-icon { color: $text-dim; }
-    .icon-success { color: #4caf50; }
-    .icon-error { color: #e74c3c; }
+    .icon-success { color: $success; }
+    .icon-error { color: $danger; }
 
     h1 { font-size: 20px; font-weight: 800; color: $text; margin: 0; }
     p { font-size: 14px; color: $text-dim; line-height: 1.6; margin: 0 0 8px; }

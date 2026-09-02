@@ -58,7 +58,7 @@ $red-hot:     #ee5555;   // stan hover / sygnał (był #e55)
 // w kodzie, żeby migracja nie zmieniała wyglądu.
 $success:     #4caf50;
 $warning:     #ff9800;
-$danger:      #e53935;
+$danger:      #ee5555;   // = dawne #e55 (83 uzycia): blad, status zablokowany, akcja niszczaca
 $info:        #2196f3;
 $premium:     #f5a623;   // złoto: wyróżnienia / TOP / Premium
 
@@ -130,3 +130,15 @@ $shadow-lg: 0 10px 30px rgba(0, 0, 0, .45);
 // ── Przejścia ────────────────────────────────────────────────────────────────
 $t-fast: .15s ease;
 $t-base: .25s ease;
+
+// ── Konsolidacja duplikatow semantycznych (audyt spojnosci) ──────────────────
+// Audyt pokazal, ze ten sam KOMUNIKAT mial po kilka roznych kolorow:
+//   zielen "sukces"  - #4caf50, #4ade80, #22c55e, #2e9d5b  (cztery odcienie!)
+//   blekit "info"    - #2196f3, #60a5fa
+//   zloto "premium"  - #f5a623, #ffd700, #f39c12
+//   czerwien "blad"  - #ee5555, #e74c3c
+// oraz szesc praktycznie nieodroznialnych czerni (#070707...#111, 154 uzycia).
+// To wlasnie sprawia, ze portal wyglada jak zlepek podstron. Ponizej jedno
+// zrodlo prawdy; roznice odcieni sa na tyle male, ze konsolidacja nie zmienia
+// odbioru strony, a usuwa przypadkowosc.
+$accent-purple: #b388ff;   // wyroznik funkcji AI/premium - zachowany jako osobny akcent

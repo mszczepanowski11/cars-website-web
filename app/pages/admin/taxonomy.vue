@@ -292,7 +292,7 @@ onMounted(async () => {
 .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
 
 .cat-select {
-    background: #0d0d0d; border: 1px solid $border; border-radius: $r-sm; color: $text-muted;
+    background: $card; border: 1px solid $border; border-radius: $r-sm; color: $text-muted;
     font-size: 12px; padding: 7px 10px; cursor: pointer; font-family: 'Inter', sans-serif;
 }
 
@@ -306,18 +306,18 @@ onMounted(async () => {
 }
 
 .add-form-card {
-    background: #0d0d0d; border: 1px solid rgba($red, 0.2); border-radius: $r-md;
+    background: $card; border: 1px solid rgba($red, 0.2); border-radius: $r-md;
     padding: 16px 20px; margin-bottom: 18px;
 }
 .afc-title { font-size: 13px; font-weight: 700; color: $text; margin-bottom: 12px; }
 .afc-fields { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .afc-input {
-    flex: 1; min-width: 200px; background: #080808; border: 1px solid $border; border-radius: $r-sm;
+    flex: 1; min-width: 200px; background: $bg; border: 1px solid $border; border-radius: $r-sm;
     color: $text; font-size: 13px; padding: 8px 12px; outline: none; font-family: 'Inter', sans-serif;
     &:focus { border-color: rgba($red, 0.4); }
 }
 .afc-select {
-    background: #080808; border: 1px solid $border; border-radius: $r-sm; color: $text-muted;
+    background: $bg; border: 1px solid $border; border-radius: $r-sm; color: $text-muted;
     font-size: 13px; padding: 8px 12px; cursor: pointer; font-family: 'Inter', sans-serif;
 }
 .btn-confirm {
@@ -357,6 +357,6 @@ onMounted(async () => {
 }
 .btn-delete {
     background: rgba(220,50,50,0.06); color: rgba(229,85,85,0.7); border-color: rgba(220,50,50,0.15);
-    &:hover { background: rgba(220,50,50,0.18); color: #e55; border-color: rgba(220,50,50,0.35); }
+    &:hover { background: rgba(220,50,50,0.18); color: $danger; border-color: rgba(220,50,50,0.35); }
 }
 </style>

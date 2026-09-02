@@ -171,7 +171,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 0 14px;
@@ -204,7 +204,7 @@ h2 {
     border-radius: $r-sm;
     padding: 10px 14px;
     font-size: 13px;
-    color: #e55;
+    color: $danger;
     .v-icon { flex-shrink: 0; }
 }
 

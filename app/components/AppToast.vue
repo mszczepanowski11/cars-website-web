@@ -73,7 +73,7 @@ function iconFor(type: ToastType): string {
     gap: 12px;
     min-width: 320px;
     max-width: 420px;
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 14px 16px 18px;
@@ -90,23 +90,23 @@ function iconFor(type: ToastType): string {
 
     &--success {
         border-color: rgba(76,175,80,0.3);
-        .toast-icon-wrap { background: rgba(76,175,80,0.12); color: #4caf50; }
-        .toast-progress { background: #4caf50; }
+        .toast-icon-wrap { background: rgba(76,175,80,0.12); color: $success; }
+        .toast-progress { background: $success; }
     }
     &--error {
         border-color: rgba(220,60,60,0.35);
-        .toast-icon-wrap { background: rgba(220,60,60,0.12); color: #e55; }
-        .toast-progress { background: #e55; }
+        .toast-icon-wrap { background: rgba(220,60,60,0.12); color: $danger; }
+        .toast-progress { background: $danger; }
     }
     &--info {
         border-color: rgba(33,150,243,0.3);
-        .toast-icon-wrap { background: rgba(33,150,243,0.12); color: #2196f3; }
-        .toast-progress { background: #2196f3; }
+        .toast-icon-wrap { background: rgba(33,150,243,0.12); color: $info; }
+        .toast-progress { background: $info; }
     }
     &--warning {
         border-color: rgba(255,152,0,0.3);
-        .toast-icon-wrap { background: rgba(255,152,0,0.12); color: #ff9800; }
-        .toast-progress { background: #ff9800; }
+        .toast-icon-wrap { background: rgba(255,152,0,0.12); color: $warning; }
+        .toast-progress { background: $warning; }
     }
 }
 

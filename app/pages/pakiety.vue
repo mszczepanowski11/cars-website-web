@@ -338,7 +338,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     gap: 8px;
     background: rgba(76,175,80,0.1);
     border: 1px solid rgba(76,175,80,0.3);
-    color: #4caf50;
+    color: $success;
     font-size: 13px;
     font-weight: 700;
     padding: 8px 18px;
@@ -422,7 +422,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     flex-direction: column;
     gap: 20px;
     transition: border-color 0.2s, transform 0.2s;
-    &:hover { border-color: #333; transform: translateY(-2px); }
+    &:hover { border-color: $border; transform: translateY(-2px); }
     &--popular {
         border-color: $red;
         background: linear-gradient(160deg, rgba(139,13,29,0.06) 0%, $card 60%);
@@ -466,7 +466,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
 .plan-badge-free {
     font-size: 10px;
     font-weight: 800;
-    color: #4caf50;
+    color: $success;
     background: rgba(76,175,80,0.12);
     border: 1px solid rgba(76,175,80,0.3);
     padding: 2px 8px;
@@ -478,7 +478,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
 
 .price-amount { font-size: 36px; font-weight: 800; color: $text; line-height: 1; }
 .price-amount--crossed { font-size: 18px; font-weight: 500; color: $text-dim; text-decoration: line-through; }
-.price-amount--free { color: #4caf50; }
+.price-amount--free { color: $success; }
 .price-unit { font-size: 13px; color: $text-dim; align-self: flex-end; padding-bottom: 3px; }
 .price-brutto { font-size: 11px; color: $text-dim; margin-top: 4px; }
 

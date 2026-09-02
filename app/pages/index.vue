@@ -1443,7 +1443,7 @@ onMounted(async () => {
     width: 100%;
     cursor: pointer;
 
-    option { background: #0d0d0d; color: #fff; }
+    option { background: $card; color: #fff; }
     &::placeholder { color: rgba(255,255,255,0.3); }
     &:disabled { opacity: 0.35; cursor: not-allowed; }
     &::-webkit-outer-spin-button,
@@ -1472,7 +1472,7 @@ onMounted(async () => {
     transition: background 0.2s, transform 0.15s;
     letter-spacing: 0.3px;
 
-    &:hover { background: lighten(#8B0D1D, 8%); transform: none; }
+    &:hover { background: lighten($red, 8%); transform: none; }
     &:active { transform: scale(0.98); }
 
     @include respond-to(md) {
@@ -1746,7 +1746,7 @@ onMounted(async () => {
     cursor: pointer;
     transition: border-color 0.18s, background 0.18s;
 
-    option { background: #111; color: #fff; }
+    option { background: $card; color: #fff; }
     &:focus   { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
     &:hover   { border-color: rgba(255,255,255,0.2); }
     &:disabled { opacity: 0.35; cursor: not-allowed; }
@@ -1922,7 +1922,7 @@ onMounted(async () => {
     cursor: pointer;
     transition: border-color 0.18s, background 0.18s;
 
-    option { background: #111; color: #fff; }
+    option { background: $card; color: #fff; }
     &:focus { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
     &:hover { border-color: rgba(255,255,255,0.2); }
 }
@@ -2028,7 +2028,7 @@ onMounted(async () => {
     top: calc(100% + 8px);
     left: 0;
     right: 0;
-    background: #111;
+    background: $card;
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
     z-index: 200;
@@ -2200,7 +2200,7 @@ onMounted(async () => {
     gap: 5px;
     font-size: 10px;
     font-weight: 700;
-    color: #f39c12;
+    color: $premium;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     background: rgba(243,156,18,0.1);
@@ -2382,10 +2382,10 @@ onMounted(async () => {
     gap: 5px;
     font-size: 10px;
     font-weight: 700;
-    color: #f39c12;
+    color: $premium;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    .crown-icon { color: #f39c12; }
+    .crown-icon { color: $premium; }
 }
 
 .fb-name {
@@ -2437,7 +2437,7 @@ onMounted(async () => {
 }
 
 .event-card {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-xl;
     overflow: hidden;
@@ -2468,10 +2468,10 @@ onMounted(async () => {
 
     &--featured {
         background: rgba(243,156,18,0.2);
-        color: #f39c12;
+        color: $premium;
         border: 1px solid rgba(243,156,18,0.3);
 
-        .v-icon { color: #f39c12; }
+        .v-icon { color: $premium; }
     }
 }
 
@@ -2711,7 +2711,7 @@ onMounted(async () => {
     white-space: nowrap;
     transition: background 0.2s;
 
-    &:hover { background: lighten(#8B0D1D, 7%); }
+    &:hover { background: lighten($red, 7%); }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 
@@ -2723,8 +2723,8 @@ onMounted(async () => {
     padding: 10px 14px;
     border-radius: $r-sm;
 }
-.subscribe-ok  { background: rgba(45,122,58,0.1); border: 1px solid rgba(45,122,58,0.3); color: #4caf50; }
-.subscribe-err { background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.25); color: #e74c3c; }
+.subscribe-ok  { background: rgba(45,122,58,0.1); border: 1px solid rgba(45,122,58,0.3); color: $success; }
+.subscribe-err { background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.25); color: $danger; }
 
 .news-consent {
     display: flex;

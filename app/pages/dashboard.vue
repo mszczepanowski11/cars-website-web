@@ -1253,7 +1253,7 @@ onMounted(async () => {
 .dash-sidebar {
     width: 220px;
     min-width: 220px;
-    background: #070707;
+    background: $bg;
     border-right: 1px solid $border;
     display: flex;
     flex-direction: column;
@@ -1278,7 +1278,7 @@ onMounted(async () => {
     position: sticky;
     top: $nav-height;
     z-index: 90;
-    background: #070707;
+    background: $bg;
     border-bottom: 1px solid $border;
     overflow-x: auto;
     scrollbar-width: none;
@@ -1316,7 +1316,7 @@ onMounted(async () => {
         .v-icon { color: $red; }
     }
 
-    &--danger { color: #e55; .v-icon { color: #e55; } }
+    &--danger { color: $danger; .v-icon { color: $danger; } }
 }
 
 .dmn-badge {
@@ -1365,7 +1365,7 @@ onMounted(async () => {
 }
 
 .nav-danger:hover {
-    color: #e55;
+    color: $danger;
 }
 
 .nav-badge {
@@ -1528,7 +1528,7 @@ onMounted(async () => {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: #4caf50;
+    background: $success;
     border: 2px solid $bg;
 }
 
@@ -1590,7 +1590,7 @@ onMounted(async () => {
 .btag-dealer {
     background: rgba(45, 122, 58, 0.15);
     border-color: rgba(45, 122, 58, 0.3);
-    color: #4caf50;
+    color: $success;
     font-weight: 700;
     font-size: 11px;
     letter-spacing: 0.3px;
@@ -1676,7 +1676,7 @@ onMounted(async () => {
     font-weight: 500;
 
     &.green {
-        color: #4caf50;
+        color: $success;
     }
 }
 
@@ -1684,7 +1684,7 @@ onMounted(async () => {
     display: flex;
     gap: 1px;
     margin-top: 3px;
-    color: #f5a623;
+    color: $premium;
 }
 
 // Recently viewed strip
@@ -1818,7 +1818,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 9px 12px;
@@ -1886,7 +1886,7 @@ onMounted(async () => {
 }
 
 .advert-card {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;
@@ -1938,8 +1938,8 @@ onMounted(async () => {
 
 .badge-hidden {
     background: rgba(150, 50, 50, 0.3);
-    color: #e55;
-    border: 1px solid rgba(#e55, 0.3);
+    color: $danger;
+    border: 1px solid rgba($danger, 0.3);
 }
 
 .adcard-delete-btn {
@@ -1951,8 +1951,8 @@ onMounted(async () => {
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(4px);
-    border: 1px solid rgba(#e55, 0.25);
-    color: rgba(#e55, 0.75);
+    border: 1px solid rgba($danger, 0.25);
+    color: rgba($danger, 0.75);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1961,8 +1961,8 @@ onMounted(async () => {
 
     &:hover:not(:disabled) {
         background: rgba(220, 50, 50, 0.28);
-        color: #e55;
-        border-color: rgba(#e55, 0.55);
+        color: $danger;
+        border-color: rgba($danger, 0.55);
     }
 
     &:disabled {
@@ -2084,7 +2084,7 @@ onMounted(async () => {
 }
 
 .review-card {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 18px;
@@ -2133,11 +2133,11 @@ onMounted(async () => {
 .review-stars {
     display: flex;
     gap: 2px;
-    color: #f5a623;
+    color: $premium;
 }
 
 .star {
-    color: #f5a623;
+    color: $premium;
 }
 
 .review-content {
@@ -2164,7 +2164,7 @@ onMounted(async () => {
 }
 
 .follower-card {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px;
@@ -2211,7 +2211,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 12px;
@@ -2265,7 +2265,7 @@ onMounted(async () => {
 
 .price-changed {
     font-size: 11px;
-    color: #4caf50;
+    color: $success;
     display: flex;
     align-items: center;
     gap: 3px;
@@ -2317,7 +2317,7 @@ onMounted(async () => {
     align-items: flex-start;
     gap: 14px;
     padding: 14px 16px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     cursor: pointer;
@@ -2350,17 +2350,17 @@ onMounted(async () => {
 
     &.notif-blue {
         background: rgba(33, 150, 243, 0.12);
-        color: #2196f3;
+        color: $info;
     }
 
     &.notif-green {
         background: rgba(76, 175, 80, 0.12);
-        color: #4caf50;
+        color: $success;
     }
 
     &.notif-orange {
         background: rgba(255, 152, 0, 0.12);
-        color: #ff9800;
+        color: $warning;
     }
 }
 
@@ -2407,14 +2407,14 @@ onMounted(async () => {
     transition: color 0.2s;
 
     &:hover {
-        color: #e55;
+        color: $danger;
     }
 }
 
 // Saved searches
 .new-search-form {
     margin: 0 24px 20px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid rgba($red, 0.2);
     border-radius: $r-md;
     padding: 18px 20px;
@@ -2447,7 +2447,7 @@ onMounted(async () => {
 }
 
 .nsf-input {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -2472,7 +2472,7 @@ onMounted(async () => {
 
 .nsf-checkbox { accent-color: $red; width: 15px; height: 15px; cursor: pointer; }
 
-.nsf-error { font-size: 12px; color: #e55; }
+.nsf-error { font-size: 12px; color: $danger; }
 
 .nsf-actions {
     display: flex;
@@ -2509,7 +2509,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 16px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 14px 18px;
@@ -2592,7 +2592,7 @@ onMounted(async () => {
     transition: color 0.2s, background 0.2s;
 
     &:hover {
-        color: #e55;
+        color: $danger;
         background: rgba(220, 50, 50, 0.1);
     }
 }
@@ -2653,7 +2653,7 @@ onMounted(async () => {
 }
 
 .form-input {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -2673,7 +2673,7 @@ onMounted(async () => {
 }
 
 .form-textarea {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -2798,7 +2798,7 @@ onMounted(async () => {
     margin-top: 8px;
     padding: 20px;
     background: rgba(220, 50, 50, 0.05);
-    border: 1px solid rgba(#e55, 0.2);
+    border: 1px solid rgba($danger, 0.2);
     border-radius: $r-md;
     display: flex;
     flex-direction: column;
@@ -2808,7 +2808,7 @@ onMounted(async () => {
 .danger-title {
     font-size: 14px;
     font-weight: 700;
-    color: #e55;
+    color: $danger;
 }
 
 .danger-desc {
@@ -2819,9 +2819,9 @@ onMounted(async () => {
 
 .btn-danger {
     background: transparent;
-    border: 1px solid rgba(#e55, 0.4);
+    border: 1px solid rgba($danger, 0.4);
     border-radius: $r-sm;
-    color: #e55;
+    color: $danger;
     font-size: 13px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;
@@ -2941,7 +2941,7 @@ onMounted(async () => {
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    color: #4caf50;
+    color: $success;
     background: rgba(76, 175, 80, 0.08);
     border: 1px solid rgba(76, 175, 80, 0.2);
     border-radius: $r-sm;
@@ -2953,7 +2953,7 @@ onMounted(async () => {
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    color: #e55;
+    color: $danger;
     background: rgba(220, 50, 50, 0.08);
     border: 1px solid rgba(220, 50, 50, 0.2);
     border-radius: $r-sm;
@@ -2998,7 +2998,7 @@ onMounted(async () => {
 }
 
 .confirm-modal {
-    background: #0e0e0e;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 32px 28px;
@@ -3012,7 +3012,7 @@ onMounted(async () => {
 }
 
 .confirm-icon {
-    color: rgba(#e55, 0.7);
+    color: rgba($danger, 0.7);
 }
 
 .confirm-title {
@@ -3062,9 +3062,9 @@ onMounted(async () => {
     justify-content: center;
     gap: 7px;
     background: rgba(220, 50, 50, 0.15);
-    border: 1px solid rgba(#e55, 0.35);
+    border: 1px solid rgba($danger, 0.35);
     border-radius: $r-sm;
-    color: #e55;
+    color: $danger;
     font-size: 13px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;
@@ -3107,7 +3107,7 @@ onMounted(async () => {
     width: 250px;
     min-width: 250px;
     border-left: 1px solid $border;
-    background: #070707;
+    background: $bg;
     display: flex;
     flex-direction: column;
     position: sticky;
@@ -3195,7 +3195,7 @@ onMounted(async () => {
 }
 
 .verif-ok {
-    color: #4caf50;
+    color: $success;
     font-size: 11px;
     font-weight: 600;
 }

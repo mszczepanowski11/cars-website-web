@@ -38,7 +38,7 @@ const { compared, toggle, clear, MAX_COMPARE } = useCompare()
     position: fixed;
     bottom: 0; left: 0; right: 0;
     z-index: 900;
-    background: #0d0d0d;
+    background: $card;
     border-top: 1px solid rgba($red, 0.35);
     padding: 12px 20px;
     box-shadow: 0 -4px 24px rgba($red, 0.12);

@@ -116,7 +116,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 }
 
 .qv-modal {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-xl;
     width: 100%;
@@ -186,10 +186,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
     border-radius: 6px;
     display: inline-flex; align-items: center; gap: 4px;
 
-    &--top    { background: rgba(#f5a623,0.18); color: #f5a623; border: 1px solid rgba(#f5a623,0.4); }
+    &--top    { background: rgba($premium,0.18); color: $premium; border: 1px solid rgba($premium,0.4); }
     &--premium { background: $red; color: #fff; }
-    &--new    { background: #14532d; color: #4ade80; border: 1px solid rgba(#4ade80,0.3); top: auto; bottom: 12px; }
-    &--dealer { background: rgba(#3b82f6,0.15); color: #60a5fa; border: 1px solid rgba(#60a5fa,0.3); }
+    &--new    { background: #14532d; color: $success; border: 1px solid rgba($success,0.3); top: auto; bottom: 12px; }
+    &--dealer { background: rgba(#3b82f6,0.15); color: $info; border: 1px solid rgba($info,0.3); }
     &--featured { background: rgba($red,0.18); color: #ff6b6b; border: 1px solid rgba($red,0.45); }
 }
 

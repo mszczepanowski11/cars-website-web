@@ -70,13 +70,13 @@ const allVerified = computed(() => items.value.every(i => i.verified))
     .cv--compact & { margin-bottom: 8px; }
 }
 
-.cv-shield { color: #22c55e; flex-shrink: 0; }
+.cv-shield { color: $success; flex-shrink: 0; }
 
 .cv-title {
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 1px;
-    color: #22c55e;
+    color: $success;
     flex: 1;
 }
 
@@ -85,7 +85,7 @@ const allVerified = computed(() => items.value.every(i => i.verified))
     font-weight: 800;
     letter-spacing: 0.8px;
     background: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
+    color: $success;
     border: 1px solid rgba(34, 197, 94, 0.35);
     border-radius: 4px;
     padding: 2px 7px;
@@ -107,7 +107,7 @@ const allVerified = computed(() => items.value.every(i => i.verified))
 
     &--on {
         color: $text-muted;
-        .cv-item-icon { color: #22c55e; }
+        .cv-item-icon { color: $success; }
     }
 
     &--off {
@@ -121,5 +121,5 @@ const allVerified = computed(() => items.value.every(i => i.verified))
 
 .cv-item-label { flex: 1; }
 
-.cv-item-check { color: #22c55e; flex-shrink: 0; }
+.cv-item-check { color: $success; flex-shrink: 0; }
 </style>

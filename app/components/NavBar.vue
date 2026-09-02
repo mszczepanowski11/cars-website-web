@@ -403,7 +403,7 @@ watch(mobileOpen, (open) => {
     top: calc(100% + 18px);
     left: 50%;
     transform: translateX(-50%);
-    background: #0e0e0e;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 8px;
@@ -550,7 +550,7 @@ watch(mobileOpen, (open) => {
     right: 0;
     bottom: 0;
     width: min(320px, 88vw);
-    background: #080808;
+    background: $bg;
     border-left: 1px solid $border;
     z-index: 1000;
     display: flex;

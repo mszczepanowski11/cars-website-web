@@ -84,7 +84,7 @@ onBeforeUnmount(() => {
     width: 100%;
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid #1a1a1a;
+    border: 1px solid $border;
 }
 
 .map-container {
@@ -101,7 +101,7 @@ onBeforeUnmount(() => {
     gap: 8px;
     color: #777;
     font-size: 13px;
-    background: #080808;
+    background: $bg;
 }
 
 .spin {

@@ -128,7 +128,7 @@ async function submit() {
 }
 
 .report-modal {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     width: 100%;
@@ -191,7 +191,7 @@ async function submit() {
     align-items: center;
     gap: 8px;
     padding: 10px 12px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text-muted;
@@ -214,7 +214,7 @@ async function submit() {
 .r-icon { color: $text-dim; flex-shrink: 0; }
 
 .field-textarea {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -235,7 +235,7 @@ async function submit() {
     align-items: center;
     gap: 7px;
     font-size: 13px;
-    color: #e55;
+    color: $danger;
     background: rgba(220, 50, 50, 0.08);
     border: 1px solid rgba(220, 50, 50, 0.2);
     border-radius: $r-sm;
@@ -247,7 +247,7 @@ async function submit() {
     align-items: center;
     gap: 7px;
     font-size: 13px;
-    color: #4caf50;
+    color: $success;
     background: rgba(76, 175, 80, 0.08);
     border: 1px solid rgba(76, 175, 80, 0.2);
     border-radius: $r-sm;

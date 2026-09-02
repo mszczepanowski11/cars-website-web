@@ -396,8 +396,8 @@ onMounted(async () => {
     font-size: 11px; font-weight: 700;
     padding: 3px 10px; border-radius: 999px;
 }
-.badge-business { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.25); }
-.badge-verified { background: rgba(34, 197, 94, 0.12); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.2); }
+.badge-business { background: rgba(59, 130, 246, 0.15); color: $info; border: 1px solid rgba(59, 130, 246, 0.25); }
+.badge-verified { background: rgba(34, 197, 94, 0.12); color: $success; border: 1px solid rgba(34, 197, 94, 0.2); }
 
 .seller-name { font-size: 28px; font-weight: 900; color: $text; margin-bottom: 10px; }
 
@@ -524,7 +524,7 @@ onMounted(async () => {
 .reviews-list { display: flex; flex-direction: column; gap: 12px; max-width: 760px; }
 
 .review-card {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 18px 20px;
@@ -550,8 +550,8 @@ onMounted(async () => {
 
 .rev-verified {
     display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11px; color: #4ade80;
-    .v-icon { color: #4ade80; }
+    font-size: 11px; color: $success;
+    .v-icon { color: $success; }
 }
 
 .spin { animation: spin 0.8s linear infinite; }

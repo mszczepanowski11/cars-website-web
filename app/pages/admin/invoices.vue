@@ -377,7 +377,7 @@ onMounted(() => { loadInvoices(); loadPayments() })
 
 <style lang="scss" scoped>
 .admin-page { display: flex; min-height: 100vh; background: $bg; padding-top: $nav-height; }
-.admin-sidebar { width: 220px; min-width: 220px; background: #070707; border-right: 1px solid $border; position: sticky; top: $nav-height; height: calc(100vh - #{$nav-height}); overflow-y: auto; display: flex; flex-direction: column; }
+.admin-sidebar { width: 220px; min-width: 220px; background: $bg; border-right: 1px solid $border; position: sticky; top: $nav-height; height: calc(100vh - #{$nav-height}); overflow-y: auto; display: flex; flex-direction: column; }
 .sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 18px 18px 12px; font-size: 13px; font-weight: 800; color: $text; border-bottom: 1px solid $border; }
 .brand-icon { color: $red; }
 .sidebar-nav { flex: 1; padding: 12px 0; }
@@ -398,20 +398,20 @@ onMounted(() => { loadInvoices(); loadPayments() })
 .tab { display: flex; align-items: center; gap: 7px; padding: 9px 16px; background: transparent; border: none; border-bottom: 2px solid transparent; color: $text-muted; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; &:hover { color: $text; } &.active { color: $text; border-bottom-color: $red; } }
 
 .generate-form { display: flex; align-items: center; gap: 8px; }
-.gen-select, .gen-input { background: #0d0d0d; border: 1px solid $border; border-radius: $r-sm; color: $text; font-size: 13px; font-family: 'Inter', sans-serif; padding: 7px 10px; outline: none; &:focus { border-color: rgba($red, 0.4); } }
+.gen-select, .gen-input { background: $card; border: 1px solid $border; border-radius: $r-sm; color: $text; font-size: 13px; font-family: 'Inter', sans-serif; padding: 7px 10px; outline: none; &:focus { border-color: rgba($red, 0.4); } }
 .gen-input { width: 76px; }
 .gen-btn { display: flex; align-items: center; gap: 6px; padding: 7px 16px; background: $red; border: none; border-radius: $r-sm; color: white; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; &:hover:not(:disabled) { opacity: 0.85; } &:disabled { opacity: 0.5; cursor: not-allowed; } }
 
 .alert-ok, .alert-err { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: $r-sm; font-size: 13px; margin-bottom: 16px; }
-.alert-ok { background: rgba(76,175,80,0.1); color: #4caf50; border: 1px solid rgba(76,175,80,0.2); }
+.alert-ok { background: rgba(76,175,80,0.1); color: $success; border: 1px solid rgba(76,175,80,0.2); }
 .alert-err { background: rgba($red, 0.1); color: $red; border: 1px solid rgba($red, 0.2); }
 
 .stats-row { display: flex; gap: 12px; margin-bottom: 20px; }
-.mini-stat { background: #0a0a0a; border: 1px solid $border; border-radius: $r-md; padding: 14px 20px; min-width: 160px; }
+.mini-stat { background: $card-alt; border: 1px solid $border; border-radius: $r-md; padding: 14px 20px; min-width: 160px; }
 .ms-label { font-size: 11px; color: $text-dim; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
 .ms-val { font-size: 24px; font-weight: 900; color: $text; }
 
-.table-wrap { background: #0a0a0a; border: 1px solid $border; border-radius: $r-md; overflow: auto; }
+.table-wrap { background: $card-alt; border: 1px solid $border; border-radius: $r-md; overflow: auto; }
 .data-table {
     width: 100%; border-collapse: collapse; min-width: 800px;
     th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: $text-dim; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255,255,255,0.02); border-bottom: 1px solid $border; white-space: nowrap; }
@@ -433,9 +433,9 @@ onMounted(() => { loadInvoices(); loadPayments() })
 .user-email { color: $text-dim; font-size: 11px; }
 .user-company { color: $text-dark; font-size: 11px; display: flex; align-items: center; gap: 3px; }
 
-.status-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.status-ok { background: rgba(76,175,80,0.12); color: #4caf50; } &.status-pending { background: rgba(255,152,0,0.12); color: #ff9800; } &.status-generated { background: rgba(33,150,243,0.12); color: #2196f3; } &.status-refunded { background: rgba(41,128,185,0.12); color: #5dade2; } &.status-fail { background: rgba($red, 0.12); color: $red; } }
+.status-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.status-ok { background: rgba(76,175,80,0.12); color: $success; } &.status-pending { background: rgba(255,152,0,0.12); color: $warning; } &.status-generated { background: rgba(33,150,243,0.12); color: $info; } &.status-refunded { background: rgba(41,128,185,0.12); color: #5dade2; } &.status-fail { background: rgba($red, 0.12); color: $red; } }
 
-.ksef-badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.ksef-badge--sent { background: rgba(76,175,80,0.12); color: #4caf50; } &.ksef-badge--not-sent { background: rgba(255,152,0,0.12); color: #ff9800; } }
+.ksef-badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.ksef-badge--sent { background: rgba(76,175,80,0.12); color: $success; } &.ksef-badge--not-sent { background: rgba(255,152,0,0.12); color: $warning; } }
 
 .actions { display: flex; gap: 4px; }
 .act-btn { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: transparent; border: 1px solid $border; border-radius: $r-sm; color: $text-muted; cursor: pointer; transition: all 0.15s; &:hover:not(:disabled) { border-color: $red; color: $text; } &:disabled { opacity: 0.4; cursor: not-allowed; } }
@@ -449,7 +449,7 @@ onMounted(() => { loadInvoices(); loadPayments() })
 }
 
 .status-select {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;

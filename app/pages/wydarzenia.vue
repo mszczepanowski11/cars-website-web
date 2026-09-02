@@ -394,7 +394,7 @@ onMounted(fetchEvents)
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 12px 18px;
@@ -516,7 +516,7 @@ onMounted(fetchEvents)
     padding: 3px 9px;
     border-radius: 5px;
 
-    &--featured { background: rgba(#ffd700, 0.9); color: #1a1200; }
+    &--featured { background: rgba($premium, 0.9); color: #1a1200; }
 }
 
 .date-chip {
@@ -651,7 +651,7 @@ onMounted(fetchEvents)
     position: absolute;
     bottom: calc(100% + 8px);
     right: 0;
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 6px;
@@ -730,7 +730,7 @@ onMounted(fetchEvents)
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     color: $text-muted;
     display: flex;

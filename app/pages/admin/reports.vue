@@ -266,14 +266,14 @@ onMounted(fetchReports)
 .type-badge {
     font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 5px; letter-spacing: 0.3px;
     &.type-advert { background: rgba($red, 0.12); color: $red; border: 1px solid rgba($red, 0.25); }
-    &.type-user { background: rgba(33,150,243,0.12); color: #2196f3; border: 1px solid rgba(33,150,243,0.25); }
-    &.type-review { background: rgba(255,152,0,0.12); color: #ff9800; border: 1px solid rgba(255,152,0,0.25); }
+    &.type-user { background: rgba(33,150,243,0.12); color: $info; border: 1px solid rgba(33,150,243,0.25); }
+    &.type-review { background: rgba(255,152,0,0.12); color: $warning; border: 1px solid rgba(255,152,0,0.25); }
 }
 
 .status-badge {
     font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
-    &.status-pending { background: rgba(255,152,0,0.1); color: #ff9800; border: 1px solid rgba(255,152,0,0.25); }
-    &.status-resolved { background: rgba(76,175,80,0.1); color: #4caf50; border: 1px solid rgba(76,175,80,0.2); }
+    &.status-pending { background: rgba(255,152,0,0.1); color: $warning; border: 1px solid rgba(255,152,0,0.25); }
+    &.status-resolved { background: rgba(76,175,80,0.1); color: $success; border: 1px solid rgba(76,175,80,0.2); }
     &.status-rejected { background: rgba(255,255,255,0.06); color: $text-dim; border: 1px solid $border; }
     &.status-dismissed { background: rgba(255,255,255,0.06); color: $text-dim; border: 1px solid $border; }
 }
@@ -289,7 +289,7 @@ onMounted(fetchReports)
     &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-.btn-resolve { background: rgba(76,175,80,0.12); color: #4caf50; border-color: rgba(76,175,80,0.25); &:hover:not(:disabled) { background: rgba(76,175,80,0.2); } }
+.btn-resolve { background: rgba(76,175,80,0.12); color: $success; border-color: rgba(76,175,80,0.25); &:hover:not(:disabled) { background: rgba(76,175,80,0.2); } }
 .btn-dismiss { background: rgba(255,255,255,0.05); color: $text-dim; border-color: $border; &:hover:not(:disabled) { background: rgba(255,255,255,0.08); color: $text-muted; } }
 
 .resolved-text { color: $text-dark; font-size: 12px; }

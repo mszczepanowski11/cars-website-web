@@ -280,7 +280,7 @@ onMounted(async () => {
 
 // ── Search bar ────────────────────────────────────────────────────────────────
 .search-bar-wrap {
-    background: #070707;
+    background: $bg;
     border-bottom: 1px solid $border;
     padding: 18px 0;
     position: sticky;
@@ -299,7 +299,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 10px 14px;
@@ -354,7 +354,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text-muted;
@@ -372,7 +372,7 @@ onMounted(async () => {
     position: absolute;
     top: calc(100% + 6px);
     right: 0;
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;

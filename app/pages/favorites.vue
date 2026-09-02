@@ -162,7 +162,7 @@ onMounted(() => load(1))
     outline: none;
     cursor: pointer;
     transition: border-color 0.2s;
-    option { background: #111; color: $text; }
+    option { background: $card; color: $text; }
     &:focus { border-color: rgba($red, 0.4); }
 }
 

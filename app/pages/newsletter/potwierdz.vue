@@ -51,7 +51,7 @@ onMounted(async () => {
     padding: 40px 16px;
 }
 .confirm-card {
-    background: #0c0c0c;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 48px 40px;

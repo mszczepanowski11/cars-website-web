@@ -88,7 +88,7 @@ async function submit() {
 <style lang="scss" scoped>
 .cs-root {
     min-height: 100vh;
-    background: #050505;
+    background: $bg;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -156,7 +156,7 @@ async function submit() {
 
 .cs-input {
     flex: 1;
-    background: #0a0a0a;
+    background: $card-alt;
     border: none;
     outline: none;
     color: #fff;

@@ -318,7 +318,7 @@ function serviceLabel(t: string) {
 .invoices-list { display: flex; flex-direction: column; gap: 12px; }
 
 .invoice-card {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     overflow: hidden;
@@ -359,9 +359,9 @@ function serviceLabel(t: string) {
     border-radius: 20px;
     white-space: nowrap;
 
-    &.status-sent { background: rgba(45,122,58,0.12); color: #4caf50; }
+    &.status-sent { background: rgba(45,122,58,0.12); color: $success; }
     &.status-generated { background: rgba(41,128,185,0.12); color: #5dade2; }
-    &.status-draft { background: rgba(255,152,0,0.12); color: #ff9800; }
+    &.status-draft { background: rgba(255,152,0,0.12); color: $warning; }
 }
 
 .inv-amounts {
@@ -467,7 +467,7 @@ function serviceLabel(t: string) {
 
 // Payments table
 .payments-table-wrap {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     overflow: hidden;
@@ -479,7 +479,7 @@ function serviceLabel(t: string) {
     grid-template-columns: 100px 1fr 80px 90px 130px 1fr;
     gap: 8px;
     padding: 12px 16px;
-    background: #0d0d0d;
+    background: $card;
     font-size: 11px;
     font-weight: 700;
     color: $text-dim;
@@ -517,9 +517,9 @@ function serviceLabel(t: string) {
     border-radius: 20px;
     width: fit-content;
 
-    &.pstatus-completed { background: rgba(45,122,58,0.12); color: #4caf50; }
-    &.pstatus-pending { background: rgba(255,152,0,0.12); color: #ff9800; }
-    &.pstatus-failed { background: rgba(231,76,60,0.12); color: #e74c3c; }
+    &.pstatus-completed { background: rgba(45,122,58,0.12); color: $success; }
+    &.pstatus-pending { background: rgba(255,152,0,0.12); color: $warning; }
+    &.pstatus-failed { background: rgba(231,76,60,0.12); color: $danger; }
     &.pstatus-cancelled { background: rgba(100,100,100,0.12); color: $text-dim; }
     &.pstatus-refunded { background: rgba(41,128,185,0.12); color: #5dade2; }
 }
@@ -579,7 +579,7 @@ function serviceLabel(t: string) {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     color: $text-muted;
     display: flex;
@@ -587,7 +587,7 @@ function serviceLabel(t: string) {
     justify-content: center;
     cursor: pointer;
     transition: background 0.2s;
-    &:hover:not(:disabled) { background: #111; color: $text; }
+    &:hover:not(:disabled) { background: $card; color: $text; }
     &:disabled { opacity: 0.3; cursor: default; }
 }
 
