@@ -313,7 +313,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 0 14px;
@@ -356,7 +356,7 @@ h2 {
     background: rgba(220,50,50,0.08);
     border: 1px solid rgba(220,50,50,0.25);
     border-radius: $r-sm;
-    color: #e55;
+    color: $danger;
     font-size: 13px;
     padding: 10px 14px;
     flex-wrap: wrap;

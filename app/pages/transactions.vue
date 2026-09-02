@@ -183,7 +183,7 @@ onMounted(() => load(1))
     display: flex;
     align-items: flex-start;
     gap: 14px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 16px;
@@ -201,9 +201,9 @@ onMounted(() => load(1))
     flex-shrink: 0;
     margin-top: 2px;
 
-    &.tx-reservation { background: rgba(33,150,243,0.1); color: #2196f3; }
-    &.tx-viewing { background: rgba(255,152,0,0.1); color: #ff9800; }
-    &.tx-purchase { background: rgba(76,175,80,0.1); color: #4caf50; }
+    &.tx-reservation { background: rgba(33,150,243,0.1); color: $info; }
+    &.tx-viewing { background: rgba(255,152,0,0.1); color: $warning; }
+    &.tx-purchase { background: rgba(76,175,80,0.1); color: $success; }
 }
 
 .tx-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
@@ -237,9 +237,9 @@ onMounted(() => load(1))
     border-radius: 20px;
     white-space: nowrap;
 
-    &.status-pending { background: rgba(255,152,0,0.1); color: #ff9800; border: 1px solid rgba(255,152,0,0.2); }
-    &.status-confirmed { background: rgba(33,150,243,0.1); color: #2196f3; border: 1px solid rgba(33,150,243,0.2); }
-    &.status-completed { background: rgba(76,175,80,0.1); color: #4caf50; border: 1px solid rgba(76,175,80,0.2); }
+    &.status-pending { background: rgba(255,152,0,0.1); color: $warning; border: 1px solid rgba(255,152,0,0.2); }
+    &.status-confirmed { background: rgba(33,150,243,0.1); color: $info; border: 1px solid rgba(33,150,243,0.2); }
+    &.status-completed { background: rgba(76,175,80,0.1); color: $success; border: 1px solid rgba(76,175,80,0.2); }
     &.status-cancelled { background: rgba(255,255,255,0.05); color: $text-dim; border: 1px solid $border; }
 }
 
@@ -258,7 +258,7 @@ onMounted(() => load(1))
     cursor: pointer;
     transition: border-color 0.15s, color 0.15s;
     white-space: nowrap;
-    &:hover:not(:disabled) { border-color: #e55; color: #e55; }
+    &:hover:not(:disabled) { border-color: $danger; color: $danger; }
     &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
@@ -280,7 +280,7 @@ onMounted(() => load(1))
 .page-btn {
     width: 38px; height: 38px;
     border-radius: 50%;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     color: $text-muted;
     display: flex; align-items: center; justify-content: center;

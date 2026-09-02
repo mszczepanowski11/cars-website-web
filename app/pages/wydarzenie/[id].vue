@@ -336,7 +336,7 @@ onMounted(async () => {
 .hero-gradient {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(#050505, 0.95) 0%, rgba(#050505, 0.4) 60%, transparent 100%);
+    background: linear-gradient(to top, rgba($bg, 0.95) 0%, rgba($bg, 0.4) 60%, transparent 100%);
 }
 
 .hero-content {
@@ -352,9 +352,9 @@ onMounted(async () => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(#ffd700, 0.15);
-    border: 1px solid rgba(#ffd700, 0.3);
-    color: #ffd700;
+    background: rgba($premium, 0.15);
+    border: 1px solid rgba($premium, 0.3);
+    color: $premium;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1px;
@@ -555,7 +555,7 @@ onMounted(async () => {
 }
 
 .sidebar-card {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 22px;

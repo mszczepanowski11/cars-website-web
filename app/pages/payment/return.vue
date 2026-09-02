@@ -197,7 +197,7 @@ onMounted(async () => {
 }
 
 .return-card {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-xl;
     padding: 48px 40px 32px;
@@ -250,14 +250,14 @@ onMounted(async () => {
     animation: cr-fly 1.4s ease-out calc(var(--i) * 0.07s) both;
 
     &:nth-child(1)  { background: $red;    --angle: 0deg;   }
-    &:nth-child(2)  { background: #ffd700; --angle: 36deg;  }
-    &:nth-child(3)  { background: #4caf50; --angle: 72deg;  }
-    &:nth-child(4)  { background: #2196f3; --angle: 108deg; }
+    &:nth-child(2)  { background: $premium; --angle: 36deg;  }
+    &:nth-child(3)  { background: $success; --angle: 72deg;  }
+    &:nth-child(4)  { background: $info; --angle: 108deg; }
     &:nth-child(5)  { background: #e91e63; --angle: 144deg; }
     &:nth-child(6)  { background: $red;    --angle: 180deg; }
-    &:nth-child(7)  { background: #ffd700; --angle: 216deg; }
-    &:nth-child(8)  { background: #4caf50; --angle: 252deg; }
-    &:nth-child(9)  { background: #2196f3; --angle: 288deg; }
+    &:nth-child(7)  { background: $premium; --angle: 216deg; }
+    &:nth-child(8)  { background: $success; --angle: 252deg; }
+    &:nth-child(9)  { background: $info; --angle: 288deg; }
     &:nth-child(10) { background: #ff5722; --angle: 324deg; }
 }
 
@@ -279,7 +279,7 @@ onMounted(async () => {
 .icon-success {
     background: rgba(76,175,80,0.1);
     border: 2px solid rgba(76,175,80,0.3);
-    color: #4caf50;
+    color: $success;
     animation: success-pulse 2s ease-in-out infinite;
 }
 
@@ -291,13 +291,13 @@ onMounted(async () => {
 .icon-cancel {
     background: rgba(220,60,60,0.1);
     border: 2px solid rgba(220,60,60,0.25);
-    color: #e55;
+    color: $danger;
 }
 
 .icon-pending {
     background: rgba(255,152,0,0.1);
     border: 2px solid rgba(255,152,0,0.25);
-    color: #ff9800;
+    color: $warning;
 }
 
 .pending-spin {
@@ -340,13 +340,13 @@ onMounted(async () => {
 .invoice-pending {
     background: rgba(255,152,0,0.08);
     border: 1px solid rgba(255,152,0,0.2);
-    color: #ff9800;
+    color: $warning;
 }
 
 .invoice-ready {
     background: rgba(76,175,80,0.08);
     border: 1px solid rgba(76,175,80,0.2);
-    color: #4caf50;
+    color: $success;
 }
 
 .inv-dl-btn {
@@ -356,7 +356,7 @@ onMounted(async () => {
     background: rgba(76,175,80,0.12);
     border: 1px solid rgba(76,175,80,0.3);
     border-radius: $r-sm;
-    color: #4caf50;
+    color: $success;
     font-size: 12px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;

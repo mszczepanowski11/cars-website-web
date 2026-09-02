@@ -200,7 +200,7 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 0 14px;
@@ -256,9 +256,9 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     border-radius: 2px;
     transition: width 0.3s ease, background 0.3s ease;
     &.strength-1 { background: #e53935; }
-    &.strength-2 { background: #ff9800; }
+    &.strength-2 { background: $warning; }
     &.strength-3 { background: #fdd835; }
-    &.strength-4 { background: #4caf50; }
+    &.strength-4 { background: $success; }
 }
 
 .strength-label {
@@ -266,9 +266,9 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     font-weight: 600;
     white-space: nowrap;
     &.sl-1 { color: #e53935; }
-    &.sl-2 { color: #ff9800; }
+    &.sl-2 { color: $warning; }
     &.sl-3 { color: #fdd835; }
-    &.sl-4 { color: #4caf50; }
+    &.sl-4 { color: $success; }
 }
 
 .field-error {
@@ -276,7 +276,7 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     align-items: center;
     gap: 4px;
     font-size: 12px;
-    color: #e55;
+    color: $danger;
 }
 
 .error-msg {
@@ -288,7 +288,7 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     border-radius: $r-sm;
     padding: 12px 14px;
     font-size: 13px;
-    color: #e55;
+    color: $danger;
     line-height: 1.4;
     width: 100%;
     .v-icon { flex-shrink: 0; margin-top: 1px; }
@@ -345,7 +345,7 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     width: 88px; height: 88px; border-radius: 50%;
     background: rgba(76,175,80,0.08); border: 1px solid rgba(76,175,80,0.2);
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 20px; color: #4caf50;
+    margin: 0 auto 20px; color: $success;
 }
 
 .success-text { font-size: 14px; color: $text-dim; line-height: 1.7; margin-bottom: 24px; }

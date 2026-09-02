@@ -539,7 +539,7 @@ function actionClass(type: string) {
 .admin-sidebar {
     width: 220px;
     min-width: 220px;
-    background: #070707;
+    background: $bg;
     border-right: 1px solid $border;
     position: sticky;
     top: $nav-height;
@@ -653,7 +653,7 @@ function actionClass(type: string) {
 }
 
 .stat-card {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 18px 20px;
@@ -689,12 +689,12 @@ function actionClass(type: string) {
 
     &.green {
         background: rgba(76, 175, 80, 0.12);
-        color: #4caf50;
+        color: $success;
     }
 
     &.blue {
         background: rgba(33, 150, 243, 0.12);
-        color: #2196f3;
+        color: $info;
     }
 
     &.red {
@@ -704,7 +704,7 @@ function actionClass(type: string) {
 
     &.orange {
         background: rgba(255, 152, 0, 0.12);
-        color: #ff9800;
+        color: $warning;
     }
 }
 
@@ -741,7 +741,7 @@ function actionClass(type: string) {
 }
 
 .logs-table-wrap {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;
@@ -828,17 +828,17 @@ function actionClass(type: string) {
 
     &.chip-danger {
         background: rgba(220, 50, 50, 0.12);
-        color: #e55;
+        color: $danger;
     }
 
     &.chip-warning {
         background: rgba(255, 152, 0, 0.12);
-        color: #ff9800;
+        color: $warning;
     }
 
     &.chip-success {
         background: rgba(76, 175, 80, 0.12);
-        color: #4caf50;
+        color: $success;
     }
 
     &.chip-neutral {
@@ -898,7 +898,7 @@ function actionClass(type: string) {
 }
 
 .cat-card {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px 18px;
@@ -964,7 +964,7 @@ function actionClass(type: string) {
     background: rgba(76, 175, 80, 0.1);
     border: 1px solid rgba(76, 175, 80, 0.25);
     border-radius: 8px;
-    color: #4caf50;
+    color: $success;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -988,7 +988,7 @@ function actionClass(type: string) {
     background: rgba(220, 50, 50, 0.1);
     border: 1px solid rgba(220, 50, 50, 0.25);
     border-radius: 8px;
-    color: #e55;
+    color: $danger;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -1060,7 +1060,7 @@ function actionClass(type: string) {
 .cat-curation-panel .afc-select {
     flex: 1;
     min-width: 160px;
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;

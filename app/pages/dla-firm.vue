@@ -257,7 +257,7 @@ h1 {
 .df-field label { display: block; font-size: 12px; font-weight: 600; color: $text-dim; margin-bottom: 6px; }
 .df-optional { font-weight: 400; color: $text-dark; }
 .df-field input {
-  width: 100%; background: #0a0a0a; border: 1px solid $border; border-radius: $r-sm;
+  width: 100%; background: $card-alt; border: 1px solid $border; border-radius: $r-sm;
   color: $text; font-size: 14px; padding: 11px 14px; outline: none; font-family: 'Inter', sans-serif;
   transition: border-color 0.2s;
   &:focus { border-color: rgba($red, 0.4); }
@@ -290,7 +290,7 @@ h1 {
   width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   margin-bottom: 16px;
   &--ok { background: rgba(60, 180, 100, 0.12); color: #5c5; }
-  &--error { background: rgba(220,50,50,0.1); color: #e55; }
+  &--error { background: rgba(220,50,50,0.1); color: $danger; }
 }
 .df-result-actions { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
 .df-result-actions .df-btn-primary { width: auto; flex: 1; min-width: 160px; }

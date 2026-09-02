@@ -286,7 +286,7 @@ useHead(() => ({
   .cp-lang { background: transparent; border: 1px solid $border; color: $text-muted; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; cursor: pointer;
     &.active { background: rgba($red,.16); border-color: rgba($red,.4); color: $red; } &:hover:not(.active) { color: $text; } } }
 .cp-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: #b6791b; background: rgba(#b6791b, .14); padding: 3px 9px; border-radius: 20px; display: inline-flex; align-items: center; gap: 3px;
-  &--ok { color: #2e9d5b; background: rgba(#2e9d5b, .14); } }
+  &--ok { color: $success; background: rgba($success, .14); } }
 
 .cp-body { @include container; padding-top: 28px; padding-bottom: 80px; }
 .cp-grid { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
@@ -299,7 +299,7 @@ useHead(() => ({
 .cp-listings { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .cp-listing { display: flex; align-items: center; gap: 12px; text-decoration: none; padding: 8px; border-radius: 10px; transition: background .15s;
   &:hover { background: rgba($red,.06); } }
-.cp-listing-img { position: relative; width: 80px; height: 60px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #111;
+.cp-listing-img { position: relative; width: 80px; height: 60px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: $card;
   img { width: 100%; height: 100%; object-fit: cover; } }
 .cp-listing-badge { position: absolute; top: 3px; left: 3px; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; background: $red; color: #fff; padding: 1px 5px; border-radius: 3px; }
 .cp-listing-body { flex: 1; min-width: 0; }

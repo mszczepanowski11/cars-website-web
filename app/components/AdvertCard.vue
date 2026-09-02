@@ -202,24 +202,24 @@ const monthlyRate = computed(() => {
     }
 
     &--top {
-        border-color: rgba(#f5a623, 0.4);
-        box-shadow: 0 0 18px rgba(#f5a623, 0.08);
-        &::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(#f5a623, 0.06) 50%, transparent 60%); animation: card-shimmer 3.5s ease-in-out infinite; pointer-events: none; }
+        border-color: rgba($premium, 0.4);
+        box-shadow: 0 0 18px rgba($premium, 0.08);
+        &::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba($premium, 0.06) 50%, transparent 60%); animation: card-shimmer 3.5s ease-in-out infinite; pointer-events: none; }
 
         &:hover {
-            border-color: rgba(#f5a623, 0.65);
-            box-shadow: 0 4px 24px rgba(#f5a623, 0.14);
+            border-color: rgba($premium, 0.65);
+            box-shadow: 0 4px 24px rgba($premium, 0.14);
         }
     }
 
     &--premium {
-        border-color: rgba(#b388ff, 0.45);
-        box-shadow: 0 0 18px rgba(#b388ff, 0.1);
-        &::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(#b388ff, 0.06) 50%, transparent 60%); animation: card-shimmer 3.5s ease-in-out infinite; pointer-events: none; }
+        border-color: rgba($accent-purple, 0.45);
+        box-shadow: 0 0 18px rgba($accent-purple, 0.1);
+        &::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba($accent-purple, 0.06) 50%, transparent 60%); animation: card-shimmer 3.5s ease-in-out infinite; pointer-events: none; }
 
         &:hover {
-            border-color: rgba(#b388ff, 0.7);
-            box-shadow: 0 4px 24px rgba(#b388ff, 0.18);
+            border-color: rgba($accent-purple, 0.7);
+            box-shadow: 0 4px 24px rgba($accent-purple, 0.18);
         }
     }
 }
@@ -431,13 +431,13 @@ const monthlyRate = computed(() => {
 
     &--verified {
         background: #14532d;
-        color: #4ade80;
+        color: $success;
         border: 1px solid rgba(74, 222, 128, 0.3);
     }
 
     &--dealer {
         background: rgba(59, 130, 246, 0.15);
-        color: #60a5fa;
+        color: $info;
         border: 1px solid rgba(96, 165, 250, 0.3);
     }
 
@@ -449,9 +449,9 @@ const monthlyRate = computed(() => {
     }
 
     &--top {
-        background: rgba(#f5a623, 0.18);
-        color: #f5a623;
-        border: 1px solid rgba(#f5a623, 0.45);
+        background: rgba($premium, 0.18);
+        color: $premium;
+        border: 1px solid rgba($premium, 0.45);
         backdrop-filter: blur(4px);
     }
 }
@@ -460,7 +460,7 @@ const monthlyRate = computed(() => {
 
 .card-badge--new {
     background: #14532d;
-    color: #4ade80;
+    color: $success;
     border: 1px solid rgba(74, 222, 128, 0.3);
 }
 

@@ -430,7 +430,7 @@ onMounted(load)
 
 .dr-filters { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
 .dr-input {
-  background: #0d0d0d; border: 1px solid $border; border-radius: $r-sm; color: $text; padding: 9px 12px;
+  background: $card; border: 1px solid $border; border-radius: $r-sm; color: $text; padding: 9px 12px;
   font-size: 13px; width: 100%; outline: none;
   &:focus { border-color: rgba($red,.4); }
   &--sm { width: auto; padding: 8px 10px; }
@@ -443,30 +443,30 @@ onMounted(load)
 .dr-pubid { font-family: monospace; font-size: 10.5px; color: $text-dark; margin-top: 2px; }
 .dr-source { font-family: monospace; font-size: 11px; color: $text-dim; }
 .dr-status { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: .3px;
-  &--active { color: #2e9d5b; background: rgba(#2e9d5b,.14); }
+  &--active { color: $success; background: rgba($success,.14); }
   &--unverified { color: #b6791b; background: rgba(#b6791b,.14); }
-  &--closed { color: $text-dark; background: rgba(#888,.14); }
+  &--closed { color: $text-dark; background: rgba($text-dim,.14); }
 }
 .dr-actions { display: flex; gap: 6px; justify-content: flex-end; }
 .dr-mini {
   display: grid; place-items: center; width: 30px; height: 30px; border-radius: 7px; cursor: pointer;
   background: transparent; border: 1px solid $border; color: $text-muted;
   &:hover { border-color: rgba($red,.4); color: $text; }
-  &--ok:hover { border-color: #2e9d5b; color: #2e9d5b; }
+  &--ok:hover { border-color: $success; color: $success; }
   &--danger:hover { border-color: #c23a34; color: #c23a34; }
 }
 
-.dr-import { background: #0d0d0d; border: 1px solid $border; border-radius: $r-md; padding: 18px; margin-bottom: 20px; }
+.dr-import { background: $card; border: 1px solid $border; border-radius: $r-md; padding: 18px; margin-bottom: 20px; }
 .dr-import-h { color: $text; font-size: 15px; margin: 0 0 8px; }
-.dr-import-note { color: $text-dim; font-size: 12.5px; margin: 0 0 14px; line-height: 1.5; code { background: #1a1a1a; padding: 1px 5px; border-radius: 3px; font-size: 11px; } }
+.dr-import-note { color: $text-dim; font-size: 12.5px; margin: 0 0 14px; line-height: 1.5; code { background: $border; padding: 1px 5px; border-radius: 3px; font-size: 11px; } }
 .dr-import-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; label { font-size: 12px; color: $text-dim; } }
-.dr-textarea { width: 100%; background: #080808; border: 1px solid $border; border-radius: $r-sm; color: $text; padding: 12px; font-family: monospace; font-size: 12px; resize: vertical; outline: none; &:focus { border-color: rgba($red,.4); } }
+.dr-textarea { width: 100%; background: $bg; border: 1px solid $border; border-radius: $r-sm; color: $text; padding: 12px; font-family: monospace; font-size: 12px; resize: vertical; outline: none; &:focus { border-color: rgba($red,.4); } }
 .dr-import-actions { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
 .dr-import-preview { font-size: 13px; color: $text-muted; margin-right: auto; }
-.dr-import-result { margin-top: 12px; color: $text; font-size: 13px; background: rgba(#2e9d5b,.1); border: 1px solid rgba(#2e9d5b,.3); border-radius: $r-sm; padding: 10px 14px; }
+.dr-import-result { margin-top: 12px; color: $text; font-size: 13px; background: rgba($success,.1); border: 1px solid rgba($success,.3); border-radius: $r-sm; padding: 10px 14px; }
 
 .dr-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: grid; place-items: center; z-index: 100; padding: 20px; }
-.dr-modal { background: #0d0d0d; border: 1px solid $border; border-radius: $r-md; padding: 24px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+.dr-modal { background: $card; border: 1px solid $border; border-radius: $r-md; padding: 24px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
 .dr-modal-h { color: $text; font-size: 18px; margin: 0 0 18px; }
 .dr-form { display: flex; flex-direction: column; gap: 6px; label { font-size: 12px; color: $text-dim; margin-top: 6px; } }
 .dr-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }

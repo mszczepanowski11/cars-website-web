@@ -518,7 +518,7 @@ onMounted(async () => {
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 12px 16px;
@@ -566,9 +566,9 @@ onMounted(async () => {
 }
 
 .bulk-btn-danger {
-    color: #e55;
+    color: $danger;
     border-color: rgba(220,50,50,0.3);
-    &:hover:not(:disabled) { background: rgba(220,50,50,0.12); color: #e55; }
+    &:hover:not(:disabled) { background: rgba(220,50,50,0.12); color: $danger; }
 }
 
 .bulk-btn-clear {
@@ -656,7 +656,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 16px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 14px;
@@ -793,8 +793,8 @@ onMounted(async () => {
     border-radius: 20px;
 }
 
-.status-active { background: rgba(76,175,80,0.1); color: #4caf50; border: 1px solid rgba(76,175,80,0.2); }
-.status-hidden { background: rgba(255,152,0,0.1); color: #ff9800; border: 1px solid rgba(255,152,0,0.2); }
+.status-active { background: rgba(76,175,80,0.1); color: $success; border: 1px solid rgba(76,175,80,0.2); }
+.status-hidden { background: rgba(255,152,0,0.1); color: $warning; border: 1px solid rgba(255,152,0,0.2); }
 .status-inactive { background: rgba(255,255,255,0.05); color: $text-dim; border: 1px solid $border; }
 
 .row-right {
@@ -817,8 +817,8 @@ onMounted(async () => {
 }
 
 .expiry-ok { background: rgba(255,255,255,0.05); color: $text-dim; }
-.expiry-warn { background: rgba(255,152,0,0.1); color: #ff9800; }
-.expiry-urgent { background: rgba(220,50,50,0.1); color: #e55; }
+.expiry-warn { background: rgba(255,152,0,0.1); color: $warning; }
+.expiry-urgent { background: rgba(220,50,50,0.1); color: $danger; }
 .expiry-expired { background: rgba(255,255,255,0.04); color: $text-dark; }
 
 .row-actions {
@@ -853,11 +853,11 @@ onMounted(async () => {
 }
 
 .act-sold {
-    &:hover:not(:disabled) { border-color: #4caf50; color: #4caf50; }
+    &:hover:not(:disabled) { border-color: $success; color: $success; }
 }
 
 .act-delete {
-    &:hover:not(:disabled) { border-color: #e55; color: #e55; }
+    &:hover:not(:disabled) { border-color: $danger; color: $danger; }
 }
 
 // Modal
@@ -868,13 +868,13 @@ onMounted(async () => {
 }
 
 .confirm-modal {
-    background: #0e0e0e; border: 1px solid $border; border-radius: $r-lg;
+    background: $card; border: 1px solid $border; border-radius: $r-lg;
     padding: 32px 28px; width: 100%; max-width: 360px;
     text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;
 }
 
-.sold-icon { color: #4caf50; opacity: 0.7; }
-.delete-icon { color: #e55; opacity: 0.8; }
+.sold-icon { color: $success; opacity: 0.7; }
+.delete-icon { color: $danger; opacity: 0.8; }
 .confirm-modal h3 { font-size: 18px; font-weight: 800; color: $text; margin: 0; }
 .confirm-modal p { font-size: 13px; color: $text-dim; margin: 0; }
 
@@ -941,7 +941,7 @@ onMounted(async () => {
 .btn-delete-confirm {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
     background: rgba(220,50,50,0.12); border: 1px solid rgba(220,50,50,0.3);
-    border-radius: $r-sm; color: #e55; font-size: 13px; font-weight: 700;
+    border-radius: $r-sm; color: $danger; font-size: 13px; font-weight: 700;
     font-family: 'Inter', sans-serif; padding: 10px; cursor: pointer;
     &:hover:not(:disabled) { background: rgba(220,50,50,0.22); }
     &:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -961,7 +961,7 @@ onMounted(async () => {
 .btn-sold-confirm {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
     background: rgba(76,175,80,0.15); border: 1px solid rgba(76,175,80,0.35);
-    border-radius: $r-sm; color: #4caf50; font-size: 13px; font-weight: 700;
+    border-radius: $r-sm; color: $success; font-size: 13px; font-weight: 700;
     font-family: 'Inter', sans-serif; padding: 10px; cursor: pointer;
     &:hover:not(:disabled) { background: rgba(76,175,80,0.25); }
     &:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -978,7 +978,7 @@ onMounted(async () => {
 .page-btn {
     width: 38px; height: 38px;
     border-radius: 50%;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     color: $text-muted;
     display: flex; align-items: center; justify-content: center;

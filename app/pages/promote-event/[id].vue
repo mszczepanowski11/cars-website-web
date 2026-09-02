@@ -345,7 +345,7 @@ async function initiatePayment() {
 
 .promo-topbar {
     height: 60px; display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px; border-bottom: 1px solid $border; background: #070707; position: sticky; top: 0; z-index: 10;
+    padding: 0 32px; border-bottom: 1px solid $border; background: $bg; position: sticky; top: 0; z-index: 10;
 }
 
 .tl-logo { font-size: 20px; font-weight: 900; color: $text; letter-spacing: 4px; span { color: $red; } }
@@ -354,7 +354,7 @@ async function initiatePayment() {
 
 .ps {
     display: flex; align-items: center; gap: 5px; color: $text-dark; font-weight: 500;
-    &.done { color: #4caf50; }
+    &.done { color: $success; }
     &.active { color: $text; font-weight: 700; }
 }
 
@@ -381,7 +381,7 @@ async function initiatePayment() {
 
 .event-preview {
     display: flex; align-items: center; justify-content: space-between;
-    background: #0a0a0a; border: 1px solid $border; border-radius: 10px;
+    background: $card-alt; border: 1px solid $border; border-radius: 10px;
     padding: 14px 18px; margin-bottom: 28px; gap: 12px;
 }
 
@@ -401,7 +401,7 @@ async function initiatePayment() {
 }
 
 .plan-card {
-    background: #0a0a0a; border: 1.5px solid $border; border-radius: 12px; padding: 24px 20px;
+    background: $card-alt; border: 1.5px solid $border; border-radius: 12px; padding: 24px 20px;
     cursor: pointer; position: relative; transition: border-color 0.2s, transform 0.2s;
     display: flex; flex-direction: column; gap: 10px;
     &:hover { border-color: rgba($red, 0.3); transform: translateY(-3px); }
@@ -423,7 +423,7 @@ async function initiatePayment() {
 
 .plan-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; flex: 1;
     li { display: flex; align-items: center; gap: 7px; font-size: 12px; color: $text-muted;
-        .v-icon { color: #4caf50; }
+        .v-icon { color: $success; }
     }
 }
 
@@ -433,7 +433,7 @@ async function initiatePayment() {
 }
 
 .promo-footer {
-    background: #0a0a0a; border: 1px solid $border; border-radius: 12px; padding: 20px 24px;
+    background: $card-alt; border: 1px solid $border; border-radius: 12px; padding: 20px 24px;
     display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
 }
 
@@ -458,15 +458,15 @@ async function initiatePayment() {
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-.action-error { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #e55; margin-top: 8px; width: 100%; }
+.action-error { display: flex; align-items: center; gap: 6px; font-size: 13px; color: $danger; margin-top: 8px; width: 100%; }
 
 .price-original { text-decoration: line-through; color: $text-dim; font-size: 16px; font-weight: 400; margin-right: 6px; }
-.coupon-applied { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #4caf50; margin-top: 2px; }
+.coupon-applied { display: flex; align-items: center; gap: 5px; font-size: 12px; color: $success; margin-top: 2px; }
 .coupon-row { width: 100%; display: flex; flex-direction: column; gap: 6px; }
 .coupon-input-wrap { display: flex; gap: 6px; }
 
 .coupon-input {
-    flex: 1; background: #0d0d0d; border: 1px solid $border; border-radius: 8px; color: $text;
+    flex: 1; background: $card; border: 1px solid $border; border-radius: 8px; color: $text;
     font-size: 13px; font-family: 'Inter', sans-serif; padding: 9px 14px; outline: none; min-width: 0;
     transition: border-color 0.2s; &::placeholder { color: $text-dark; } &:focus { border-color: rgba($red, 0.4); }
     &:disabled { opacity: 0.5; }
@@ -480,10 +480,10 @@ async function initiatePayment() {
     &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-.coupon-error { font-size: 12px; color: #e55; }
+.coupon-error { font-size: 12px; color: $danger; }
 
 .billing-step {
-    max-width: 680px; margin: 0 auto; background: #0a0a0a; border: 1px solid $border;
+    max-width: 680px; margin: 0 auto; background: $card-alt; border: 1px solid $border;
     border-radius: 12px; padding: 28px; display: flex; flex-direction: column; gap: 20px;
 }
 
@@ -494,7 +494,7 @@ async function initiatePayment() {
 
 .billing-step-sub { font-size: 13px; color: $text-dim; line-height: 1.5; margin: 0; }
 
-.billing-order-summary { background: #0d0d0d; border: 1px solid $border; border-radius: 8px; overflow: hidden; }
+.billing-order-summary { background: $card; border: 1px solid $border; border-radius: 8px; overflow: hidden; }
 
 .bos-row {
     display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;
@@ -502,7 +502,7 @@ async function initiatePayment() {
     &:last-child { border-bottom: none; }
 }
 
-.bos-discount { color: #4caf50; }
+.bos-discount { color: $success; }
 .bos-net, .bos-vat { color: $text-dim; font-size: 12px; }
 .bos-total { background: rgba($red, 0.06); color: $text; font-weight: 700; strong { font-size: 18px; color: $red; } }
 

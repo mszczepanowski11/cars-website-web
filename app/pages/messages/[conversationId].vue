@@ -400,7 +400,7 @@ onUnmounted(() => {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: #1a1a1a;
+    background: $border;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -423,7 +423,7 @@ onUnmounted(() => {
 .hdr-name-loading {
     height: 14px;
     width: 120px;
-    background: #1a1a1a;
+    background: $border;
     border-radius: 6px;
     margin-bottom: 6px;
     animation: shimmer 1.4s infinite;
@@ -442,7 +442,7 @@ onUnmounted(() => {
 .hdr-advert-loading {
     height: 10px;
     width: 180px;
-    background: #1a1a1a;
+    background: $border;
     border-radius: 5px;
     animation: shimmer 1.4s infinite;
 }
@@ -468,7 +468,7 @@ onUnmounted(() => {
     justify-content: center;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
-    &:hover { background: #1a1a1a; color: $text; }
+    &:hover { background: $border; color: $text; }
 }
 
 .act-backdrop {
@@ -482,7 +482,7 @@ onUnmounted(() => {
     top: calc(100% + 6px);
     right: 0;
     z-index: 101;
-    background: #111;
+    background: $card;
     border: 1px solid #2a2a2a;
     border-radius: $r-md;
     padding: 4px;
@@ -504,7 +504,7 @@ onUnmounted(() => {
     cursor: pointer;
     text-align: left;
     transition: background 0.15s, color 0.15s;
-    &:hover { background: #1a1a1a; color: $text; }
+    &:hover { background: $border; color: $text; }
 }
 
 // ── Advert strip ──────────────────────────────────────────────────────────────
@@ -518,10 +518,10 @@ onUnmounted(() => {
     align-items: center;
     gap: 10px;
     padding: 8px 16px;
-    background: #050505;
+    background: $bg;
     transition: background 0.15s;
     text-decoration: none;
-    &:hover { background: #0a0a0a; }
+    &:hover { background: $card-alt; }
 }
 
 .strip-thumb {
@@ -535,7 +535,7 @@ onUnmounted(() => {
 .strip-thumb-placeholder {
     width: 36px;
     height: 28px;
-    background: #1a1a1a;
+    background: $border;
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -578,7 +578,7 @@ onUnmounted(() => {
 .skel-bubble {
     height: 36px;
     width: 180px;
-    background: #1a1a1a;
+    background: $border;
     border-radius: 16px;
     animation: shimmer 1.4s infinite;
 }
@@ -598,7 +598,7 @@ onUnmounted(() => {
     color: $text-dark;
     font-size: 14px;
 }
-.no-msg-icon { color: #1a1a1a; }
+.no-msg-icon { color: $border; }
 
 // Date separator
 .date-sep {
@@ -610,7 +610,7 @@ onUnmounted(() => {
     span {
         font-size: 11px;
         color: $text-dark;
-        background: #0a0a0a;
+        background: $card-alt;
         padding: 3px 10px;
         border-radius: 20px;
         border: 1px solid $border;
@@ -634,7 +634,7 @@ onUnmounted(() => {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #1a1a1a;
+    background: $border;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -738,7 +738,7 @@ onUnmounted(() => {
 .input-bar {
     flex-shrink: 0;
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-    background: #050505;
+    background: $bg;
     border-top: 1px solid $border;
 }
 
@@ -756,7 +756,7 @@ onUnmounted(() => {
 
 .msg-textarea {
     flex: 1;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: 22px;
     color: $text;

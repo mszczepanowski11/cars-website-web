@@ -233,7 +233,7 @@ onUnmounted(() => {
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    background: #050505;
+    background: $bg;
     border-right: 1px solid $border;
     overflow: hidden;
 }
@@ -268,7 +268,7 @@ onUnmounted(() => {
 
 .search-input {
     width: 100%;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     color: $text;
@@ -374,14 +374,14 @@ onUnmounted(() => {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #1a1a1a;
+    background: $border;
     flex-shrink: 0;
     animation: shimmer 1.4s infinite;
 }
 .skel-lines { flex: 1; }
 .skel-line {
     height: 10px;
-    background: #1a1a1a;
+    background: $border;
     border-radius: 5px;
     animation: shimmer 1.4s infinite;
     margin-bottom: 8px;
@@ -438,7 +438,7 @@ onUnmounted(() => {
     gap: 12px;
 }
 
-.placeholder-icon { color: #1a1a1a; }
+.placeholder-icon { color: $border; }
 .placeholder-text { font-size: 15px; color: $text-dark; }
 
 // ── Mobile ──────────────────────────────────────────────────────────────────

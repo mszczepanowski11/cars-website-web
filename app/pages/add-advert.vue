@@ -5466,7 +5466,7 @@ onBeforeUnmount(() => {
     gap: 6px;
     padding: 10px 16px;
     border-bottom: 1px solid $border;
-    background: #070707;
+    background: $bg;
 
     @media (max-width: 768px) {
         display: flex;
@@ -5510,7 +5510,7 @@ onBeforeUnmount(() => {
     width: 240px;
     min-width: 240px;
     border-right: 1px solid $border;
-    background: #070707;
+    background: $bg;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -5658,7 +5658,7 @@ onBeforeUnmount(() => {
     align-items: center;
     padding: 20px 40px;
     border-bottom: 1px solid $border;
-    background: #070707;
+    background: $bg;
     flex-shrink: 0;
     @media (max-width: 768px) { display: none; }
 }
@@ -5780,7 +5780,7 @@ onBeforeUnmount(() => {
 
 .fselect, .finput {
     width: 100%;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -5923,7 +5923,7 @@ onBeforeUnmount(() => {
     font-family: inherit;
     font-size: 10px;
     font-weight: 600;
-    color: #8B0D1D;
+    color: $red;
     background: rgba(139, 13, 29, 0.12);
     border: 1px solid rgba(139, 13, 29, 0.25);
     border-radius: 4px;
@@ -5988,7 +5988,7 @@ onBeforeUnmount(() => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, #8B0D1D, #b01424);
+    background: linear-gradient(135deg, $red, #b01424);
     color: white;
     border: none;
     border-radius: 8px;
@@ -6048,7 +6048,7 @@ onBeforeUnmount(() => {
     list-style: none;
     max-height: 240px;
     overflow-y: auto;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 10px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
@@ -6086,7 +6086,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px 20px;
@@ -6144,7 +6144,7 @@ onBeforeUnmount(() => {
     font-size: 12px; color: #f87171; margin-top: 8px; padding: 0 20px;
 }
 
-.btn-draft--saved { color: #4ade80; border-color: rgba(74, 222, 128, 0.4); }
+.btn-draft--saved { color: $success; border-color: rgba(74, 222, 128, 0.4); }
 
 .preview-modal-overlay {
     position: fixed; inset: 0; z-index: 2000;
@@ -6153,7 +6153,7 @@ onBeforeUnmount(() => {
 }
 
 .preview-modal {
-    background: #0d0d0d; border: 1px solid $border;
+    background: $card; border: 1px solid $border;
     border-radius: $r-lg; width: 100%; max-width: 680px; max-height: 90vh;
     overflow-y: auto; box-shadow: 0 24px 80px rgba(0,0,0,0.8);
 }
@@ -6174,7 +6174,7 @@ onBeforeUnmount(() => {
 
 .pm-img-wrap {
     position: relative; aspect-ratio: 16/9; border-radius: $r-md; overflow: hidden;
-    background: #111; margin-bottom: 20px;
+    background: $card; margin-bottom: 20px;
 }
 
 .pm-img { width: 100%; height: 100%; object-fit: cover; }
@@ -6204,8 +6204,8 @@ onBeforeUnmount(() => {
 .photo-count-bar {
     display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500;
     padding: 8px 14px; border-radius: $r-sm; margin-bottom: 16px;
-    &.pc-ok { color: #4caf50; background: rgba(76,175,80,0.08); border: 1px solid rgba(76,175,80,0.2); }
-    &.pc-warn { color: #ff9800; background: rgba(255,152,0,0.08); border: 1px solid rgba(255,152,0,0.2); }
+    &.pc-ok { color: $success; background: rgba(76,175,80,0.08); border: 1px solid rgba(76,175,80,0.2); }
+    &.pc-warn { color: $warning; background: rgba(255,152,0,0.08); border: 1px solid rgba(255,152,0,0.2); }
 }
 
 // ── Form actions ──────────────────────────────────────────────────────────────
@@ -6233,7 +6233,7 @@ onBeforeUnmount(() => {
 .form-actions-left { display: flex; align-items: center; gap: 14px; }
 
 .step-error {
-    display: flex; align-items: center; gap: 6px; font-size: 12px; color: #ff9800;
+    display: flex; align-items: center; gap: 6px; font-size: 12px; color: $warning;
 }
 
 .fade-err-enter-active, .fade-err-leave-active { transition: opacity 0.3s; }
@@ -6312,7 +6312,7 @@ onBeforeUnmount(() => {
     width: 268px;
     min-width: 268px;
     border-left: 1px solid $border;
-    background: #070707;
+    background: $bg;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -6370,7 +6370,7 @@ onBeforeUnmount(() => {
     font-weight: 700;
     text-align: center;
     margin-bottom: 16px;
-    &.sl-great { color: #4caf50; }
+    &.sl-great { color: $success; }
     &.sl-good  { color: #e67e22; }
     &.sl-poor  { color: lighten($red, 15%); }
 }
@@ -6395,7 +6395,7 @@ onBeforeUnmount(() => {
     margin-bottom: 10px;
 }
 
-.st-icon { color: #f39c12; }
+.st-icon { color: $premium; }
 
 .st-tip {
     font-size: 11px;
@@ -6427,7 +6427,7 @@ onBeforeUnmount(() => {
 
     &.sf-done {
         color: $text-muted;
-        .sf-check-box { background: rgba(45, 122, 58, 0.2); border-color: rgba(45, 122, 58, 0.5); color: #4caf50; }
+        .sf-check-box { background: rgba(45, 122, 58, 0.2); border-color: rgba(45, 122, 58, 0.5); color: $success; }
     }
 }
 
@@ -6624,7 +6624,7 @@ onBeforeUnmount(() => {
 // ── Details step ──────────────────────────────────────────────────────────────
 .ftextarea {
     width: 100%;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -6805,7 +6805,7 @@ onBeforeUnmount(() => {
     border-radius: 100px;
     border: 1px solid rgba(255,255,255,0.10);
     background: rgba(255,255,255,0.04);
-    color: #888;
+    color: $text-dim;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -6871,7 +6871,7 @@ onBeforeUnmount(() => {
     position: relative;
     display: flex;
     align-items: center;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: 8px;
     padding: 0 12px;
@@ -6928,7 +6928,7 @@ onBeforeUnmount(() => {
     font-size: 13px;
     font-weight: 500;
 
-    &.ph-ok    { background: rgba(#4ade80, 0.08); border: 1px solid rgba(#4ade80, 0.2); color: #4ade80; }
+    &.ph-ok    { background: rgba($success, 0.08); border: 1px solid rgba($success, 0.2); color: $success; }
     &.ph-warn  { background: rgba(#facc15, 0.08); border: 1px solid rgba(#facc15, 0.2); color: #facc15; }
     &.ph-error { background: rgba($red, 0.08);    border: 1px solid rgba($red, 0.2);    color: $red;     }
 }
@@ -6942,7 +6942,7 @@ onBeforeUnmount(() => {
     border-radius: $r-sm;
     padding: 12px 16px;
     font-size: 13px;
-    color: #e55;
+    color: $danger;
     margin-bottom: 16px;
     .v-icon { flex-shrink: 0; }
 }
@@ -6952,7 +6952,7 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    color: #e55;
+    color: $danger;
     max-width: 300px;
     .v-icon { flex-shrink: 0; }
 }
@@ -7005,7 +7005,7 @@ onBeforeUnmount(() => {
 }
 
 .pp-card {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1.5px solid $border;
     border-radius: 12px;
     padding: 18px 16px;
@@ -7029,14 +7029,14 @@ onBeforeUnmount(() => {
 .promo-banner {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 10px;
-    color: #4caf50; font-size: 13px; font-weight: 700; padding: 10px 16px; margin-bottom: 16px;
+    color: $success; font-size: 13px; font-weight: 700; padding: 10px 16px; margin-bottom: 16px;
 }
 
 .pp-header { display: flex; align-items: center; gap: 8px; }
 .pp-icon { color: $red; flex-shrink: 0; }
 .pp-name { font-size: 14px; font-weight: 800; color: $text; }
 .pp-badge-free {
-    font-size: 9px; font-weight: 800; color: #4caf50;
+    font-size: 9px; font-weight: 800; color: $success;
     background: rgba(76,175,80,0.12); border: 1px solid rgba(76,175,80,0.3);
     padding: 2px 7px; border-radius: 20px; margin-left: auto;
 }
@@ -7045,7 +7045,7 @@ onBeforeUnmount(() => {
 .pp-feats {
     list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; flex: 1;
     li { display: flex; align-items: center; gap: 6px; font-size: 11px; color: $text-muted;
-        .v-icon { color: #4caf50; flex-shrink: 0; }
+        .v-icon { color: $success; flex-shrink: 0; }
     }
     .pp-feat-no { color: $text-dark; .v-icon { color: $text-dark; } }
 }
@@ -7063,7 +7063,7 @@ onBeforeUnmount(() => {
 }
 
 .promo-summary {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: 12px;
     padding: 16px 20px;
@@ -7074,20 +7074,20 @@ onBeforeUnmount(() => {
 
 .ps-free-info {
     display: flex; align-items: center; gap: 8px;
-    font-size: 13px; color: #4caf50; font-weight: 500;
+    font-size: 13px; color: $success; font-weight: 500;
 }
 
 .ps-paid-info { display: flex; flex-direction: column; gap: 2px; }
 .ps-plan-name { font-size: 13px; font-weight: 700; color: $text; }
 .ps-plan-price { font-size: 20px; font-weight: 900; color: $red; }
 .ps-original { text-decoration: line-through; color: $text-dim; font-size: 14px; font-weight: 400; margin-right: 6px; }
-.ps-coupon-ok { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #4caf50; }
+.ps-coupon-ok { display: flex; align-items: center; gap: 5px; font-size: 11px; color: $success; }
 
 .ps-coupon-row { display: flex; flex-direction: column; gap: 5px; }
 .ps-coupon-wrap { display: flex; gap: 6px; }
 .ps-coupon-input {
     flex: 1; min-width: 0;
-    background: #0d0d0d; border: 1px solid $border; border-radius: 8px;
+    background: $card; border: 1px solid $border; border-radius: 8px;
     color: $text; font-size: 13px; font-family: 'Inter', sans-serif;
     padding: 8px 13px; outline: none;
     &::placeholder { color: $text-dark; }
@@ -7101,7 +7101,7 @@ onBeforeUnmount(() => {
     &:hover:not(:disabled) { border-color: $red; color: $text; }
     &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
-.ps-coupon-error { font-size: 12px; color: #e55; }
+.ps-coupon-error { font-size: 12px; color: $danger; }
 
 // ── Smart form additions ──────────────────────────────────────────────────────
 .cat-context-bar {
@@ -7131,17 +7131,17 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    background: rgba(#f5a623, 0.06);
-    border: 1px solid rgba(#f5a623, 0.2);
+    background: rgba($premium, 0.06);
+    border: 1px solid rgba($premium, 0.2);
     border-radius: $r-sm;
     padding: 9px 14px;
     font-size: 12px;
-    color: rgba(#f5a623, 0.9);
+    color: rgba($premium, 0.9);
     margin-bottom: 20px;
     line-height: 1.5;
 }
 
-.cnb-icon { color: #f5a623; flex-shrink: 0; margin-top: 1px; }
+.cnb-icon { color: $premium; flex-shrink: 0; margin-top: 1px; }
 
 .field-hint {
     display: flex;
@@ -7199,9 +7199,9 @@ onBeforeUnmount(() => {
     }
 
     &--success {
-        background: rgba(#4ade80, 0.1);
-        color: #4ade80;
-        border: 1px solid rgba(#4ade80, 0.2);
+        background: rgba($success, 0.1);
+        color: $success;
+        border: 1px solid rgba($success, 0.2);
     }
 }
 
@@ -7242,7 +7242,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid rgba($red, 0.2);
     border-radius: $r-md;
     padding: 14px 18px;
@@ -7294,16 +7294,16 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 4px;
     font-size: 12px;
-    color: #4caf50;
+    color: $success;
     white-space: nowrap;
-    .v-icon { color: #4caf50; }
+    .v-icon { color: $success; }
 }
 
 // ── Edit mode ─────────────────────────────────────────────────────────────────
 .img-thumb--existing { opacity: 1; }
 
 .edit-summary {
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: 12px;
     padding: 20px;
@@ -7554,7 +7554,7 @@ onBeforeUnmount(() => {
     font-weight: 600;
     color: $text-dark;
     pointer-events: none;
-    background: #0c0c0c;
+    background: $card-alt;
     padding-left: 4px;
 }
 
@@ -7579,7 +7579,7 @@ onBeforeUnmount(() => {
     min-width: 18px;
     border-radius: 4px;
     border: 1.5px solid $border;
-    background: #0c0c0c;
+    background: $card-alt;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7608,10 +7608,10 @@ onBeforeUnmount(() => {
     font-size: 11px;
     color: $text-dark;
     pointer-events: none;
-    background: #0c0c0c;
+    background: $card-alt;
     padding-left: 4px;
 
-    &.warn { color: #f5a623; }
+    &.warn { color: $premium; }
 }
 
 .flabel-opt {
@@ -7644,7 +7644,7 @@ onBeforeUnmount(() => {
     min-width: 16px;
     border-radius: 3px;
     border: 1.5px solid $border;
-    background: #0c0c0c;
+    background: $card-alt;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7664,7 +7664,7 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: space-between;
     padding: 8px 12px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-top: none;
     border-radius: 0 0 $r-sm $r-sm;
@@ -7696,10 +7696,10 @@ onBeforeUnmount(() => {
     color: $text-dark;
     white-space: nowrap;
 
-    &.poor { color: #e55; }
-    &.ok { color: #f5a623; }
-    &.good { color: #60a5fa; }
-    &.great { color: #4ade80; }
+    &.poor { color: $danger; }
+    &.ok { color: $premium; }
+    &.good { color: $info; }
+    &.great { color: $success; }
 }
 
 .desc-max { font-weight: 400; color: $text-dark; font-size: 11px; }
@@ -7711,10 +7711,10 @@ onBeforeUnmount(() => {
     border-radius: 20px;
     background: rgba(255,255,255,0.04);
 
-    .desc-counter.poor & { background: rgba(#e55, 0.12); color: #e55; }
-    .desc-counter.ok & { background: rgba(#f5a623, 0.12); color: #f5a623; }
-    .desc-counter.good & { background: rgba(#60a5fa, 0.12); color: #60a5fa; }
-    .desc-counter.great & { background: rgba(#4ade80, 0.12); color: #4ade80; }
+    .desc-counter.poor & { background: rgba($danger, 0.12); color: $danger; }
+    .desc-counter.ok & { background: rgba($premium, 0.12); color: $premium; }
+    .desc-counter.good & { background: rgba($info, 0.12); color: $info; }
+    .desc-counter.great & { background: rgba($success, 0.12); color: $success; }
 }
 
 .desc-wrap .ftextarea {
@@ -7739,7 +7739,7 @@ onBeforeUnmount(() => {
     font-weight: 700;
     color: $text-muted;
     margin-bottom: 10px;
-    .v-icon { color: #f5a623; }
+    .v-icon { color: $premium; }
 }
 
 .wt-grid {
@@ -7759,7 +7759,7 @@ onBeforeUnmount(() => {
 
 // ── History step ──────────────────────────────────────────────────────────────
 .hist-section {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 20px 20px 16px;
@@ -7790,13 +7790,13 @@ onBeforeUnmount(() => {
     margin-top: 4px;
 }
 
-.hq-icon { color: #4ade80; flex-shrink: 0; margin-top: 2px; }
+.hq-icon { color: $success; flex-shrink: 0; margin-top: 2px; }
 .hq-title { font-size: 13px; font-weight: 700; color: $text; margin-bottom: 4px; }
 .hq-sub { font-size: 12px; color: $text-dark; line-height: 1.5; }
 
 // ── Publish summary card ──────────────────────────────────────────────────────
 .pub-summary-card {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 20px;
@@ -7870,7 +7870,7 @@ onBeforeUnmount(() => {
 
 .psc-score-bar {
     height: 5px;
-    background: #1a1a1a;
+    background: $border;
     border-radius: 3px;
     overflow: hidden;
 }
@@ -7880,8 +7880,8 @@ onBeforeUnmount(() => {
     border-radius: 3px;
     transition: width 0.6s ease;
 
-    &.fill-great { background: #4ade80; }
-    &.fill-good { background: #60a5fa; }
+    &.fill-great { background: $success; }
+    &.fill-good { background: $info; }
     &.fill-poor { background: $red; }
 }
 
@@ -7890,8 +7890,8 @@ onBeforeUnmount(() => {
     color: $text-dark;
 }
 
-.col-great { color: #4ade80; font-weight: 700; }
-.col-good { color: #60a5fa; font-weight: 700; }
+.col-great { color: $success; font-weight: 700; }
+.col-good { color: $info; font-weight: 700; }
 .col-poor { color: $red; font-weight: 700; }
 
 // ── Success screen ────────────────────────────────────────────────────────────
@@ -7940,11 +7940,11 @@ onBeforeUnmount(() => {
     animation: confetti-fall 1.8s ease-out calc(var(--i) * 0.08s) both;
 
     &:nth-child(1)  { left:  8%; background: $red;      top: -10px; transform: rotate(20deg); }
-    &:nth-child(2)  { left: 20%; background: #ffd700;   top: -10px; transform: rotate(-30deg); border-radius: 50%; }
-    &:nth-child(3)  { left: 35%; background: #4caf50;   top: -10px; transform: rotate(45deg); }
+    &:nth-child(2)  { left: 20%; background: $premium;   top: -10px; transform: rotate(-30deg); border-radius: 50%; }
+    &:nth-child(3)  { left: 35%; background: $success;   top: -10px; transform: rotate(45deg); }
     &:nth-child(4)  { left: 50%; background: $red;      top: -10px; border-radius: 50%; }
-    &:nth-child(5)  { left: 65%; background: #2196f3;   top: -10px; transform: rotate(-20deg); }
-    &:nth-child(6)  { left: 80%; background: #ffd700;   top: -10px; transform: rotate(60deg); }
+    &:nth-child(5)  { left: 65%; background: $info;   top: -10px; transform: rotate(-20deg); }
+    &:nth-child(6)  { left: 80%; background: $premium;   top: -10px; transform: rotate(60deg); }
     &:nth-child(7)  { left: 92%; background: $red;      top: -10px; border-radius: 50%; }
     &:nth-child(8)  { left: 14%; background: #e040fb;   top: -10px; transform: rotate(-45deg); }
     &:nth-child(9)  { left: 28%; background: #ff5722;   top: -10px; }
@@ -7978,7 +7978,7 @@ onBeforeUnmount(() => {
     animation: icon-pulse 2s ease-in-out infinite;
 }
 
-.success-icon { color: #4caf50; }
+.success-icon { color: $success; }
 
 @keyframes icon-pulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.25); }
@@ -8286,7 +8286,7 @@ onBeforeUnmount(() => {
     border-radius: 6px;
     margin-bottom: 16px;
 
-    &--gold   { background: rgba(#ffd700, 0.12); color: #ffd700; border: 1px solid rgba(#ffd700, 0.25); }
+    &--gold   { background: rgba($premium, 0.12); color: $premium; border: 1px solid rgba($premium, 0.25); }
     &--silver { background: rgba($red, 0.10); color: $red; border: 1px solid rgba($red, 0.2); }
     &--bronze { background: rgba(255,255,255,0.05); color: $text-dim; border: 1px solid rgba(255,255,255,0.1); }
 }
@@ -8334,7 +8334,7 @@ onBeforeUnmount(() => {
     gap: 6px;
     font-size: 11px;
     font-weight: 700;
-    color: #FFD700;
+    color: $premium;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -8758,7 +8758,7 @@ onBeforeUnmount(() => {
     background: rgba(74, 222, 128, 0.08);
     border: 1px solid rgba(74, 222, 128, 0.2);
     border-radius: 8px;
-    color: #4ade80;
+    color: $success;
 }
 
 .bool-checks-row {

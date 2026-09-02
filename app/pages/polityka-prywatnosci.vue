@@ -328,7 +328,7 @@ table {
     font-size: 13px;
 
     th {
-        background: #111;
+        background: $card;
         color: $text;
         font-weight: 700;
         text-align: left;

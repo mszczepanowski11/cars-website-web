@@ -215,7 +215,7 @@ async function onLeave() {
     display: flex;
     align-items: flex-start;
     gap: 16px;
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 20px;
@@ -234,7 +234,7 @@ async function onLeave() {
     background: transparent;
     border: 1px solid rgba(231,76,60,0.4);
     border-radius: $r-sm;
-    color: #e74c3c;
+    color: $danger;
     font-size: 13px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;
@@ -257,7 +257,7 @@ async function onLeave() {
 .invite-input {
     flex: 1;
     min-width: 240px;
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -292,7 +292,7 @@ async function onLeave() {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 14px 18px;
@@ -311,8 +311,8 @@ async function onLeave() {
     padding: 3px 10px;
     border-radius: 20px;
     white-space: nowrap;
-    &.status-active { background: rgba(45,122,58,0.12); color: #4caf50; }
-    &.status-pending { background: rgba(255,152,0,0.12); color: #ff9800; }
+    &.status-active { background: rgba(45,122,58,0.12); color: $success; }
+    &.status-pending { background: rgba(255,152,0,0.12); color: $warning; }
 }
 
 .mr-remove {
@@ -328,7 +328,7 @@ async function onLeave() {
     cursor: pointer;
     flex-shrink: 0;
     transition: background 0.2s, color 0.2s;
-    &:hover:not(:disabled) { background: rgba(231,76,60,0.12); color: #e74c3c; }
+    &:hover:not(:disabled) { background: rgba(231,76,60,0.12); color: $danger; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 

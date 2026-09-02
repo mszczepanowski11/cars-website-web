@@ -160,7 +160,7 @@ function applyConsent(p: CookiePrefs) {
     left: 0;
     right: 0;
     z-index: 9999;
-    background: #0c0c0c;
+    background: $card-alt;
     border-top: 1px solid $border;
     padding: 14px 0;
     box-shadow: 0 -4px 24px rgba(0,0,0,0.5);
@@ -257,7 +257,7 @@ function applyConsent(p: CookiePrefs) {
 }
 
 .cookie-panel {
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     width: 100%;
@@ -329,7 +329,7 @@ function applyConsent(p: CookiePrefs) {
 .slider {
     position: absolute;
     inset: 0;
-    background: #333;
+    background: $border;
     border-radius: 22px;
     transition: background 0.2s;
     &::before {

@@ -409,7 +409,7 @@ const faq = computed(() => [
 .tab-switch {
     display: flex;
     gap: 8px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 6px;
@@ -455,7 +455,7 @@ const faq = computed(() => [
     gap: 8px;
     background: rgba(76,175,80,0.1);
     border: 1px solid rgba(76,175,80,0.3);
-    color: #4caf50;
+    color: $success;
     font-size: 13px;
     font-weight: 700;
     padding: 10px 16px;
@@ -496,7 +496,7 @@ const faq = computed(() => [
     display: flex;
     align-items: center;
     gap: 16px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 20px 22px;
@@ -519,7 +519,7 @@ const faq = computed(() => [
     .info-card--free & {
         background: rgba(76, 175, 80, 0.1);
         border-color: rgba(76, 175, 80, 0.25);
-        color: #4caf50;
+        color: $success;
     }
 }
 
@@ -546,7 +546,7 @@ const faq = computed(() => [
         font-size: 13px;
         font-weight: 800;
         letter-spacing: 0.5px;
-        color: #4caf50;
+        color: $success;
         background: rgba(76, 175, 80, 0.1);
         border: 1px solid rgba(76, 175, 80, 0.25);
         padding: 5px 12px;
@@ -598,8 +598,8 @@ const faq = computed(() => [
         }
     }
 
-    &--top       { background: rgba(#f5a623, 0.015); }
-    &--premium   { background: rgba(#b388ff, 0.015); }
+    &--top       { background: rgba($premium, 0.015); }
+    &--premium   { background: rgba($accent-purple, 0.015); }
 
     @include respond-to(sm) {
         grid-template-columns: 1.5fr repeat(3, 1fr);
@@ -617,8 +617,8 @@ const faq = computed(() => [
     color: $red;
     flex-shrink: 0;
 
-    .promo-row--top &     { color: #f5a623; }
-    .promo-row--premium & { color: #b388ff; }
+    .promo-row--top &     { color: $premium; }
+    .promo-row--premium & { color: $accent-purple; }
 }
 
 .promo-name {
@@ -652,7 +652,7 @@ const faq = computed(() => [
 }
 
 .promo-price-free {
-    color: #4caf50;
+    color: $success;
     font-weight: 800;
     text-transform: uppercase;
     font-size: 12px;
@@ -693,7 +693,7 @@ const faq = computed(() => [
 }
 
 .b2b-card {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     display: flex;
@@ -706,12 +706,12 @@ const faq = computed(() => [
     &:hover { transform: translateY(-3px); }
 
     &--start:hover   { border-color: rgba($red, 0.35); box-shadow: 0 8px 30px rgba($red, 0.07); }
-    &--biznes:hover  { border-color: rgba(#f5a623, 0.4); box-shadow: 0 8px 30px rgba(#f5a623, 0.07); }
-    &--premium:hover { border-color: rgba(#b388ff, 0.4); box-shadow: 0 8px 30px rgba(#b388ff, 0.07); }
+    &--biznes:hover  { border-color: rgba($premium, 0.4); box-shadow: 0 8px 30px rgba($premium, 0.07); }
+    &--premium:hover { border-color: rgba($accent-purple, 0.4); box-shadow: 0 8px 30px rgba($accent-purple, 0.07); }
     &--enterprise:hover { border-color: rgba(255,255,255, 0.15); }
 
     &--popular {
-        border-color: rgba(#f5a623, 0.35);
+        border-color: rgba($premium, 0.35);
     }
 
     > *:not(.b2b-accent):not(.b2b-popular) {
@@ -729,8 +729,8 @@ const faq = computed(() => [
     border-radius: $r-lg $r-lg 0 0;
 
     .b2b-card--start &     { background: $red; }
-    .b2b-card--biznes &    { background: linear-gradient(90deg, #e89020, #f5a623); }
-    .b2b-card--premium &   { background: linear-gradient(90deg, #7b52d4, #b388ff); }
+    .b2b-card--biznes &    { background: linear-gradient(90deg, #e89020, $premium); }
+    .b2b-card--premium &   { background: linear-gradient(90deg, #7b52d4, $accent-purple); }
     .b2b-card--enterprise & { background: linear-gradient(90deg, #555, #aaa); }
 }
 
@@ -741,9 +741,9 @@ const faq = computed(() => [
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: rgba(#f5a623, 0.15);
-    border: 1px solid rgba(#f5a623, 0.4);
-    color: #f5a623;
+    background: rgba($premium, 0.15);
+    border: 1px solid rgba($premium, 0.4);
+    color: $premium;
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 0.8px;
@@ -770,8 +770,8 @@ const faq = computed(() => [
     border: 1px solid rgba($red, 0.2);
     color: $red;
 
-    .b2b-card--biznes &    { background: rgba(#f5a623, 0.1); border-color: rgba(#f5a623, 0.2); color: #f5a623; }
-    .b2b-card--premium &   { background: rgba(#b388ff, 0.1); border-color: rgba(#b388ff, 0.2); color: #b388ff; }
+    .b2b-card--biznes &    { background: rgba($premium, 0.1); border-color: rgba($premium, 0.2); color: $premium; }
+    .b2b-card--premium &   { background: rgba($accent-purple, 0.1); border-color: rgba($accent-purple, 0.2); color: $accent-purple; }
     .b2b-card--enterprise & { background: rgba(255,255,255, 0.06); border-color: rgba(255,255,255, 0.12); color: $text-muted; }
 }
 
@@ -789,7 +789,7 @@ const faq = computed(() => [
     display: inline-block;
     margin-top: 3px;
 
-    &--biznes { background: rgba(#f5a623, 0.15); color: #f5a623; border: 1px solid rgba(#f5a623, 0.3); }
+    &--biznes { background: rgba($premium, 0.15); color: $premium; border: 1px solid rgba($premium, 0.3); }
 }
 
 .b2b-price-block {
@@ -827,7 +827,7 @@ const faq = computed(() => [
     &--free {
         font-size: 20px;
         font-weight: 900;
-        color: #4caf50;
+        color: $success;
         letter-spacing: 0.02em;
     }
 }
@@ -853,8 +853,8 @@ const faq = computed(() => [
 .b2b-check {
     color: $red;
     flex-shrink: 0;
-    .b2b-card--biznes &    { color: #f5a623; }
-    .b2b-card--premium &   { color: #b388ff; }
+    .b2b-card--biznes &    { color: $premium; }
+    .b2b-card--premium &   { color: $accent-purple; }
     .b2b-card--enterprise & { color: $text-muted; }
 }
 
@@ -879,17 +879,17 @@ const faq = computed(() => [
     &:hover { background: rgba($red, 0.18); border-color: rgba($red, 0.5); }
 
     .b2b-card--biznes & {
-        background: rgba(#f5a623, 0.1);
-        border-color: rgba(#f5a623, 0.3);
-        color: #f5a623;
-        &:hover { background: rgba(#f5a623, 0.18); border-color: rgba(#f5a623, 0.5); }
+        background: rgba($premium, 0.1);
+        border-color: rgba($premium, 0.3);
+        color: $premium;
+        &:hover { background: rgba($premium, 0.18); border-color: rgba($premium, 0.5); }
     }
 
     .b2b-card--premium & {
-        background: rgba(#b388ff, 0.1);
-        border-color: rgba(#b388ff, 0.3);
-        color: #b388ff;
-        &:hover { background: rgba(#b388ff, 0.18); border-color: rgba(#b388ff, 0.5); }
+        background: rgba($accent-purple, 0.1);
+        border-color: rgba($accent-purple, 0.3);
+        color: $accent-purple;
+        &:hover { background: rgba($accent-purple, 0.18); border-color: rgba($accent-purple, 0.5); }
     }
 
     &--contact {
@@ -917,7 +917,7 @@ const faq = computed(() => [
 }
 
 .faq-item {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 22px;

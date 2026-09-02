@@ -101,11 +101,11 @@ onBeforeUnmount(() => { mapInstance?.remove(); mapInstance = null })
 </script>
 
 <style scoped>
-.cmap-wrap { width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid #1a1a1a; }
+.cmap-wrap { width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid $border; }
 .cmap-container { width: 100%; height: 560px; }
 .cmap-msg {
   height: 300px; display: flex; align-items: center; justify-content: center; gap: 8px;
-  color: #888; font-size: 14px; background: #080808; text-align: center; padding: 20px;
+  color: $text-dim; font-size: 14px; background: $bg; text-align: center; padding: 20px;
 }
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

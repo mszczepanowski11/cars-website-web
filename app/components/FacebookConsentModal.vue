@@ -88,7 +88,7 @@ h2 { font-size: 19px; font-weight: 800; color: $text; margin: 0 0 10px; }
         display: flex;
         align-items: center;
         gap: 8px;
-        background: #0d0d0d;
+        background: $card;
         border: 1px solid $border;
         border-radius: $r-sm;
         padding: 9px 12px;

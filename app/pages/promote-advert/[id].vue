@@ -468,7 +468,7 @@ async function initiatePayment(useQuota = false) {
 
 .promo-topbar {
     height: 60px; display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px; border-bottom: 1px solid $border; background: #070707; position: sticky; top: 0; z-index: 10;
+    padding: 0 32px; border-bottom: 1px solid $border; background: $bg; position: sticky; top: 0; z-index: 10;
 }
 
 .tl-logo { font-size: 20px; font-weight: 900; color: $text; letter-spacing: 4px; span { color: $red; } }
@@ -477,7 +477,7 @@ async function initiatePayment(useQuota = false) {
 
 .ps {
     display: flex; align-items: center; gap: 5px; color: $text-dark; font-weight: 500;
-    &.done { color: #4caf50; }
+    &.done { color: $success; }
     &.active { color: $text; font-weight: 700; }
 }
 
@@ -496,14 +496,14 @@ async function initiatePayment(useQuota = false) {
 .promo-banner {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 10px;
-    color: #4caf50; font-size: 13px; font-weight: 700; padding: 10px 16px; margin: -20px auto 24px;
+    color: $success; font-size: 13px; font-weight: 700; padding: 10px 16px; margin: -20px auto 24px;
     max-width: 560px;
 }
 
 .plans-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 32px; @media (max-width: 900px) { grid-template-columns: 1fr 1fr; } @media (max-width: 600px) { grid-template-columns: 1fr; } }
 
 .plan-card {
-    background: #0a0a0a; border: 1.5px solid $border; border-radius: 12px; padding: 22px 18px;
+    background: $card-alt; border: 1.5px solid $border; border-radius: 12px; padding: 22px 18px;
     cursor: pointer; position: relative; transition: border-color 0.2s, transform 0.2s;
     display: flex; flex-direction: column; gap: 10px;
     &:hover { border-color: rgba($red, 0.3); transform: translateY(-3px); }
@@ -520,13 +520,13 @@ async function initiatePayment(useQuota = false) {
 .plan-header { display: flex; align-items: center; gap: 10px; }
 .plan-icon { color: $red; }
 .plan-name { font-size: 16px; font-weight: 800; color: $text; }
-.plan-badge-free { font-size: 10px; font-weight: 800; color: #4caf50; background: rgba(76,175,80,0.12); border: 1px solid rgba(76,175,80,0.3); padding: 2px 8px; border-radius: 20px; margin-left: auto; }
+.plan-badge-free { font-size: 10px; font-weight: 800; color: $success; background: rgba(76,175,80,0.12); border: 1px solid rgba(76,175,80,0.3); padding: 2px 8px; border-radius: 20px; margin-left: auto; }
 .plan-price { font-size: 22px; font-weight: 900; color: $red; strong { font-size: 26px; } }
 .plan-desc { font-size: 12px; color: $text-dim; line-height: 1.5; }
 
 .plan-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; flex: 1;
     li { display: flex; align-items: center; gap: 7px; font-size: 12px; color: $text-muted;
-        .v-icon { color: #4caf50; }
+        .v-icon { color: $success; }
         &.disabled { color: $text-dark; .v-icon { color: $text-dark; } }
     }
 }
@@ -547,11 +547,11 @@ async function initiatePayment(useQuota = false) {
 }
 
 .promo-footer {
-    background: #0a0a0a; border: 1px solid $border; border-radius: 12px; padding: 20px 24px;
+    background: $card-alt; border: 1px solid $border; border-radius: 12px; padding: 20px 24px;
     display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
 }
 
-.summary-free { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #4caf50; font-weight: 500; .sf-icon { flex-shrink: 0; } }
+.summary-free { display: flex; align-items: center; gap: 8px; font-size: 14px; color: $success; font-weight: 500; .sf-icon { flex-shrink: 0; } }
 .summary-paid { display: flex; flex-direction: column; gap: 2px; }
 .summary-name { font-size: 14px; font-weight: 700; color: $text; }
 .summary-price { font-size: 22px; font-weight: 900; color: $red; }
@@ -581,12 +581,12 @@ async function initiatePayment(useQuota = false) {
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-.btn-quota { background: #4caf50; }
+.btn-quota { background: $success; }
 
-.action-error { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #e55; margin-top: 8px; width: 100%; }
+.action-error { display: flex; align-items: center; gap: 6px; font-size: 13px; color: $danger; margin-top: 8px; width: 100%; }
 
 .price-original { text-decoration: line-through; color: $text-dim; font-size: 16px; font-weight: 400; margin-right: 6px; }
-.coupon-applied { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #4caf50; margin-top: 2px; }
+.coupon-applied { display: flex; align-items: center; gap: 5px; font-size: 12px; color: $success; margin-top: 2px; }
 
 .coupon-row {
     width: 100%;
@@ -602,7 +602,7 @@ async function initiatePayment(useQuota = false) {
 
 .coupon-input {
     flex: 1;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: 8px;
     color: $text;
@@ -633,7 +633,7 @@ async function initiatePayment(useQuota = false) {
     &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-.coupon-error { font-size: 12px; color: #e55; }
+.coupon-error { font-size: 12px; color: $danger; }
 
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -642,7 +642,7 @@ async function initiatePayment(useQuota = false) {
 .billing-step {
     max-width: 680px;
     margin: 0 auto;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: 12px;
     padding: 28px;
@@ -670,7 +670,7 @@ async function initiatePayment(useQuota = false) {
 }
 
 .billing-order-summary {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: 8px;
     overflow: hidden;
@@ -687,7 +687,7 @@ async function initiatePayment(useQuota = false) {
     &:last-child { border-bottom: none; }
 }
 
-.bos-discount { color: #4caf50; }
+.bos-discount { color: $success; }
 .bos-net, .bos-vat { color: $text-dim; font-size: 12px; }
 
 .bos-total {

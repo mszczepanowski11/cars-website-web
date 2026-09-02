@@ -79,7 +79,7 @@ function toggleOption(o: string) {
 }
 .dafl-range {
     display: flex; align-items: center; gap: 6px;
-    background: #0d0d0d; border: 1px solid $border; border-radius: $r-sm; padding: 0 10px;
+    background: $card; border: 1px solid $border; border-radius: $r-sm; padding: 0 10px;
 }
 .dafl-range-input {
     flex: 1; min-width: 0; background: transparent; border: none; outline: none;

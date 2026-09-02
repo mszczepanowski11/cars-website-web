@@ -142,7 +142,7 @@ function toggleMulti(option: string) {
 .daf-req { color: $red; margin-left: 2px; }
 .daf-unit { color: $text-dim; font-weight: 400; margin-left: 4px; }
 .daf-input {
-    background: #0d0d0d; border: 1px solid $border; border-radius: $r-sm; color: $text;
+    background: $card; border: 1px solid $border; border-radius: $r-sm; color: $text;
     font-size: 13px; padding: 9px 12px; outline: none; font-family: 'Inter', sans-serif;
     &:focus { border-color: rgba($red, 0.4); }
 }

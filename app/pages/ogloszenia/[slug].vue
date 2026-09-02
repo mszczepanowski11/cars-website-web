@@ -1779,7 +1779,7 @@ onUnmounted(() => {
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;
@@ -1814,7 +1814,7 @@ onUnmounted(() => {
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 12px;
@@ -1834,7 +1834,7 @@ onUnmounted(() => {
 
 // ── Hero section ──────────────────────────────────────────────────────────────
 .hero-section {
-    background: #050505;
+    background: $bg;
     border-bottom: 1px solid $border;
     padding: 24px 0 20px;
 
@@ -1866,7 +1866,7 @@ onUnmounted(() => {
     width: 100%;
     border-radius: $r-lg;
     overflow: hidden;
-    background: #0a0a0a;
+    background: $card-alt;
     cursor: pointer;
     aspect-ratio: 16/10;
 
@@ -1919,7 +1919,7 @@ onUnmounted(() => {
     padding: 3px 8px;
     border-radius: 5px;
     letter-spacing: 0.5px;
-    &--premium { background: linear-gradient(135deg, #8B0D1D, #c0392b); color: #fff; }
+    &--premium { background: linear-gradient(135deg, $red, #c0392b); color: #fff; }
     &--top { background: #e67e22; color: #fff; }
     &--featured { background: #2980b9; color: #fff; }
     &--dealer { background: #555; color: #fff; }
@@ -2039,7 +2039,7 @@ onUnmounted(() => {
     border-radius: 6px;
     overflow: hidden;
     border: 2px solid transparent;
-    background: #111;
+    background: $card;
     cursor: pointer;
     transition: border-color 0.2s;
     padding: 0;
@@ -2182,7 +2182,7 @@ onUnmounted(() => {
     gap: 4px;
     background: rgba(45, 122, 58, 0.15);
     border: 1px solid rgba(45, 122, 58, 0.3);
-    color: #4caf50;
+    color: $success;
     font-size: 11px;
     font-weight: 600;
     padding: 3px 9px;
@@ -2230,7 +2230,7 @@ onUnmounted(() => {
     &.pa-great {
         background: rgba(76, 175, 80, 0.15);
         border: 1px solid rgba(76, 175, 80, 0.35);
-        color: #4caf50;
+        color: $success;
     }
     &.pa-good {
         background: rgba(139, 195, 74, 0.12);
@@ -2240,7 +2240,7 @@ onUnmounted(() => {
     &.pa-avg {
         background: rgba(255, 152, 0, 0.1);
         border: 1px solid rgba(255, 152, 0, 0.25);
-        color: #ff9800;
+        color: $warning;
     }
     &.pa-high {
         background: rgba(244, 67, 54, 0.1);
@@ -2341,7 +2341,7 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 2px;
-    .star { color: #f39c12; }
+    .star { color: $premium; }
 }
 
 .sma-rating { font-size: 11px; color: $text-dim; margin-left: 2px; }
@@ -2397,7 +2397,7 @@ onUnmounted(() => {
     justify-content: center;
     gap: 8px;
     transition: background 0.2s, border-color 0.2s;
-    &:hover { background: rgba(255,255,255,0.1); border-color: #333; }
+    &:hover { background: rgba(255,255,255,0.1); border-color: $border; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
@@ -2427,7 +2427,7 @@ onUnmounted(() => {
     justify-content: center;
     gap: 8px;
     transition: background 0.2s, border-color 0.2s;
-    &:hover { background: rgba(255,255,255,0.1); border-color: #333; }
+    &:hover { background: rgba(255,255,255,0.1); border-color: $border; }
 }
 
 .tx-modal { max-width: 420px; }
@@ -2501,7 +2501,7 @@ onUnmounted(() => {
 
 // Date picker card
 .date-picker-card {
-    background: #0c0c0c;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 14px;
@@ -2527,7 +2527,7 @@ onUnmounted(() => {
 
 .dpc-input {
     flex: 1;
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -2542,7 +2542,7 @@ onUnmounted(() => {
 .dpc-time { max-width: 100px; }
 
 .dpc-note {
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -2601,13 +2601,13 @@ onUnmounted(() => {
     margin-top: 2px;
 }
 
-.secure-icon-sm { color: #4caf50; }
+.secure-icon-sm { color: $success; }
 .red-text { color: $red; }
 .nowrap-brand { white-space: nowrap; }
 
 // ── Specs bar ─────────────────────────────────────────────────────────────────
 .specs-bar {
-    background: #070707;
+    background: $bg;
     border-bottom: 1px solid $border;
     padding: 0;
     overflow: hidden;
@@ -2675,7 +2675,7 @@ onUnmounted(() => {
 
 // ── Tech chips ────────────────────────────────────────────────────────────────
 .tech-chips-section {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 18px;
@@ -2706,7 +2706,7 @@ onUnmounted(() => {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     padding: 8px 12px;
@@ -2717,7 +2717,7 @@ onUnmounted(() => {
 
 .tc-label { color: $text-dim; }
 .tc-value { color: $text; font-weight: 600; }
-.tc-check { color: #4caf50; display: flex; align-items: center; gap: 4px; }
+.tc-check { color: $success; display: flex; align-items: center; gap: 4px; }
 
 // Faza 8: documents/videos section
 .docs-grid {
@@ -2733,18 +2733,18 @@ onUnmounted(() => {
 .doc-card-label { margin-top: 6px; font-size: 12px; color: $text-dim; }
 .doc-link-card {
     display: flex; align-items: center; gap: 10px; padding: 14px 16px;
-    background: #0d0d0d; border: 1px solid $border; border-radius: $r-md;
+    background: $card; border: 1px solid $border; border-radius: $r-md;
     color: $text; text-decoration: none; font-size: 13px; font-weight: 600;
     transition: border-color 0.15s;
     &:hover { border-color: rgba($red, 0.4); }
 }
 .doc-link-ext { margin-left: auto; color: $text-dim; }
-.tc-check-icon { color: #4caf50; }
+.tc-check-icon { color: $success; }
 
 // ── Premium vertical scroll sections ─────────────────────────────────────────
 .pg-section {
     margin-bottom: 28px;
-    background: #0a0a0a;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-lg;
     overflow: hidden;
@@ -2809,7 +2809,7 @@ onUnmounted(() => {
 .pg-section .eq-item {
     color: $text-dim;
 
-    .feat-icon { color: #4caf50; flex-shrink: 0; }
+    .feat-icon { color: $success; flex-shrink: 0; }
 }
 
 .eq-collapse-enter-active,
@@ -2826,7 +2826,7 @@ onUnmounted(() => {
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
 .tabs-wrap {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     overflow: hidden;
@@ -2901,7 +2901,7 @@ onUnmounted(() => {
 
 .desc-tech-inline {
     margin-top: 22px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px;
@@ -2927,7 +2927,7 @@ onUnmounted(() => {
     flex-direction: column;
     gap: 3px;
     padding: 8px 10px;
-    background: #111;
+    background: $card;
     border-radius: 6px;
 }
 
@@ -2940,7 +2940,7 @@ onUnmounted(() => {
     align-items: center;
     gap: 4px;
 }
-.dti-check { color: #4caf50; }
+.dti-check { color: $success; }
 
 .features-section { margin-top: 22px; }
 
@@ -2967,7 +2967,7 @@ onUnmounted(() => {
     color: $text-muted;
 }
 
-.feat-icon { color: #4caf50; flex-shrink: 0; }
+.feat-icon { color: $success; flex-shrink: 0; }
 
 // ── Spec table ────────────────────────────────────────────────────────────────
 .spec-table { display: flex; flex-direction: column; gap: 20px; }
@@ -3004,12 +3004,12 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 5px;
-    &--check { color: #4caf50; }
+    &--check { color: $success; }
     &--warn { color: #e67e22; }
     &--color { display: flex; align-items: center; gap: 7px; }
     &--mono { font-family: 'Roboto Mono', monospace; font-size: 12px; letter-spacing: 0.05em; }
 }
-.sr-check-icon { color: #4caf50; }
+.sr-check-icon { color: $success; }
 .color-dot {
     display: inline-block;
     width: 14px;
@@ -3139,7 +3139,7 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 14px;
@@ -3157,8 +3157,8 @@ onUnmounted(() => {
     margin-left: auto;
     font-size: 11px;
     font-weight: 600;
-    color: #4caf50;
-    .v-icon { color: #4caf50; }
+    color: $success;
+    .v-icon { color: $success; }
 }
 
 .hist-items-grid {
@@ -3172,12 +3172,12 @@ onUnmounted(() => {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 14px;
 
-    &.hi-ok { border-color: rgba(45,122,58,0.3); background: rgba(45,122,58,0.06); .hi-icon { color: #4caf50; } }
+    &.hi-ok { border-color: rgba(45,122,58,0.3); background: rgba(45,122,58,0.06); .hi-icon { color: $success; } }
     &.hi-warn { border-color: rgba(230,126,34,0.3); background: rgba(230,126,34,0.06); .hi-icon { color: #e67e22; } }
     &.hi-info { border-color: $border; background: rgba(255,255,255,0.03); .hi-icon { color: $text-dim; } }
 }
@@ -3280,7 +3280,7 @@ onUnmounted(() => {
 .fin-price-sub { font-size: 11px; color: $text-dark; margin-top: 2px; }
 
 .fin-calc-body {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px;
@@ -3305,7 +3305,7 @@ onUnmounted(() => {
 .crb-val--sm { font-size: 16px; color: $text; }
 
 .fin-inquiry-section {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 20px;
@@ -3330,7 +3330,7 @@ onUnmounted(() => {
 }
 
 .fin-input {
-    background: #111;
+    background: $card;
     border: 1px solid #2d2d2d;
     border-radius: $r-sm;
     color: $text;
@@ -3365,7 +3365,7 @@ onUnmounted(() => {
     cursor: pointer;
     transition: all 0.2s;
     &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.4); color: $text; }
-    &:not(.active):hover { border-color: #333; color: $text; }
+    &:not(.active):hover { border-color: $border; color: $text; }
 }
 
 .fin-submit-btn {
@@ -3392,7 +3392,7 @@ onUnmounted(() => {
 .reviews-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
 
 .review-card {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px;
@@ -3424,12 +3424,12 @@ onUnmounted(() => {
 .rev-date { font-size: 11px; color: $text-dark; margin-top: 2px; }
 
 .rev-stars { display: flex; gap: 2px; margin-left: auto; }
-.star-icon { color: #f39c12; }
+.star-icon { color: $premium; }
 
 .rev-text { font-size: 13px; color: $text-muted; line-height: 1.6; margin: 0; }
 
 .review-form {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 18px;
@@ -3454,12 +3454,12 @@ onUnmounted(() => {
     cursor: pointer;
 }
 
-.star-active { color: #f39c12; }
+.star-active { color: $premium; }
 .star-empty { color: $text-dark; }
 .rev-rating-label { font-size: 12px; color: $text-dim; margin-left: 8px; }
 
 .rev-textarea {
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -3472,7 +3472,7 @@ onUnmounted(() => {
     &::placeholder { color: $text-dark; }
 }
 
-.rev-error { font-size: 12px; color: #e74c3c; }
+.rev-error { font-size: 12px; color: $danger; }
 
 .rev-submit-btn {
     background: $red;
@@ -3502,10 +3502,10 @@ onUnmounted(() => {
     border-radius: $r-sm;
     padding: 12px 16px;
     font-size: 13px;
-    color: #4caf50;
+    color: $success;
     font-weight: 600;
     margin-top: 14px;
-    .v-icon { color: #4caf50; }
+    .v-icon { color: $success; }
 }
 
 // ── Similar tab grid ──────────────────────────────────────────────────────────
@@ -3564,7 +3564,7 @@ onUnmounted(() => {
     border-radius: $r-md;
     overflow: hidden;
     cursor: pointer;
-    background: #0a0a0a;
+    background: $card-alt;
 
     img { width: 100%; height: 280px; object-fit: cover; display: block; transition: transform 0.3s; }
     &:hover img { transform: scale(1.03); }
@@ -3597,7 +3597,7 @@ onUnmounted(() => {
     border-radius: $r-md;
     overflow: hidden;
     cursor: pointer;
-    background: #0a0a0a;
+    background: $card-alt;
     flex: 1;
 
     img { width: 100%; height: 88px; object-fit: cover; display: block; transition: transform 0.3s; }
@@ -3638,7 +3638,7 @@ onUnmounted(() => {
 .sim-card {
     display: block;
     text-decoration: none;
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     overflow: hidden;
@@ -3648,7 +3648,7 @@ onUnmounted(() => {
 
 .sim-img-wrap {
     position: relative;
-    background: #0a0a0a;
+    background: $card-alt;
     img { width: 100%; height: 140px; object-fit: cover; display: block; }
 }
 
@@ -3689,7 +3689,7 @@ onUnmounted(() => {
 
 // ── Right sidebar ─────────────────────────────────────────────────────────────
 .sidebar-card {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 18px;
@@ -3765,7 +3765,7 @@ onUnmounted(() => {
     align-items: center;
     gap: 2px;
     margin-top: 4px;
-    .star { color: #f39c12; }
+    .star { color: $premium; }
 }
 
 .seller-rating { font-size: 12px; font-weight: 700; color: $text; margin-left: 4px; }
@@ -3774,7 +3774,7 @@ onUnmounted(() => {
 .seller-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     overflow: hidden;
@@ -3856,7 +3856,7 @@ onUnmounted(() => {
 .map-wrap {
     border-radius: $r-md;
     overflow: hidden;
-    background: #0a0a0a;
+    background: $card-alt;
 }
 
 .map-iframe {
@@ -3873,7 +3873,7 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    background: #0d0d0d;
+    background: $card;
     border-radius: $r-md;
     text-align: center;
     padding: 16px;
@@ -3897,7 +3897,7 @@ onUnmounted(() => {
 
 .calc-tabs {
     display: flex;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     overflow: hidden;
@@ -4107,9 +4107,9 @@ onUnmounted(() => {
     border-radius: $r-sm;
     padding: 10px 14px;
     font-size: 13px;
-    color: #4caf50;
+    color: $success;
     font-weight: 600;
-    .v-icon { color: #4caf50; }
+    .v-icon { color: $success; }
 }
 
 .tx-error {
@@ -4121,7 +4121,7 @@ onUnmounted(() => {
     border-radius: $r-sm;
     padding: 10px 14px;
     font-size: 13px;
-    color: #e74c3c;
+    color: $danger;
     font-weight: 500;
 }
 
@@ -4201,7 +4201,7 @@ onUnmounted(() => {
     border: 1px solid;
     font-size: 13px;
 
-    &.pa-great { background: rgba(46,160,67,0.12); border-color: rgba(46,160,67,0.3); color: #4caf50; }
+    &.pa-great { background: rgba(46,160,67,0.12); border-color: rgba(46,160,67,0.3); color: $success; }
     &.pa-good  { background: rgba(46,160,67,0.08); border-color: rgba(46,160,67,0.2); color: #81c784; }
     &.pa-avg   { background: rgba(255,255,255,0.04); border-color: $border; color: $text-dim; }
     &.pa-high  { background: rgba(139,13,29,0.1); border-color: rgba($red,0.3); color: $red; }
@@ -4210,7 +4210,7 @@ onUnmounted(() => {
 .phm-sub { font-size: 11px; opacity: 0.8; }
 
 .ph-graph-area {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 20px 20px 10px;
@@ -4357,7 +4357,7 @@ onUnmounted(() => {
 
     &.done {
         color: $text-dim;
-        .v-icon { color: #4caf50; }
+        .v-icon { color: $success; }
     }
 }
 
@@ -4392,7 +4392,7 @@ onUnmounted(() => {
     margin-bottom: 12px;
 }
 
-.vtb-icon { color: #22c55e; }
+.vtb-icon { color: $success; }
 
 .vtb-title {
     font-size: 11px;
@@ -4420,9 +4420,9 @@ onUnmounted(() => {
     border-radius: $r-sm;
 
     &.vtb-ok {
-        color: #22c55e;
-        background: rgba(#22c55e, 0.08);
-        .v-icon { color: #22c55e; }
+        color: $success;
+        background: rgba($success, 0.08);
+        .v-icon { color: $success; }
     }
 
     &.vtb-pending {
@@ -4505,7 +4505,7 @@ onUnmounted(() => {
     .v-icon { color: $text-dark; }
 }
 
-.seller-response { color: #22c55e; .v-icon { color: #22c55e; } }
+.seller-response { color: $success; .v-icon { color: $success; } }
 
 // ── Info column extra space ────────────────────────────────────────────────────
 .info-col {
@@ -4528,7 +4528,7 @@ onUnmounted(() => {
         gap: 10px;
         padding: 12px 16px;
         padding-bottom: max(12px, env(safe-area-inset-bottom));
-        background: rgba(#080808, 0.95);
+        background: rgba($bg, 0.95);
         border-top: 1px solid #232323;
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
@@ -4644,7 +4644,7 @@ onUnmounted(() => {
 }
 
 .compose-modal {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-xl;
     padding: 28px;

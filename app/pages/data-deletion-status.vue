@@ -81,8 +81,8 @@ onMounted(async () => {
     p { margin: 0; line-height: 1.5; }
 }
 
-.status-state--ok { color: #4caf50; }
-.status-state--error { color: #e55; }
+.status-state--ok { color: $success; }
+.status-state--error { color: $danger; }
 
 .status-code {
     color: $text-dim !important;
@@ -90,7 +90,7 @@ onMounted(async () => {
     margin-top: 6px !important;
 
     code {
-        background: #0d0d0d;
+        background: $card;
         border: 1px solid $border;
         border-radius: 6px;
         padding: 2px 6px;

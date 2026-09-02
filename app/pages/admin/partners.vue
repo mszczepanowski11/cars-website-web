@@ -601,7 +601,7 @@ onMounted(() => {
 .signup-list { display: flex; flex-direction: column; gap: 10px; }
 .signup-card {
     display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
-    background: #0d0d0d; border: 1px solid rgba($red, 0.2); border-radius: $r-md;
+    background: $card; border: 1px solid rgba($red, 0.2); border-radius: $r-md;
     padding: 14px 18px; flex-wrap: wrap;
 }
 .signup-card-main { flex: 1; min-width: 240px; }
@@ -629,16 +629,16 @@ onMounted(() => {
 }
 .key-banner-body { flex: 1; }
 .key-banner-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
-.key-value { font-size: 13px; background: #0d0d0d; padding: 6px 10px; border-radius: 5px; display: inline-block; color: $text; word-break: break-all; }
+.key-value { font-size: 13px; background: $card; padding: 6px 10px; border-radius: 5px; display: inline-block; color: $text; word-break: break-all; }
 
 .add-form-card {
-    background: #0d0d0d; border: 1px solid rgba($red, 0.2); border-radius: $r-md;
+    background: $card; border: 1px solid rgba($red, 0.2); border-radius: $r-md;
     padding: 16px 20px; margin-bottom: 18px;
 }
 .afc-title { font-size: 13px; font-weight: 700; color: $text; margin-bottom: 12px; }
 .afc-fields { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
 .afc-input {
-    flex: 1; min-width: 180px; background: #080808; border: 1px solid $border; border-radius: $r-sm;
+    flex: 1; min-width: 180px; background: $bg; border: 1px solid $border; border-radius: $r-sm;
     color: $text; font-size: 13px; padding: 8px 12px; outline: none; font-family: 'Inter', sans-serif;
     &:focus { border-color: rgba($red, 0.4); }
     &--wide { min-width: 100%; }
@@ -701,7 +701,7 @@ onMounted(() => {
 .mapping-row--value .afc-input { flex: 1; min-width: 140px; }
 .mapping-row--value select.afc-select { flex: 0 0 130px; min-width: 130px; }
 
-.logs-cell { background: #0a0a0a; white-space: normal; }
+.logs-cell { background: $card-alt; white-space: normal; }
 .logs-table {
     width: 100%; border-collapse: collapse;
     th { font-size: 10px; padding: 6px 10px; color: $text-dim; text-transform: uppercase; }
@@ -717,6 +717,6 @@ onMounted(() => {
 }
 .btn-delete {
     background: rgba(220,50,50,0.06); color: rgba(229,85,85,0.7); border-color: rgba(220,50,50,0.15);
-    &:hover { background: rgba(220,50,50,0.18); color: #e55; border-color: rgba(220,50,50,0.35); }
+    &:hover { background: rgba(220,50,50,0.18); color: $danger; border-color: rgba(220,50,50,0.35); }
 }
 </style>

@@ -505,7 +505,7 @@ h2 {
 .type-toggle {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 4px;
@@ -557,7 +557,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 14px 16px;
@@ -657,7 +657,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 0 14px;
@@ -699,7 +699,7 @@ h2 {
 .auth-hint {
     font-size: 11px;
     color: $text-dark;
-    &--error { color: #e55; }
+    &--error { color: $danger; }
 }
 
 .strength-wrap {
@@ -723,9 +723,9 @@ h2 {
     transition: width 0.3s ease, background 0.3s ease;
 
     &.strength-1 { background: #e53935; }
-    &.strength-2 { background: #ff9800; }
+    &.strength-2 { background: $warning; }
     &.strength-3 { background: #fdd835; }
-    &.strength-4 { background: #4caf50; }
+    &.strength-4 { background: $success; }
 }
 
 .strength-label {
@@ -734,9 +734,9 @@ h2 {
     white-space: nowrap;
 
     &.strength-label-1 { color: #e53935; }
-    &.strength-label-2 { color: #ff9800; }
+    &.strength-label-2 { color: $warning; }
     &.strength-label-3 { color: #fdd835; }
-    &.strength-label-4 { color: #4caf50; }
+    &.strength-label-4 { color: $success; }
 }
 
 .auth-error {
@@ -746,7 +746,7 @@ h2 {
     background: rgba(220,50,50,0.08);
     border: 1px solid rgba(220,50,50,0.25);
     border-radius: $r-sm;
-    color: #e55;
+    color: $danger;
     font-size: 13px;
     padding: 10px 14px;
 }
@@ -820,7 +820,7 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #4caf50;
+    color: $success;
     animation: icon-pulse 2s ease-in-out infinite;
 }
 
@@ -869,7 +869,7 @@ h2 {
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-.email-icon { color: #4caf50 !important; }
+.email-icon { color: $success !important; }
 
 .reg-success-actions {
     display: flex;
@@ -928,7 +928,7 @@ h2 {
     height: 18px;
     border: 1.5px solid $border;
     border-radius: 4px;
-    background: #0d0d0d;
+    background: $card;
     display: flex;
     align-items: center;
     justify-content: center;

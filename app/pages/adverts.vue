@@ -1491,7 +1491,7 @@ onMounted(async () => {
     flex: 1;
     min-width: 0;
 
-    option { background: #111; color: $text; }
+    option { background: $card; color: $text; }
     &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
@@ -1910,7 +1910,7 @@ onMounted(async () => {
     top: calc(100% + 8px);
     left: 0;
     right: 0;
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     z-index: 200;
@@ -1989,7 +1989,7 @@ onMounted(async () => {
     cursor: pointer;
     transition: border-color 0.2s;
 
-    option { background: #111; color: $text; }
+    option { background: $card; color: $text; }
     &:focus { border-color: rgba($red, 0.4); }
 }
 

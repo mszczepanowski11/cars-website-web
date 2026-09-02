@@ -179,7 +179,7 @@ defineExpose({ validateAll, isValid })
 
 .bf-type-switch {
     display: flex;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     overflow: hidden;
@@ -236,7 +236,7 @@ defineExpose({ validateAll, isValid })
 }
 
 .bf-input {
-    background: #111;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;
@@ -247,12 +247,12 @@ defineExpose({ validateAll, isValid })
     transition: border-color 0.2s;
     &:focus { border-color: $red; }
     &::placeholder { color: $text-dark; }
-    &.error { border-color: #e74c3c; }
+    &.error { border-color: $danger; }
 }
 
 .bf-error {
     font-size: 11px;
-    color: #e74c3c;
+    color: $danger;
 }
 
 .bf-note {

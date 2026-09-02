@@ -721,7 +721,7 @@ onMounted(async () => {
 }
 
 .plan-card {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 0;
@@ -736,8 +736,8 @@ onMounted(async () => {
 
     &--refresh:hover  { border-color: rgba($red, 0.35); box-shadow: 0 12px 40px rgba($red, 0.07); }
     &--highlight:hover { border-color: rgba($red, 0.5); box-shadow: 0 12px 40px rgba($red, 0.09); }
-    &--top:hover       { border-color: rgba(#f5a623, 0.5); box-shadow: 0 12px 40px rgba(#f5a623, 0.08); }
-    &--premium:hover   { border-color: rgba(#b388ff, 0.5); box-shadow: 0 12px 40px rgba(#b388ff, 0.08); }
+    &--top:hover       { border-color: rgba($premium, 0.5); box-shadow: 0 12px 40px rgba($premium, 0.08); }
+    &--premium:hover   { border-color: rgba($accent-purple, 0.5); box-shadow: 0 12px 40px rgba($accent-purple, 0.08); }
 
     // inner padding applied to children except accent strip
     > *:not(.plan-accent-strip):not(.plan-popular-badge) {
@@ -755,8 +755,8 @@ onMounted(async () => {
     border-radius: $r-lg $r-lg 0 0;
     background: $red;
 
-    .plan-card--top &     { background: linear-gradient(90deg, #f5a623, #ffcc66); }
-    .plan-card--premium & { background: linear-gradient(90deg, #7b52d4, #b388ff); }
+    .plan-card--top &     { background: linear-gradient(90deg, $premium, #ffcc66); }
+    .plan-card--premium & { background: linear-gradient(90deg, #7b52d4, $accent-purple); }
 }
 
 .plan-popular-badge {
@@ -766,9 +766,9 @@ onMounted(async () => {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: rgba(#f5a623, 0.15);
-    border: 1px solid rgba(#f5a623, 0.4);
-    color: #f5a623;
+    background: rgba($premium, 0.15);
+    border: 1px solid rgba($premium, 0.4);
+    color: $premium;
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 0.8px;
@@ -797,15 +797,15 @@ onMounted(async () => {
     flex-shrink: 0;
 
     .plan-card--top & {
-        background: rgba(#f5a623, 0.1);
-        border-color: rgba(#f5a623, 0.25);
-        color: #f5a623;
+        background: rgba($premium, 0.1);
+        border-color: rgba($premium, 0.25);
+        color: $premium;
     }
 
     .plan-card--premium & {
-        background: rgba(#b388ff, 0.1);
-        border-color: rgba(#b388ff, 0.25);
-        color: #b388ff;
+        background: rgba($accent-purple, 0.1);
+        border-color: rgba($accent-purple, 0.25);
+        color: $accent-purple;
     }
 }
 
@@ -827,9 +827,9 @@ onMounted(async () => {
     }
 
     &.preview--top {
-        background: rgba(#f5a623, 0.15);
-        color: #f5a623;
-        border: 1px solid rgba(#f5a623, 0.4);
+        background: rgba($premium, 0.15);
+        color: $premium;
+        border: 1px solid rgba($premium, 0.4);
     }
 }
 
@@ -869,8 +869,8 @@ onMounted(async () => {
     color: $red;
     flex-shrink: 0;
 
-    .plan-card--top &     { color: #f5a623; }
-    .plan-card--premium & { color: #b388ff; }
+    .plan-card--top &     { color: $premium; }
+    .plan-card--premium & { color: $accent-purple; }
 }
 
 // Duration toggle
@@ -905,8 +905,8 @@ onMounted(async () => {
         color: $text;
 
         .plan-card--top & {
-            border-color: rgba(#f5a623, 0.5);
-            background: rgba(#f5a623, 0.06);
+            border-color: rgba($premium, 0.5);
+            background: rgba($premium, 0.06);
         }
     }
 }
@@ -917,8 +917,8 @@ onMounted(async () => {
     color: $text-dim;
 
     .dur-tab.active & { color: $red; }
-    .plan-card--top .dur-tab.active & { color: #f5a623; }
-    .plan-card--premium .dur-tab.active & { color: #b388ff; }
+    .plan-card--top .dur-tab.active & { color: $premium; }
+    .plan-card--premium .dur-tab.active & { color: $accent-purple; }
 }
 
 // Price
@@ -950,8 +950,8 @@ onMounted(async () => {
     font-weight: 900;
     color: $red;
 
-    .plan-card--top & { color: #f5a623; }
-    .plan-card--premium & { color: #b388ff; }
+    .plan-card--top & { color: $premium; }
+    .plan-card--premium & { color: $accent-purple; }
 }
 
 .plan-period {
@@ -1007,21 +1007,21 @@ onMounted(async () => {
         color: lighten($red, 15%);
     }
     .plan-card--top & {
-        background: rgba(#f5a623, 0.1);
-        border-color: rgba(#f5a623, 0.3);
-        color: #f5a623;
+        background: rgba($premium, 0.1);
+        border-color: rgba($premium, 0.3);
+        color: $premium;
     }
     .plan-card--premium & {
-        background: rgba(#b388ff, 0.1);
-        border-color: rgba(#b388ff, 0.3);
-        color: #b388ff;
+        background: rgba($accent-purple, 0.1);
+        border-color: rgba($accent-purple, 0.3);
+        color: $accent-purple;
     }
 
     &:hover {
         .plan-card--refresh &,
         .plan-card--highlight & { background: rgba($red, 0.2); border-color: rgba($red, 0.5); }
-        .plan-card--top &       { background: rgba(#f5a623, 0.18); border-color: rgba(#f5a623, 0.5); }
-        .plan-card--premium &   { background: rgba(#b388ff, 0.18); border-color: rgba(#b388ff, 0.5); }
+        .plan-card--top &       { background: rgba($premium, 0.18); border-color: rgba($premium, 0.5); }
+        .plan-card--premium &   { background: rgba($accent-purple, 0.18); border-color: rgba($accent-purple, 0.5); }
     }
 }
 
@@ -1041,7 +1041,7 @@ onMounted(async () => {
 }
 
 .picker-card {
-    display: flex; align-items: center; gap: 12px; background: #0a0a0a;
+    display: flex; align-items: center; gap: 12px; background: $card-alt;
     border: 1px solid $border; border-radius: $r-md; padding: 12px; cursor: pointer;
     transition: border-color 0.2s, background 0.2s; position: relative;
     &:hover { border-color: rgba($red, 0.35); background: rgba($red, 0.03); }
@@ -1069,20 +1069,20 @@ onMounted(async () => {
 }
 
 .plan-card--top.plan-selected {
-    border-color: rgba(#f5a623, 0.6) !important;
-    background: rgba(#f5a623, 0.03);
-    box-shadow: 0 0 0 1px rgba(#f5a623, 0.2);
+    border-color: rgba($premium, 0.6) !important;
+    background: rgba($premium, 0.03);
+    box-shadow: 0 0 0 1px rgba($premium, 0.2);
 }
 
 .plan-card--premium.plan-selected {
-    border-color: rgba(#b388ff, 0.6) !important;
-    background: rgba(#b388ff, 0.03);
-    box-shadow: 0 0 0 1px rgba(#b388ff, 0.2);
+    border-color: rgba($accent-purple, 0.6) !important;
+    background: rgba($accent-purple, 0.03);
+    box-shadow: 0 0 0 1px rgba($accent-purple, 0.2);
 }
 
 // ── Order panel ───────────────────────────────────────────────────────────────
 .order-panel {
-    margin-top: 36px; background: #0a0a0a; border: 1px solid $border;
+    margin-top: 36px; background: $card-alt; border: 1px solid $border;
     border-radius: $r-lg; padding: 28px; max-width: 520px;
 }
 
@@ -1101,7 +1101,7 @@ onMounted(async () => {
 .coupon-row { margin: 16px 0; display: flex; flex-direction: column; gap: 6px; }
 
 .coupon-input-wrap {
-    display: flex; align-items: center; gap: 8px; background: #0d0d0d;
+    display: flex; align-items: center; gap: 8px; background: $card;
     border: 1px solid $border; border-radius: $r-sm; padding: 9px 12px;
     transition: border-color 0.2s;
     &:focus-within { border-color: rgba($red, 0.4); }
@@ -1127,11 +1127,11 @@ onMounted(async () => {
 
 .coupon-clear-btn {
     background: transparent; border: none; color: $text-dim; cursor: pointer;
-    padding: 4px; transition: color 0.2s; &:hover { color: #e55; }
+    padding: 4px; transition: color 0.2s; &:hover { color: $danger; }
 }
 
-.coupon-ok { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4caf50; }
-.coupon-err { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #e55; }
+.coupon-ok { display: flex; align-items: center; gap: 6px; font-size: 12px; color: $success; }
+.coupon-err { display: flex; align-items: center; gap: 6px; font-size: 12px; color: $danger; }
 
 // Purchase
 .purchase-btn {
@@ -1145,13 +1145,13 @@ onMounted(async () => {
 
 .purchase-ok {
     display: flex; align-items: center; gap: 8px; margin-top: 14px;
-    font-size: 13px; color: #4caf50; background: rgba(76,175,80,0.08);
+    font-size: 13px; color: $success; background: rgba(76,175,80,0.08);
     border: 1px solid rgba(76,175,80,0.2); border-radius: $r-sm; padding: 10px 14px;
 }
 
 .purchase-err {
     display: flex; align-items: center; gap: 8px; margin-top: 14px;
-    font-size: 13px; color: #e55; background: rgba(220,50,50,0.08);
+    font-size: 13px; color: $danger; background: rgba(220,50,50,0.08);
     border: 1px solid rgba(220,50,50,0.2); border-radius: $r-sm; padding: 10px 14px;
 }
 
@@ -1163,7 +1163,7 @@ onMounted(async () => {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 28px 32px;

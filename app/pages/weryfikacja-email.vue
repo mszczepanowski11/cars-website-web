@@ -116,7 +116,7 @@ async function resend() {
 }
 
 .verify-card {
-    background: #080808;
+    background: $bg;
     border: 1px solid $border;
     border-radius: $r-xl;
     padding: 48px 40px 32px;
@@ -160,12 +160,12 @@ async function resend() {
 .icon-success {
     background: rgba(76,175,80,0.1);
     border: 2px solid rgba(76,175,80,0.3);
-    color: #4caf50;
+    color: $success;
 }
 .icon-error {
     background: rgba(220,60,60,0.1);
     border: 2px solid rgba(220,60,60,0.25);
-    color: #e55;
+    color: $danger;
 }
 
 .verify-title {
@@ -198,7 +198,7 @@ async function resend() {
 
 .resend-input {
     width: 100%;
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     color: $text;
@@ -213,7 +213,7 @@ async function resend() {
 
 .resend-msg {
     font-size: 13px;
-    color: #4caf50;
+    color: $success;
     margin: 0;
 }
 

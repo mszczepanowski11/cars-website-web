@@ -111,9 +111,9 @@ function openMenu(e: MouseEvent) {
     position: relative;
     border-left: 3px solid transparent;
 
-    &:hover { background: #0d0d0d; }
+    &:hover { background: $card; }
     &.conv-active {
-        background: #0d0d0d;
+        background: $card;
         border-left-color: $red;
     }
     &.conv-unread .conv-name { color: #fff; }
@@ -129,7 +129,7 @@ function openMenu(e: MouseEvent) {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #1a1a1a;
+    background: $border;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -157,7 +157,7 @@ function openMenu(e: MouseEvent) {
     height: 10px;
     background: $red;
     border-radius: 50%;
-    border: 2px solid #050505;
+    border: 2px solid $bg;
 }
 
 // Body
@@ -263,7 +263,7 @@ function openMenu(e: MouseEvent) {
 .ctx-menu {
     position: fixed;
     z-index: 1001;
-    background: #111;
+    background: $card;
     border: 1px solid #2a2a2a;
     border-radius: $r-md;
     padding: 4px;
@@ -286,6 +286,6 @@ function openMenu(e: MouseEvent) {
     text-align: left;
     transition: background 0.15s, color 0.15s;
 
-    &:hover { background: #1a1a1a; color: $text; }
+    &:hover { background: $border; color: $text; }
 }
 </style>

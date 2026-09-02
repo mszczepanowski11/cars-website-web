@@ -153,7 +153,7 @@ onUnmounted(() => document.removeEventListener('click', _outsideClickHandler))
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #0c0c0c;
+    background: $card-alt;
     border: 1px solid $border;
     border-radius: $r-sm;
     padding: 0 12px;
@@ -162,7 +162,7 @@ onUnmounted(() => document.removeEventListener('click', _outsideClickHandler))
     transition: border-color 0.2s;
     user-select: none;
 
-    &:hover:not(.disabled) { border-color: #333; }
+    &:hover:not(.disabled) { border-color: $border; }
     &.disabled { opacity: 0.45; cursor: not-allowed; }
 
     .ss-wrap.open & { border-color: #444; }
@@ -248,7 +248,7 @@ onUnmounted(() => document.removeEventListener('click', _outsideClickHandler))
     cursor: pointer;
     transition: background 0.15s;
 
-    &:hover, &--highlighted { background: #1a1a1a; color: $text; }
+    &:hover, &--highlighted { background: $border; color: $text; }
     &--selected { color: $red; }
 }
 

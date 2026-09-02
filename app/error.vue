@@ -95,7 +95,7 @@ function goBack() {
     &.wrap-500 {
         background: rgba(255,152,0,0.08);
         border: 1px solid rgba(255,152,0,0.2);
-        color: #ff9800;
+        color: $warning;
     }
 }
 

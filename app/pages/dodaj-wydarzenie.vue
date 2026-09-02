@@ -330,7 +330,7 @@ onMounted(async () => {
 
 .form-input,
 .form-textarea {
-    background: #0d0d0d;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 12px 16px;
@@ -411,7 +411,7 @@ onMounted(async () => {
     border-radius: $r-sm;
     padding: 12px 16px;
     font-size: 13px;
-    color: #e55;
+    color: $danger;
     margin-bottom: 16px;
 
     .v-icon { flex-shrink: 0; }
