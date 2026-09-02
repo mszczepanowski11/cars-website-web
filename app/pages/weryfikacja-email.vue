@@ -1,7 +1,7 @@
 <template>
     <div class="verify-page">
         <div class="verify-card">
-            <NuxtLink to="/" class="verify-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
+            <NuxtLink to="/" class="verify-logo"><img src="/carizo-logo.svg" alt="CARIZO" loading="lazy" decoding="async" /></NuxtLink>
 
             <!-- Loading -->
             <template v-if="status === 'loading'">

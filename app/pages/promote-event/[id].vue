@@ -2,7 +2,7 @@
     <div class="promote-page">
 
         <div class="promo-topbar">
-            <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" />
+            <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" loading="lazy" decoding="async" />
             <div class="promo-steps">
                 <span class="ps done"><v-icon icon="mdi-check" size="14" />{{ $t('promoteEvent.stepEvent') }}</span>
                 <span class="ps-sep" />

@@ -1,7 +1,7 @@
 <template>
     <div class="error-page">
         <div class="error-card">
-            <img src="/carizo-logo.svg" alt="CARIZO" class="error-logo" />
+            <img src="/carizo-logo.svg" alt="CARIZO" class="error-logo" loading="lazy" decoding="async" />
 
             <div class="error-icon-wrap" :class="isNotFound ? 'wrap-404' : 'wrap-500'">
                 <v-icon :icon="isNotFound ? 'mdi-map-search-outline' : 'mdi-alert-circle-outline'" size="52" />

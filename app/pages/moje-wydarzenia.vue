@@ -40,7 +40,7 @@
             <div v-else class="events-list">
                 <div v-for="ev in events" :key="ev.id" class="event-row">
                     <div class="ev-thumb-wrap">
-                        <img :src="getEventImageUrl(ev)" :alt="ev.name" class="ev-thumb" />
+                        <img :src="getEventImageUrl(ev)" :alt="ev.name" class="ev-thumb" loading="lazy" decoding="async" />
                         <span v-if="ev.isFeatured" class="thumb-crown" :title="$t('myEvents.featured')">
                             <v-icon icon="mdi-crown" size="13" />
                         </span>

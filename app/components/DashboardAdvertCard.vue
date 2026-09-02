@@ -18,8 +18,7 @@ const statusColor = computed(() => {
                 :src="mainImageUrl"
                 :alt="advert.title"
                 loading="lazy"
-                @error="onImageError"
-            />
+                @error="onImageError" decoding="async" />
             <span v-if="status" class="status-badge" :style="{ background: statusColor }">{{ status }}</span>
         </div>
         <div class="dash-card-body">

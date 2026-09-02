@@ -1,7 +1,7 @@
 <template>
     <div class="return-page">
         <div class="return-card">
-            <NuxtLink to="/" class="return-logo"><img src="/carizo-logo.svg" alt="CARIZO" /></NuxtLink>
+            <NuxtLink to="/" class="return-logo"><img src="/carizo-logo.svg" alt="CARIZO" loading="lazy" decoding="async" /></NuxtLink>
 
             <!-- ── SUCCESS ── -->
             <template v-if="status === 'success'">

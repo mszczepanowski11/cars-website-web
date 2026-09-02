@@ -13,7 +13,7 @@
 
                     <template v-else-if="advert">
                         <div class="qv-img-wrap">
-                            <img :src="mainImg" :alt="advert.title" class="qv-img" loading="lazy" />
+                            <img :src="mainImg" :alt="advert.title" class="qv-img" loading="lazy" decoding="async" />
                             <span v-if="resolvedBadge" :class="['qv-badge', `qv-badge--${resolvedBadge.toLowerCase()}`]">
                                 <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" />
                                 {{ badgeLabel }}

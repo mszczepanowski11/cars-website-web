@@ -48,7 +48,7 @@
                     </div>
                 </div>
 
-                <img src="/car-placeholder.svg" alt="" class="promo-car-img" />
+                <img src="/car-placeholder.svg" alt="" class="promo-car-img" loading="lazy" decoding="async" />
             </div>
 
             <!-- ── Standard header (after premiere) ───────────────────────── -->
@@ -71,7 +71,7 @@
                         :class="{ selected: selectedAdvertId === a.id }"
                         @click="selectedAdvertId = a.id"
                     >
-                        <img :src="getPickerImage(a)" class="picker-img" :alt="a.title" loading="lazy" />
+                        <img :src="getPickerImage(a)" class="picker-img" :alt="a.title" loading="lazy" decoding="async" />
                         <div class="picker-info">
                             <div class="picker-name">{{ a.brand?.name }} {{ a.model?.name }}</div>
                             <div class="picker-meta">{{ a.year }} • {{ Number(a.price).toLocaleString('pl') }} zł</div>

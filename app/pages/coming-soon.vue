@@ -1,7 +1,7 @@
 <template>
     <div class="cs-root">
         <div class="cs-card">
-            <img src="/carizo-logo.svg" alt="CARIZO" class="cs-logo" />
+            <img src="/carizo-logo.svg" alt="CARIZO" class="cs-logo" loading="lazy" decoding="async" />
             <h1 class="cs-title">{{ $t('comingSoon.titleBefore') }} <span>{{ $t('comingSoon.titleHighlight') }}</span></h1>
             <p class="cs-sub">{{ $t('comingSoon.sub') }}</p>
 

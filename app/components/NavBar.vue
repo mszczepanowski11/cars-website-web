@@ -129,7 +129,7 @@ watch(mobileOpen, (open) => {
     <header class="carizo-nav" :style="{ top: showAnnBar ? '38px' : '0' }">
         <div class="nav-inner">
             <NuxtLink to="/" class="logo" @click="closeMobile">
-                <img src="/carizo-logo.svg" alt="CARIZO" class="logo-img" />
+                <img src="/carizo-logo.svg" alt="CARIZO" class="logo-img" loading="lazy" decoding="async" />
             </NuxtLink>
 
             <nav class="nav-links">
@@ -234,7 +234,7 @@ watch(mobileOpen, (open) => {
         <transition name="slide">
             <div v-if="mobileOpen" class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu nawigacyjne">
                 <div class="drawer-header">
-                    <img src="/carizo-logo.svg" alt="CARIZO" class="drawer-logo" />
+                    <img src="/carizo-logo.svg" alt="CARIZO" class="drawer-logo" loading="lazy" decoding="async" />
                     <button class="drawer-close" aria-label="Zamknij menu" @click="closeMobile">
                         <v-icon icon="mdi-close" size="22" />
                     </button>
