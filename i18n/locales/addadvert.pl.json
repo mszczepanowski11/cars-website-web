@@ -60,7 +60,10 @@
       "suffix": "— formularz dostosowany do tej kategorii",
       "vehicleType": "Rodzaj pojazdu",
       "selectVehicleType": "Wybierz rodzaj pojazdu",
-      "subtypes": "podtypów"
+      "subtypes": "podtypów",
+      "searchPlaceholder": "Szukaj kategorii…",
+      "searchClear": "Wyczyść wyszukiwanie",
+      "searchEmpty": "Brak kategorii pasującej do „{query}”"
     },
     "vin": {
       "prompt": "Masz numer VIN? Uzupełnij dane pojazdu automatycznie z CEPiK",
