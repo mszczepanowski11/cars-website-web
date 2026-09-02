@@ -60,7 +60,10 @@
       "suffix": "— form adapted to this category",
       "vehicleType": "Vehicle type",
       "selectVehicleType": "Select vehicle type",
-      "subtypes": "subtypes"
+      "subtypes": "subtypes",
+      "searchPlaceholder": "Search categories…",
+      "searchClear": "Clear search",
+      "searchEmpty": "No category matches “{query}”"
     },
     "vin": {
       "prompt": "Have a VIN? Fill in the vehicle details automatically",

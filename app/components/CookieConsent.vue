@@ -170,9 +170,19 @@ function applyConsent(p: CookiePrefs) {
     @include container;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: $s-5;
     flex-wrap: wrap;
     justify-content: space-between;
+
+    // Na telefonie `flex: 1` na tekscie razem z `flex-shrink: 0` na przyciskach dawalo
+    // efekt odwrotny do zamierzonego: zamiast przeniesc przyciski do nowej linii,
+    // uklad sciskal tekst do kilkuznakowej kolumny, po ktorej przyciski jeszcze
+    // przejezdzaly. Na waskim ekranie ustawiamy wiec jedno pod drugim.
+    @media (max-width: $bp-mobile) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: $s-3;
+    }
 }
 
 .cookie-text {
@@ -193,9 +203,23 @@ function applyConsent(p: CookiePrefs) {
 .cookie-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: $s-2;
     flex-shrink: 0;
     flex-wrap: wrap;
+
+    @media (max-width: $bp-mobile) {
+        flex-wrap: nowrap;
+        // "Akceptuj wszystkie" to akcja, po ktora siega wiekszosc - dostaje wiecej miejsca,
+        // a wszystkie trzy przyciski maja pelna wysokosc dotykowa.
+        > button { flex: 1; min-width: 0; padding-left: $s-2; padding-right: $s-2; min-height: $touch-min; }
+        > button:last-child { flex: 1.4; }
+    }
+
+    @media (max-width: $bp-phone) {
+        flex-wrap: wrap;
+        > button { flex: 1 1 calc(50% - #{$s-2}); }
+        > button:last-child { flex: 1 1 100%; }
+    }
 }
 
 .btn-reject {

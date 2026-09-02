@@ -60,7 +60,10 @@
       "suffix": "— Formular an diese Kategorie angepasst",
       "vehicleType": "Fahrzeugtyp",
       "selectVehicleType": "Fahrzeugtyp wählen",
-      "subtypes": "Unterkategorien"
+      "subtypes": "Unterkategorien",
+      "searchPlaceholder": "Kategorien suchen…",
+      "searchClear": "Suche löschen",
+      "searchEmpty": "Keine Kategorie passt zu „{query}“"
     },
     "vin": {
       "prompt": "FIN vorhanden? Fahrzeugdaten automatisch übernehmen",

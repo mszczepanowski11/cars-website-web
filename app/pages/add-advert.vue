@@ -71,9 +71,19 @@
 
         <!-- Mobile step progress (hidden on desktop where left sidebar shows) -->
         <div class="mobile-step-bar">
-            <div class="mobile-step-label">{{ $t('addAdvert.stepCounter', { current: currentStep + 1, total: steps.length, name: steps[currentStep]?.name }) }}</div>
-            <div class="mobile-step-track">
-                <div class="mobile-step-fill" :style="{ width: `${((currentStep + 1) / steps.length) * 100}%` }" />
+            <div class="mobile-step-head">
+                <span class="mobile-step-label">{{ $t('addAdvert.stepCounter', { current: currentStep + 1, total: steps.length, name: steps[currentStep]?.name }) }}</span>
+                <span class="mobile-step-pct">{{ stepProgressPct }}%</span>
+                <button type="button" class="mobile-step-draft" :class="{ 'is-saved': draftSaved }"
+                    :aria-label="draftSaved ? 'Zapisano szkic' : 'Zapisz szkic'" @click="saveDraft">
+                    <v-icon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="15" />
+                </button>
+            </div>
+            <div class="mobile-step-track"
+                role="progressbar"
+                :aria-valuenow="stepProgressPct" aria-valuemin="0" aria-valuemax="100"
+                :aria-label="$t('addAdvert.stepCounter', { current: currentStep + 1, total: steps.length, name: steps[currentStep]?.name })">
+                <div class="mobile-step-fill" :style="{ width: `${stepProgressPct}%` }" />
             </div>
         </div>
 
@@ -190,43 +200,72 @@
                     <div class="cepik-or-divider"><span>{{ $t('addAdvert.vin.orManual') }}</span></div>
                     -->
 
+                    <!--
+                        Potwierdzenie wyboru i podpowiedz do kategorii trafiaja NAD siatke.
+                        Wczesniej byly pod nia, czyli po ~1300 px przewijania na telefonie:
+                        uzytkownik klikal kafelek u gory i nie widzial zadnej reakcji strony.
+                    -->
+                    <transition name="fade-err">
+                        <div v-if="selectedCategory" class="cat-context-bar">
+                            <span class="ccb-badge"><v-icon :icon="selectedCategory.iconName" size="15" /></span>
+                            <span class="ccb-text"><strong>{{ selectedCategory.name }}</strong> {{ $t('addAdvert.category.suffix') }}</span>
+                            <v-icon icon="mdi-check-circle" size="16" class="ccb-tick" />
+                        </div>
+                    </transition>
+
+                    <transition name="fade-err">
+                        <div v-if="categoryConfig.categoryNote" class="cat-note-bar">
+                            <v-icon icon="mdi-lightbulb-outline" size="15" class="cnb-icon" />
+                            <span>{{ categoryConfig.categoryNote }}</span>
+                        </div>
+                    </transition>
+
                     <!-- Category -->
-                    <div class="field full-width" style="margin-bottom: 16px;">
-                        <label class="flabel">{{ $t('addAdvert.category.label') }} <span class="req">*</span></label>
-                        <div class="category-grid">
+                    <!--
+                        Bez widocznej etykiety "Kategoria": naglowek sekcji tuz nad nia mowi
+                        dokladnie to samo ("Wybierz kategorie"), a na telefonie kazde powtorzenie
+                        spycha faktyczne kafelki ponizej zgiecia. Dla czytnikow ekranu nazwe
+                        grupy niesie `aria-label` na siatce.
+                    -->
+                    <div class="field full-width">
+                        <div v-if="showCatSearch" class="cat-search">
+                            <v-icon icon="mdi-magnify" size="17" class="cs-icon" />
+                            <input
+                                v-model="catSearch"
+                                type="search"
+                                class="cs-input"
+                                :placeholder="$t('addAdvert.category.searchPlaceholder')"
+                                :aria-label="$t('addAdvert.category.searchPlaceholder')"
+                            />
+                            <button v-if="catSearch" type="button" class="cs-clear" :aria-label="$t('addAdvert.category.searchClear')" @click="catSearch = ''">
+                                <v-icon icon="mdi-close" size="15" />
+                            </button>
+                        </div>
+
+                        <div class="category-grid" role="group" :aria-label="$t('addAdvert.category.label')">
                             <button
-                                v-for="cat in advertCategories"
+                                v-for="cat in filteredCategories"
                                 :key="cat.id"
                                 type="button"
                                 class="cat-choice-btn"
                                 :class="{ active: form.categoryId === cat.id }"
+                                :aria-pressed="form.categoryId === cat.id"
                                 @click="onCategory(cat.id)"
                             >
+                                <span v-if="cat.advertCount" class="ccb-count">{{ cat.advertCount.toLocaleString('pl') }}</span>
+                                <span class="ccb-tickmark"><v-icon icon="mdi-check" size="13" /></span>
                                 <div class="ccb-icon-wrap">
-                                    <v-icon :icon="cat.iconName" size="28" />
+                                    <v-icon :icon="cat.iconName" size="24" />
                                 </div>
                                 <span class="ccb-name">{{ cat.name }}</span>
-                                <span v-if="cat.advertCount" class="ccb-count">{{ cat.advertCount.toLocaleString('pl') }}</span>
                             </button>
                         </div>
+
+                        <p v-if="showCatSearch && filteredCategories.length === 0" class="cat-empty">
+                            <v-icon icon="mdi-magnify-close" size="16" />
+                            {{ $t('addAdvert.category.searchEmpty', { query: catSearch }) }}
+                        </p>
                     </div>
-
-                    <!-- Category context banner -->
-                    <transition name="fade-err">
-                        <div v-if="selectedCategory" class="cat-context-bar">
-                            <v-icon :icon="selectedCategory.iconName" size="14" class="ccb-icon" />
-                            <span><strong>{{ selectedCategory.name }}</strong> {{ $t('addAdvert.category.suffix') }}</span>
-                            <span class="ccb-count">{{ selectedCategory.advertCount?.toLocaleString('pl') ?? '' }} ogłoszeń</span>
-                        </div>
-                    </transition>
-
-                    <!-- Category note (special instructions per category) -->
-                    <transition name="fade-err">
-                        <div v-if="categoryConfig.categoryNote" class="cat-note-bar">
-                            <v-icon icon="mdi-lightbulb-outline" size="14" class="cnb-icon" />
-                            <span>{{ categoryConfig.categoryNote }}</span>
-                        </div>
-                    </transition>
                 </div>
 
                 <!-- ════════════════════════════════════════════════════════════ -->
@@ -271,7 +310,7 @@
                                 <SmartSelect
                                     v-model="form.brandId"
                                     :options="brandOptions"
-                                    :placeholder="`Wybierz ${categoryConfig.brandLabel ?? 'markę'}`"
+                                    :placeholder="selectPlaceholder(categoryConfig.brandLabel, 'Wybierz markę')"
                                     search-placeholder="marki"
                                     prefix-icon="mdi-car-outline"
                                     filter-numeric-labels
@@ -306,7 +345,7 @@
                                 <SmartSelect
                                     v-model="form.modelId"
                                     :options="modelOptions"
-                                    :placeholder="`Wybierz ${categoryConfig.modelLabel ?? 'model'}`"
+                                    :placeholder="selectPlaceholder(categoryConfig.modelLabel, 'Wybierz model')"
                                     search-placeholder="modele"
                                     :disabled="!form.brandId"
                                     @change="onModel"
@@ -473,8 +512,10 @@
                                 :class="{ 'finput--locked': engineLocked.capacity }"
                                 :placeholder="categoryConfig.engineHint ?? 'np. 1995'"
                                 :readonly="engineLocked.capacity" />
-                            <div v-if="categoryConfig.engineHint" class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.engineHint }}
+                            <!-- Podpowiedz tylko wtedy, gdy mowi cos wiecej niz placeholder -
+                                 wczesniej ta sama tresc pojawiala sie dwa razy pod rzad. -->
+                            <div v-if="categoryConfig.engineNote" class="field-hint">
+                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.engineNote }}
                             </div>
                         </div>
 
@@ -592,7 +633,7 @@
                                             :model-value="extras[ef.key]"
                                             @update:model-value="v => !efIsLocked(ef.key) && (extras[ef.key] = v)"
                                             :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
-                                            :placeholder="`Wybierz ${ef.label.toLowerCase()}`"
+                                            :placeholder="'Wybierz…'"
                                             :disabled="efIsLocked(ef.key)"
                                         />
                                         <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
@@ -814,7 +855,7 @@
                                             :model-value="extras[ef.key]"
                                             @update:model-value="extras[ef.key] = $event"
                                             :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
-                                            :placeholder="`Wybierz ${ef.label.toLowerCase()}`"
+                                            :placeholder="'Wybierz…'"
                                         />
                                         <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
@@ -3160,6 +3201,35 @@ const selectedCategory = computed(() =>
     advertCategories.value.find(c => c.id === form.categoryId) ?? null
 )
 
+// Wyszukiwarka kategorii. Przy 20 kafelkach na telefonie dojscie do "Wozkow widlowych"
+// wymagalo przewiniecia niemal calego ekranu w dol - szybciej jest wpisac dwie litery.
+// Pole pokazujemy dopiero, gdy kategorii jest na tyle duzo, ze skanowanie wzrokiem meczy.
+const catSearch = ref('')
+const showCatSearch = computed(() => advertCategories.value.length > 8)
+
+const filteredCategories = computed(() => {
+    const q = catSearch.value.trim().toLowerCase()
+    if (!q) return advertCategories.value
+    // Bez diakrytykow, zeby "ciezarowe" znajdowalo "Ciezarowe", a "lodzie" - "Lodzie i jachty".
+    const norm = (v: string) => v.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\u0142/g, 'l')
+    const nq = norm(q)
+    return advertCategories.value.filter(c => norm(c.name ?? '').includes(nq) || norm(c.slug ?? '').includes(nq))
+})
+
+/**
+ * Placeholder dla listy wyboru.
+ *
+ * Wczesniej powstawal przez sklejenie "Wybierz " z etykieta pola, co po polsku
+ * daje bledna forme: etykieta jest w mianowniku ("Liczba osi", "Producent / marka"),
+ * a czasownik "wybierz" wymaga biernika. Uzytkownik czytal wiec "Wybierz liczba osi".
+ * Wlasne, gotowe formy zostaja (np. "Wybierz marke"); wszedzie tam, gdzie etykieta
+ * pochodzi z konfiguracji kategorii lub z pola dodatkowego, uzywamy formy neutralnej -
+ * etykieta i tak stoi bezposrednio nad polem.
+ */
+function selectPlaceholder(customLabel?: string | null, fallback = 'Wybierz…'): string {
+    return customLabel ? 'Wybierz…' : fallback
+}
+
 const categoryConfig = computed<CatFieldConfig>(() => {
     if (!selectedCategory.value) return DEFAULT_CAT_CONFIG
     const slug = selectedCategory.value.slug ?? ''
@@ -3224,6 +3294,13 @@ const steps = computed(() => {
 const stepKey = computed<StepKey>(() => (steps.value[currentStep.value]?.key ?? 'category') as StepKey)
 
 const progressSteps = computed(() => steps.value.map(s => ({ label: stepShort(s.key), icon: s.icon })))
+
+// Procent postepu - ta sama liczba zasila pasek i etykiete, wiec nie moga sie rozjechac.
+const stepProgressPct = computed(() => {
+    const total = steps.value.length
+    if (total === 0) return 0
+    return Math.round(((currentStep.value + 1) / total) * 100)
+})
 
 // If the visible-step list shrinks under the cursor (e.g. features finish loading empty while
 // a restored draft already sits on a later index), clamp instead of falling off the end.
@@ -4783,15 +4860,20 @@ onBeforeUnmount(() => {
 .add-page {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    // Naglowek serwisu jest `position: fixed`, wiec bez tego odstepu przykrywal
+    // gorne 85 px kreatora - a tam siedzi wlasny pasek z tytulem i "Zapisz szkic".
+    // Efekt: przy pierwszym wejsciu ten pasek byl po prostu niewidoczny, a razem z nim
+    // ginal licznik krokow. Pozostale strony serwisu robia to tak samo (padding-top: $nav-height).
+    padding-top: $nav-height;
+    height: calc(100vh - #{$nav-height});
     background: $bg;
     color: $text;
     font-family: 'Inter', sans-serif;
     overflow: hidden;
 
-    @media (max-width: 768px) {
+    @media (max-width: $bp-mobile) {
         height: auto;
-        min-height: 100vh;
+        min-height: calc(100vh - #{$nav-height});
         overflow: visible;
     }
 }
@@ -4804,9 +4886,15 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 $s-5;
     background: $bg;
     z-index: 10;
+
+    // Na telefonie ten pasek powtarzal logo i nawigacje z naglowka serwisu - dwa loga
+    // CARIZO jedno pod drugim, a etykiety ("Wroc do panelu", "Zapisz szkic") lamaly sie
+    // na trzy linie. Rolе przejmuje przyklejony pasek kroku ponizej: ma zapis szkicu,
+    // a wyjscie z kreatora jest w stopce formularza ("Anuluj").
+    @media (max-width: $bp-mobile) { display: none; }
 }
 
 .top-left {
@@ -4896,37 +4984,82 @@ onBeforeUnmount(() => {
 }
 
 // ── Mobile step progress bar ──────────────────────────────────────────────────
+// Przyklejony pod naglowkiem serwisu. Wczesniej przewijal sie razem z trescia, wiec
+// juz po jednym gescie uzytkownik tracil informacje, na ktorym z szesciu krokow jest
+// i ile zostalo - a formularz ma kilka ekranow wysokosci.
 .mobile-step-bar {
     display: none;
     flex-direction: column;
-    gap: 6px;
-    padding: 10px 16px;
+    gap: $s-15;
+    padding: $s-25 $s-4;
     border-bottom: 1px solid $border;
-    background: $bg;
+    background: rgba(10, 10, 10, 0.92);
+    backdrop-filter: blur(12px);
 
-    @media (max-width: 768px) {
+    @media (max-width: $bp-mobile) {
         display: flex;
+        position: sticky;
+        top: $nav-height;
+        z-index: 5;
     }
 }
 
+.mobile-step-head {
+    display: flex;
+    align-items: center;
+    gap: $s-25;
+}
+
 .mobile-step-label {
-    font-size: 12px;
+    font-size: $fs-sm;
+    color: $text;
+    font-weight: $fw-semibold;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mobile-step-pct {
+    font-size: $fs-xs;
+    font-weight: $fw-bold;
+    color: $red-hot;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    margin-left: auto;
+}
+
+.mobile-step-draft {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: 1px solid $border;
+    border-radius: $r-xs;
+    background: rgba(255,255,255,0.03);
     color: $text-dim;
-    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    align-self: center;
+
+    &:hover { color: $text; border-color: rgba(255,255,255,0.2); }
+    &.is-saved { color: $success; border-color: rgba($success, 0.45); background: rgba($success, 0.1); }
 }
 
 .mobile-step-track {
-    height: 3px;
-    background: $border;
-    border-radius: 2px;
+    height: 4px;
+    background: rgba(255,255,255,0.09);
+    border-radius: $r-pill;
     overflow: hidden;
 }
 
 .mobile-step-fill {
     height: 100%;
-    background: $red;
-    border-radius: 2px;
-    transition: width 0.3s ease;
+    background: linear-gradient(to right, $red, $red-hot);
+    border-radius: $r-pill;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 // ── Page body ─────────────────────────────────────────────────────────────────
@@ -5062,12 +5195,15 @@ onBeforeUnmount(() => {
         url('/hero-car.jpg') center / cover;
     display: flex;
     align-items: center;
-    padding: 32px 40px;
+    padding: $s-8 $s-10;
     flex-shrink: 0;
 
-    @media (max-width: 768px) {
-        min-height: 100px;
-        padding: 20px 16px;
+    // Na telefonie ten baner zajmowal ponad jedna trzecia ekranu i spychal siatke
+    // kategorii - czyli jedyna rzecz, ktora uzytkownik ma tu zrobic - ponizej zgiecia.
+    // Zostaje jako akcent marki, ale w rozmiarze, ktory nie konkuruje z trescia.
+    @media (max-width: $bp-mobile) {
+        min-height: 0;
+        padding: $s-4;
     }
 }
 
@@ -5077,14 +5213,16 @@ onBeforeUnmount(() => {
 
 .form-hero-text {
     h1 {
-        font-size: 30px;
-        font-weight: 900;
+        font-size: $fs-2xl;
+        font-weight: $fw-black;
         color: $text;
-        margin-bottom: 6px;
+        margin-bottom: $s-15;
+        @media (max-width: $bp-mobile) { font-size: $fs-xl; margin-bottom: $s-1; }
     }
     p {
-        font-size: 14px;
+        font-size: $fs-sm;
         color: $text-muted;
+        @media (max-width: $bp-mobile) { font-size: 12px; }
     }
 }
 
@@ -5165,19 +5303,22 @@ onBeforeUnmount(() => {
 }
 
 .form-section-head {
-    margin-bottom: 28px;
+    margin-bottom: $s-7;
 
     h2 {
-        font-size: 22px;
+        font-size: $fs-xl;
         font-weight: 800;
         color: $text;
-        margin-bottom: 4px;
+        margin-bottom: $s-1;
+        @media (max-width: $bp-mobile) { font-size: $fs-lg; }
     }
 
     p {
-        font-size: 13px;
+        font-size: $fs-sm;
         color: $text-dim;
     }
+
+    @media (max-width: $bp-mobile) { margin-bottom: $s-4; }
 }
 
 .fields-grid {
@@ -6074,54 +6215,183 @@ onBeforeUnmount(() => {
     &::placeholder { color: $text-dark; }
 }
 
+// ── Wybor kategorii ───────────────────────────────────────────────────────────
+// Kafelki sa celowo niskie. Kategorii jest 20; przy poprzednim rozmiarze telefon
+// miescil dwie w rzedzie po ~134 px, czyli caly krok mial ok. 1300 px wysokosci -
+// trzy pelne ekrany przewijania, zanim uzytkownik zobaczyl przycisk "Dalej".
+// Teraz na telefonie mieszcza sie trzy w rzedzie, a caly wybor to jeden ekran z okladem.
+.cat-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: $s-3;
+
+    .cs-icon {
+        position: absolute;
+        left: 12px;
+        color: $text-dark;
+        pointer-events: none;
+    }
+}
+
+.cs-input {
+    width: 100%;
+    height: 42px;
+    padding: 0 38px 0 36px;
+    border: 1px solid $border;
+    border-radius: $r-pill;
+    background: rgba(255,255,255,0.03);
+    color: $text;
+    font-size: $fs-sm;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.15s, background 0.15s;
+
+    &::placeholder { color: $text-dark; }
+    &:focus {
+        outline: none;
+        border-color: rgba($red-hot, 0.5);
+        background: rgba(255,255,255,0.05);
+    }
+    // iOS powieksza strone przy wejsciu w pole ponizej 16 px - stad pelny rozmiar na telefonie.
+    @media (max-width: $bp-mobile) { font-size: $fs-input; height: $touch-min; }
+    &::-webkit-search-cancel-button { display: none; }
+}
+
+.cs-clear {
+    position: absolute;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    color: $text-dim;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    &:hover { background: rgba(255,255,255,0.13); color: $text; }
+}
+
+.cat-empty {
+    display: flex;
+    align-items: center;
+    gap: $s-2;
+    margin-top: $s-3;
+    font-size: $fs-sm;
+    color: $text-dim;
+    .v-icon { color: $text-dark; }
+}
+
 .category-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    gap: $s-3;
+
+    @media (max-width: $bp-mobile) {
+        grid-template-columns: repeat(3, 1fr);
+        gap: $s-2;
+    }
 }
 
 .cat-choice-btn {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 24px 16px 18px;
-    border: 2px solid rgba(255,255,255,0.07);
-    border-radius: 16px;
+    justify-content: center;
+    gap: $s-2;
+    padding: $s-4 $s-2;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: $r-md;
     background: rgba(255,255,255,0.02);
     color: $text-dim;
     cursor: pointer;
     font-family: 'Inter', sans-serif;
-    transition: all 0.2s;
+    transition: border-color 0.18s, background 0.18s, transform 0.18s;
     text-align: center;
-    min-height: 110px;
+    // Rowna wysokosc niezaleznie od dlugosci nazwy - inaczej "Uslugi motoryzacyjne"
+    // rozpychalo caly rzad i siatka wygladala na przypadkowa.
+    min-height: 104px;
+
+    @media (max-width: $bp-mobile) {
+        min-height: 96px;
+        padding: $s-3 $s-1;
+        gap: $s-15;
+    }
 
     .ccb-icon-wrap {
-        width: 56px;
-        height: 56px;
-        border-radius: 14px;
+        width: 44px;
+        height: 44px;
+        border-radius: $r-sm;
         background: rgba(255,255,255,0.05);
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
+        transition: background 0.18s, color 0.18s;
         color: $text-dim;
+
+        @media (max-width: $bp-mobile) { width: 38px; height: 38px; }
     }
-    .ccb-name { font-size: 13px; font-weight: 600; color: $text-dim; line-height: 1.2; }
-    .ccb-count { font-size: 10px; color: $text-dark; }
+
+    .ccb-name {
+        font-size: 12px;
+        font-weight: $fw-semibold;
+        color: $text-dim;
+        line-height: 1.25;
+        @media (max-width: $bp-mobile) { font-size: $fs-xs; }
+    }
+
+    // Licznik jako maly znacznik w rogu, a nie kolejny wiersz tekstu - dzieki temu
+    // kafelki kategorii pustych i pelnych maja dokladnie ten sam uklad.
+    .ccb-count {
+        position: absolute;
+        top: 6px;
+        right: 7px;
+        font-size: 10px;
+        font-weight: $fw-semibold;
+        color: $text-dark;
+        background: rgba(255,255,255,0.06);
+        border-radius: $r-pill;
+        padding: 1px 6px;
+        line-height: 1.5;
+    }
+
+    .ccb-tickmark {
+        position: absolute;
+        top: 6px;
+        left: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 19px;
+        height: 19px;
+        border-radius: 50%;
+        background: $red;
+        color: #fff;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: opacity 0.18s, transform 0.18s;
+    }
 
     &:hover {
-        border-color: rgba($red, 0.3);
-        background: rgba($red, 0.04);
-        .ccb-icon-wrap { background: rgba($red, 0.12); color: $red; }
+        border-color: rgba($red, 0.35);
+        background: rgba($red, 0.05);
+        .ccb-icon-wrap { background: rgba($red, 0.14); color: $red-hot; }
         .ccb-name { color: $text; }
     }
 
+    &:active { transform: scale(0.97); }
+
     &.active {
         border-color: $red;
-        background: rgba($red, 0.08);
-        .ccb-icon-wrap { background: $red; color: white; }
-        .ccb-name { color: $text; font-weight: 700; }
+        background: rgba($red, 0.1);
+        box-shadow: 0 0 0 1px rgba($red, 0.5) inset;
+        .ccb-icon-wrap { background: $red; color: #fff; }
+        .ccb-name { color: $text; font-weight: $fw-bold; }
+        .ccb-count { background: rgba($red, 0.25); color: rgba(255,255,255,0.85); }
+        .ccb-tickmark { opacity: 1; transform: scale(1); }
     }
 }
 
@@ -6543,37 +6813,45 @@ onBeforeUnmount(() => {
 .cat-context-bar {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: rgba($red, 0.07);
-    border: 1px solid rgba($red, 0.2);
+    gap: $s-25;
+    background: linear-gradient(to right, rgba($red, 0.14), rgba($red, 0.05));
+    border: 1px solid rgba($red, 0.28);
     border-radius: $r-sm;
-    padding: 8px 14px;
-    font-size: 12px;
+    padding: $s-25 $s-35;
+    font-size: $fs-sm;
     color: $text-muted;
-    margin-bottom: 20px;
+    margin-bottom: $s-3;
 
-    strong { color: $text; }
+    strong { color: $text; font-weight: $fw-bold; }
 }
 
-.ccb-icon { color: $red; flex-shrink: 0; }
-
-.ccb-count {
-    margin-left: auto;
-    font-size: 11px;
-    color: $text-dark;
+.ccb-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: $r-xs;
+    background: $red;
+    color: #fff;
 }
+
+.ccb-text { flex: 1; line-height: 1.35; }
+
+.ccb-tick { color: $red-hot; flex-shrink: 0; }
 
 .cat-note-bar {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
+    gap: $s-2;
     background: rgba($premium, 0.06);
     border: 1px solid rgba($premium, 0.2);
     border-radius: $r-sm;
-    padding: 9px 14px;
-    font-size: 12px;
+    padding: $s-25 $s-35;
+    font-size: $fs-sm;
     color: rgba($premium, 0.9);
-    margin-bottom: 20px;
+    margin-bottom: $s-4;
     line-height: 1.5;
 }
 

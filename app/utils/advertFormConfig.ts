@@ -50,7 +50,15 @@ export interface CatFieldConfig {
     mileageHint?: string
     priceHint?: string
     yearHint?: string
+    /** Placeholder w polu pojemnosci - sam przyklad wartosci, np. "np. 1995 cm3". */
     engineHint?: string
+    /**
+     * Dodatkowa podpowiedz POD polem pojemnosci. Celowo osobna od `engineHint`:
+     * wczesniej jedna wartosc szla i w placeholder, i w podpowiedz, wiec uzytkownik
+     * czytal ten sam przyklad dwa razy. Wypelniaj tylko wtedy, gdy jest do
+     * przekazania cos, czego przyklad w polu nie mowi.
+     */
+    engineNote?: string
     categoryNote?: string
     // Step 1 section visibility
     showVinSection?: boolean
