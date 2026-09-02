@@ -21,7 +21,10 @@ if (!Number.isFinite(id) || id <= 0) {
     throw createError({ statusCode: 404, statusMessage: 'Ogłoszenie nie istnieje', fatal: true })
 }
 
-await navigateTo(`/ogloszenia/${id}`, { redirectCode: 301, replace: true })
+// `localePath` zachowuje jezyk: wejscie z /en/advert/123 trafia na /en/ogloszenia/123,
+// a nie na polska wersje strony.
+const localePath = useLocalePath()
+await navigateTo(localePath(`/ogloszenia/${id}`), { redirectCode: 301, replace: true })
 </script>
 
 <template>

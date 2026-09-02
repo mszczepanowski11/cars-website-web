@@ -902,7 +902,9 @@ const route = useRoute()
 // ID na końcu, część opisowa służy tylko użytkownikowi i wyszukiwarkom. Dzięki
 // temu zmiana tytułu ogłoszenia nie unieważnia istniejących linków, a poniżej
 // przekierowujemy na aktualną postać adresu.
-const { advertPath, parseAdvertId } = useAdvertUrl()
+// `advertPath` i `parseAdvertId` sa auto-importowane z `app/composables/useAdvertUrl.ts`
+// (re-eksport czystej logiki z `shared/advertSlug.ts`) - nie ma tu zadnego `useAdvertUrl()`.
+const localePath = useLocalePath()
 const rawId = parseAdvertId(route.params.slug) ?? NaN
 if (isNaN(rawId) || rawId <= 0) {
     throw createError({ statusCode: 404, statusMessage: 'Ogłoszenie nie istnieje' })
@@ -1633,8 +1635,12 @@ sellerStats.value = advertData.value?.sellerStats ?? null
 // dlatego jeśli adres nie jest w postaci kanonicznej, przekierowujemy na nią
 // trwale (301). Robimy to po stronie serwera, zanim cokolwiek się wyrenderuje.
 if (advert.value) {
-    const canonical = advertPath(advert.value)
-    if (route.path !== canonical) {
+    // Adres kanoniczny musi zostac w JEZYKU, w ktorym uzytkownik oglada strone.
+    // Bez `localePath` porownywalibysmy "/en/ogloszenia/..." z "/ogloszenia/..." i przy
+    // KAZDYM wejsciu wyrzucalibysmy odwiedzajacych z /en i /de z powrotem na polska wersje.
+    const canonical = localePath(advertPath(advert.value))
+    const current = route.path.replace(/\/+$/, '') || '/'
+    if (current !== canonical.replace(/\/+$/, '')) {
         await navigateTo(canonical, { redirectCode: 301, replace: true })
     }
 }
