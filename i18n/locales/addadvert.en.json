@@ -1,1 +1,99 @@
-{}
+{
+  "addAdvert": {
+    "steps": {
+      "category": {
+        "name": "Category",
+        "short": "Category",
+        "desc": "Listing type"
+      },
+      "details": {
+        "name": "Vehicle details",
+        "short": "Vehicle",
+        "desc": "Make, model, specification"
+      },
+      "history": {
+        "name": "History & VIN",
+        "short": "History",
+        "desc": "Identification and history"
+      },
+      "photos": {
+        "name": "Photos",
+        "short": "Photos",
+        "desc": "Listing gallery"
+      },
+      "equipment": {
+        "name": "Equipment",
+        "short": "Equipment",
+        "desc": "Options and equipment"
+      },
+      "trust": {
+        "name": "Trust score",
+        "short": "Trust",
+        "desc": "Credibility summary"
+      },
+      "description": {
+        "name": "Description",
+        "short": "Description",
+        "desc": "Description and location"
+      },
+      "promo": {
+        "name": "Promotion",
+        "short": "Promotion",
+        "desc": "Feature your listing"
+      },
+      "preview": {
+        "name": "Preview",
+        "short": "Preview",
+        "desc": "Review and publish"
+      }
+    },
+    "stepCounter": "Step {current} of {total}: {name}",
+    "hero": {
+      "title": "List your car.",
+      "subtitle": "Create a premium listing in minutes."
+    },
+    "breadcrumbHome": "Home",
+    "category": {
+      "heading": "Choose a category",
+      "hint": "Pick the vehicle type — the form adapts to your choice.",
+      "label": "Category",
+      "suffix": "— form adapted to this category",
+      "vehicleType": "Vehicle type",
+      "selectVehicleType": "Select vehicle type",
+      "subtypes": "subtypes"
+    },
+    "vin": {
+      "prompt": "Have a VIN? Fill in the vehicle details automatically",
+      "explain": "We'll fetch the make, model, year, engine and other details from the vehicle register. You can correct them before publishing.",
+      "label": "VIN number",
+      "placeholder": "17-character VIN",
+      "orManual": "or choose a category and fill the form manually"
+    },
+    "details": {
+      "heading": "Vehicle details",
+      "hint": "Enter the technical and identification details of the vehicle.",
+      "registrationRegion": "Region of registration",
+      "selectRegion": "Select a region"
+    },
+    "help": {
+      "title": "Need help?",
+      "text": "See our guide on writing the best listing",
+      "link": "Read the guide →"
+    },
+    "onBehalf": "You are creating a listing on behalf of:",
+    "success": {
+      "title": "Thank you for your listing!",
+      "text": "Your listing has been saved and published on CARIZO.",
+      "congrats": "Congratulations — we wish you a quick sale!",
+      "viewAdvert": "View your listing",
+      "addAnother": "Add another listing",
+      "backToPanel": "Back to dashboard",
+      "close": "Close and return to listings"
+    },
+    "promoCta": {
+      "lead": "Feature your listing —",
+      "action": "buy a promotion",
+      "tail": "and sell faster!"
+    }
+  }
+}

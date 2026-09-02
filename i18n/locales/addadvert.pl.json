@@ -1,1 +1,99 @@
-{}
+{
+  "addAdvert": {
+    "steps": {
+      "category": {
+        "name": "Kategoria",
+        "short": "Kategoria",
+        "desc": "Typ ogłoszenia"
+      },
+      "details": {
+        "name": "Dane pojazdu",
+        "short": "Pojazd",
+        "desc": "Marka, model, dane techniczne"
+      },
+      "history": {
+        "name": "Historia i VIN",
+        "short": "Historia",
+        "desc": "Identyfikacja i historia"
+      },
+      "photos": {
+        "name": "Zdjęcia",
+        "short": "Zdjęcia",
+        "desc": "Galeria ogłoszenia"
+      },
+      "equipment": {
+        "name": "Wyposażenie",
+        "short": "Wyposażenie",
+        "desc": "Opcje i wyposażenie"
+      },
+      "trust": {
+        "name": "Ocena zaufania",
+        "short": "Zaufanie",
+        "desc": "Podsumowanie wiarygodności"
+      },
+      "description": {
+        "name": "Opis",
+        "short": "Opis",
+        "desc": "Opis i lokalizacja"
+      },
+      "promo": {
+        "name": "Promocja",
+        "short": "Promocja",
+        "desc": "Wyróżnij ogłoszenie"
+      },
+      "preview": {
+        "name": "Podgląd",
+        "short": "Podgląd",
+        "desc": "Przejrzyj i opublikuj"
+      }
+    },
+    "stepCounter": "Krok {current} z {total}: {name}",
+    "hero": {
+      "title": "Dodaj swoje auto.",
+      "subtitle": "Stwórz premium ogłoszenie w kilka minut."
+    },
+    "breadcrumbHome": "Strona główna",
+    "category": {
+      "heading": "Wybierz kategorię",
+      "hint": "Zaznacz typ pojazdu — formularz dostosuje się do wybranej kategorii.",
+      "label": "Kategoria",
+      "suffix": "— formularz dostosowany do tej kategorii",
+      "vehicleType": "Rodzaj pojazdu",
+      "selectVehicleType": "Wybierz rodzaj pojazdu",
+      "subtypes": "podtypów"
+    },
+    "vin": {
+      "prompt": "Masz numer VIN? Uzupełnij dane pojazdu automatycznie z CEPiK",
+      "explain": "Pobierzemy markę, model, rok, silnik i inne dane z Centralnej Ewidencji Pojazdów i Kierowców. Będziesz mógł je poprawić przed publikacją.",
+      "label": "Numer VIN",
+      "placeholder": "17-znakowy numer VIN",
+      "orManual": "lub wybierz kategorię i wypełnij formularz ręcznie"
+    },
+    "details": {
+      "heading": "Dane pojazdu",
+      "hint": "Podaj dane techniczne i identyfikacyjne pojazdu.",
+      "registrationRegion": "Województwo rejestracji",
+      "selectRegion": "Wybierz województwo"
+    },
+    "help": {
+      "title": "Potrzebujesz pomocy?",
+      "text": "Sprawdź poradnik jak dodać najlepsze ogłoszenie",
+      "link": "Zobacz poradnik →"
+    },
+    "onBehalf": "Tworzysz ogłoszenie w imieniu klienta:",
+    "success": {
+      "title": "Dziękujemy za dodanie ogłoszenia!",
+      "text": "Twoje ogłoszenie zostało pomyślnie zapisane i opublikowane w serwisie CARIZO.",
+      "congrats": "Gratulujemy — życzymy szybkiej sprzedaży!",
+      "viewAdvert": "Zobacz swoje ogłoszenie",
+      "addAnother": "Dodaj kolejne ogłoszenie",
+      "backToPanel": "Wróć do panelu",
+      "close": "Zamknij i wróć do ogłoszeń"
+    },
+    "promoCta": {
+      "lead": "Wyróżnij ogłoszenie —",
+      "action": "kup promocję",
+      "tail": "i sprzedaj szybciej!"
+    }
+  }
+}
