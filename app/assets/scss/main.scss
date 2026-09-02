@@ -318,3 +318,55 @@ body.has-compare-panel {
         scroll-behavior: auto !important;
     }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Warstwa bazowa elementów sterujących (system projektowy)
+// ─────────────────────────────────────────────────────────────────────────────
+// Audyt: w całym portalu istniał DOKŁADNIE JEDEN `:focus-visible`. 125 klas
+// przycisków nie miało żadnego widocznego wskaźnika fokusu, więc osoba
+// nawigująca klawiaturą nie wiedziała, gdzie się znajduje — to naruszenie
+// WCAG 2.4.7 i jednocześnie brak, który sprawia, że portal nie sprawia wrażenia
+// dopracowanego.
+//
+// Te reguły mają CELOWO niską specyficzność (pojedynczy element lub jedna
+// klasa), więc istniejące style poszczególnych przycisków nadal je nadpisują.
+// Nic się nie psuje — dokładany jest wyłącznie brakujący fundament, którego
+// każdy nowy element dostaje automatycznie, bez projektowania od zera.
+
+// Jeden, spójny wskaźnik fokusu dla wszystkiego, co da się aktywować klawiaturą.
+// :focus-visible (a nie :focus) pokazuje obwódkę tylko przy nawigacji klawiaturą,
+// więc kliknięcie myszą nie zostawia ramki.
+button,
+a,
+input,
+select,
+textarea,
+summary,
+[tabindex]:not([tabindex="-1"]),
+[role="button"] {
+    &:focus-visible {
+        outline: 2px solid $red-hot;
+        outline-offset: 2px;
+        border-radius: $r-xs;
+    }
+}
+
+// Przyciski dziedziczą krój pisma. Bez tego przeglądarka narzuca systemowy font
+// formularzy — to jedna z przyczyn, dla których 292 miejsca powtarzały
+// `font-family`, żeby to obejść.
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+// Spójny wskaźnik „nie da się kliknąć". Powtarzany w 380 miejscach osobno.
+button:disabled,
+[role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+}
+
+button:not(:disabled) {
+    cursor: pointer;
+}
