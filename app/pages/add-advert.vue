@@ -10,28 +10,28 @@
                 <div class="success-icon-wrap">
                     <v-icon icon="mdi-check-circle" size="52" class="success-icon" />
                 </div>
-                <h1 class="success-title">Dziękujemy za dodanie ogłoszenia!</h1>
+                <h1 class="success-title">{{ $t('addAdvert.success.title') }}</h1>
                 <p class="success-desc">
-                    Twoje ogłoszenie zostało pomyślnie zapisane i opublikowane w serwisie CARIZO.<br>
-                    Gratulujemy — życzymy szybkiej sprzedaży!
+                    {{ $t('addAdvert.success.text') }}<br>
+                    {{ $t('addAdvert.success.congrats') }}
                 </p>
                 <div class="success-actions">
                     <NuxtLink v-if="publishedAdvertId" :to="`/ogloszenia/${publishedAdvertId}`" class="sact-btn sact-btn--primary">
                         <v-icon icon="mdi-arrow-right-circle-outline" size="18" />
-                        Zobacz swoje ogłoszenie
+                        {{ $t('addAdvert.success.viewAdvert') }}
                     </NuxtLink>
                     <NuxtLink to="/add-advert" class="sact-btn sact-btn--secondary" @click="showSuccess = false">
                         <v-icon icon="mdi-plus-circle-outline" size="17" />
-                        Dodaj kolejne ogłoszenie
+                        {{ $t('addAdvert.success.addAnother') }}
                     </NuxtLink>
                     <NuxtLink to="/" class="sact-btn sact-btn--ghost">
                         <v-icon icon="mdi-home-outline" size="17" />
-                        Strona główna
+                        {{ $t('addAdvert.breadcrumbHome') }}
                     </NuxtLink>
                 </div>
                 <div class="success-tip">
                     <v-icon icon="mdi-lightbulb-outline" size="15" class="tip-icon" />
-                    <span>Wyróżnij ogłoszenie — <NuxtLink v-if="publishedAdvertId" :to="`/promote-advert/${publishedAdvertId}`" class="tip-link">kup promocję</NuxtLink> i sprzedaj szybciej!</span>
+                    <span>{{ $t('addAdvert.promoCta.lead') }} <NuxtLink v-if="publishedAdvertId" :to="`/promote-advert/${publishedAdvertId}`" class="tip-link">{{ $t('addAdvert.promoCta.action') }}</NuxtLink> {{ $t('addAdvert.promoCta.tail') }}</span>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
                 <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" loading="lazy" decoding="async" />
                 <button class="back-btn" @click="navigateTo('/dashboard')">
                     <v-icon icon="mdi-arrow-left" size="16" />
-                    Wróć do panelu
+                    {{ $t('addAdvert.success.backToPanel') }}
                 </button>
             </div>
             <div class="top-center">{{ isEdit ? 'Edytuj ogłoszenie' : 'Dodaj ogłoszenie' }}</div>
@@ -54,7 +54,7 @@
                     <v-icon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="16" />
                     {{ draftSaved ? 'Zapisano!' : 'Zapisz szkic' }}
                 </button>
-                <button class="btn-close" aria-label="Zamknij i wróć do ogłoszeń" @click="navigateTo('/my-adverts')">
+                <button class="btn-close" :aria-label="$t('addAdvert.success.close')" @click="navigateTo('/my-adverts')">
                     <v-icon icon="mdi-close" size="18" />
                 </button>
             </div>
@@ -64,14 +64,14 @@
         <div v-if="isAdminClientMode" class="admin-client-banner">
             <v-icon icon="mdi-account-tie-outline" size="18" />
             <span>
-                Tworzysz ogłoszenie w imieniu klienta:
+                {{ $t('addAdvert.onBehalf') }}
                 <strong>{{ adminClientDraft.fullName }}</strong> · {{ adminClientDraft.email }} · {{ adminClientDraft.phoneNumber }}
             </span>
         </div>
 
         <!-- Mobile step progress (hidden on desktop where left sidebar shows) -->
         <div class="mobile-step-bar">
-            <div class="mobile-step-label">Krok {{ currentStep + 1 }} z {{ steps.length }}: {{ steps[currentStep]?.name }}</div>
+            <div class="mobile-step-label">{{ $t('addAdvert.stepCounter', { current: currentStep + 1, total: steps.length, name: steps[currentStep]?.name }) }}</div>
             <div class="mobile-step-track">
                 <div class="mobile-step-fill" :style="{ width: `${((currentStep + 1) / steps.length) * 100}%` }" />
             </div>
@@ -100,9 +100,9 @@
                 <div class="sidebar-help">
                     <v-icon icon="mdi-help-circle-outline" size="20" class="help-icon" />
                     <div>
-                        <div class="help-title">Potrzebujesz pomocy?</div>
-                        <p class="help-sub">Sprawdź poradnik jak dodać najlepsze ogłoszenie</p>
-                        <NuxtLink to="/jak-to-dziala" target="_blank" rel="noopener noreferrer" class="help-link">Zobacz poradnik →</NuxtLink>
+                        <div class="help-title">{{ $t('addAdvert.help.title') }}</div>
+                        <p class="help-sub">{{ $t('addAdvert.help.text') }}</p>
+                        <NuxtLink to="/jak-to-dziala" target="_blank" rel="noopener noreferrer" class="help-link">{{ $t('addAdvert.help.link') }}</NuxtLink>
                     </div>
                 </div>
             </aside>
@@ -114,8 +114,8 @@
                      banner on every step pushed the actual fields far down the screen. -->
                 <div class="form-hero" :class="{ 'form-hero--step-only': currentStep > 0 }">
                     <div class="form-hero-text">
-                        <h1>Dodaj swoje auto.</h1>
-                        <p>Stwórz premium ogłoszenie w kilka minut.</p>
+                        <h1>{{ $t('addAdvert.hero.title') }}</h1>
+                        <p>{{ $t('addAdvert.hero.subtitle') }}</p>
                     </div>
                 </div>
 
@@ -135,8 +135,8 @@
                 <!-- Step 0: Basic info -->
                 <div v-if="stepKey === 'category'" class="form-content">
                     <div class="form-section-head">
-                        <h2>Wybierz kategorię</h2>
-                        <p>Zaznacz typ pojazdu — formularz dostosuje się do wybranej kategorii.</p>
+                        <h2>{{ $t('addAdvert.category.heading') }}</h2>
+                        <p>{{ $t('addAdvert.category.hint') }}</p>
                     </div>
 
                     <!--
@@ -154,19 +154,19 @@
                     <div class="cepik-panel">
                         <button type="button" class="cepik-toggle-btn" @click="cepikOpen = !cepikOpen">
                             <v-icon icon="mdi-database-search-outline" size="18" />
-                            <span>Masz numer VIN? Uzupełnij dane pojazdu automatycznie z CEPiK</span>
+                            <span>{{ $t('addAdvert.vin.prompt') }}</span>
                             <v-icon :icon="cepikOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="cepik-toggle-chevron" />
                         </button>
                         <transition name="fade-err">
                             <div v-if="cepikOpen" class="cepik-form">
                                 <div class="fields-grid">
                                     <div class="field">
-                                        <label class="flabel">Województwo rejestracji <span class="req">*</span></label>
-                                        <SmartSelect v-model="cepikWojewodztwo" :options="WOJEWODZTWA" placeholder="Wybierz województwo" />
+                                        <label class="flabel">{{ $t('addAdvert.details.registrationRegion') }} <span class="req">*</span></label>
+                                        <SmartSelect v-model="cepikWojewodztwo" :options="WOJEWODZTWA" :placeholder="$t('addAdvert.details.selectRegion')" />
                                     </div>
                                     <div class="field">
                                         <label class="flabel">Numer VIN <span class="req">*</span></label>
-                                        <input v-model="cepikVin" class="finput cepik-vin-input" placeholder="17-znakowy numer VIN" maxlength="17" />
+                                        <input v-model="cepikVin" class="finput cepik-vin-input" :placeholder="$t('addAdvert.vin.placeholder')" maxlength="17" />
                                     </div>
                                 </div>
                                 <button type="button" class="btn-cepik-search"
@@ -181,18 +181,18 @@
                                 </div>
                                 <p class="field-hint">
                                     <v-icon icon="mdi-information-outline" size="12" />
-                                    Pobierzemy markę, model, rok, silnik i inne dane z Centralnej Ewidencji Pojazdów i Kierowców. Będziesz mógł je poprawić przed publikacją.
+                                    {{ $t('addAdvert.vin.explain') }}
                                 </p>
                             </div>
                         </transition>
                     </div>
 
-                    <div class="cepik-or-divider"><span>lub wybierz kategorię i wypełnij formularz ręcznie</span></div>
+                    <div class="cepik-or-divider"><span>{{ $t('addAdvert.vin.orManual') }}</span></div>
                     -->
 
                     <!-- Category -->
                     <div class="field full-width" style="margin-bottom: 16px;">
-                        <label class="flabel">Kategoria <span class="req">*</span></label>
+                        <label class="flabel">{{ $t('addAdvert.category.label') }} <span class="req">*</span></label>
                         <div class="category-grid">
                             <button
                                 v-for="cat in advertCategories"
@@ -215,7 +215,7 @@
                     <transition name="fade-err">
                         <div v-if="selectedCategory" class="cat-context-bar">
                             <v-icon :icon="selectedCategory.iconName" size="14" class="ccb-icon" />
-                            <span><strong>{{ selectedCategory.name }}</strong> — formularz dostosowany do tej kategorii</span>
+                            <span><strong>{{ selectedCategory.name }}</strong> {{ $t('addAdvert.category.suffix') }}</span>
                             <span class="ccb-count">{{ selectedCategory.advertCount?.toLocaleString('pl') ?? '' }} ogłoszeń</span>
                         </div>
                     </transition>
@@ -234,21 +234,21 @@
                 <!-- ════════════════════════════════════════════════════════════ -->
                 <div v-else-if="stepKey === 'details'" class="form-content">
                     <div class="form-section-head">
-                        <h2>Dane pojazdu</h2>
-                        <p>Podaj dane techniczne i identyfikacyjne pojazdu.</p>
+                        <h2>{{ $t('addAdvert.details.heading') }}</h2>
+                        <p>{{ $t('addAdvert.details.hint') }}</p>
                     </div>
                     <div class="fields-grid">
 
                         <!-- Vehicle Subtype -->
                         <div v-if="subtypes.length > 0" class="field full-width">
                             <label class="flabel">
-                                Rodzaj pojazdu <span class="req">*</span>
+                                {{ $t('addAdvert.category.vehicleType') }} <span class="req">*</span>
                             </label>
                             <SmartSelect
                                 v-model="form.vehicleSubtypeId"
                                 :options="vehicleSubtypeOptions"
-                                placeholder="Wybierz rodzaj pojazdu"
-                                search-placeholder="podtypów"
+                                :placeholder="$t('addAdvert.category.selectVehicleType')"
+                                :search-placeholder="$t('addAdvert.category.subtypes')"
                                 clearable
                             />
                         </div>
@@ -1339,14 +1339,14 @@
                     </div>
                     <div v-else-if="!allFeatures.length" class="feat-empty">
                         <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
-                        <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>Dane pojazdu</strong>.</p>
+                        <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>{{ $t('addAdvert.details.heading') }}</strong>.</p>
                         <button type="button" class="btn-next" style="margin-top:16px" @click="currentStep++">
                             Przejdź dalej <v-icon icon="mdi-arrow-right" size="15" />
                         </button>
                     </div>
                     <div v-else-if="allFeatures.length && !Object.keys(featureGroups).length" class="feat-empty">
                         <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
-                        <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>Dane pojazdu</strong>.</p>
+                        <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>{{ $t('addAdvert.details.heading') }}</strong>.</p>
                         <button type="button" class="btn-next" style="margin-top:16px" @click="currentStep++">
                             Przejdź dalej <v-icon icon="mdi-arrow-right" size="15" />
                         </button>
@@ -1434,7 +1434,7 @@
                                     <v-icon :icon="form.vin ? 'mdi-check' : 'mdi-barcode'" size="18" />
                                 </div>
                                 <div class="vi-texts">
-                                    <div class="vi-title">Numer VIN</div>
+                                    <div class="vi-title">{{ $t('addAdvert.vin.label') }}</div>
                                     <div class="vi-desc">Unikalny identyfikator pojazdu — potwierdza jego tożsamość</div>
                                 </div>
                                 <div v-if="form.vin" class="vi-badge">+4 pkt</div>
@@ -3748,17 +3748,29 @@ const categoryConfig = computed<CatFieldConfig>(() => {
 // usługi motoryzacyjne...) skip "Historia i VIN", "Ocena zaufania" and "Wyposażenie" entirely
 // instead of walking the user through empty screens. currentStep stays an INDEX into this
 // array, so template blocks and validation branch on `stepKey` — never on a hardcoded index.
+const { t } = useI18n()
+
+// Kroki trzymaja WYLACZNIE ikony i klucze - nazwy i opisy sa tlumaczone dopiero
+// przy uzyciu, w computed ponizej. Gdyby tekst siedzial tu na stale, zmiana jezyka
+// nie odswiezylaby paska postepu bez przeladowania strony, bo ten obiekt jest
+// tworzony raz przy wczytaniu modulu.
 const STEP_DEFS = {
-    category:    { name: 'Kategoria',      short: 'Kategoria',   desc: 'Typ ogłoszenia',                icon: 'mdi-apps' },
-    details:     { name: 'Dane pojazdu',   short: 'Pojazd',      desc: 'Marka, model, dane techniczne', icon: 'mdi-car-outline' },
-    history:     { name: 'Historia i VIN', short: 'Historia',    desc: 'Identyfikacja i historia',      icon: 'mdi-barcode-scan' },
-    photos:      { name: 'Zdjęcia',        short: 'Zdjęcia',     desc: 'Galeria ogłoszenia',            icon: 'mdi-image-outline' },
-    equipment:   { name: 'Wyposażenie',    short: 'Wyposażenie', desc: 'Opcje i wyposażenie',           icon: 'mdi-format-list-checkbox' },
-    trust:       { name: 'Ocena zaufania', short: 'Zaufanie',    desc: 'Podsumowanie wiarygodności',    icon: 'mdi-shield-check-outline' },
-    description: { name: 'Opis',           short: 'Opis',        desc: 'Opis i lokalizacja',            icon: 'mdi-text-box-outline' },
-    promo:       { name: 'Promocja',       short: 'Promocja',    desc: 'Wyróżnij ogłoszenie',           icon: 'mdi-crown-outline' },
-    preview:     { name: 'Podgląd',        short: 'Podgląd',     desc: 'Przejrzyj i opublikuj',         icon: 'mdi-check-circle-outline' },
+    category:    { icon: 'mdi-apps' },
+    details:     { icon: 'mdi-car-outline' },
+    history:     { icon: 'mdi-barcode-scan' },
+    photos:      { icon: 'mdi-image-outline' },
+    equipment:   { icon: 'mdi-format-list-checkbox' },
+    trust:       { icon: 'mdi-shield-check-outline' },
+    description: { icon: 'mdi-text-box-outline' },
+    promo:       { icon: 'mdi-crown-outline' },
+    preview:     { icon: 'mdi-check-circle-outline' },
 } as const
+
+// Skroty do tlumaczen kroku - `t` jest reaktywne, wiec pasek postepu i naglowki
+// zmieniaja jezyk natychmiast po przelaczeniu.
+const stepName  = (k: StepKey) => t(`addAdvert.steps.${k}.name`)
+const stepShort = (k: StepKey) => t(`addAdvert.steps.${k}.short`)
+const stepDesc  = (k: StepKey) => t(`addAdvert.steps.${k}.desc`)
 
 type StepKey = keyof typeof STEP_DEFS
 
@@ -3778,15 +3790,17 @@ const steps = computed(() => {
         .filter(k => !(k === 'equipment' && equipmentHidden))
     return keys.map(k => ({
         key: k,
-        name: k === 'details' ? (cfg.detailsStepName ?? STEP_DEFS.details.name) : STEP_DEFS[k].name,
-        desc: k === 'details' ? (cfg.detailsStepDesc ?? STEP_DEFS.details.desc) : STEP_DEFS[k].desc,
+        // Konfiguracja kategorii moze nadpisac nazwe kroku 'Dane pojazdu' (np. na
+        // 'Dane maszyny'); gdy tego nie robi, uzywamy tlumaczenia.
+        name: k === 'details' ? (cfg.detailsStepName ?? stepName(k)) : stepName(k),
+        desc: k === 'details' ? (cfg.detailsStepDesc ?? stepDesc(k)) : stepDesc(k),
         icon: STEP_DEFS[k].icon,
     }))
 })
 
 const stepKey = computed<StepKey>(() => (steps.value[currentStep.value]?.key ?? 'category') as StepKey)
 
-const progressSteps = computed(() => steps.value.map(s => ({ label: STEP_DEFS[s.key].short, icon: s.icon })))
+const progressSteps = computed(() => steps.value.map(s => ({ label: stepShort(s.key), icon: s.icon })))
 
 // If the visible-step list shrinks under the cursor (e.g. features finish loading empty while
 // a restored draft already sits on a later index), clamp instead of falling off the end.

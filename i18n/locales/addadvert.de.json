@@ -1,1 +1,99 @@
-{}
+{
+  "addAdvert": {
+    "steps": {
+      "category": {
+        "name": "Kategorie",
+        "short": "Kategorie",
+        "desc": "Anzeigentyp"
+      },
+      "details": {
+        "name": "Fahrzeugdaten",
+        "short": "Fahrzeug",
+        "desc": "Marke, Modell, technische Daten"
+      },
+      "history": {
+        "name": "Historie & FIN",
+        "short": "Historie",
+        "desc": "Identifikation und Historie"
+      },
+      "photos": {
+        "name": "Fotos",
+        "short": "Fotos",
+        "desc": "Anzeigengalerie"
+      },
+      "equipment": {
+        "name": "Ausstattung",
+        "short": "Ausstattung",
+        "desc": "Optionen und Ausstattung"
+      },
+      "trust": {
+        "name": "Vertrauenswert",
+        "short": "Vertrauen",
+        "desc": "Zusammenfassung der Glaubwürdigkeit"
+      },
+      "description": {
+        "name": "Beschreibung",
+        "short": "Beschreibung",
+        "desc": "Beschreibung und Standort"
+      },
+      "promo": {
+        "name": "Werbung",
+        "short": "Werbung",
+        "desc": "Anzeige hervorheben"
+      },
+      "preview": {
+        "name": "Vorschau",
+        "short": "Vorschau",
+        "desc": "Prüfen und veröffentlichen"
+      }
+    },
+    "stepCounter": "Schritt {current} von {total}: {name}",
+    "hero": {
+      "title": "Inserieren Sie Ihr Auto.",
+      "subtitle": "Erstellen Sie in wenigen Minuten eine Premium-Anzeige."
+    },
+    "breadcrumbHome": "Startseite",
+    "category": {
+      "heading": "Kategorie wählen",
+      "hint": "Wählen Sie den Fahrzeugtyp — das Formular passt sich an.",
+      "label": "Kategorie",
+      "suffix": "— Formular an diese Kategorie angepasst",
+      "vehicleType": "Fahrzeugtyp",
+      "selectVehicleType": "Fahrzeugtyp wählen",
+      "subtypes": "Unterkategorien"
+    },
+    "vin": {
+      "prompt": "FIN vorhanden? Fahrzeugdaten automatisch übernehmen",
+      "explain": "Wir übernehmen Marke, Modell, Baujahr, Motor und weitere Daten aus dem Fahrzeugregister. Sie können sie vor der Veröffentlichung korrigieren.",
+      "label": "FIN-Nummer",
+      "placeholder": "17-stellige FIN",
+      "orManual": "oder Kategorie wählen und Formular manuell ausfüllen"
+    },
+    "details": {
+      "heading": "Fahrzeugdaten",
+      "hint": "Geben Sie die technischen und identifizierenden Daten des Fahrzeugs an.",
+      "registrationRegion": "Zulassungsregion",
+      "selectRegion": "Region wählen"
+    },
+    "help": {
+      "title": "Brauchen Sie Hilfe?",
+      "text": "Lesen Sie unseren Leitfaden für die beste Anzeige",
+      "link": "Zum Leitfaden →"
+    },
+    "onBehalf": "Sie erstellen eine Anzeige im Auftrag von:",
+    "success": {
+      "title": "Danke für Ihre Anzeige!",
+      "text": "Ihre Anzeige wurde gespeichert und auf CARIZO veröffentlicht.",
+      "congrats": "Herzlichen Glückwunsch — wir wünschen einen schnellen Verkauf!",
+      "viewAdvert": "Anzeige ansehen",
+      "addAnother": "Weitere Anzeige aufgeben",
+      "backToPanel": "Zurück zum Dashboard",
+      "close": "Schließen und zu den Anzeigen"
+    },
+    "promoCta": {
+      "lead": "Anzeige hervorheben —",
+      "action": "Werbung kaufen",
+      "tail": "und schneller verkaufen!"
+    }
+  }
+}
