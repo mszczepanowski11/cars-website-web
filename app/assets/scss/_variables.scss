@@ -62,19 +62,33 @@ $danger:      #ee5555;   // = dawne #e55 (83 uzycia): blad, status zablokowany, 
 $info:        #2196f3;
 $premium:     #f5a623;   // złoto: wyróżnienia / TOP / Premium
 
-// ── Skala odstępów (4px) ─────────────────────────────────────────────────────
-// Zastępuje 254 unikalne deklaracje paddingu. Każdy nowy odstęp MUSI pochodzić
-// z tej skali — to jedyny sposób, żeby siatka przestała się rozjeżdżać.
+// ── Skala odstępów (krok 2px) ────────────────────────────────────────────────
+// Pomiar: w kodzie jest 2924 wartości pikselowych w odstępach, z czego 53% nie
+// mieściło się w czystej skali 4px. Dominują 10px (345x), 14px (241x), 6px
+// (222x) — to typowe wartości dla gęstego interfejsu z kartami i plakietkami.
+//
+// Świadoma decyzja: skala jest oparta o krok 2px, a nie 4px. Wymuszanie 4px
+// oznaczałoby przepisanie ~1567 wartości i przesunięcie układu w setkach miejsc
+// — czyli dokładnie tę przypadkowość, którą mamy usuwać. Skala opisuje więc
+// rzeczywistość i daje token na KAŻDĄ realnie potrzebną wartość, dzięki czemu
+// nowy kod nie dokłada kolejnych wariantów.
+$s-05: 2px;
 $s-1:  4px;
+$s-15: 6px;
 $s-2:  8px;
+$s-25: 10px;
 $s-3:  12px;
+$s-35: 14px;
 $s-4:  16px;
+$s-45: 18px;
 $s-5:  20px;
 $s-6:  24px;
+$s-7:  28px;
 $s-8:  32px;
 $s-10: 40px;
 $s-12: 48px;
 $s-16: 64px;
+$s-20: 80px;
 
 // ── Skala typografii ─────────────────────────────────────────────────────────
 // Audyt: 48 unikalnych rozmiarów, a dominują 13px (350×), 12px (302×) i 11px
