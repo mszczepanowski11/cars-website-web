@@ -40,6 +40,11 @@ const PAGES = [
     { path: '/jak-to-dziala' },
     { path: '/kontakt' },
     { path: '/o-nas' },
+    // Strony pośrednie kategoria → marka → model. To one zbierają ruch z wyszukiwarki,
+    // więc muszą realnie renderować listę, a nie sam szkielet.
+    { path: '/kategorie/osobowe', expect: '.car-card' },
+    { path: '/kategorie/osobowe/audi', expect: '.kat-chips' },
+    { path: '/kategorie/osobowe/audi/q5', expect: '.car-card' },
     // Postać aktualna: kategoria / marka / model / opis-IDxxxx
     { path: '/ogloszenia/osobowe/volkswagen/passat/volkswagen-passat-2021-poznan-ID1003', expect: '.advert-page' },
     // Postać sprzed zmiany - musi nadal prowadzić do ogłoszenia (przez przekierowanie 301).

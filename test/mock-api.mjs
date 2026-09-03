@@ -49,6 +49,10 @@ http.createServer((req,res)=>{
   if (/\/(listings|Advert)\/\d+/.test(u)) return send(mk(3))
   if (/\/Advert\?/.test(u)) return send({items:items(12),totalCount:1847})
   if (/\/Taxonomy\/categories|\/api\/Category(\?|$)/.test(u)) return send(cats)
+  // Kolejnosc ma znaczenie: `/Taxonomy/brands/{id}/models` zaczyna sie tak samo jak
+  // `/Taxonomy/brands`, wiec modele musza byc sprawdzane PIERWSZE - inaczej lista modeli
+  // zwracalaby marki i strony /kategorie/marka/model dawalyby 404.
+  if (/\/Taxonomy\/brands\/\d+\/models/.test(u)) return send(BR.map(([,m],i)=>({id:i+1,name:m,slug:m.toLowerCase()})))
   if (/\/Taxonomy\/brands/.test(u)) return send(BR.map(([b],i)=>({id:i+1,name:b,slug:b.toLowerCase()})))
   if (/\/Taxonomy\/models/.test(u)) return send(BR.map(([,m],i)=>({id:i+1,name:m,slug:m.toLowerCase()})))
   if (/\/Taxonomy\/fuel/.test(u)) return send(['Benzyna','Diesel','LPG','Hybryda','Elektryczny'].map((name,i)=>({id:i+1,name})))
