@@ -50,6 +50,12 @@ jobs:
             exit 1
           fi
 
+      - name: Testy jednostkowe
+        # Sprawdzaja sama logike - bez przegladarki, w ulamku sekundy. Ida PRZED
+        # budowaniem, bo jesli logika adresow jest zepsuta, nie ma sensu czekac
+        # trzech minut na build, zeby dowiedziec sie tego samego wolniej.
+        run: npm run test:unit
+
       - name: Budowanie
         run: npm run build
         env:

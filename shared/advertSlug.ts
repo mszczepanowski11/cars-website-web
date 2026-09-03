@@ -123,16 +123,35 @@ export function advertPath(advert: SlugSource): string {
  *
  * Rozpoznaje trzy postacie, bo wszystkie trzy żyją w sieci:
  *   1. aktualną      "...-warszawa-ID1234"
- *   2. poprzednią    "...-warszawa-1234"   (adresy sprzed tej zmiany)
+ *   2. poprzednią    "...-warszawa-1234"   (adresy sprzed wprowadzenia przedrostka)
  *   3. samo ID       "/ogloszenia/1234"    (skrót, np. z wiadomości)
  *
- * Postać z przedrostkiem sprawdzamy pierwsza, bo jest jednoznaczna.
+ * Znacznik "ID" ma pierwszeństwo i jest szukany W CAŁYM adresie, nie tylko na końcu.
+ * Dzięki temu adres, do którego ktoś dokleił coś po identyfikatorze
+ * ("...-ID1234-2020", parametr sklejony przez zewnętrzny serwis), nadal prowadzi
+ * do właściwego ogłoszenia zamiast do tego o numerze 2020.
+ *
+ * CZEGO TO NIE ROZWIĄZUJE - i trzeba to wiedzieć:
+ * Adres URWANY przed znacznikiem ("...-audi-q5-2020") nie zawiera już żadnej
+ * wskazówki, więc odczyta się jako ogłoszenie 2020. Nie da się tego odróżnić od
+ * poprawnego adresu w starej postaci, który kończy się na 2020 - i właśnie dlatego
+ * stara postać musi być nadal obsługiwana. To ograniczenie wynika z decyzji
+ * o zachowaniu wstecznej zgodności, a nie z niedopatrzenia.
+ *
+ * Uboczny wniosek: adres typu "/ogloszenia/osobowe/audi/q5" odczytałby się jako
+ * ogłoszenie numer 5, bo "q5" kończy się cyfrą. To jeden z powodów, dla których
+ * listy kategoria/marka/model leżą pod osobnym prefiksem /kategorie/, a nie
+ * pod /ogloszenia/.
  */
 export function parseAdvertId(slugParam: string | string[] | undefined): number | null {
     const raw = (Array.isArray(slugParam) ? slugParam.join('/') : (slugParam ?? '')).trim()
 
-    const withMark = new RegExp(`${ID_MARK}(\\d+)$`, 'i').exec(raw)
-    const match = withMark ?? /(\d+)$/.exec(raw)
+    // Ostatnie wystąpienie znacznika - gdyby w adresie znalazły się dwa,
+    // liczy się ten bliżej końca, czyli dopisany później.
+    const marked = raw.match(new RegExp(`${ID_MARK}(\\d+)`, 'gi'))
+    const match = marked?.length
+        ? new RegExp(`${ID_MARK}(\\d+)`, 'i').exec(marked[marked.length - 1]!)
+        : /(\d+)$/.exec(raw)
     if (!match) return null
 
     const id = Number(match[1])

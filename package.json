@@ -10,7 +10,9 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "icons": "node scripts/generate-mdi-paths.mjs",
-    "test:smoke": "node test/smoke.mjs"
+    "test:smoke": "node test/smoke.mjs",
+    "test:unit": "node --experimental-strip-types --test test/*.test.mjs",
+    "test": "npm run test:unit && npm run test:smoke"
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",
