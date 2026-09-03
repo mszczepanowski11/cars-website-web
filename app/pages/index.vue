@@ -1063,6 +1063,13 @@ const { data: homeData } = await useAsyncData('home-data', async () => {
     const categories = (realCategories ?? STATIC_CATEGORIES).filter((c: any) => c.slug !== 'inne')
     const defaultCategoryId = categories.find((c: any) => c.slug === searchCat.value)?.id
 
+    // Paski „najnowsze w kategorii". To JEDNO zapytanie do własnego endpointu, który
+    // buforuje wynik na pięć minut dla wszystkich odwiedzających (server/api/home/showcase).
+    // Pobieramy je po stronie serwera, żeby paski były w gotowym HTML-u zamiast dociągać
+    // się po uwodnieniu - dzięki temu nie ma migotania szkieletów ani dodatkowego
+    // żądania z przeglądarki.
+    const showcasePromise = $fetch<CategoryShowcaseGroup[]>('/api/home/showcase').catch(() => [] as CategoryShowcaseGroup[])
+
     const [featuredResult, recentResult, evts, stats, brands] = await Promise.allSettled([
         $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
@@ -1083,6 +1090,7 @@ const { data: homeData } = await useAsyncData('home-data', async () => {
         stats:         stats.status          === 'fulfilled' ? stats.value                 : null,
         brands:        brands.status         === 'fulfilled' ? brands.value                : [],
         categories,
+        showcase:      await showcasePromise,
     }
 })
 
@@ -1094,6 +1102,8 @@ if (homeData.value) {
     events.value        = homeData.value.events ?? []
     filterBrands.value  = homeData.value.brands ?? []
     if (homeData.value.categories?.length) homeCategories.value = homeData.value.categories
+    categoryShowcase.value = homeData.value.showcase ?? []
+    catShowcaseLoading.value = false
     if (homeData.value.stats) Object.assign(homeStats.value, homeData.value.stats)
 }
 statsLoading.value = false
@@ -1116,22 +1126,6 @@ if (import.meta.client) {
         clientDataLoading.value = false
     })
 
-    // Per-category showcase: newest listings for every category that has any. Client-side and
-    // lazy so it never blocks SSR; each category is one small search, run in parallel.
-    loadCategoryShowcase()
-}
-
-async function loadCategoryShowcase() {
-    catShowcaseLoading.value = true
-    try {
-        // Jedno żądanie zamiast jednego na kategorię. Fan-out po kategoriach nadal
-        // istnieje, ale dzieje się na serwerze i jest buforowany na pięć minut dla
-        // wszystkich odwiedzających — patrz `server/api/home/showcase.get.ts`.
-        // Wcześniej ta funkcja wysyłała z przeglądarki dwadzieścia zapytań
-        // wyszukiwania przy każdym wejściu na stronę główną.
-        categoryShowcase.value = await $fetch<CategoryShowcaseGroup[]>('/api/home/showcase')
-    } catch { categoryShowcase.value = [] }
-    finally { catShowcaseLoading.value = false }
 }
 
 onMounted(async () => {

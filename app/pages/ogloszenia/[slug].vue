@@ -798,14 +798,14 @@
                         </button>
                     </div>
                     <div class="compose-advert-ref">{{ advert?.title }}</div>
-                    <VDatePicker
-                        v-model="viewingDate"
-                        :min="today"
-                        :max="maxBookingDate"
-                        hide-header
-                        show-adjacent-months
-                        color="red"
-                        class="tx-calendar"
+                    <label class="tx-date-label" :for="'d-' + 'viewingDateInput'">Data</label>
+                    <input
+                        :id="'d-' + 'viewingDateInput'"
+                        v-model="viewingDateInput"
+                        type="date"
+                        class="tx-date-input"
+                        :min="todayInput"
+                        :max="maxBookingInput"
                     />
                     <div class="tx-time-row">
                         <label class="tx-time-label">Godzina</label>
@@ -848,14 +848,14 @@
                         <CzIcon icon="mdi-information-outline" size="13" />
                         Wybierz termin, do kiedy chcesz zarezerwować to auto — sprzedawca musi potwierdzić rezerwację.
                     </p>
-                    <VDatePicker
-                        v-model="reservationDate"
-                        :min="today"
-                        :max="maxBookingDate"
-                        hide-header
-                        show-adjacent-months
-                        color="red"
-                        class="tx-calendar"
+                    <label class="tx-date-label" :for="'d-' + 'reservationDateInput'">Data</label>
+                    <input
+                        :id="'d-' + 'reservationDateInput'"
+                        v-model="reservationDateInput"
+                        type="date"
+                        class="tx-date-input"
+                        :min="todayInput"
+                        :max="maxBookingInput"
                     />
                     <div class="tx-time-row">
                         <label class="tx-time-label">Godzina</label>
@@ -986,8 +986,7 @@ const txLoading = ref<'reservation' | 'viewing' | null>(null)
 const txSuccess = ref<string | null>(null)
 const txError = ref<string | null>(null)
 
-// Date/time pickers for viewing & reservation - VDatePicker gives a real calendar grid rather
-// than a bare <input type="date">, with today..+60d as the selectable range.
+// Wybór daty i godziny oględzin oraz rezerwacji.
 const today = new Date(); today.setHours(0, 0, 0, 0)
 const maxBookingDate = new Date(today); maxBookingDate.setDate(maxBookingDate.getDate() + 60)
 const TIME_OPTIONS = Array.from({ length: 21 }, (_, i) => {
@@ -999,10 +998,27 @@ const TIME_OPTIONS = Array.from({ length: 21 }, (_, i) => {
 
 const showViewingPicker = ref(false)
 const viewingDate = ref<Date | null>(null)
+// Pola dat są natywne (`<input type="date">`), a stan pozostaje typu Date, bo taki
+// przyjmuje `combineDateAndTime` przy wysyłce. Te dwie własności tłumaczą jedno na
+// drugie. Natywne pole ma na telefonie lepszy wybierak niż cokolwiek własnego -
+// i nie wymaga ładowania biblioteki.
+const dateToInput = (d: Date | null) => d ? new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10) : ''
+const inputToDate = (v: string) => v ? new Date(`${v}T00:00:00`) : null
 const viewingTime = ref('10:00')
 const viewingNote = ref('')
 const showReservationPicker = ref(false)
 const reservationDate = ref<Date | null>(null)
+
+const todayInput = computed(() => dateToInput(today))
+const maxBookingInput = computed(() => dateToInput(maxBookingDate))
+const viewingDateInput = computed({
+    get: () => dateToInput(viewingDate.value),
+    set: (v: string) => { viewingDate.value = inputToDate(v) },
+})
+const reservationDateInput = computed({
+    get: () => dateToInput(reservationDate.value),
+    set: (v: string) => { reservationDate.value = inputToDate(v) },
+})
 const reservationTime = ref('10:00')
 const reservationNote = ref('')
 
@@ -1129,11 +1145,16 @@ const isNegotiable = computed(() =>
     (advert.value?.description?.includes('💬 Cena do negocjacji'))
 )
 
-const sellerTypeLabel = computed(() => {
-    if (seller.value?.accountType === 'Business') return 'Dealer / Firma'
-    if (advert.value?.description?.includes('Sprzedawca: Dealer')) return 'Dealer / Firma'
-    return 'Sprzedawca prywatny'
-})
+// Szablon odwoływał się do `isSellerDealer`, którego nigdy nie zdefiniowano - Vue
+// podstawiało `undefined`, więc plakietka sprzedawcy ZAWSZE dostawała styl
+// „prywatny", nawet gdy napis obok mówił „Dealer / Firma". Jedno źródło prawdy
+// dla obu miejsc.
+const isSellerDealer = computed(() =>
+    seller.value?.accountType === 'Business' ||
+    !!advert.value?.description?.includes('Sprzedawca: Dealer')
+)
+
+const sellerTypeLabel = computed(() => isSellerDealer.value ? 'Dealer / Firma' : 'Sprzedawca prywatny')
 
 // Seller display helpers
 const sellerDisplayName = computed(() => {
@@ -1696,7 +1717,7 @@ onMounted(async () => {
                 getSellerReviews(advert.value.userId),
                 isLoggedIn.value ? canReview(advert.value.userId) : Promise.resolve(false),
             ])
-            sellerReviews.value = r.items
+            sellerReviews.value = r?.items ?? []
             canLeaveReview.value = ok
         } catch {} finally { reviewsLoading.value = false }
     }
@@ -2478,6 +2499,32 @@ onUnmounted(() => {
     color: $text-dim;
     line-height: 1.4;
     margin: 0;
+}
+
+.tx-date-label {
+    display: block;
+    font-size: $fs-sm;
+    font-weight: $fw-semibold;
+    color: $text-muted;
+    margin-bottom: $s-15;
+}
+
+.tx-date-input {
+    width: 100%;
+    height: $touch-min;
+    padding: 0 $s-3;
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    background: rgba(255,255,255,0.03);
+    color: $text;
+    font-family: 'Inter', sans-serif;
+    // iOS powiększa stronę przy wejściu w pole poniżej 16 px.
+    font-size: $fs-input;
+    margin-bottom: $s-3;
+
+    &:focus { outline: none; border-color: rgba($red-hot, 0.55); }
+    // Domyślna ikona kalendarza jest czarna i ginie na ciemnym tle.
+    &::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.55; cursor: pointer; }
 }
 
 .tx-time-row {

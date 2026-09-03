@@ -273,7 +273,7 @@ async function loadInvoices(page = 1) {
     invoicesPage.value = page
     try {
         const res = await getAdminInvoices(page, invoicesPageSize)
-        invoices.value = res.items
+        invoices.value = res?.items ?? []
         invoicesTotalCount.value = res.totalCount
     } catch { invoices.value = [] }
     finally { invoicesLoading.value = false }
@@ -286,7 +286,7 @@ async function loadPayments(page = 1) {
         const res = await $fetch<{ items: PaymentRecord[]; totalCount: number }>('/api/proxy/api/Payment/admin/all', {
             query: { page, pageSize: paymentsPageSize }
         })
-        payments.value = res.items
+        payments.value = res?.items ?? []
         paymentsTotalCount.value = res.totalCount
     } catch { payments.value = [] }
     finally { paymentsLoading.value = false }

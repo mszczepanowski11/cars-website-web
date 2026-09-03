@@ -200,7 +200,7 @@ async function fetchEvents() {
         if (search.value) params.search = search.value
         if (statusFilter.value !== 'all') params.status = statusFilter.value
         const r = await adminGetEvents(params)
-        events.value = r.items
+        events.value = r?.items ?? []
         totalCount.value = r.totalCount
     } catch (e: any) {
         toastError(e?.data?.message ?? 'Nie udało się załadować wydarzeń.')

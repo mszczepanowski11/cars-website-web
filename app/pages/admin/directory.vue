@@ -240,7 +240,7 @@ async function load() {
         page: page.value, pageSize: PAGE_SIZE,
       },
     })
-    items.value = res.items
+    items.value = res?.items ?? []
     total.value = res.total
   } catch { useToast().error('Nie udało się wczytać katalogu.') }
   finally { loading.value = false }

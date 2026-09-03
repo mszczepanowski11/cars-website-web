@@ -198,7 +198,7 @@ async function loadInvoices() {
     invoicesLoading.value = true
     try {
         const r = await getMyInvoices(invoicesPage.value, 20)
-        invoices.value = r.items
+        invoices.value = r?.items ?? []
         invoicesTotal.value = r.totalCount
     } catch (e: any) {
         invoices.value = []
@@ -212,7 +212,7 @@ async function loadPayments() {
         const r = await $fetch<PagedResult<PaymentRecord>>('/api/proxy/api/Payment/my', {
             query: { page: paymentsPage.value, pageSize: 20 }
         })
-        payments.value = r.items
+        payments.value = r?.items ?? []
         paymentsTotal.value = r.totalCount
     } catch (e: any) {
         payments.value = []

@@ -367,7 +367,7 @@ async function loadBrands() {
         const q: Record<string, any> = { pageSize: 200 }
         if (brandSearch.value) q.search = brandSearch.value
         const resp = await $fetch<{ items: any[] }>('/api/proxy/api/Admin/brands', { query: q })
-        brands.value = resp.items
+        brands.value = resp?.items ?? []
     } catch (e: any) {
         toastError(e?.data?.message ?? 'Nie udało się załadować marek.')
         brands.value = []
@@ -424,7 +424,7 @@ async function loadModels() {
         if (modelSearch.value) q.search = modelSearch.value
         if (modelBrandFilter.value) q.brandId = modelBrandFilter.value
         const resp = await $fetch<{ items: any[] }>('/api/proxy/api/Admin/models', { query: q })
-        models.value = resp.items
+        models.value = resp?.items ?? []
     } catch (e: any) {
         toastError(e?.data?.message ?? 'Nie udało się załadować modeli.')
         models.value = []
@@ -478,7 +478,7 @@ async function loadGenerations() {
         if (genSearch.value) q.search = genSearch.value
         if (genModelFilter.value) q.modelId = genModelFilter.value
         const resp = await $fetch<{ items: any[] }>('/api/proxy/api/Admin/generations', { query: q })
-        generations.value = resp.items
+        generations.value = resp?.items ?? []
     } catch (e: any) {
         toastError(e?.data?.message ?? 'Nie udało się załadować generacji.')
         generations.value = []
@@ -538,7 +538,7 @@ async function loadEngines() {
         if (engineSearch.value) q.search = engineSearch.value
         if (engineGenFilter.value) q.generationId = engineGenFilter.value
         const resp = await $fetch<{ items: any[] }>('/api/proxy/api/Admin/engines', { query: q })
-        engines.value = resp.items
+        engines.value = resp?.items ?? []
     } catch (e: any) {
         toastError(e?.data?.message ?? 'Nie udało się załadować silników.')
         engines.value = []

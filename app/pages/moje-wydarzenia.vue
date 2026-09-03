@@ -149,7 +149,7 @@ async function fetchEvents() {
     loading.value = true
     try {
         const r = await getMyEvents(page.value, pageSize)
-        events.value = r.items
+        events.value = r?.items ?? []
         totalCount.value = r.totalCount
     } catch (e: any) {
         events.value = []

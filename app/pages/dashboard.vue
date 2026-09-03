@@ -949,7 +949,7 @@ async function goReviews() {
         reviewsLoading.value = true
         try {
             const r = await getMyReceivedReviews()
-            receivedReviews.value = r.items
+            receivedReviews.value = r?.items ?? []
         } catch { toastError(t('dashboard.errLoadReviews')) } finally { reviewsLoading.value = false }
     }
 }
@@ -1181,21 +1181,21 @@ watch(activeTab, async (tab) => {
         reviewsLoading.value = true
         try {
             const r = await getMyReceivedReviews()
-            receivedReviews.value = r.items
+            receivedReviews.value = r?.items ?? []
         } catch { toastError(t('dashboard.errLoadReviews')) } finally { reviewsLoading.value = false }
     }
     if (tab === 'followers' && followers.value.length === 0) {
         followersLoading.value = true
         try {
             const r = await getFollowers()
-            followers.value = r.items
+            followers.value = r?.items ?? []
         } catch { toastError(t('dashboard.errLoadFollowers')) } finally { followersLoading.value = false }
     }
     if (tab === 'following' && followedAdverts.value.length === 0) {
         followingLoading.value = true
         try {
             const r = await getFollowedAdverts()
-            followedAdverts.value = r.items
+            followedAdverts.value = r?.items ?? []
         } catch { toastError(t('dashboard.errLoadFollowing')) } finally { followingLoading.value = false }
     }
 })
@@ -1205,7 +1205,7 @@ watch(section, async (s) => {
         searchesLoading.value = true
         try {
             const r = await getSavedSearches()
-            savedSearches.value = r.items
+            savedSearches.value = r?.items ?? []
         } catch { toastError(t('dashboard.errLoadSearches')) } finally { searchesLoading.value = false }
     }
 })
@@ -1214,7 +1214,7 @@ onMounted(async () => {
     try {
         ;[profile.value, stats.value] = await Promise.all([fetchProfile(), fetchStats()])
         const r = await $fetch<{ items: CarAdvert[]; totalCount: number }>('/api/proxy/api/listings/user?page=1&pageSize=8')
-        myAdverts.value = r.items
+        myAdverts.value = r?.items ?? []
         advertTotal.value = r.totalCount
         // Lazy load notifications count
         fetchNotifications().catch(() => { })

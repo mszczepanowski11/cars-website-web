@@ -26,18 +26,21 @@ const MOCK_PORT = 4999
 
 /** Strony publiczne, przez które przechodzi ruch. Każda musi renderować się bez błędu. */
 const PAGES = [
-    '/',
-    '/adverts',
-    '/categories',
-    '/firmy',
-    '/login',
-    '/register',
-    '/cennik',
-    '/pakiety',
-    '/jak-to-dziala',
-    '/kontakt',
-    '/o-nas',
-    '/ogloszenia/audi-q5-2020-warszawa-1003',
+    // `expect` to selektor, ktory MUSI byc obecny po zaladowaniu. Bez tego test
+    // przechodzil dla strony wynikow pokazujacej "Nie znaleziono ogloszen" - czyli
+    // sprawdzal szkielet, a nie to, po co ta strona istnieje.
+    { path: '/', expect: '.cat-row-head' },
+    { path: '/adverts', expect: '.car-card' },
+    { path: '/categories' },
+    { path: '/firmy' },
+    { path: '/login', expect: 'input[type=password]' },
+    { path: '/register' },
+    { path: '/cennik' },
+    { path: '/pakiety' },
+    { path: '/jak-to-dziala' },
+    { path: '/kontakt' },
+    { path: '/o-nas' },
+    { path: '/ogloszenia/audi-q5-2020-warszawa-1003', expect: '.advert-page' },
 ]
 
 /** Szerokości: mały telefon, tablet, laptop. */
@@ -68,6 +71,19 @@ async function waitFor(url, seconds = 60) {
 }
 
 async function main() {
+    // Port zajety przez wczesniejszy, NIEAKTUALNY serwer to najgorszy mozliwy przypadek:
+    // `spawn` cicho przegrywa binding, a test sprawdza starą wersję aplikacji i przechodzi
+    // albo pada bez zwiazku z biezacymi zmianami. Lepiej stanac od razu z jasnym powodem.
+    for (const [port, co] of [[3000, 'aplikacji'], [MOCK_PORT, 'atrapy API']]) {
+        try {
+            await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(1500) })
+            throw new Error(`Port ${port} jest juz zajety (serwer ${co}). Zatrzymaj go - inaczej test sprawdzilby nieaktualna wersje.`)
+        } catch (e) {
+            if (e instanceof Error && e.message.startsWith('Port ')) throw e
+            // brak odpowiedzi = port wolny, o to chodzi
+        }
+    }
+
     run('node', ['test/mock-api.mjs'])
     run('node', ['.output/server/index.mjs'], {
         NUXT_PUBLIC_API_BASE: `http://127.0.0.1:${MOCK_PORT}/`,
@@ -98,7 +114,7 @@ async function main() {
         const CONCURRENCY = 4
         await Promise.all(Array.from({ length: CONCURRENCY }, async () => {
           while (queue.length) {
-            const path = queue.shift()
+            const { path, expect } = queue.shift()
             const page = await ctx.newPage()
             const jsErrors = []
             page.on('pageerror', e => jsErrors.push(String(e).split('\n')[0].slice(0, 160)))
@@ -158,6 +174,9 @@ async function main() {
             }
             if (result.textLength < 200) {
                 failures.push(`${label} — strona prawie pusta (${result.textLength} znaków tekstu)`)
+            }
+            if (expect && await page.locator(expect).count() === 0) {
+                failures.push(`${label} — brak oczekiwanej treści (${expect})`)
             }
 
             if (!failures.some(f => f.startsWith(label))) {

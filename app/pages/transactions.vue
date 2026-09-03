@@ -115,7 +115,7 @@ async function load(p: number = page.value) {
     loading.value = true
     try {
         const r = await getMyTransactions(p, pageSize)
-        transactions.value = r.items
+        transactions.value = r?.items ?? []
         total.value = r.totalCount
     } catch (e: any) {
         transactions.value = []

@@ -283,7 +283,7 @@ async function fetchEvents() {
     if (activeFilter.value === 'month') filterQuery.dateRange = 'month'
     try {
         const r = await getEvents(filterQuery)
-        events.value = r.items
+        events.value = r?.items ?? []
         totalCount.value = r.totalCount
         attendedIds.value = new Set(r.items.filter(e => e.isUserInterested).map(e => e.id))
         interestCounts.value = new Map(r.items.map(e => [e.id, e.interestedCount ?? 0]))

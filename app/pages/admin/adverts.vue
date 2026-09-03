@@ -197,7 +197,7 @@ async function fetchAdverts() {
         else if (statusFilter.value === 'hidden') { query.isHidden = true }
         else if (statusFilter.value === 'expired') { query.isActive = false; query.isHidden = false }
         const r = await $fetch<{ items: AdminAdvert[]; totalCount: number }>('/api/proxy/api/Admin/adverts', { query })
-        adverts.value = r.items
+        adverts.value = r?.items ?? []
         totalCount.value = r.totalCount
     } catch { adverts.value = [] } finally { loading.value = false }
 }
