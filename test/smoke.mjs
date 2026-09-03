@@ -203,6 +203,22 @@ async function main() {
                         }
                     }
                 }
+                // Pola formularza bez nazwy dostępnej dla czytnika ekranu. Etykieta bywa
+                // widoczna na ekranie, ale technicznie niepowiązana z polem - wtedy czytnik
+                // mówi „pole edycji" i nic więcej. Placeholder się nie liczy: znika po
+                // wpisaniu pierwszego znaku.
+                const poleBezNazwy = [...document.querySelectorAll('input:not([type=hidden]), select, textarea')]
+                    .filter(e => {
+                        if (e.getAttribute('aria-label')?.trim()) return false
+                        if (e.getAttribute('aria-labelledby')) return false
+                        if (e.id && document.querySelector(`label[for="${CSS.escape(e.id)}"]`)) return false
+                        if (e.closest('label')) return false
+                        if (e.getAttribute('title')?.trim()) return false
+                        return true
+                    })
+                    .map(e => e.tagName.toLowerCase() + '.' + (typeof e.className === 'string' && e.className.trim()
+                        ? e.className.trim().split(/\s+/)[0] : ''))
+
                 const icons = [...document.querySelectorAll('.cz-icon')]
                 return {
                     overflow,
@@ -214,6 +230,7 @@ async function main() {
                     textLength: (document.body.innerText || '').trim().length,
                     cls: window.__cls ?? 0,
                     shifts: [...new Set(window.__shifts ?? [])].slice(0, 3),
+                    poleBezNazwy: [...new Set(poleBezNazwy)],
                 }
             })
 
@@ -229,6 +246,9 @@ async function main() {
             }
             // Próg Google dla oceny „dobry". Dziś wszystkie strony mają 0,000 -
             // ten warunek pilnuje, żeby tak zostało.
+            if (result.poleBezNazwy.length) {
+                failures.push(`${label} — pola bez nazwy dla czytnika ekranu: ${result.poleBezNazwy.join(', ')}`)
+            }
             if (result.cls > 0.1) {
                 failures.push(`${label} — treść skacze w trakcie ładowania, CLS ${result.cls.toFixed(3)} (${result.shifts.join(', ')})`)
             }

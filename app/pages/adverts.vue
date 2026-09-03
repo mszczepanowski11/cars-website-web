@@ -48,10 +48,10 @@
                     <div class="fp-primary">
                         <!-- Category -->
                         <div class="fp-field">
-                            <label class="fp-label">{{ $t('adverts.category') }}</label>
+                            <label class="fp-label" for="fp-category">{{ $t('adverts.category') }}</label>
                             <div class="fp-select-wrap">
                                 <CzIcon icon="mdi-tag-multiple-outline" size="14" class="fp-field-icon" />
-                                <select v-model="f.categoryId" class="fp-select" @change="onCategoryChange">
+                                <select id="fp-category" v-model="f.categoryId" class="fp-select" @change="onCategoryChange">
                                     <option :value="null">Wszystkie</option>
                                     <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
                                 </select>
@@ -62,10 +62,10 @@
 
                         <!-- Brand -->
                         <div class="fp-field">
-                            <label class="fp-label">{{ $t('adverts.brand') }}</label>
+                            <label class="fp-label" for="fp-brand">{{ $t('adverts.brand') }}</label>
                             <div class="fp-select-wrap">
                                 <CzIcon icon="mdi-car-outline" size="14" class="fp-field-icon" />
-                                <select v-model="f.brandId" class="fp-select" @change="onBrandChange">
+                                <select id="fp-brand" v-model="f.brandId" class="fp-select" @change="onBrandChange">
                                     <option :value="null">Wszystkie marki</option>
                                     <option v-for="b in brands.filter(b => b.name && !/^\d+$/.test(b.name))" :key="b.id" :value="b.id">{{ b.name }}</option>
                                 </select>
@@ -76,10 +76,10 @@
 
                         <!-- Model -->
                         <div class="fp-field">
-                            <label class="fp-label">{{ $t('adverts.model') }}</label>
+                            <label class="fp-label" for="fp-model">{{ $t('adverts.model') }}</label>
                             <div class="fp-select-wrap">
                                 <CzIcon icon="mdi-car-settings" size="14" class="fp-field-icon" />
-                                <select v-model="f.modelId" class="fp-select" :disabled="!f.brandId" @change="onModelChange">
+                                <select id="fp-model" v-model="f.modelId" class="fp-select" :disabled="!f.brandId" @change="onModelChange">
                                     <option :value="null">{{ $t('adverts.allModels') }}</option>
                                     <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
                                 </select>
@@ -92,9 +92,10 @@
                         <div class="fp-field fp-field--range">
                             <label class="fp-label">{{ $t('adverts.price') }}</label>
                             <div class="fp-range">
-                                <input v-model.number="f.priceFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                <!-- Zakres: wspólna etykieta „Cena" nie mówi, którym końcem jest dane pole. -->
+                                <input v-model.number="f.priceFrom" type="number" class="fp-range-input" :aria-label="`${$t('adverts.price')} od`" placeholder="Od" min="0" />
                                 <span class="fp-range-sep">–</span>
-                                <input v-model.number="f.priceTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                <input v-model.number="f.priceTo" type="number" class="fp-range-input" :aria-label="`${$t('adverts.price')} do`" placeholder="Do" min="0" />
                             </div>
                         </div>
 
@@ -102,10 +103,10 @@
 
                         <!-- Location -->
                         <div class="fp-field">
-                            <label class="fp-label">{{ $t('adverts.location') }}</label>
+                            <label class="fp-label" for="fp-location">{{ $t('adverts.location') }}</label>
                             <div class="fp-input-wrap">
                                 <CzIcon icon="mdi-map-marker-outline" size="14" class="fp-field-icon" />
-                                <input v-model="f.locationCity" type="text" class="fp-text-input" :placeholder="$t('adverts.locationPlaceholder')" />
+                                <input id="fp-location" v-model="f.locationCity" type="text" class="fp-text-input" :placeholder="$t('adverts.locationPlaceholder')" />
                             </div>
                         </div>
 
@@ -627,7 +628,7 @@
                     <p v-else class="result-count result-count--empty">{{ $t('adverts.noResults') }}</p>
                     <div class="sort-wrap">
                         <CzIcon icon="mdi-sort" size="16" class="sort-icon" />
-                        <select v-model="f.sortBy" class="sort-select" @change="load(1)">
+                        <select v-model="f.sortBy" class="sort-select" :aria-label="$t('adverts.sortBy')" @change="load(1)">
                             <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
                     </div>
