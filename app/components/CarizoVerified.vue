@@ -25,7 +25,7 @@ const allVerified = computed(() => items.value.every(i => i.verified))
 <template>
     <div v-if="anyVerified" class="cv" :class="{ 'cv--compact': compact }">
         <div class="cv-header">
-            <v-icon icon="mdi-shield-check" size="16" class="cv-shield" />
+            <CzIcon icon="mdi-shield-check" size="16" class="cv-shield" />
             <span class="cv-title">CARIZO VERIFIED</span>
             <span v-if="allVerified" class="cv-all-badge">PREMIUM</span>
         </div>
@@ -36,9 +36,9 @@ const allVerified = computed(() => items.value.every(i => i.verified))
                 class="cv-item"
                 :class="{ 'cv-item--on': item.verified, 'cv-item--off': !item.verified }"
             >
-                <v-icon :icon="item.icon" size="14" class="cv-item-icon" />
+                <CzIcon :icon="item.icon" size="14" class="cv-item-icon" />
                 <span class="cv-item-label">{{ item.label }}</span>
-                <v-icon
+                <CzIcon
                     v-if="item.verified"
                     icon="mdi-check-circle"
                     size="13"

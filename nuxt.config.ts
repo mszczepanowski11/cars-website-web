@@ -4,7 +4,7 @@ const scss = (file: string) =>
   fileURLToPath(new URL(`./app/assets/scss/${file}`, import.meta.url)).replace(/\\/g, '/')
 
 export default defineNuxtConfig({
-  modules: ['vuetify-nuxt-module', '@nuxt/image', '@nuxtjs/i18n'],
+  modules: ['@nuxt/image', '@nuxtjs/i18n'],
   compatibilityDate: '2025-07-15',
 
   // Multilingual + global SEO. Polish stays unprefixed (carizo.eu/...) so every existing URL keeps
@@ -130,7 +130,10 @@ export default defineNuxtConfig({
     '~shared': fileURLToPath(new URL('./shared', import.meta.url)).replace(/\\/g, '/'),
   },
 
-  css: ['~/assets/scss/main.scss', '@mdi/font/css/materialdesignicons.min.css'],
+  // Czcionka ikon Material Design (396 kB woff2, 7448 ikon) zostala usunieta.
+  // Ikony renderuje `CzIcon` jako wstawiony SVG - do przegladarki trafia 317 sciezek,
+  // czyli wylacznie to, co serwis naprawde wyswietla.
+  css: ['~/assets/scss/main.scss'],
 
   vite: {
     build: {
@@ -156,32 +159,6 @@ export default defineNuxtConfig({
           additionalData: `@import "${scss('_variables')}"; @import "${scss('_mixins')}";`,
           silenceDeprecations: ['import', 'color-functions', 'global-builtin'],
         }
-      }
-    }
-  },
-
-  vuetify: {
-    vuetifyOptions: {
-      theme: {
-        defaultTheme: 'carizo',
-        themes: {
-          carizo: {
-            dark: true,
-            colors: {
-              background: '#050505',
-              surface: '#0d0d0d',
-              primary: '#8B0D1D',
-              secondary: '#888888',
-            }
-          }
-        }
-      },
-      defaults: {
-        VCard: { rounded: 'xl', color: 'surface' },
-        VBtn: { rounded: 'lg' },
-        VTextField: { variant: 'outlined', bgColor: '#090909' },
-        VSelect: { variant: 'outlined', bgColor: '#090909' },
-        VTextarea: { variant: 'outlined', bgColor: '#090909' },
       }
     }
   },

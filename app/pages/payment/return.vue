@@ -9,7 +9,7 @@
                     <span v-for="i in 10" :key="i" class="cr-dot" :style="{ '--i': i }" />
                 </div>
                 <div class="icon-wrap icon-success">
-                    <v-icon icon="mdi-check-circle" size="52" />
+                    <CzIcon icon="mdi-check-circle" size="52" />
                 </div>
                 <h1 class="return-title">{{ $t('paymentReturn.successTitleLine1') }}<br>{{ $t('paymentReturn.successTitleLine2') }}</h1>
                 <p class="return-desc">
@@ -24,38 +24,38 @@
 
                 <!-- Invoice info -->
                 <div class="invoice-status invoice-pending">
-                    <v-icon icon="mdi-receipt-outline" size="16" />
+                    <CzIcon icon="mdi-receipt-outline" size="16" />
                     {{ $t('paymentReturn.invoicePending') }}
                 </div>
                 <div v-if="latestInvoice" class="invoice-status invoice-ready">
-                    <v-icon icon="mdi-receipt-check-outline" size="16" />
+                    <CzIcon icon="mdi-receipt-text-check-outline" size="16" />
                     {{ $t('paymentReturn.invoiceReady', { number: latestInvoice.invoiceNumber }) }}
                     <button class="inv-dl-btn" :disabled="pdfLoading" @click="downloadInvoicePdf">
-                        <v-icon v-if="pdfLoading" icon="mdi-loading" size="14" class="spin" />
-                        <v-icon v-else icon="mdi-file-pdf-box" size="14" />
+                        <CzIcon v-if="pdfLoading" icon="mdi-loading" size="14" class="spin" />
+                        <CzIcon v-else icon="mdi-file-pdf-box" size="14" />
                         {{ $t('paymentReturn.downloadPdf') }}
                     </button>
                 </div>
 
                 <div class="return-actions">
                     <NuxtLink v-if="eventId" :to="`/wydarzenie/${eventId}`" class="btn-red">
-                        <v-icon icon="mdi-calendar-star" size="17" />
+                        <CzIcon icon="mdi-calendar-star" size="17" />
                         {{ $t('paymentReturn.seeEvent') }}
                     </NuxtLink>
                     <NuxtLink v-else-if="advertId" :to="`/ogloszenia/${advertId}`" class="btn-red">
-                        <v-icon icon="mdi-eye-outline" size="17" />
+                        <CzIcon icon="mdi-eye-outline" size="17" />
                         {{ $t('paymentReturn.seeAdvert') }}
                     </NuxtLink>
                     <NuxtLink v-if="eventId" to="/wydarzenia" class="btn-outline">
-                        <v-icon icon="mdi-calendar-outline" size="15" />
+                        <CzIcon icon="mdi-calendar-outline" size="15" />
                         {{ $t('paymentReturn.allEvents') }}
                     </NuxtLink>
                     <NuxtLink v-else to="/my-adverts" class="btn-outline">
-                        <v-icon icon="mdi-car-outline" size="15" />
+                        <CzIcon icon="mdi-car-outline" size="15" />
                         {{ $t('paymentReturn.myAdverts') }}
                     </NuxtLink>
                     <NuxtLink to="/faktury" class="btn-ghost">
-                        <v-icon icon="mdi-receipt-outline" size="15" />
+                        <CzIcon icon="mdi-receipt-outline" size="15" />
                         {{ $t('paymentReturn.myInvoices') }}
                     </NuxtLink>
                 </div>
@@ -64,7 +64,7 @@
             <!-- ── CANCEL ── -->
             <template v-else-if="status === 'cancel'">
                 <div class="icon-wrap icon-cancel">
-                    <v-icon icon="mdi-close-circle" size="52" />
+                    <CzIcon icon="mdi-close-circle" size="52" />
                 </div>
                 <h1 class="return-title">{{ $t('paymentReturn.cancelTitle') }}</h1>
                 <p class="return-desc">
@@ -78,11 +78,11 @@
                 </p>
                 <div class="return-actions">
                     <NuxtLink v-if="eventId" :to="`/promote-event/${eventId}`" class="btn-red">
-                        <v-icon icon="mdi-refresh" size="17" />
+                        <CzIcon icon="mdi-refresh" size="17" />
                         {{ $t('paymentReturn.tryAgain') }}
                     </NuxtLink>
                     <NuxtLink v-else-if="advertId" :to="`/promote-advert/${advertId}`" class="btn-red">
-                        <v-icon icon="mdi-refresh" size="17" />
+                        <CzIcon icon="mdi-refresh" size="17" />
                         {{ $t('paymentReturn.tryAgain') }}
                     </NuxtLink>
                     <NuxtLink v-if="eventId" to="/wydarzenia" class="btn-outline">
@@ -100,7 +100,7 @@
             <!-- ── PENDING ── -->
             <template v-else>
                 <div class="icon-wrap icon-pending">
-                    <v-icon icon="mdi-clock-outline" size="52" class="pending-spin" />
+                    <CzIcon icon="mdi-clock-outline" size="52" class="pending-spin" />
                 </div>
                 <h1 class="return-title">{{ $t('paymentReturn.pendingTitle') }}</h1>
                 <p class="return-desc">
@@ -109,7 +109,7 @@
                 </p>
                 <div class="return-actions">
                     <NuxtLink to="/my-adverts" class="btn-red">
-                        <v-icon icon="mdi-car-outline" size="17" />
+                        <CzIcon icon="mdi-car-outline" size="17" />
                         {{ $t('paymentReturn.myAdverts') }}
                     </NuxtLink>
                 </div>

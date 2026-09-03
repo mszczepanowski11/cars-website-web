@@ -14,7 +14,7 @@
                     :class="{ active: tab === 'personal' }"
                     @click="tab = 'personal'"
                 >
-                    <v-icon icon="mdi-account-outline" size="18" />
+                    <CzIcon icon="mdi-account-outline" size="18" />
                     {{ $t('pricing.tabPersonal') }}
                 </button>
                 <button
@@ -22,7 +22,7 @@
                     :class="{ active: tab === 'business' }"
                     @click="tab = 'business'"
                 >
-                    <v-icon icon="mdi-briefcase-outline" size="18" />
+                    <CzIcon icon="mdi-briefcase-outline" size="18" />
                     {{ $t('pricing.tabBusiness') }}
                 </button>
             </div>
@@ -31,7 +31,7 @@
             <div v-if="tab === 'personal'" class="tab-content">
 
                 <div v-if="promoActive" class="promo-banner">
-                    <v-icon icon="mdi-gift-outline" size="17" />
+                    <CzIcon icon="mdi-gift-outline" size="17" />
                     {{ $t('pricing.promoBanner') }}
                 </div>
 
@@ -42,7 +42,7 @@
                     <div class="info-cards">
                         <div class="info-card info-card--free">
                             <div class="info-card-icon">
-                                <v-icon icon="mdi-car-outline" size="22" />
+                                <CzIcon icon="mdi-car-outline" size="22" />
                             </div>
                             <div>
                                 <div class="info-card-title">{{ $t('pricing.addAdvert') }}</div>
@@ -52,7 +52,7 @@
                         </div>
                         <div class="info-card">
                             <div class="info-card-icon">
-                                <v-icon icon="mdi-calendar-range" size="22" />
+                                <CzIcon icon="mdi-calendar-range" size="22" />
                             </div>
                             <div>
                                 <div class="info-card-title">{{ $t('pricing.emissionTime') }}</div>
@@ -63,7 +63,7 @@
                     </div>
 
                     <div class="limit-note">
-                        <v-icon icon="mdi-information-outline" size="15" />
+                        <CzIcon icon="mdi-information-outline" size="15" />
                         {{ $t('pricing.limitNote') }}
                     </div>
                 </section>
@@ -81,7 +81,7 @@
                         </div>
                         <div v-for="p in promoPlansPersonal" :key="p.key" class="promo-row" :class="`promo-row--${p.key}`">
                             <div class="promo-name-cell">
-                                <v-icon :icon="p.icon" size="16" class="promo-icon" />
+                                <CzIcon :icon="p.icon" size="16" class="promo-icon" />
                                 <div>
                                     <div class="promo-name">{{ p.name }}</div>
                                     <div class="promo-hint">{{ p.hint }}</div>
@@ -107,7 +107,7 @@
             <div v-if="tab === 'business'" class="tab-content">
 
                 <div v-if="promoActive" class="promo-banner">
-                    <v-icon icon="mdi-gift-outline" size="17" />
+                    <CzIcon icon="mdi-gift-outline" size="17" />
                     {{ $t('pricing.promoBanner') }}
                 </div>
 
@@ -124,11 +124,11 @@
                         >
                             <div class="b2b-accent" />
                             <div v-if="plan.popular" class="b2b-popular">
-                                <v-icon icon="mdi-fire" size="11" />{{ $t('pricing.mostPopular') }}
+                                <CzIcon icon="mdi-fire" size="11" />{{ $t('pricing.mostPopular') }}
                             </div>
                             <div class="b2b-head">
                                 <div class="b2b-icon">
-                                    <v-icon :icon="plan.icon" size="20" />
+                                    <CzIcon :icon="plan.icon" size="20" />
                                 </div>
                                 <div>
                                     <div class="b2b-name">{{ plan.name }}</div>
@@ -151,18 +151,18 @@
 
                             <ul class="b2b-features">
                                 <li v-for="f in plan.features" :key="f">
-                                    <v-icon icon="mdi-check" size="13" class="b2b-check" />
+                                    <CzIcon icon="mdi-check" size="13" class="b2b-check" />
                                     {{ f }}
                                 </li>
                             </ul>
 
                             <NuxtLink v-if="!plan.custom" to="/pakiety" class="b2b-cta">
                                 {{ $t('pricing.choosePackage') }}
-                                <v-icon icon="mdi-arrow-right" size="14" />
+                                <CzIcon icon="mdi-arrow-right" size="14" />
                             </NuxtLink>
                             <a v-else href="mailto:kontakt@carizo.eu" class="b2b-cta b2b-cta--contact">
                                 {{ $t('pricing.contact') }}
-                                <v-icon icon="mdi-email-outline" size="14" />
+                                <CzIcon icon="mdi-email-outline" size="14" />
                             </a>
                         </div>
                     </div>
@@ -185,7 +185,7 @@
                         </div>
                         <div v-for="p in promoPlansB2B" :key="p.key" class="promo-row" :class="`promo-row--${p.key}`">
                             <div class="promo-name-cell">
-                                <v-icon :icon="p.icon" size="16" class="promo-icon" />
+                                <CzIcon :icon="p.icon" size="16" class="promo-icon" />
                                 <div>
                                     <div class="promo-name">{{ p.name }}</div>
                                     <div class="promo-hint">{{ p.hint }}</div>
@@ -218,7 +218,7 @@
                 <div class="faq-grid">
                     <div v-for="q in faq" :key="q.q" class="faq-item">
                         <div class="faq-q">
-                            <v-icon icon="mdi-help-circle-outline" size="16" class="faq-icon" />
+                            <CzIcon icon="mdi-help-circle-outline" size="16" class="faq-icon" />
                             {{ q.q }}
                         </div>
                         <div class="faq-a">{{ q.a }}</div>
@@ -434,14 +434,14 @@ const faq = computed(() => [
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
 
-    .v-icon { transition: color 0.2s; }
+    .cz-icon { transition: color 0.2s; }
 
     &:hover { color: $text-muted; }
 
     &.active {
         background: $red;
         color: white;
-        .v-icon { color: white; }
+        .cz-icon { color: white; }
     }
 }
 
@@ -565,7 +565,7 @@ const faq = computed(() => [
     border-radius: $r-sm;
     padding: 12px 16px;
 
-    .v-icon { flex-shrink: 0; margin-top: 1px; }
+    .cz-icon { flex-shrink: 0; margin-top: 1px; }
 }
 
 // ── Promo table ───────────────────────────────────────────────────────────────

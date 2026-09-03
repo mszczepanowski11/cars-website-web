@@ -9,7 +9,7 @@
                 <div class="auth-field">
                     <label for="login-email" class="auth-label">{{ $t('login.emailLabel') }}</label>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--focus': emailFocused }">
-                        <v-icon icon="mdi-email-outline" size="17" class="auth-field-icon" />
+                        <CzIcon icon="mdi-email-outline" size="17" class="auth-field-icon" />
                         <input
                             id="login-email"
                             v-model="email"
@@ -30,7 +30,7 @@
                         <NuxtLink to="/forgot-password" class="auth-forgot">{{ $t('login.forgot') }}</NuxtLink>
                     </div>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--focus': passwordFocused }">
-                        <v-icon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
+                        <CzIcon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
                         <input
                             id="login-password"
                             v-model="password"
@@ -43,13 +43,13 @@
                             @blur="passwordFocused = false"
                         />
                         <button type="button" class="auth-eye" :aria-label="showPassword ? $t('login.hidePassword') : $t('login.showPassword')" @click="showPassword = !showPassword">
-                            <v-icon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
+                            <CzIcon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
                         </button>
                     </div>
                 </div>
 
                 <div v-if="error" role="alert" class="auth-error">
-                    <v-icon icon="mdi-alert-circle-outline" size="15" />
+                    <CzIcon icon="mdi-alert-circle-outline" size="15" />
                     {{ error }}
                     <NuxtLink v-if="unverifiedEmail" :to="`/register`" class="verify-hint">
                         {{ $t('login.verifyHint') }}
@@ -64,7 +64,7 @@
                 />
 
                 <button type="submit" class="auth-btn" :disabled="loading">
-                    <v-icon v-if="loading" icon="mdi-loading" size="18" class="spin" />
+                    <CzIcon v-if="loading" icon="mdi-loading" size="18" class="spin" />
                     <span>{{ loading ? $t('login.loggingIn') : $t('login.submit') }}</span>
                 </button>
             </form>

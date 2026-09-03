@@ -16,7 +16,7 @@
                     class="ftab"
                     :class="{ active: activeFilter === tab.key }"
                     @click="setFilter(tab.key)">
-                    <v-icon v-if="tab.icon" :icon="tab.icon" size="14" />
+                    <CzIcon v-if="tab.icon" :icon="tab.icon" size="14" />
                     {{ tab.label }}
                 </button>
             </div>
@@ -24,34 +24,34 @@
             <!-- Toolbar -->
             <div class="search-row">
                 <div class="search-box">
-                    <v-icon icon="mdi-magnify" size="20" class="s-icon" />
+                    <CzIcon icon="mdi-magnify" size="20" class="s-icon" />
                     <input v-model="search" class="s-input" :placeholder="$t('events.searchPlaceholder')" @input="onSearch" />
                 </div>
                 <NuxtLink to="/dodaj-wydarzenie" class="btn-add-event">
-                    <v-icon icon="mdi-plus" size="18" />
+                    <CzIcon icon="mdi-plus" size="18" />
                     {{ $t('events.addEvent') }}
                 </NuxtLink>
             </div>
 
             <!-- Loading -->
             <div v-if="loading" class="loading-row">
-                <v-icon icon="mdi-loading" size="28" class="spin" />
+                <CzIcon icon="mdi-loading" size="28" class="spin" />
             </div>
 
             <!-- Error -->
             <div v-else-if="fetchError" class="empty-state">
-                <v-icon icon="mdi-alert-circle-outline" size="52" class="empty-icon" color="#c0392b" />
+                <CzIcon icon="mdi-alert-circle-outline" size="52" class="empty-icon" color="#c0392b" />
                 <div class="empty-title">{{ $t('events.error.title') }}</div>
                 <div class="empty-sub">{{ $t('events.error.desc') }}</div>
                 <button class="btn-retry" @click="fetchEvents">
-                    <v-icon icon="mdi-refresh" size="16" />
+                    <CzIcon icon="mdi-refresh" size="16" />
                     {{ $t('events.error.refresh') }}
                 </button>
             </div>
 
             <!-- Empty -->
             <div v-else-if="!events.length" class="empty-state">
-                <v-icon icon="mdi-calendar-remove-outline" size="52" class="empty-icon" />
+                <CzIcon icon="mdi-calendar-remove-outline" size="52" class="empty-icon" />
                 <div class="empty-title">{{ $t('events.empty.title') }}</div>
                 <div class="empty-sub">{{ $t('events.empty.desc') }}</div>
             </div>
@@ -62,11 +62,11 @@
                     <div class="card-img-wrap">
                         <img :src="getEventImageUrl(ev)" :alt="ev.name" loading="lazy" decoding="async" />
                         <span v-if="ev.isFeatured" class="event-badge event-badge--featured">
-                            <v-icon icon="mdi-crown" size="10" /> {{ $t('events.card.featured') }}
+                            <CzIcon icon="mdi-crown" size="10" /> {{ $t('events.card.featured') }}
                         </span>
                         <span v-else class="event-badge">{{ $t('events.card.event') }}</span>
                         <div class="date-chip">
-                            <v-icon icon="mdi-calendar" size="12" />
+                            <CzIcon icon="mdi-calendar" size="12" />
                             {{ formatDate(ev.startDate) }}
                         </div>
                     </div>
@@ -74,24 +74,24 @@
                         <div class="event-name">{{ ev.name }}</div>
                         <div class="event-meta">
                             <span>
-                                <v-icon icon="mdi-map-marker-outline" size="14" class="meta-icon" />
+                                <CzIcon icon="mdi-map-marker-outline" size="14" class="meta-icon" />
                                 {{ ev.city }}
                             </span>
                             <span v-if="ev.endDate && ev.endDate !== ev.startDate">
-                                <v-icon icon="mdi-calendar-end" size="14" class="meta-icon" />
+                                <CzIcon icon="mdi-calendar-end" size="14" class="meta-icon" />
                                 {{ $t('events.card.until', { date: formatDate(ev.endDate) }) }}
                             </span>
                         </div>
                         <p class="event-desc">{{ ev.description?.slice(0, 120) }}{{ (ev.description?.length ?? 0) > 120 ? '...' : '' }}</p>
                         <div class="card-footer">
                             <div class="organizer" v-if="ev.organizerName">
-                                <v-icon icon="mdi-account-outline" size="13" />
+                                <CzIcon icon="mdi-account-outline" size="13" />
                                 {{ ev.organizerName }}
                             </div>
                             <div class="footer-actions">
                                 <!-- Interested count -->
                                 <div v-if="interestCounts.get(ev.id)" class="interest-count">
-                                    <v-icon icon="mdi-account-check-outline" size="14" />
+                                    <CzIcon icon="mdi-account-check-outline" size="14" />
                                     {{ interestCounts.get(ev.id) }}
                                 </div>
                                 <!-- Attend -->
@@ -101,39 +101,39 @@
                                     @click.stop="toggleAttend(ev)"
                                     :title="attendedIds.has(ev.id) ? $t('events.card.cancelAttend') : $t('events.card.willAttend')"
                                 >
-                                    <v-icon :icon="attendedIds.has(ev.id) ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="15" />
+                                    <CzIcon :icon="attendedIds.has(ev.id) ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="15" />
                                 </button>
                                 <!-- Share -->
                                 <div class="share-wrap">
                                     <button class="btn-share" @click.stop="toggleShare(ev.id)" :title="$t('events.card.share')">
-                                        <v-icon icon="mdi-share-variant-outline" size="15" />
+                                        <CzIcon icon="mdi-share-variant-outline" size="15" />
                                     </button>
                                     <div v-if="sharePopupId === ev.id" class="share-popup" @click.stop>
                                         <a :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl(ev.id))}`" target="_blank" rel="noopener noreferrer" class="share-item">
-                                            <v-icon icon="mdi-facebook" size="16" />Facebook
+                                            <CzIcon icon="mdi-facebook" size="16" />Facebook
                                         </a>
                                         <a :href="`https://wa.me/?text=${encodeURIComponent(ev.name + ' ' + getShareUrl(ev.id))}`" target="_blank" rel="noopener noreferrer" class="share-item">
-                                            <v-icon icon="mdi-whatsapp" size="16" />WhatsApp
+                                            <CzIcon icon="mdi-whatsapp" size="16" />WhatsApp
                                         </a>
                                         <a :href="`fb-messenger://share/?link=${encodeURIComponent(getShareUrl(ev.id))}`" class="share-item">
-                                            <v-icon icon="mdi-facebook-messenger" size="16" />Messenger
+                                            <CzIcon icon="mdi-facebook-messenger" size="16" />Messenger
                                         </a>
                                         <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="share-item">
-                                            <v-icon icon="mdi-instagram" size="16" />Instagram
+                                            <CzIcon icon="mdi-instagram" size="16" />Instagram
                                         </a>
                                         <button class="share-item" @click="copyLink(ev.id)">
-                                            <v-icon :icon="copiedId === ev.id ? 'mdi-check' : 'mdi-link-variant'" size="16" />
+                                            <CzIcon :icon="copiedId === ev.id ? 'mdi-check' : 'mdi-link-variant'" size="16" />
                                             {{ copiedId === ev.id ? $t('events.card.copied') : $t('events.card.copyLink') }}
                                         </button>
                                     </div>
                                 </div>
                                 <!-- External links -->
                                 <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener noreferrer" class="btn-ticket" @click.stop>
-                                    <v-icon icon="mdi-ticket-outline" size="14" />
+                                    <CzIcon icon="mdi-ticket-outline" size="14" />
                                     {{ $t('events.card.tickets') }}
                                 </a>
                                 <a v-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn-web" @click.stop>
-                                    <v-icon icon="mdi-web" size="14" />
+                                    <CzIcon icon="mdi-web" size="14" />
                                     {{ $t('events.card.website') }}
                                 </a>
                             </div>
@@ -145,11 +145,11 @@
             <!-- Pagination -->
             <div v-if="totalCount > pageSize" class="pagination">
                 <button class="page-btn" :disabled="page === 1" :aria-label="$t('events.pagination.prev')" @click="changePage(page - 1)">
-                    <v-icon icon="mdi-chevron-left" size="18" />
+                    <CzIcon icon="mdi-chevron-left" size="18" />
                 </button>
                 <span class="page-info">{{ page }} / {{ totalPages }}</span>
                 <button class="page-btn" :disabled="page >= totalPages" :aria-label="$t('events.pagination.next')" @click="changePage(page + 1)">
-                    <v-icon icon="mdi-chevron-right" size="18" />
+                    <CzIcon icon="mdi-chevron-right" size="18" />
                 </button>
             </div>
 
@@ -607,7 +607,7 @@ onMounted(fetchEvents)
     font-size: 11px;
     color: $text-dim;
 
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .btn-attend {
@@ -682,7 +682,7 @@ onMounted(fetchEvents)
 
     &:hover { background: rgba(255,255,255,0.05); color: $text; }
 
-    .v-icon { flex-shrink: 0; }
+    .cz-icon { flex-shrink: 0; }
 }
 
 .share-overlay {

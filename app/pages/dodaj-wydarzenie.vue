@@ -75,7 +75,7 @@
                         <div class="upload-area" :class="{ 'has-img': previewUrl }" @click="triggerUpload">
                             <img v-if="previewUrl" :src="previewUrl" class="img-preview" :alt="$t('addEvent.form.imagePreviewAlt')" loading="lazy" decoding="async" />
                             <div v-else class="upload-placeholder">
-                                <v-icon icon="mdi-image-plus-outline" size="40" class="upload-icon" />
+                                <CzIcon icon="mdi-image-plus-outline" size="40" class="upload-icon" />
                                 <span>{{ $t('addEvent.form.uploadClick') }}</span>
                                 <small>{{ $t('addEvent.form.uploadHint') }}</small>
                             </div>
@@ -86,19 +86,19 @@
                 </div>
 
                 <div class="notice">
-                    <v-icon icon="mdi-information-outline" size="16" />
+                    <CzIcon icon="mdi-information-outline" size="16" />
                     {{ isEdit ? $t('addEvent.notice.edit') : $t('addEvent.notice.new') }}
                 </div>
 
                 <div v-if="error" class="error-msg">
-                    <v-icon icon="mdi-alert-circle-outline" size="15" />
+                    <CzIcon icon="mdi-alert-circle-outline" size="15" />
                     {{ error }}
                 </div>
 
                 <div class="form-actions">
                     <NuxtLink to="/moje-wydarzenia" class="btn-cancel">{{ $t('addEvent.actions.cancel') }}</NuxtLink>
                     <button type="submit" class="btn-submit" :disabled="loading">
-                        <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
                         {{ loading ? $t('addEvent.actions.saving') : (isEdit ? $t('addEvent.actions.saveChanges') : $t('addEvent.actions.add')) }}
                     </button>
                 </div>
@@ -399,7 +399,7 @@ onMounted(async () => {
     color: $text-dim;
     margin-bottom: 16px;
 
-    .v-icon { color: $red; flex-shrink: 0; }
+    .cz-icon { color: $red; flex-shrink: 0; }
 }
 
 .error-msg {
@@ -414,7 +414,7 @@ onMounted(async () => {
     color: $danger;
     margin-bottom: 16px;
 
-    .v-icon { flex-shrink: 0; }
+    .cz-icon { flex-shrink: 0; }
 }
 
 // Actions

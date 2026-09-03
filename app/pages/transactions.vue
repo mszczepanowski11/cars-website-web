@@ -7,16 +7,16 @@
                     <p class="page-sub">{{ $t('transactions.subtitle') }}</p>
                 </div>
                 <NuxtLink to="/dashboard" class="back-link">
-                    <v-icon icon="mdi-arrow-left" size="16" />{{ $t('transactions.backToPanel') }}
+                    <CzIcon icon="mdi-arrow-left" size="16" />{{ $t('transactions.backToPanel') }}
                 </NuxtLink>
             </div>
 
             <div v-if="loading" class="loading-row">
-                <v-icon icon="mdi-loading" size="36" class="spin" />
+                <CzIcon icon="mdi-loading" size="36" class="spin" />
             </div>
 
             <div v-else-if="!transactions.length" class="empty-state">
-                <v-icon icon="mdi-handshake-outline" size="48" class="empty-icon" />
+                <CzIcon icon="mdi-handshake-outline" size="48" class="empty-icon" />
                 <p>{{ $t('transactions.empty') }}</p>
             </div>
 
@@ -24,7 +24,7 @@
                 <div class="tx-list">
                     <div v-for="tx in transactions" :key="tx.id" class="tx-row">
                         <div class="tx-type-icon" :class="`tx-${tx.type.toLowerCase()}`">
-                            <v-icon :icon="typeIcon(tx.type)" size="18" />
+                            <CzIcon :icon="typeIcon(tx.type)" size="18" />
                         </div>
                         <div class="tx-body">
                             <div class="tx-title">
@@ -39,7 +39,7 @@
                             </div>
                             <div v-if="tx.notes" class="tx-notes">{{ tx.notes }}</div>
                             <div v-if="tx.sellerPhone" class="tx-phone">
-                                <v-icon icon="mdi-phone-outline" size="13" />{{ tx.sellerPhone }}
+                                <CzIcon icon="mdi-phone-outline" size="13" />{{ tx.sellerPhone }}
                             </div>
                         </div>
                         <div class="tx-right">
@@ -50,7 +50,7 @@
                                 :disabled="cancelLoading === tx.id"
                                 @click="doCancel(tx)"
                             >
-                                <v-icon v-if="cancelLoading === tx.id" icon="mdi-loading" size="13" class="spin" />
+                                <CzIcon v-if="cancelLoading === tx.id" icon="mdi-loading" size="13" class="spin" />
                                 <span v-else>{{ $t('transactions.cancel') }}</span>
                             </button>
                         </div>
@@ -59,11 +59,11 @@
 
                 <div v-if="totalPages > 1" class="pagination">
                     <button class="page-btn" :disabled="page === 1" :aria-label="$t('transactions.prevPage')" @click="load(page - 1)">
-                        <v-icon icon="mdi-chevron-left" size="18" />
+                        <CzIcon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
                     <button class="page-btn" :disabled="page >= totalPages" :aria-label="$t('transactions.nextPage')" @click="load(page + 1)">
-                        <v-icon icon="mdi-chevron-right" size="18" />
+                        <CzIcon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
             </template>

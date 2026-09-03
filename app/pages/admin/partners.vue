@@ -2,23 +2,23 @@
     <div class="admin-page">
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <v-icon icon="mdi-shield-crown" size="20" class="brand-icon" />
+                <CzIcon icon="mdi-shield-crown" size="20" class="brand-icon" />
                 Panel Administratora
             </div>
             <nav class="sidebar-nav">
-                <NuxtLink to="/admin" class="nav-item"><v-icon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
-                <NuxtLink to="/admin/reports" class="nav-item"><v-icon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
-                <NuxtLink to="/admin/users" class="nav-item"><v-icon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
-                <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
-                <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
-                <NuxtLink to="/admin/taxonomy" class="nav-item"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
-                <NuxtLink to="/admin/vehicle-data" class="nav-item"><v-icon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
-                <NuxtLink to="/admin/attributes" class="nav-item"><v-icon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
-                <NuxtLink to="/admin/partners" class="nav-item active"><v-icon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
-                <NuxtLink to="/admin/directory" class="nav-item"><v-icon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
-                <NuxtLink to="/admin/quality-report" class="nav-item"><v-icon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
+                <NuxtLink to="/admin" class="nav-item"><CzIcon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
+                <NuxtLink to="/admin/reports" class="nav-item"><CzIcon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
+                <NuxtLink to="/admin/users" class="nav-item"><CzIcon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
+                <NuxtLink to="/admin/adverts" class="nav-item"><CzIcon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
+                <NuxtLink to="/admin/events" class="nav-item"><CzIcon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item"><CzIcon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
+                <NuxtLink to="/admin/vehicle-data" class="nav-item"><CzIcon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
+                <NuxtLink to="/admin/attributes" class="nav-item"><CzIcon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
+                <NuxtLink to="/admin/partners" class="nav-item active"><CzIcon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
+                <NuxtLink to="/admin/directory" class="nav-item"><CzIcon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item"><CzIcon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
                 <div class="nav-divider" />
-                <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
+                <NuxtLink to="/dashboard" class="nav-item"><CzIcon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
         </aside>
 
@@ -33,7 +33,7 @@
                     <h2 class="signup-title">Zgłoszenia z formularza "Dla firm"</h2>
                     <span v-if="pendingSignups.length" class="signup-count">{{ pendingSignups.length }}</span>
                 </div>
-                <div v-if="signupsLoading" class="loading-state"><v-icon icon="mdi-loading" size="22" class="spin" />Ładowanie...</div>
+                <div v-if="signupsLoading" class="loading-state"><CzIcon icon="mdi-loading" size="22" class="spin" />Ładowanie...</div>
                 <div v-else-if="!pendingSignups.length" class="td-dim">Brak oczekujących zgłoszeń.</div>
                 <div v-else class="signup-list">
                     <div v-for="s in pendingSignups" :key="s.id" class="signup-card">
@@ -42,7 +42,7 @@
                             <div class="td-dim">{{ s.email }} · {{ s.phone }}</div>
                             <div v-if="s.websiteUrl" class="td-dim">{{ s.websiteUrl }}</div>
                             <div v-if="s.feedUrl" class="signup-feed">
-                                <v-icon icon="mdi-file-code-outline" size="13" />
+                                <CzIcon icon="mdi-file-code-outline" size="13" />
                                 {{ s.feedUrl }}
                                 <span v-if="s.detectedItemCount != null" class="signup-count-inline">({{ s.detectedItemCount }} ogłoszeń, {{ s.format }})</span>
                             </div>
@@ -51,7 +51,7 @@
                         </div>
                         <div class="signup-card-actions">
                             <button class="btn-confirm" :disabled="signupActionId === s.id" @click="approveSignup(s)">
-                                <v-icon v-if="signupActionId === s.id" icon="mdi-loading" size="13" class="spin" />
+                                <CzIcon v-if="signupActionId === s.id" icon="mdi-loading" size="13" class="spin" />
                                 Zatwierdź
                             </button>
                             <button class="btn-cancel" :disabled="signupActionId === s.id" @click="rejectSignup(s)">Odrzuć</button>
@@ -62,12 +62,12 @@
 
             <div class="toolbar">
                 <button class="btn-add" @click="openCreateForm">
-                    <v-icon icon="mdi-plus" size="15" /> Dodaj partnera
+                    <CzIcon icon="mdi-plus" size="15" /> Dodaj partnera
                 </button>
             </div>
 
             <div v-if="newApiKey" class="key-banner">
-                <v-icon icon="mdi-key-alert-outline" size="20" />
+                <CzIcon icon="mdi-key-alert-outline" size="20" />
                 <div class="key-banner-body">
                     <div class="key-banner-title">Klucz API — zapisz go teraz, nie zostanie pokazany ponownie</div>
                     <code class="key-value">{{ newApiKey }}</code>
@@ -113,14 +113,14 @@
                 </div>
                 <div class="afc-actions">
                     <button class="btn-confirm" :disabled="!canSave || saving" @click="saveForm">
-                        <v-icon v-if="saving" icon="mdi-loading" size="13" class="spin" />
+                        <CzIcon v-if="saving" icon="mdi-loading" size="13" class="spin" />
                         {{ editingId ? 'Zapisz zmiany' : 'Utwórz partnera' }}
                     </button>
                     <button class="btn-cancel" @click="closeForm">Anuluj</button>
                 </div>
             </div>
 
-            <div v-if="loading" class="loading-state"><v-icon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
+            <div v-if="loading" class="loading-state"><CzIcon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
             <div v-else-if="partners.length" class="feat-table">
                 <table>
                     <thead>
@@ -139,24 +139,24 @@
                                     <span v-if="!p.feedUrl" class="td-dim">— (push-only)</span>
                                     <template v-else>
                                         <span class="feed-badge" :class="{ 'feed-badge--off': !p.autoSyncEnabled }" :title="p.feedUrl">
-                                            <v-icon icon="mdi-sync" size="12" />{{ p.feedFormat }}{{ p.autoSyncEnabled ? '' : ' (wyłączony)' }}
+                                            <CzIcon icon="mdi-sync" size="12" />{{ p.feedFormat }}{{ p.autoSyncEnabled ? '' : ' (wyłączony)' }}
                                         </span>
                                         <span v-if="p.consecutiveSyncFailures > 0" class="health-badge" :title="p.lastSyncError ?? ''">
-                                            <v-icon icon="mdi-alert-circle-outline" size="12" />{{ p.consecutiveSyncFailures }}× nieudana synchronizacja
+                                            <CzIcon icon="mdi-alert-circle-outline" size="12" />{{ p.consecutiveSyncFailures }}× nieudana synchronizacja
                                         </span>
                                     </template>
                                 </td>
                                 <td class="td-dim">{{ p.lastImportAt ? formatDate(p.lastImportAt) : '—' }}</td>
                                 <td><input type="checkbox" :checked="p.isActive" @change="toggleActive(p, $event)" /></td>
                                 <td>
-                                    <button class="btn-action" @click="openEditForm(p)"><v-icon icon="mdi-pencil-outline" size="13" />Edytuj</button>
+                                    <button class="btn-action" @click="openEditForm(p)"><CzIcon icon="mdi-pencil-outline" size="13" />Edytuj</button>
                                     <button v-if="p.feedUrl" class="btn-action" :disabled="syncingId === p.id" @click="syncNow(p)">
-                                        <v-icon :icon="syncingId === p.id ? 'mdi-loading' : 'mdi-cloud-sync-outline'" size="13" :class="{ spin: syncingId === p.id }" />Synchronizuj teraz
+                                        <CzIcon :icon="syncingId === p.id ? 'mdi-loading' : 'mdi-cloud-sync-outline'" size="13" :class="{ spin: syncingId === p.id }" />Synchronizuj teraz
                                     </button>
-                                    <button class="btn-action" @click="regenerateKey(p)"><v-icon icon="mdi-key-outline" size="13" />Nowy klucz</button>
-                                    <button class="btn-action" @click="toggleLogs(p)"><v-icon icon="mdi-history" size="13" />Historia</button>
-                                    <button class="btn-action" @click="toggleMapping(p)"><v-icon icon="mdi-transit-connection-variant" size="13" />Mapowanie</button>
-                                    <button class="btn-action btn-delete" @click="deletePartner(p)"><v-icon icon="mdi-delete-outline" size="13" />Usuń</button>
+                                    <button class="btn-action" @click="regenerateKey(p)"><CzIcon icon="mdi-key-outline" size="13" />Nowy klucz</button>
+                                    <button class="btn-action" @click="toggleLogs(p)"><CzIcon icon="mdi-history" size="13" />Historia</button>
+                                    <button class="btn-action" @click="toggleMapping(p)"><CzIcon icon="mdi-transit-connection-variant" size="13" />Mapowanie</button>
+                                    <button class="btn-action btn-delete" @click="deletePartner(p)"><CzIcon icon="mdi-delete-outline" size="13" />Usuń</button>
                                 </td>
                             </tr>
                             <tr v-if="expandedLogs === p.id">
@@ -205,18 +205,18 @@
                                                     <option v-for="f in valueFieldOptions" :key="f" :value="f">{{ f }}</option>
                                                 </select>
                                                 <input v-model="row.externalValue" class="afc-input" placeholder="wartość partnera, np. Osobowe" />
-                                                <v-icon icon="mdi-arrow-right" size="14" />
+                                                <CzIcon icon="mdi-arrow-right" size="14" />
                                                 <input v-model="row.internalValue" class="afc-input" placeholder="wartość CARIZO, np. auta-osobowe" />
-                                                <button class="btn-action btn-delete" @click="mappingByPartner[p.id].values.splice(idx, 1)"><v-icon icon="mdi-close" size="13" /></button>
+                                                <button class="btn-action btn-delete" @click="mappingByPartner[p.id].values.splice(idx, 1)"><CzIcon icon="mdi-close" size="13" /></button>
                                             </div>
                                             <button class="btn-action" @click="mappingByPartner[p.id].values.push({ field: 'Category', externalValue: '', internalValue: '' })">
-                                                <v-icon icon="mdi-plus" size="13" />Dodaj mapowanie wartości
+                                                <CzIcon icon="mdi-plus" size="13" />Dodaj mapowanie wartości
                                             </button>
                                         </div>
 
                                         <div class="afc-actions" style="margin-top: 14px;">
                                             <button class="btn-confirm" :disabled="savingMapping" @click="saveMapping(p)">
-                                                <v-icon v-if="savingMapping" icon="mdi-loading" size="13" class="spin" />
+                                                <CzIcon v-if="savingMapping" icon="mdi-loading" size="13" class="spin" />
                                                 Zapisz mapowania
                                             </button>
                                         </div>
@@ -227,7 +227,7 @@
                     </tbody>
                 </table>
             </div>
-            <div v-else class="empty-state"><v-icon icon="mdi-handshake-outline" size="36" class="empty-icon" />Brak partnerów.</div>
+            <div v-else class="empty-state"><CzIcon icon="mdi-handshake-outline" size="36" class="empty-icon" />Brak partnerów.</div>
         </main>
     </div>
 </template>

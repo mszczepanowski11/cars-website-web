@@ -143,19 +143,19 @@ watch(mobileOpen, (open) => {
                         @click="toggleCategories"
                     >
                         {{ $t('nav.categories') }}
-                        <v-icon icon="mdi-chevron-down" size="16" :class="{ rotated: categoriesOpen }" />
+                        <CzIcon icon="mdi-chevron-down" size="16" :class="{ rotated: categoriesOpen }" />
                     </button>
                     <div v-show="categoriesOpen" class="nav-dropdown-menu" role="menu" :aria-label="$t('nav.categories')">
                         <NuxtLink v-for="c in categories" :key="c.id"
                             :to="localePath(`/adverts?categoryId=${c.id}`)" class="dropdown-item"
                             role="menuitem"
                             @click="closeCategories">
-                            <v-icon :icon="c.icon" size="16" />
+                            <CzIcon :icon="c.icon" size="16" />
                             {{ c.label }}
                         </NuxtLink>
                         <NuxtLink :to="localePath('/adverts')" class="dropdown-item dropdown-all" role="menuitem" @click="closeCategories">
                             {{ $t('nav.allCategories') }}
-                            <v-icon icon="mdi-arrow-right" size="14" />
+                            <CzIcon icon="mdi-arrow-right" size="14" />
                         </NuxtLink>
                     </div>
                 </div>
@@ -169,9 +169,9 @@ watch(mobileOpen, (open) => {
             <!-- Language switcher -->
             <div class="nav-lang">
                 <button class="nav-lang-btn" :aria-label="$t('common.language')" @click="langOpen = !langOpen">
-                    <v-icon icon="mdi-translate" size="18" />
+                    <CzIcon icon="mdi-translate" size="18" />
                     <span>{{ locale.toUpperCase() }}</span>
-                    <v-icon icon="mdi-chevron-down" size="14" :class="{ rotated: langOpen }" />
+                    <CzIcon icon="mdi-chevron-down" size="14" :class="{ rotated: langOpen }" />
                 </button>
                 <div v-show="langOpen" class="nav-lang-menu" role="menu">
                     <NuxtLink
@@ -186,35 +186,35 @@ watch(mobileOpen, (open) => {
 
             <div class="nav-btns">
                 <NuxtLink v-if="isLoggedIn" to="/favorites" class="nav-icon-btn" title="Ulubione">
-                    <v-icon icon="mdi-heart-outline" size="20" />
+                    <CzIcon icon="mdi-heart-outline" size="20" />
                     <span class="nav-icon-label">Ulubione</span>
                 </NuxtLink>
                 <NuxtLink v-if="isLoggedIn" to="/messages" class="nav-icon-btn" title="Wiadomości">
-                    <v-badge v-if="unreadCount > 0" :content="String(unreadCount)" color="primary" floating>
-                        <v-icon icon="mdi-message-outline" size="20" />
-                    </v-badge>
-                    <v-icon v-else icon="mdi-message-outline" size="20" />
+                    <span class="nav-badge-wrap">
+                        <CzIcon icon="mdi-message-outline" size="20" />
+                        <span v-if="unreadCount > 0" class="nav-badge" :aria-label="`Nieprzeczytane wiadomości: ${unreadCount}`">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+                    </span>
                     <span class="nav-icon-label">Wiadomości</span>
                 </NuxtLink>
                 <template v-if="!isLoggedIn">
                     <NuxtLink to="/login" class="btn-login desktop-only">
-                        <v-icon icon="mdi-account-outline" size="18" class="mr-1" />
+                        <CzIcon icon="mdi-account-outline" size="18" class="mr-1" />
                         Zaloguj się
                     </NuxtLink>
                 </template>
                 <template v-else>
                     <NuxtLink v-if="isAdmin" to="/admin" class="btn-login desktop-only nav-admin-btn">
-                        <v-icon icon="mdi-shield-crown" size="18" class="mr-1" />
+                        <CzIcon icon="mdi-shield-crown" size="18" class="mr-1" />
                         Admin
                     </NuxtLink>
                     <NuxtLink to="/dashboard" class="btn-login desktop-only">
-                        <v-icon icon="mdi-account-circle-outline" size="18" class="mr-1" />
+                        <CzIcon icon="mdi-account-circle-outline" size="18" class="mr-1" />
                         Konto
                     </NuxtLink>
                     <button class="btn-login btn-logout desktop-only" @click="logout">Wyloguj</button>
                 </template>
                 <NuxtLink to="/add-advert" class="btn-add desktop-only">
-                    <v-icon icon="mdi-plus" size="18" class="mr-1" />
+                    <CzIcon icon="mdi-plus" size="18" class="mr-1" />
                     Dodaj ogłoszenie
                 </NuxtLink>
 
@@ -236,78 +236,78 @@ watch(mobileOpen, (open) => {
                 <div class="drawer-header">
                     <img src="/carizo-logo.svg" alt="CARIZO" class="drawer-logo" loading="lazy" decoding="async" />
                     <button class="drawer-close" aria-label="Zamknij menu" @click="closeMobile">
-                        <v-icon icon="mdi-close" size="22" />
+                        <CzIcon icon="mdi-close" size="22" />
                     </button>
                 </div>
 
                 <nav class="drawer-nav">
                     <NuxtLink to="/adverts" class="drawer-link" @click="closeMobile">
-                        <v-icon icon="mdi-car-multiple" size="18" />
+                        <CzIcon icon="mdi-car-multiple" size="18" />
                         Ogłoszenia
                     </NuxtLink>
 
                     <button class="drawer-link drawer-expandable" @click="mobileCatsOpen = !mobileCatsOpen">
-                        <v-icon icon="mdi-shape-outline" size="18" />
+                        <CzIcon icon="mdi-shape-outline" size="18" />
                         Kategorie
-                        <v-icon :icon="mobileCatsOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="ml-auto" />
+                        <CzIcon :icon="mobileCatsOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="ml-auto" />
                     </button>
                     <transition name="expand">
                         <div v-if="mobileCatsOpen" class="drawer-subcats">
                             <NuxtLink v-for="c in categories" :key="c.id"
                                 :to="`/adverts?categoryId=${c.id}`" class="drawer-sublink"
                                 @click="closeMobile">
-                                <v-icon :icon="c.icon" size="15" />
+                                <CzIcon :icon="c.icon" size="15" />
                                 {{ c.label }}
                             </NuxtLink>
                             <NuxtLink to="/adverts" class="drawer-sublink drawer-sublink--all" @click="closeMobile">
                                 Wszystkie kategorie
-                                <v-icon icon="mdi-arrow-right" size="14" class="ml-auto" />
+                                <CzIcon icon="mdi-arrow-right" size="14" class="ml-auto" />
                             </NuxtLink>
                         </div>
                     </transition>
 
                     <NuxtLink to="/firmy" class="drawer-link" @click="closeMobile">
-                        <v-icon icon="mdi-domain" size="18" />
+                        <CzIcon icon="mdi-domain" size="18" />
                         Firmy
                     </NuxtLink>
                     <NuxtLink to="/wydarzenia" class="drawer-link" @click="closeMobile">
-                        <v-icon icon="mdi-calendar-star" size="18" />
+                        <CzIcon icon="mdi-calendar-star" size="18" />
                         Wydarzenia
                     </NuxtLink>
                     <NuxtLink to="/pakiety" class="drawer-link" @click="closeMobile">
-                        <v-icon icon="mdi-briefcase-outline" size="18" />
+                        <CzIcon icon="mdi-briefcase-outline" size="18" />
                         Dla dealerów
                     </NuxtLink>
                     <NuxtLink to="/o-nas" class="drawer-link" @click="closeMobile">
-                        <v-icon icon="mdi-information-outline" size="18" />
+                        <CzIcon icon="mdi-information-outline" size="18" />
                         O nas
                     </NuxtLink>
                     <NuxtLink to="/kontakt" class="drawer-link" @click="closeMobile">
-                        <v-icon icon="mdi-email-outline" size="18" />
+                        <CzIcon icon="mdi-email-outline" size="18" />
                         Kontakt
                     </NuxtLink>
 
                     <template v-if="isLoggedIn">
                         <div class="drawer-divider" />
                         <NuxtLink v-if="isAdmin" to="/admin" class="drawer-link drawer-link--admin" @click="closeMobile">
-                            <v-icon icon="mdi-shield-crown" size="18" />
+                            <CzIcon icon="mdi-shield-crown" size="18" />
                             Panel Administratora
                         </NuxtLink>
                         <NuxtLink to="/favorites" class="drawer-link" @click="closeMobile">
-                            <v-icon icon="mdi-heart-outline" size="18" />
+                            <CzIcon icon="mdi-heart-outline" size="18" />
                             Ulubione
                         </NuxtLink>
                         <NuxtLink to="/messages" class="drawer-link" @click="closeMobile">
-                            <v-icon icon="mdi-message-outline" size="18" />
+                            <CzIcon icon="mdi-message-outline" size="18" />
                             Wiadomości
                             <span v-if="unreadCount > 0" class="drawer-badge">{{ unreadCount }}</span>
                         </NuxtLink>
                         <NuxtLink to="/dashboard" class="drawer-link" @click="closeMobile">
-                            <v-icon icon="mdi-account-circle-outline" size="18" />
+                            <CzIcon icon="mdi-account-circle-outline" size="18" />
                             Konto
                         </NuxtLink>
                         <NuxtLink to="/faktury" class="drawer-link" @click="closeMobile">
-                            <v-icon icon="mdi-receipt-outline" size="18" />
+                            <CzIcon icon="mdi-receipt-outline" size="18" />
                             Faktury i płatności
                         </NuxtLink>
                     </template>
@@ -315,7 +315,7 @@ watch(mobileOpen, (open) => {
 
                 <div class="drawer-footer">
                     <NuxtLink to="/add-advert" class="drawer-btn-add" @click="closeMobile">
-                        <v-icon icon="mdi-plus" size="18" />
+                        <CzIcon icon="mdi-plus" size="18" />
                         Dodaj ogłoszenie
                     </NuxtLink>
                     <template v-if="!isLoggedIn">
@@ -395,7 +395,7 @@ watch(mobileOpen, (open) => {
     padding: 0;
     transition: color 0.2s;
     &:hover { color: $text; }
-    .v-icon { transition: transform 0.2s; &.rotated { transform: rotate(180deg); } }
+    .cz-icon { transition: transform 0.2s; &.rotated { transform: rotate(180deg); } }
 }
 
 .nav-dropdown-menu {
@@ -422,8 +422,8 @@ watch(mobileOpen, (open) => {
     font-weight: 500;
     text-decoration: none;
     transition: background 0.15s, color 0.15s;
-    .v-icon { color: $text-dim; transition: color 0.15s; }
-    &:hover { background: rgba($red, 0.08); color: $text; .v-icon { color: $red; } }
+    .cz-icon { color: $text-dim; transition: color 0.15s; }
+    &:hover { background: rgba($red, 0.08); color: $text; .cz-icon { color: $red; } }
 }
 
 .dropdown-all {
@@ -453,6 +453,31 @@ watch(mobileOpen, (open) => {
 }
 
 .nav-btns { display: flex; gap: 8px; align-items: center; }
+
+.nav-badge-wrap {
+    position: relative;
+    display: inline-flex;
+}
+
+// Licznik nieprzeczytanych. Zastępuje `<v-badge floating>` - ten sam efekt to
+// jeden pozycjonowany element, bez frameworka.
+.nav-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 5px;
+    border-radius: $r-pill;
+    background: $red;
+    color: #fff;
+    font-size: 10px;
+    font-weight: $fw-bold;
+    line-height: 17px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 0 0 2px $bg;
+}
 
 .nav-icon-btn {
     display: flex;
@@ -614,11 +639,11 @@ watch(mobileOpen, (open) => {
     font-family: 'Inter', sans-serif;
     width: 100%;
     text-align: left;
-    .v-icon { color: $text-dim; flex-shrink: 0; }
+    .cz-icon { color: $text-dim; flex-shrink: 0; }
     &:hover, &.router-link-active {
         background: rgba(255, 255, 255, 0.04);
         color: $text;
-        .v-icon { color: $red; }
+        .cz-icon { color: $red; }
     }
 }
 
@@ -710,7 +735,7 @@ watch(mobileOpen, (open) => {
 
 .drawer-link--admin {
     color: $red;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
     &:hover { background: rgba($red, 0.08); }
 }
 

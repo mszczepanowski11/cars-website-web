@@ -3,7 +3,7 @@
         <!-- Chat header -->
         <div class="chat-header">
             <NuxtLink to="/messages" class="back-btn" :aria-label="$t('conversation.back')">
-                <v-icon icon="mdi-arrow-left" size="20" />
+                <CzIcon icon="mdi-arrow-left" size="20" />
             </NuxtLink>
 
             <div class="header-user" v-if="conversation">
@@ -14,7 +14,7 @@
                 <div class="header-info">
                     <div class="hdr-name">{{ conversation.otherUserName }}</div>
                     <NuxtLink :to="`/ogloszenia/${conversation.advertId}`" class="hdr-advert">
-                        <v-icon icon="mdi-car" size="12" />
+                        <CzIcon icon="mdi-car" size="12" />
                         {{ conversation.advertTitle }}
                     </NuxtLink>
                 </div>
@@ -30,10 +30,10 @@
             <!-- Actions -->
             <div class="header-actions">
                 <NuxtLink v-if="conversation" :to="`/ogloszenia/${conversation.advertId}`" class="hdr-action-btn" :title="$t('conversation.viewAdvert')">
-                    <v-icon icon="mdi-open-in-new" size="18" />
+                    <CzIcon icon="mdi-open-in-new" size="18" />
                 </NuxtLink>
                 <button class="hdr-action-btn" :title="$t('conversation.moreOptions')" @click="showActions = !showActions">
-                    <v-icon icon="mdi-dots-vertical" size="18" />
+                    <CzIcon icon="mdi-dots-vertical" size="18" />
                 </button>
 
                 <!-- Dropdown actions -->
@@ -41,15 +41,15 @@
                     <div class="act-backdrop" @click="showActions = false" />
                     <div class="act-menu">
                         <button class="act-item" @click="togglePin">
-                            <v-icon :icon="conversation?.isPinned ? 'mdi-pin-off' : 'mdi-pin'" size="16" />
+                            <CzIcon :icon="conversation?.isPinned ? 'mdi-pin-off' : 'mdi-pin'" size="16" />
                             {{ conversation?.isPinned ? $t('conversation.unpin') : $t('conversation.pin') }}
                         </button>
                         <button class="act-item" @click="doMarkUnread">
-                            <v-icon icon="mdi-email-mark-as-unread" size="16" />
+                            <CzIcon icon="mdi-email-mark-as-unread" size="16" />
                             {{ $t('conversation.markUnread') }}
                         </button>
                         <button class="act-item" @click="toggleArchive">
-                            <v-icon :icon="conversation?.isArchived ? 'mdi-archive-arrow-up' : 'mdi-archive-arrow-down'" size="16" />
+                            <CzIcon :icon="conversation?.isArchived ? 'mdi-archive-arrow-up' : 'mdi-archive-arrow-down'" size="16" />
                             {{ conversation?.isArchived ? $t('conversation.unarchive') : $t('conversation.archive') }}
                         </button>
                     </div>
@@ -61,9 +61,9 @@
         <div v-if="conversation" class="advert-strip">
             <NuxtLink :to="`/ogloszenia/${conversation.advertId}`" class="advert-strip-inner">
                 <img v-if="conversation.advertThumbnail" :src="conversation.advertThumbnail" class="strip-thumb" :alt="conversation.advertTitle" loading="lazy" decoding="async" />
-                <div v-else class="strip-thumb-placeholder"><v-icon icon="mdi-car" size="16" /></div>
+                <div v-else class="strip-thumb-placeholder"><CzIcon icon="mdi-car" size="16" /></div>
                 <span class="strip-title">{{ conversation.advertTitle }}</span>
-                <v-icon icon="mdi-chevron-right" size="16" class="strip-arrow" />
+                <CzIcon icon="mdi-chevron-right" size="16" class="strip-arrow" />
             </NuxtLink>
         </div>
 
@@ -77,12 +77,12 @@
 
             <template v-else>
                 <div v-if="loadError" class="no-messages">
-                    <v-icon icon="mdi-alert-circle-outline" size="40" class="no-msg-icon" />
+                    <CzIcon icon="mdi-alert-circle-outline" size="40" class="no-msg-icon" />
                     <p>{{ $t('conversation.errLoadMessages') }} <button class="retry-link" @click="loadAll">{{ $t('conversation.retry') }}</button></p>
                 </div>
 
                 <div v-else-if="!messages.length" class="no-messages">
-                    <v-icon icon="mdi-message-outline" size="40" class="no-msg-icon" />
+                    <CzIcon icon="mdi-message-outline" size="40" class="no-msg-icon" />
                     <p>{{ $t('conversation.writeFirst') }}</p>
                 </div>
 
@@ -108,7 +108,7 @@
                             <div class="msg-footer">
                                 <span class="msg-time">{{ formatTime(msg.sentAt) }}</span>
                                 <span v-if="msg.isMine" class="msg-status">
-                                    <v-icon
+                                    <CzIcon
                                         :icon="msg.isRead ? 'mdi-check-all' : 'mdi-check'"
                                         size="14"
                                         :class="msg.isRead ? 'status-read' : 'status-sent'"
@@ -136,7 +136,7 @@
 
         <!-- Load error -->
         <div v-if="loadError" class="load-error">
-            <v-icon icon="mdi-wifi-off" size="16" />
+            <CzIcon icon="mdi-wifi-off" size="16" />
             {{ $t('conversation.loadError') }}
             <button class="retry-btn" @click="loadAll">{{ $t('conversation.tryAgain') }}</button>
         </div>
@@ -161,8 +161,8 @@
                     :title="sending ? $t('conversation.sending') : $t('conversation.sendTitle')"
                     @click="send"
                 >
-                    <v-icon v-if="sending" icon="mdi-loading" size="20" class="spin" />
-                    <v-icon v-else icon="mdi-send" size="20" />
+                    <CzIcon v-if="sending" icon="mdi-loading" size="20" class="spin" />
+                    <CzIcon v-else icon="mdi-send" size="20" />
                 </button>
             </div>
         </div>

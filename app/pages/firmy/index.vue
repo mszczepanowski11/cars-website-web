@@ -7,7 +7,7 @@
         <p class="dir-sub">{{ $t('firmy.sub') }}</p>
 
         <form class="dir-search" @submit.prevent="applySearch">
-          <v-icon icon="mdi-magnify" size="20" class="dir-search-icon" />
+          <CzIcon icon="mdi-magnify" size="20" class="dir-search-icon" />
           <input v-model="qInput" type="text" :placeholder="$t('firmy.searchPlaceholder')" class="dir-search-input" />
           <button type="submit" class="dir-search-btn">{{ $t('firmy.searchBtn') }}</button>
         </form>
@@ -56,23 +56,23 @@
             <span v-if="!pending">{{ $t('firmy.found') }} <strong>{{ total.toLocaleString('pl') }}</strong> {{ pluralFirm(total) }}</span>
             <span v-else>{{ $t('firmy.loading') }}</span>
             <div class="dir-viewtoggle">
-              <button :class="{ active: view === 'list' }" @click="view = 'list'"><v-icon icon="mdi-format-list-bulleted" size="16" /> {{ $t('firmy.list') }}</button>
-              <button :class="{ active: view === 'map' }" @click="view = 'map'"><v-icon icon="mdi-map-outline" size="16" /> {{ $t('firmy.map') }}</button>
+              <button :class="{ active: view === 'list' }" @click="view = 'list'"><CzIcon icon="mdi-format-list-bulleted" size="16" /> {{ $t('firmy.list') }}</button>
+              <button :class="{ active: view === 'map' }" @click="view = 'map'"><CzIcon icon="mdi-map-outline" size="16" /> {{ $t('firmy.map') }}</button>
             </div>
           </div>
 
           <ClientOnly v-if="view === 'map'">
             <CompanyMap :category="activeCategory" :country="activeCountry" />
-            <template #fallback><div class="dir-loading"><v-icon icon="mdi-loading" size="34" class="spin" /></div></template>
+            <template #fallback><div class="dir-loading"><CzIcon icon="mdi-loading" size="34" class="spin" /></div></template>
           </ClientOnly>
 
           <template v-else>
           <div v-if="pending" class="dir-loading">
-            <v-icon icon="mdi-loading" size="34" class="spin" />
+            <CzIcon icon="mdi-loading" size="34" class="spin" />
           </div>
 
           <div v-else-if="items.length === 0" class="dir-empty">
-            <v-icon icon="mdi-office-building-outline" size="44" />
+            <CzIcon icon="mdi-office-building-outline" size="44" />
             <p>{{ $t('firmy.empty') }}</p>
             <button v-if="activeCategory || activeCountry || q" class="dir-reset" @click="resetAll">{{ $t('firmy.clearFilters') }}</button>
           </div>
@@ -81,7 +81,7 @@
             <li v-for="co in items" :key="co.publicId">
               <NuxtLink :to="`/firmy/${co.slug}`" class="dir-card">
                 <div class="dir-card-icon">
-                  <v-icon :icon="categoryIcon(co.category)" size="22" />
+                  <CzIcon :icon="categoryIcon(co.category)" size="22" />
                 </div>
                 <div class="dir-card-body">
                   <div class="dir-card-name">
@@ -90,11 +90,11 @@
                   </div>
                   <div class="dir-card-meta">
                     <span class="dir-card-cat">{{ categoryLabel(co.category) }}</span>
-                    <span v-if="co.city" class="dir-card-city"><v-icon icon="mdi-map-marker-outline" size="13" />{{ co.city }}</span>
+                    <span v-if="co.city" class="dir-card-city"><CzIcon icon="mdi-map-marker-outline" size="13" />{{ co.city }}</span>
                     <span v-if="co.countryCode" class="dir-card-country" :title="countryName(co.countryCode)">{{ co.countryCode }}</span>
                   </div>
                 </div>
-                <v-icon icon="mdi-chevron-right" size="18" class="dir-card-arrow" />
+                <CzIcon icon="mdi-chevron-right" size="18" class="dir-card-arrow" />
               </NuxtLink>
             </li>
           </ul>
@@ -102,11 +102,11 @@
           <!-- Pagination -->
           <div v-if="totalPages > 1" class="dir-pager">
             <button class="dir-pager-btn" :disabled="page <= 1" @click="goPage(page - 1)">
-              <v-icon icon="mdi-chevron-left" size="18" /> {{ $t('firmy.prev') }}
+              <CzIcon icon="mdi-chevron-left" size="18" /> {{ $t('firmy.prev') }}
             </button>
             <span class="dir-pager-info">{{ $t('firmy.pageOf', { page, total: totalPages }) }}</span>
             <button class="dir-pager-btn" :disabled="page >= totalPages" @click="goPage(page + 1)">
-              {{ $t('firmy.next') }} <v-icon icon="mdi-chevron-right" size="18" />
+              {{ $t('firmy.next') }} <CzIcon icon="mdi-chevron-right" size="18" />
             </button>
           </div>
           </template>

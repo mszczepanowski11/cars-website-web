@@ -2,7 +2,7 @@
     <div class="seller-page">
 
         <div v-if="pageLoading" class="page-loading">
-            <v-icon icon="mdi-loading" size="40" class="spin" />
+            <CzIcon icon="mdi-loading" size="40" class="spin" />
         </div>
 
         <template v-else-if="seller">
@@ -10,15 +10,15 @@
                 <div class="container">
                     <div class="hero-inner">
                         <div class="seller-avatar">
-                            <v-icon icon="mdi-account-circle" size="72" />
+                            <CzIcon icon="mdi-account-circle" size="72" />
                         </div>
                         <div class="seller-identity">
                             <div class="seller-badges">
                                 <span v-if="seller.accountType === 'Business'" class="badge-business">
-                                    <v-icon icon="mdi-domain" size="12" /> {{ $t('seller.badges.dealer') }}
+                                    <CzIcon icon="mdi-domain" size="12" /> {{ $t('seller.badges.dealer') }}
                                 </span>
                                 <span v-if="seller.isAdmin" class="badge-verified">
-                                    <v-icon icon="mdi-check-decagram" size="12" /> {{ $t('seller.badges.verified') }}
+                                    <CzIcon icon="mdi-check-decagram" size="12" /> {{ $t('seller.badges.verified') }}
                                 </span>
                             </div>
                             <h1 class="seller-name">
@@ -26,11 +26,11 @@
                             </h1>
                             <div class="seller-meta">
                                 <span v-if="seller.city || seller.region" class="meta-item">
-                                    <v-icon icon="mdi-map-marker-outline" size="14" />
+                                    <CzIcon icon="mdi-map-marker-outline" size="14" />
                                     {{ [seller.city, seller.region].filter(Boolean).join(', ') }}
                                 </span>
                                 <span class="meta-item">
-                                    <v-icon icon="mdi-calendar-outline" size="14" />
+                                    <CzIcon icon="mdi-calendar-outline" size="14" />
                                     {{ $t('seller.memberSince', { year: joinedYear }) }}
                                 </span>
                             </div>
@@ -38,11 +38,11 @@
                         </div>
                         <div class="seller-actions">
                             <button v-if="!isSelf" class="btn-follow" :class="{ following: isFollowing }" :disabled="followLoading" @click="toggleFollow">
-                                <v-icon :icon="isFollowing ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="16" />
+                                <CzIcon :icon="isFollowing ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="16" />
                                 {{ isFollowing ? $t('seller.following') : $t('seller.follow') }}
                             </button>
                             <button v-if="!isSelf" class="btn-message" :title="!isLoggedIn ? $t('seller.loginToMessage') : $t('seller.openAdvertToMessage')" @click="handleMessage">
-                                <v-icon icon="mdi-message-outline" size="16" />
+                                <CzIcon icon="mdi-message-outline" size="16" />
                                 {{ $t('seller.message') }}
                             </button>
                         </div>
@@ -63,7 +63,7 @@
                         </div>
                         <div class="stat-pill highlight">
                             <div class="stat-val">
-                                <v-icon icon="mdi-star" size="14" class="star-ic" />
+                                <CzIcon icon="mdi-star" size="14" class="star-ic" />
                                 {{ stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '—' }}
                             </div>
                             <div class="stat-lbl">{{ $t('seller.stats.avgRating') }}</div>
@@ -92,10 +92,10 @@
 
                 <div v-if="activeTab === 'adverts'">
                     <div v-if="advertsLoading" class="section-loading">
-                        <v-icon icon="mdi-loading" size="32" class="spin" />
+                        <CzIcon icon="mdi-loading" size="32" class="spin" />
                     </div>
                     <div v-else-if="!adverts.length" class="empty-state">
-                        <v-icon icon="mdi-car-off" size="40" />
+                        <CzIcon icon="mdi-car-off" size="40" />
                         <p>{{ $t('seller.emptyAdverts') }}</p>
                     </div>
                     <div v-else class="adverts-grid">
@@ -114,24 +114,24 @@
 
                 <div v-if="activeTab === 'reviews'">
                     <div v-if="reviewsLoading" class="section-loading">
-                        <v-icon icon="mdi-loading" size="32" class="spin" />
+                        <CzIcon icon="mdi-loading" size="32" class="spin" />
                     </div>
                     <div v-else-if="!reviews.length" class="empty-state">
-                        <v-icon icon="mdi-star-off-outline" size="40" />
+                        <CzIcon icon="mdi-star-off-outline" size="40" />
                         <p>{{ $t('seller.emptyReviews') }}</p>
                     </div>
                     <div v-else class="reviews-list">
                         <div v-for="rev in reviews" :key="rev.id" class="review-card">
                             <div class="rev-header">
                                 <div class="rev-author">
-                                    <v-icon icon="mdi-account-circle" size="32" class="rev-avatar" />
+                                    <CzIcon icon="mdi-account-circle" size="32" class="rev-avatar" />
                                     <div>
                                         <div class="rev-name">{{ rev.buyerName }}</div>
                                         <div class="rev-date">{{ formatDate(rev.createdAt) }}</div>
                                     </div>
                                 </div>
                                 <div class="rev-stars">
-                                    <v-icon
+                                    <CzIcon
                                         v-for="n in 5"
                                         :key="n"
                                         :icon="n <= rev.rating ? 'mdi-star' : 'mdi-star-outline'"
@@ -142,7 +142,7 @@
                             </div>
                             <p v-if="rev.content" class="rev-content">{{ rev.content }}</p>
                             <div v-if="rev.isVerifiedPurchase" class="rev-verified">
-                                <v-icon icon="mdi-check-circle-outline" size="13" /> {{ $t('seller.verifiedPurchase') }}
+                                <CzIcon icon="mdi-check-circle-outline" size="13" /> {{ $t('seller.verifiedPurchase') }}
                             </div>
                         </div>
                     </div>
@@ -156,7 +156,7 @@
         </template>
 
         <div v-else class="not-found">
-            <v-icon icon="mdi-account-off-outline" size="64" />
+            <CzIcon icon="mdi-account-off-outline" size="64" />
             <h2>{{ $t('seller.notFound.title') }}</h2>
             <NuxtLink to="/adverts" class="btn-back">{{ $t('seller.notFound.browse') }}</NuxtLink>
         </div>
@@ -407,7 +407,7 @@ onMounted(async () => {
 .meta-item {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: 13px; color: $text-dim;
-    .v-icon { color: $text-dim; }
+    .cz-icon { color: $text-dim; }
 }
 
 .seller-about {
@@ -497,7 +497,7 @@ onMounted(async () => {
 
 .empty-state {
     text-align: center; padding: 80px 0; color: $text-dim;
-    .v-icon { color: $text-dim; display: block; margin: 0 auto 16px; }
+    .cz-icon { color: $text-dim; display: block; margin: 0 auto 16px; }
     p { font-size: 15px; }
 }
 
@@ -551,7 +551,7 @@ onMounted(async () => {
 .rev-verified {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: 11px; color: $success;
-    .v-icon { color: $success; }
+    .cz-icon { color: $success; }
 }
 
 .spin { animation: spin 0.8s linear infinite; }

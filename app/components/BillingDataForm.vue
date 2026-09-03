@@ -2,11 +2,11 @@
     <div class="billing-form">
         <div class="bf-type-switch">
             <button :class="['bf-type-btn', { active: form.type === 'personal' }]" @click="setType('personal')">
-                <v-icon icon="mdi-account-outline" size="16" />
+                <CzIcon icon="mdi-account-outline" size="16" />
                 {{ $t('cBilling.typePersonal') }}
             </button>
             <button :class="['bf-type-btn', { active: form.type === 'business' }]" @click="setType('business')">
-                <v-icon icon="mdi-domain" size="16" />
+                <CzIcon icon="mdi-domain" size="16" />
                 {{ $t('cBilling.typeBusiness') }}
             </button>
         </div>
@@ -75,7 +75,7 @@
         </div>
 
         <div class="bf-note">
-            <v-icon icon="mdi-information-outline" size="14" />
+            <CzIcon icon="mdi-information-outline" size="14" />
             {{ $t('cBilling.note') }}
         </div>
     </div>
@@ -203,7 +203,7 @@ defineExpose({ validateAll, isValid })
     &.active {
         background: rgba($red, 0.1);
         color: $text;
-        .v-icon { color: $red; }
+        .cz-icon { color: $red; }
     }
     &:not(.active):hover { color: $text; }
 }
@@ -266,6 +266,6 @@ defineExpose({ validateAll, isValid })
     border: 1px solid $border;
     border-radius: $r-sm;
     padding: 10px 12px;
-    .v-icon { flex-shrink: 0; margin-top: 1px; color: $text-dim; }
+    .cz-icon { flex-shrink: 0; margin-top: 1px; color: $text-dim; }
 }
 </style>

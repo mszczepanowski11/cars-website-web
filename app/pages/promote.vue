@@ -10,7 +10,7 @@
             >
                 <div class="promo-hero-left">
                     <div class="promo-badge">
-                        <v-icon icon="mdi-rocket-launch-outline" size="15" />
+                        <CzIcon icon="mdi-rocket-launch-outline" size="15" />
                         {{ isPremiereUpcoming ? $t('promote.premiereUpcoming') : $t('promote.premiereActive') }}
                     </div>
                     <h1 class="promo-title">
@@ -29,7 +29,7 @@
                     </p>
                     <NuxtLink to="/add-advert" class="promo-cta">
                         {{ $t('promote.addAdvert') }}
-                        <v-icon icon="mdi-arrow-right" size="16" />
+                        <CzIcon icon="mdi-arrow-right" size="16" />
                     </NuxtLink>
                 </div>
 
@@ -61,7 +61,7 @@
             <div class="advert-picker-section">
                 <h2 class="picker-title">{{ $t('promote.step1Title') }}</h2>
                 <div v-if="advertsLoading" class="picker-loading">
-                    <v-icon icon="mdi-loading" size="22" class="spin" />{{ $t('promote.loadingAdverts') }}
+                    <CzIcon icon="mdi-loading" size="22" class="spin" />{{ $t('promote.loadingAdverts') }}
                 </div>
                 <div v-else-if="myAdverts.length" class="picker-grid">
                     <div
@@ -77,7 +77,7 @@
                             <div class="picker-meta">{{ a.year }} • {{ Number(a.price).toLocaleString('pl') }} zł</div>
                         </div>
                         <div v-if="selectedAdvertId === a.id" class="picker-check">
-                            <v-icon icon="mdi-check-circle" size="20" />
+                            <CzIcon icon="mdi-check-circle" size="20" />
                         </div>
                     </div>
                 </div>
@@ -104,17 +104,17 @@
                         <!-- Accent strip + popular badge -->
                         <div class="plan-accent-strip" />
                         <div v-if="plan.popularLabel" class="plan-popular-badge">
-                            <v-icon icon="mdi-fire" size="11" />
+                            <CzIcon icon="mdi-fire" size="11" />
                             {{ plan.popularLabel }}
                         </div>
 
                         <!-- Icon + badge preview -->
                         <div class="plan-top-row">
                             <div class="plan-icon-wrap">
-                                <v-icon :icon="plan.icon" size="24" />
+                                <CzIcon :icon="plan.icon" size="24" />
                             </div>
                             <div v-if="plan.badgeLabel" class="plan-badge-preview" :class="`preview--${plan.key}`">
-                                <v-icon v-if="plan.key === 'top'" icon="mdi-crown" size="10" />
+                                <CzIcon v-if="plan.key === 'top'" icon="mdi-crown" size="10" />
                                 {{ plan.badgeLabel }}
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                         <!-- Features list -->
                         <ul class="plan-features">
                             <li v-for="f in plan.features" :key="f">
-                                <v-icon icon="mdi-check" size="13" class="feature-check" />
+                                <CzIcon icon="mdi-check" size="13" class="feature-check" />
                                 {{ f }}
                             </li>
                         </ul>
@@ -167,7 +167,7 @@
 
                         <!-- Active premiere: countdown tag -->
                         <div v-if="isPremiereActive" class="plan-promo-row">
-                            <v-icon icon="mdi-fire" size="14" class="fire-icon" />
+                            <CzIcon icon="mdi-fire" size="14" class="fire-icon" />
                             <span class="plan-promo-label">{{ $t('promote.premiereOfferLabel') }}</span>
                             <span class="plan-promo-time">
                                 {{ pad(remainingToEnd.h) }}h&nbsp;{{ pad(remainingToEnd.m) }}m
@@ -176,13 +176,13 @@
 
                         <!-- Upcoming premiere: teaser tag -->
                         <div v-else-if="isPremiereUpcoming" class="plan-upcoming-row">
-                            <v-icon icon="mdi-gift-outline" size="14" class="gift-icon" />
+                            <CzIcon icon="mdi-gift-outline" size="14" class="gift-icon" />
                             <span>{{ $t('promote.freeFromTo') }}</span>
                         </div>
 
                         <button class="plan-btn" @click.stop="selectAndPurchase(plan.key)">
                             {{ plan.cta }}
-                            <v-icon icon="mdi-arrow-right" size="15" />
+                            <CzIcon icon="mdi-arrow-right" size="15" />
                         </button>
                     </div>
                 </div>
@@ -206,22 +206,22 @@
                     <!-- Coupon -->
                     <div v-if="!isPremiereActive" class="coupon-row">
                         <div class="coupon-input-wrap" :class="{ 'coupon-valid': couponValid, 'coupon-invalid': couponInvalid }">
-                            <v-icon icon="mdi-ticket-percent-outline" size="17" class="coupon-icon" />
+                            <CzIcon icon="mdi-ticket-percent-outline" size="17" class="coupon-icon" />
                             <input v-model="couponCode" class="coupon-input" :placeholder="$t('promote.couponPlaceholder')" @keyup.enter="applyCoupon" />
                             <button v-if="couponCode && !couponValid" class="coupon-apply-btn" :disabled="couponLoading" @click="applyCoupon">
-                                <v-icon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
+                                <CzIcon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
                                 <span v-else>{{ $t('promote.apply') }}</span>
                             </button>
                             <button v-if="couponValid" class="coupon-clear-btn" :aria-label="$t('promote.couponRemoveAria')" @click="clearCoupon">
-                                <v-icon icon="mdi-close" size="14" />
+                                <CzIcon icon="mdi-close" size="14" />
                             </button>
                         </div>
                         <div v-if="couponValid && couponData" class="coupon-ok">
-                            <v-icon icon="mdi-check-circle-outline" size="14" />
+                            <CzIcon icon="mdi-check-circle-outline" size="14" />
                             {{ $t('promote.couponApplied', { amount: couponData.discountAmount.toFixed(2) }) }}
                         </div>
                         <div v-if="couponInvalid" class="coupon-err">
-                            <v-icon icon="mdi-alert-circle-outline" size="14" />
+                            <CzIcon icon="mdi-alert-circle-outline" size="14" />
                             {{ couponError }}
                         </div>
                     </div>
@@ -232,16 +232,16 @@
                     </div>
 
                     <button class="purchase-btn" :disabled="purchasing" @click="doPurchase">
-                        <v-icon v-if="purchasing" icon="mdi-loading" size="17" class="spin" />
-                        <v-icon v-else icon="mdi-rocket-launch-outline" size="17" />
+                        <CzIcon v-if="purchasing" icon="mdi-loading" size="17" class="spin" />
+                        <CzIcon v-else icon="mdi-rocket-launch-outline" size="17" />
                         {{ isPremiereActive ? $t('promote.activateFree') : $t('promote.buyAndActivate') }}
                     </button>
                     <div v-if="purchaseSuccess" class="purchase-ok">
-                        <v-icon icon="mdi-check-circle-outline" size="18" />
+                        <CzIcon icon="mdi-check-circle-outline" size="18" />
                         {{ purchaseSuccess }}
                     </div>
                     <div v-if="purchaseError" class="purchase-err">
-                        <v-icon icon="mdi-alert-circle-outline" size="18" />
+                        <CzIcon icon="mdi-alert-circle-outline" size="18" />
                         {{ purchaseError }}
                     </div>
                 </div>
@@ -250,7 +250,7 @@
             <!-- ── Benefits row ────────────────────────────────────────────── -->
             <div class="benefits-row">
                 <div v-for="b in benefits" :key="b.title" class="benefit-item">
-                    <v-icon :icon="b.icon" size="22" class="benefit-icon" />
+                    <CzIcon :icon="b.icon" size="22" class="benefit-icon" />
                     <div>
                         <div class="benefit-title">{{ b.title }}</div>
                         <div class="benefit-sub">{{ b.sub }}</div>

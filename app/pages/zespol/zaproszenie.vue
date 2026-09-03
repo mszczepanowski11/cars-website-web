@@ -3,19 +3,19 @@
         <div class="container">
             <div class="invite-card">
                 <template v-if="state === 'loading'">
-                    <v-icon icon="mdi-loading" size="40" class="spin" />
+                    <CzIcon icon="mdi-loading" size="40" class="spin" />
                     <p>{{ $t('team.acceptLoading') }}</p>
                 </template>
 
                 <template v-else-if="state === 'success'">
-                    <v-icon icon="mdi-check-circle-outline" size="48" class="icon-success" />
+                    <CzIcon icon="mdi-check-circle-outline" size="48" class="icon-success" />
                     <h1>{{ $t('team.acceptSuccessTitle') }}</h1>
                     <p>{{ $t('team.acceptSuccessSub') }}</p>
                     <NuxtLink to="/zespol" class="btn-red">{{ $t('team.goToTeam') }}</NuxtLink>
                 </template>
 
                 <template v-else>
-                    <v-icon icon="mdi-alert-circle-outline" size="48" class="icon-error" />
+                    <CzIcon icon="mdi-alert-circle-outline" size="48" class="icon-error" />
                     <h1>{{ $t('team.acceptErrorTitle') }}</h1>
                     <p>{{ errorMessage }}</p>
                     <NuxtLink to="/" class="btn-outline">{{ $t('team.backHome') }}</NuxtLink>
@@ -77,7 +77,7 @@ onMounted(async () => {
     align-items: center;
     gap: 14px;
 
-    .v-icon { color: $text-dim; }
+    .cz-icon { color: $text-dim; }
     .icon-success { color: $success; }
     .icon-error { color: $danger; }
 

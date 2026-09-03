@@ -112,20 +112,20 @@ const monthlyRate = computed(() => {
                 @error="imgFailed = true"
             />
             <span v-if="resolvedBadge" :class="['card-badge', `card-badge--${resolvedBadge.toLowerCase()}`]">
-                <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" class="badge-icon" />
+                <CzIcon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" class="badge-icon" />
                 {{ badgeText }}
             </span>
             <span v-if="isNew && !resolvedBadge" class="card-badge card-badge--new">{{ $t('cAdvertCard.badgeNew') }}</span>
             <div class="card-hover-actions">
                 <button class="card-action-btn" :aria-label="$t('cAdvertCard.quickView')" @click="onQuickView">
-                    <v-icon icon="mdi-eye-outline" size="16" />
+                    <CzIcon icon="mdi-eye-outline" size="16" />
                 </button>
                 <button v-if="!hideCompare" class="card-action-btn" :class="{ active: isCompared(advert.id) }" :aria-label="isCompared(advert.id) ? $t('cAdvertCard.removeFromCompare') : $t('cAdvertCard.addToCompare')" @click="onCompare">
-                    <v-icon icon="mdi-compare" size="16" />
+                    <CzIcon icon="mdi-compare" size="16" />
                 </button>
             </div>
             <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" :aria-label="isFavorite(advert.id) ? $t('cAdvertCard.removeFromFavorites') : $t('cAdvertCard.addToFavorites')" @click="toggleFav">
-                <v-icon :icon="isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
+                <CzIcon :icon="isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
             </button>
         </div>
         <div class="car-body">
@@ -133,44 +133,44 @@ const monthlyRate = computed(() => {
             <!-- Parts-specific meta -->
             <div v-if="isParts" class="car-meta">
                 <span v-if="advert.catalogNumber" class="meta-catalog">
-                    <v-icon icon="mdi-barcode-scan" size="14" class="mr-1" />{{ advert.catalogNumber }}
+                    <CzIcon icon="mdi-barcode-scan" size="14" class="mr-1" />{{ advert.catalogNumber }}
                 </span>
                 <span v-if="advert.bodySubtype" class="meta-part-cat">
-                    <v-icon icon="mdi-cog-outline" size="14" class="mr-1" />{{ advert.bodySubtype }}
+                    <CzIcon icon="mdi-cog-outline" size="14" class="mr-1" />{{ advert.bodySubtype }}
                 </span>
                 <span v-if="compatibilityCount > 0" class="meta-compat">
-                    <v-icon icon="mdi-car-multiple" size="14" class="mr-1" />{{ $t('cAdvertCard.compatFits') }} {{ compatibilityCount }} {{ compatibilityCount === 1 ? $t('cAdvertCard.compatModelSingular') : $t('cAdvertCard.compatModelPlural') }}
+                    <CzIcon icon="mdi-car-multiple" size="14" class="mr-1" />{{ $t('cAdvertCard.compatFits') }} {{ compatibilityCount }} {{ compatibilityCount === 1 ? $t('cAdvertCard.compatModelSingular') : $t('cAdvertCard.compatModelPlural') }}
                 </span>
             </div>
             <!-- Standard vehicle meta -->
             <div v-else class="car-meta">
-                <span v-if="advert.year"><v-icon icon="mdi-calendar-outline" size="14" class="mr-1" />{{ advert.year }}</span>
-                <span><v-icon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–' }}</span>
-                <span><v-icon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage?.toLocaleString('pl-PL') ?? '—' }} km</span>
-                <span v-if="gearboxShort"><v-icon icon="mdi-car-shift-pattern" size="14" class="mr-1" />{{ gearboxShort }}</span>
-                <span v-if="advert.powerHP"><v-icon icon="mdi-engine-outline" size="14" class="mr-1" />{{ advert.powerHP }} {{ $t('cAdvertCard.powerUnit') }}</span>
+                <span v-if="advert.year"><CzIcon icon="mdi-calendar-outline" size="14" class="mr-1" />{{ advert.year }}</span>
+                <span><CzIcon icon="mdi-gas-station-outline" size="14" class="mr-1" />{{ advert.fuelType?.name ?? '–' }}</span>
+                <span><CzIcon icon="mdi-speedometer" size="14" class="mr-1" />{{ advert.mileage?.toLocaleString('pl-PL') ?? '—' }} km</span>
+                <span v-if="gearboxShort"><CzIcon icon="mdi-car-shift-pattern" size="14" class="mr-1" />{{ gearboxShort }}</span>
+                <span v-if="advert.powerHP"><CzIcon icon="mdi-engine-outline" size="14" class="mr-1" />{{ advert.powerHP }} {{ $t('cAdvertCard.powerUnit') }}</span>
             </div>
             <div class="car-price">
                 {{ advert.price?.toLocaleString('pl-PL') ?? $t('cAdvertCard.priceNegotiable') }} {{ advert.price != null ? (advert.currency ?? 'zł') : '' }}
                 <span v-if="advert.priceEur != null && advert.currency !== 'EUR'" class="car-price-eur">≈ {{ Math.round(advert.priceEur).toLocaleString('pl-PL') }} €</span>
             </div>
             <div v-if="monthlyRate" class="car-monthly">
-                <v-icon icon="mdi-bank-outline" size="12" class="car-monthly-icon" />
+                <CzIcon icon="mdi-bank-outline" size="12" class="car-monthly-icon" />
                 {{ $t('cAdvertCard.monthlyFrom', { rate: monthlyRate.toLocaleString('pl') }) }}
                 <span class="car-monthly-label">ING leasing</span>
             </div>
             <div class="car-footer">
                 <span v-if="advert.city" class="car-city">
-                    <v-icon icon="mdi-map-marker-outline" size="14" class="mr-1" />{{ advert.city }}
+                    <CzIcon icon="mdi-map-marker-outline" size="14" class="mr-1" />{{ advert.city }}
                 </span>
                 <span v-if="advert.isVerified" class="car-verified">
-                    <v-icon icon="mdi-shield-check" size="16" />
+                    <CzIcon icon="mdi-shield-check" size="16" />
                 </span>
                 <span v-if="advert.color?.hexCode" class="car-color-dot"
                     :style="{ background: advert.color.hexCode }"
                     :title="advert.color.name" />
                 <span v-if="advert.viewCount" class="car-views">
-                    <v-icon icon="mdi-eye-outline" size="13" />{{ advert.viewCount.toLocaleString('pl') }}
+                    <CzIcon icon="mdi-eye-outline" size="13" />{{ advert.viewCount.toLocaleString('pl') }}
                 </span>
             </div>
         </div>
@@ -270,10 +270,10 @@ const monthlyRate = computed(() => {
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    .v-icon { color: $text-muted; transition: color 0.2s; }
+    .cz-icon { color: $text-muted; transition: color 0.2s; }
 
-    &:hover { background: rgba($red,0.2); border-color: rgba($red,0.5); .v-icon { color: $red; } }
-    &.active { background: rgba($red,0.25); border-color: $red; .v-icon { color: $red; } }
+    &:hover { background: rgba($red,0.2); border-color: rgba($red,0.5); .cz-icon { color: $red; } }
+    &.active { background: rgba($red,0.25); border-color: $red; .cz-icon { color: $red; } }
 }
 
 .fav-btn {
@@ -407,7 +407,7 @@ const monthlyRate = computed(() => {
     color: $text-faint;
     font-size: 11px;
     margin-left: auto;
-    .v-icon { color: $text-faint; }
+    .cz-icon { color: $text-faint; }
 }
 
 // ── Badges ────────────────────────────────────────────────────────────────────

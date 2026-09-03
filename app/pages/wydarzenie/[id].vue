@@ -2,7 +2,7 @@
     <div class="event-detail-page">
 
         <div v-if="loading" class="loading-wrap">
-            <v-icon icon="mdi-loading" size="40" class="spin" />
+            <CzIcon icon="mdi-loading" size="40" class="spin" />
         </div>
 
         <template v-else-if="event">
@@ -14,13 +14,13 @@
                 </div>
                 <div class="hero-content container">
                     <span v-if="event.isFeatured" class="featured-chip">
-                        <v-icon icon="mdi-crown" size="13" /> {{ $t('eventDetail.featured') }}
+                        <CzIcon icon="mdi-crown" size="13" /> {{ $t('eventDetail.featured') }}
                     </span>
                     <h1 class="hero-title">{{ event.name }}</h1>
                     <div class="hero-meta">
-                        <span><v-icon icon="mdi-calendar" size="15" />{{ formatDate(event.startDate) }}</span>
-                        <span><v-icon icon="mdi-map-marker-outline" size="15" />{{ event.city }}</span>
-                        <span v-if="event.organizerName"><v-icon icon="mdi-account-outline" size="15" />{{ event.organizerName }}</span>
+                        <span><CzIcon icon="mdi-calendar" size="15" />{{ formatDate(event.startDate) }}</span>
+                        <span><CzIcon icon="mdi-map-marker-outline" size="15" />{{ event.city }}</span>
+                        <span v-if="event.organizerName"><CzIcon icon="mdi-account-outline" size="15" />{{ event.organizerName }}</span>
                     </div>
                 </div>
             </div>
@@ -35,18 +35,18 @@
                         <!-- Action bar -->
                         <div class="action-bar">
                             <button class="btn-attend" :class="{ active: isInterested }" @click="toggleAttend">
-                                <v-icon :icon="isInterested ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="17" />
+                                <CzIcon :icon="isInterested ? 'mdi-account-check' : 'mdi-account-plus-outline'" size="17" />
                                 {{ isInterested ? $t('eventDetail.attending') : $t('eventDetail.willAttend') }}
                                 <span v-if="localInterestedCount" class="attend-count">{{ localInterestedCount }}</span>
                             </button>
                             <button class="btn-fav" :class="{ active: isFavorite }" :aria-label="isFavorite ? $t('eventDetail.removeFav') : $t('eventDetail.addFav')" @click="toggleFavorite">
-                                <v-icon :icon="isFavorite ? 'mdi-heart' : 'mdi-heart-outline'" size="17" />
+                                <CzIcon :icon="isFavorite ? 'mdi-heart' : 'mdi-heart-outline'" size="17" />
                             </button>
                             <a v-if="event.ticketsUrl" :href="event.ticketsUrl" target="_blank" rel="noopener noreferrer" class="btn-ticket">
-                                <v-icon icon="mdi-ticket-outline" size="16" />{{ $t('eventDetail.buyTickets') }}
+                                <CzIcon icon="mdi-ticket-outline" size="16" />{{ $t('eventDetail.buyTickets') }}
                             </a>
                             <a v-if="event.websiteUrl" :href="event.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn-web">
-                                <v-icon icon="mdi-web" size="16" />{{ $t('eventDetail.website') }}
+                                <CzIcon icon="mdi-web" size="16" />{{ $t('eventDetail.website') }}
                             </a>
                         </div>
 
@@ -61,19 +61,19 @@
                             <h2 class="block-title">{{ $t('eventDetail.shareTitle') }}</h2>
                             <div class="share-btns">
                                 <a :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`" target="_blank" rel="noopener noreferrer" class="share-btn share-fb">
-                                    <v-icon icon="mdi-facebook" size="18" />Facebook
+                                    <CzIcon icon="mdi-facebook" size="18" />Facebook
                                 </a>
                                 <a :href="`https://wa.me/?text=${encodeURIComponent(event.name + ' ' + shareUrl)}`" target="_blank" rel="noopener noreferrer" class="share-btn share-wa">
-                                    <v-icon icon="mdi-whatsapp" size="18" />WhatsApp
+                                    <CzIcon icon="mdi-whatsapp" size="18" />WhatsApp
                                 </a>
                                 <a :href="`fb-messenger://share/?link=${encodeURIComponent(shareUrl)}`" class="share-btn share-ms">
-                                    <v-icon icon="mdi-facebook-messenger" size="18" />Messenger
+                                    <CzIcon icon="mdi-facebook-messenger" size="18" />Messenger
                                 </a>
                                 <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="share-btn share-ig">
-                                    <v-icon icon="mdi-instagram" size="18" />Instagram
+                                    <CzIcon icon="mdi-instagram" size="18" />Instagram
                                 </a>
                                 <button class="share-btn share-copy" @click="copyLink">
-                                    <v-icon :icon="copied ? 'mdi-check' : 'mdi-link-variant'" size="18" />
+                                    <CzIcon :icon="copied ? 'mdi-check' : 'mdi-link-variant'" size="18" />
                                     {{ copied ? $t('eventDetail.copied') : $t('eventDetail.copyLink') }}
                                 </button>
                             </div>
@@ -87,21 +87,21 @@
                         <div class="sidebar-card">
                             <h3 class="card-title">{{ $t('eventDetail.details.title') }}</h3>
                             <div class="detail-item">
-                                <v-icon icon="mdi-calendar-start" size="16" class="di-icon" />
+                                <CzIcon icon="mdi-calendar-start" size="16" class="di-icon" />
                                 <div>
                                     <div class="di-label">{{ $t('eventDetail.details.start') }}</div>
                                     <div class="di-val">{{ formatDate(event.startDate) }}</div>
                                 </div>
                             </div>
                             <div v-if="event.endDate && event.endDate !== event.startDate" class="detail-item">
-                                <v-icon icon="mdi-calendar-end" size="16" class="di-icon" />
+                                <CzIcon icon="mdi-calendar-end" size="16" class="di-icon" />
                                 <div>
                                     <div class="di-label">{{ $t('eventDetail.details.end') }}</div>
                                     <div class="di-val">{{ formatDate(event.endDate) }}</div>
                                 </div>
                             </div>
                             <div class="detail-item">
-                                <v-icon icon="mdi-map-marker" size="16" class="di-icon" />
+                                <CzIcon icon="mdi-map-marker" size="16" class="di-icon" />
                                 <div>
                                     <div class="di-label">{{ $t('eventDetail.details.location') }}</div>
                                     <div class="di-val">{{ event.city }}</div>
@@ -115,7 +115,7 @@
                                 class="mt-3"
                             />
                             <div v-if="event.organizerName" class="detail-item">
-                                <v-icon icon="mdi-account-tie-outline" size="16" class="di-icon" />
+                                <CzIcon icon="mdi-account-tie-outline" size="16" class="di-icon" />
                                 <div>
                                     <div class="di-label">{{ $t('eventDetail.details.organizer') }}</div>
                                     <div class="di-val">{{ event.organizerName }}</div>
@@ -129,19 +129,19 @@
                         <div class="sidebar-card">
                             <h3 class="card-title">{{ $t('eventDetail.stats.title') }}</h3>
                             <div class="stat-row">
-                                <v-icon icon="mdi-eye-outline" size="15" class="stat-icon" />
+                                <CzIcon icon="mdi-eye-outline" size="15" class="stat-icon" />
                                 <span>{{ $t('eventDetail.stats.views', { count: (event.viewCount ?? 0).toLocaleString(locale) }) }}</span>
                             </div>
                             <div class="stat-row">
-                                <v-icon icon="mdi-account-check-outline" size="15" class="stat-icon" />
+                                <CzIcon icon="mdi-account-check-outline" size="15" class="stat-icon" />
                                 <span>{{ $t('eventDetail.stats.interested', { count: localInterestedCount.toLocaleString(locale) }) }}</span>
                             </div>
                             <div class="stat-row">
-                                <v-icon icon="mdi-account-group-outline" size="15" class="stat-icon" />
+                                <CzIcon icon="mdi-account-group-outline" size="15" class="stat-icon" />
                                 <span>{{ $t('eventDetail.stats.attendees', { count: (event.attendingCount ?? 0).toLocaleString(locale) }) }}</span>
                             </div>
                             <div class="stat-row">
-                                <v-icon icon="mdi-share-variant-outline" size="15" class="stat-icon" />
+                                <CzIcon icon="mdi-share-variant-outline" size="15" class="stat-icon" />
                                 <span>{{ $t('eventDetail.stats.shares', { count: (event.shareCount ?? 0).toLocaleString(locale) }) }}</span>
                             </div>
                         </div>
@@ -152,7 +152,7 @@
         </template>
 
         <div v-else class="not-found">
-            <v-icon icon="mdi-calendar-off-outline" size="52" class="nf-icon" />
+            <CzIcon icon="mdi-calendar-remove-outline" size="52" class="nf-icon" />
             <p>{{ $t('eventDetail.notFound.title') }}</p>
             <NuxtLink to="/wydarzenia" class="back-link">{{ $t('eventDetail.notFound.back') }}</NuxtLink>
         </div>
@@ -386,7 +386,7 @@ onMounted(async () => {
         align-items: center;
         gap: 6px;
 
-        .v-icon { color: $red; }
+        .cz-icon { color: $red; }
     }
 }
 
@@ -457,7 +457,7 @@ onMounted(async () => {
     transition: all 0.2s;
 
     &:hover { border-color: rgba($red, 0.4); color: $red; }
-    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.4); color: $red; .v-icon { color: $red; } }
+    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.4); color: $red; .cz-icon { color: $red; } }
 }
 
 .btn-ticket {

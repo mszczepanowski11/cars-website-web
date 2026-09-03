@@ -31,21 +31,21 @@
         <div class="search-bar-wrap">
             <div class="container search-inner">
                 <div class="search-box">
-                    <v-icon icon="mdi-magnify" size="20" class="s-icon" />
+                    <CzIcon icon="mdi-magnify" size="20" class="s-icon" />
                     <input
                         v-model="searchText"
                         class="s-input"
                         :placeholder="$t('categories.searchPlaceholder')"
                     />
                     <button class="s-btn">
-                        <v-icon icon="mdi-magnify" size="18" />
+                        <CzIcon icon="mdi-magnify" size="18" />
                     </button>
                 </div>
                 <div class="sort-wrap">
                     <span class="sort-label">{{ $t('categories.sortLabel') }}</span>
                     <button class="sort-btn" @click="sortOpen = !sortOpen">
                         {{ sortLabel }}
-                        <v-icon icon="mdi-chevron-down" size="16" />
+                        <CzIcon icon="mdi-chevron-down" size="16" />
                     </button>
                     <div v-if="sortOpen" class="sort-dropdown">
                         <button v-for="opt in sortOptions" :key="opt.value"
@@ -77,7 +77,7 @@
                         <div class="cat-gradient" />
                         <div class="cat-top">
                             <div class="cat-icon-wrap">
-                                <v-icon :icon="cat.iconName ?? 'mdi-car-outline'" size="20" />
+                                <CzIcon :icon="cat.iconName ?? 'mdi-car-outline'" size="20" />
                             </div>
                         </div>
                         <div class="cat-bottom">
@@ -86,14 +86,14 @@
                                 <div class="cat-count">{{ $t('categories.advertCount', { count: cat.advertCount.toLocaleString('pl') }) }}</div>
                             </div>
                             <div class="cat-arrow">
-                                <v-icon icon="mdi-arrow-right" size="16" />
+                                <CzIcon icon="mdi-arrow-right" size="16" />
                             </div>
                         </div>
                     </NuxtLink>
                 </div>
 
                 <div v-if="!filtered.length && !loading" class="empty-state">
-                    <v-icon icon="mdi-magnify" size="40" class="empty-icon" />
+                    <CzIcon icon="mdi-magnify" size="40" class="empty-icon" />
                     <p>{{ $t('categories.emptyBefore') }}<strong>{{ searchText }}</strong>{{ $t('categories.emptyAfter') }}</p>
                 </div>
             </div>
@@ -290,11 +290,22 @@ onMounted(async () => {
 .search-inner {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: $s-35;
+
+    // Na telefonie sortowanie schodzi do własnej linii. Wcześniej rząd nie zawijał się,
+    // a `.sort-wrap` miało `flex-shrink: 0`, więc kontrolka wypychała dokument poza ekran
+    // (487 px przy ekranie 390 px) i cała strona przewijała się na boki.
+    @media (max-width: $bp-mobile) {
+        flex-wrap: wrap;
+        gap: $s-25;
+    }
 }
 
 .search-box {
     flex: 1;
+    // Bez tego pole nie może zmniejszyć się poniżej swojej treści - to domyślne
+    // zachowanie flexboksa i najczęstsza przyczyna wyjeżdżania układu poza ekran.
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -340,8 +351,13 @@ onMounted(async () => {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: $s-2;
     flex-shrink: 0;
+
+    @media (max-width: $bp-mobile) {
+        width: 100%;
+        justify-content: space-between;
+    }
 }
 
 .sort-label {

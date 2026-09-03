@@ -3,11 +3,11 @@
         <div class="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
             <div class="modal-header">
                 <div id="report-modal-title" class="modal-title">
-                    <v-icon icon="mdi-flag-outline" size="18" class="modal-icon" />
+                    <CzIcon icon="mdi-flag-outline" size="18" class="modal-icon" />
                     {{ targetType === 'Advert' ? $t('cReport.titleAdvert') : $t('cReport.titleUser') }}
                 </div>
                 <button class="modal-close" :aria-label="$t('cReport.close')" @click="$emit('update:modelValue', false)">
-                    <v-icon icon="mdi-close" size="18" />
+                    <CzIcon icon="mdi-close" size="18" />
                 </button>
             </div>
 
@@ -22,7 +22,7 @@
                             :class="{ active: selectedReason === r.value }"
                             @click="selectedReason = r.value"
                         >
-                            <v-icon :icon="r.icon" size="16" class="r-icon" />
+                            <CzIcon :icon="r.icon" size="16" class="r-icon" />
                             {{ r.label }}
                         </button>
                     </div>
@@ -41,12 +41,12 @@
                 </div>
 
                 <div v-if="error" class="modal-error">
-                    <v-icon icon="mdi-alert-circle-outline" size="15" />
+                    <CzIcon icon="mdi-alert-circle-outline" size="15" />
                     {{ error }}
                 </div>
 
                 <div v-if="success" class="modal-success">
-                    <v-icon icon="mdi-check-circle-outline" size="15" />
+                    <CzIcon icon="mdi-check-circle-outline" size="15" />
                     {{ $t('cReport.successMsg') }}
                 </div>
             </div>
@@ -58,8 +58,8 @@
                     :disabled="!selectedReason || loading || success"
                     @click="submit"
                 >
-                    <v-icon v-if="loading" icon="mdi-loading" size="15" class="spin" />
-                    <v-icon v-else icon="mdi-flag" size="15" />
+                    <CzIcon v-if="loading" icon="mdi-loading" size="15" class="spin" />
+                    <CzIcon v-else icon="mdi-flag" size="15" />
                     {{ $t('cReport.submit') }}
                 </button>
             </div>

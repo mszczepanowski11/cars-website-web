@@ -11,8 +11,8 @@
                         {{ $t('cFbConsent.body') }}
                     </p>
                     <ul class="fb-consent-fields">
-                        <li><v-icon icon="mdi-account-outline" size="15" />{{ name || $t('cFbConsent.namePlaceholder') }}</li>
-                        <li><v-icon icon="mdi-email-outline" size="15" />{{ email }}</li>
+                        <li><CzIcon icon="mdi-account-outline" size="15" />{{ name || $t('cFbConsent.namePlaceholder') }}</li>
+                        <li><CzIcon icon="mdi-email-outline" size="15" />{{ email }}</li>
                     </ul>
                     <p class="fb-consent-legal">
                         {{ $t('cFbConsent.legalPrefix') }}
@@ -24,7 +24,7 @@
                     <div class="fb-consent-actions">
                         <button type="button" class="fb-consent-btn fb-consent-btn--ghost" :disabled="loading" @click="$emit('cancel')">{{ $t('cFbConsent.cancel') }}</button>
                         <button type="button" class="fb-consent-btn fb-consent-btn--primary" :disabled="loading" @click="$emit('confirm')">
-                            <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+                            <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
                             {{ loading ? $t('cFbConsent.creating') : $t('cFbConsent.createAccount') }}
                         </button>
                     </div>
@@ -96,7 +96,7 @@ h2 { font-size: 19px; font-weight: 800; color: $text; margin: 0 0 10px; }
         color: $text;
         text-align: left;
 
-        .v-icon { color: $text-dark; flex-shrink: 0; }
+        .cz-icon { color: $text-dark; flex-shrink: 0; }
     }
 }
 

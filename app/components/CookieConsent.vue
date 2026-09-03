@@ -4,7 +4,7 @@
             <div v-if="visible && !showPanel" class="cookie-bar">
                 <div class="cookie-inner">
                     <div class="cookie-text">
-                        <v-icon icon="mdi-cookie-outline" size="20" class="cookie-icon" />
+                        <CzIcon icon="mdi-cookie-outline" size="20" class="cookie-icon" />
                         <span>
                             {{ $t('cCookie.barText') }}
                             <NuxtLink to="/polityka-cookies" class="cookie-link">{{ $t('cCookie.policyLink') }}</NuxtLink>
@@ -23,10 +23,10 @@
             <div v-if="visible && showPanel" class="cookie-panel-overlay" @click.self="showPanel = false">
                 <div class="cookie-panel">
                     <div class="panel-header">
-                        <v-icon icon="mdi-cookie-cog-outline" size="20" />
+                        <CzIcon icon="mdi-cookie-cog-outline" size="20" />
                         <span>{{ $t('cCookie.panelTitle') }}</span>
                         <button class="panel-close" @click="showPanel = false">
-                            <v-icon icon="mdi-close" size="18" />
+                            <CzIcon icon="mdi-close" size="18" />
                         </button>
                     </div>
 

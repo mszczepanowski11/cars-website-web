@@ -5,20 +5,20 @@
         <div class="hero">
             <div class="hero-inner">
                 <div class="hero-badge">
-                    <v-icon icon="mdi-briefcase-outline" size="14" />
+                    <CzIcon icon="mdi-briefcase-outline" size="14" />
                     {{ $t('packages.heroBadge') }}
                 </div>
                 <h1 class="hero-title">{{ $t('packages.heroTitleLine1') }}<br><span class="accent">{{ $t('packages.heroTitleLine2') }}</span></h1>
                 <p class="hero-desc">{{ $t('packages.heroDesc') }}</p>
 
                 <div v-if="subscription?.isActive" class="current-plan-banner">
-                    <v-icon icon="mdi-check-circle-outline" size="18" />
+                    <CzIcon icon="mdi-check-circle-outline" size="18" />
                     {{ $t('packages.activePackage') }} <strong>{{ subscription.tierName }}</strong>
                     <span v-if="subscription.expiresAt" class="exp-date">{{ $t('packages.validUntil', { date: formatDate(subscription.expiresAt) }) }}</span>
                 </div>
 
                 <div v-if="promoActive" class="promo-banner">
-                    <v-icon icon="mdi-gift-outline" size="17" />
+                    <CzIcon icon="mdi-gift-outline" size="17" />
                     {{ $t('packages.promoBanner') }}
                 </div>
             </div>
@@ -35,7 +35,7 @@
                 <button class="sp-btn" :disabled="startLoading || !user" @click="activateStart">
                     <template v-if="!user">{{ $t('packages.loginToActivate') }}</template>
                     <template v-else-if="startLoading">
-                        <v-icon icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon icon="mdi-loading" size="16" class="spin" />
                         {{ $t('packages.activating') }}
                     </template>
                     <template v-else>{{ $t('packages.activateStartProgram') }}</template>
@@ -46,7 +46,7 @@
             <div class="sp-inner">
                 <div class="sp-left">
                     <div class="sp-label">
-                        <v-icon icon="mdi-check-circle" size="14" />
+                        <CzIcon icon="mdi-check-circle" size="14" />
                         {{ $t('packages.startProgramActiveLabel') }}
                     </div>
                     <div class="sp-title">{{ $t('packages.startProgramActiveTitle') }}</div>
@@ -69,7 +69,7 @@
                     }"
                 >
                     <div v-if="plan.tier === 'Biznes'" class="popular-tag">
-                        <v-icon icon="mdi-fire" size="13" /> {{ $t('packages.mostPopular') }}
+                        <CzIcon icon="mdi-fire" size="13" /> {{ $t('packages.mostPopular') }}
                     </div>
 
                     <div class="plan-header">
@@ -94,29 +94,29 @@
 
                     <ul class="plan-features">
                         <li v-for="f in plan.features" :key="f">
-                            <v-icon icon="mdi-check" size="15" class="check-icon" />
+                            <CzIcon icon="mdi-check" size="15" class="check-icon" />
                             {{ f }}
                         </li>
                     </ul>
 
                     <div class="plan-stats">
                         <div class="stat">
-                            <v-icon icon="mdi-car-multiple" size="15" />
+                            <CzIcon icon="mdi-car-multiple" size="15" />
                             <span>{{ $t('packages.adsCount', { count: plan.maxActiveAds >= 999999 ? '∞' : plan.maxActiveAds }) }}</span>
                         </div>
                         <div class="stat">
-                            <v-icon icon="mdi-calendar-clock" size="15" />
+                            <CzIcon icon="mdi-calendar-clock" size="15" />
                             <span>{{ $t('packages.emissionDays', { days: plan.emissionDays }) }}</span>
                         </div>
                         <div class="stat">
-                            <v-icon icon="mdi-star-outline" size="15" />
+                            <CzIcon icon="mdi-star-outline" size="15" />
                             <span>{{ $t('packages.featuredPerMonth', { count: plan.featuredQuotaPerMonth >= 999999 ? '∞' : plan.featuredQuotaPerMonth }) }}</span>
                         </div>
                     </div>
 
                     <template v-if="subscription?.tier === plan.tier && subscription?.isActive">
                         <button class="plan-btn plan-btn--active" disabled>
-                            <v-icon icon="mdi-check-circle-outline" size="16" />
+                            <CzIcon icon="mdi-check-circle-outline" size="16" />
                             {{ $t('packages.activePackageBtn') }}
                         </button>
                     </template>
@@ -134,7 +134,7 @@
                         >
                             <template v-if="!user">{{ $t('packages.login') }}</template>
                             <template v-else-if="buyLoading === plan.tier">
-                                <v-icon icon="mdi-loading" size="16" class="spin" />
+                                <CzIcon icon="mdi-loading" size="16" class="spin" />
                                 {{ $t('packages.redirecting') }}
                             </template>
                             <template v-else-if="promoActive">{{ $t('packages.activateForFree') }}</template>
@@ -155,7 +155,7 @@
                     <div v-for="(item, i) in faq" :key="i" class="faq-item" @click="toggleFaq(i)">
                         <div class="faq-q">
                             {{ item.q }}
-                            <v-icon :icon="openFaq === i ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="18" />
+                            <CzIcon :icon="openFaq === i ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="18" />
                         </div>
                         <div v-if="openFaq === i" class="faq-a">{{ item.a }}</div>
                     </div>
@@ -165,7 +165,7 @@
 
         <!-- Toast -->
         <div v-if="toast" class="toast" :class="'toast--' + toast.type">
-            <v-icon :icon="toast.type === 'success' ? 'mdi-check-circle-outline' : 'mdi-alert-circle-outline'" size="18" />
+            <CzIcon :icon="toast.type === 'success' ? 'mdi-check-circle-outline' : 'mdi-alert-circle-outline'" size="18" />
             {{ toast.msg }}
         </div>
     </div>

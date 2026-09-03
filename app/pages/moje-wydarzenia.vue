@@ -15,23 +15,23 @@
                     <span class="events-count">{{ totalCount }} {{ totalCount === 1 ? $t('myEvents.eventOne') : totalCount < 5 ? $t('myEvents.eventFew') : $t('myEvents.eventMany') }}</span>
                 </div>
                 <NuxtLink to="/dodaj-wydarzenie" class="btn-add">
-                    <v-icon icon="mdi-plus" size="18" />
+                    <CzIcon icon="mdi-plus" size="18" />
                     {{ $t('myEvents.addEvent') }}
                 </NuxtLink>
             </div>
 
             <!-- Loading -->
             <div v-if="loading" class="loading-row">
-                <v-icon icon="mdi-loading" size="28" class="spin" />
+                <CzIcon icon="mdi-loading" size="28" class="spin" />
             </div>
 
             <!-- Empty -->
             <div v-else-if="!events.length" class="empty-state">
-                <v-icon icon="mdi-calendar-plus-outline" size="56" class="empty-icon" />
+                <CzIcon icon="mdi-calendar-plus-outline" size="56" class="empty-icon" />
                 <div class="empty-title">{{ $t('myEvents.emptyTitle') }}</div>
                 <div class="empty-sub">{{ $t('myEvents.emptySub') }}</div>
                 <NuxtLink to="/dodaj-wydarzenie" class="btn-add-first">
-                    <v-icon icon="mdi-plus" size="16" />
+                    <CzIcon icon="mdi-plus" size="16" />
                     {{ $t('myEvents.addFirst') }}
                 </NuxtLink>
             </div>
@@ -42,29 +42,29 @@
                     <div class="ev-thumb-wrap">
                         <img :src="getEventImageUrl(ev)" :alt="ev.name" class="ev-thumb" loading="lazy" decoding="async" />
                         <span v-if="ev.isFeatured" class="thumb-crown" :title="$t('myEvents.featured')">
-                            <v-icon icon="mdi-crown" size="13" />
+                            <CzIcon icon="mdi-crown" size="13" />
                         </span>
                     </div>
                     <div class="ev-info">
                         <div class="ev-name">{{ ev.name }}</div>
                         <div class="ev-meta">
-                            <span><v-icon icon="mdi-calendar" size="13" />{{ formatDate(ev.startDate) }}</span>
-                            <span><v-icon icon="mdi-map-marker-outline" size="13" />{{ ev.city }}</span>
+                            <span><CzIcon icon="mdi-calendar" size="13" />{{ formatDate(ev.startDate) }}</span>
+                            <span><CzIcon icon="mdi-map-marker-outline" size="13" />{{ ev.city }}</span>
                             <span v-if="ev.interestedCount">
-                                <v-icon icon="mdi-account-check-outline" size="13" />{{ ev.interestedCount }} {{ $t('myEvents.interested') }}
+                                <CzIcon icon="mdi-account-check-outline" size="13" />{{ ev.interestedCount }} {{ $t('myEvents.interested') }}
                             </span>
                         </div>
                     </div>
                     <span class="ev-status" :class="`status-${ev.status?.toLowerCase()}`">{{ statusLabel(ev.status) }}</span>
                     <div class="ev-actions">
                         <NuxtLink :to="`/wydarzenie/${ev.id}`" class="btn-view" :aria-label="$t('myEvents.previewAria', { name: ev.name })">
-                            <v-icon icon="mdi-eye-outline" size="16" />
+                            <CzIcon icon="mdi-eye-outline" size="16" />
                         </NuxtLink>
                         <NuxtLink :to="`/dodaj-wydarzenie?id=${ev.id}`" class="btn-edit" :aria-label="$t('myEvents.editAria', { name: ev.name })">
-                            <v-icon icon="mdi-pencil-outline" size="16" />
+                            <CzIcon icon="mdi-pencil-outline" size="16" />
                         </NuxtLink>
                         <button @click="confirmDelete(ev.id)" class="btn-delete" :aria-label="$t('myEvents.deleteAria', { name: ev.name })">
-                            <v-icon icon="mdi-delete-outline" size="16" />
+                            <CzIcon icon="mdi-delete-outline" size="16" />
                         </button>
                     </div>
                 </div>
@@ -73,11 +73,11 @@
             <!-- Pagination -->
             <div v-if="totalCount > pageSize" class="pagination">
                 <button class="page-btn" :disabled="page === 1" :aria-label="$t('myEvents.prevPage')" @click="goPage(page - 1)">
-                    <v-icon icon="mdi-chevron-left" size="18" />
+                    <CzIcon icon="mdi-chevron-left" size="18" />
                 </button>
                 <span class="page-info">{{ page }} / {{ totalPages }}</span>
                 <button class="page-btn" :disabled="page >= totalPages" :aria-label="$t('myEvents.nextPage')" @click="goPage(page + 1)">
-                    <v-icon icon="mdi-chevron-right" size="18" />
+                    <CzIcon icon="mdi-chevron-right" size="18" />
                 </button>
             </div>
 
@@ -88,13 +88,13 @@
             <transition name="fade">
                 <div v-if="deleteId !== null" class="modal-backdrop" @click.self="deleteId = null">
                     <div class="confirm-modal">
-                        <v-icon icon="mdi-calendar-remove" size="36" class="del-icon" />
+                        <CzIcon icon="mdi-calendar-remove" size="36" class="del-icon" />
                         <h3>{{ $t('myEvents.deleteTitle') }}</h3>
                         <p>{{ $t('myEvents.deleteConfirm') }}</p>
                         <div class="confirm-actions">
                             <button class="btn-cancel-modal" @click="deleteId = null">{{ $t('myEvents.cancel') }}</button>
                             <button class="btn-delete-confirm" :disabled="deleting" @click="doDelete">
-                                <v-icon v-if="deleting" icon="mdi-loading" size="14" class="spin" />
+                                <CzIcon v-if="deleting" icon="mdi-loading" size="14" class="spin" />
                                 {{ $t('myEvents.delete') }}
                             </button>
                         </div>
@@ -382,7 +382,7 @@ onMounted(fetchEvents)
         align-items: center;
         gap: 4px;
 
-        .v-icon { color: $text-dark; }
+        .cz-icon { color: $text-dark; }
     }
 }
 

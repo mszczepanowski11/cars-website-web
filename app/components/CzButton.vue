@@ -38,8 +38,8 @@ withDefaults(defineProps<{
         class="cz-btn"
         :class="[`cz-btn--${variant}`, `cz-btn--${size}`, { 'cz-btn--block': block, 'is-loading': loading }]"
     >
-        <v-icon v-if="loading" icon="mdi-loading" size="18" class="cz-btn__spin" />
-        <v-icon v-else-if="icon" :icon="icon" size="18" />
+        <CzIcon v-if="loading" icon="mdi-loading" size="18" class="cz-btn__spin" />
+        <CzIcon v-else-if="icon" :icon="icon" size="18" />
         <span v-if="$slots.default" class="cz-btn__label"><slot /></span>
     </component>
 </template>

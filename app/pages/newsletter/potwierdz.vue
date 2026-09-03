@@ -2,17 +2,17 @@
     <div class="confirm-page">
         <div class="confirm-card">
             <template v-if="status === 'loading'">
-                <v-progress-circular indeterminate color="#8B0D1D" size="48" />
+                <CzSpinner :size="48" color="#8B0D1D" :label="$t('newsletterConfirm.loadingText')" />
                 <p class="confirm-text">{{ $t('newsletterConfirm.loadingText') }}</p>
             </template>
             <template v-else-if="status === 'success'">
-                <v-icon icon="mdi-check-circle-outline" size="56" color="#4CAF50" />
+                <CzIcon icon="mdi-check-circle-outline" size="56" color="#4CAF50" />
                 <h1 class="confirm-title">{{ $t('newsletterConfirm.successTitle') }}</h1>
                 <p class="confirm-text">{{ $t('newsletterConfirm.successText') }}</p>
                 <NuxtLink to="/" class="confirm-btn">{{ $t('newsletterConfirm.successBtn') }}</NuxtLink>
             </template>
             <template v-else>
-                <v-icon icon="mdi-alert-circle-outline" size="56" color="#8B0D1D" />
+                <CzIcon icon="mdi-alert-circle-outline" size="56" color="#8B0D1D" />
                 <h1 class="confirm-title">{{ $t('newsletterConfirm.errorTitle') }}</h1>
                 <p class="confirm-text">{{ $t('newsletterConfirm.errorText') }}</p>
                 <NuxtLink to="/" class="confirm-btn">{{ $t('newsletterConfirm.errorBtn') }}</NuxtLink>

@@ -4,18 +4,18 @@
             <div v-if="modelValue" class="qv-overlay" @click.self="$emit('update:modelValue', false)">
                 <div class="qv-modal" role="dialog" aria-modal="true" :aria-label="$t('cQuickView.dialogLabel')">
                     <button class="qv-close" :aria-label="$t('cQuickView.closeAria')" @click="$emit('update:modelValue', false)">
-                        <v-icon icon="mdi-close" size="20" />
+                        <CzIcon icon="mdi-close" size="20" />
                     </button>
 
                     <div v-if="loading" class="qv-loading" role="status" :aria-label="$t('cQuickView.loadingAria')">
-                        <v-icon icon="mdi-loading" size="32" class="spin" />
+                        <CzIcon icon="mdi-loading" size="32" class="spin" />
                     </div>
 
                     <template v-else-if="advert">
                         <div class="qv-img-wrap">
                             <img :src="mainImg" :alt="advert.title" class="qv-img" loading="lazy" decoding="async" />
                             <span v-if="resolvedBadge" :class="['qv-badge', `qv-badge--${resolvedBadge.toLowerCase()}`]">
-                                <v-icon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" />
+                                <CzIcon v-if="resolvedBadge === 'TOP'" icon="mdi-crown" size="10" />
                                 {{ badgeLabel }}
                             </span>
                             <span v-if="isNew" class="qv-badge qv-badge--new">{{ $t('cQuickView.badgeNew') }}</span>
@@ -24,19 +24,19 @@
                             <h2 class="qv-title">{{ advert.title }}</h2>
                             <div class="qv-price">{{ Number(advert.price).toLocaleString('pl') }} zł</div>
                             <div class="qv-chips">
-                                <span class="qv-chip"><v-icon icon="mdi-calendar-outline" size="13" />{{ advert.year }}</span>
-                                <span class="qv-chip"><v-icon icon="mdi-speedometer" size="13" />{{ Number(advert.mileage).toLocaleString('pl') }} km</span>
-                                <span v-if="advert.fuelType" class="qv-chip"><v-icon icon="mdi-gas-station-outline" size="13" />{{ advert.fuelType.name }}</span>
-                                <span v-if="advert.gearbox" class="qv-chip"><v-icon icon="mdi-cog-outline" size="13" />{{ advert.gearbox.name }}</span>
-                                <span v-if="advert.engineVersion?.horsepower" class="qv-chip"><v-icon icon="mdi-lightning-bolt" size="13" />{{ advert.engineVersion.horsepower }} {{ $t('cQuickView.powerUnit') }}</span>
+                                <span class="qv-chip"><CzIcon icon="mdi-calendar-outline" size="13" />{{ advert.year }}</span>
+                                <span class="qv-chip"><CzIcon icon="mdi-speedometer" size="13" />{{ Number(advert.mileage).toLocaleString('pl') }} km</span>
+                                <span v-if="advert.fuelType" class="qv-chip"><CzIcon icon="mdi-gas-station-outline" size="13" />{{ advert.fuelType.name }}</span>
+                                <span v-if="advert.gearbox" class="qv-chip"><CzIcon icon="mdi-cog-outline" size="13" />{{ advert.gearbox.name }}</span>
+                                <span v-if="advert.engineVersion?.horsepower" class="qv-chip"><CzIcon icon="mdi-lightning-bolt" size="13" />{{ advert.engineVersion.horsepower }} {{ $t('cQuickView.powerUnit') }}</span>
                             </div>
                             <p v-if="advert.description" class="qv-desc">{{ advert.description.slice(0, 200) }}{{ advert.description.length > 200 ? '…' : '' }}</p>
                             <div class="qv-location" v-if="advert.city">
-                                <v-icon icon="mdi-map-marker-outline" size="14" />{{ advert.city }}
+                                <CzIcon icon="mdi-map-marker-outline" size="14" />{{ advert.city }}
                             </div>
                             <div class="qv-actions">
                                 <NuxtLink :to="advertPath(advert)" class="qv-btn-primary" @click="$emit('update:modelValue', false)">
-                                    <v-icon icon="mdi-arrow-right-circle-outline" size="16" />
+                                    <CzIcon icon="mdi-arrow-right-circle-outline" size="16" />
                                     {{ $t('cQuickView.viewAdvert') }}
                                 </NuxtLink>
                             </div>
@@ -154,7 +154,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
     justify-content: center;
     padding: 60px;
     width: 100%;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .qv-img-wrap {
@@ -232,7 +232,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
     font-size: 12px;
     color: $text-muted;
     padding: 4px 10px;
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
 .qv-desc {

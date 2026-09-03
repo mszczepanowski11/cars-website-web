@@ -45,7 +45,7 @@ function close() { emit('update:modelValue', false) }
             >
                 <div class="cz-dlg">
                     <div class="cz-dlg__icon" :class="`cz-dlg__icon--${tone}`">
-                        <v-icon :icon="tone === 'danger' ? 'mdi-alert-outline' : 'mdi-help-circle-outline'" size="26" />
+                        <CzIcon :icon="tone === 'danger' ? 'mdi-alert-outline' : 'mdi-help-circle-outline'" size="26" />
                     </div>
                     <h3 class="cz-dlg__title">{{ title }}</h3>
                     <p class="cz-dlg__msg">{{ message }}</p>

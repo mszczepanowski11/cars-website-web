@@ -3,17 +3,17 @@
         <div class="container">
             <div class="page-header">
                 <NuxtLink to="/adverts" class="back-link">
-                    <v-icon icon="mdi-chevron-left" size="18" />{{ $t('compare.backToAdverts') }}
+                    <CzIcon icon="mdi-chevron-left" size="18" />{{ $t('compare.backToAdverts') }}
                 </NuxtLink>
                 <h1 class="page-title">{{ $t('compare.title') }}</h1>
             </div>
 
             <div v-if="!compared.length" class="empty-compare">
-                <v-icon icon="mdi-compare-remove" size="64" class="empty-icon" />
+                <CzIcon icon="mdi-compare-remove" size="64" class="empty-icon" />
                 <h2>{{ $t('compare.emptyTitle') }}</h2>
-                <p>{{ $t('compare.emptyDesc') }} <v-icon icon="mdi-compare" size="16" /></p>
+                <p>{{ $t('compare.emptyDesc') }} <CzIcon icon="mdi-compare" size="16" /></p>
                 <NuxtLink to="/adverts" class="btn-red">
-                    <v-icon icon="mdi-car-multiple" size="16" />{{ $t('compare.browseAdverts') }}
+                    <CzIcon icon="mdi-car-multiple" size="16" />{{ $t('compare.browseAdverts') }}
                 </NuxtLink>
             </div>
 
@@ -25,7 +25,7 @@
                         <div class="cmp-header-img-wrap">
                             <img :src="getMainImg(a)" :alt="a.title" class="cmp-header-img" loading="lazy" decoding="async" />
                             <button class="cmp-remove-btn" @click="toggle(a.id)" :title="$t('compare.removeFromCompare')">
-                                <v-icon icon="mdi-close" size="14" />
+                                <CzIcon icon="mdi-close" size="14" />
                             </button>
                             <span v-if="a.badge" :class="['cmp-advert-badge', `cmp-badge--${a.badge.toLowerCase()}`]">{{ a.badge }}</span>
                         </div>
@@ -50,17 +50,17 @@
                     <div class="cmp-label-cell" />
                     <div v-for="a in loadedAdverts" :key="a.id + 'action'" class="cmp-val-cell cmp-action-cell">
                         <NuxtLink :to="advertPath(a)" class="cmp-see-btn">
-                            <v-icon icon="mdi-arrow-right-circle-outline" size="15" />
+                            <CzIcon icon="mdi-arrow-right-circle-outline" size="15" />
                             {{ $t('compare.details') }}
                         </NuxtLink>
                         <button v-if="isLoggedIn" class="cmp-fav-btn" :class="{ active: isFavorite(a.id) }" @click.prevent="toggleFavorite(a.id)" :title="isFavorite(a.id) ? $t('compare.removeFromFavorites') : $t('compare.addToFavorites')">
-                            <v-icon :icon="isFavorite(a.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="15" />
+                            <CzIcon :icon="isFavorite(a.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="15" />
                         </button>
                     </div>
                 </div>
 
                 <div v-if="loading" class="cmp-loading">
-                    <v-icon icon="mdi-loading" size="30" class="spin" />
+                    <CzIcon icon="mdi-loading" size="30" class="spin" />
                 </div>
             </template>
         </div>
@@ -185,7 +185,7 @@ onMounted(fetchAdverts)
 
     h2 { font-size: 22px; color: $text; }
     p { color: $text-dim; font-size: 14px; }
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
 .empty-icon { color: #222 !important; margin-bottom: 8px; }
@@ -368,7 +368,7 @@ onMounted(fetchAdverts)
     display: flex;
     justify-content: center;
     padding: 40px;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .spin { animation: spin 1s linear infinite; }

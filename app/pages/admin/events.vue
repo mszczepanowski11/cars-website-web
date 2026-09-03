@@ -2,23 +2,23 @@
     <div class="admin-page">
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <v-icon icon="mdi-shield-crown" size="20" class="brand-icon" />
+                <CzIcon icon="mdi-shield-crown" size="20" class="brand-icon" />
                 Panel Administratora
             </div>
             <nav class="sidebar-nav">
-                <NuxtLink to="/admin" class="nav-item"><v-icon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
-                <NuxtLink to="/admin/reports" class="nav-item"><v-icon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
-                <NuxtLink to="/admin/users" class="nav-item"><v-icon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
-                <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
-                <NuxtLink to="/admin/events" class="nav-item active"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
-                <NuxtLink to="/admin/taxonomy" class="nav-item"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
-                <NuxtLink to="/admin/vehicle-data" class="nav-item"><v-icon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
-                <NuxtLink to="/admin/attributes" class="nav-item"><v-icon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
-                <NuxtLink to="/admin/partners" class="nav-item"><v-icon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
-                <NuxtLink to="/admin/directory" class="nav-item"><v-icon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
-                <NuxtLink to="/admin/quality-report" class="nav-item"><v-icon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
+                <NuxtLink to="/admin" class="nav-item"><CzIcon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
+                <NuxtLink to="/admin/reports" class="nav-item"><CzIcon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
+                <NuxtLink to="/admin/users" class="nav-item"><CzIcon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
+                <NuxtLink to="/admin/adverts" class="nav-item"><CzIcon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
+                <NuxtLink to="/admin/events" class="nav-item active"><CzIcon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item"><CzIcon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
+                <NuxtLink to="/admin/vehicle-data" class="nav-item"><CzIcon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
+                <NuxtLink to="/admin/attributes" class="nav-item"><CzIcon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
+                <NuxtLink to="/admin/partners" class="nav-item"><CzIcon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
+                <NuxtLink to="/admin/directory" class="nav-item"><CzIcon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item"><CzIcon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
                 <div class="nav-divider" />
-                <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
+                <NuxtLink to="/dashboard" class="nav-item"><CzIcon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
         </aside>
 
@@ -30,7 +30,7 @@
 
             <div class="toolbar">
                 <div class="search-bar">
-                    <v-icon icon="mdi-magnify" size="18" class="sb-icon" />
+                    <CzIcon icon="mdi-magnify" size="18" class="sb-icon" />
                     <input v-model="search" class="sb-input" placeholder="Szukaj wydarzeń..." @input="debouncedFetch" />
                 </div>
                 <div class="filter-tabs">
@@ -39,7 +39,7 @@
             </div>
 
             <div v-if="loading" class="loading-state">
-                <v-icon icon="mdi-loading" size="32" class="spin" />Ładowanie wydarzeń...
+                <CzIcon icon="mdi-loading" size="32" class="spin" />Ładowanie wydarzeń...
             </div>
 
             <template v-else>
@@ -79,24 +79,24 @@
                                 <td>
                                     <div class="action-row">
                                         <button v-if="e.status === 'Pending'" class="btn-action btn-approve" :disabled="actionLoading === e.id" @click="changeStatus(e, 'Published')">
-                                            <v-icon v-if="actionLoading === e.id" icon="mdi-loading" size="13" class="spin" />
-                                            <v-icon v-else icon="mdi-check" size="13" />
+                                            <CzIcon v-if="actionLoading === e.id" icon="mdi-loading" size="13" class="spin" />
+                                            <CzIcon v-else icon="mdi-check" size="13" />
                                             Zatwierdź
                                         </button>
                                         <button v-if="e.status === 'Pending'" class="btn-action btn-reject" :disabled="actionLoading === e.id" @click="changeStatus(e, 'Rejected')">
-                                            <v-icon icon="mdi-close" size="13" />Odrzuć
+                                            <CzIcon icon="mdi-close" size="13" />Odrzuć
                                         </button>
                                         <button v-if="e.status === 'Published'" class="btn-action btn-archive" :disabled="actionLoading === e.id" @click="changeStatus(e, 'Archived')">
-                                            <v-icon icon="mdi-archive-outline" size="13" />Archiwizuj
+                                            <CzIcon icon="mdi-archive-outline" size="13" />Archiwizuj
                                         </button>
                                         <button v-if="e.status === 'Published' && !e.isFeatured" class="btn-action btn-feature" :disabled="actionLoading === e.id" @click="toggleFeature(e, true)">
-                                            <v-icon icon="mdi-crown-outline" size="13" />Wyróżnij
+                                            <CzIcon icon="mdi-crown-outline" size="13" />Wyróżnij
                                         </button>
                                         <button v-if="e.status === 'Published' && e.isFeatured" class="btn-action btn-unfeature" :disabled="actionLoading === e.id" @click="toggleFeature(e, false)">
-                                            <v-icon icon="mdi-crown-off-outline" size="13" />Usuń wyróżn.
+                                            <CzIcon icon="mdi-crown-outline" size="13" />Usuń wyróżn.
                                         </button>
                                         <button class="btn-action btn-delete" :disabled="actionLoading === e.id" aria-label="Usuń wydarzenie" @click="confirmDelete(e.id)">
-                                            <v-icon icon="mdi-delete-outline" size="13" />
+                                            <CzIcon icon="mdi-delete-outline" size="13" />
                                         </button>
                                     </div>
                                 </td>
@@ -105,14 +105,14 @@
                     </table>
                 </div>
                 <div v-else class="empty-state">
-                    <v-icon icon="mdi-calendar-off-outline" size="40" class="empty-icon" />
+                    <CzIcon icon="mdi-calendar-remove-outline" size="40" class="empty-icon" />
                     <p>Brak wydarzeń spełniających kryteria.</p>
                 </div>
 
                 <div v-if="totalCount > pageSize" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)"><v-icon icon="mdi-chevron-left" size="18" /></button>
+                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)"><CzIcon icon="mdi-chevron-left" size="18" /></button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                    <button class="page-btn" :disabled="page === totalPages" aria-label="Następna strona" @click="goPage(page + 1)"><v-icon icon="mdi-chevron-right" size="18" /></button>
+                    <button class="page-btn" :disabled="page === totalPages" aria-label="Następna strona" @click="goPage(page + 1)"><CzIcon icon="mdi-chevron-right" size="18" /></button>
                 </div>
             </template>
         </main>
@@ -121,13 +121,13 @@
             <transition name="fade">
                 <div v-if="deleteId !== null" class="modal-backdrop" @click.self="deleteId = null">
                     <div class="confirm-modal">
-                        <v-icon icon="mdi-calendar-remove" size="36" class="del-icon" />
+                        <CzIcon icon="mdi-calendar-remove" size="36" class="del-icon" />
                         <h3>Usuń wydarzenie</h3>
                         <p>Tej operacji nie można cofnąć.</p>
                         <div class="confirm-actions">
                             <button class="btn-cancel" @click="deleteId = null">Anuluj</button>
                             <button class="btn-delete-confirm" :disabled="actionLoading !== null" @click="doDelete">
-                                <v-icon v-if="actionLoading !== null" icon="mdi-loading" size="14" class="spin" />Usuń
+                                <CzIcon v-if="actionLoading !== null" icon="mdi-loading" size="14" class="spin" />Usuń
                             </button>
                         </div>
                     </div>

@@ -1,8 +1,8 @@
 <template>
   <div class="cmap-wrap">
-    <div v-if="loading" class="cmap-msg"><v-icon icon="mdi-loading" size="22" class="spin" /> Ładowanie mapy…</div>
+    <div v-if="loading" class="cmap-msg"><CzIcon icon="mdi-loading" size="22" class="spin" /> Ładowanie mapy…</div>
     <div v-else-if="points.length === 0" class="cmap-msg">
-      <v-icon icon="mdi-map-marker-off-outline" size="22" />
+      <CzIcon icon="mdi-map-marker-off-outline" size="22" />
       Brak firm z lokalizacją na mapie dla wybranych filtrów.
     </div>
     <div v-show="!loading && points.length" ref="mapContainer" class="cmap-container" />

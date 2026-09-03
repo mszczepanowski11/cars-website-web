@@ -1,9 +1,9 @@
 <template>
   <div class="cp-page">
-    <div v-if="pending" class="cp-loading"><v-icon icon="mdi-loading" size="34" class="spin" /></div>
+    <div v-if="pending" class="cp-loading"><CzIcon icon="mdi-loading" size="34" class="spin" /></div>
 
     <div v-else-if="!company" class="cp-notfound">
-      <v-icon icon="mdi-office-building-outline" size="52" />
+      <CzIcon icon="mdi-office-building-outline" size="52" />
       <h1>Nie znaleziono firmy</h1>
       <p>Ta firma nie istnieje lub została usunięta z katalogu.</p>
       <NuxtLink to="/firmy" class="cp-back-btn">Wróć do katalogu</NuxtLink>
@@ -12,18 +12,18 @@
     <template v-else>
       <section class="cp-hero">
         <div class="cp-hero-inner">
-          <NuxtLink to="/firmy" class="cp-crumb"><v-icon icon="mdi-chevron-left" size="16" /> Firmy</NuxtLink>
+          <NuxtLink to="/firmy" class="cp-crumb"><CzIcon icon="mdi-chevron-left" size="16" /> Firmy</NuxtLink>
           <div class="cp-head">
-            <div class="cp-icon"><v-icon :icon="categoryIcon(company.category)" size="30" /></div>
+            <div class="cp-icon"><CzIcon :icon="categoryIcon(company.category)" size="30" /></div>
             <div>
               <h1 class="cp-name">{{ company.name }}</h1>
               <div class="cp-tags">
                 <span class="cp-cat">{{ categoryLabel(company.category) }}</span>
                 <span v-if="company.status === 'unverified'" class="cp-badge">niezweryfikowana</span>
-                <span v-else-if="company.status === 'active'" class="cp-badge cp-badge--ok"><v-icon icon="mdi-check-decagram" size="13" /> zweryfikowana</span>
+                <span v-else-if="company.status === 'active'" class="cp-badge cp-badge--ok"><CzIcon icon="mdi-check-decagram" size="13" /> zweryfikowana</span>
               </div>
               <div v-if="(company.availableLanguages?.length ?? 0) > 1" class="cp-langs">
-                <v-icon icon="mdi-translate" size="14" />
+                <CzIcon icon="mdi-translate" size="14" />
                 <button
                   v-for="l in company.availableLanguages" :key="l"
                   class="cp-lang" :class="{ active: currentLang === l }"
@@ -46,19 +46,19 @@
               <h2 class="cp-card-h">Dane kontaktowe</h2>
               <dl class="cp-dl">
                 <template v-if="fullAddress">
-                  <dt><v-icon icon="mdi-map-marker-outline" size="16" /> Adres</dt>
+                  <dt><CzIcon icon="mdi-map-marker-outline" size="16" /> Adres</dt>
                   <dd>{{ fullAddress }}</dd>
                 </template>
                 <template v-if="company.phone">
-                  <dt><v-icon icon="mdi-phone-outline" size="16" /> Telefon</dt>
+                  <dt><CzIcon icon="mdi-phone-outline" size="16" /> Telefon</dt>
                   <dd><a :href="`tel:${company.phone}`">{{ company.phone }}</a></dd>
                 </template>
                 <template v-if="company.email">
-                  <dt><v-icon icon="mdi-email-outline" size="16" /> E-mail</dt>
+                  <dt><CzIcon icon="mdi-email-outline" size="16" /> E-mail</dt>
                   <dd><a :href="`mailto:${company.email}`">{{ company.email }}</a></dd>
                 </template>
                 <template v-if="company.website">
-                  <dt><v-icon icon="mdi-web" size="16" /> Strona</dt>
+                  <dt><CzIcon icon="mdi-web" size="16" /> Strona</dt>
                   <dd><a :href="normalizedWebsite" target="_blank" rel="noopener nofollow">{{ company.website }}</a></dd>
                 </template>
                 <template v-if="!hasContact">
@@ -72,14 +72,14 @@
               <div class="cp-branches">
                 <div v-for="b in company.branches" :key="b.id" class="cp-branch">
                   <div class="cp-branch-name">
-                    <v-icon icon="mdi-office-building-outline" size="16" />
+                    <CzIcon icon="mdi-office-building-outline" size="16" />
                     {{ b.name || (b.isPrimary ? 'Siedziba główna' : 'Oddział') }}
                   </div>
                   <div v-if="branchAddress(b)" class="cp-branch-row">
-                    <v-icon icon="mdi-map-marker-outline" size="15" />{{ branchAddress(b) }}
+                    <CzIcon icon="mdi-map-marker-outline" size="15" />{{ branchAddress(b) }}
                   </div>
                   <div v-for="p in b.phones" :key="p.number" class="cp-branch-row">
-                    <v-icon icon="mdi-phone-outline" size="15" />
+                    <CzIcon icon="mdi-phone-outline" size="15" />
                     <a :href="`tel:${p.number}`">{{ p.number }}</a>
                     <span v-if="p.label" class="cp-branch-phone-label">({{ p.label }})</span>
                   </div>
@@ -119,7 +119,7 @@
             </div>
 
             <div v-if="isOwnerClaimable" class="cp-claim">
-              <v-icon icon="mdi-shield-account-outline" size="20" />
+              <CzIcon icon="mdi-shield-account-outline" size="20" />
               <div>
                 <strong>To Twoja firma?</strong>
                 <p>Przejmij profil i zarządzaj danymi w panelu „Dla firm".</p>
@@ -326,7 +326,7 @@ useHead(() => ({
 .cp-claim { display: flex; align-items: center; gap: 14px; background: rgba($red, .08); border: 1px solid rgba($red, .2); border-radius: 12px; padding: 16px 18px;
   strong { color: $text; } p { margin: 2px 0 0; color: $text-muted; font-size: 13.5px; }
   .cp-claim-btn { margin: 0 0 0 auto; flex-shrink: 0; } }
-.cp-claim > .v-icon { color: $red; flex-shrink: 0; }
+.cp-claim > .cz-icon { color: $red; flex-shrink: 0; }
 
 .cp-id { font-family: monospace; font-size: 13px; color: $red; word-break: break-all; background: rgba($red, .08); padding: 8px 10px; border-radius: 6px; }
 .cp-id-note { font-size: 12px; color: $text-muted; margin: 8px 0 16px; }

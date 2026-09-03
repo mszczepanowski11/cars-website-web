@@ -5,12 +5,12 @@
                 <h1 class="page-title">{{ $t('myAdverts.title') }}</h1>
                 <div class="header-actions">
                     <button class="btn-export" :disabled="exporting" @click="exportCsv">
-                        <v-icon v-if="exporting" icon="mdi-loading" size="16" class="spin" />
-                        <v-icon v-else icon="mdi-download-outline" size="16" />
+                        <CzIcon v-if="exporting" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-else icon="mdi-download-outline" size="16" />
                         {{ $t('myAdverts.exportCsv') }}
                     </button>
                     <NuxtLink to="/add-advert" class="btn-add-top">
-                        <v-icon icon="mdi-plus" size="17" />
+                        <CzIcon icon="mdi-plus" size="17" />
                         {{ $t('myAdverts.addAdvert') }}
                     </NuxtLink>
                 </div>
@@ -35,16 +35,16 @@
             </div>
 
             <div v-if="loading" class="loading-center">
-                <v-icon icon="mdi-loading" size="40" class="spin" />
+                <CzIcon icon="mdi-loading" size="40" class="spin" />
             </div>
             <div v-else-if="!adverts.length" class="empty-block">
                 <div class="empty-block-icon">
-                    <v-icon icon="mdi-car-outline" size="44" />
+                    <CzIcon icon="mdi-car-outline" size="44" />
                 </div>
                 <h3 class="empty-block-title">{{ $t('myAdverts.emptyTitle') }}</h3>
                 <p class="empty-block-desc">{{ $t('myAdverts.emptyDesc') }}</p>
                 <NuxtLink to="/add-advert" class="empty-block-btn">
-                    <v-icon icon="mdi-plus" size="18" />
+                    <CzIcon icon="mdi-plus" size="18" />
                     {{ $t('myAdverts.addFirst') }}
                 </NuxtLink>
             </div>
@@ -75,10 +75,10 @@
                             </div>
                             <div class="row-stats">
                                 <span v-if="a.viewCount" class="stat-chip">
-                                    <v-icon icon="mdi-eye-outline" size="13" />{{ a.viewCount }}
+                                    <CzIcon icon="mdi-eye-outline" size="13" />{{ a.viewCount }}
                                 </span>
                                 <span v-if="a.favoriteCount" class="stat-chip">
-                                    <v-icon icon="mdi-heart-outline" size="13" />{{ a.favoriteCount }}
+                                    <CzIcon icon="mdi-heart-outline" size="13" />{{ a.favoriteCount }}
                                 </span>
                                 <span v-if="a.isActive" class="status-chip status-active">{{ $t('myAdverts.statusActive') }}</span>
                                 <span v-else-if="a.isHidden" class="status-chip status-hidden">{{ $t('myAdverts.statusHidden') }}</span>
@@ -91,17 +91,17 @@
                                  sprawdzic, czy emisja skonczy sie w weekend. Dokladna data jest
                                  podana obok, a nie w dymku, bo na telefonie dymki nie dzialaja. -->
                             <div v-if="a.expiresAt && !a.soldAt" class="expiry-info" :class="expiryClass(a.expiresAt)">
-                                <v-icon icon="mdi-clock-outline" size="14" />
+                                <CzIcon icon="mdi-clock-outline" size="14" />
                                 <span class="expiry-rel">{{ expiryText(a.expiresAt) }}</span>
                                 <span class="expiry-abs">{{ expiryDate(a.expiresAt) }}</span>
                             </div>
 
                             <div class="row-actions">
                                 <NuxtLink :to="advertPath(a)" class="act-btn" :aria-label="`Podgląd: ${a.title}`">
-                                    <v-icon icon="mdi-eye-outline" size="15" /><span class="act-label">Podgląd</span>
+                                    <CzIcon icon="mdi-eye-outline" size="15" /><span class="act-label">Podgląd</span>
                                 </NuxtLink>
                                 <NuxtLink :to="`/add-advert?edit=${a.id}`" class="act-btn" :aria-label="`Edytuj: ${a.title}`">
-                                    <v-icon icon="mdi-pencil-outline" size="15" /><span class="act-label">Edytuj</span>
+                                    <CzIcon icon="mdi-pencil-outline" size="15" /><span class="act-label">Edytuj</span>
                                 </NuxtLink>
                                 <NuxtLink
                                     v-if="!a.soldAt && a.isActive"
@@ -109,7 +109,7 @@
                                     class="act-btn act-promote"
                                     :aria-label="`Wyróżnij: ${a.title}`"
                                 >
-                                    <v-icon icon="mdi-star-outline" size="15" /><span class="act-label">Wyróżnij</span>
+                                    <CzIcon icon="mdi-star-outline" size="15" /><span class="act-label">Wyróżnij</span>
                                 </NuxtLink>
                                 <button
                                     v-if="!a.soldAt && !a.isActive"
@@ -118,8 +118,8 @@
                                     :aria-label="`Reaktywuj: ${a.title}`"
                                     @click="reactivateAdvert(a)"
                                 >
-                                    <v-icon v-if="reactivateLoading === a.id" icon="mdi-loading" size="15" class="spin" />
-                                    <v-icon v-else icon="mdi-refresh" size="15" /><span class="act-label">Wznów</span>
+                                    <CzIcon v-if="reactivateLoading === a.id" icon="mdi-loading" size="15" class="spin" />
+                                    <CzIcon v-else icon="mdi-refresh" size="15" /><span class="act-label">Wznów</span>
                                 </button>
                                 <button
                                     v-if="!a.soldAt && (a.isActive || a.isHidden)"
@@ -128,8 +128,8 @@
                                     :aria-label="`Oznacz jako sprzedane: ${a.title}`"
                                     @click="markAsSold(a)"
                                 >
-                                    <v-icon v-if="soldLoading === a.id" icon="mdi-loading" size="15" class="spin" />
-                                    <v-icon v-else icon="mdi-handshake-outline" size="15" /><span class="act-label">Sprzedane</span>
+                                    <CzIcon v-if="soldLoading === a.id" icon="mdi-loading" size="15" class="spin" />
+                                    <CzIcon v-else icon="mdi-handshake-outline" size="15" /><span class="act-label">Sprzedane</span>
                                 </button>
                                 <button
                                     class="act-btn act-delete"
@@ -137,8 +137,8 @@
                                     :aria-label="`Usuń: ${a.title}`"
                                     @click="openDeleteModal(a)"
                                 >
-                                    <v-icon v-if="deleteLoading === a.id" icon="mdi-loading" size="15" class="spin" />
-                                    <v-icon v-else icon="mdi-trash-can-outline" size="15" /><span class="act-label">Usuń</span>
+                                    <CzIcon v-if="deleteLoading === a.id" icon="mdi-loading" size="15" class="spin" />
+                                    <CzIcon v-else icon="mdi-trash-can-outline" size="15" /><span class="act-label">Usuń</span>
                                 </button>
                             </div>
                         </div>
@@ -146,11 +146,11 @@
                 </div>
                 <div v-if="totalPages > 1" class="pagination">
                     <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="load(page - 1)">
-                        <v-icon icon="mdi-chevron-left" size="18" />
+                        <CzIcon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
                     <button class="page-btn" :disabled="page >= totalPages" aria-label="Następna strona" @click="load(page + 1)">
-                        <v-icon icon="mdi-chevron-right" size="18" />
+                        <CzIcon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
             </template>
@@ -161,13 +161,13 @@
             <transition name="fade">
                 <div v-if="confirmAdvert" class="modal-backdrop" @click.self="confirmAdvert = null">
                     <div class="confirm-modal">
-                        <v-icon icon="mdi-handshake-outline" size="36" class="sold-icon" />
+                        <CzIcon icon="mdi-handshake-outline" size="36" class="sold-icon" />
                         <h3>Oznacz jako sprzedane</h3>
                         <p>Ogłoszenie „{{ confirmAdvert.title }}" zostanie oznaczone jako sprzedane i ukryte z wyników.</p>
                         <div class="confirm-actions">
                             <button class="btn-cancel" @click="confirmAdvert = null">Anuluj</button>
                             <button class="btn-sold-confirm" :disabled="soldLoading !== null" @click="doMarkSold">
-                                <v-icon v-if="soldLoading !== null" icon="mdi-loading" size="14" class="spin" />
+                                <CzIcon v-if="soldLoading !== null" icon="mdi-loading" size="14" class="spin" />
                                 Oznacz
                             </button>
                         </div>
@@ -181,12 +181,12 @@
             <transition name="fade">
                 <div v-if="deleteAdvert" class="modal-backdrop" @click.self="deleteAdvert = null">
                     <div class="confirm-modal">
-                        <v-icon icon="mdi-trash-can-outline" size="36" class="delete-icon" />
+                        <CzIcon icon="mdi-trash-can-outline" size="36" class="delete-icon" />
                         <h3>Usuń ogłoszenie</h3>
                         <p>Ogłoszenie „{{ deleteAdvert.title }}" zostanie trwale usunięte.</p>
                         <div v-if="!deleteAdvert.soldAt" class="sold-option">
                             <div class="sold-option-label">
-                                <v-icon icon="mdi-chart-bar" size="15" class="sold-opt-icon" />
+                                <CzIcon icon="mdi-chart-bar" size="15" class="sold-opt-icon" />
                                 Oznaczyć jako sprzedane przed usunięciem?
                             </div>
                             <p class="sold-option-desc">Sprzedane auto zostanie wliczone do Twoich statystyk sprzedaży.</p>
@@ -196,7 +196,7 @@
                                     :class="{ active: markSoldOnDelete }"
                                     @click="markSoldOnDelete = true"
                                 >
-                                    <v-icon icon="mdi-check-circle" size="15" />
+                                    <CzIcon icon="mdi-check-circle" size="15" />
                                     Tak, sprzedałem
                                 </button>
                                 <button
@@ -204,7 +204,7 @@
                                     :class="{ active: !markSoldOnDelete }"
                                     @click="markSoldOnDelete = false"
                                 >
-                                    <v-icon icon="mdi-close-circle-outline" size="15" />
+                                    <CzIcon icon="mdi-close-circle-outline" size="15" />
                                     Nie, po prostu usuń
                                 </button>
                             </div>
@@ -212,7 +212,7 @@
                         <div class="confirm-actions">
                             <button class="btn-cancel" @click="deleteAdvert = null">Anuluj</button>
                             <button class="btn-delete-confirm" :disabled="deleteLoading !== null" @click="doDelete">
-                                <v-icon v-if="deleteLoading !== null" icon="mdi-loading" size="14" class="spin" />
+                                <CzIcon v-if="deleteLoading !== null" icon="mdi-loading" size="14" class="spin" />
                                 {{ markSoldOnDelete && !deleteAdvert.soldAt ? 'Sprzedaj i usuń' : 'Usuń' }}
                             </button>
                         </div>

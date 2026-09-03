@@ -7,7 +7,7 @@
 
             <template v-if="!tokenPresent">
                 <div class="error-msg">
-                    <v-icon icon="mdi-alert-circle-outline" size="16" />
+                    <CzIcon icon="mdi-alert-circle-outline" size="16" />
                     {{ $t('resetPassword.invalidToken') }}
                 </div>
                 <NuxtLink to="/forgot-password" class="btn-primary">{{ $t('resetPassword.sendNewLink') }}</NuxtLink>
@@ -16,7 +16,7 @@
             <template v-else-if="success">
                 <div class="success-state">
                     <div class="success-icon">
-                        <v-icon icon="mdi-check-circle-outline" size="52" />
+                        <CzIcon icon="mdi-check-circle-outline" size="52" />
                     </div>
                     <p class="success-text">
                         {{ $t('resetPassword.successText') }}
@@ -30,7 +30,7 @@
                     <div class="field-group">
                         <label class="field-label">{{ $t('resetPassword.newPasswordLabel') }}</label>
                         <div class="field-input-wrap">
-                            <v-icon icon="mdi-lock-outline" size="16" class="field-icon" />
+                            <CzIcon icon="mdi-lock-outline" size="16" class="field-icon" />
                             <input
                                 v-model="password"
                                 :type="showPass ? 'text' : 'password'"
@@ -40,7 +40,7 @@
                                 autocomplete="new-password"
                             />
                             <button type="button" class="toggle-pass" @click="showPass = !showPass" tabindex="-1">
-                                <v-icon :icon="showPass ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="16" />
+                                <CzIcon :icon="showPass ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="16" />
                             </button>
                         </div>
                         <!-- Strength bar -->
@@ -55,7 +55,7 @@
                     <div class="field-group">
                         <label class="field-label">{{ $t('resetPassword.confirmLabel') }}</label>
                         <div class="field-input-wrap" :class="{ 'field-input-wrap--error': passwordConfirm && password !== passwordConfirm }">
-                            <v-icon icon="mdi-lock-check-outline" size="16" class="field-icon" />
+                            <CzIcon icon="mdi-lock-check-outline" size="16" class="field-icon" />
                             <input
                                 v-model="passwordConfirm"
                                 type="password"
@@ -66,18 +66,18 @@
                             />
                         </div>
                         <span v-if="passwordConfirm && password !== passwordConfirm" class="field-error">
-                            <v-icon icon="mdi-close-circle-outline" size="12" />{{ $t('resetPassword.passwordMismatch') }}
+                            <CzIcon icon="mdi-close-circle-outline" size="12" />{{ $t('resetPassword.passwordMismatch') }}
                         </span>
                     </div>
 
                     <div v-if="validationError || apiError" class="error-msg">
-                        <v-icon icon="mdi-alert-circle-outline" size="14" />
+                        <CzIcon icon="mdi-alert-circle-outline" size="14" />
                         {{ validationError || apiError }}
                     </div>
 
                     <button type="submit" class="btn-submit" :disabled="loading || (!!passwordConfirm && password !== passwordConfirm)">
-                        <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-                        <v-icon v-else icon="mdi-lock-reset" size="16" />
+                        <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-else icon="mdi-lock-reset" size="16" />
                         {{ loading ? $t('resetPassword.changing') : $t('resetPassword.submit') }}
                     </button>
                 </form>
@@ -85,7 +85,7 @@
 
             <p class="auth-link">
                 <NuxtLink to="/login">
-                    <v-icon icon="mdi-arrow-left" size="14" />
+                    <CzIcon icon="mdi-arrow-left" size="14" />
                     {{ $t('resetPassword.backToLogin') }}
                 </NuxtLink>
             </p>
@@ -291,7 +291,7 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     color: $danger;
     line-height: 1.4;
     width: 100%;
-    .v-icon { flex-shrink: 0; margin-top: 1px; }
+    .cz-icon { flex-shrink: 0; margin-top: 1px; }
 }
 
 .btn-primary {
