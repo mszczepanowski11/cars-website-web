@@ -129,7 +129,15 @@ watch(mobileOpen, (open) => {
     <header class="carizo-nav" :style="{ top: showAnnBar ? '38px' : '0' }">
         <div class="nav-inner">
             <NuxtLink to="/" class="logo" @click="closeMobile">
-                <img src="/carizo-logo.svg" alt="CARIZO" class="logo-img" loading="lazy" decoding="async" />
+                <!--
+                    Logo bylo `loading="lazy"` i BEZ wymiarow - a lezy na samej gorze kazdej
+                    strony, wiec odkladanie go na pozniej nie oszczedzalo niczego, tylko
+                    powodowalo, ze pasek startowal z pusta luka i doklejal 199 px w chwili
+                    wczytania obrazu. Wszystko po prawej przeskakiwalo. Atrybuty width/height
+                    daja przegladarce proporcje od razu, wiec miejsce jest zarezerwowane
+                    jeszcze przed pobraniem pliku.
+                -->
+                <img src="/carizo-logo.svg" alt="CARIZO" class="logo-img" width="310" height="56" fetchpriority="high" decoding="async" />
             </NuxtLink>
 
             <nav class="nav-links">
@@ -333,7 +341,11 @@ watch(mobileOpen, (open) => {
 .carizo-nav {
     position: fixed;
     top: 0;
-    width: 100%;
+    // Zakotwiczony do OBU krawędzi. Samo `width: 100%` nie wystarcza: element
+    // `fixed` bez `left` zostaje na pozycji statycznej, więc każdy niezerowy
+    // margines `body` przesuwał cały pasek w prawo i wypychał go poza ekran.
+    left: 0;
+    right: 0;
     z-index: 998;
     background: rgba(4, 4, 4, 0.95);
     backdrop-filter: blur(14px);
@@ -346,12 +358,27 @@ watch(mobileOpen, (open) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: $s-4;
+    // Bez tego rząd nie może zmniejszyć się poniżej sumy swoich dzieci.
+    min-width: 0;
+
+    // Przy 360 px zawartość paska (logo 199 + przełącznik języka 81 + menu 44
+    // plus odstępy) zostawiała około czterech pikseli zapasu. Wystarczyła inna
+    // czcionka zastępcza - a taką widzi każdy, u kogo webfont jeszcze się nie
+    // wczytał albo w ogóle nie doszedł - żeby pasek przestał się mieścić i cała
+    // strona zaczynała przewijać się na boki. Wykryło to dopiero CI, bo lokalnie
+    // przeglądarka miała inny zestaw czcionek zastępczych.
+    @media (max-width: $bp-phone) {
+        gap: $s-2;
+    }
 }
 
 .logo {
     text-decoration: none;
-    flex-shrink: 0;
+    // Logo ustępuje jako ostatnie, ale MUSI móc ustąpić - inaczej to ono wypycha
+    // pasek poza ekran, gdy metryki czcionki okażą się inne, niż zakładano.
+    flex-shrink: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
 }
@@ -359,7 +386,10 @@ watch(mobileOpen, (open) => {
 .logo-img {
     height: 36px;
     width: auto;
+    max-width: 100%;
     display: block;
+
+    @media (max-width: $bp-phone) { height: 30px; }
 }
 
 .nav-links {
@@ -452,7 +482,7 @@ watch(mobileOpen, (open) => {
     &.active { color: $red-text; font-weight: 700; }
 }
 
-.nav-btns { display: flex; gap: 8px; align-items: center; }
+.nav-btns { display: flex; gap: $s-2; align-items: center; flex-shrink: 0; }
 
 .nav-badge-wrap {
     position: relative;
