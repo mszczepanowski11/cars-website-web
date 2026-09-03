@@ -169,6 +169,21 @@ async function main() {
             const jsErrors = []
             page.on('pageerror', e => jsErrors.push(String(e).split('\n')[0].slice(0, 160)))
 
+            // Niezgodnosc przy uwadnianiu: serwer wyrenderowal co innego, niz klient
+            // wyrenderowal w pierwszym przebiegu. Vue nie przerywa dzialania - porzuca
+            // gotowe wezly z HTML-a i przebudowuje wszystko, co idzie po nich. Widac to
+            // jako skok ukladu. Tak wlasnie powstal CLS 0,142 na stronie glownej: dwie
+            // sekcje pobierane wylacznie z przegladarki istnialy w pierwszym renderowaniu
+            // klienta, a nie istnialy w HTML-u z serwera. Warto to lapac WPROST, bo
+            // pomiar CLS wychwytuje to tylko wtedy, gdy skok akurat wypadnie w widocznej
+            // czesci ekranu - przy 1440 px ta sama wada dawala 0,062 i przechodzila.
+            let niezgodnoscUwodnienia = false
+            page.on('console', m => {
+                if (m.type() === 'error' && m.text().includes('Hydration completed but contains mismatches')) {
+                    niezgodnoscUwodnienia = true
+                }
+            })
+
             // Zewnętrzne zasoby (fonty Google) bywają niedostępne z runnera i wieszałyby
             // oczekiwanie na bezczynność sieci. Testujemy własny kod, nie cudze CDN-y.
             await page.route('**://*', r =>
@@ -191,17 +206,27 @@ async function main() {
             const result = await page.evaluate(() => {
                 const de = document.documentElement
                 const overflow = de.scrollWidth - de.clientWidth
-                const culprits = []
+                let culprits = []
                 if (overflow > 1) {
-                    for (const el of document.querySelectorAll('body *')) {
+                    const granica = de.clientWidth + 1
+                    const wystajace = [...document.querySelectorAll('body *')].filter(el => {
                         const b = el.getBoundingClientRect()
-                        if (b.width > 0 && b.right > de.clientWidth + 1 && b.left < de.clientWidth) {
-                            const cls = typeof el.className === 'string' && el.className.trim()
-                                ? '.' + el.className.trim().split(/\s+/)[0] : ''
-                            culprits.push(el.tagName.toLowerCase() + cls)
-                            if (culprits.length >= 3) break
-                        }
-                    }
+                        return b.width > 0 && b.right > granica && b.left < granica
+                    })
+                    // NAJGLEBSZE, nie pierwsze w dokumencie. Gdy cokolwiek rozepcha strone,
+                    // rozciagaja sie za nim wszystkie elementy o szerokosci 100% - w tym
+                    // pasek nawigacji i inne `position: fixed`, bo na widoku telefonu
+                    // Chrome poszerza dla nich blok zawierajacy do szerokosci dokumentu.
+                    // Poprzednia wersja wypisywala trzy pierwsze w kolejnosci dokumentu
+                    // i konsekwentnie wskazywala wlasnie je - czyli OFIARY. Prawdziwa
+                    // przyczyna, lezaca nizej, nigdy nie trafiala do raportu i szukalem
+                    // jej trzy razy w zlym miejscu.
+                    const najglebsze = wystajace.filter(el => !wystajace.some(inny => inny !== el && el.contains(inny)))
+                    culprits = najglebsze.slice(0, 4).map(el => {
+                        const cls = typeof el.className === 'string' && el.className.trim()
+                            ? '.' + el.className.trim().split(/\s+/)[0] : ''
+                        return el.tagName.toLowerCase() + cls + '@' + Math.round(el.getBoundingClientRect().right)
+                    })
                 }
                 // Pola formularza bez nazwy dostępnej dla czytnika ekranu. Etykieta bywa
                 // widoczna na ekranie, ale technicznie niepowiązana z polem - wtedy czytnik
@@ -235,6 +260,9 @@ async function main() {
             })
 
             if (jsErrors.length) failures.push(`${label} — błąd JS: ${jsErrors[0]}`)
+            if (niezgodnoscUwodnienia) {
+                failures.push(`${label} — serwer wyrenderował co innego niż przeglądarka (niezgodność przy uwadnianiu)`)
+            }
             if (result.overflow > 1) {
                 failures.push(`${label} — przewijanie poziome +${result.overflow}px (${result.culprits.join(', ')})`)
             }

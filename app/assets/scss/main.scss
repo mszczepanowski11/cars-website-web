@@ -35,6 +35,15 @@ html, body {
   font-family: 'Inter', sans-serif;
 }
 
+// Domyślny margines 8 px na `body` zerowała wcześniej normalizacja Vuetify. Razem
+// z Vuetify zniknęła, a tego nikt nie zauważył, bo cała treść siedzi w kontenerze
+// o szerokości 92% - zwężenie o 16 px wyglądało po prostu jak trochę węższa strona.
+// Widać to było dopiero na pasku nawigacji: `position: fixed` bez `left` startuje
+// z pozycji statycznej, czyli od marginesu `body`, i pasek o szerokości 100%
+// wystawał 8 px poza prawą krawędź ekranu. Na telefonie oznacza to poziome
+// przewijanie CAŁEJ strony - na każdym podstronie serwisu.
+body { margin: 0; }
+
 a { text-decoration: none; color: inherit; }
 
 .v-application {

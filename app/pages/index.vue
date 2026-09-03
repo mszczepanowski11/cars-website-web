@@ -245,7 +245,7 @@
         </div>
 
         <!-- ─── Premium Collection ───────────────────────────────────────── -->
-        <section v-if="clientDataLoading || premiumCollection.length" class="section">
+        <section v-if="premiumCollection.length" class="section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
@@ -255,12 +255,7 @@
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <CzIcon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
                 <div class="cars-grid">
-                    <template v-if="clientDataLoading">
-                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
-                    </template>
-                    <template v-else>
-                        <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
-                    </template>
+                    <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
                 </div>
             </div>
         </section>
@@ -288,7 +283,7 @@
         </section>
 
         <!-- ─── Most viewed ─────────────────────────────────────────────── -->
-        <section v-if="clientDataLoading || mostViewed.length" class="section">
+        <section v-if="mostViewed.length" class="section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
@@ -298,12 +293,7 @@
                     <NuxtLink to="/adverts" class="see-all">Wszystkie <CzIcon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
                 <div class="cars-grid cars-grid--small">
-                    <template v-if="clientDataLoading">
-                        <AdvertCardSkeleton v-for="n in 4" :key="n" />
-                    </template>
-                    <template v-else>
-                        <AdvertCard v-for="a in mostViewed.slice(0, 4)" :key="a.id" :advert="a" />
-                    </template>
+                    <AdvertCard v-for="a in mostViewed.slice(0, 4)" :key="a.id" :advert="a" />
                 </div>
             </div>
         </section>
@@ -612,12 +602,13 @@ const mostViewed = ref<CarAdvert[]>([])
 const premiumCollection = ref<CarAdvert[]>([])
 // Newest listings grouped per category - the homepage now surfaces every category, not just cars.
 interface CategoryShowcaseGroup { category: CategoryWithCount; items: CarAdvert[]; total: number }
+/** Kształt odpowiedzi server/api/home/collections.get.ts. */
+interface HomeCollections { mostViewed: CarAdvert[]; premium: CarAdvert[] }
 const categoryShowcase = ref<CategoryShowcaseGroup[]>([])
 const catShowcaseLoading = ref(false)
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
-const clientDataLoading = ref(false)
 const statsLoading = ref(true)
 
 // ─── Hero search state ────────────────────────────────────────────────────────
@@ -1061,6 +1052,14 @@ const { data: homeData } = await useAsyncData('home-data', async () => {
     // żądania z przeglądarki.
     const showcasePromise = $fetch<CategoryShowcaseGroup[]>('/api/home/showcase').catch(() => [] as CategoryShowcaseGroup[])
 
+    // „Najczęściej oglądane" i „kolekcja premium" - też jedno buforowane żądanie.
+    // Wcześniej leciały wyłącznie z przeglądarki i to one były przyczyną skoku układu
+    // na stronie głównej: serwer renderował HTML bez tych sekcji, klient przy pierwszym
+    // renderowaniu już z nimi, więc Vue porzucał gotowe węzły i przebudowywał wszystko,
+    // co szło dalej. Szczegóły w server/api/home/collections.get.ts.
+    const collectionsPromise = $fetch<HomeCollections>('/api/home/collections')
+        .catch(() => ({ mostViewed: [], premium: [] } as HomeCollections))
+
     const [featuredResult, recentResult, evts, stats, brands] = await Promise.allSettled([
         $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
             method: 'POST',
@@ -1082,6 +1081,7 @@ const { data: homeData } = await useAsyncData('home-data', async () => {
         brands:        brands.status         === 'fulfilled' ? brands.value                : [],
         categories,
         showcase:      await showcasePromise,
+        collections:   await collectionsPromise,
     }
 })
 
@@ -1095,29 +1095,11 @@ if (homeData.value) {
     if (homeData.value.categories?.length) homeCategories.value = homeData.value.categories
     categoryShowcase.value = homeData.value.showcase ?? []
     catShowcaseLoading.value = false
+    mostViewed.value        = homeData.value.collections?.mostViewed ?? []
+    premiumCollection.value = homeData.value.collections?.premium ?? []
     if (homeData.value.stats) Object.assign(homeStats.value, homeData.value.stats)
 }
 statsLoading.value = false
-
-// most-viewed and premium-collection fetched client-side only to avoid SSR crashes
-if (import.meta.client) {
-    clientDataLoading.value = true
-    Promise.allSettled([
-        $fetch<CarAdvert[]>('/api/proxy/api/listings/most-viewed', { query: { count: 8 } }).catch(() => [] as CarAdvert[]),
-        $fetch<CarAdvert[]>('/api/proxy/api/listings/premium-collection', { query: { count: 8 } }).catch(() => [] as CarAdvert[])
-    ]).then(([mvRes, pcRes]) => {
-        if (mvRes.status === 'fulfilled') {
-            const mv = mvRes.value
-            mostViewed.value = Array.isArray(mv) ? mv : (mv as any).items ?? []
-        }
-        if (pcRes.status === 'fulfilled') {
-            const pc = pcRes.value
-            premiumCollection.value = Array.isArray(pc) ? pc : (pc as any).items ?? []
-        }
-        clientDataLoading.value = false
-    })
-
-}
 
 onMounted(async () => {
     await nextTick()

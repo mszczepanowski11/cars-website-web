@@ -129,7 +129,15 @@ watch(mobileOpen, (open) => {
     <header class="carizo-nav" :style="{ top: showAnnBar ? '38px' : '0' }">
         <div class="nav-inner">
             <NuxtLink to="/" class="logo" @click="closeMobile">
-                <img src="/carizo-logo.svg" alt="CARIZO" class="logo-img" loading="lazy" decoding="async" />
+                <!--
+                    Logo bylo `loading="lazy"` i BEZ wymiarow - a lezy na samej gorze kazdej
+                    strony, wiec odkladanie go na pozniej nie oszczedzalo niczego, tylko
+                    powodowalo, ze pasek startowal z pusta luka i doklejal 199 px w chwili
+                    wczytania obrazu. Wszystko po prawej przeskakiwalo. Atrybuty width/height
+                    daja przegladarce proporcje od razu, wiec miejsce jest zarezerwowane
+                    jeszcze przed pobraniem pliku.
+                -->
+                <img src="/carizo-logo.svg" alt="CARIZO" class="logo-img" width="310" height="56" fetchpriority="high" decoding="async" />
             </NuxtLink>
 
             <nav class="nav-links">
@@ -333,7 +341,11 @@ watch(mobileOpen, (open) => {
 .carizo-nav {
     position: fixed;
     top: 0;
-    width: 100%;
+    // Zakotwiczony do OBU krawędzi. Samo `width: 100%` nie wystarcza: element
+    // `fixed` bez `left` zostaje na pozycji statycznej, więc każdy niezerowy
+    // margines `body` przesuwał cały pasek w prawo i wypychał go poza ekran.
+    left: 0;
+    right: 0;
     z-index: 998;
     background: rgba(4, 4, 4, 0.95);
     backdrop-filter: blur(14px);
