@@ -225,6 +225,22 @@ async function subscribeNewsletter() {
   gap: 24px;
   flex-wrap: wrap;
   justify-content: space-between;
+
+  // Na wąskim ekranie zachęta i formularz idą JEDNO POD DRUGIM. Wcześniej dzieliły
+  // jeden wiersz: tekst zabierał 235 z 331 px, na formularz zostawały 72 px, w które
+  // przycisk „Zapisz się" (98 px, nie da się go zwęzić) po prostu się nie mieścił -
+  // i wypychał całą stronę poza ekran. Pole na wejście adresu miało wtedy 30 px.
+  @include respond-to(sm) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    // KONIECZNE razem ze zmianą kierunku na pionowy. `flex-wrap: wrap` w kolumnie
+    // zawija na KOLUMNY, a nie na wiersze - szerokość każdej kolumny wyznacza wtedy
+    // najszersze dziecko (tu: cały tekst zachęty w jednej linii, 317 px), a `stretch`
+    // rozciąga elementy do tej kolumny, nie do kontenera. Efekt: oba wiersze były
+    // szersze od stopki i wypychały stronę.
+    flex-wrap: nowrap;
+  }
 }
 
 .fn-text {
@@ -253,6 +269,12 @@ async function subscribeNewsletter() {
   gap: 8px;
   flex: 1;
   max-width: 400px;
+
+  // CELOWO BEZ `min-width: 0`. Automatyczny rozmiar minimalny elementu flex jest tu
+  // zabezpieczeniem: nie pozwala zwęzić wiersza poniżej szerokości przycisku, który
+  // i tak nie potrafi się zwęzić. Dodanie tu zera „żeby się mieściło" daje efekt
+  // odwrotny - wiersz kurczy się, a przycisk wychodzi poza niego i poza ekran.
+  @include respond-to(sm) { max-width: none; }
 }
 
 .fn-input {

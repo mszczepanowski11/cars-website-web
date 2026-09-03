@@ -44,6 +44,17 @@ html, body {
 // przewijanie CAŁEJ strony - na każdym podstronie serwisu.
 body { margin: 0; }
 
+// Pola formularza maja WBUDOWANA szerokosc domyslna (`<input>` to okolo 20 znakow)
+// i jako elementy kontenera flex nie moga zejsc ponizej niej - automatyczny rozmiar
+// minimalny elementu flex to jego rozmiar min-content. Dopoki nie dostana `min-width: 0`,
+// wiersz „pole + przycisk" NIE ZWEZI SIE ponizej tej szerokosci, tylko wypchnie
+// zawartosc poza ekran. Widac to bylo na stopce (obecnej na kazdej stronie)
+// i na wyszukiwarce firm: przy 360 px strona przewijala sie na boki o kilka pikseli,
+// przy czym o ile dokladnie - zalezalo od tego, jaka czcionke zastepcza ma przegladarka.
+// U mnie miescilo sie o wlos, na serwerze CI juz nie. To jest wlasnie ten rodzaj wady,
+// ktora „u mnie dziala".
+input, select, textarea { min-width: 0; }
+
 a { text-decoration: none; color: inherit; }
 
 .v-application {

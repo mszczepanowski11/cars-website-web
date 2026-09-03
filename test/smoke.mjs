@@ -59,8 +59,16 @@ const PAGES = [
     { path: '/ogloszenia/1003', noConsent: true, clickable: '.mobile-cta-bar', onlyMobile: true },
 ]
 
-/** Szerokości: mały telefon, tablet, laptop. */
+/** Szerokości: najwęższy realny telefon, mały telefon, tablet, laptop. */
 const VIEWPORTS = [
+    // 320 px to iPhone SE i starsze Androidy - najwezszy ekran, ktory ma sens obslugiwac.
+    // Jest tu jednak z drugiego powodu: DAJE ZAPAS. Dwa razy z rzedu okazalo sie, ze
+    // uklad miescil sie przy 360 px u mnie i NIE miescil na serwerze CI, bo tam
+    // `sans-serif` rozwiazuje sie na inna czcionke - szersza o kilka procent. Strona,
+    // ktora miesci sie przy 320, ma przy 360 czterdziesci pikseli marginesu bledu
+    // i takie roznice przestaja ja wywracac. Dotyczy to tez uzytkownika, u ktorego
+    // webfont jeszcze sie nie wczytal.
+    { w: 320, h: 720, mobile: true },
     { w: 360, h: 780, mobile: true },
     { w: 768, h: 1024, mobile: false },
     { w: 1440, h: 900, mobile: false },
@@ -222,11 +230,27 @@ async function main() {
                     // przyczyna, lezaca nizej, nigdy nie trafiala do raportu i szukalem
                     // jej trzy razy w zlym miejscu.
                     const najglebsze = wystajace.filter(el => !wystajace.some(inny => inny !== el && el.contains(inny)))
-                    culprits = najglebsze.slice(0, 4).map(el => {
-                        const cls = typeof el.className === 'string' && el.className.trim()
-                            ? '.' + el.className.trim().split(/\s+/)[0] : ''
-                        return el.tagName.toLowerCase() + cls + '@' + Math.round(el.getBoundingClientRect().right)
-                    })
+                    // Element przyciety przez przewijany lub ukryty kontener NIE MOZE rozepchnac
+                    // dokumentu - poziomy pasek kart kategorii czy wiersz parametrow ogloszenia
+                    // wystaja poza ekran z zalozenia i przewijaja sie same. Wypisywanie ich
+                    // jako winnych to falszywy trop; przy poprzedniej wersji zajely cala liste.
+                    const nieprzyciety = el => {
+                        for (let a = el.parentElement; a && a !== document.documentElement; a = a.parentElement) {
+                            const cs = getComputedStyle(a)
+                            if (cs.overflowX !== 'visible' || cs.overflowY !== 'visible') return false
+                        }
+                        return true
+                    }
+                    culprits = najglebsze
+                        .filter(nieprzyciety)
+                        // Najdalej wystajacy na poczatku - to on wyznacza szerokosc dokumentu.
+                        .sort((a, b) => b.getBoundingClientRect().right - a.getBoundingClientRect().right)
+                        .slice(0, 5)
+                        .map(el => {
+                            const cls = typeof el.className === 'string' && el.className.trim()
+                                ? '.' + el.className.trim().split(/\s+/)[0] : ''
+                            return el.tagName.toLowerCase() + cls + '@' + Math.round(el.getBoundingClientRect().right)
+                        })
                 }
                 // Pola formularza bez nazwy dostępnej dla czytnika ekranu. Etykieta bywa
                 // widoczna na ekranie, ale technicznie niepowiązana z polem - wtedy czytnik
