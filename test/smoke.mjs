@@ -41,6 +41,12 @@ const PAGES = [
     { path: '/kontakt' },
     { path: '/o-nas' },
     { path: '/ogloszenia/audi-q5-2020-warszawa-1003', expect: '.advert-page' },
+    // Ta sama strona, ale oczami kogoś, kto wchodzi PIERWSZY RAZ - bez zapisanej zgody
+    // na cookies. Baner zgody jest przyklejony do dołu ekranu z bardzo wysoką warstwą
+    // i dwukrotnie w tym projekcie przykrył element, który musi być klikalny:
+    // przycisk „Zadzwoń" na ogłoszeniu i „Pokaż N ogłoszeń" w filtrach.
+    // `clickable` sprawdza, czy w środku wskazanego elementu naprawdę leży ON, a nie coś nad nim.
+    { path: '/ogloszenia/audi-q5-2020-warszawa-1003', noConsent: true, clickable: '.mobile-cta-bar', onlyMobile: true },
 ]
 
 /** Szerokości: mały telefon, tablet, laptop. */
@@ -103,13 +109,7 @@ async function main() {
         // maskował błąd: panel filtrów lądował POD nim). Zgoda jest trzymana
         // w localStorage pod kluczem `cookieConsent` - ustawienie ciasteczka o podobnej
         // nazwie nic nie dawało i baner wychodził na każdym sprawdzeniu.
-        await ctx.addInitScript(() => {
-            try {
-                localStorage.setItem('cookieConsent', JSON.stringify({
-                    analytics: false, marketing: false, timestamp: new Date().toISOString(),
-                }))
-            } catch { /* prywatne okno - trudno, baner się pokaże */ }
-        })
+
 
         // Strony sprawdzamy równolegle, po kilka naraz. Sekwencyjnie 12 stron razy
         // 3 szerokości trwało ponad osiem minut, co w CI zniechęca do czekania na wynik -
@@ -118,8 +118,44 @@ async function main() {
         const CONCURRENCY = 4
         await Promise.all(Array.from({ length: CONCURRENCY }, async () => {
           while (queue.length) {
-            const { path, expect } = queue.shift()
+            const { path, expect, clickable, noConsent, onlyMobile } = queue.shift()
+            if (onlyMobile && !vp.mobile) continue
             const page = await ctx.newPage()
+
+            if (!noConsent) {
+                await page.addInitScript(() => {
+                    try {
+                        localStorage.setItem('cookieConsent', JSON.stringify({
+                            analytics: false, marketing: false, timestamp: new Date().toISOString(),
+                        }))
+                    } catch { /* prywatne okno - trudno, baner się pokaże */ }
+                })
+            }
+
+            // Pomiar przesunięć układu (CLS) - Google liczy go do oceny strony, a gołym
+            // okiem widać go jako „treść skacze w trakcie ładowania". Mierzymy skutek,
+            // nie jego domniemaną przyczynę: wcześniejszy audyt zakładał, że obrazy bez
+            // atrybutu `width` powodują skoki, a pomiar pokazał CLS równy zeru - bo
+            // wszystkie siedzą w kontenerach o stałych proporcjach.
+            await page.addInitScript(() => {
+                window.__cls = 0
+                window.__shifts = []
+                new PerformanceObserver(list => {
+                    for (const e of list.getEntries()) {
+                        if (e.hadRecentInput) continue
+                        window.__cls += e.value
+                        for (const src of (e.sources || [])) {
+                            const n = src.node
+                            if (n && n.nodeType === 1) {
+                                const cls = typeof n.className === 'string' && n.className.trim()
+                                    ? '.' + n.className.trim().split(/\s+/)[0] : ''
+                                window.__shifts.push(n.tagName.toLowerCase() + cls)
+                            }
+                        }
+                    }
+                }).observe({ type: 'layout-shift', buffered: true })
+            })
+
             const jsErrors = []
             page.on('pageerror', e => jsErrors.push(String(e).split('\n')[0].slice(0, 160)))
 
@@ -166,6 +202,8 @@ async function main() {
                     iconCount: icons.length,
                     // Strona, która wyrenderowała pusty <body>, technicznie „działa”.
                     textLength: (document.body.innerText || '').trim().length,
+                    cls: window.__cls ?? 0,
+                    shifts: [...new Set(window.__shifts ?? [])].slice(0, 3),
                 }
             })
 
@@ -179,12 +217,31 @@ async function main() {
             if (result.textLength < 200) {
                 failures.push(`${label} — strona prawie pusta (${result.textLength} znaków tekstu)`)
             }
+            // Próg Google dla oceny „dobry". Dziś wszystkie strony mają 0,000 -
+            // ten warunek pilnuje, żeby tak zostało.
+            if (result.cls > 0.1) {
+                failures.push(`${label} — treść skacze w trakcie ładowania, CLS ${result.cls.toFixed(3)} (${result.shifts.join(', ')})`)
+            }
             if (expect && await page.locator(expect).count() === 0) {
                 failures.push(`${label} — brak oczekiwanej treści (${expect})`)
             }
+            if (clickable) {
+                const verdict = await page.evaluate(sel => {
+                    const el = document.querySelector(sel)
+                    if (!el) return 'brak elementu'
+                    const r = el.getBoundingClientRect()
+                    if (r.width === 0 || r.height === 0) return 'element o zerowym rozmiarze'
+                    const top = document.elementFromPoint(r.left + r.width * 0.25, r.top + r.height / 2)
+                    if (el.contains(top)) return 'ok'
+                    const cls = top && typeof top.className === 'string' && top.className.trim()
+                        ? '.' + top.className.trim().split(/\s+/)[0] : ''
+                    return `przykryty przez ${top ? top.tagName.toLowerCase() + cls : 'nic'}`
+                }, clickable)
+                if (verdict !== 'ok') failures.push(`${label} — ${clickable} nie jest klikalny: ${verdict}`)
+            }
 
             if (!failures.some(f => f.startsWith(label))) {
-                console.log(`  ok   ${label}  (ikon: ${result.iconCount})`)
+                console.log(`  ok   ${label}  (ikon: ${result.iconCount}, CLS ${result.cls.toFixed(3)})`)
             }
             await page.close()
           }
@@ -202,7 +259,7 @@ main()
             failures.forEach(f => console.error('  ' + f))
             process.exitCode = 1
         } else {
-            console.log(`\n✓ Test dymny: ${PAGES.length} stron × ${VIEWPORTS.length} szerokości — bez zastrzeżeń`)
+            console.log(`\n✓ Test dymny: ${PAGES.length} sprawdzanych adresow × ${VIEWPORTS.length} szerokości — bez zastrzeżeń`)
         }
     })
     .catch(err => {

@@ -1,7 +1,7 @@
 <template>
     <Teleport to="body">
         <transition name="slide-up">
-            <div v-if="visible && !showPanel" class="cookie-bar">
+            <div v-if="visible && !showPanel" ref="barEl" class="cookie-bar">
                 <div class="cookie-inner">
                     <div class="cookie-text">
                         <CzIcon icon="mdi-cookie-outline" size="20" class="cookie-icon" />
@@ -151,6 +151,39 @@ function applyConsent(p: CookiePrefs) {
         personalization_storage: p.analytics ? 'granted' : 'denied',
     })
 }
+
+/**
+ * Baner publikuje swoją wysokość jako `--cookie-bar-h`.
+ *
+ * DLACZEGO
+ * Baner jest przyklejony do dołu ekranu z bardzo wysoką warstwą (9999) i przykrywał
+ * wszystko, co też siedzi przy dolnej krawędzi. Na stronie ogłoszenia zasłaniał
+ * przycisk „Zadzwoń" - zmierzone: dla każdego, kto wchodził PIERWSZY RAZ,
+ * najważniejsza akcja w całym serwisie była nieklikalna.
+ *
+ * Podbijanie warstw pojedynczym paskom to gra w kotka i myszkę (i tak czy inaczej
+ * ukryłaby baner, który musi być widoczny). Zamiast tego baner mówi, ile miejsca
+ * zajmuje, a paski przy dolnej krawędzi ustawiają się nad nim.
+ */
+const barEl = ref<HTMLElement | null>(null)
+
+function publishHeight(px: number) {
+    if (import.meta.client) document.documentElement.style.setProperty('--cookie-bar-h', `${Math.round(px)}px`)
+}
+
+onMounted(() => {
+    // Wysokość zależy od szerokości ekranu (tekst zawija się inaczej), więc mierzymy
+    // ją na bieżąco zamiast wpisywać na sztywno.
+    const ro = new ResizeObserver(entries => {
+        for (const e of entries) publishHeight(e.contentRect.height + 2)
+    })
+    watch(barEl, el => {
+        ro.disconnect()
+        if (el) ro.observe(el)
+        else publishHeight(0)
+    }, { immediate: true })
+    onUnmounted(() => { ro.disconnect(); publishHeight(0) })
+})
 </script>
 
 <style lang="scss" scoped>

@@ -4599,10 +4599,13 @@ onUnmounted(() => {
     @include respond-to(md) {
         display: flex;
         position: fixed;
-        bottom: 0;
+        // Nad banerem zgody, jeśli jest widoczny. Zmienną publikuje CookieConsent;
+        // gdy banera nie ma, wartość zapasowa to 0 i pasek siada na krawędzi ekranu.
+        bottom: var(--cookie-bar-h, 0px);
         left: 0;
         right: 0;
         z-index: 200;
+        transition: bottom 0.2s ease;
         gap: 10px;
         padding: 12px 16px;
         padding-bottom: max(12px, env(safe-area-inset-bottom));
