@@ -121,7 +121,9 @@
     "sortPriceDesc": "Preis: absteigend",
     "sortYearDesc": "Jahr: neueste",
     "sortMileageAsc": "Laufleistung: niedrigste",
-    "sortPowerDesc": "Leistung: höchste"
+    "sortPowerDesc": "Leistung: höchste",
+    "filters": "Filter",
+    "sortBy": "Sortierung"
   },
   "firmy": {
     "eyebrow": "Automotive-Firmendatenbank",

@@ -26,10 +26,23 @@
             </div>
         </div>
 
-        <!-- ── Filter panel ── -->
-        <div class="fp-wrap">
+        <!--
+            Pasek filtrów. Na szerokim ekranie leży w treści strony jak dotąd.
+            Na telefonie zamienia się w pełnoekranowy panel otwierany przyciskiem
+            (patrz `.fp-trigger-bar` pod spodem) - wcześniej zajmował 412 px i wypychał
+            pierwsze ogłoszenie poza dolną krawędź ekranu.
+        -->
+        <div class="fp-wrap" :class="{ 'fp-wrap--open': mobileFiltersOpen }">
             <div class="container">
                 <div class="fp-panel">
+
+                    <!-- Nagłówek panelu, tylko na telefonie -->
+                    <div class="fp-sheet-head">
+                        <h2 class="fp-sheet-title">{{ $t('adverts.filters') }}</h2>
+                        <button type="button" class="fp-sheet-close" aria-label="Zamknij filtry" @click="mobileFiltersOpen = false">
+                            <CzIcon icon="mdi-close" size="22" />
+                        </button>
+                    </div>
 
                     <!-- PRIMARY ROW -->
                     <div class="fp-primary">
@@ -569,6 +582,34 @@
                         </div>
                     </transition>
 
+                    <!-- Stopka panelu, tylko na telefonie: liczba wyników na przycisku -->
+                    <div class="fp-sheet-foot">
+                        <button v-if="activeFilterCount" type="button" class="fp-sheet-clear" @click="clearFilters">
+                            {{ $t('adverts.clearFilters') }}
+                        </button>
+                        <button type="button" class="fp-sheet-apply" @click="mobileFiltersOpen = false">
+                            <CzIcon icon="mdi-magnify" size="17" />
+                            {{ loading ? $t('adverts.loading') : `Pokaż ${total.toLocaleString('pl')} ogłoszeń` }}
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Pasek uruchamiający filtry - wyłącznie telefon -->
+        <div class="fp-trigger-bar">
+            <div class="container fp-trigger-inner">
+                <button type="button" class="fp-trigger" @click="mobileFiltersOpen = true">
+                    <CzIcon icon="mdi-tune-variant" size="17" />
+                    {{ $t('adverts.filters') }}
+                    <span v-if="activeFilterCount" class="fp-trigger-badge">{{ activeFilterCount }}</span>
+                </button>
+                <div class="fp-trigger-sort">
+                    <CzIcon icon="mdi-sort" size="16" />
+                    <select v-model="f.sortBy" class="fp-trigger-select" :aria-label="$t('adverts.sortBy')" @change="load(1)">
+                        <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -865,6 +906,44 @@ const activeBrand = computed(() =>
 const activeModel = computed(() =>
     f.modelId ? (models.value.find(m => m.id === f.modelId) ?? null) : null
 )
+
+// Filtry na telefonie: pełnoekranowy panel zamiast bloku, który spychał wyniki
+// poza ekran (412 px wysokości; pierwsze ogłoszenie zaczynało się na 830 px przy
+// ekranie 844 px, więc wchodząc na listę nie widziało się ANI JEDNEGO ogłoszenia).
+const mobileFiltersOpen = ref(false)
+
+// Blokada przewijania tła, gdy panel jest otwarty - bez tego przewijanie palcem
+// po panelu „przechodzi" na stronę pod spodem i lista ucieka w tle.
+watch(mobileFiltersOpen, open => {
+    if (import.meta.client) document.body.style.overflow = open ? 'hidden' : ''
+})
+onUnmounted(() => { if (import.meta.client) document.body.style.overflow = '' })
+
+/**
+ * Ile filtrów jest realnie ustawionych. Liczba na przycisku mówi użytkownikowi,
+ * że wyniki są zawężone - inaczej „mało wyników" wygląda jak pusty serwis,
+ * a nie jak skutek własnych ustawień.
+ */
+const activeFilterCount = computed(() => {
+    let n = 0
+    const proste: unknown[] = [
+        f.categoryId, f.textSearch, f.brandId, f.modelId, f.fuelTypeId, f.bodyTypeId,
+        f.gearboxId, f.driveTypeId, f.colorId, f.priceFrom, f.priceTo, f.yearFrom, f.yearTo,
+        f.mileageFrom, f.mileageTo, f.powerFrom, f.powerTo, f.engineSizeFrom, f.engineSizeTo,
+        f.payloadFrom, f.payloadTo, f.catalogNumber, f.partCategoryId, f.partSubcategoryId,
+        f.side, f.quantityFrom, f.oemNumber, f.manufacturerPartNumber, f.vehicleSubtypeId,
+        f.sellerType, f.condition, f.locationCity, f.vin, f.doorsFrom, f.doorsTo,
+        f.seatsFrom, f.seatsTo, f.emissionFrom, f.emissionTo, f.euroNorm,
+        f.originCountry, f.era,
+    ]
+    for (const v of proste) if (v !== null && v !== undefined && v !== '') n++
+    // Trójstanowe (tak / nie / bez znaczenia) — liczy się tylko realny wybór.
+    for (const v of [f.hasDamage, f.hasWarranty, f.hasServiceBook, f.isImported,
+                     f.hasFinancing, f.isLuxuryBrand, f.isSporty]) if (v !== null) n++
+    n += f.featureIds.length
+    n += Object.keys(attrFilters).length
+    return n
+})
 
 const hasActiveFilters = computed(() =>
     !!(f.categoryId || f.textSearch || f.brandId || f.modelId || f.fuelTypeId || f.bodyTypeId ||
@@ -1402,7 +1481,211 @@ onMounted(async () => {
 
 // ── Filter panel ─────────────────────────────────────────────────────────────────────
 .fp-wrap {
-    padding: 20px 0 0;
+    padding: $s-5 0 0;
+}
+
+// ── Filtry na telefonie: pełnoekranowy panel ────────────────────────────────
+// Nagłówek, stopka i pasek uruchamiający istnieją WYŁĄCZNIE na wąskim ekranie.
+// Na desktopie panel zostaje dokładnie tym, czym był - w treści strony.
+.fp-sheet-head,
+.fp-sheet-foot,
+.fp-trigger-bar { display: none; }
+
+@media (max-width: $bp-mobile) {
+    .fp-wrap {
+        position: fixed;
+        inset: 0;
+        // Ponad banerem zgody (9999). Baner jest przyklejony do dołu ekranu i przykrywał
+        // przycisk „Pokaż N ogłoszeń" - czyli dla KAŻDEGO, kto wchodzi pierwszy raz
+        // i nie kliknął jeszcze zgody, panel filtrów nie dawał się zamknąć przyciskiem.
+        // Baner wraca na wierzch, gdy panel się zamyka.
+        z-index: 10001;
+        padding: 0;
+        background: $bg;
+        overflow-y: auto;
+        // Zamknięty panel jest wyjęty z układu, a nie tylko przezroczysty -
+        // inaczej przechwytywałby dotknięcia w miejscu, w którym nic nie widać.
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
+        // Miejsce na przyklejoną stopkę z przyciskiem „Pokaż N ogłoszeń".
+        padding-bottom: calc(76px + env(safe-area-inset-bottom));
+
+        &--open {
+            visibility: visible;
+            opacity: 1;
+            transform: none;
+        }
+
+        > .container { width: 100%; max-width: none; padding: 0; }
+    }
+
+    .fp-panel {
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        padding: 0 $s-4 $s-5;
+    }
+
+    .fp-sheet-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $s-3;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        margin: 0 -#{$s-4} $s-4;
+        padding: $s-4;
+        background: $bg;
+        border-bottom: 1px solid $border;
+    }
+
+    .fp-sheet-title {
+        margin: 0;
+        font-size: $fs-lg;
+        font-weight: $fw-bold;
+        color: $text;
+    }
+
+    .fp-sheet-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: $touch-min;
+        height: $touch-min;
+        border: 1px solid $border;
+        border-radius: $r-sm;
+        background: transparent;
+        color: $text-muted;
+        cursor: pointer;
+        &:hover { color: $text; border-color: rgba(255,255,255,0.2); }
+    }
+
+    .fp-sheet-foot {
+        display: flex;
+        align-items: center;
+        gap: $s-2;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: $s-3 $s-4 calc(#{$s-3} + env(safe-area-inset-bottom));
+        background: rgba(10,10,10,0.96);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid $border;
+    }
+
+    .fp-sheet-clear {
+        flex-shrink: 0;
+        min-height: $touch-min;
+        padding: 0 $s-35;
+        border: 1px solid $border;
+        border-radius: $r-sm;
+        background: transparent;
+        color: $text-muted;
+        font-family: 'Inter', sans-serif;
+        font-size: $fs-sm;
+        font-weight: $fw-semibold;
+        cursor: pointer;
+    }
+
+    .fp-sheet-apply {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $s-2;
+        min-height: $touch-min;
+        border: none;
+        border-radius: $r-sm;
+        background: $red;
+        color: #fff;
+        font-family: 'Inter', sans-serif;
+        font-size: $fs-base;
+        font-weight: $fw-bold;
+        cursor: pointer;
+    }
+
+    // Pasek nad listą: otwiera filtry i trzyma sortowanie pod ręką.
+    .fp-trigger-bar {
+        display: block;
+        padding: $s-3 0 0;
+    }
+
+    .fp-trigger-inner {
+        display: flex;
+        align-items: center;
+        gap: $s-2;
+    }
+
+    .fp-trigger {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $s-2;
+        min-height: $touch-min;
+        border: 1px solid $border;
+        border-radius: $r-sm;
+        background: rgba(255,255,255,0.03);
+        color: $text;
+        font-family: 'Inter', sans-serif;
+        font-size: $fs-sm;
+        font-weight: $fw-semibold;
+        cursor: pointer;
+    }
+
+    .fp-trigger-badge {
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: $r-pill;
+        background: $red;
+        color: #fff;
+        font-size: $fs-xs;
+        font-weight: $fw-bold;
+        line-height: 20px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .fp-trigger-sort {
+        display: flex;
+        align-items: center;
+        gap: $s-15;
+        flex-shrink: 0;
+        min-width: 0;
+        padding: 0 $s-25;
+        min-height: $touch-min;
+        border: 1px solid $border;
+        border-radius: $r-sm;
+        background: rgba(255,255,255,0.03);
+        color: $text-dim;
+    }
+
+    .fp-trigger-select {
+        min-width: 0;
+        max-width: 130px;
+        border: none;
+        background: transparent;
+        color: $text;
+        font-family: 'Inter', sans-serif;
+        // iOS powiększa stronę przy wejściu w pole poniżej 16 px.
+        font-size: $fs-input;
+        &:focus { outline: none; }
+    }
+
+    // Przyklejona stopka panelu przejmuje rolę zatwierdzenia. Wewnętrzne przyciski
+    // „Szukaj" i „Pokaż N ogłoszeń" robiłyby dokładnie to samo, jeden nad drugim.
+    .fp-search-btn,
+    .fp-apply-btn,
+    .fp-clear-btn { display: none; }
+
+    // Sortowanie jest teraz w pasku nad listą - powtarzanie go w nagłówku wyników
+    // dawałoby dwa te same przełączniki w odległości jednego ekranu.
+    .results-hd .sort-wrap { display: none; }
 }
 
 .fp-panel {

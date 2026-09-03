@@ -121,7 +121,9 @@
     "sortPriceDesc": "Price: high to low",
     "sortYearDesc": "Year: newest",
     "sortMileageAsc": "Mileage: lowest",
-    "sortPowerDesc": "Power: highest"
+    "sortPowerDesc": "Power: highest",
+    "filters": "Filters",
+    "sortBy": "Sort by"
   },
   "firmy": {
     "eyebrow": "Automotive company database",

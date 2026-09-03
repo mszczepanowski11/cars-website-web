@@ -99,13 +99,17 @@ async function main() {
             viewport: { width: vp.w, height: vp.h },
             isMobile: vp.mobile,
         })
-        // Baner zgody przykrywałby treść i zaburzał pomiary — zgoda jest już zapisana.
-        await ctx.addCookies([{
-            name: 'cookie_consent',
-            value: '{"analytics":false,"marketing":false}',
-            domain: '127.0.0.1',
-            path: '/',
-        }])
+        // Baner zgody przykrywa dolną część ekranu i zaburza pomiary (a przy okazji
+        // maskował błąd: panel filtrów lądował POD nim). Zgoda jest trzymana
+        // w localStorage pod kluczem `cookieConsent` - ustawienie ciasteczka o podobnej
+        // nazwie nic nie dawało i baner wychodził na każdym sprawdzeniu.
+        await ctx.addInitScript(() => {
+            try {
+                localStorage.setItem('cookieConsent', JSON.stringify({
+                    analytics: false, marketing: false, timestamp: new Date().toISOString(),
+                }))
+            } catch { /* prywatne okno - trudno, baner się pokaże */ }
+        })
 
         // Strony sprawdzamy równolegle, po kilka naraz. Sekwencyjnie 12 stron razy
         // 3 szerokości trwało ponad osiem minut, co w CI zniechęca do czekania na wynik -
