@@ -15,6 +15,10 @@ export interface SlugSource {
     brand?: { name?: string | null } | null
     model?: { name?: string | null } | null
     generation?: { name?: string | null } | null
+    /** Kategoria pojazdu — pierwszy segment adresu, np. "osobowe". */
+    category?: { slug?: string | null; name?: string | null } | null
+    /** Wersja silnikowa, np. "2.0 TDI" — trafia do części opisowej. */
+    engineVersion?: { name?: string | null } | null
 }
 
 /** Zamienia polskie i inne znaki diakrytyczne oraz wszystko spoza [a-z0-9] na bezpieczny tekst. */
@@ -32,8 +36,10 @@ export function slugifyPart(input: string | null | undefined): string {
 }
 
 /**
- * Część opisowa adresu. Kolejność od najbardziej do najmniej rozpoznawalnego:
- * marka → model → generacja → rok → miasto.
+ * Część opisowa adresu — ostatni segment, ten, który człowiek czyta.
+ *
+ * Kolejność od najbardziej do najmniej rozpoznawalnego:
+ * marka → model → generacja → wersja silnikowa → rok → miasto.
  *
  * Dla kategorii bez marki i modelu (części, opony, felgi, maszyny) fallbackiem
  * jest tytuł, dzięki czemu adres pozostaje sensowny dla KAŻDEJ kategorii,
@@ -45,6 +51,9 @@ export function buildAdvertSlug(advert: SlugSource): string {
     if (advert.brand?.name) parts.push(slugifyPart(advert.brand.name))
     if (advert.model?.name) parts.push(slugifyPart(advert.model.name))
     if (advert.generation?.name) parts.push(slugifyPart(advert.generation.name))
+    // Wersja silnikowa ("2.0 TDI") to dla kupującego jeden z pierwszych filtrów -
+    // w adresie działa jak dopowiedzenie, po którym widać, że to właśnie ta odmiana.
+    if (advert.engineVersion?.name) parts.push(slugifyPart(advert.engineVersion.name))
 
     if (parts.length === 0 && advert.title) parts.push(slugifyPart(advert.title))
 
@@ -64,21 +73,68 @@ export function buildAdvertSlug(advert: SlugSource): string {
     return slug
 }
 
-/** Pełna ścieżka. Jedyne miejsce w projekcie, które zna kształt tego adresu. */
+/** Znacznik identyfikatora na końcu adresu. */
+const ID_MARK = 'ID'
+
+/**
+ * Pełna ścieżka ogłoszenia. Jedyne miejsce w projekcie, które zna kształt tego adresu.
+ *
+ * Postać docelowa:
+ *   /ogloszenia/osobowe/audi/q5/audi-q5-2-0-tdi-2020-warszawa-ID1234
+ *    └ kategoria  └ marka └ model └──── część czytelna ────┘  └ ID
+ *
+ * Segmenty kategorii, marki i modelu dają wyszukiwarce hierarchię serwisu -
+ * bez nich wszystkie ogłoszenia leżą na jednym poziomie i nie da się zbudować
+ * stron pośrednich typu "wszystkie Audi Q5", które w tej branży generują
+ * większość ruchu z wyszukiwarki.
+ *
+ * Segmenty pojawiają się tylko wtedy, gdy dane naprawdę są. Ogłoszenie części
+ * bez marki dostanie krótszy adres zamiast segmentu "brak" albo pustego członu.
+ *
+ * Identyfikator zostaje NA KOŃCU i jest jedynym źródłem prawdy. Dzięki temu
+ * zmiana tytułu, marki czy kategorii nie unieważnia istniejących linków -
+ * strona i tak znajdzie ogłoszenie, po czym przekieruje na aktualną postać.
+ * Przedrostek "ID" usuwa dwuznaczność: bez niego adres urwany na roczniku
+ * ("...-audi-q5-2020") wyglądałby jak poprawne ID 2020.
+ */
 export function advertPath(advert: SlugSource): string {
+    const segments = ['ogloszenia']
+
+    const category = slugifyPart(advert.category?.slug ?? advert.category?.name)
+    const brand = slugifyPart(advert.brand?.name)
+    const model = slugifyPart(advert.model?.name)
+
+    if (category) segments.push(category)
+    // Model bez marki nie niesie informacji ("q5" samo w sobie nic nie mówi),
+    // więc dokładamy go dopiero, gdy marka też jest znana.
+    if (brand) {
+        segments.push(brand)
+        if (model) segments.push(model)
+    }
+
     const slug = buildAdvertSlug(advert)
-    return slug ? `/ogloszenia/${slug}-${advert.id}` : `/ogloszenia/${advert.id}`
+    segments.push(slug ? `${slug}-${ID_MARK}${advert.id}` : `${ID_MARK}${advert.id}`)
+
+    return '/' + segments.join('/')
 }
 
 /**
- * Wyciąga ID z adresu. Autorytatywne jest ID na KOŃCU — dzięki temu działa
- * zarówno pełna postać ("porsche-911-2018-warszawa-123456"), jak i samo ID,
- * a zmiana tytułu ogłoszenia nigdy nie unieważnia istniejących linków.
+ * Wyciąga ID z adresu ogłoszenia.
+ *
+ * Rozpoznaje trzy postacie, bo wszystkie trzy żyją w sieci:
+ *   1. aktualną      "...-warszawa-ID1234"
+ *   2. poprzednią    "...-warszawa-1234"   (adresy sprzed tej zmiany)
+ *   3. samo ID       "/ogloszenia/1234"    (skrót, np. z wiadomości)
+ *
+ * Postać z przedrostkiem sprawdzamy pierwsza, bo jest jednoznaczna.
  */
 export function parseAdvertId(slugParam: string | string[] | undefined): number | null {
-    const raw = Array.isArray(slugParam) ? slugParam.join('/') : (slugParam ?? '')
-    const match = /(\d+)$/.exec(raw.trim())
+    const raw = (Array.isArray(slugParam) ? slugParam.join('/') : (slugParam ?? '')).trim()
+
+    const withMark = new RegExp(`${ID_MARK}(\\d+)$`, 'i').exec(raw)
+    const match = withMark ?? /(\d+)$/.exec(raw)
     if (!match) return null
+
     const id = Number(match[1])
     return Number.isFinite(id) && id > 0 ? id : null
 }
