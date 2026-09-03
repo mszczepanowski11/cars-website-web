@@ -1,4 +1,4 @@
-import { advertPath } from '~shared/advertSlug'
+import { advertPath, slugifyPart } from '~shared/advertSlug'
 export interface SitemapUrl {
     loc: string
     lastmod?: string
@@ -35,7 +35,7 @@ function localizedRoutes(path: string, priority: string, changefreq: string, las
 // from search engines' index once the old hard cap was hit.
 const HARD_SAFETY_LIMIT = 200_000
 
-export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
+async function buildSitemapUrlsUncached(): Promise<SitemapUrl[]> {
     const config = useRuntimeConfig()
     const apiBase = (config.public.apiBase as string).replace(/\/$/, '')
     const now = new Date().toISOString().split('T')[0]
@@ -63,9 +63,44 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
     // category-aware title/description/canonical for these) - list them so Google can discover
     // and rank "Auta osobowe — ogłoszenia" etc. separately from the generic /adverts page.
     try {
-        const categoriesRes = await $fetch<Array<{ id: number }>>(`${apiBase}/api/Taxonomy/categories`).catch(() => null)
+        const categoriesRes = await $fetch<Array<{ id: number; name?: string; slug?: string }>>(
+            `${apiBase}/api/Taxonomy/categories`
+        ).catch(() => null)
+
         for (const cat of categoriesRes ?? []) {
             dynamicUrls.push({ loc: `/adverts?categoryId=${cat.id}`, priority: '0.7', changefreq: 'daily' })
+
+            // Strony pośrednie kategoria → marka → model (/kategorie/...). To one zbierają
+            // w tej branży ruch z wyszukiwarki: człowiek wpisuje "audi q5 używane", a nie
+            // nazwę portalu. Bez wypisania ich tutaj Google trafi na nie tylko przez linki
+            // wewnętrzne, czyli dużo wolniej.
+            const catSlug = slugifyPart(cat.slug ?? cat.name)
+            if (!catSlug || catSlug === 'inne') continue
+            dynamicUrls.push({ loc: `/kategorie/${catSlug}`, priority: '0.8', changefreq: 'daily' })
+
+            const brands = await $fetch<Array<{ id: number; name?: string }>>(
+                `${apiBase}/api/Taxonomy/brands/category/${cat.id}`
+            ).catch(() => null)
+
+            for (const brand of brands ?? []) {
+                const brandSlug = slugifyPart(brand.name)
+                if (!brandSlug) continue
+                dynamicUrls.push({ loc: `/kategorie/${catSlug}/${brandSlug}`, priority: '0.7', changefreq: 'daily' })
+
+                const models = await $fetch<Array<{ id: number; name?: string }>>(
+                    `${apiBase}/api/Taxonomy/brands/${brand.id}/models`,
+                    { query: { categoryId: cat.id } }
+                ).catch(() => null)
+
+                for (const model of models ?? []) {
+                    const modelSlug = slugifyPart(model.name)
+                    if (!modelSlug) continue
+                    dynamicUrls.push({ loc: `/kategorie/${catSlug}/${brandSlug}/${modelSlug}`, priority: '0.6', changefreq: 'daily' })
+                }
+
+                if (dynamicUrls.length >= HARD_SAFETY_LIMIT) break
+            }
+            if (dynamicUrls.length >= HARD_SAFETY_LIMIT) break
         }
     } catch { /* skip if API unavailable */ }
 
@@ -140,3 +175,26 @@ ${urls.map(u => `  <url>
   </url>`).join('\n')}
 </urlset>`
 }
+
+/**
+ * Buforowana wersja — ta, której używają trasy.
+ *
+ * Zbudowanie mapy strony to teraz jedno zapytanie na kategorię plus jedno na każdą
+ * markę w tej kategorii (potrzebne do stron pośrednich /kategorie/marka/model).
+ * Przy pełnej taksonomii to grubo ponad tysiąc zapytań do backendu na JEDNO
+ * wywołanie. Bez bufora wystarczyłby jeden robot indeksujący odpytujący mapę
+ * co chwilę, żeby położyć backend — a mapa dzieli się dodatkowo na części,
+ * z których każda wywoływała budowanie od nowa.
+ *
+ * Godzina to kompromis: nowe ogłoszenie trafia do mapy najpóźniej po tym czasie,
+ * co dla indeksowania nie ma znaczenia, a backend przestaje być odpytywany
+ * w kółko o to samo. Wpis jest wspólny dla wszystkich części mapy.
+ */
+export const buildSitemapUrls = defineCachedFunction(buildSitemapUrlsUncached, {
+    maxAge: 3600,
+    name: 'sitemap',
+    getKey: () => 'all',
+    // Po wygaśnięciu oddajemy stary wpis i odświeżamy w tle - robot nigdy nie czeka
+    // na przebudowę, a my nie ryzykujemy, że kilka równoczesnych żądań ruszy ją naraz.
+    swr: true,
+})
