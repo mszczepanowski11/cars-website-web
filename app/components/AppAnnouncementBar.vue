@@ -81,7 +81,7 @@ function dismiss() {
     gap: 5px;
     background: rgba($red, 0.2);
     border: 1px solid rgba($red, 0.4);
-    color: $red;
+    color: $red-text;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1px;
@@ -92,7 +92,7 @@ function dismiss() {
     .ann-bar--upcoming & {
         background: rgba($red, 0.15);
         border-color: rgba($red, 0.35);
-        color: $red;
+        color: $red-text;
     }
 }
 
@@ -118,7 +118,7 @@ function dismiss() {
     display: flex;
     align-items: center;
     gap: 3px;
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     font-weight: 600;
     text-decoration: none;
@@ -127,7 +127,7 @@ function dismiss() {
 
     &:hover { opacity: 0.8; }
 
-    .ann-bar--upcoming & { color: $red; }
+    .ann-bar--upcoming & { color: $red-text; }
 
     @include respond-to(sm) { display: none; }
 }

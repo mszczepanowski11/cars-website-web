@@ -226,7 +226,7 @@ onMounted(async () => {
     color: $text;
     text-decoration: none;
     margin-bottom: 4px;
-    span { color: $red; }
+    span { color: $red-text; }
 }
 
 // Confetti ring for success
@@ -442,7 +442,7 @@ onMounted(async () => {
 }
 
 .footer-link {
-    color: $red;
+    color: $red-text;
     &:hover { text-decoration: underline; }
 }
 

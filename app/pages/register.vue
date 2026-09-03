@@ -475,7 +475,7 @@ async function resendVerification() {
     @include card($r-xl);
     padding: 48px 40px 40px;
     width: 100%;
-    max-width: 500px;
+    max-width: $container-narrow;   // wspólna szerokość kolumny formularza
     position: relative;
     z-index: 1;
 
@@ -591,7 +591,7 @@ h2 {
 
     .btype-card--active & {
         background: rgba($red, 0.15);
-        color: $red;
+        color: $red-text;
     }
 }
 
@@ -614,7 +614,7 @@ h2 {
 }
 
 .btype-check {
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
 }
 
@@ -651,7 +651,7 @@ h2 {
     color: $text-muted;
 }
 
-.req { color: $red; }
+.req { color: $red-text; }
 
 .auth-input-wrap {
     display: flex;
@@ -780,7 +780,7 @@ h2 {
     font-size: 14px;
 
     a {
-        color: $red;
+        color: $red-text;
         font-weight: 600;
         &:hover { text-decoration: underline; }
     }
@@ -793,7 +793,7 @@ h2 {
     align-items: center;
     gap: 20px;
     text-align: center;
-    max-width: 460px;
+    max-width: $container-narrow;   // wspólna szerokość kolumny formularza
     width: 100%;
     animation: success-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
@@ -808,7 +808,7 @@ h2 {
     font-weight: 900;
     letter-spacing: 5px;
     color: $text;
-    span { color: $red; }
+    span { color: $red-text; }
 }
 
 .reg-success-icon {
@@ -860,7 +860,7 @@ h2 {
 .resend-link {
     background: none;
     border: none;
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
@@ -947,7 +947,7 @@ h2 {
     color: $text-muted;
     line-height: 1.5;
 
-    a { color: $red; font-weight: 500; &:hover { text-decoration: underline; } }
+    a { color: $red-text; font-weight: 500; &:hover { text-decoration: underline; } }
 
     &--optional { opacity: 0.8; }
 }
@@ -968,7 +968,7 @@ h2 {
 }
 
 .cookie-link {
-    color: $red;
+    color: $red-text;
     text-decoration: none;
     font-weight: 500;
     &:hover { text-decoration: underline; }

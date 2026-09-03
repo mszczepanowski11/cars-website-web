@@ -423,16 +423,16 @@ watch(mobileOpen, (open) => {
     text-decoration: none;
     transition: background 0.15s, color 0.15s;
     .cz-icon { color: $text-dim; transition: color 0.15s; }
-    &:hover { background: rgba($red, 0.08); color: $text; .cz-icon { color: $red; } }
+    &:hover { background: rgba($red, 0.08); color: $text; .cz-icon { color: $red-text; } }
 }
 
 .dropdown-all {
     margin-top: 4px;
     border-top: 1px solid $border;
     padding-top: 12px;
-    color: $red;
+    color: $red-text;
     justify-content: space-between;
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 
 .nav-lang { position: relative; margin-left: 4px; }
@@ -449,7 +449,7 @@ watch(mobileOpen, (open) => {
 .nav-lang-item {
     display: block; text-decoration: none; color: $text-muted; padding: 8px 12px; border-radius: 7px; font-size: 14px;
     &:hover { background: rgba($red, .1); color: $text; }
-    &.active { color: $red; font-weight: 700; }
+    &.active { color: $red-text; font-weight: 700; }
 }
 
 .nav-btns { display: flex; gap: 8px; align-items: center; }
@@ -512,8 +512,8 @@ watch(mobileOpen, (open) => {
 
 .nav-admin-btn {
     border-color: rgba($red, 0.3);
-    color: $red;
-    &:hover { background: rgba($red, 0.08); border-color: rgba($red, 0.5); color: $red; }
+    color: $red-text;
+    &:hover { background: rgba($red, 0.08); border-color: rgba($red, 0.5); color: $red-text; }
 }
 
 .btn-add {
@@ -643,7 +643,7 @@ watch(mobileOpen, (open) => {
     &:hover, &.router-link-active {
         background: rgba(255, 255, 255, 0.04);
         color: $text;
-        .cz-icon { color: $red; }
+        .cz-icon { color: $red-text; }
     }
 }
 
@@ -668,7 +668,7 @@ watch(mobileOpen, (open) => {
     text-decoration: none;
     transition: background 0.15s, color 0.15s;
     &:hover { background: rgba($red, 0.08); color: $text; }
-    &--all { margin-top: 4px; color: $red; border-top: 1px solid $border; padding-top: 12px; justify-content: space-between; }
+    &--all { margin-top: 4px; color: $red-text; border-top: 1px solid $border; padding-top: 12px; justify-content: space-between; }
 }
 
 .drawer-badge {
@@ -734,8 +734,8 @@ watch(mobileOpen, (open) => {
 .drawer-btn-logout { color: rgba($red, 0.9); border-color: rgba($red, 0.25); }
 
 .drawer-link--admin {
-    color: $red;
-    .cz-icon { color: $red; }
+    color: $red-text;
+    .cz-icon { color: $red-text; }
     &:hover { background: rgba($red, 0.08); }
 }
 

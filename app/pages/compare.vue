@@ -166,7 +166,7 @@ onMounted(fetchAdverts)
     text-decoration: none;
     margin-bottom: 12px;
     transition: color 0.2s;
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 
 .page-title {
@@ -261,7 +261,7 @@ onMounted(fetchAdverts)
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    &:hover { background: rgba($red,0.2); color: $red; }
+    &:hover { background: rgba($red,0.2); color: $red-text; }
 }
 
 .cmp-advert-title {
@@ -270,13 +270,13 @@ onMounted(fetchAdverts)
     color: $text;
     text-decoration: none;
     line-height: 1.3;
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 
 .cmp-advert-price {
     font-size: 18px;
     font-weight: 800;
-    color: $red;
+    color: $red-text;
     display: flex;
     align-items: center;
 }
@@ -316,7 +316,7 @@ onMounted(fetchAdverts)
     padding: 7px 14px;
     text-decoration: none;
     transition: all 0.2s;
-    &:hover { border-color: $red; color: $red; }
+    &:hover { border-color: $red; color: $red-text; }
 }
 
 .cmp-fav-btn {
@@ -333,8 +333,8 @@ onMounted(fetchAdverts)
     transition: all 0.2s;
     flex-shrink: 0;
 
-    &:hover { border-color: rgba($red, 0.4); color: $red; }
-    &.active { color: $red; border-color: rgba($red, 0.4); background: rgba($red, 0.06); }
+    &:hover { border-color: rgba($red, 0.4); color: $red-text; }
+    &.active { color: $red-text; border-color: rgba($red, 0.4); background: rgba($red, 0.06); }
 }
 
 .cmp-advert-badge {
@@ -368,7 +368,7 @@ onMounted(fetchAdverts)
     display: flex;
     justify-content: center;
     padding: 40px;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .spin { animation: spin 1s linear infinite; }

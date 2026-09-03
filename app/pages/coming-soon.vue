@@ -117,7 +117,7 @@ async function submit() {
     letter-spacing: -2px;
     margin: 0;
     line-height: 1;
-    span { color: $red; }
+    span { color: $red-text; }
 
     @media (max-width: 480px) { font-size: 38px; }
 }
@@ -196,7 +196,7 @@ async function submit() {
 
 .cs-error {
     font-size: 13px;
-    color: $red;
+    color: $red-text;
     margin: 0;
 }
 

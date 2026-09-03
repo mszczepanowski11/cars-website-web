@@ -513,7 +513,7 @@ const faq = computed(() => [
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
 
     .info-card--free & {
@@ -614,7 +614,7 @@ const faq = computed(() => [
 }
 
 .promo-icon {
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
 
     .promo-row--top &     { color: $premium; }
@@ -768,7 +768,7 @@ const faq = computed(() => [
     flex-shrink: 0;
     background: rgba($red, 0.1);
     border: 1px solid rgba($red, 0.2);
-    color: $red;
+    color: $red-text;
 
     .b2b-card--biznes &    { background: rgba($premium, 0.1); border-color: rgba($premium, 0.2); color: $premium; }
     .b2b-card--premium &   { background: rgba($accent-purple, 0.1); border-color: rgba($accent-purple, 0.2); color: $accent-purple; }
@@ -851,7 +851,7 @@ const faq = computed(() => [
 }
 
 .b2b-check {
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
     .b2b-card--biznes &    { color: $premium; }
     .b2b-card--premium &   { color: $accent-purple; }
@@ -933,7 +933,7 @@ const faq = computed(() => [
     margin-bottom: 10px;
 }
 
-.faq-icon { color: $red; flex-shrink: 0; margin-top: 1px; }
+.faq-icon { color: $red-text; flex-shrink: 0; margin-top: 1px; }
 
 .faq-a {
     font-size: 13px;

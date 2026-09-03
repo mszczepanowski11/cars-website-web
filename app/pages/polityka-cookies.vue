@@ -172,13 +172,13 @@ useHead({ link: [{ rel: 'canonical', href: `${cookiesConfig.public.siteUrl}/poli
 }
 
 .hero-eyebrow {
-    font-size: 11px; font-weight: 700; color: $red;
+    font-size: 11px; font-weight: 700; color: $red-text;
     text-transform: uppercase; letter-spacing: 3px; margin-bottom: 14px;
 }
 
 .page-hero h1 {
     font-size: 48px; font-weight: 900; color: $text; margin-bottom: 10px;
-    span { color: $red; }
+    span { color: $red-text; }
     @include respond-to(sm) { font-size: 34px; }
 }
 
@@ -220,7 +220,7 @@ useHead({ link: [{ rel: 'canonical', href: `${cookiesConfig.public.siteUrl}/poli
 
     strong { color: $text; font-weight: 600; }
 
-    a { color: $red; text-decoration: none; &:hover { text-decoration: underline; } }
+    a { color: $red-text; text-decoration: none; &:hover { text-decoration: underline; } }
 
     code {
         font-family: monospace; font-size: 12px;

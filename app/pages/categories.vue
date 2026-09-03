@@ -227,7 +227,7 @@ onMounted(async () => {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 4px;
-    color: $red;
+    color: $red-text;
     margin-bottom: 18px;
 }
 
@@ -238,7 +238,7 @@ onMounted(async () => {
     line-height: 1.08;
     margin-bottom: 18px;
 
-    span { color: $red; }
+    span { color: $red-text; }
 
     @include respond-to(md) { font-size: 38px; }
     @include respond-to(sm) { font-size: 30px; }
@@ -410,7 +410,7 @@ onMounted(async () => {
     transition: background 0.15s, color 0.15s;
 
     &:hover { background: rgba(255,255,255,0.04); color: $text; }
-    &.active { color: $red; font-weight: 600; }
+    &.active { color: $red-text; font-weight: 600; }
 }
 
 // ── Grid ──────────────────────────────────────────────────────────────────────
@@ -482,7 +482,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $red;
+    color: $red-text;
 }
 
 .cat-bottom {

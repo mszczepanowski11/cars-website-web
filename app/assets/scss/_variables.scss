@@ -4,6 +4,10 @@ $card:       #0d0d0d;
 $card-alt:   #0c0c0c;
 $border:     #1a1a1a;
 $border-alt: #1b1b1b;
+// Powierzchnia karty pod kursorem. Wczesniej kazda karta liczyla sobie ten stan
+// sama (najczesciej rgba(255,255,255,0.03) albo rgba($red,0.04)), stad rozne
+// reakcje na najechanie w sasiadujacych ze soba miejscach.
+$card-hover: #121212;
 $red:        #8B0D1D;
 $red-glow:   rgba(139, 13, 29, 0.35);
 $red-fade:   rgba(139, 13, 29, 0.4);
@@ -12,13 +16,18 @@ $red-fade:   rgba(139, 13, 29, 0.4);
 $text:       #ffffff;
 $text-muted: #aaaaaa;
 $text-dim:   #888888;
-$text-dark:  #777777;
-$text-faint: #666666;
+$text-dark:  #808080;   // 4,92:1 na karcie #0d0d0d - najciemniejszy dopuszczalny stopien (bylo #777 = 4,34:1)
+// Token $text-faint (#666) zostal usuniety - 3,38:1 na karcie, czyli ponizej progu
+// WCAG AA (4,5:1). Dziesiec miejsc, ktore go uzywalo, korzysta teraz z $text-dark.
 $text-link:  #cfcfcf;
 
 
 $container-w:   92%;
 $container-max: 1450px;
+// Wąska kolumna dla formularzy i tekstu czytanego ciągiem. 480 px to szerokość,
+// przy której pole formularza jest wygodne, a wiersz tekstu nie przekracza
+// ok. 65 znaków - powyżej tego oko gubi początek następnej linii.
+$container-narrow: 480px;
 
 
 $r-sm: 12px;
@@ -52,6 +61,17 @@ $compare-panel-height:  62px;   // compare panel bottom bar
 // się je świadomie ujednolicić zamiast mnożyć kolejne odcienie.
 $red-bright:  #cc1020;   // jaśniejszy akcent na ciemnym tle (był #cc1020)
 $red-hot:     #ee5555;   // stan hover / sygnał (był #e55)
+
+// Czerwien do TEKSTU i ikon na ciemnym tle.
+//
+// $red (#8B0D1D) swietnie sprawdza sie jako WYPELNIENIE - bialy napis na nim ma
+// kontrast 9,66:1. Ale jako kolor tekstu na karcie daje 2,01:1, czyli napis jest
+// praktycznie nieczytelny - a tak byl uzywany w 420 miejscach (ceny, linki, stany
+// aktywne). Ten odcien zachowuje ton marki (ten sam odcien 352 stopni, wysokie
+// nasycenie), a osiaga 4,73:1, czyli spelnia WCAG AA.
+//
+// Zasada: $red do teł i obramowan, $red-text do liter.
+$red-text:    #eb334b;   // 4,73:1 na karcie #0d0d0d
 
 // ── Kolory semantyczne ───────────────────────────────────────────────────────
 // Jedno źródło prawdy dla komunikatów. Wartości wzięte z faktycznie dominujących

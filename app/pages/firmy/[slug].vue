@@ -276,15 +276,15 @@ useHead(() => ({
 .cp-hero { border-bottom: 1px solid $border; background: radial-gradient(ellipse at 30% 0%, rgba($red, .1) 0%, transparent 60%); }
 .cp-hero-inner { @include container; padding-top: 24px; padding-bottom: 28px; }
 .cp-crumb { display: inline-flex; align-items: center; gap: 2px; color: $text-muted; text-decoration: none; font-size: 14px; margin-bottom: 18px;
-  &:hover { color: $red; } }
+  &:hover { color: $red-text; } }
 .cp-head { display: flex; align-items: center; gap: 18px; }
-.cp-icon { width: 60px; height: 60px; flex-shrink: 0; border-radius: 14px; display: grid; place-items: center; background: rgba($red, .14); color: $red; }
+.cp-icon { width: 60px; height: 60px; flex-shrink: 0; border-radius: 14px; display: grid; place-items: center; background: rgba($red, .14); color: $red-text; }
 .cp-name { font-size: clamp(22px, 4vw, 32px); font-weight: 800; color: $text; margin: 0 0 8px; line-height: 1.1; }
 .cp-tags { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .cp-cat { color: $text-muted; font-size: 14px; }
 .cp-langs { display: flex; align-items: center; gap: 4px; margin-top: 10px; color: $text-muted;
   .cp-lang { background: transparent; border: 1px solid $border; color: $text-muted; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; cursor: pointer;
-    &.active { background: rgba($red,.16); border-color: rgba($red,.4); color: $red; } &:hover:not(.active) { color: $text; } } }
+    &.active { background: rgba($red,.16); border-color: rgba($red,.4); color: $red-text; } &:hover:not(.active) { color: $text; } } }
 .cp-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: #b6791b; background: rgba(#b6791b, .14); padding: 3px 9px; border-radius: 20px; display: inline-flex; align-items: center; gap: 3px;
   &--ok { color: $success; background: rgba($success, .14); } }
 
@@ -305,19 +305,19 @@ useHead(() => ({
 .cp-listing-body { flex: 1; min-width: 0; }
 .cp-listing-title { color: $text; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cp-listing-meta { display: flex; gap: 10px; color: $text-muted; font-size: 12.5px; margin-top: 3px; }
-.cp-listing-price { color: $red; font-weight: 700; font-size: 14.5px; white-space: nowrap; }
+.cp-listing-price { color: $red-text; font-weight: 700; font-size: 14.5px; white-space: nowrap; }
 .cp-listings-more { color: $text-muted; font-size: 13px; margin: 10px 0 0; }
 
 .cp-dl { display: grid; grid-template-columns: 130px 1fr; gap: 12px 16px; margin: 0; }
 .cp-dl dt { color: $text-muted; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
-.cp-dl dd { margin: 0; color: $text; font-size: 15px; a { color: $red; text-decoration: none; &:hover { text-decoration: underline; } } }
+.cp-dl dd { margin: 0; color: $text; font-size: 15px; a { color: $red-text; text-decoration: none; &:hover { text-decoration: underline; } } }
 .cp-nocontact { grid-column: 1 / -1; color: $text-muted; font-style: italic; }
 
 .cp-branches { display: flex; flex-direction: column; gap: 16px; }
 .cp-branch { border: 1px solid $border; border-radius: 10px; padding: 14px 16px; }
 .cp-branch-name { display: flex; align-items: center; gap: 6px; font-weight: 700; color: $text; margin-bottom: 8px; }
 .cp-branch-row { display: flex; align-items: center; gap: 6px; color: $text-muted; font-size: 14px; margin-top: 4px;
-  a { color: $red; text-decoration: none; &:hover { text-decoration: underline; } } }
+  a { color: $red-text; text-decoration: none; &:hover { text-decoration: underline; } } }
 .cp-branch-phone-label { color: $text-muted; font-size: 12.5px; }
 .cp-branch-hours { margin-top: 8px; padding-top: 8px; border-top: 1px dashed $border; }
 .cp-branch-hours-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: $text-muted; padding: 2px 0; }
@@ -326,9 +326,9 @@ useHead(() => ({
 .cp-claim { display: flex; align-items: center; gap: 14px; background: rgba($red, .08); border: 1px solid rgba($red, .2); border-radius: 12px; padding: 16px 18px;
   strong { color: $text; } p { margin: 2px 0 0; color: $text-muted; font-size: 13.5px; }
   .cp-claim-btn { margin: 0 0 0 auto; flex-shrink: 0; } }
-.cp-claim > .cz-icon { color: $red; flex-shrink: 0; }
+.cp-claim > .cz-icon { color: $red-text; flex-shrink: 0; }
 
-.cp-id { font-family: monospace; font-size: 13px; color: $red; word-break: break-all; background: rgba($red, .08); padding: 8px 10px; border-radius: 6px; }
+.cp-id { font-family: monospace; font-size: 13px; color: $red-text; word-break: break-all; background: rgba($red, .08); padding: 8px 10px; border-radius: 6px; }
 .cp-id-note { font-size: 12px; color: $text-muted; margin: 8px 0 16px; }
 .cp-meta-row { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-top: 1px solid $border;
   span:first-child { color: $text-muted; } span:last-child { color: $text; font-variant-numeric: tabular-nums; } }

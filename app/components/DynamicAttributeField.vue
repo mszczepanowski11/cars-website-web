@@ -139,7 +139,7 @@ function toggleMulti(option: string) {
 .daf-field { display: flex; flex-direction: column; gap: 6px; min-width: 200px; flex: 1; }
 .daf-field--full { flex-basis: 100%; }
 .daf-label { font-size: 12px; font-weight: 600; color: $text-muted; }
-.daf-req { color: $red; margin-left: 2px; }
+.daf-req { color: $red-text; margin-left: 2px; }
 .daf-unit { color: $text-dim; font-weight: 400; margin-left: 4px; }
 .daf-input {
     background: $card; border: 1px solid $border; border-radius: $r-sm; color: $text;

@@ -471,7 +471,7 @@ async function initiatePayment(useQuota = false) {
     padding: 0 32px; border-bottom: 1px solid $border; background: $bg; position: sticky; top: 0; z-index: 10;
 }
 
-.tl-logo { font-size: 20px; font-weight: 900; color: $text; letter-spacing: 4px; span { color: $red; } }
+.tl-logo { font-size: 20px; font-weight: 900; color: $text; letter-spacing: 4px; span { color: $red-text; } }
 
 .promo-steps { display: flex; align-items: center; gap: 10px; font-size: 13px; }
 
@@ -518,10 +518,10 @@ async function initiatePayment(useQuota = false) {
 }
 
 .plan-header { display: flex; align-items: center; gap: 10px; }
-.plan-icon { color: $red; }
+.plan-icon { color: $red-text; }
 .plan-name { font-size: 16px; font-weight: 800; color: $text; }
 .plan-badge-free { font-size: 10px; font-weight: 800; color: $success; background: rgba(76,175,80,0.12); border: 1px solid rgba(76,175,80,0.3); padding: 2px 8px; border-radius: 20px; margin-left: auto; }
-.plan-price { font-size: 22px; font-weight: 900; color: $red; strong { font-size: 26px; } }
+.plan-price { font-size: 22px; font-weight: 900; color: $red-text; strong { font-size: 26px; } }
 .plan-desc { font-size: 12px; color: $text-dim; line-height: 1.5; }
 
 .plan-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; flex: 1;
@@ -554,7 +554,7 @@ async function initiatePayment(useQuota = false) {
 .summary-free { display: flex; align-items: center; gap: 8px; font-size: 14px; color: $success; font-weight: 500; .sf-icon { flex-shrink: 0; } }
 .summary-paid { display: flex; flex-direction: column; gap: 2px; }
 .summary-name { font-size: 14px; font-weight: 700; color: $text; }
-.summary-price { font-size: 22px; font-weight: 900; color: $red; }
+.summary-price { font-size: 22px; font-weight: 900; color: $red-text; }
 
 .footer-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 
@@ -659,7 +659,7 @@ async function initiatePayment(useQuota = false) {
     font-weight: 800;
     color: $text;
     margin: 0;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .billing-step-sub {
@@ -694,6 +694,6 @@ async function initiatePayment(useQuota = false) {
     background: rgba($red, 0.06);
     color: $text;
     font-weight: 700;
-    strong { font-size: 18px; color: $red; }
+    strong { font-size: 18px; color: $red-text; }
 }
 </style>

@@ -1269,7 +1269,7 @@ onMounted(async () => {
 }
 
 .title-accent {
-    color: $red;
+    color: $red-text;
     -webkit-text-stroke: 0;
     display: block;
 }
@@ -1311,7 +1311,7 @@ onMounted(async () => {
 }
 
 .hfs-feat-icon {
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
     filter: drop-shadow(0 0 4px rgba($red, 0.5));
 }
@@ -1491,7 +1491,7 @@ onMounted(async () => {
     font-weight: 500;
     color: rgba(255,255,255,0.6);
 
-    .cz-icon { color: $red; flex-shrink: 0; }
+    .cz-icon { color: $red-text; flex-shrink: 0; }
 }
 
 .hfs-links {
@@ -2108,7 +2108,7 @@ onMounted(async () => {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: $red;
+        color: $red-text;
         font-size: 14px;
         font-weight: 600;
         text-decoration: none;
@@ -2130,7 +2130,7 @@ onMounted(async () => {
 .sec-eyebrow {
     font-size: 10px;
     font-weight: 700;
-    color: $red;
+    color: $red-text;
     letter-spacing: 2.5px;
     text-transform: uppercase;
 }
@@ -2167,12 +2167,12 @@ onMounted(async () => {
     // linku "Zobacz wszystkie", który ma `flex-shrink: 0` - i cały dokument robi się
     // szerszy od ekranu. To ten sam wzorzec, który wypychał układ na /categories.
     min-width: 0;
-    &:hover { color: $red; }
-    &:hover .cat-row-icon { border-color: $red; color: $red; }
+    &:hover { color: $red-text; }
+    &:hover .cat-row-icon { border-color: $red; color: $red-text; }
 }
 .cat-row-icon {
     display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px;
-    background: rgba($red, 0.1); border: 1px solid rgba($red, 0.25); color: $red; transition: all .2s;
+    background: rgba($red, 0.1); border: 1px solid rgba($red, 0.25); color: $red-text; transition: all .2s;
 }
 .cat-row-count {
     font-size: 12px; font-weight: 600; color: $text-muted; background: $card;
@@ -2187,7 +2187,7 @@ onMounted(async () => {
 .cat-row-all {
     display: inline-flex; align-items: center; gap: 4px; text-decoration: none; flex-shrink: 0;
     color: $text-muted; font-size: 13px; font-weight: 600;
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 .cat-row-title-sk {
     width: 200px; height: 24px; border-radius: 6px;
@@ -2242,7 +2242,7 @@ onMounted(async () => {
     gap: 14px;
     font-size: 10px;
     font-weight: 700;
-    color: $red;
+    color: $red-text;
     letter-spacing: 4px;
     text-transform: uppercase;
 
@@ -2321,7 +2321,7 @@ onMounted(async () => {
         transform: translateY(-3px);
 
         &::after { transform: scaleX(1); }
-        .why-card-icon { background: rgba($red, 0.15); border-color: rgba($red, 0.3); color: $red; }
+        .why-card-icon { background: rgba($red, 0.15); border-color: rgba($red, 0.3); color: $red-text; }
     }
 }
 
@@ -2434,7 +2434,7 @@ onMounted(async () => {
     gap: 5px;
     font-size: 13px;
     font-weight: 700;
-    color: $red;
+    color: $red-text;
 }
 
 .events-grid {
@@ -2524,7 +2524,7 @@ onMounted(async () => {
     font-size: 12px;
     color: $text-dim;
 }
-.event-loc-icon { color: $red; }
+.event-loc-icon { color: $red-text; }
 
 .event-organizer {
     display: flex;
@@ -2563,7 +2563,7 @@ onMounted(async () => {
     gap: 4px;
     font-size: 12px;
     font-weight: 700;
-    color: $red;
+    color: $red-text;
     text-decoration: none;
     transition: opacity 0.2s;
 
@@ -2621,7 +2621,7 @@ onMounted(async () => {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    color: $red;
+    color: $red-text;
     background: rgba($red, 0.12);
     border: 1px solid rgba($red, 0.3);
     border-radius: $r-sm;
@@ -2655,7 +2655,7 @@ onMounted(async () => {
     flex-shrink: 0;
     @media (max-width: $bp-sm) { display: none; }
 }
-.b2b-visual-icon { color: $red; }
+.b2b-visual-icon { color: $red-text; }
 
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
@@ -2672,7 +2672,7 @@ onMounted(async () => {
     @include respond-to(sm) { padding: 24px 20px; gap: 18px; }
 }
 
-.news-icon { color: $red; flex-shrink: 0; }
+.news-icon { color: $red-text; flex-shrink: 0; }
 
 .news-text {
     flex: 1;
@@ -2782,7 +2782,7 @@ h2 {
     margin: 0 0 8px;
     letter-spacing: -0.3px;
 
-    span { color: $red; }
+    span { color: $red-text; }
 }
 
 // ─── Car of week / Most viewed / Premium collection ───────────────────────────

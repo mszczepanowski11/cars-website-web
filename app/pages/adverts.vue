@@ -1478,7 +1478,7 @@ onMounted(async () => {
     gap: 6px;
 }
 
-.fp-field-icon { color: $red; flex-shrink: 0; }
+.fp-field-icon { color: $red-text; flex-shrink: 0; }
 
 .fp-select {
     background: transparent;
@@ -1511,7 +1511,7 @@ onMounted(async () => {
     flex: 1;
     min-width: 0;
 
-    &::placeholder { color: $text-faint; }
+    &::placeholder { color: $text-dark; }
 }
 
 .fp-range {
@@ -1530,7 +1530,7 @@ onMounted(async () => {
     font-size: 14px;
     font-family: 'Inter', sans-serif;
 
-    &::placeholder { color: $text-faint; }
+    &::placeholder { color: $text-dark; }
     &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { -webkit-appearance: none; }
     -moz-appearance: textfield;
 }
@@ -1601,7 +1601,7 @@ onMounted(async () => {
     font-size: 14px;
     font-family: 'Inter', sans-serif;
 
-    &::placeholder { color: $text-faint; }
+    &::placeholder { color: $text-dark; }
 }
 
 .fp-kw-clear {
@@ -1647,7 +1647,7 @@ onMounted(async () => {
     &--active {
         background: rgba($red, 0.08);
         border-color: rgba($red, 0.3);
-        color: $red;
+        color: $red-text;
     }
 }
 
@@ -1679,7 +1679,7 @@ onMounted(async () => {
     gap: 5px;
     background: rgba($red, 0.1);
     border: 1px solid rgba($red, 0.2);
-    color: $red;
+    color: $red-text;
     border-radius: 20px;
     padding: 4px 10px;
     font-size: 12px;
@@ -1742,7 +1742,7 @@ onMounted(async () => {
     letter-spacing: 0.5px;
     margin-bottom: 8px;
 
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .fp-expanded-footer {
@@ -1768,7 +1768,7 @@ onMounted(async () => {
     padding: 9px 16px;
     cursor: pointer;
     transition: all 0.15s;
-    &:hover { border-color: $red; color: $red; }
+    &:hover { border-color: $red; color: $red-text; }
 }
 
 .fp-apply-btn {
@@ -1811,10 +1811,10 @@ onMounted(async () => {
     gap: 4px;
 
     &:hover { border-color: rgba($red, 0.3); color: $text; }
-    &.active { background: rgba($red, 0.12); border-color: rgba($red, 0.4); color: $red; font-weight: 700; }
+    &.active { background: rgba($red, 0.12); border-color: rgba($red, 0.4); color: $red-text; font-weight: 700; }
 }
 
-.btn-check-icon { color: $red; }
+.btn-check-icon { color: $red-text; }
 
 .filter-checks {
     display: flex;
@@ -1845,7 +1845,7 @@ onMounted(async () => {
     margin-left: auto;
     font-size: 10px;
     font-weight: 500;
-    color: $red;
+    color: $red-text;
     text-transform: none;
     letter-spacing: 0;
     max-width: 90px;
@@ -1896,7 +1896,7 @@ onMounted(async () => {
 
         &.active {
             border-color: $red;
-            color: $red;
+            color: $red-text;
             box-shadow: 0 0 0 2px rgba($red, 0.35);
         }
 
@@ -1935,7 +1935,7 @@ onMounted(async () => {
     &:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.04); }
 }
 
-.ac-icon { color: $red; flex-shrink: 0; }
+.ac-icon { color: $red-text; flex-shrink: 0; }
 
 .ac-name { flex: 1; font-size: 13px; color: $text; }
 
@@ -1966,7 +1966,7 @@ onMounted(async () => {
     color: $text-muted;
     font-size: 14px;
 
-    strong { color: $red; }
+    strong { color: $red-text; }
 }
 
 .sort-wrap {
@@ -2018,7 +2018,7 @@ onMounted(async () => {
     gap: 6px;
     border: 1px solid rgba($red, 0.4);
     background: rgba($red, 0.06);
-    color: $red;
+    color: $red-text;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
     padding: 8px 18px;
@@ -2048,7 +2048,7 @@ onMounted(async () => {
     border-radius: $r-sm;
     cursor: pointer;
     transition: all 0.2s;
-    &:hover:not(:disabled) { border-color: $red; color: $red; }
+    &:hover:not(:disabled) { border-color: $red; color: $red-text; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 

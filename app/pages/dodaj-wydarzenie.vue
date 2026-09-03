@@ -278,7 +278,7 @@ onMounted(async () => {
 .hero-eyebrow {
     font-size: 11px;
     font-weight: 700;
-    color: $red;
+    color: $red-text;
     text-transform: uppercase;
     letter-spacing: 3px;
     margin-bottom: 14px;
@@ -290,7 +290,7 @@ onMounted(async () => {
     color: $text;
     margin-bottom: 14px;
 
-    span { color: $red; }
+    span { color: $red-text; }
 
     @include respond-to(sm) { font-size: 34px; }
 }
@@ -399,7 +399,7 @@ onMounted(async () => {
     color: $text-dim;
     margin-bottom: 16px;
 
-    .cz-icon { color: $red; flex-shrink: 0; }
+    .cz-icon { color: $red-text; flex-shrink: 0; }
 }
 
 .error-msg {

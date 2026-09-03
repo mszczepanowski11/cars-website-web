@@ -145,7 +145,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
     cursor: pointer;
     z-index: 2;
     transition: all 0.2s;
-    &:hover { background: rgba($red, 0.15); color: $red; border-color: $red; }
+    &:hover { background: rgba($red, 0.15); color: $red-text; border-color: $red; }
 }
 
 .qv-loading {
@@ -154,7 +154,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
     justify-content: center;
     padding: 60px;
     width: 100%;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .qv-img-wrap {
@@ -213,7 +213,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 .qv-price {
     font-size: 26px;
     font-weight: 800;
-    color: $red;
+    color: $red-text;
 }
 
 .qv-chips {
@@ -272,6 +272,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 .qv-fade-enter-active, .qv-fade-leave-active { transition: opacity 0.2s ease; }
 .qv-fade-enter-from, .qv-fade-leave-to { opacity: 0; }
 
-.spin { animation: spin 1s linear infinite; color: $red; }
+.spin { animation: spin 1s linear infinite; color: $red-text; }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>

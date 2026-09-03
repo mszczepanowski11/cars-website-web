@@ -107,7 +107,7 @@ h2 { font-size: 19px; font-weight: 800; color: $text; margin: 0 0 10px; }
     margin: 0 0 22px;
 }
 
-.fb-consent-link { color: $red; &:hover { text-decoration: underline; } }
+.fb-consent-link { color: $red-text; &:hover { text-decoration: underline; } }
 
 .fb-consent-actions {
     display: flex;

@@ -192,7 +192,7 @@ onMounted(() => load(1))
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $red;
+    color: $red-text;
     margin-bottom: 4px;
 }
 

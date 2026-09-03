@@ -409,7 +409,7 @@ onUnmounted(() => {
 .empty-icon { color: #222; display: block; }
 .retry-link {
     margin-top: 12px;
-    color: $red;
+    color: $red-text;
     font-size: 13px;
     font-weight: 600;
     background: none;

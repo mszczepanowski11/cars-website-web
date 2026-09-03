@@ -219,19 +219,19 @@ async function submitWithoutFeed() {
 .df-hero-inner { @include container; max-width: 680px; }
 .df-eyebrow {
   display: inline-flex; align-items: center; gap: 14px;
-  font-size: 10px; font-weight: 700; color: $red; letter-spacing: 4px; text-transform: uppercase;
+  font-size: 10px; font-weight: 700; color: $red-text; letter-spacing: 4px; text-transform: uppercase;
   margin-bottom: 24px;
   &::before, &::after { content: ''; display: block; width: 36px; height: 1px; background: $red; opacity: 0.6; }
 }
 h1 {
   font-size: clamp(30px, 5vw, 44px); font-weight: 800; color: $text; line-height: 1.15;
   margin: 0 0 16px; letter-spacing: -0.02em;
-  .accent { color: $red; }
+  .accent { color: $red-text; }
 }
 .df-hero-desc { font-size: 16px; color: $text-muted; line-height: 1.6; margin: 0 auto 20px; }
 .df-badge {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: $red;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: $red-text;
   background: rgba($red, 0.12); border: 1px solid rgba($red, 0.3); border-radius: $r-sm;
   padding: 5px 12px;
 }
@@ -261,7 +261,7 @@ h1 {
   color: $text; font-size: 14px; padding: 11px 14px; outline: none; font-family: 'Inter', sans-serif;
   transition: border-color 0.2s;
   &:focus { border-color: rgba($red, 0.4); }
-  &::placeholder { color: $text-faint; }
+  &::placeholder { color: $text-dark; }
 }
 
 .df-alert {
@@ -301,7 +301,7 @@ h1 {
 }
 .df-info-card {
   padding: 22px; background: rgba(255,255,255,0.015); border: 1px solid $border; border-radius: $r-md;
-  color: $red;
+  color: $red-text;
 }
 .df-info-title { font-size: 14px; font-weight: 700; color: $text; margin: 10px 0 6px; }
 .df-info-desc { font-size: 13px; color: $text-dim; line-height: 1.55; }

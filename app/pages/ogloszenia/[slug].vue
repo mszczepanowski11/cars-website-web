@@ -1772,7 +1772,7 @@ onUnmounted(() => {
     text-overflow: ellipsis;
     max-width: 120px;
 }
-.crumb-sep { color: $text-faint; }
+.crumb-sep { color: $text-dark; }
 .crumb-active { color: $text-muted; }
 
 .topbar-actions {
@@ -1797,7 +1797,7 @@ onUnmounted(() => {
     border-radius: $r-sm;
     transition: color 0.2s, background 0.2s;
     &:hover { color: $text; background: rgba(255,255,255,0.05); }
-    .heart-active { color: $red; }
+    .heart-active { color: $red-text; }
 }
 
 .ia-label {
@@ -2020,7 +2020,7 @@ onUnmounted(() => {
     transition: color 0.2s, background 0.2s;
     z-index: 5;
     &:hover { background: rgba(0,0,0,0.9); }
-    &.active { color: $red; }
+    &.active { color: $red-text; }
 }
 
 .photo-nav-arrow {
@@ -2165,7 +2165,7 @@ onUnmounted(() => {
         background: rgba($red, 0.08);
         border-color: rgba($red, 0.2);
         color: lighten($red, 20%);
-        .cz-icon { color: $red; }
+        .cz-icon { color: $red-text; }
     }
 }
 
@@ -2183,7 +2183,7 @@ onUnmounted(() => {
 .price-big {
     font-size: 42px;
     font-weight: 900;
-    color: $red;
+    color: $red-text;
     line-height: 1;
     letter-spacing: -1px;
     margin-bottom: 0;
@@ -2288,7 +2288,7 @@ onUnmounted(() => {
 .finance-hint-link {
     background: transparent;
     border: none;
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
@@ -2381,7 +2381,7 @@ onUnmounted(() => {
 .sma-link {
     font-size: 12px;
     font-weight: 600;
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
     &:hover { opacity: 0.8; }
 }
@@ -2548,7 +2548,7 @@ onUnmounted(() => {
     font-size: 13px;
     font-weight: 700;
     color: $text;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .dpc-row {
@@ -2633,7 +2633,7 @@ onUnmounted(() => {
 }
 
 .secure-icon-sm { color: $success; }
-.red-text { color: $red; }
+.red-text { color: $red-text; }
 .nowrap-brand { white-space: nowrap; }
 
 // ── Specs bar ─────────────────────────────────────────────────────────────────
@@ -2669,7 +2669,7 @@ onUnmounted(() => {
     &--dim { opacity: 0.6; }
 }
 
-.spi-icon { color: $red; flex-shrink: 0; }
+.spi-icon { color: $red-text; flex-shrink: 0; }
 .spi-icon--dim { color: $text-dark; }
 .spi-val { font-size: 14px; font-weight: 700; color: $text; white-space: nowrap; }
 .spi-val--dim { color: $text-dim; }
@@ -2723,7 +2723,7 @@ onUnmounted(() => {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 14px;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .tech-chips-grid {
@@ -2791,7 +2791,7 @@ onUnmounted(() => {
     padding: 18px 20px 14px;
     border-bottom: 1px solid $border;
     margin: 0;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .pg-section .spec-table {
@@ -2922,7 +2922,7 @@ onUnmounted(() => {
     gap: 4px;
     background: transparent;
     border: none;
-    color: $red;
+    color: $red-text;
     font-size: 13px;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
@@ -3066,7 +3066,7 @@ onUnmounted(() => {
     strong { color: $text; }
 }
 
-.eq-sum-icon { color: $red; }
+.eq-sum-icon { color: $red-text; }
 
 .eq-group { margin-bottom: 20px; }
 
@@ -3118,7 +3118,7 @@ onUnmounted(() => {
 }
 
 .eq-chip-icon {
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
 }
 
@@ -3136,7 +3136,7 @@ onUnmounted(() => {
     gap: 6px;
 }
 
-.eq-cat-icon { color: $red; flex-shrink: 0; }
+.eq-cat-icon { color: $red-text; flex-shrink: 0; }
 
 .eq-count {
     display: inline-flex;
@@ -3177,7 +3177,7 @@ onUnmounted(() => {
     margin-bottom: 16px;
 }
 
-.hv-icon { color: $red; flex-shrink: 0; }
+.hv-icon { color: $red-text; flex-shrink: 0; }
 .hv-label { font-size: 11px; color: $text-dark; margin-bottom: 2px; }
 .hv-val { font-size: 13px; font-weight: 700; color: $text; font-family: monospace; letter-spacing: 1px; }
 
@@ -3233,7 +3233,7 @@ onUnmounted(() => {
     font-weight: 700;
     color: $text;
     margin-bottom: 8px;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .vrs-desc {
@@ -3307,7 +3307,7 @@ onUnmounted(() => {
 }
 
 .fin-price-display { }
-.fin-price-big { font-size: 28px; font-weight: 900; color: $red; }
+.fin-price-big { font-size: 28px; font-weight: 900; color: $red-text; }
 .fin-price-sub { font-size: 11px; color: $text-dark; margin-top: 2px; }
 
 .fin-calc-body {
@@ -3332,7 +3332,7 @@ onUnmounted(() => {
 }
 
 .crb-label { display: block; font-size: 11px; color: $text-dark; margin-bottom: 4px; }
-.crb-val { font-size: 20px; font-weight: 900; color: $red; display: block; }
+.crb-val { font-size: 20px; font-weight: 900; color: $red-text; display: block; }
 .crb-val--sm { font-size: 16px; color: $text; }
 
 .fin-inquiry-section {
@@ -3568,7 +3568,7 @@ onUnmounted(() => {
 .see-all-link {
     background: transparent;
     border: none;
-    color: $red;
+    color: $red-text;
     font-size: 13px;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
@@ -3579,7 +3579,7 @@ onUnmounted(() => {
 .see-all-link-nuxt {
     font-size: 13px;
     font-weight: 600;
-    color: $red;
+    color: $red-text;
     &:hover { opacity: 0.8; }
 }
 
@@ -3710,13 +3710,13 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 
 .sim-body { padding: 12px 14px; }
 .sim-title { font-size: 13px; font-weight: 700; color: $text; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
 .sim-meta { font-size: 11px; color: $text-dim; margin-bottom: 6px; }
-.sim-price { font-size: 16px; font-weight: 800; color: $red; }
+.sim-price { font-size: 16px; font-weight: 800; color: $red-text; }
 
 // ── Right sidebar ─────────────────────────────────────────────────────────────
 .sidebar-card {
@@ -3740,7 +3740,7 @@ onUnmounted(() => {
     letter-spacing: 0.5px;
 }
 
-.card-title-icon { color: $red; }
+.card-title-icon { color: $red-text; }
 
 .seller-info {
     display: flex;
@@ -3839,7 +3839,7 @@ onUnmounted(() => {
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s;
     &:hover { background: rgba(255,255,255,0.08); }
-    &.following { background: rgba($red, 0.1); border-color: rgba($red, 0.35); color: $red; }
+    &.following { background: rgba($red, 0.1); border-color: rgba($red, 0.35); color: $red-text; }
 }
 
 .outline-btn {
@@ -3881,7 +3881,7 @@ onUnmounted(() => {
     color: $text-muted;
 }
 
-.loc-pin { color: $red; flex-shrink: 0; }
+.loc-pin { color: $red-text; flex-shrink: 0; }
 .loc-city { font-weight: 600; }
 
 .map-wrap {
@@ -3910,7 +3910,7 @@ onUnmounted(() => {
     padding: 16px;
 }
 
-.map-fallback-pin { color: $red; }
+.map-fallback-pin { color: $red-text; }
 
 .map-fallback-city {
     font-size: 14px;
@@ -3976,7 +3976,7 @@ onUnmounted(() => {
     padding: 10px 14px;
     margin-top: 4px;
     span { font-size: 12px; color: $text-dark; }
-    strong { font-size: 18px; color: $red; }
+    strong { font-size: 18px; color: $red-text; }
 }
 
 .calc-disclaimer { font-size: 10px; color: $text-dark; line-height: 1.4; margin: 0; }
@@ -4202,7 +4202,7 @@ onUnmounted(() => {
     border-bottom: 1px solid $border;
 }
 
-.ph-icon { color: $red; flex-shrink: 0; }
+.ph-icon { color: $red-text; flex-shrink: 0; }
 
 .ph-title { font-size: 16px; font-weight: 700; color: $text; margin-bottom: 3px; }
 .ph-sub { font-size: 12px; color: $text-dim; }
@@ -4235,7 +4235,7 @@ onUnmounted(() => {
     &.pa-great { background: rgba(46,160,67,0.12); border-color: rgba(46,160,67,0.3); color: $success; }
     &.pa-good  { background: rgba(46,160,67,0.08); border-color: rgba(46,160,67,0.2); color: #81c784; }
     &.pa-avg   { background: rgba(255,255,255,0.04); border-color: $border; color: $text-dim; }
-    &.pa-high  { background: rgba(139,13,29,0.1); border-color: rgba($red,0.3); color: $red; }
+    &.pa-high  { background: rgba(139,13,29,0.1); border-color: rgba($red,0.3); color: $red-text; }
 }
 .phm-label { font-weight: 700; font-size: 13px; }
 .phm-sub { font-size: 11px; opacity: 0.8; }
@@ -4321,13 +4321,13 @@ onUnmounted(() => {
     flex-wrap: wrap;
 }
 
-.ph-alert-icon { color: $red; flex-shrink: 0; }
+.ph-alert-icon { color: $red-text; flex-shrink: 0; }
 
 .ph-follow-btn {
     margin-left: auto;
     background: rgba($red, 0.1);
     border: 1px solid rgba($red, 0.3);
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     font-weight: 600;
     padding: 5px 12px;
@@ -4769,7 +4769,7 @@ onUnmounted(() => {
     align-items: center;
     gap: 6px;
     font-size: 13px;
-    color: $red;
+    color: $red-text;
 }
 
 .compose-send {

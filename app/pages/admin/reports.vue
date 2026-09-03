@@ -265,7 +265,7 @@ onMounted(fetchReports)
 
 .type-badge {
     font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 5px; letter-spacing: 0.3px;
-    &.type-advert { background: rgba($red, 0.12); color: $red; border: 1px solid rgba($red, 0.25); }
+    &.type-advert { background: rgba($red, 0.12); color: $red-text; border: 1px solid rgba($red, 0.25); }
     &.type-user { background: rgba(33,150,243,0.12); color: $info; border: 1px solid rgba(33,150,243,0.25); }
     &.type-review { background: rgba(255,152,0,0.12); color: $warning; border: 1px solid rgba(255,152,0,0.25); }
 }
@@ -278,7 +278,7 @@ onMounted(fetchReports)
     &.status-dismissed { background: rgba(255,255,255,0.06); color: $text-dim; border: 1px solid $border; }
 }
 
-.target-link { color: $red; text-decoration: none; font-size: 12px; font-weight: 500; &:hover { opacity: 0.8; } }
+.target-link { color: $red-text; text-decoration: none; font-size: 12px; font-weight: 500; &:hover { opacity: 0.8; } }
 
 .action-row { display: flex; gap: 6px; }
 
@@ -297,8 +297,8 @@ onMounted(fetchReports)
 .error-state {
     text-align: center;
     padding: 60px 20px;
-    color: $red;
+    color: $red-text;
     font-size: 14px;
 }
-.error-icon { color: $red; display: block; margin: 0 auto 12px; }
+.error-icon { color: $red-text; display: block; margin: 0 auto 12px; }
 </style>

@@ -573,7 +573,7 @@ onMounted(async () => {
     gap: 6px;
     background: rgba($red, 0.15);
     border: 1px solid rgba($red, 0.35);
-    color: $red;
+    color: $red-text;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1px;
@@ -584,7 +584,7 @@ onMounted(async () => {
     .promo-hero--upcoming & {
         background: rgba($red, 0.12);
         border-color: rgba($red, 0.3);
-        color: $red;
+        color: $red-text;
     }
 }
 
@@ -599,7 +599,7 @@ onMounted(async () => {
     @include respond-to(sm) { font-size: 28px; }
 }
 
-.promo-free { color: $red; }
+.promo-free { color: $red-text; }
 
 .promo-desc {
     color: $text-muted;
@@ -793,7 +793,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
 
     .plan-card--top & {
@@ -866,7 +866,7 @@ onMounted(async () => {
 }
 
 .feature-check {
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
 
     .plan-card--top &     { color: $premium; }
@@ -916,7 +916,7 @@ onMounted(async () => {
     font-weight: 700;
     color: $text-dim;
 
-    .dur-tab.active & { color: $red; }
+    .dur-tab.active & { color: $red-text; }
     .plan-card--top .dur-tab.active & { color: $premium; }
     .plan-card--premium .dur-tab.active & { color: $accent-purple; }
 }
@@ -948,7 +948,7 @@ onMounted(async () => {
 .plan-new-price {
     font-size: 34px;
     font-weight: 900;
-    color: $red;
+    color: $red-text;
 
     .plan-card--top & { color: $premium; }
     .plan-card--premium & { color: $accent-purple; }
@@ -970,14 +970,14 @@ onMounted(async () => {
     font-size: 12px;
 }
 
-.fire-icon  { color: $red; }
-.gift-icon  { color: $red; }
+.fire-icon  { color: $red-text; }
+.gift-icon  { color: $red-text; }
 
 .plan-promo-label { color: $text-dim; font-weight: 500; }
-.plan-promo-time  { color: $red; font-weight: 700; margin-left: 2px; }
+.plan-promo-time  { color: $red-text; font-weight: 700; margin-left: 2px; }
 
 .plan-upcoming-row {
-    color: $red;
+    color: $red-text;
     font-weight: 500;
     margin-bottom: 20px;
 }
@@ -1056,10 +1056,10 @@ onMounted(async () => {
 .picker-name { font-size: 13px; font-weight: 600; color: $text; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .picker-meta { font-size: 11px; color: $text-dim; margin-top: 2px; }
 
-.picker-check { color: $red; flex-shrink: 0; }
+.picker-check { color: $red-text; flex-shrink: 0; }
 
 .picker-empty { color: $text-dim; font-size: 14px; }
-.picker-link { color: $red; font-weight: 600; text-decoration: none; &:hover { opacity: 0.8; } }
+.picker-link { color: $red-text; font-weight: 600; text-decoration: none; &:hover { opacity: 0.8; } }
 
 // ── Plan selection ────────────────────────────────────────────────────────────
 .plan-selected {
@@ -1095,7 +1095,7 @@ onMounted(async () => {
 
 .order-label { font-size: 13px; color: $text-dim; }
 .order-val { font-size: 13px; font-weight: 600; color: $text; }
-.order-val-total { font-size: 22px; font-weight: 900; color: $red; }
+.order-val-total { font-size: 22px; font-weight: 900; color: $red-text; }
 
 // Coupon
 .coupon-row { margin: 16px 0; display: flex; flex-direction: column; gap: 6px; }
@@ -1121,7 +1121,7 @@ onMounted(async () => {
     background: transparent; border: 1px solid $border; border-radius: $r-sm;
     color: $text-muted; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
     padding: 6px 12px; cursor: pointer; transition: border-color 0.2s, color 0.2s;
-    &:hover:not(:disabled) { border-color: $red; color: $red; }
+    &:hover:not(:disabled) { border-color: $red; color: $red-text; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
@@ -1179,7 +1179,7 @@ onMounted(async () => {
     gap: 14px;
 }
 
-.benefit-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
+.benefit-icon { color: $red-text; flex-shrink: 0; margin-top: 2px; }
 
 .benefit-title {
     font-size: 14px;

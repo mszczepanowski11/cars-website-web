@@ -145,7 +145,7 @@ function openMenu(e: MouseEvent) {
 .avatar-initials {
     font-size: 16px;
     font-weight: 700;
-    color: $red;
+    color: $red-text;
     letter-spacing: -0.5px;
 }
 
@@ -208,7 +208,7 @@ function openMenu(e: MouseEvent) {
 
 .advert-title {
     font-size: 11px;
-    color: $red;
+    color: $red-text;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -4908,7 +4908,7 @@ onBeforeUnmount(() => {
     font-weight: 900;
     letter-spacing: 4px;
     color: $text;
-    span { color: $red; }
+    span { color: $red-text; }
 }
 
 .back-btn {
@@ -5110,7 +5110,7 @@ onBeforeUnmount(() => {
 
     &.step-done {
         cursor: pointer;
-        .step-num { background: rgba($red, 0.15); border-color: rgba($red, 0.3); color: $red; }
+        .step-num { background: rgba($red, 0.15); border-color: rgba($red, 0.3); color: $red-text; }
         &:hover { background: rgba(255,255,255,0.02); }
     }
 }
@@ -5175,7 +5175,7 @@ onBeforeUnmount(() => {
 .help-link {
     font-size: 12px;
     font-weight: 600;
-    color: $red;
+    color: $red-text;
     &:hover { opacity: 0.8; }
 }
 
@@ -5245,7 +5245,7 @@ onBeforeUnmount(() => {
     position: relative;
 
     &.pn-done {
-        .pn-icon { background: rgba($red, 0.15); border-color: rgba($red, 0.4); color: $red; }
+        .pn-icon { background: rgba($red, 0.15); border-color: rgba($red, 0.4); color: $red-text; }
         .pn-label { color: $text-muted; }
         .pn-line { background: rgba($red, 0.3); }
     }
@@ -5349,7 +5349,7 @@ onBeforeUnmount(() => {
     letter-spacing: 0.2px;
 }
 
-.req { color: $red; }
+.req { color: $red-text; }
 .req--optional {
     color: $text-dim;
     font-size: 10px;
@@ -5400,7 +5400,7 @@ onBeforeUnmount(() => {
     background: rgba($red, 0.15);
     border: 1px solid rgba($red, 0.4);
     border-radius: $r-sm;
-    color: $red;
+    color: $red-text;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -5434,7 +5434,7 @@ onBeforeUnmount(() => {
     cursor: pointer;
     text-align: left;
 
-    .cz-icon:first-child { color: $red; }
+    .cz-icon:first-child { color: $red-text; }
     span { flex: 1; }
     .cepik-toggle-chevron { color: $text-dim; }
     &:hover { background: rgba(255,255,255,0.03); }
@@ -5467,7 +5467,7 @@ onBeforeUnmount(() => {
     gap: 6px;
     margin-top: 10px;
     font-size: 12px;
-    color: $red;
+    color: $red-text;
 }
 .cepik-or-divider {
     display: flex;
@@ -5484,7 +5484,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 5px;
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     margin-top: 6px;
 }
@@ -5507,7 +5507,7 @@ onBeforeUnmount(() => {
     font-family: inherit;
     font-size: 10px;
     font-weight: 600;
-    color: $red;
+    color: $red-text;
     background: rgba(139, 13, 29, 0.12);
     border: 1px solid rgba(139, 13, 29, 0.25);
     border-radius: 4px;
@@ -5554,7 +5554,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 5px;
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     margin-top: 4px;
     font-weight: 500;
@@ -5712,7 +5712,7 @@ onBeforeUnmount(() => {
     background: transparent;
     border: 1px solid rgba($red, 0.5);
     border-radius: $r-sm;
-    color: $red;
+    color: $red-text;
     font-size: 13px;
     font-weight: 600;
     padding: 9px 18px;
@@ -5769,12 +5769,12 @@ onBeforeUnmount(() => {
     font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
 }
 
-.pm-brand { font-size: 12px; color: $red; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.pm-brand { font-size: 12px; color: $red-text; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
 .pm-name { font-size: 24px; font-weight: 900; color: $text; margin-bottom: 10px; }
 .pm-meta {
     display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; color: $text-dim; margin-bottom: 12px;
 }
-.pm-price { font-size: 28px; font-weight: 900; color: $red; margin-bottom: 16px; }
+.pm-price { font-size: 28px; font-weight: 900; color: $red-text; margin-bottom: 16px; }
 .pm-desc { font-size: 14px; color: $text-muted; line-height: 1.7; white-space: pre-wrap; }
 
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
@@ -5876,7 +5876,7 @@ onBeforeUnmount(() => {
     &:last-child { border-right: none; }
 }
 
-.strip-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
+.strip-icon { color: $red-text; flex-shrink: 0; margin-top: 2px; }
 
 .strip-title {
     font-size: 12px;
@@ -6075,7 +6075,7 @@ onBeforeUnmount(() => {
 .preview-price {
     font-size: 18px;
     font-weight: 800;
-    color: $red;
+    color: $red-text;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -6201,7 +6201,7 @@ onBeforeUnmount(() => {
     font-size: 12px;
     font-weight: 500;
     transition: border-color 0.2s, color 0.2s;
-    &:hover { border-color: $red; color: $red; }
+    &:hover { border-color: $red; color: $red-text; }
     &--loading { border-color: rgba($red, 0.4); color: $text-muted; cursor: wait; }
 }
 
@@ -6482,7 +6482,7 @@ onBeforeUnmount(() => {
     border-radius: 20px;
     padding: 1px 7px;
 
-    &.fgc-has { color: $red; background: rgba($red, 0.1); }
+    &.fgc-has { color: $red-text; background: rgba($red, 0.1); }
 }
 
 .feat-badges {
@@ -6536,7 +6536,7 @@ onBeforeUnmount(() => {
         background: rgba($red, 0.15);
         color: #fff;
 
-        .feat-badge-icon { color: $red; }
+        .feat-badge-icon { color: $red-text; }
     }
 }
 
@@ -6557,7 +6557,7 @@ onBeforeUnmount(() => {
     border-radius: 8px;
     background: rgba($red, 0.08);
     border: 1px solid rgba($red, 0.2);
-    color: $red;
+    color: $red-text;
     font-size: 13px;
     font-weight: 600;
     margin-top: 16px;
@@ -6577,7 +6577,7 @@ onBeforeUnmount(() => {
     cursor: pointer;
     margin-left: auto;
     transition: all 0.15s;
-    &:hover { background: rgba($red, 0.1); color: $red; }
+    &:hover { background: rgba($red, 0.1); color: $red-text; }
 }
 
 .feat-search-wrap {
@@ -6615,7 +6615,7 @@ onBeforeUnmount(() => {
     padding: 4px;
     display: flex;
     align-items: center;
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 
 :deep(.feat-hl) {
@@ -6643,7 +6643,7 @@ onBeforeUnmount(() => {
 
     &.ph-ok    { background: rgba($success, 0.08); border: 1px solid rgba($success, 0.2); color: $success; }
     &.ph-warn  { background: rgba(#facc15, 0.08); border: 1px solid rgba(#facc15, 0.2); color: #facc15; }
-    &.ph-error { background: rgba($red, 0.08);    border: 1px solid rgba($red, 0.2);    color: $red;     }
+    &.ph-error { background: rgba($red, 0.08);    border: 1px solid rgba($red, 0.2);    color: $red-text;     }
 }
 
 .submit-error {
@@ -6746,14 +6746,14 @@ onBeforeUnmount(() => {
 }
 
 .pp-header { display: flex; align-items: center; gap: 8px; }
-.pp-icon { color: $red; flex-shrink: 0; }
+.pp-icon { color: $red-text; flex-shrink: 0; }
 .pp-name { font-size: 14px; font-weight: 800; color: $text; }
 .pp-badge-free {
     font-size: 9px; font-weight: 800; color: $success;
     background: rgba(76,175,80,0.12); border: 1px solid rgba(76,175,80,0.3);
     padding: 2px 7px; border-radius: 20px; margin-left: auto;
 }
-.pp-price { font-size: 18px; font-weight: 900; color: $red; strong { font-size: 22px; } }
+.pp-price { font-size: 18px; font-weight: 900; color: $red-text; strong { font-size: 22px; } }
 .pp-desc { font-size: 11px; color: $text-dim; line-height: 1.5; }
 .pp-feats {
     list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; flex: 1;
@@ -6792,7 +6792,7 @@ onBeforeUnmount(() => {
 
 .ps-paid-info { display: flex; flex-direction: column; gap: 2px; }
 .ps-plan-name { font-size: 13px; font-weight: 700; color: $text; }
-.ps-plan-price { font-size: 20px; font-weight: 900; color: $red; }
+.ps-plan-price { font-size: 20px; font-weight: 900; color: $red-text; }
 .ps-original { text-decoration: line-through; color: $text-dim; font-size: 14px; font-weight: 400; margin-right: 6px; }
 .ps-coupon-ok { display: flex; align-items: center; gap: 5px; font-size: 11px; color: $success; }
 
@@ -6909,7 +6909,7 @@ onBeforeUnmount(() => {
 
     &--primary {
         background: rgba($red, 0.12);
-        color: $red;
+        color: $red-text;
         border: 1px solid rgba($red, 0.25);
     }
 
@@ -6940,7 +6940,7 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 3px;
     white-space: nowrap;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 .ai-hint-chip {
     font-size: 11px;
@@ -6979,7 +6979,7 @@ onBeforeUnmount(() => {
     min-width: 0;
 }
 
-.tsc-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
+.tsc-icon { color: $red-text; flex-shrink: 0; margin-top: 2px; }
 
 .tsc-label {
     font-size: 11px;
@@ -6999,7 +6999,7 @@ onBeforeUnmount(() => {
     background: rgba($red, 0.12);
     border: 1px solid rgba($red, 0.35);
     border-radius: $r-sm;
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     font-weight: 700;
     padding: 7px 16px;
@@ -7040,7 +7040,7 @@ onBeforeUnmount(() => {
     gap: 12px;
 }
 
-.es-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
+.es-icon { color: $red-text; flex-shrink: 0; margin-top: 2px; }
 .es-label { font-size: 11px; color: $text-dim; text-transform: uppercase; letter-spacing: 0.4px; }
 .es-val { font-size: 15px; font-weight: 700; color: $text; margin-top: 2px; }
 
@@ -7082,7 +7082,7 @@ onBeforeUnmount(() => {
 .btn-compat-add {
     display: flex; align-items: center; gap: 5px; padding: 9px 16px; height: fit-content;
     background: rgba($red, 0.12); border: 1px solid rgba($red, 0.3); border-radius: 8px;
-    color: $red; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+    color: $red-text; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
     white-space: nowrap;
     &:disabled { opacity: 0.4; cursor: not-allowed; }
     &:hover:not(:disabled) { background: rgba($red, 0.2); }
@@ -7114,12 +7114,12 @@ onBeforeUnmount(() => {
     display: flex; align-items: center; justify-content: center; width: 34px; height: 34px;
     border-radius: 8px; border: 1px solid $border; background: rgba(255,255,255,0.04);
     color: $text-muted; cursor: pointer;
-    &:hover { border-color: rgba($red, 0.3); color: $red; }
+    &:hover { border-color: rgba($red, 0.3); color: $red-text; }
 }
 .btn-doc-add {
     display: flex; align-items: center; gap: 5px; padding: 9px 16px; margin-top: 4px;
     background: rgba($red, 0.12); border: 1px solid rgba($red, 0.3); border-radius: 8px;
-    color: $red; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+    color: $red-text; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
     &:hover { background: rgba($red, 0.2); }
 }
 
@@ -7259,7 +7259,7 @@ onBeforeUnmount(() => {
     user-select: none;
 
     &:hover { border-color: rgba($red, 0.3); color: $text; }
-    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.5); color: $red; font-weight: 700; }
+    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.5); color: $red-text; font-weight: 700; }
 }
 
 .input-unit-wrap {
@@ -7305,7 +7305,7 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: center;
     transition: all 0.15s;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 
     .bool-check.active & { border-color: $red; background: rgba($red, 0.1); }
 }
@@ -7370,7 +7370,7 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: center;
     transition: all 0.15s;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 
     .nego-toggle.active & { border-color: $red; background: rgba($red, 0.1); }
 }
@@ -7497,7 +7497,7 @@ onBeforeUnmount(() => {
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .hist-quality-tip {
@@ -7549,7 +7549,7 @@ onBeforeUnmount(() => {
     font-size: 13px;
 }
 
-.psc-icon { color: $red; flex-shrink: 0; }
+.psc-icon { color: $red-text; flex-shrink: 0; }
 
 .psc-label {
     color: $text-dark;
@@ -7563,7 +7563,7 @@ onBeforeUnmount(() => {
     flex: 1;
 }
 
-.psc-price { color: $red; }
+.psc-price { color: $red-text; }
 
 .psc-nego {
     display: inline-block;
@@ -7613,7 +7613,7 @@ onBeforeUnmount(() => {
 
 .col-great { color: $success; font-weight: 700; }
 .col-good { color: $info; font-weight: 700; }
-.col-poor { color: $red; font-weight: 700; }
+.col-poor { color: $red-text; font-weight: 700; }
 
 // ── Success screen ────────────────────────────────────────────────────────────
 .success-screen {
@@ -7684,7 +7684,7 @@ onBeforeUnmount(() => {
     font-weight: 900;
     letter-spacing: 6px;
     color: $text;
-    span { color: $red; }
+    span { color: $red-text; }
 }
 
 .success-icon-wrap {
@@ -7787,7 +7787,7 @@ onBeforeUnmount(() => {
 .tip-icon { color: rgba($red, 0.7); flex-shrink: 0; }
 
 .tip-link {
-    color: $red;
+    color: $red-text;
     font-weight: 600;
     &:hover { text-decoration: underline; }
 }
@@ -7843,7 +7843,7 @@ onBeforeUnmount(() => {
     &--done {
         background: rgba($red, 0.15);
         border-color: rgba($red, 0.3);
-        color: $red;
+        color: $red-text;
     }
 }
 
@@ -7854,7 +7854,7 @@ onBeforeUnmount(() => {
 .vi-badge {
     font-size: 10px;
     font-weight: 700;
-    color: $red;
+    color: $red-text;
     background: rgba($red, 0.1);
     border: 1px solid rgba($red, 0.2);
     border-radius: 5px;
@@ -7922,7 +7922,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
 }
 
@@ -7933,7 +7933,7 @@ onBeforeUnmount(() => {
     margin-left: auto;
     font-size: 28px;
     font-weight: 900;
-    color: $red;
+    color: $red-text;
 }
 
 // ── Premium score panel (right sidebar) ───────────────────────────────────────
@@ -8008,7 +8008,7 @@ onBeforeUnmount(() => {
     margin-bottom: 16px;
 
     &--gold   { background: rgba($premium, 0.12); color: $premium; border: 1px solid rgba($premium, 0.25); }
-    &--silver { background: rgba($red, 0.10); color: $red; border: 1px solid rgba($red, 0.2); }
+    &--silver { background: rgba($red, 0.10); color: $red-text; border: 1px solid rgba($red, 0.2); }
     &--bronze { background: rgba(255,255,255,0.05); color: $text-dim; border: 1px solid rgba(255,255,255,0.1); }
 }
 
@@ -8139,7 +8139,7 @@ onBeforeUnmount(() => {
     text-transform: uppercase;
 
     &--dealer { background: rgba(#4fc3f7, 0.15); color: #4fc3f7; }
-    &--cat { background: rgba($red, 0.12); color: $red; border: 1px solid rgba($red, 0.2); }
+    &--cat { background: rgba($red, 0.12); color: $red-text; border: 1px solid rgba($red, 0.2); }
 }
 
 .prev-title {
@@ -8152,7 +8152,7 @@ onBeforeUnmount(() => {
 .prev-price {
     font-size: 28px;
     font-weight: 900;
-    color: $red;
+    color: $red-text;
     letter-spacing: -0.5px;
 }
 
@@ -8173,7 +8173,7 @@ onBeforeUnmount(() => {
         gap: 5px;
         font-size: 13px;
         color: $text-dim;
-        .cz-icon { color: $red; }
+        .cz-icon { color: $red-text; }
     }
 }
 
@@ -8198,7 +8198,7 @@ onBeforeUnmount(() => {
     font-size: 11px;
     color: $text-dim;
 
-    &--more { color: $red; border-color: rgba($red, 0.2); }
+    &--more { color: $red-text; border-color: rgba($red, 0.2); }
 }
 
 .preview-publish-row {
@@ -8584,7 +8584,7 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 3px;
     font-size: 11px;
-    color: $red;
+    color: $red-text;
     text-decoration: none;
     margin-top: 2px;
     &:hover { text-decoration: underline; }

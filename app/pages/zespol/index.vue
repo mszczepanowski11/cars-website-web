@@ -222,7 +222,7 @@ async function onLeave() {
     width: 100%;
 }
 
-.member-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
+.member-icon { color: $red-text; flex-shrink: 0; margin-top: 2px; }
 .member-title { font-size: 12px; color: $text-dim; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
 .member-company { font-size: 18px; font-weight: 800; color: $text; margin: 4px 0 8px; }
 .member-desc { font-size: 13px; color: $text-dim; line-height: 1.6; margin: 0; }

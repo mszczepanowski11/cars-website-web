@@ -324,7 +324,7 @@ onMounted(fetchEvents)
 .hero-eyebrow {
     font-size: 11px;
     font-weight: 700;
-    color: $red;
+    color: $red-text;
     text-transform: uppercase;
     letter-spacing: 3px;
     margin-bottom: 14px;
@@ -337,7 +337,7 @@ onMounted(fetchEvents)
     line-height: 1.1;
     margin-bottom: 16px;
 
-    span { color: $red; }
+    span { color: $red-text; }
 
     @include respond-to(sm) { font-size: 36px; }
 }
@@ -379,7 +379,7 @@ onMounted(fetchEvents)
     font-family: 'Inter', sans-serif;
 
     &:hover { border-color: rgba($red, 0.3); color: $text; }
-    &.active { background: rgba($red, 0.12); border-color: rgba($red, 0.4); color: $red; font-weight: 700; }
+    &.active { background: rgba($red, 0.12); border-color: rgba($red, 0.4); color: $red-text; font-weight: 700; }
 }
 
 .search-row {
@@ -461,7 +461,7 @@ onMounted(fetchEvents)
 .btn-retry {
     display: inline-flex; align-items: center; gap: 7px; margin-top: 4px;
     background: rgba($red, 0.1); border: 1px solid rgba($red, 0.3); border-radius: $r-sm;
-    color: $red; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif;
+    color: $red-text; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif;
     padding: 9px 20px; cursor: pointer; transition: opacity 0.2s;
     &:hover { opacity: 0.8; }
 }
@@ -565,7 +565,7 @@ onMounted(fetchEvents)
     }
 }
 
-.meta-icon { color: $red; }
+.meta-icon { color: $red-text; }
 
 .event-desc {
     font-size: 13px;
@@ -607,7 +607,7 @@ onMounted(fetchEvents)
     font-size: 11px;
     color: $text-dim;
 
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .btn-attend {
@@ -624,8 +624,8 @@ onMounted(fetchEvents)
     transition: all 0.2s;
     font-family: 'Inter', sans-serif;
 
-    &:hover { border-color: $red; color: $red; }
-    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.5); color: $red; }
+    &:hover { border-color: $red; color: $red-text; }
+    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.5); color: $red-text; }
 }
 
 .share-wrap { position: relative; }

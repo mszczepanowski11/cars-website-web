@@ -90,7 +90,7 @@ function goBack() {
     &.wrap-404 {
         background: rgba($red, 0.08);
         border: 1px solid rgba($red, 0.2);
-        color: $red;
+        color: $red-text;
     }
     &.wrap-500 {
         background: rgba(255,152,0,0.08);

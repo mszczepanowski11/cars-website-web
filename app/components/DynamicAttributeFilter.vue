@@ -84,7 +84,7 @@ function toggleOption(o: string) {
 .dafl-range-input {
     flex: 1; min-width: 0; background: transparent; border: none; outline: none;
     color: $text; font-size: 13px; font-family: 'Inter', sans-serif; padding: 9px 0;
-    &::placeholder { color: $text-faint; }
+    &::placeholder { color: $text-dark; }
     &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { -webkit-appearance: none; }
     -moz-appearance: textfield;
 }
@@ -100,6 +100,6 @@ function toggleOption(o: string) {
     color: $text-muted; font-size: 12px; font-weight: 500; padding: 5px 10px; cursor: pointer;
     font-family: 'Inter', sans-serif; transition: all 0.15s;
     &:hover { border-color: rgba($red, 0.3); color: $text; }
-    &.active { background: rgba($red, 0.12); border-color: rgba($red, 0.4); color: $red; font-weight: 700; }
+    &.active { background: rgba($red, 0.12); border-color: rgba($red, 0.4); color: $red-text; font-weight: 700; }
 }
 </style>

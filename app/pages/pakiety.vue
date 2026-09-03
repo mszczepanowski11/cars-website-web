@@ -289,7 +289,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     gap: 6px;
     background: rgba(139,13,29,0.12);
     border: 1px solid rgba(139,13,29,0.3);
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -305,7 +305,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     color: $text;
     line-height: 1.15;
     margin: 0 0 16px;
-    .accent { color: $red; }
+    .accent { color: $red-text; }
 }
 
 .hero-desc {
@@ -327,7 +327,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     padding: 8px 18px;
     border-radius: $r-sm;
     margin-top: 8px;
-    v-icon { color: $red; }
+    v-icon { color: $red-text; }
     strong { color: $text; }
     .exp-date { color: $text-dim; }
 }
@@ -371,7 +371,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: $red;
+    color: $red-text;
     margin-bottom: 6px;
 }
 .sp-title { font-size: 18px; font-weight: 700; color: $text; margin-bottom: 4px; }
@@ -499,7 +499,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     }
 }
 
-.check-icon { color: $red; flex-shrink: 0; margin-top: 1px; }
+.check-icon { color: $red-text; flex-shrink: 0; margin-top: 1px; }
 
 .plan-stats {
     display: flex;
@@ -513,7 +513,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
         gap: 8px;
         font-size: 12px;
         color: $text-dim;
-        v-icon { color: $text-faint; }
+        v-icon { color: $text-dark; }
     }
 }
 

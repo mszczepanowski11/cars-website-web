@@ -1,7 +1,22 @@
+// Szerokość treści. W projekcie istnieją dokładnie dwie uzasadnione:
+// szeroka - dla siatek ogłoszeń, kart i tabel; wąska - dla formularzy i tekstu
+// czytanego ciągiem, gdzie zbyt długi wiersz męczy oko.
+//
+// Audyt wykazał 28 stron z własnymi szerokościami (460, 500, 380, 720, 760 px...),
+// co sprawiało, że treść „skacze" w bok przy przechodzeniu między stronami.
 @mixin container {
   width: $container-w;
   max-width: $container-max;
   margin: 0 auto;
+}
+
+// Formularze, strony logowania i rejestracji, potwierdzenia, krótkie komunikaty.
+@mixin container-narrow {
+  width: 100%;
+  max-width: $container-narrow;
+  margin: 0 auto;
+  padding-left: $s-4;
+  padding-right: $s-4;
 }
 
 @mixin card($radius: $r-lg) {
