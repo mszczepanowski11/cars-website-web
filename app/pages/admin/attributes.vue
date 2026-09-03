@@ -184,7 +184,7 @@ async function loadDefinitions() {
         const q: Record<string, any> = {}
         if (categoryFilter.value) q.categoryId = categoryFilter.value
         const resp = await $fetch<{ items: any[] }>('/api/proxy/api/Attributes/all', { query: q })
-        definitions.value = resp.items
+        definitions.value = resp?.items ?? []
     } catch (e: any) {
         toastError(e?.data?.message ?? 'Nie udało się załadować pól.')
         definitions.value = []

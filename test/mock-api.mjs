@@ -41,8 +41,11 @@ http.createServer((req,res)=>{
   res.setHeader('content-type','application/json; charset=utf-8')
   const u=req.url||''
   const send=(o)=>res.end(JSON.stringify(o))
-  if (/\/listings\/search/.test(u)) return send({items:items(12),totalCount:1847,total:1847,page:1,pageSize:12})
-  if (/\/listings\/(most-viewed|premium-collection|featured)/.test(u)) return send(items(8))
+  // Proxy aplikacji przepisuje `api/listings/*` na `api/Advert/*` (zeby reguly blokad
+  // reklam nie ucinaly zapytan po slowie "advert" w adresie), wiec atrapa musi
+  // rozpoznawac OBIE postacie - inaczej test sprawdza pusta liste zamiast kart ogloszen.
+  if (/\/(listings|Advert)\/search/.test(u)) return send({items:items(12),totalCount:1847,total:1847,page:1,pageSize:12})
+  if (/\/(listings|Advert)\/(most-viewed|premium-collection|featured)/.test(u)) return send(items(8))
   if (/\/(listings|Advert)\/\d+/.test(u)) return send(mk(3))
   if (/\/Advert\?/.test(u)) return send({items:items(12),totalCount:1847})
   if (/\/Taxonomy\/categories|\/api\/Category(\?|$)/.test(u)) return send(cats)

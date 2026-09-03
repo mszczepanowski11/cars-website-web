@@ -415,7 +415,7 @@ async function searchUsers() {
         const r = await $fetch<{ items: { id: number; email: string }[] }>('/api/proxy/api/Admin/users', {
             query: { search: userSearch.value, accountType: 'Business', pageSize: 10 },
         })
-        userResults.value = r.items
+        userResults.value = r?.items ?? []
     } catch { userResults.value = [] }
 }
 

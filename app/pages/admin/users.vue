@@ -227,7 +227,7 @@ async function fetchUsers() {
         if (typeFilter.value === 'blocked') query.isBlocked = true
         else if (typeFilter.value !== 'all') query.accountType = typeFilter.value
         const r = await $fetch<{ items: AdminUser[]; totalCount: number }>('/api/proxy/api/Admin/users', { query })
-        users.value = r.items
+        users.value = r?.items ?? []
         totalCount.value = r.totalCount
     } catch (e: any) {
         toastError(e?.data?.message ?? 'Nie udało się załadować użytkowników.')

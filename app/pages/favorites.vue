@@ -91,7 +91,7 @@ async function load(p: number = page.value) {
         const r = await $fetch<PagedResult<CarAdvert>>('/api/proxy/api/Favorite', {
             query: { page: p, pageSize, sortBy: sortBy.value || undefined }
         })
-        adverts.value = r.items
+        adverts.value = r?.items ?? []
         total.value = r.totalCount
     } finally { loading.value = false }
 }

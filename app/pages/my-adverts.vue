@@ -321,7 +321,7 @@ async function load(p: number = page.value) {
         const r = await $fetch<PagedResult<CarAdvert>>(
             `/api/proxy/api/listings/user?page=${p}&pageSize=${pageSize}`
         )
-        adverts.value = r.items
+        adverts.value = r?.items ?? []
         total.value = r.totalCount
     } catch (e: any) {
         toastError(e?.data?.message ?? 'Nie udało się załadować ogłoszeń.')
