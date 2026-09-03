@@ -48,29 +48,29 @@
                 <!-- Level 1: Primary row -->
                 <div class="hs-primary">
                     <div v-if="currentSearchConfig.hasBrand" class="hsp-field">
-                        <label class="hsp-label">{{ currentSearchConfig.brandLabel ?? $t('search.brand') }}</label>
-                        <select v-model="searchBrandId" class="hsp-select" @change="onBrandChange">
+                        <label class="hsp-label" for="hs-brand">{{ currentSearchConfig.brandLabel ?? $t('search.brand') }}</label>
+                        <select id="hs-brand" v-model="searchBrandId" class="hsp-select" @change="onBrandChange">
                             <option :value="null">{{ $t('search.allBrands') }}</option>
                             <option v-for="b in filterBrands.filter(b => b.name && !/^\d+$/.test(b.name))" :key="b.id" :value="b.id">{{ b.name }}</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.hasBrand && currentSearchConfig.hasModel" class="hsp-field">
-                        <label class="hsp-label">{{ $t('search.model') }}</label>
-                        <select v-model="searchModelId" class="hsp-select" :disabled="!searchBrandId" @change="onModelChange">
+                        <label class="hsp-label" for="hs-model">{{ $t('search.model') }}</label>
+                        <select id="hs-model" v-model="searchModelId" class="hsp-select" :disabled="!searchBrandId" @change="onModelChange">
                             <option :value="null">{{ searchBrandId ? 'Wszystkie modele' : 'Wybierz markę' }}</option>
                             <option v-for="m in searchModels" :key="m.id" :value="m.id">{{ m.name }}</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.subtypes?.length" class="hsp-field">
-                        <label class="hsp-label">{{ currentSearchConfig.subtypeLabel ?? $t('search.type') }}</label>
-                        <select v-model="searchSubtype" class="hsp-select">
+                        <label class="hsp-label" for="hs-subtype">{{ currentSearchConfig.subtypeLabel ?? $t('search.type') }}</label>
+                        <select id="hs-subtype" v-model="searchSubtype" class="hsp-select">
                             <option value="">{{ $t('search.all') }}</option>
                             <option v-for="s in currentSearchConfig.subtypes" :key="s" :value="s">{{ s }}</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.hasPartCategory" class="hsp-field">
-                        <label class="hsp-label">{{ $t('search.partCategory') }}</label>
-                        <select v-model="searchPartCategory" class="hsp-select">
+                        <label class="hsp-label" for="hs-partcat">{{ $t('search.partCategory') }}</label>
+                        <select id="hs-partcat" v-model="searchPartCategory" class="hsp-select">
                             <option :value="null">{{ $t('search.allCategories') }}</option>
                             <option v-for="pc in partCategories" :key="pc.id" :value="pc.id">{{ pc.name }}</option>
                         </select>
@@ -78,9 +78,11 @@
                     <div class="hsp-field hsp-range">
                         <label class="hsp-label">{{ $t('search.price') }}</label>
                         <div class="hsp-range-row">
-                            <input v-model="searchPriceFrom" type="number" class="hsp-input" :placeholder="$t('search.from')" min="0" />
-                            <span class="hsp-sep">—</span>
-                            <input v-model="searchPriceTo" type="number" class="hsp-input" :placeholder="$t('search.to')" min="0" />
+                            <!-- Dwa pola pod wspólną etykietą „Cena" - każde musi powiedzieć
+                                 czytnikowi ekranu, którym końcem zakresu jest. -->
+                            <input v-model="searchPriceFrom" type="number" class="hsp-input" :aria-label="`${$t('search.price')} ${$t('search.from')}`" :placeholder="$t('search.from')" min="0" />
+                            <span class="hsp-sep" aria-hidden="true">—</span>
+                            <input v-model="searchPriceTo" type="number" class="hsp-input" :aria-label="`${$t('search.price')} ${$t('search.to')}`" :placeholder="$t('search.to')" min="0" />
                         </div>
                     </div>
                     <button class="hsp-search-btn" @click="doSearch">
@@ -498,7 +500,7 @@
                         <p>Zapisz się do newslettera i otrzymuj najlepsze oferty.</p>
                     </div>
                     <div class="news-form">
-                        <input v-model="email" class="news-input" placeholder="Twój adres email" @keyup.enter="subscribeNewsletter" />
+                        <input v-model="email" class="news-input" type="email" autocomplete="email" aria-label="Twój adres email" placeholder="Twój adres email" @keyup.enter="subscribeNewsletter" />
                         <button
                             class="btn-subscribe"
                             :disabled="subscribeLoading || !newsletterConsent"

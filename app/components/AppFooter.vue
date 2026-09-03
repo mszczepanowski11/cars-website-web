@@ -96,10 +96,18 @@ async function subscribeNewsletter() {
         </div>
         <template v-if="!newsletterOk">
           <div class="fn-form">
+            <!--
+              Etykieta zamiast samego placeholdera: placeholder znika po wpisaniu
+              pierwszego znaku, a czytnik ekranu i tak odczytuje go niekonsekwentnie.
+              To pole jest w stopce KAŻDEJ strony, więc jedna poprawka obejmuje cały serwis.
+            -->
             <input
+              id="footer-newsletter-email"
               v-model="newsletterEmail"
               class="fn-input"
               type="email"
+              autocomplete="email"
+              :aria-label="$t('footer.emailPlaceholder')"
               :placeholder="$t('footer.emailPlaceholder')"
               @keyup.enter="subscribeNewsletter"
             />

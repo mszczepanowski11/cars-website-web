@@ -8,7 +8,7 @@
 
         <form class="dir-search" @submit.prevent="applySearch">
           <CzIcon icon="mdi-magnify" size="20" class="dir-search-icon" />
-          <input v-model="qInput" type="text" :placeholder="$t('firmy.searchPlaceholder')" class="dir-search-input" />
+          <input v-model="qInput" type="search" :aria-label="$t('firmy.searchPlaceholder')" :placeholder="$t('firmy.searchPlaceholder')" class="dir-search-input" />
           <button type="submit" class="dir-search-btn">{{ $t('firmy.searchBtn') }}</button>
         </form>
       </div>

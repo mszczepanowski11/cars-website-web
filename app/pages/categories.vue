@@ -35,6 +35,8 @@
                     <input
                         v-model="searchText"
                         class="s-input"
+                        type="search"
+                        :aria-label="$t('categories.searchPlaceholder')"
                         :placeholder="$t('categories.searchPlaceholder')"
                     />
                     <button class="s-btn">
