@@ -898,10 +898,11 @@
 import type { CarAdvert, Feature, PagedResult, UserProfile, UserStats, Review } from '~/types'
 
 const route = useRoute()
-// Przyjazny adres ma postać "marka-model-rok-miasto-123456" - autorytatywne jest
-// ID na końcu, część opisowa służy tylko użytkownikowi i wyszukiwarkom. Dzięki
-// temu zmiana tytułu ogłoszenia nie unieważnia istniejących linków, a poniżej
-// przekierowujemy na aktualną postać adresu.
+// Trasa jest wielosegmentowa ([...slug]), bo adres ogłoszenia ma teraz postać
+// /ogloszenia/kategoria/marka/model/opis-ID1234. Autorytatywne jest wyłącznie ID
+// na końcu - reszta służy użytkownikowi i wyszukiwarkom. Dzięki temu ta sama trasa
+// obsługuje też adresy sprzed zmiany (bez segmentów, bez przedrostka ID) i skrót
+// "/ogloszenia/1234", a poniżej przekierowuje je trwale na postać aktualną.
 // `advertPath` i `parseAdvertId` sa auto-importowane z `app/composables/useAdvertUrl.ts`
 // (re-eksport czystej logiki z `shared/advertSlug.ts`) - nie ma tu zadnego `useAdvertUrl()`.
 const localePath = useLocalePath()

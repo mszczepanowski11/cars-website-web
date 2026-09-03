@@ -40,13 +40,18 @@ const PAGES = [
     { path: '/jak-to-dziala' },
     { path: '/kontakt' },
     { path: '/o-nas' },
+    // Postać aktualna: kategoria / marka / model / opis-IDxxxx
+    { path: '/ogloszenia/osobowe/volkswagen/passat/volkswagen-passat-2021-poznan-ID1003', expect: '.advert-page' },
+    // Postać sprzed zmiany - musi nadal prowadzić do ogłoszenia (przez przekierowanie 301).
     { path: '/ogloszenia/audi-q5-2020-warszawa-1003', expect: '.advert-page' },
+    // Sam identyfikator - skrót używany np. w wiadomościach.
+    { path: '/ogloszenia/1003', expect: '.advert-page' },
     // Ta sama strona, ale oczami kogoś, kto wchodzi PIERWSZY RAZ - bez zapisanej zgody
     // na cookies. Baner zgody jest przyklejony do dołu ekranu z bardzo wysoką warstwą
     // i dwukrotnie w tym projekcie przykrył element, który musi być klikalny:
     // przycisk „Zadzwoń" na ogłoszeniu i „Pokaż N ogłoszeń" w filtrach.
     // `clickable` sprawdza, czy w środku wskazanego elementu naprawdę leży ON, a nie coś nad nim.
-    { path: '/ogloszenia/audi-q5-2020-warszawa-1003', noConsent: true, clickable: '.mobile-cta-bar', onlyMobile: true },
+    { path: '/ogloszenia/1003', noConsent: true, clickable: '.mobile-cta-bar', onlyMobile: true },
 ]
 
 /** Szerokości: mały telefon, tablet, laptop. */
