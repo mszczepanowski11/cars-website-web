@@ -11,14 +11,14 @@
                     @click="dismiss(toast.id)"
                 >
                     <div class="toast-icon-wrap">
-                        <v-icon :icon="iconFor(toast.type)" size="18" />
+                        <CzIcon :icon="iconFor(toast.type)" size="18" />
                     </div>
                     <div class="toast-body">
                         <div v-if="toast.title" class="toast-title">{{ toast.title }}</div>
                         <div class="toast-message">{{ toast.message }}</div>
                     </div>
                     <button class="toast-close" @click.stop="dismiss(toast.id)" aria-label="Zamknij">
-                        <v-icon icon="mdi-close" size="14" />
+                        <CzIcon icon="mdi-close" size="14" />
                     </button>
                     <div class="toast-progress" :style="{ animationDuration: toast.duration + 'ms' }" />
                 </div>

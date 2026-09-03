@@ -3,20 +3,20 @@
     <div v-if="!advert" class="advert-not-found">
         <div class="anf-inner">
             <template v-if="advertFetchError && advertFetchError >= 500">
-                <v-icon icon="mdi-alert-circle-outline" size="64" class="anf-icon" />
+                <CzIcon icon="mdi-alert-circle-outline" size="64" class="anf-icon" />
                 <h1 class="anf-title">{{ $t('advertDetail.notFound.serverErrorTitle') }}</h1>
                 <p class="anf-desc">{{ $t('advertDetail.notFound.serverErrorDesc') }}</p>
                 <button type="button" class="anf-btn" @click="() => { if (typeof window !== 'undefined') window.location.reload() }">
-                    <v-icon icon="mdi-refresh" size="18" />
+                    <CzIcon icon="mdi-refresh" size="18" />
                     {{ $t('advertDetail.notFound.retry') }}
                 </button>
             </template>
             <template v-else>
-                <v-icon icon="mdi-car-off" size="64" class="anf-icon" />
+                <CzIcon icon="mdi-car-off" size="64" class="anf-icon" />
                 <h1 class="anf-title">{{ $t('advertDetail.notFound.title') }}</h1>
                 <p class="anf-desc">{{ $t('advertDetail.notFound.desc') }}</p>
                 <NuxtLink to="/adverts" class="anf-btn">
-                    <v-icon icon="mdi-magnify" size="18" />
+                    <CzIcon icon="mdi-magnify" size="18" />
                     {{ $t('advertDetail.notFound.browse') }}
                 </NuxtLink>
             </template>
@@ -29,53 +29,53 @@
             <div class="container topbar-inner">
                 <div class="topbar-left">
                     <NuxtLink to="/adverts" class="back-link">
-                        <v-icon icon="mdi-chevron-left" size="18" />
+                        <CzIcon icon="mdi-chevron-left" size="18" />
                         {{ $t('advertDetail.topbar.back') }}
                     </NuxtLink>
                     <div v-if="advert" class="topbar-crumbs">
                         <span class="crumb">{{ advert.brand?.name }}</span>
-                        <v-icon icon="mdi-chevron-right" size="12" class="crumb-sep" />
+                        <CzIcon icon="mdi-chevron-right" size="12" class="crumb-sep" />
                         <span class="crumb">{{ advert.model?.name }}</span>
                         <template v-if="advert.year">
-                            <v-icon icon="mdi-chevron-right" size="12" class="crumb-sep" />
+                            <CzIcon icon="mdi-chevron-right" size="12" class="crumb-sep" />
                             <span class="crumb crumb-active">{{ advert.year }}</span>
                         </template>
                     </div>
                 </div>
                 <div class="topbar-actions">
                     <button class="icon-action" @click="toggleFav">
-                        <v-icon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="17" :class="{ 'heart-active': isFav }" />
+                        <CzIcon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="17" :class="{ 'heart-active': isFav }" />
                         <span class="ia-label">{{ $t('advertDetail.topbar.favorite') }}</span>
                     </button>
                     <div class="share-wrap" v-click-outside="() => shareOpen = false">
                         <button class="icon-action" @click="shareOpen = !shareOpen">
-                            <v-icon icon="mdi-share-variant-outline" size="17" />
+                            <CzIcon icon="mdi-share-variant-outline" size="17" />
                             <span class="ia-label">{{ $t('advertDetail.topbar.share') }}</span>
                         </button>
                         <div v-if="shareOpen" class="share-dropdown">
-                            <button class="share-opt" @click="doShareNative"><v-icon icon="mdi-share-outline" size="15" /> {{ $t('advertDetail.share.native') }}</button>
-                            <button class="share-opt" @click="doShareFacebook"><v-icon icon="mdi-facebook" size="15" /> Facebook</button>
-                            <button class="share-opt" @click="doShareX"><v-icon icon="mdi-twitter" size="15" /> X / Twitter</button>
-                            <button class="share-opt" @click="doShareWhatsApp"><v-icon icon="mdi-whatsapp" size="15" /> WhatsApp</button>
+                            <button class="share-opt" @click="doShareNative"><CzIcon icon="mdi-share-outline" size="15" /> {{ $t('advertDetail.share.native') }}</button>
+                            <button class="share-opt" @click="doShareFacebook"><CzIcon icon="mdi-facebook" size="15" /> Facebook</button>
+                            <button class="share-opt" @click="doShareX"><CzIcon icon="mdi-twitter" size="15" /> X / Twitter</button>
+                            <button class="share-opt" @click="doShareWhatsApp"><CzIcon icon="mdi-whatsapp" size="15" /> WhatsApp</button>
                             <button class="share-opt" @click="doCopyLink">
-                                <v-icon :icon="linkCopied ? 'mdi-check' : 'mdi-link-variant'" size="15" />
+                                <CzIcon :icon="linkCopied ? 'mdi-check' : 'mdi-link-variant'" size="15" />
                                 {{ linkCopied ? $t('advertDetail.share.copied') : $t('advertDetail.share.copyLink') }}
                             </button>
                         </div>
                     </div>
                     <button class="icon-action" :disabled="pdfLoading" @click="downloadPDF">
-                        <v-icon :icon="pdfLoading ? 'mdi-loading' : 'mdi-file-pdf-box'" size="17" :class="{ spin: pdfLoading }" />
+                        <CzIcon :icon="pdfLoading ? 'mdi-loading' : 'mdi-file-pdf-box'" size="17" :class="{ spin: pdfLoading }" />
                         <span class="ia-label">PDF</span>
                     </button>
                     <div class="qr-wrap" @mouseenter="generateQR">
-                        <button class="icon-action"><v-icon icon="mdi-qrcode" size="17" /><span class="ia-label">QR</span></button>
+                        <button class="icon-action"><CzIcon icon="mdi-qrcode" size="17" /><span class="ia-label">QR</span></button>
                         <div v-if="qrDataUrl" class="qr-popup">
                             <img :src="qrDataUrl" :alt="$t('advertDetail.qr.alt')" width="120" height="120" loading="lazy" decoding="async" />
                             <span>{{ $t('advertDetail.qr.scan') }}</span>
                         </div>
                     </div>
                     <button class="icon-action" @click="handleReport">
-                        <v-icon icon="mdi-flag-outline" size="17" />
+                        <CzIcon icon="mdi-flag-outline" size="17" />
                         <span class="ia-label">{{ $t('advertDetail.topbar.report') }}</span>
                     </button>
                 </div>
@@ -96,7 +96,7 @@
                     >
                         <div class="photo-badges">
                             <span v-if="advert?.isVerified" class="badge-verified">
-                                <v-icon icon="mdi-check-circle" size="12" /> VERIFIED
+                                <CzIcon icon="mdi-check-circle" size="12" /> VERIFIED
                             </span>
                             <span v-if="advert?.badge" class="badge-hero" :class="`badge-hero--${(advert.badge ?? '').toLowerCase()}`">
                                 {{ advert.badge }}
@@ -105,15 +105,15 @@
                         <img :src="mainImg" :alt="advert?.title ?? ''" class="main-photo-img" width="1200" height="750" fetchpriority="high" decoding="async" @error="onImageError" />
                         <div class="photo-bottom-bar">
                             <span v-if="hasImages" class="photo-count-pill">
-                                <v-icon icon="mdi-image-multiple-outline" size="13" />
+                                <CzIcon icon="mdi-image-multiple-outline" size="13" />
                                 {{ activeImg + 1 }} / {{ allImages.length }}
                             </span>
                             <button class="photo-expand-btn" @click.stop="openLightbox(activeImg)">
-                                <v-icon icon="mdi-fullscreen" size="15" /> {{ $t('advertDetail.gallery.expand') }}
+                                <CzIcon icon="mdi-fullscreen" size="15" /> {{ $t('advertDetail.gallery.expand') }}
                             </button>
                         </div>
                         <button class="photo-fav-btn" :class="{ active: isFav }" @click.stop="toggleFav">
-                            <v-icon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
+                            <CzIcon :icon="isFav ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
                         </button>
                         <template v-if="hasImages && allImages.length > 1">
                             <button
@@ -121,13 +121,13 @@
                                 :aria-label="$t('advertDetail.gallery.prevPhoto')"
                                 :disabled="activeImg === 0"
                                 @click.stop="activeImg--"
-                            ><v-icon icon="mdi-chevron-left" size="22" /></button>
+                            ><CzIcon icon="mdi-chevron-left" size="22" /></button>
                             <button
                                 class="photo-nav-arrow photo-nav-next"
                                 :aria-label="$t('advertDetail.gallery.nextPhoto')"
                                 :disabled="activeImg === allImages.length - 1"
                                 @click.stop="activeImg++"
-                            ><v-icon icon="mdi-chevron-right" size="22" /></button>
+                            ><CzIcon icon="mdi-chevron-right" size="22" /></button>
                         </template>
                     </div>
                     <div v-if="hasImages && allImages.length > 1" class="photo-thumbs-row">
@@ -167,12 +167,12 @@
                     <h1 class="info-title">{{ advert?.model?.name ?? advert?.title ?? '' }}</h1>
 
                     <div class="info-chips">
-                        <span v-if="advert?.year" class="i-chip"><v-icon icon="mdi-calendar-outline" size="12" />{{ advert.year }}</span>
-                        <span v-if="advert?.mileage" class="i-chip"><v-icon icon="mdi-speedometer" size="12" />{{ Number(advert.mileage).toLocaleString('pl') }} km</span>
-                        <span v-if="advert?.fuelType" class="i-chip"><v-icon icon="mdi-gas-station-outline" size="12" />{{ advert.fuelType.name }}</span>
-                        <span v-if="advert?.gearbox" class="i-chip"><v-icon icon="mdi-cog-outline" size="12" />{{ advert.gearbox.name }}</span>
-                        <span v-if="advert?.powerHP || advert?.engineVersion?.horsepower" class="i-chip i-chip--power"><v-icon icon="mdi-lightning-bolt" size="12" />{{ advert?.powerHP ?? advert?.engineVersion?.horsepower }} {{ $t('advertDetail.units.hp') }}</span>
-                        <span v-if="advert?.driveType" class="i-chip"><v-icon icon="mdi-car-traction-control" size="12" />{{ advert.driveType.name }}</span>
+                        <span v-if="advert?.year" class="i-chip"><CzIcon icon="mdi-calendar-outline" size="12" />{{ advert.year }}</span>
+                        <span v-if="advert?.mileage" class="i-chip"><CzIcon icon="mdi-speedometer" size="12" />{{ Number(advert.mileage).toLocaleString('pl') }} km</span>
+                        <span v-if="advert?.fuelType" class="i-chip"><CzIcon icon="mdi-gas-station-outline" size="12" />{{ advert.fuelType.name }}</span>
+                        <span v-if="advert?.gearbox" class="i-chip"><CzIcon icon="mdi-cog-outline" size="12" />{{ advert.gearbox.name }}</span>
+                        <span v-if="advert?.powerHP || advert?.engineVersion?.horsepower" class="i-chip i-chip--power"><CzIcon icon="mdi-lightning-bolt" size="12" />{{ advert?.powerHP ?? advert?.engineVersion?.horsepower }} {{ $t('advertDetail.units.hp') }}</span>
+                        <span v-if="advert?.driveType" class="i-chip"><CzIcon icon="mdi-car-traction-control" size="12" />{{ advert.driveType.name }}</span>
                         <span v-if="advert?.color" class="i-chip">
                             <span class="i-chip-color-dot" :style="{ background: advert.color.hexCode }" />
                             {{ advert.color.name }}
@@ -204,13 +204,13 @@
                             <div class="pme-note">{{ $t('advertDetail.price.estimateNote') }}</div>
                         </div>
                         <div class="price-badges-row">
-                            <span v-if="isNegotiable" class="nego-badge"><v-icon icon="mdi-handshake-outline" size="12" />{{ $t('advertDetail.price.negotiable') }}</span>
+                            <span v-if="isNegotiable" class="nego-badge"><CzIcon icon="mdi-handshake-outline" size="12" />{{ $t('advertDetail.price.negotiable') }}</span>
                             <span class="seller-type-chip" :class="isSellerDealer ? 'chip-dealer' : 'chip-private'">
-                                <v-icon :icon="isSellerDealer ? 'mdi-store-outline' : 'mdi-account-outline'" size="11" />
+                                <CzIcon :icon="isSellerDealer ? 'mdi-store-outline' : 'mdi-account-outline'" size="11" />
                                 {{ sellerTypeLabel }}
                             </span>
                             <span v-if="priceAnalysis" class="price-analysis-badge" :class="priceAnalysis.cls">
-                                <v-icon :icon="priceAnalysis.icon" size="11" />
+                                <CzIcon :icon="priceAnalysis.icon" size="11" />
                                 {{ priceAnalysis.label }}
                                 <span class="pab-sub">{{ priceAnalysis.sub }}</span>
                             </span>
@@ -218,10 +218,10 @@
                     </div>
 
                     <div v-if="advert?.city" class="info-location-row">
-                        <v-icon icon="mdi-map-marker-outline" size="14" class="loc-pin-sm" />
+                        <CzIcon icon="mdi-map-marker-outline" size="14" class="loc-pin-sm" />
                         <span>{{ advert.city }}<template v-if="advert?.region">, {{ advert.region }}</template></span>
                         <span v-if="advert?.viewCount" class="views-pill">
-                            <v-icon icon="mdi-eye-outline" size="12" />{{ Number(advert.viewCount).toLocaleString('pl') }}
+                            <CzIcon icon="mdi-eye-outline" size="12" />{{ Number(advert.viewCount).toLocaleString('pl') }}
                         </span>
                         <span class="time-pill">{{ advertAge }}</span>
                     </div>
@@ -229,24 +229,24 @@
                     <!-- CARIZO VERIFIED trust badges -->
                     <div class="verified-trust-box">
                         <div class="vtb-header">
-                            <v-icon icon="mdi-shield-check" size="16" class="vtb-icon" />
+                            <CzIcon icon="mdi-shield-check" size="16" class="vtb-icon" />
                             <span class="vtb-title">CARIZO VERIFIED</span>
                         </div>
                         <div class="vtb-items">
                             <div class="vtb-item" :class="advert?.vin ? 'vtb-ok' : 'vtb-pending'">
-                                <v-icon :icon="advert?.vin ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
+                                <CzIcon :icon="advert?.vin ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
                                 <span>{{ advert?.vin ? $t('advertDetail.trust.vinVerified') : $t('advertDetail.trust.vinUnverified') }}</span>
                             </div>
                             <div class="vtb-item" :class="advert?.hasFullServiceHistory ? 'vtb-ok' : 'vtb-pending'">
-                                <v-icon :icon="advert?.hasFullServiceHistory ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
+                                <CzIcon :icon="advert?.hasFullServiceHistory ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
                                 <span>{{ $t('advertDetail.trust.serviceHistory') }}</span>
                             </div>
                             <div class="vtb-item" :class="!advert?.hasDamage ? 'vtb-ok' : 'vtb-warn'">
-                                <v-icon :icon="!advert?.hasDamage ? 'mdi-check-circle' : 'mdi-alert-circle'" size="14" />
+                                <CzIcon :icon="!advert?.hasDamage ? 'mdi-check-circle' : 'mdi-alert-circle'" size="14" />
                                 <span>{{ $t('advertDetail.trust.accidentFree') }}</span>
                             </div>
                             <div class="vtb-item" :class="seller?.accountType === 'Business' ? 'vtb-ok' : 'vtb-pending'">
-                                <v-icon :icon="seller?.accountType === 'Business' ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
+                                <CzIcon :icon="seller?.accountType === 'Business' ? 'mdi-check-circle' : 'mdi-clock-outline'" size="14" />
                                 <span>{{ $t('advertDetail.trust.verifiedSeller') }}</span>
                             </div>
                         </div>
@@ -260,7 +260,7 @@
                             <div class="sma-name">{{ sellerDisplayName }}</div>
                             <div class="sma-meta">
                                 <span v-if="sellerStats?.averageRating" class="sma-stars">
-                                    <v-icon v-for="n in 5" :key="n" :icon="n <= Math.round(sellerStats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="11" class="star" />
+                                    <CzIcon v-for="n in 5" :key="n" :icon="n <= Math.round(sellerStats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="11" class="star" />
                                     <span class="sma-rating">{{ sellerStats.averageRating.toFixed(1) }}</span>
                                 </span>
                                 <span class="sma-cnt">{{ $t('advertDetail.sellerMini.advertsCount', { count: sellerStats?.activeAdverts ?? 0 }) }}</span>
@@ -274,43 +274,43 @@
                     <!-- CTAs -->
                     <div class="cta-stack">
                         <button v-if="seller?.phoneNumber" class="cta-phone" @click="showPhone = !showPhone">
-                            <v-icon icon="mdi-phone-outline" size="17" />
+                            <CzIcon icon="mdi-phone-outline" size="17" />
                             {{ showPhone ? seller.phoneNumber : $t('advertDetail.cta.showPhone') }}
                         </button>
                         <button class="cta-message" :disabled="contactLoading || isOwnAdvert" :title="isOwnAdvert ? $t('advertDetail.cta.ownAdvertTitle') : undefined" @click="contactSeller">
-                            <v-icon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
-                            <v-icon v-else-if="isOwnAdvert" icon="mdi-message-off-outline" size="17" />
-                            <v-icon v-else icon="mdi-message-text-outline" size="17" />
+                            <CzIcon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
+                            <CzIcon v-else-if="isOwnAdvert" icon="mdi-message-off-outline" size="17" />
+                            <CzIcon v-else icon="mdi-message-text-outline" size="17" />
                             {{ contactLoading ? $t('advertDetail.cta.opening') : isOwnAdvert ? $t('advertDetail.cta.ownAdvert') : $t('advertDetail.cta.sendMessage') }}
                         </button>
                         <p v-if="isOwnAdvert" class="own-advert-note">
-                            <v-icon icon="mdi-information-outline" size="13" />
+                            <CzIcon icon="mdi-information-outline" size="13" />
                             {{ $t('advertDetail.cta.ownAdvertNote') }}
                         </p>
                         <template v-if="!isOwnAdvert">
                             <button class="cta-viewing" @click="showViewingPicker = true">
-                                <v-icon icon="mdi-calendar-outline" size="17" />
+                                <CzIcon icon="mdi-calendar-outline" size="17" />
                                 {{ $t('advertDetail.cta.scheduleViewing') }}
                             </button>
                             <button class="cta-reserve" @click="showReservationPicker = true">
-                                <v-icon icon="mdi-bookmark-outline" size="17" />
+                                <CzIcon icon="mdi-bookmark-outline" size="17" />
                                 {{ $t('advertDetail.cta.reserve') }}
                             </button>
                         </template>
                     </div>
 
                     <transition name="fade-msg">
-                        <div v-if="contactError" class="tx-error"><v-icon icon="mdi-alert-circle-outline" size="14" />{{ contactError }}</div>
+                        <div v-if="contactError" class="tx-error"><CzIcon icon="mdi-alert-circle-outline" size="14" />{{ contactError }}</div>
                     </transition>
                     <transition name="fade-msg">
-                        <div v-if="txSuccess" class="tx-success"><v-icon icon="mdi-check-circle-outline" size="14" />{{ txSuccess }}</div>
+                        <div v-if="txSuccess" class="tx-success"><CzIcon icon="mdi-check-circle-outline" size="14" />{{ txSuccess }}</div>
                     </transition>
                     <transition name="fade-msg">
-                        <div v-if="txError" class="tx-error"><v-icon icon="mdi-alert-circle-outline" size="14" />{{ txError }}</div>
+                        <div v-if="txError" class="tx-error"><CzIcon icon="mdi-alert-circle-outline" size="14" />{{ txError }}</div>
                     </transition>
 
                     <div class="secure-note-sm">
-                        <v-icon icon="mdi-shield-check-outline" size="13" class="secure-icon-sm" />
+                        <CzIcon icon="mdi-shield-check-outline" size="13" class="secure-icon-sm" />
                         {{ $t('advertDetail.cta.secureNote') }} <span class="nowrap-brand">CARI<span class="red-text">ZO</span></span>
                     </div>
                 </div>
@@ -321,35 +321,35 @@
         <div class="specs-bar">
             <div class="container specs-bar-inner">
                 <div v-if="advert?.mileage" class="spec-item">
-                    <v-icon icon="mdi-speedometer" size="22" class="spi-icon" />
+                    <CzIcon icon="mdi-speedometer" size="22" class="spi-icon" />
                     <div><div class="spi-val">{{ Number(advert.mileage).toLocaleString('pl') }} km</div><div class="spi-lbl">{{ $t('advertDetail.specs.mileage') }}</div></div>
                 </div>
                 <div v-if="advert?.year" class="spec-item">
-                    <v-icon icon="mdi-calendar-outline" size="22" class="spi-icon" />
+                    <CzIcon icon="mdi-calendar-outline" size="22" class="spi-icon" />
                     <div><div class="spi-val">{{ advert.year }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.year') }}</div></div>
                 </div>
                 <div v-if="advert?.fuelType" class="spec-item">
-                    <v-icon icon="mdi-gas-station-outline" size="22" class="spi-icon" />
+                    <CzIcon icon="mdi-gas-station-outline" size="22" class="spi-icon" />
                     <div><div class="spi-val">{{ advert.fuelType.name }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.fuel') }}</div></div>
                 </div>
                 <div v-if="advert?.engineVersion?.horsepower" class="spec-item">
-                    <v-icon icon="mdi-lightning-bolt" size="22" class="spi-icon" />
+                    <CzIcon icon="mdi-lightning-bolt" size="22" class="spi-icon" />
                     <div><div class="spi-val">{{ advert.engineVersion.horsepower }} {{ $t('advertDetail.units.hp') }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.power') }}</div></div>
                 </div>
                 <div v-if="advert?.engineVersion?.displacement" class="spec-item">
-                    <v-icon icon="mdi-engine-outline" size="22" class="spi-icon" />
+                    <CzIcon icon="mdi-engine-outline" size="22" class="spi-icon" />
                     <div><div class="spi-val">{{ advert.engineVersion.displacement }} cm³</div><div class="spi-lbl">{{ $t('advertDetail.specs.displacement') }}</div></div>
                 </div>
                 <div v-if="advert?.gearbox" class="spec-item">
-                    <v-icon icon="mdi-cog-outline" size="22" class="spi-icon" />
+                    <CzIcon icon="mdi-cog-outline" size="22" class="spi-icon" />
                     <div><div class="spi-val">{{ advert.gearbox.name }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.gearbox') }}</div></div>
                 </div>
                 <div v-if="advert?.bodyType" class="spec-item">
-                    <v-icon icon="mdi-car-outline" size="22" class="spi-icon" />
+                    <CzIcon icon="mdi-car-outline" size="22" class="spi-icon" />
                     <div><div class="spi-val">{{ advert.bodyType.name }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.body') }}</div></div>
                 </div>
                 <div v-if="advert?.viewCount" class="spec-item spec-item--dim">
-                    <v-icon icon="mdi-eye-outline" size="22" class="spi-icon spi-icon--dim" />
+                    <CzIcon icon="mdi-eye-outline" size="22" class="spi-icon spi-icon--dim" />
                     <div><div class="spi-val spi-val--dim">{{ Number(advert.viewCount).toLocaleString('pl') }}</div><div class="spi-lbl">{{ $t('advertDetail.specs.views') }}</div></div>
                 </div>
             </div>
@@ -364,12 +364,12 @@
                 <!-- Extra tech chips from description -->
                 <transition name="fade">
                     <div v-if="parsedTechData.length" class="tech-chips-section">
-                        <div class="tcs-title"><v-icon icon="mdi-clipboard-list-outline" size="14" />{{ $t('advertDetail.sections.additionalData') }}</div>
+                        <div class="tcs-title"><CzIcon icon="mdi-clipboard-list-outline" size="14" />{{ $t('advertDetail.sections.additionalData') }}</div>
                         <div class="tech-chips-grid">
                             <div v-for="item in parsedTechData" :key="item.label" class="tech-chip" :class="{ 'chip-bool': item.isCheck && !item.value.includes(' ') }">
                                 <span class="tc-label">{{ item.label }}</span>
                                 <span class="tc-value" :class="{ 'tc-check': item.isCheck && item.value === 'Tak' }">
-                                    <v-icon v-if="item.isCheck && item.value === 'Tak'" icon="mdi-check-circle" size="13" class="tc-check-icon" />
+                                    <CzIcon v-if="item.isCheck && item.value === 'Tak'" icon="mdi-check-circle" size="13" class="tc-check-icon" />
                                     {{ item.value === 'Tak' && item.isCheck ? '' : item.value }}
                                 </span>
                             </div>
@@ -379,14 +379,14 @@
 
                 <!-- SECTION 1: Opis -->
                 <section v-if="parsedUserDesc" class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-text-box-outline" size="17" />{{ $t('advertDetail.sections.description') }}</h2>
+                    <h2 class="pg-section-title"><CzIcon icon="mdi-text-box-outline" size="17" />{{ $t('advertDetail.sections.description') }}</h2>
                     <div class="tab-content">
                         <div class="desc-body">
                             <p ref="descRef" class="desc-text" :class="{ clamped: !showFullDesc }">{{ parsedUserDesc }}</p>
                             <div v-if="descIsOverflowing" class="desc-toggle">
                                 <button @click="showFullDesc = !showFullDesc; checkDescOverflow()" class="read-more-btn">
                                     {{ showFullDesc ? $t('advertDetail.desc.collapse') : $t('advertDetail.desc.readMore') }}
-                                    <v-icon :icon="showFullDesc ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" />
+                                    <CzIcon :icon="showFullDesc ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" />
                                 </button>
                             </div>
                         </div>
@@ -395,7 +395,7 @@
 
                 <!-- SECTION: Dokumenty i filmy (Faza 8 of the category/attribute restructure) -->
                 <section v-if="advert?.documents?.length" class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-file-video-outline" size="17" />{{ $t('advertDetail.sections.documents') }}</h2>
+                    <h2 class="pg-section-title"><CzIcon icon="mdi-file-video-outline" size="17" />{{ $t('advertDetail.sections.documents') }}</h2>
                     <div class="docs-grid">
                         <div v-for="doc in advert.documents" :key="doc.id" class="doc-card">
                             <template v-if="doc.type === 'Video' && youtubeEmbedIdFor(doc.url)">
@@ -412,9 +412,9 @@
                                 <div v-if="doc.label" class="doc-card-label">{{ doc.label }}</div>
                             </template>
                             <a v-else :href="doc.url" target="_blank" rel="noopener noreferrer" class="doc-link-card">
-                                <v-icon :icon="docTypeIcon(doc.type)" size="20" />
+                                <CzIcon :icon="docTypeIcon(doc.type)" size="20" />
                                 <span>{{ doc.label || docTypeLabel(doc.type) }}</span>
-                                <v-icon icon="mdi-open-in-new" size="14" class="doc-link-ext" />
+                                <CzIcon icon="mdi-open-in-new" size="14" class="doc-link-ext" />
                             </a>
                         </div>
                     </div>
@@ -422,7 +422,7 @@
 
                 <!-- SECTION 2: Parametry techniczne -->
                 <section class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-cog-outline" size="17" />{{ $t('advertDetail.sections.techParams') }}</h2>
+                    <h2 class="pg-section-title"><CzIcon icon="mdi-cog-outline" size="17" />{{ $t('advertDetail.sections.techParams') }}</h2>
                     <div class="spec-table">
                         <div class="spec-section">
                             <div class="spec-section-title">{{ $t('advertDetail.specGroups.basic') }}</div>
@@ -476,7 +476,7 @@
                                 <div v-for="item in parsedTechData" :key="item.label" class="spec-row">
                                     <span class="sr-label">{{ item.label }}</span>
                                     <span class="sr-val" :class="{ 'sr-val--check': item.isCheck && item.value === 'Tak', 'sr-val--warn': item.isWarning }">
-                                        <v-icon v-if="item.isCheck && item.value === 'Tak'" icon="mdi-check-circle" size="14" class="sr-check-icon" />
+                                        <CzIcon v-if="item.isCheck && item.value === 'Tak'" icon="mdi-check-circle" size="14" class="sr-check-icon" />
                                         {{ item.value === 'Tak' && item.isCheck ? 'Tak' : item.value }}
                                     </span>
                                 </div>
@@ -487,15 +487,15 @@
 
                 <!-- SECTION 3: Wyposażenie -->
                 <section v-if="Object.keys(featureGroups).length" class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-check-all" size="17" />{{ $t('advertDetail.sections.features') }} <span class="eq-total-badge">{{ advert?.features?.length ?? 0 }}</span></h2>
+                    <h2 class="pg-section-title"><CzIcon icon="mdi-check-all" size="17" />{{ $t('advertDetail.sections.features') }} <span class="eq-total-badge">{{ advert?.features?.length ?? 0 }}</span></h2>
                     <div v-for="(group, cat) in featureGroups" :key="cat" class="eq-group">
                         <div class="eq-cat-label">
-                            <v-icon :icon="featureGroupIcon(String(cat))" size="13" class="eq-cat-icon" />
+                            <CzIcon :icon="featureGroupIcon(String(cat))" size="13" class="eq-cat-icon" />
                             {{ cat }}
                         </div>
                         <div class="eq-chip-grid">
                             <span v-for="f in group" :key="f.id" class="eq-chip">
-                                <v-icon icon="mdi-check" size="11" class="eq-chip-icon" />{{ f.name }}
+                                <CzIcon icon="mdi-check" size="11" class="eq-chip-icon" />{{ f.name }}
                             </span>
                         </div>
                     </div>
@@ -503,71 +503,71 @@
 
                 <!-- SECTION 4: Historia pojazdu -->
                 <section v-if="hasHistoryData" class="pg-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-history" size="17" />{{ $t('advertDetail.sections.history') }}</h2>
+                    <h2 class="pg-section-title"><CzIcon icon="mdi-history" size="17" />{{ $t('advertDetail.sections.history') }}</h2>
                     <div class="tab-content">
                         <div v-if="advert?.vin" class="hist-vin-block">
-                            <v-icon icon="mdi-barcode-scan" size="16" class="hv-icon" />
+                            <CzIcon icon="mdi-barcode-scan" size="16" class="hv-icon" />
                             <div><div class="hv-label">{{ $t('advertDetail.history.vinNumber') }}</div><div class="hv-val">{{ advert.vin }}</div></div>
-                            <span class="hv-verified"><v-icon icon="mdi-check-circle" size="13" />{{ $t('advertDetail.history.identified') }}</span>
+                            <span class="hv-verified"><CzIcon icon="mdi-check-circle" size="13" />{{ $t('advertDetail.history.identified') }}</span>
                         </div>
                         <!-- Structured history data -->
                         <div class="hist-items-grid">
                             <div v-if="advert?.firstRegistrationDate" class="hist-item hi-info">
-                                <v-icon icon="mdi-calendar-check-outline" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-calendar-check-outline" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.firstRegistration') }}</div><div class="hi-value">{{ advert.firstRegistrationDate }}</div></div>
                             </div>
                             <div v-if="advert?.ownersCount !== undefined && advert?.ownersCount !== null" class="hist-item hi-info">
-                                <v-icon icon="mdi-account-multiple-outline" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-account-multiple-outline" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.ownersCount') }}</div><div class="hi-value">{{ advert.ownersCount }}</div></div>
                             </div>
                             <div v-if="advert?.registrationCountry && advert.registrationCountry !== 'PL'" class="hist-item hi-info">
-                                <v-icon icon="mdi-flag-outline" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-flag-outline" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.registrationCountry') }}</div><div class="hi-value">{{ advert.registrationCountry }}</div></div>
                             </div>
                             <div v-if="advert?.isImported" class="hist-item hi-info">
-                                <v-icon icon="mdi-earth" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-earth" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.imported') }}</div><div v-if="advert.importCountry" class="hi-value">{{ advert.importCountry }}</div></div>
                             </div>
                             <div v-if="advert?.hasServiceBook" class="hist-item hi-ok">
-                                <v-icon icon="mdi-book-check-outline" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-book-check-outline" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.serviceBook') }}</div></div>
                             </div>
                             <div v-if="advert?.hasFullServiceHistory" class="hist-item hi-ok">
-                                <v-icon icon="mdi-check-decagram-outline" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-check-decagram-outline" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.fullServiceHistory') }}</div></div>
                             </div>
                             <div v-if="advert?.nextInspection" class="hist-item hi-info">
-                                <v-icon icon="mdi-wrench-clock" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-wrench-clock" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.nextInspection') }}</div><div class="hi-value">{{ advert.nextInspection }}</div></div>
                             </div>
                             <div v-if="advert?.hasDamage" class="hist-item hi-warn">
-                                <v-icon icon="mdi-alert-outline" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-alert-outline" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.damaged') }}</div><div v-if="advert.damageDescription" class="hi-value">{{ advert.damageDescription }}</div></div>
                             </div>
                             <div v-if="advert?.hasDamage === false" class="hist-item hi-ok">
-                                <v-icon icon="mdi-shield-check-outline" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-shield-check-outline" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.accidentFree') }}</div></div>
                             </div>
                             <div v-if="advert?.hasWarranty" class="hist-item hi-ok">
-                                <v-icon icon="mdi-certificate-outline" size="18" class="hi-icon" />
+                                <CzIcon icon="mdi-certificate-outline" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ $t('advertDetail.history.warrantyActive') }}</div><div v-if="advert.warrantyUntil" class="hi-value">{{ $t('advertDetail.history.until', { date: advert.warrantyUntil }) }}</div></div>
                             </div>
                             <!-- Legacy parsed history from description text -->
                             <div v-for="item in parsedHistory" :key="item.label" class="hist-item" :class="{ 'hi-ok': item.isCheck, 'hi-warn': item.isWarning, 'hi-info': !item.isCheck && !item.isWarning }">
-                                <v-icon :icon="item.isWarning ? 'mdi-alert-outline' : item.isCheck ? 'mdi-check-circle-outline' : 'mdi-information-outline'" size="18" class="hi-icon" />
+                                <CzIcon :icon="item.isWarning ? 'mdi-alert-outline' : item.isCheck ? 'mdi-check-circle-outline' : 'mdi-information-outline'" size="18" class="hi-icon" />
                                 <div class="hi-body"><div class="hi-label">{{ item.label }}</div><div v-if="item.value" class="hi-value">{{ item.value }}</div></div>
                             </div>
                         </div>
                         <!-- VIN Report external links -->
                         <div class="vin-report-section">
-                            <div class="vrs-title"><v-icon icon="mdi-shield-search" size="15" />{{ $t('advertDetail.history.checkTitle') }}</div>
+                            <div class="vrs-title"><CzIcon icon="mdi-shield-search" size="15" />{{ $t('advertDetail.history.checkTitle') }}</div>
                             <p class="vrs-desc">{{ $t('advertDetail.history.vinReportDesc') }}</p>
                             <div class="vrs-btns">
                                 <a href="https://autodna.pl" target="_blank" rel="noopener noreferrer" class="vrs-btn">
-                                    <v-icon icon="mdi-file-search-outline" size="15" /> AutoDNA
+                                    <CzIcon icon="mdi-file-search-outline" size="15" /> AutoDNA
                                 </a>
                                 <a href="https://www.carvertical.com/pl" target="_blank" rel="noopener noreferrer" class="vrs-btn">
-                                    <v-icon icon="mdi-car-search-outline" size="15" /> carVertical
+                                    <CzIcon icon="mdi-car-search-outline" size="15" /> carVertical
                                 </a>
                             </div>
                         </div>
@@ -576,16 +576,16 @@
 
                 <!-- SECTION 6: Opinie o sprzedawcy -->
                 <section class="pg-section" id="reviews-section">
-                    <h2 class="pg-section-title"><v-icon icon="mdi-star-outline" size="17" />{{ $t('advertDetail.sections.reviews') }}</h2>
+                    <h2 class="pg-section-title"><CzIcon icon="mdi-star-outline" size="17" />{{ $t('advertDetail.sections.reviews') }}</h2>
                     <div class="tab-content">
-                        <div v-if="reviewsLoading" class="loading-center"><v-icon icon="mdi-loading" size="26" class="spin" /></div>
+                        <div v-if="reviewsLoading" class="loading-center"><CzIcon icon="mdi-loading" size="26" class="spin" /></div>
                         <template v-else>
                             <div v-if="sellerReviews.length" class="reviews-list">
                                 <div v-for="r in sellerReviews" :key="r.id" class="review-card">
                                     <div class="review-header">
                                         <div class="rev-avatar">{{ r.buyerName?.[0] ?? '?' }}</div>
                                         <div class="rev-info"><div class="rev-name">{{ r.buyerName }}</div><div class="rev-date">{{ new Date(r.createdAt).toLocaleDateString('pl-PL') }}</div></div>
-                                        <div class="rev-stars"><v-icon v-for="n in 5" :key="n" :icon="n <= r.rating ? 'mdi-star' : 'mdi-star-outline'" size="15" class="star-icon" /></div>
+                                        <div class="rev-stars"><CzIcon v-for="n in 5" :key="n" :icon="n <= r.rating ? 'mdi-star' : 'mdi-star-outline'" size="15" class="star-icon" /></div>
                                     </div>
                                     <p class="rev-text">{{ r.content }}</p>
                                 </div>
@@ -595,19 +595,19 @@
                                 <div class="review-form-title">{{ $t('advertDetail.reviews.formTitle') }}</div>
                                 <div class="rev-rating-row">
                                     <button v-for="n in 5" :key="n" class="rev-star-btn" @click="reviewRating = n">
-                                        <v-icon :icon="n <= reviewRating ? 'mdi-star' : 'mdi-star-outline'" size="22" :class="n <= reviewRating ? 'star-active' : 'star-empty'" />
+                                        <CzIcon :icon="n <= reviewRating ? 'mdi-star' : 'mdi-star-outline'" size="22" :class="n <= reviewRating ? 'star-active' : 'star-empty'" />
                                     </button>
                                     <span class="rev-rating-label">{{ reviewRating }}/5</span>
                                 </div>
                                 <textarea v-model="reviewContent" class="rev-textarea" :placeholder="$t('advertDetail.reviews.placeholder')" rows="4" />
                                 <div v-if="reviewError" class="rev-error">{{ reviewError }}</div>
                                 <button class="rev-submit-btn" :disabled="reviewSubmitting || !reviewContent.trim()" @click="doSubmitReview">
-                                    <v-icon v-if="reviewSubmitting" icon="mdi-loading" size="15" class="spin" />
-                                    <v-icon v-else icon="mdi-send-outline" size="15" />
+                                    <CzIcon v-if="reviewSubmitting" icon="mdi-loading" size="15" class="spin" />
+                                    <CzIcon v-else icon="mdi-send-outline" size="15" />
                                     {{ $t('advertDetail.reviews.submit') }}
                                 </button>
                             </div>
-                            <div v-else-if="reviewSuccess" class="review-success"><v-icon icon="mdi-check-circle-outline" size="18" />{{ $t('advertDetail.reviews.thanks') }}</div>
+                            <div v-else-if="reviewSuccess" class="review-success"><CzIcon icon="mdi-check-circle-outline" size="18" />{{ $t('advertDetail.reviews.thanks') }}</div>
                         </template>
                     </div>
                 </section>
@@ -635,7 +635,7 @@
                                     quality="72"
                                     @error="onImageError"
                                 />
-                                <button class="sim-fav" @click.prevent="toggleFavorite(a.id)"><v-icon :icon="isFavorite(a.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="17" /></button>
+                                <button class="sim-fav" @click.prevent="toggleFavorite(a.id)"><CzIcon :icon="isFavorite(a.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="17" /></button>
                             </div>
                             <div class="sim-body">
                                 <div class="sim-title">{{ a.brand?.name }} {{ a.model?.name }}</div>
@@ -656,21 +656,21 @@
                     <div class="seller-info">
                         <div class="seller-avatar" :style="{ background: sellerAvatarColor }"><span>{{ sellerInitials }}</span></div>
                         <div class="seller-details">
-                            <div class="seller-name">{{ sellerDisplayName }}<v-icon v-if="seller?.accountType === 'Business'" icon="mdi-check-decagram" size="14" class="dealer-badge" /></div>
+                            <div class="seller-name">{{ sellerDisplayName }}<CzIcon v-if="seller?.accountType === 'Business'" icon="mdi-check-decagram" size="14" class="dealer-badge" /></div>
                             <div class="seller-role">
                                 <span class="role-badge" :class="seller?.accountType === 'Business' ? 'role-dealer' : 'role-private'">
-                                    <v-icon :icon="seller?.accountType === 'Business' ? 'mdi-domain' : 'mdi-account-outline'" size="11" />
+                                    <CzIcon :icon="seller?.accountType === 'Business' ? 'mdi-domain' : 'mdi-account-outline'" size="11" />
                                     {{ seller?.accountType === 'Business' ? $t('advertDetail.sellerType.dealer') : $t('advertDetail.sellerType.private') }}
                                 </span>
                             </div>
                             <div v-if="sellerStats?.averageRating" class="seller-stars">
-                                <v-icon v-for="n in 5" :key="n" :icon="n <= Math.round(sellerStats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="13" class="star" />
+                                <CzIcon v-for="n in 5" :key="n" :icon="n <= Math.round(sellerStats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="13" class="star" />
                                 <span class="seller-rating">{{ sellerStats.averageRating.toFixed(1) }}</span>
                                 <span class="seller-reviews">({{ sellerStats.reviewCount }})</span>
                             </div>
                             <div class="seller-meta-row">
                                 <span v-if="seller?.createdAt && new Date(seller.createdAt).getFullYear() >= 2020" class="seller-meta-item">
-                                    <v-icon icon="mdi-calendar-outline" size="12" />
+                                    <CzIcon icon="mdi-calendar-outline" size="12" />
                                     {{ $t('advertDetail.sidebar.memberSince', { year: new Date(seller.createdAt).getFullYear() }) }}
                                 </span>
                             </div>
@@ -682,38 +682,38 @@
                         <div class="ss-item"><div class="ss-val">{{ sellerStats.reviewCount ?? 0 }}</div><div class="ss-label">{{ $t('advertDetail.sidebar.reviews') }}</div></div>
                     </div>
                     <button class="follow-seller-btn w-full" :class="{ following: isFollowingSeller }" @click="toggleFollowSeller">
-                        <v-icon :icon="isFollowingSeller ? 'mdi-bell' : 'mdi-bell-outline'" size="15" />
+                        <CzIcon :icon="isFollowingSeller ? 'mdi-bell' : 'mdi-bell-outline'" size="15" />
                         {{ isFollowingSeller ? $t('advertDetail.sidebar.following') : $t('advertDetail.sidebar.followSeller') }}
                     </button>
-                    <transition name="fade-msg"><div v-if="followError" class="tx-error"><v-icon icon="mdi-alert-circle-outline" size="14" />{{ followError }}</div></transition>
+                    <transition name="fade-msg"><div v-if="followError" class="tx-error"><CzIcon icon="mdi-alert-circle-outline" size="14" />{{ followError }}</div></transition>
                     <NuxtLink v-if="advert?.userId" :to="`/seller/${advert.userId}`" class="outline-btn w-full">
-                        <v-icon icon="mdi-car-multiple" size="15" />{{ $t('advertDetail.sidebar.allAdverts') }}
+                        <CzIcon icon="mdi-car-multiple" size="15" />{{ $t('advertDetail.sidebar.allAdverts') }}
                         <span v-if="sellerStats?.activeAdverts" class="btn-count">{{ sellerStats.activeAdverts }}</span>
                     </NuxtLink>
                     <NuxtLink v-if="advert?.userId" :to="`/seller/${advert.userId}`" class="outline-btn w-full outline-btn--dim">
-                        <v-icon icon="mdi-account-outline" size="15" />{{ $t('advertDetail.sidebar.sellerProfile') }}
+                        <CzIcon icon="mdi-account-outline" size="15" />{{ $t('advertDetail.sidebar.sellerProfile') }}
                     </NuxtLink>
                 </div>
 
                 <div class="sidebar-card">
-                    <div class="card-title"><v-icon icon="mdi-map-marker-outline" size="15" class="card-title-icon" />{{ $t('advertDetail.sidebar.location') }}</div>
-                    <div v-if="advert?.city" class="location-addr"><v-icon icon="mdi-map-marker" size="16" class="loc-pin" /><span class="loc-city">{{ advert.city }}<template v-if="advert?.region">, {{ advert.region }}</template></span></div>
+                    <div class="card-title"><CzIcon icon="mdi-map-marker-outline" size="15" class="card-title-icon" />{{ $t('advertDetail.sidebar.location') }}</div>
+                    <div v-if="advert?.city" class="location-addr"><CzIcon icon="mdi-map-marker" size="16" class="loc-pin" /><span class="loc-city">{{ advert.city }}<template v-if="advert?.region">, {{ advert.region }}</template></span></div>
                     <div class="map-wrap">
                         <iframe v-if="mapSrc" :src="mapSrc" class="map-iframe" frameborder="0" loading="lazy" allowfullscreen />
                         <div v-else class="map-fallback">
-                            <v-icon icon="mdi-map-marker" size="22" class="map-fallback-pin" />
+                            <CzIcon icon="mdi-map-marker" size="22" class="map-fallback-pin" />
                             <span class="map-fallback-city">{{ advert?.city ?? $t('advertDetail.sidebar.noLocation') }}<template v-if="advert?.region">, {{ advert.region }}</template></span>
                             <span class="map-fallback-sub">{{ $t('advertDetail.sidebar.locationNote') }}</span>
                         </div>
                     </div>
                     <a v-if="advert?.city" :href="`https://www.google.com/maps/search/${encodeURIComponent((advert.city) + ', Polska')}`" target="_blank" rel="noopener noreferrer" class="outline-btn w-full">
-                        <v-icon icon="mdi-open-in-new" size="15" />{{ $t('advertDetail.sidebar.openMaps') }}
+                        <CzIcon icon="mdi-open-in-new" size="15" />{{ $t('advertDetail.sidebar.openMaps') }}
                     </a>
                 </div>
 
 
                 <div class="sidebar-report-row">
-                    <button class="report-advert-btn" @click="handleReport"><v-icon icon="mdi-flag-outline" size="13" />{{ $t('advertDetail.sidebar.reportAdvert') }}</button>
+                    <button class="report-advert-btn" @click="handleReport"><CzIcon icon="mdi-flag-outline" size="13" />{{ $t('advertDetail.sidebar.reportAdvert') }}</button>
                 </div>
 
             </aside>
@@ -725,10 +725,10 @@
     <Teleport to="body">
         <transition name="fade">
             <div v-if="lightboxOpen" class="lightbox-backdrop" @click.self="lightboxOpen = false">
-                <button class="lb-close" :aria-label="$t('advertDetail.gallery.lightboxClose')" @click="lightboxOpen = false"><v-icon icon="mdi-close" size="22" /></button>
-                <button class="lb-arrow lb-prev" :aria-label="$t('advertDetail.gallery.prevPhoto')" :disabled="lightboxIdx === 0" @click="lightboxIdx--"><v-icon icon="mdi-chevron-left" size="30" /></button>
+                <button class="lb-close" :aria-label="$t('advertDetail.gallery.lightboxClose')" @click="lightboxOpen = false"><CzIcon icon="mdi-close" size="22" /></button>
+                <button class="lb-arrow lb-prev" :aria-label="$t('advertDetail.gallery.prevPhoto')" :disabled="lightboxIdx === 0" @click="lightboxIdx--"><CzIcon icon="mdi-chevron-left" size="30" /></button>
                 <div class="lb-img-wrap"><img :src="allImages[lightboxIdx]?.url ?? placeholder" :alt="`${advert?.title ?? $t('advertDetail.gallery.photo')} ${lightboxIdx + 1} / ${allImages.length}`" class="lb-img" @error="onImageError" loading="lazy" decoding="async" /></div>
-                <button class="lb-arrow lb-next" :aria-label="$t('advertDetail.gallery.nextPhoto')" :disabled="lightboxIdx === allImages.length - 1" @click="lightboxIdx++"><v-icon icon="mdi-chevron-right" size="30" /></button>
+                <button class="lb-arrow lb-next" :aria-label="$t('advertDetail.gallery.nextPhoto')" :disabled="lightboxIdx === allImages.length - 1" @click="lightboxIdx++"><CzIcon icon="mdi-chevron-right" size="30" /></button>
                 <div class="lb-counter">{{ lightboxIdx + 1 }} / {{ allImages.length }}</div>
                 <div class="lb-thumbs">
                     <div v-for="(img, i) in allImages" :key="i" class="lb-thumb" :class="{ 'lb-thumb-active': i === lightboxIdx }" @click="lightboxIdx = i"><img :src="img.url" :alt="$t('advertDetail.gallery.thumbAlt', { n: i + 1 })" @error="onImageError" loading="lazy" decoding="async" /></div>
@@ -746,11 +746,11 @@
                 <div class="compose-modal">
                     <div class="compose-header">
                         <div class="compose-to">
-                            <v-icon icon="mdi-message-text-outline" size="18" />
+                            <CzIcon icon="mdi-message-text-outline" size="18" />
                             <span>{{ $t('advertDetail.compose.messageTo') }} <strong>{{ seller?.name }} {{ seller?.surname }}</strong></span>
                         </div>
                         <button class="compose-close" @click="composeOpen = false">
-                            <v-icon icon="mdi-close" size="20" />
+                            <CzIcon icon="mdi-close" size="20" />
                         </button>
                     </div>
                     <div class="compose-advert-ref">{{ advert?.title }}</div>
@@ -771,11 +771,11 @@
                         rows="3"
                     />
                     <div v-if="contactError" class="compose-error">
-                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ contactError }}
+                        <CzIcon icon="mdi-alert-circle-outline" size="14" />{{ contactError }}
                     </div>
                     <button class="compose-send" :disabled="contactLoading || !composeDraft.trim()" @click="sendComposeMessage">
-                        <v-icon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
-                        <v-icon v-else icon="mdi-send" size="17" />
+                        <CzIcon v-if="contactLoading" icon="mdi-loading" size="17" class="spin" />
+                        <CzIcon v-else icon="mdi-send" size="17" />
                         {{ contactLoading ? 'Wysyłanie...' : 'Wyślij wiadomość' }}
                     </button>
                 </div>
@@ -790,11 +790,11 @@
                 <div class="compose-modal tx-modal">
                     <div class="compose-header">
                         <div class="compose-to">
-                            <v-icon icon="mdi-calendar-outline" size="18" />
+                            <CzIcon icon="mdi-calendar-outline" size="18" />
                             <span>Umów oględziny</span>
                         </div>
                         <button class="compose-close" @click="showViewingPicker = false">
-                            <v-icon icon="mdi-close" size="20" />
+                            <CzIcon icon="mdi-close" size="20" />
                         </button>
                     </div>
                     <div class="compose-advert-ref">{{ advert?.title }}</div>
@@ -820,8 +820,8 @@
                         rows="2"
                     />
                     <button class="compose-send" :disabled="txLoading === 'viewing' || !viewingDate" @click="scheduleViewing">
-                        <v-icon v-if="txLoading === 'viewing'" icon="mdi-loading" size="17" class="spin" />
-                        <v-icon v-else icon="mdi-calendar-check-outline" size="17" />
+                        <CzIcon v-if="txLoading === 'viewing'" icon="mdi-loading" size="17" class="spin" />
+                        <CzIcon v-else icon="mdi-calendar-check-outline" size="17" />
                         {{ txLoading === 'viewing' ? 'Wysyłanie...' : 'Wyślij prośbę o oględziny' }}
                     </button>
                 </div>
@@ -836,16 +836,16 @@
                 <div class="compose-modal tx-modal">
                     <div class="compose-header">
                         <div class="compose-to">
-                            <v-icon icon="mdi-bookmark-outline" size="18" />
+                            <CzIcon icon="mdi-bookmark-outline" size="18" />
                             <span>Zarezerwuj auto</span>
                         </div>
                         <button class="compose-close" @click="showReservationPicker = false">
-                            <v-icon icon="mdi-close" size="20" />
+                            <CzIcon icon="mdi-close" size="20" />
                         </button>
                     </div>
                     <div class="compose-advert-ref">{{ advert?.title }}</div>
                     <p class="tx-hint">
-                        <v-icon icon="mdi-information-outline" size="13" />
+                        <CzIcon icon="mdi-information-outline" size="13" />
                         Wybierz termin, do kiedy chcesz zarezerwować to auto — sprzedawca musi potwierdzić rezerwację.
                     </p>
                     <VDatePicker
@@ -870,8 +870,8 @@
                         rows="2"
                     />
                     <button class="compose-send" :disabled="txLoading === 'reservation' || !reservationDate" @click="reserveCar">
-                        <v-icon v-if="txLoading === 'reservation'" icon="mdi-loading" size="17" class="spin" />
-                        <v-icon v-else icon="mdi-bookmark-check-outline" size="17" />
+                        <CzIcon v-if="txLoading === 'reservation'" icon="mdi-loading" size="17" class="spin" />
+                        <CzIcon v-else icon="mdi-bookmark-check-outline" size="17" />
                         {{ txLoading === 'reservation' ? 'Wysyłanie...' : 'Wyślij prośbę o rezerwację' }}
                     </button>
                 </div>
@@ -883,11 +883,11 @@
     <Teleport to="body">
         <div v-if="seller" class="mobile-cta-bar">
             <button v-if="seller?.phoneNumber" class="mcb-phone" @click="showPhone = !showPhone">
-                <v-icon :icon="showPhone ? 'mdi-phone' : 'mdi-phone-outline'" size="18" />
+                <CzIcon :icon="showPhone ? 'mdi-phone' : 'mdi-phone-outline'" size="18" />
                 <span>{{ showPhone ? seller.phoneNumber : 'Zadzwoń' }}</span>
             </button>
             <button class="mcb-message" @click="contactSeller">
-                <v-icon icon="mdi-message-text-outline" size="18" />
+                <CzIcon icon="mdi-message-text-outline" size="18" />
                 <span>Napisz</span>
             </button>
         </div>
@@ -2159,13 +2159,13 @@ onUnmounted(() => {
     padding: 4px 10px;
     white-space: nowrap;
 
-    .v-icon { color: $text-dim; }
+    .cz-icon { color: $text-dim; }
 
     &--power {
         background: rgba($red, 0.08);
         border-color: rgba($red, 0.2);
         color: lighten($red, 20%);
-        .v-icon { color: $red; }
+        .cz-icon { color: $red; }
     }
 }
 
@@ -2548,7 +2548,7 @@ onUnmounted(() => {
     font-size: 13px;
     font-weight: 700;
     color: $text;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .dpc-row {
@@ -2723,7 +2723,7 @@ onUnmounted(() => {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 14px;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .tech-chips-grid {
@@ -2791,7 +2791,7 @@ onUnmounted(() => {
     padding: 18px 20px 14px;
     border-bottom: 1px solid $border;
     margin: 0;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .pg-section .spec-table {
@@ -3189,7 +3189,7 @@ onUnmounted(() => {
     font-size: 11px;
     font-weight: 600;
     color: $success;
-    .v-icon { color: $success; }
+    .cz-icon { color: $success; }
 }
 
 .hist-items-grid {
@@ -3233,7 +3233,7 @@ onUnmounted(() => {
     font-weight: 700;
     color: $text;
     margin-bottom: 8px;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .vrs-desc {
@@ -3536,7 +3536,7 @@ onUnmounted(() => {
     color: $success;
     font-weight: 600;
     margin-top: 14px;
-    .v-icon { color: $success; }
+    .cz-icon { color: $success; }
 }
 
 // ── Similar tab grid ──────────────────────────────────────────────────────────
@@ -3654,7 +3654,7 @@ onUnmounted(() => {
     color: $text-dark;
     font-size: 13px;
     padding: 24px 0;
-    .v-icon { color: $text-dim; }
+    .cz-icon { color: $text-dim; }
 }
 
 // ── Similar section ───────────────────────────────────────────────────────────
@@ -4140,7 +4140,7 @@ onUnmounted(() => {
     font-size: 13px;
     color: $success;
     font-weight: 600;
-    .v-icon { color: $success; }
+    .cz-icon { color: $success; }
 }
 
 .tx-error {
@@ -4165,7 +4165,7 @@ onUnmounted(() => {
     color: $text-dim;
     font-size: 14px;
     text-align: center;
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
 .loading-center {
@@ -4384,11 +4384,11 @@ onUnmounted(() => {
     font-size: 12px;
     color: $text-dark;
 
-    .v-icon { color: $text-dark; flex-shrink: 0; }
+    .cz-icon { color: $text-dark; flex-shrink: 0; }
 
     &.done {
         color: $text-dim;
-        .v-icon { color: $success; }
+        .cz-icon { color: $success; }
     }
 }
 
@@ -4453,19 +4453,19 @@ onUnmounted(() => {
     &.vtb-ok {
         color: $success;
         background: rgba($success, 0.08);
-        .v-icon { color: $success; }
+        .cz-icon { color: $success; }
     }
 
     &.vtb-pending {
         color: $text-dim;
         background: rgba(255,255,255,0.03);
-        .v-icon { color: $text-dark; }
+        .cz-icon { color: $text-dark; }
     }
 
     &.vtb-warn {
         color: #f59e0b;
         background: rgba(#f59e0b, 0.08);
-        .v-icon { color: #f59e0b; }
+        .cz-icon { color: #f59e0b; }
     }
 }
 
@@ -4533,10 +4533,10 @@ onUnmounted(() => {
     gap: 5px;
     font-size: 11px;
     color: $text-dim;
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
-.seller-response { color: $success; .v-icon { color: $success; } }
+.seller-response { color: $success; .cz-icon { color: $success; } }
 
 // ── Info column extra space ────────────────────────────────────────────────────
 .info-col {

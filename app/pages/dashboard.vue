@@ -5,52 +5,52 @@
         <aside class="dash-sidebar">
             <nav class="dash-nav">
                 <button class="nav-item" :class="{ active: section === 'overview' }" @click="section = 'overview'">
-                    <v-icon icon="mdi-view-dashboard-outline" size="19" /><span>{{ $t('dashboard.navOverview') }}</span>
+                    <CzIcon icon="mdi-view-dashboard-outline" size="19" /><span>{{ $t('dashboard.navOverview') }}</span>
                 </button>
                 <NuxtLink to="/my-adverts" class="nav-item">
-                    <v-icon icon="mdi-card-text-outline" size="19" /><span>{{ $t('dashboard.navMyAdverts') }}</span>
+                    <CzIcon icon="mdi-card-text-outline" size="19" /><span>{{ $t('dashboard.navMyAdverts') }}</span>
                 </NuxtLink>
                 <NuxtLink to="/favorites" class="nav-item">
-                    <v-icon icon="mdi-heart-outline" size="19" /><span>{{ $t('dashboard.navFavorites') }}</span>
+                    <CzIcon icon="mdi-heart-outline" size="19" /><span>{{ $t('dashboard.navFavorites') }}</span>
                 </NuxtLink>
                 <button class="nav-item" :class="{ active: section === 'searches' }" @click="section = 'searches'">
-                    <v-icon icon="mdi-magnify" size="19" /><span>{{ $t('dashboard.navSearches') }}</span>
+                    <CzIcon icon="mdi-magnify" size="19" /><span>{{ $t('dashboard.navSearches') }}</span>
                     <span v-if="savedSearchNewCount > 0" class="nav-badge">{{ savedSearchNewCount }}</span>
                 </button>
                 <NuxtLink to="/messages" class="nav-item">
-                    <v-icon icon="mdi-email-outline" size="19" /><span>{{ $t('dashboard.navMessages') }}</span>
+                    <CzIcon icon="mdi-email-outline" size="19" /><span>{{ $t('dashboard.navMessages') }}</span>
                     <span v-if="stats?.unreadMessages" class="nav-badge">{{ stats.unreadMessages }}</span>
                 </NuxtLink>
                 <button class="nav-item" :class="{ active: section === 'notifications' }" @click="goNotifications">
-                    <v-icon icon="mdi-bell-outline" size="19" /><span>{{ $t('dashboard.navNotifications') }}</span>
+                    <CzIcon icon="mdi-bell-outline" size="19" /><span>{{ $t('dashboard.navNotifications') }}</span>
                     <span v-if="notifUnread > 0" class="nav-badge">{{ notifUnread }}</span>
                 </button>
                 <button class="nav-item" :class="{ active: section === 'reviews' }" @click="goReviews">
-                    <v-icon icon="mdi-star-outline" size="19" /><span>{{ $t('dashboard.navReviews') }}</span>
+                    <CzIcon icon="mdi-star-outline" size="19" /><span>{{ $t('dashboard.navReviews') }}</span>
                 </button>
                 <NuxtLink to="/faktury" class="nav-item">
-                    <v-icon icon="mdi-receipt-text-outline" size="19" /><span>{{ $t('dashboard.navInvoices') }}</span>
+                    <CzIcon icon="mdi-receipt-text-outline" size="19" /><span>{{ $t('dashboard.navInvoices') }}</span>
                 </NuxtLink>
                 <NuxtLink to="/zespol" class="nav-item">
-                    <v-icon icon="mdi-account-group-outline" size="19" /><span>{{ $t('team.title') }}</span>
+                    <CzIcon icon="mdi-account-group-outline" size="19" /><span>{{ $t('team.title') }}</span>
                 </NuxtLink>
                 <div class="nav-divider" />
                 <button class="nav-item" :class="{ active: section === 'profile' }" @click="goProfile">
-                    <v-icon icon="mdi-account-outline" size="19" /><span>{{ $t('dashboard.navPersonalData') }}</span>
+                    <CzIcon icon="mdi-account-outline" size="19" /><span>{{ $t('dashboard.navPersonalData') }}</span>
                 </button>
                 <button class="nav-item" :class="{ active: section === 'settings' }" @click="goSettings">
-                    <v-icon icon="mdi-cog-outline" size="19" /><span>{{ $t('dashboard.navAccountSettings') }}</span>
+                    <CzIcon icon="mdi-cog-outline" size="19" /><span>{{ $t('dashboard.navAccountSettings') }}</span>
                 </button>
                 <div class="nav-divider" />
                 <button class="nav-item nav-danger" @click="authLogout">
-                    <v-icon icon="mdi-logout" size="19" /><span>{{ $t('dashboard.navLogout') }}</span>
+                    <CzIcon icon="mdi-logout" size="19" /><span>{{ $t('dashboard.navLogout') }}</span>
                 </button>
             </nav>
             <!-- B2B subscription widget -->
             <div v-if="profile?.accountType === 'Business'" class="dash-subscription">
                 <div v-if="subscription" class="sub-info">
                     <div class="sub-label">
-                        <v-icon :icon="subscription.isActive ? 'mdi-check-circle-outline' : 'mdi-briefcase-outline'" size="14" />
+                        <CzIcon :icon="subscription.isActive ? 'mdi-check-circle-outline' : 'mdi-briefcase-outline'" size="14" />
                         {{ $t('dashboard.b2bPackage') }}
                     </div>
                     <div class="sub-tier">{{ subscription.tierName }}</div>
@@ -80,27 +80,27 @@
         <!-- Mobile nav strip (visible only when sidebar is hidden) -->
         <nav class="dash-mobile-nav">
             <button :class="['dmn-item', { active: section === 'overview' }]" @click="section = 'overview'">
-                <v-icon icon="mdi-view-dashboard-outline" size="20" /><span>{{ $t('dashboard.mnavPanel') }}</span>
+                <CzIcon icon="mdi-view-dashboard-outline" size="20" /><span>{{ $t('dashboard.mnavPanel') }}</span>
             </button>
             <NuxtLink to="/my-adverts" class="dmn-item">
-                <v-icon icon="mdi-card-text-outline" size="20" /><span>{{ $t('dashboard.mnavAdverts') }}</span>
+                <CzIcon icon="mdi-card-text-outline" size="20" /><span>{{ $t('dashboard.mnavAdverts') }}</span>
             </NuxtLink>
             <NuxtLink to="/messages" class="dmn-item">
-                <v-icon icon="mdi-email-outline" size="20" /><span>{{ $t('dashboard.mnavMessages') }}</span>
+                <CzIcon icon="mdi-email-outline" size="20" /><span>{{ $t('dashboard.mnavMessages') }}</span>
                 <span v-if="stats?.unreadMessages" class="dmn-badge">{{ stats.unreadMessages }}</span>
             </NuxtLink>
             <button :class="['dmn-item', { active: section === 'notifications' }]" @click="goNotifications">
-                <v-icon icon="mdi-bell-outline" size="20" /><span>{{ $t('dashboard.mnavNotif') }}</span>
+                <CzIcon icon="mdi-bell-outline" size="20" /><span>{{ $t('dashboard.mnavNotif') }}</span>
                 <span v-if="notifUnread > 0" class="dmn-badge">{{ notifUnread }}</span>
             </button>
             <button :class="['dmn-item', { active: section === 'profile' }]" @click="goProfile">
-                <v-icon icon="mdi-account-outline" size="20" /><span>{{ $t('dashboard.mnavProfile') }}</span>
+                <CzIcon icon="mdi-account-outline" size="20" /><span>{{ $t('dashboard.mnavProfile') }}</span>
             </button>
             <button :class="['dmn-item', { active: section === 'settings' }]" @click="goSettings">
-                <v-icon icon="mdi-cog-outline" size="20" /><span>{{ $t('dashboard.mnavSettings') }}</span>
+                <CzIcon icon="mdi-cog-outline" size="20" /><span>{{ $t('dashboard.mnavSettings') }}</span>
             </button>
             <button class="dmn-item dmn-item--danger" @click="authLogout">
-                <v-icon icon="mdi-logout" size="20" /><span>{{ $t('dashboard.mnavLogout') }}</span>
+                <CzIcon icon="mdi-logout" size="20" /><span>{{ $t('dashboard.mnavLogout') }}</span>
             </button>
         </nav>
 
@@ -119,7 +119,7 @@
                         <div class="profile-info">
                             <div class="profile-name-row">
                                 <h1 class="profile-name">{{ profile?.name }} {{ profile?.surname }}</h1>
-                                <v-icon v-if="profile?.accountType === 'Business'" icon="mdi-check-decagram" size="18" class="verified-badge" />
+                                <CzIcon v-if="profile?.accountType === 'Business'" icon="mdi-check-decagram" size="18" class="verified-badge" />
                             </div>
                             <div class="profile-role">{{ profile?.accountType === 'Business' ? (profile.companyName ??
                                 $t('dashboard.dealer')) : $t('dashboard.individualUser') }}</div>
@@ -128,61 +128,61 @@
                     </div>
                     <div class="banner-tags">
                         <span v-if="profile?.accountType === 'Business'" class="btag btag-dealer">
-                            <v-icon icon="mdi-shield-check" size="13" />{{ $t('dashboard.verifiedDealer') }}
+                            <CzIcon icon="mdi-shield-check" size="13" />{{ $t('dashboard.verifiedDealer') }}
                         </span>
                         <span v-if="profile?.email" class="btag">
-                            <v-icon icon="mdi-email-outline" size="13" />{{ profile.email }}
+                            <CzIcon icon="mdi-email-outline" size="13" />{{ profile.email }}
                         </span>
                         <span v-if="profile?.phoneNumber" class="btag">
-                            <v-icon icon="mdi-phone-outline" size="13" />{{ profile.phoneNumber }}
+                            <CzIcon icon="mdi-phone-outline" size="13" />{{ profile.phoneNumber }}
                         </span>
                         <span v-if="profile?.city" class="btag">
-                            <v-icon icon="mdi-map-marker-outline" size="13" />{{ profile.city }}<template
+                            <CzIcon icon="mdi-map-marker-outline" size="13" />{{ profile.city }}<template
                                 v-if="profile.region">, {{ profile.region }}</template>
                         </span>
                     </div>
                     <button class="edit-profile-btn" @click="goProfile">
-                        <v-icon icon="mdi-pencil-outline" size="15" />{{ $t('dashboard.editProfile') }}
+                        <CzIcon icon="mdi-pencil-outline" size="15" />{{ $t('dashboard.editProfile') }}
                     </button>
                 </div>
 
                 <!-- Stats row -->
                 <div class="stats-row">
                     <div class="stat-card">
-                        <v-icon icon="mdi-car-outline" size="22" class="stat-icon" />
+                        <CzIcon icon="mdi-car-outline" size="22" class="stat-icon" />
                         <div class="stat-num" v-count-up="stats?.totalAdverts ?? 0" />
                         <div class="stat-label">{{ $t('dashboard.statMyAdverts') }}</div>
                         <div class="stat-sub green">{{ stats?.activeAdverts ?? 0 }} {{ $t('dashboard.statActive') }}</div>
                     </div>
                     <div class="stat-card">
-                        <v-icon icon="mdi-eye-outline" size="22" class="stat-icon" />
+                        <CzIcon icon="mdi-eye-outline" size="22" class="stat-icon" />
                         <div class="stat-num">{{ formatViews(stats?.totalViews ?? 0) }}</div>
                         <div class="stat-label">{{ $t('dashboard.statViews') }}</div>
                         <div class="stat-sub">{{ $t('dashboard.statTotal') }}</div>
                     </div>
                     <div class="stat-card">
-                        <v-icon icon="mdi-check-circle-outline" size="22" class="stat-icon" />
+                        <CzIcon icon="mdi-check-circle-outline" size="22" class="stat-icon" />
                         <div class="stat-num" v-count-up="stats?.totalSold ?? 0" />
                         <div class="stat-label">{{ $t('dashboard.statSold') }}</div>
                     </div>
                     <div class="stat-card">
-                        <v-icon icon="mdi-heart-outline" size="22" class="stat-icon" />
+                        <CzIcon icon="mdi-heart-outline" size="22" class="stat-icon" />
                         <div class="stat-num" v-count-up="stats?.favoritesCount ?? 0" />
                         <div class="stat-label">{{ $t('dashboard.statFavorites') }}</div>
                     </div>
                     <div class="stat-card">
-                        <v-icon icon="mdi-star-outline" size="22" class="stat-icon" />
+                        <CzIcon icon="mdi-star-outline" size="22" class="stat-icon" />
                         <div class="stat-num">{{ stats?.averageRating ? stats.averageRating.toFixed(1) : $t('dashboard.none') }}</div>
                         <div class="stat-label">{{ $t('dashboard.statRating') }}</div>
                         <div v-if="stats?.averageRating" class="stat-stars">
-                            <v-icon v-for="n in 5" :key="n"
+                            <CzIcon v-for="n in 5" :key="n"
                                 :icon="n <= Math.round(stats.averageRating) ? 'mdi-star' : 'mdi-star-outline'"
                                 size="12" />
                         </div>
                         <div v-if="stats?.reviewCount" class="stat-sub">{{ stats.reviewCount }} {{ $t('dashboard.reviewsWord') }}</div>
                     </div>
                     <div class="stat-card">
-                        <v-icon icon="mdi-account-multiple-outline" size="22" class="stat-icon" />
+                        <CzIcon icon="mdi-account-multiple-outline" size="22" class="stat-icon" />
                         <div class="stat-num" v-count-up="stats?.followersCount ?? 0" />
                         <div class="stat-label">{{ $t('dashboard.statFollowers') }}</div>
                     </div>
@@ -191,7 +191,7 @@
                 <!-- Recently viewed strip -->
                 <div v-if="recentAdverts.length" class="recent-section">
                     <div class="recent-hd">
-                        <v-icon icon="mdi-history" size="14" class="recent-hd-icon" />
+                        <CzIcon icon="mdi-history" size="14" class="recent-hd-icon" />
                         {{ $t('dashboard.recentlyViewed') }}
                     </div>
                     <div class="recent-strip">
@@ -226,15 +226,15 @@
                 <div v-if="activeTab === 'adverts'" class="tab-body">
                     <div class="tab-toolbar">
                         <div class="tab-search">
-                            <v-icon icon="mdi-magnify" size="18" class="ts-icon" />
+                            <CzIcon icon="mdi-magnify" size="18" class="ts-icon" />
                             <input v-model="advertSearch" class="ts-input"
                                 :placeholder="$t('dashboard.searchPlaceholder')" />
                         </div>
                         <NuxtLink to="/add-advert" class="btn-add-ad">
-                            <v-icon icon="mdi-plus" size="16" />{{ $t('dashboard.addAdvert') }}
+                            <CzIcon icon="mdi-plus" size="16" />{{ $t('dashboard.addAdvert') }}
                         </NuxtLink>
                     </div>
-                    <div v-if="loading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" /></div>
+                    <div v-if="loading" class="loading-row"><CzIcon icon="mdi-loading" size="28" class="spin" /></div>
                     <div v-else-if="filteredAdverts.length" class="adverts-grid">
                         <div v-for="a in filteredAdverts" :key="a.id" class="advert-card">
                             <div class="adcard-img-wrap">
@@ -242,8 +242,8 @@
                                 <img :src="getImageUrl(a.images?.find(i => i.isMain)?.url)" :alt="a.title" loading="lazy" decoding="async" />
                                 <button class="adcard-delete-btn" :disabled="deleteLoading === a.id" :title="$t('dashboard.deleteTitle')"
                                     @click.stop="confirmDelete(a.id)">
-                                    <v-icon v-if="deleteLoading === a.id" icon="mdi-loading" size="14" class="spin" />
-                                    <v-icon v-else icon="mdi-delete-outline" size="14" />
+                                    <CzIcon v-if="deleteLoading === a.id" icon="mdi-loading" size="14" class="spin" />
+                                    <CzIcon v-else icon="mdi-delete-outline" size="14" />
                                 </button>
                             </div>
                             <div class="adcard-body">
@@ -253,29 +253,29 @@
                                         Number(a.mileage).toLocaleString('pl') }} km</div>
                                     <div class="adcard-price">{{ Number(a.price).toLocaleString('pl') }} zł</div>
                                     <div class="adcard-stats">
-                                        <span><v-icon icon="mdi-eye-outline" size="13" /> {{ a.viewCount ?? 0 }}</span>
-                                        <span><v-icon icon="mdi-heart-outline" size="13" /> {{ a.favoriteCount ?? 0 }}</span>
+                                        <span><CzIcon icon="mdi-eye-outline" size="13" /> {{ a.viewCount ?? 0 }}</span>
+                                        <span><CzIcon icon="mdi-heart-outline" size="13" /> {{ a.favoriteCount ?? 0 }}</span>
                                     </div>
                                 </NuxtLink>
                                 <div class="adcard-actions">
                                     <NuxtLink :to="`/add-advert?edit=${a.id}`" class="adcard-act">
-                                        <v-icon icon="mdi-pencil-outline" size="12" />{{ $t('dashboard.edit') }}
+                                        <CzIcon icon="mdi-pencil-outline" size="12" />{{ $t('dashboard.edit') }}
                                     </NuxtLink>
                                     <NuxtLink :to="`/promote-advert/${a.id}`" class="adcard-act adcard-act--promo">
-                                        <v-icon icon="mdi-star-outline" size="12" />{{ $t('dashboard.promote') }}
+                                        <CzIcon icon="mdi-star-outline" size="12" />{{ $t('dashboard.promote') }}
                                     </NuxtLink>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div v-else class="empty-state">
-                        <v-icon icon="mdi-car-outline" size="36" class="empty-icon" />
+                        <CzIcon icon="mdi-car-outline" size="36" class="empty-icon" />
                         <p>{{ $t('dashboard.emptyAdverts') }}</p>
                         <NuxtLink to="/add-advert" class="btn-red-sm">{{ $t('dashboard.addFirstAdvert') }}</NuxtLink>
                     </div>
                     <button v-if="myAdverts.length && myAdverts.length < advertTotal" class="show-more-btn"
                         :disabled="loadingMore" @click="loadMoreAdverts">
-                        <v-icon v-if="loadingMore" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-if="loadingMore" icon="mdi-loading" size="16" class="spin" />
                         <span v-else>{{ $t('dashboard.showMore') }}</span>
                     </button>
 
@@ -285,16 +285,16 @@
                             <div v-if="deleteConfirmId !== null" class="modal-backdrop"
                                 @click.self="deleteConfirmId = null">
                                 <div class="confirm-modal">
-                                    <div class="confirm-icon"><v-icon icon="mdi-delete-alert-outline" size="32" /></div>
+                                    <div class="confirm-icon"><CzIcon icon="mdi-delete-alert-outline" size="32" /></div>
                                     <h3 class="confirm-title">{{ $t('dashboard.deleteAdvertTitle') }}</h3>
                                     <p class="confirm-sub">{{ $t('dashboard.deleteAdvertConfirm') }}</p>
                                     <div class="confirm-actions">
                                         <button class="btn-cancel-modal" @click="deleteConfirmId = null">{{ $t('dashboard.cancel') }}</button>
                                         <button class="btn-delete-modal" :disabled="deleteLoading !== null"
                                             @click="doDelete">
-                                            <v-icon v-if="deleteLoading !== null" icon="mdi-loading" size="15"
+                                            <CzIcon v-if="deleteLoading !== null" icon="mdi-loading" size="15"
                                                 class="spin" />
-                                            <v-icon v-else icon="mdi-delete-outline" size="15" />
+                                            <CzIcon v-else icon="mdi-delete-outline" size="15" />
                                             {{ $t('dashboard.deleteAdvertBtn') }}
                                         </button>
                                     </div>
@@ -306,7 +306,7 @@
 
                 <!-- Tab: Opinie -->
                 <div v-else-if="activeTab === 'reviews'" class="tab-body">
-                    <div v-if="reviewsLoading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" />
+                    <div v-if="reviewsLoading" class="loading-row"><CzIcon icon="mdi-loading" size="28" class="spin" />
                     </div>
                     <template v-else>
                         <div v-if="receivedReviews.length" class="reviews-list">
@@ -318,20 +318,20 @@
                                         <div class="review-date">{{ formatDate(r.createdAt) }}</div>
                                     </div>
                                     <div class="review-stars">
-                                        <v-icon v-for="n in 5" :key="n"
+                                        <CzIcon v-for="n in 5" :key="n"
                                             :icon="n <= r.rating ? 'mdi-star' : 'mdi-star-outline'" size="16"
                                             class="star" />
                                     </div>
                                 </div>
                                 <p class="review-content">{{ r.content }}</p>
                                 <div v-if="r.advertTitle" class="review-advert">
-                                    <v-icon icon="mdi-car-outline" size="13" />
+                                    <CzIcon icon="mdi-car-outline" size="13" />
                                     {{ r.advertTitle }}
                                 </div>
                             </div>
                         </div>
                         <div v-else class="empty-state">
-                            <v-icon icon="mdi-star-outline" size="36" class="empty-icon" />
+                            <CzIcon icon="mdi-star-outline" size="36" class="empty-icon" />
                             <p>{{ $t('dashboard.emptyReviews') }}</p>
                         </div>
                     </template>
@@ -339,7 +339,7 @@
 
                 <!-- Tab: Obserwujący -->
                 <div v-else-if="activeTab === 'followers'" class="tab-body">
-                    <div v-if="followersLoading" class="loading-row"><v-icon icon="mdi-loading" size="28"
+                    <div v-if="followersLoading" class="loading-row"><CzIcon icon="mdi-loading" size="28"
                             class="spin" /></div>
                     <div v-else-if="followers.length" class="followers-grid">
                         <div v-for="f in followers" :key="f.id" class="follower-card">
@@ -349,14 +349,14 @@
                         </div>
                     </div>
                     <div v-else class="empty-state">
-                        <v-icon icon="mdi-account-multiple-outline" size="36" class="empty-icon" />
+                        <CzIcon icon="mdi-account-multiple-outline" size="36" class="empty-icon" />
                         <p>{{ $t('dashboard.emptyFollowers') }}</p>
                     </div>
                 </div>
 
                 <!-- Tab: Obserwowane -->
                 <div v-else-if="activeTab === 'following'" class="tab-body">
-                    <div v-if="followingLoading" class="loading-row"><v-icon icon="mdi-loading" size="28"
+                    <div v-if="followingLoading" class="loading-row"><CzIcon icon="mdi-loading" size="28"
                             class="spin" /></div>
                     <div v-else-if="followedAdverts.length" class="advert-follow-list">
                         <div v-for="fa in followedAdverts" :key="fa.id" class="follow-advert-row">
@@ -365,24 +365,24 @@
                                 <div class="follow-advert-title">{{ fa.advertTitle }}</div>
                                 <div class="follow-advert-meta">
                                     <span v-if="fa.brand">{{ fa.brand }} {{ fa.model }}</span>
-                                    <span v-if="fa.city"><v-icon icon="mdi-map-marker-outline" size="13" />{{ fa.city
+                                    <span v-if="fa.city"><CzIcon icon="mdi-map-marker-outline" size="13" />{{ fa.city
                                         }}</span>
                                 </div>
                                 <div class="follow-advert-price">
                                     {{ Number(fa.advertPrice).toLocaleString('pl') }} zł
                                     <span v-if="fa.priceChanged" class="price-changed">
-                                        <v-icon icon="mdi-trending-down" size="14" />
+                                        <CzIcon icon="mdi-trending-down" size="14" />
                                         {{ $t('dashboard.priceChanged') }}
                                     </span>
                                 </div>
                             </div>
                             <NuxtLink :to="`/ogloszenia/${fa.advertId}`" class="follow-advert-link">
-                                <v-icon icon="mdi-arrow-right" size="18" />
+                                <CzIcon icon="mdi-arrow-right" size="18" />
                             </NuxtLink>
                         </div>
                     </div>
                     <div v-else class="empty-state">
-                        <v-icon icon="mdi-bell-outline" size="36" class="empty-icon" />
+                        <CzIcon icon="mdi-bell-outline" size="36" class="empty-icon" />
                         <p>{{ $t('dashboard.emptyFollowing') }}</p>
                     </div>
                 </div>
@@ -393,15 +393,15 @@
                 <div class="section-topbar">
                     <h2 class="section-title">{{ $t('dashboard.notificationsTitle') }}</h2>
                     <button v-if="notifUnread > 0" class="btn-outline-sm" @click="markAllRead">
-                        <v-icon icon="mdi-check-all" size="15" />{{ $t('dashboard.markAllRead') }}
+                        <CzIcon icon="mdi-check-all" size="15" />{{ $t('dashboard.markAllRead') }}
                     </button>
                 </div>
-                <div v-if="notifsLoading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" /></div>
+                <div v-if="notifsLoading" class="loading-row"><CzIcon icon="mdi-loading" size="28" class="spin" /></div>
                 <div v-else-if="allNotifications.length" class="notif-list">
                     <div v-for="n in allNotifications" :key="n.id" class="notif-item" :class="{ unread: !n.isRead }"
                         @click="onNotifClick(n)">
                         <div class="notif-icon-wrap" :class="notifIconClass(n.type)">
-                            <v-icon :icon="notifIcon(n.type)" size="18" />
+                            <CzIcon :icon="notifIcon(n.type)" size="18" />
                         </div>
                         <div class="notif-body">
                             <div class="notif-title">{{ n.title }}</div>
@@ -410,12 +410,12 @@
                         </div>
                         <div v-if="!n.isRead" class="notif-dot" />
                         <button class="notif-del" :aria-label="$t('dashboard.deleteNotifAria')" @click.stop="deleteNotif(n.id)">
-                            <v-icon icon="mdi-close" size="14" />
+                            <CzIcon icon="mdi-close" size="14" />
                         </button>
                     </div>
                 </div>
                 <div v-else class="empty-state" style="margin-top:60px">
-                    <v-icon icon="mdi-bell-off-outline" size="40" class="empty-icon" />
+                    <CzIcon icon="mdi-bell-off-outline" size="40" class="empty-icon" />
                     <p>{{ $t('dashboard.emptyNotifications') }}</p>
                 </div>
             </template>
@@ -425,7 +425,7 @@
                 <div class="section-topbar">
                     <h2 class="section-title">{{ $t('dashboard.savedSearchesTitle') }}</h2>
                     <button class="btn-red-sm" @click="showNewSearchForm = !showNewSearchForm">
-                        <v-icon icon="mdi-plus" size="14" />{{ $t('dashboard.newSearch') }}
+                        <CzIcon icon="mdi-plus" size="14" />{{ $t('dashboard.newSearch') }}
                     </button>
                 </div>
 
@@ -466,14 +466,14 @@
                         <div class="nsf-actions">
                             <button class="btn-ghost-sm" @click="showNewSearchForm = false">{{ $t('dashboard.cancel') }}</button>
                             <button class="btn-red-sm" :disabled="!newSearch.name.trim() || searchSaving" @click="createSearch">
-                                <v-icon v-if="searchSaving" icon="mdi-loading" size="13" class="spin" />
+                                <CzIcon v-if="searchSaving" icon="mdi-loading" size="13" class="spin" />
                                 {{ $t('dashboard.saveSearch') }}
                             </button>
                         </div>
                     </div>
                 </transition>
 
-                <div v-if="searchesLoading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" /></div>
+                <div v-if="searchesLoading" class="loading-row"><CzIcon icon="mdi-loading" size="28" class="spin" /></div>
                 <div v-else-if="savedSearches.length" class="searches-list">
                     <div v-for="s in savedSearches" :key="s.id" class="search-card">
                         <div class="search-card-left">
@@ -484,14 +484,14 @@
                         <div class="search-card-right">
                             <span v-if="s.newResultsCount > 0" class="new-results-badge">{{ s.newResultsCount }} {{ $t('dashboard.newWord') }}</span>
                             <NuxtLink :to="searchUrl(s.criteria)" class="btn-search-run">
-                                <v-icon icon="mdi-magnify" size="14" />{{ $t('dashboard.search') }}
+                                <CzIcon icon="mdi-magnify" size="14" />{{ $t('dashboard.search') }}
                             </NuxtLink>
-                            <button class="btn-icon-danger" :aria-label="$t('dashboard.deleteSearchAria')" @click="deleteSearch(s.id)"><v-icon icon="mdi-delete-outline" size="16" /></button>
+                            <button class="btn-icon-danger" :aria-label="$t('dashboard.deleteSearchAria')" @click="deleteSearch(s.id)"><CzIcon icon="mdi-delete-outline" size="16" /></button>
                         </div>
                     </div>
                 </div>
                 <div v-else class="empty-state" style="margin-top:60px">
-                    <v-icon icon="mdi-magnify" size="40" class="empty-icon" />
+                    <CzIcon icon="mdi-magnify" size="40" class="empty-icon" />
                     <p>{{ $t('dashboard.emptySearches') }}</p>
                     <NuxtLink to="/adverts" class="btn-red-sm">{{ $t('dashboard.goToSearch') }}</NuxtLink>
                 </div>
@@ -505,13 +505,13 @@
                 <div v-if="stats?.averageRating" class="rating-summary">
                     <div class="rating-big">{{ stats.averageRating.toFixed(1) }}</div>
                     <div class="rating-stars">
-                        <v-icon v-for="n in 5" :key="n"
+                        <CzIcon v-for="n in 5" :key="n"
                             :icon="n <= Math.round(stats.averageRating) ? 'mdi-star' : 'mdi-star-outline'" size="22"
                             class="star" />
                     </div>
                     <div class="rating-count">{{ stats.reviewCount ?? 0 }} {{ $t('dashboard.reviewsWord') }}</div>
                 </div>
-                <div v-if="reviewsLoading" class="loading-row"><v-icon icon="mdi-loading" size="28" class="spin" />
+                <div v-if="reviewsLoading" class="loading-row"><CzIcon icon="mdi-loading" size="28" class="spin" />
                 </div>
                 <div v-else-if="receivedReviews.length" class="reviews-list" style="padding:0 24px 40px">
                     <div v-for="r in receivedReviews" :key="r.id" class="review-card">
@@ -522,18 +522,18 @@
                                 <div class="review-date">{{ formatDate(r.createdAt) }}</div>
                             </div>
                             <div class="review-stars">
-                                <v-icon v-for="n in 5" :key="n" :icon="n <= r.rating ? 'mdi-star' : 'mdi-star-outline'"
+                                <CzIcon v-for="n in 5" :key="n" :icon="n <= r.rating ? 'mdi-star' : 'mdi-star-outline'"
                                     size="16" class="star" />
                             </div>
                         </div>
                         <p class="review-content">{{ r.content }}</p>
                         <div v-if="r.advertTitle" class="review-advert">
-                            <v-icon icon="mdi-car-outline" size="13" />{{ r.advertTitle }}
+                            <CzIcon icon="mdi-car-outline" size="13" />{{ r.advertTitle }}
                         </div>
                     </div>
                 </div>
                 <div v-else class="empty-state" style="margin-top:60px">
-                    <v-icon icon="mdi-star-off-outline" size="40" class="empty-icon" />
+                    <CzIcon icon="mdi-star-off-outline" size="40" class="empty-icon" />
                     <p>{{ $t('dashboard.emptyReviews') }}</p>
                 </div>
             </template>
@@ -601,13 +601,13 @@
                         </div>
                     </template>
                     <div v-if="profileSuccess" class="alert-success">
-                        <v-icon icon="mdi-check-circle-outline" size="16" />{{ $t('dashboard.dataSaved') }}
+                        <CzIcon icon="mdi-check-circle-outline" size="16" />{{ $t('dashboard.dataSaved') }}
                     </div>
                     <div v-if="profileError" class="alert-error">
-                        <v-icon icon="mdi-alert-circle-outline" size="16" />{{ profileError }}
+                        <CzIcon icon="mdi-alert-circle-outline" size="16" />{{ profileError }}
                     </div>
                     <button type="submit" class="btn-red" :disabled="profileSaving">
-                        <v-icon v-if="profileSaving" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-if="profileSaving" icon="mdi-loading" size="16" class="spin" />
                         {{ $t('dashboard.saveChanges') }}
                     </button>
                 </form>
@@ -624,13 +624,13 @@
                             minlength="6" />
                     </div>
                     <div v-if="passwordSuccess" class="alert-success">
-                        <v-icon icon="mdi-check-circle-outline" size="16" />{{ $t('dashboard.passwordChanged') }}
+                        <CzIcon icon="mdi-check-circle-outline" size="16" />{{ $t('dashboard.passwordChanged') }}
                     </div>
                     <div v-if="passwordError" class="alert-error">
-                        <v-icon icon="mdi-alert-circle-outline" size="16" />{{ passwordError }}
+                        <CzIcon icon="mdi-alert-circle-outline" size="16" />{{ passwordError }}
                     </div>
                     <button type="submit" class="btn-outline" :disabled="passwordSaving">
-                        <v-icon v-if="passwordSaving" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-if="passwordSaving" icon="mdi-loading" size="16" class="spin" />
                         {{ $t('dashboard.changePasswordBtn') }}
                     </button>
                 </form>
@@ -686,13 +686,13 @@
                         </div>
                     </div>
                     <div v-if="settingsSuccess" class="alert-success">
-                        <v-icon icon="mdi-check-circle-outline" size="16" />{{ $t('dashboard.settingsSaved') }}
+                        <CzIcon icon="mdi-check-circle-outline" size="16" />{{ $t('dashboard.settingsSaved') }}
                     </div>
                     <div v-if="settingsError" class="alert-error">
-                        <v-icon icon="mdi-alert-circle-outline" size="16" />{{ settingsError }}
+                        <CzIcon icon="mdi-alert-circle-outline" size="16" />{{ settingsError }}
                     </div>
                     <button class="btn-red" :disabled="settingsSaving" @click="saveSettings">
-                        <v-icon v-if="settingsSaving" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-if="settingsSaving" icon="mdi-loading" size="16" class="spin" />
                         {{ $t('dashboard.saveSettings') }}
                     </button>
 
@@ -725,33 +725,33 @@
                 <div class="rs-title">{{ $t('dashboard.about') }}</div>
                 <p class="rs-about">{{ profile?.about || $t('dashboard.noDescription') }}</p>
                 <button class="rs-edit-link" @click="goProfile">
-                    <v-icon icon="mdi-pencil-outline" size="13" />{{ $t('dashboard.editDescription') }}
+                    <CzIcon icon="mdi-pencil-outline" size="13" />{{ $t('dashboard.editDescription') }}
                 </button>
             </div>
             <div class="rs-card">
                 <div class="rs-title">{{ $t('dashboard.location') }}</div>
                 <div class="rs-location" v-if="profile?.city">
-                    <v-icon icon="mdi-map-marker-outline" size="15" class="loc-icon" />
+                    <CzIcon icon="mdi-map-marker-outline" size="15" class="loc-icon" />
                     {{ profile.city }}<template v-if="profile.region">, {{ profile.region }}</template>
                 </div>
-                <div class="rs-location" v-else><v-icon icon="mdi-map-marker-outline" size="15" class="loc-icon" />{{ $t('dashboard.notProvided') }}
+                <div class="rs-location" v-else><CzIcon icon="mdi-map-marker-outline" size="15" class="loc-icon" />{{ $t('dashboard.notProvided') }}
                 </div>
             </div>
             <div class="rs-card">
                 <div class="rs-title">{{ $t('dashboard.verifications') }}</div>
                 <div class="rs-verif-list">
                     <div class="verif-row">
-                        <div class="verif-left"><v-icon icon="mdi-phone-outline" size="15" class="verif-icon" />{{ $t('dashboard.phone') }}
+                        <div class="verif-left"><CzIcon icon="mdi-phone-outline" size="15" class="verif-icon" />{{ $t('dashboard.phone') }}
                         </div>
                         <span class="verif-ok">{{ $t('dashboard.verified') }}</span>
                     </div>
                     <div class="verif-row">
-                        <div class="verif-left"><v-icon icon="mdi-email-outline" size="15" class="verif-icon" />{{ $t('dashboard.email') }}
+                        <div class="verif-left"><CzIcon icon="mdi-email-outline" size="15" class="verif-icon" />{{ $t('dashboard.email') }}
                         </div>
                         <span class="verif-ok">{{ $t('dashboard.verified') }}</span>
                     </div>
                     <div class="verif-row">
-                        <div class="verif-left"><v-icon icon="mdi-shield-check-outline" size="15" class="verif-icon" />
+                        <div class="verif-left"><CzIcon icon="mdi-shield-check-outline" size="15" class="verif-icon" />
                             {{ profile?.accountType === 'Business' ? $t('dashboard.dealer') : $t('dashboard.account') }}
                         </div>
                         <span class="verif-ok">{{ $t('dashboard.verified') }}</span>
@@ -765,7 +765,7 @@
             <transition name="fade">
                 <div v-if="confirmDeleteAccount" class="modal-backdrop" @click.self="confirmDeleteAccount = false">
                     <div class="confirm-modal">
-                        <div class="confirm-icon"><v-icon icon="mdi-account-remove" size="32" /></div>
+                        <div class="confirm-icon"><CzIcon icon="mdi-account-remove" size="32" /></div>
                         <h3 class="confirm-title">{{ $t('dashboard.deleteAccount') }}</h3>
                         <p class="confirm-sub">{{ $t('dashboard.deleteAccountConfirm') }}</p>
                         <div class="confirm-actions">
@@ -1308,14 +1308,14 @@ onMounted(async () => {
     flex-shrink: 0;
     position: relative;
     transition: color 0.2s;
-    .v-icon { color: $text-dark; transition: color 0.2s; }
+    .cz-icon { color: $text-dark; transition: color 0.2s; }
 
     &.active, &:hover {
         color: $red;
-        .v-icon { color: $red; }
+        .cz-icon { color: $red; }
     }
 
-    &--danger { color: $danger; .v-icon { color: $danger; } }
+    &--danger { color: $danger; .cz-icon { color: $danger; } }
 }
 
 .dmn-badge {

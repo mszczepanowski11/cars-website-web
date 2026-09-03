@@ -20,18 +20,18 @@
                         <span class="title-accent">{{ $t('hero.titleLine2') }}</span>
                     </h1>
                     <ul class="hfs-features">
-                        <li><v-icon icon="mdi-shield-check-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat1') }}</li>
-                        <li><v-icon icon="mdi-file-document-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat2') }}</li>
-                        <li><v-icon icon="mdi-cpu-64-bit" size="16" class="hfs-feat-icon" />{{ $t('hero.feat3') }}</li>
-                        <li><v-icon icon="mdi-account-tie-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat4') }}</li>
+                        <li><CzIcon icon="mdi-shield-check-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat1') }}</li>
+                        <li><CzIcon icon="mdi-file-document-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat2') }}</li>
+                        <li><CzIcon icon="mdi-cpu-64-bit" size="16" class="hfs-feat-icon" />{{ $t('hero.feat3') }}</li>
+                        <li><CzIcon icon="mdi-account-tie-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat4') }}</li>
                     </ul>
                     <div class="hfs-links">
                         <NuxtLink to="/adverts" class="hfs-link hfs-link--primary">
-                            <v-icon icon="mdi-magnify" size="16" />
+                            <CzIcon icon="mdi-magnify" size="16" />
                             Znajdź samochód
                         </NuxtLink>
                         <NuxtLink to="/add-advert" class="hfs-link hfs-link--secondary">
-                            <v-icon icon="mdi-plus-circle-outline" size="16" />
+                            <CzIcon icon="mdi-plus-circle-outline" size="16" />
                             Dodaj ogłoszenie
                         </NuxtLink>
                     </div>
@@ -40,7 +40,7 @@
 
             <!-- scroll indicator -->
             <div class="hfs-scroll">
-                <v-icon icon="mdi-chevron-down" size="26" />
+                <CzIcon icon="mdi-chevron-down" size="26" />
             </div>
         </section>
 
@@ -57,7 +57,7 @@
                         :class="{ 'cat-tab--active': searchCat === cat.slug }"
                         @click="selectSearchCat(cat.slug)"
                     >
-                        <v-icon :icon="cat.icon" size="14" />
+                        <CzIcon :icon="cat.icon" size="14" />
                         {{ cat.label }}
                     </button>
                 </div>
@@ -104,7 +104,7 @@
                         </div>
                     </div>
                     <button class="hsp-search-btn" @click="doSearch">
-                        <v-icon icon="mdi-magnify" size="18" />
+                        <CzIcon icon="mdi-magnify" size="18" />
                         {{ $t('search.searchBtn') }}
                     </button>
                 </div>
@@ -112,10 +112,10 @@
                 <!-- Więcej filtrów toggle -->
                 <div class="hs-more-row">
                     <button class="hs-more-btn" @click="showMoreFilters = !showMoreFilters">
-                        <v-icon icon="mdi-tune-variant" size="15" />
+                        <CzIcon icon="mdi-tune-variant" size="15" />
                         {{ $t('search.moreFilters') }}
                         <span v-if="homeAdvancedCount" class="hs-more-badge">{{ homeAdvancedCount }}</span>
-                        <v-icon :icon="showMoreFilters ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="15" />
+                        <CzIcon :icon="showMoreFilters ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="15" />
                     </button>
                 </div>
 
@@ -240,7 +240,7 @@
                         <div v-if="i > 0" class="sstrip-sep" />
                         <div class="sstrip-item">
                             <div class="sstrip-icon-badge">
-                                <v-icon :icon="stat.icon" size="22" />
+                                <CzIcon :icon="stat.icon" size="22" />
                             </div>
                             <div class="sstrip-text">
                                 <div v-if="statsLoading" class="sstrip-skeleton" />
@@ -261,7 +261,7 @@
                         <div class="sec-eyebrow">{{ $t('home.premiumEyebrow') }}</div>
                         <h2>{{ $t('home.premiumTitle') }}</h2>
                     </div>
-                    <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                    <NuxtLink to="/adverts" class="see-all">Wszystkie <CzIcon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
                 <div class="cars-grid">
                     <template v-if="clientDataLoading">
@@ -280,14 +280,14 @@
                 <div class="sec-top">
                     <div class="sec-top-left">
                         <span class="premium-label">
-                            <v-icon icon="mdi-crown" size="14" />
+                            <CzIcon icon="mdi-crown" size="14" />
                             {{ $t('home.featuredLabel') }}
                         </span>
                         <h2>{{ $t('home.featuredTitle') }}</h2>
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Zobacz wszystkie
-                        <v-icon icon="mdi-arrow-right" size="16" />
+                        <CzIcon icon="mdi-arrow-right" size="16" />
                     </NuxtLink>
                 </div>
                 <div class="cars-grid">
@@ -304,7 +304,7 @@
                         <div class="sec-eyebrow">{{ $t('home.popularEyebrow') }}</div>
                         <h2>{{ $t('home.popularTitle') }}</h2>
                     </div>
-                    <NuxtLink to="/adverts" class="see-all">Wszystkie <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                    <NuxtLink to="/adverts" class="see-all">Wszystkie <CzIcon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
                 <div class="cars-grid cars-grid--small">
                     <template v-if="clientDataLoading">
@@ -325,7 +325,7 @@
                         <div class="sec-eyebrow">{{ $t('home.everyCategory.eyebrow') }}</div>
                         <h2>{{ $t('home.everyCategory.title') }}</h2>
                     </div>
-                    <NuxtLink to="/adverts" class="see-all">{{ $t('home.everyCategory.seeAll') }} <v-icon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                    <NuxtLink to="/adverts" class="see-all">{{ $t('home.everyCategory.seeAll') }} <CzIcon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
 
                 <template v-if="catShowcaseLoading">
@@ -340,12 +340,12 @@
                 <div v-for="group in categoryShowcase" v-else :key="group.category.id" class="cat-row">
                     <div class="cat-row-head">
                         <NuxtLink :to="`/adverts?categoryId=${group.category.id}`" class="cat-row-title">
-                            <span class="cat-row-icon"><v-icon :icon="group.category.iconName || 'mdi-tag'" size="18" /></span>
-                            {{ group.category.name }}
+                            <span class="cat-row-icon"><CzIcon :icon="group.category.iconName || 'mdi-tag'" size="18" /></span>
+                            <span class="cat-row-name">{{ group.category.name }}</span>
                             <span v-if="group.total" class="cat-row-count">{{ group.total.toLocaleString('pl') }}</span>
                         </NuxtLink>
                         <NuxtLink :to="`/adverts?categoryId=${group.category.id}`" class="cat-row-all">
-                            Zobacz wszystkie <v-icon icon="mdi-arrow-right" size="14" />
+                            Zobacz wszystkie <CzIcon icon="mdi-arrow-right" size="14" />
                         </NuxtLink>
                     </div>
                     <div class="cars-grid cars-grid--small">
@@ -366,7 +366,7 @@
                 <div class="why-grid">
                     <div v-for="f in feats" :key="f.title" class="why-card">
                         <div class="why-card-icon">
-                            <v-icon :icon="f.icon" size="32" />
+                            <CzIcon :icon="f.icon" size="32" />
                         </div>
                         <h3 class="why-card-title">{{ f.title }}</h3>
                         <p class="why-card-desc">{{ f.desc }}</p>
@@ -382,7 +382,7 @@
                     <h2>{{ $t('home.eventsTitle') }} <span>{{ $t('home.eventsTitleAccent') }}</span></h2>
                     <NuxtLink to="/wydarzenia" class="see-all">
                         Zobacz wszystkie
-                        <v-icon icon="mdi-arrow-right" size="16" />
+                        <CzIcon icon="mdi-arrow-right" size="16" />
                     </NuxtLink>
                 </div>
 
@@ -392,17 +392,17 @@
                     </div>
                     <div class="fb-body">
                         <div class="fb-label">
-                            <v-icon icon="mdi-crown" size="13" class="crown-icon" />
+                            <CzIcon icon="mdi-crown" size="13" class="crown-icon" />
                             Wyróżnione wydarzenie
                         </div>
                         <div class="fb-name">{{ featuredEvent.name }}</div>
                         <div class="fb-meta">
-                            <span><v-icon icon="mdi-calendar" size="13" />{{ formatEventDate(featuredEvent.startDate) }}</span>
-                            <span><v-icon icon="mdi-map-marker-outline" size="13" />{{ featuredEvent.city }}</span>
-                            <span v-if="featuredEvent.organizerName"><v-icon icon="mdi-account-outline" size="13" />{{ featuredEvent.organizerName }}</span>
+                            <span><CzIcon icon="mdi-calendar" size="13" />{{ formatEventDate(featuredEvent.startDate) }}</span>
+                            <span><CzIcon icon="mdi-map-marker-outline" size="13" />{{ featuredEvent.city }}</span>
+                            <span v-if="featuredEvent.organizerName"><CzIcon icon="mdi-account-outline" size="13" />{{ featuredEvent.organizerName }}</span>
                         </div>
                         <p class="fb-desc">{{ featuredEvent.description?.slice(0, 200) }}{{ (featuredEvent.description?.length ?? 0) > 200 ? '...' : '' }}</p>
-                        <div class="fb-cta">Dowiedz się więcej <v-icon icon="mdi-arrow-right" size="14" /></div>
+                        <div class="fb-cta">Dowiedz się więcej <CzIcon icon="mdi-arrow-right" size="14" /></div>
                     </div>
                 </div>
 
@@ -411,35 +411,35 @@
                         <div class="event-img-wrap">
                             <img :src="getEventImageUrl(ev)" :alt="ev.name" loading="lazy" decoding="async" />
                             <span v-if="ev.isFeatured" class="event-badge event-badge--featured">
-                                <v-icon icon="mdi-crown" size="10" /> WYRÓŻNIONE
+                                <CzIcon icon="mdi-crown" size="10" /> WYRÓŻNIONE
                             </span>
                             <span v-else class="event-badge">WYDARZENIE</span>
                             <div class="event-date-chip">
-                                <v-icon icon="mdi-calendar" size="13" />
+                                <CzIcon icon="mdi-calendar" size="13" />
                                 {{ formatEventDate(ev.startDate) }}
                             </div>
                         </div>
                         <div class="event-body">
                             <div class="event-name">{{ ev.name }}</div>
                             <div class="event-loc">
-                                <v-icon icon="mdi-map-marker-outline" size="14" class="event-loc-icon" />
+                                <CzIcon icon="mdi-map-marker-outline" size="14" class="event-loc-icon" />
                                 {{ ev.city }}
                             </div>
                             <div v-if="ev.organizerName" class="event-organizer">
-                                <v-icon icon="mdi-account-outline" size="13" />
+                                <CzIcon icon="mdi-account-outline" size="13" />
                                 {{ ev.organizerName }}
                             </div>
                             <div class="event-desc">{{ ev.description?.slice(0, 80) }}{{ (ev.description?.length ?? 0) > 80 ? '...' : '' }}</div>
                             <div class="event-card-footer">
                                 <div v-if="ev.interestedCount" class="event-interested">
-                                    <v-icon icon="mdi-account-check-outline" size="13" />
+                                    <CzIcon icon="mdi-account-check-outline" size="13" />
                                     {{ ev.interestedCount }}
                                 </div>
                                 <a v-if="ev.ticketsUrl" :href="ev.ticketsUrl" target="_blank" rel="noopener noreferrer" class="event-link-btn" @click.stop>
-                                    Kup bilety <v-icon icon="mdi-arrow-right" size="14" />
+                                    Kup bilety <CzIcon icon="mdi-arrow-right" size="14" />
                                 </a>
                                 <a v-else-if="ev.websiteUrl" :href="ev.websiteUrl" target="_blank" rel="noopener noreferrer" class="event-link-btn" @click.stop>
-                                    Więcej <v-icon icon="mdi-arrow-right" size="14" />
+                                    Więcej <CzIcon icon="mdi-arrow-right" size="14" />
                                 </a>
                             </div>
                         </div>
@@ -448,7 +448,7 @@
 
                 <div class="events-see-all-row">
                     <NuxtLink to="/wydarzenia" class="btn-see-all-events">
-                        <v-icon icon="mdi-calendar-multiple" size="18" />
+                        <CzIcon icon="mdi-calendar-multiple" size="18" />
                         Zobacz wszystkie wydarzenia
                     </NuxtLink>
                 </div>
@@ -465,7 +465,7 @@
                     </div>
                     <NuxtLink to="/adverts" class="see-all">
                         Wszystkie ogłoszenia
-                        <v-icon icon="mdi-arrow-right" size="16" />
+                        <CzIcon icon="mdi-arrow-right" size="16" />
                     </NuxtLink>
                 </div>
                 <div class="cars-grid cars-grid--small">
@@ -483,15 +483,15 @@
             <div class="container">
                 <div class="b2b-card">
                     <div class="b2b-content">
-                        <div class="b2b-badge"><v-icon icon="mdi-sync" size="13" />XML • CSV • API</div>
+                        <div class="b2b-badge"><CzIcon icon="mdi-sync" size="13" />XML • CSV • API</div>
                         <h2 class="b2b-title">Połącz swoją firmę z CARIZO</h2>
                         <p class="b2b-sub">Synchronizuj swoje ogłoszenia automatycznie. Bez ręcznego dodawania.</p>
                         <NuxtLink to="/dla-firm" class="b2b-cta">
-                            Połącz firmę <v-icon icon="mdi-arrow-right" size="14" />
+                            Połącz firmę <CzIcon icon="mdi-arrow-right" size="14" />
                         </NuxtLink>
                     </div>
                     <div class="b2b-visual">
-                        <v-icon icon="mdi-warehouse" size="56" class="b2b-visual-icon" />
+                        <CzIcon icon="mdi-warehouse" size="56" class="b2b-visual-icon" />
                     </div>
                 </div>
             </div>
@@ -502,7 +502,7 @@
             <div class="container">
                 <div class="newsletter">
                     <div class="news-icon">
-                        <v-icon icon="mdi-email-outline" size="36" />
+                        <CzIcon icon="mdi-email-outline" size="36" />
                     </div>
                     <div class="news-text">
                         <h2>Bądź na bieżąco</h2>
@@ -522,7 +522,7 @@
                     <label class="news-consent">
                         <input v-model="newsletterConsent" type="checkbox" class="news-consent-input" />
                         <span class="news-consent-box" :class="{ 'news-consent-box--checked': newsletterConsent }">
-                            <v-icon v-if="newsletterConsent" icon="mdi-check" size="11" />
+                            <CzIcon v-if="newsletterConsent" icon="mdi-check" size="11" />
                         </span>
                         <span class="news-consent-text">Wyrażam zgodę na otrzymywanie newslettera CARIZO z ofertami i nowościami motoryzacyjnymi. Możesz zrezygnować w każdej chwili klikając link w e-mailu. <NuxtLink to="/polityka-prywatnosci" class="news-pp-link">Polityka prywatności</NuxtLink></span>
                     </label>
@@ -1124,18 +1124,12 @@ if (import.meta.client) {
 async function loadCategoryShowcase() {
     catShowcaseLoading.value = true
     try {
-        const cats = (homeCategories.value ?? []).filter(c => c.slug !== 'inne')
-        const results = await Promise.allSettled(
-            cats.map(c => $fetch<PagedResult<CarAdvert>>('/api/proxy/api/listings/search', {
-                method: 'POST',
-                body: { page: 1, pageSize: 4, sortBy: '', categoryId: c.id },
-            }).then(r => ({ category: c, items: r.items ?? [], total: r.totalCount ?? (r as any).total ?? 0 })))
-        )
-        categoryShowcase.value = results
-            .filter((r): r is PromiseFulfilledResult<CategoryShowcaseGroup> => r.status === 'fulfilled' && r.value.items.length > 0)
-            .map(r => r.value)
-            // Busiest categories first so the strongest content leads.
-            .sort((a, b) => b.total - a.total)
+        // Jedno żądanie zamiast jednego na kategorię. Fan-out po kategoriach nadal
+        // istnieje, ale dzieje się na serwerze i jest buforowany na pięć minut dla
+        // wszystkich odwiedzających — patrz `server/api/home/showcase.get.ts`.
+        // Wcześniej ta funkcja wysyłała z przeglądarki dwadzieścia zapytań
+        // wyszukiwania przy każdym wejściu na stronę główną.
+        categoryShowcase.value = await $fetch<CategoryShowcaseGroup[]>('/api/home/showcase')
     } catch { categoryShowcase.value = [] }
     finally { catShowcaseLoading.value = false }
 }
@@ -1497,7 +1491,7 @@ onMounted(async () => {
     font-weight: 500;
     color: rgba(255,255,255,0.6);
 
-    .v-icon { color: $red; flex-shrink: 0; }
+    .cz-icon { color: $red; flex-shrink: 0; }
 }
 
 .hfs-links {
@@ -2169,6 +2163,10 @@ onMounted(async () => {
 .cat-row-title {
     display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
     color: $text; font-size: 19px; font-weight: 800; letter-spacing: -0.01em;
+    // Bez tego długa nazwa kategorii ("Usługi motoryzacyjne") nie mieści się obok
+    // linku "Zobacz wszystkie", który ma `flex-shrink: 0` - i cały dokument robi się
+    // szerszy od ekranu. To ten sam wzorzec, który wypychał układ na /categories.
+    min-width: 0;
     &:hover { color: $red; }
     &:hover .cat-row-icon { border-color: $red; color: $red; }
 }
@@ -2179,6 +2177,12 @@ onMounted(async () => {
 .cat-row-count {
     font-size: 12px; font-weight: 600; color: $text-muted; background: $card;
     border: 1px solid $border; padding: 2px 9px; border-radius: 20px;
+}
+.cat-row-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .cat-row-all {
     display: inline-flex; align-items: center; gap: 4px; text-decoration: none; flex-shrink: 0;
@@ -2256,8 +2260,14 @@ onMounted(async () => {
 .why-logo {
     height: 72px;
     width: auto;
+    max-width: 100%;
     display: block;
     filter: drop-shadow(0 0 32px rgba(139, 13, 29, 0.4));
+
+    // Przy 72 px wysokości to logo ma 399 px szerokości - więcej niż ekran telefonu,
+    // przez co cała strona przewijała się na boki. Wysokość, nie tylko `max-width`,
+    // bo samo przycięcie szerokości przy sztywnej wysokości zniekształciłoby znak.
+    @media (max-width: $bp-mobile) { height: 52px; }
 }
 
 .why-sub {
@@ -2406,7 +2416,7 @@ onMounted(async () => {
         gap: 4px;
         font-size: 12px;
         color: $text-dim;
-        .v-icon { color: $text-dark; }
+        .cz-icon { color: $text-dark; }
     }
 }
 
@@ -2471,7 +2481,7 @@ onMounted(async () => {
         color: $premium;
         border: 1px solid rgba(243,156,18,0.3);
 
-        .v-icon { color: $premium; }
+        .cz-icon { color: $premium; }
     }
 }
 
@@ -2490,7 +2500,7 @@ onMounted(async () => {
     font-weight: 600;
     padding: 4px 8px;
     border-radius: 6px;
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
 .event-body {
@@ -2522,7 +2532,7 @@ onMounted(async () => {
     gap: 4px;
     font-size: 11px;
     color: $text-dark;
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
 .event-desc {
@@ -2544,7 +2554,7 @@ onMounted(async () => {
     gap: 4px;
     font-size: 11px;
     color: $text-dark;
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
 .event-link-btn {

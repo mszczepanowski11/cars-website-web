@@ -1,17 +1,17 @@
 <template>
     <div class="ss-wrap" :class="{ open: isOpen }" ref="wrapRef">
         <div class="ss-trigger" @click="toggle" :class="{ disabled, 'ss-trigger--filled': !!modelValue }">
-            <v-icon v-if="prefixIcon" :icon="prefixIcon" size="15" class="ss-prefix-icon" />
+            <CzIcon v-if="prefixIcon" :icon="prefixIcon" size="15" class="ss-prefix-icon" />
             <span class="ss-value" :class="{ placeholder: !selectedLabel }">
                 {{ selectedLabel || placeholder || $t('cSmartSelect.placeholderDefault') }}
             </span>
-            <v-icon :icon="isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="ss-arrow" />
+            <CzIcon :icon="isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="ss-arrow" />
         </div>
 
         <Transition name="ss-drop">
             <div v-if="isOpen && !disabled" class="ss-dropdown">
                 <div class="ss-search-wrap">
-                    <v-icon icon="mdi-magnify" size="15" class="ss-search-icon" />
+                    <CzIcon icon="mdi-magnify" size="15" class="ss-search-icon" />
                     <input
                         ref="searchRef"
                         v-model="query"
@@ -39,10 +39,10 @@
                         @click="select(opt)"
                         @mouseenter="highlightIdx = i"
                     >
-                        <v-icon v-if="opt.icon" :icon="opt.icon" size="14" class="ss-opt-icon" />
+                        <CzIcon v-if="opt.icon" :icon="opt.icon" size="14" class="ss-opt-icon" />
                         <span class="ss-opt-label">{{ opt.label }}</span>
                         <span v-if="opt.meta" class="ss-opt-meta">{{ opt.meta }}</span>
-                        <v-icon v-if="opt.value === modelValue" icon="mdi-check" size="13" class="ss-opt-check" />
+                        <CzIcon v-if="opt.value === modelValue" icon="mdi-check" size="13" class="ss-opt-check" />
                     </div>
                 </div>
             </div>

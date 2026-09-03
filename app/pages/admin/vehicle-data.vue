@@ -2,23 +2,23 @@
     <div class="admin-page">
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <v-icon icon="mdi-shield-crown" size="20" class="brand-icon" />
+                <CzIcon icon="mdi-shield-crown" size="20" class="brand-icon" />
                 Panel Administratora
             </div>
             <nav class="sidebar-nav">
-                <NuxtLink to="/admin" class="nav-item"><v-icon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
-                <NuxtLink to="/admin/reports" class="nav-item"><v-icon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
-                <NuxtLink to="/admin/users" class="nav-item"><v-icon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
-                <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
-                <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
-                <NuxtLink to="/admin/taxonomy" class="nav-item"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
-                <NuxtLink to="/admin/vehicle-data" class="nav-item active"><v-icon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
-                <NuxtLink to="/admin/attributes" class="nav-item"><v-icon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
-                <NuxtLink to="/admin/partners" class="nav-item"><v-icon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
-                <NuxtLink to="/admin/directory" class="nav-item"><v-icon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
-                <NuxtLink to="/admin/quality-report" class="nav-item"><v-icon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
+                <NuxtLink to="/admin" class="nav-item"><CzIcon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
+                <NuxtLink to="/admin/reports" class="nav-item"><CzIcon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
+                <NuxtLink to="/admin/users" class="nav-item"><CzIcon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
+                <NuxtLink to="/admin/adverts" class="nav-item"><CzIcon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
+                <NuxtLink to="/admin/events" class="nav-item"><CzIcon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item"><CzIcon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
+                <NuxtLink to="/admin/vehicle-data" class="nav-item active"><CzIcon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
+                <NuxtLink to="/admin/attributes" class="nav-item"><CzIcon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
+                <NuxtLink to="/admin/partners" class="nav-item"><CzIcon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
+                <NuxtLink to="/admin/directory" class="nav-item"><CzIcon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item"><CzIcon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
                 <div class="nav-divider" />
-                <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
+                <NuxtLink to="/dashboard" class="nav-item"><CzIcon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
         </aside>
 
@@ -37,11 +37,11 @@
             <div v-if="tab === 'brands'">
                 <div class="toolbar">
                     <div class="search-bar">
-                        <v-icon icon="mdi-magnify" size="18" class="sb-icon" />
+                        <CzIcon icon="mdi-magnify" size="18" class="sb-icon" />
                         <input v-model="brandSearch" class="sb-input" placeholder="Szukaj marki..." @input="debounced(loadBrands)" />
                     </div>
                     <button class="btn-add" @click="showAddBrand = true">
-                        <v-icon icon="mdi-plus" size="15" /> Dodaj markę
+                        <CzIcon icon="mdi-plus" size="15" /> Dodaj markę
                     </button>
                 </div>
 
@@ -67,14 +67,14 @@
                     </div>
                     <div class="afc-actions">
                         <button class="btn-confirm" :disabled="!newBrand.name || savingBrand" @click="addBrand">
-                            <v-icon v-if="savingBrand" icon="mdi-loading" size="13" class="spin" />
+                            <CzIcon v-if="savingBrand" icon="mdi-loading" size="13" class="spin" />
                             Dodaj
                         </button>
                         <button class="btn-cancel" @click="showAddBrand = false; resetNewBrand()">Anuluj</button>
                     </div>
                 </div>
 
-                <div v-if="brandsLoading" class="loading-state"><v-icon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
+                <div v-if="brandsLoading" class="loading-state"><CzIcon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
                 <div v-else-if="brands.length" class="feat-table">
                     <table>
                         <thead>
@@ -98,14 +98,14 @@
                                 </td>
                                 <td>
                                     <button class="btn-action btn-delete" @click="deleteBrand(b.id, b.name, b.modelCount)">
-                                        <v-icon icon="mdi-delete-outline" size="13" />Usuń
+                                        <CzIcon icon="mdi-delete-outline" size="13" />Usuń
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="empty-state"><v-icon icon="mdi-car-off" size="36" class="empty-icon" />Brak marek.</div>
+                <div v-else class="empty-state"><CzIcon icon="mdi-car-off" size="36" class="empty-icon" />Brak marek.</div>
             </div>
 
             <!-- MODELS -->
@@ -116,11 +116,11 @@
                         <option v-for="b in allBrandsLite" :key="b.id" :value="b.id">{{ b.name }}</option>
                     </select>
                     <div class="search-bar">
-                        <v-icon icon="mdi-magnify" size="18" class="sb-icon" />
+                        <CzIcon icon="mdi-magnify" size="18" class="sb-icon" />
                         <input v-model="modelSearch" class="sb-input" placeholder="Szukaj modelu..." @input="debounced(loadModels)" />
                     </div>
                     <button class="btn-add" @click="showAddModel = true">
-                        <v-icon icon="mdi-plus" size="15" /> Dodaj model
+                        <CzIcon icon="mdi-plus" size="15" /> Dodaj model
                     </button>
                 </div>
 
@@ -134,14 +134,14 @@
                         <input v-model="newModel.name" class="afc-input" placeholder="Nazwa modelu (np. Corolla)" />
                         <input v-model="newModel.slug" class="afc-input" placeholder="Slug (opcjonalnie)" />
                         <button class="btn-confirm" :disabled="!newModel.name || !newModel.brandId || savingModel" @click="addModel">
-                            <v-icon v-if="savingModel" icon="mdi-loading" size="13" class="spin" />
+                            <CzIcon v-if="savingModel" icon="mdi-loading" size="13" class="spin" />
                             Dodaj
                         </button>
                         <button class="btn-cancel" @click="showAddModel = false; resetNewModel()">Anuluj</button>
                     </div>
                 </div>
 
-                <div v-if="modelsLoading" class="loading-state"><v-icon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
+                <div v-if="modelsLoading" class="loading-state"><CzIcon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
                 <div v-else-if="models.length" class="feat-table">
                     <table>
                         <thead>
@@ -155,14 +155,14 @@
                                 <td class="td-dim">{{ m.generationCount }}</td>
                                 <td>
                                     <button class="btn-action btn-delete" @click="deleteModel(m.id, m.name, m.generationCount)">
-                                        <v-icon icon="mdi-delete-outline" size="13" />Usuń
+                                        <CzIcon icon="mdi-delete-outline" size="13" />Usuń
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="empty-state"><v-icon icon="mdi-car-off" size="36" class="empty-icon" />Brak modeli.</div>
+                <div v-else class="empty-state"><CzIcon icon="mdi-car-off" size="36" class="empty-icon" />Brak modeli.</div>
             </div>
 
             <!-- GENERATIONS -->
@@ -173,11 +173,11 @@
                         <option v-for="m in allModelsLite" :key="m.id" :value="m.id">{{ m.brandName }} {{ m.name }}</option>
                     </select>
                     <div class="search-bar">
-                        <v-icon icon="mdi-magnify" size="18" class="sb-icon" />
+                        <CzIcon icon="mdi-magnify" size="18" class="sb-icon" />
                         <input v-model="genSearch" class="sb-input" placeholder="Szukaj generacji..." @input="debounced(loadGenerations)" />
                     </div>
                     <button class="btn-add" @click="showAddGen = true">
-                        <v-icon icon="mdi-plus" size="15" /> Dodaj generację
+                        <CzIcon icon="mdi-plus" size="15" /> Dodaj generację
                     </button>
                 </div>
 
@@ -192,14 +192,14 @@
                         <input v-model.number="newGen.yearFrom" type="number" class="afc-input afc-small" placeholder="Rok od" />
                         <input v-model.number="newGen.yearTo" type="number" class="afc-input afc-small" placeholder="Rok do (opcjonalnie)" />
                         <button class="btn-confirm" :disabled="!newGen.name || !newGen.modelId || !newGen.yearFrom || savingGen" @click="addGeneration">
-                            <v-icon v-if="savingGen" icon="mdi-loading" size="13" class="spin" />
+                            <CzIcon v-if="savingGen" icon="mdi-loading" size="13" class="spin" />
                             Dodaj
                         </button>
                         <button class="btn-cancel" @click="showAddGen = false; resetNewGen()">Anuluj</button>
                     </div>
                 </div>
 
-                <div v-if="generationsLoading" class="loading-state"><v-icon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
+                <div v-if="generationsLoading" class="loading-state"><CzIcon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
                 <div v-else-if="generations.length" class="feat-table">
                     <table>
                         <thead>
@@ -215,14 +215,14 @@
                                 <td class="td-dim">{{ g.engineCount }}</td>
                                 <td>
                                     <button class="btn-action btn-delete" @click="deleteGeneration(g.id, g.name, g.engineCount)">
-                                        <v-icon icon="mdi-delete-outline" size="13" />Usuń
+                                        <CzIcon icon="mdi-delete-outline" size="13" />Usuń
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="empty-state"><v-icon icon="mdi-car-off" size="36" class="empty-icon" />Brak generacji.</div>
+                <div v-else class="empty-state"><CzIcon icon="mdi-car-off" size="36" class="empty-icon" />Brak generacji.</div>
             </div>
 
             <!-- ENGINES -->
@@ -233,11 +233,11 @@
                         <option v-for="g in allGenerationsLite" :key="g.id" :value="g.id">{{ g.brandName }} {{ g.modelName }} {{ g.name }}</option>
                     </select>
                     <div class="search-bar">
-                        <v-icon icon="mdi-magnify" size="18" class="sb-icon" />
+                        <CzIcon icon="mdi-magnify" size="18" class="sb-icon" />
                         <input v-model="engineSearch" class="sb-input" placeholder="Szukaj silnika..." @input="debounced(loadEngines)" />
                     </div>
                     <button class="btn-add" @click="showAddEngine = true">
-                        <v-icon icon="mdi-plus" size="15" /> Dodaj silnik
+                        <CzIcon icon="mdi-plus" size="15" /> Dodaj silnik
                     </button>
                 </div>
 
@@ -256,14 +256,14 @@
                         <input v-model.number="newEngine.powerHP" type="number" class="afc-input afc-small" placeholder="Moc (KM)" />
                         <input v-model.number="newEngine.displacement" type="number" class="afc-input afc-small" placeholder="Pojemność (cm³)" />
                         <button class="btn-confirm" :disabled="!newEngine.engineName || !newEngine.generationId || !newEngine.fuelTypeId || savingEngine" @click="addEngine">
-                            <v-icon v-if="savingEngine" icon="mdi-loading" size="13" class="spin" />
+                            <CzIcon v-if="savingEngine" icon="mdi-loading" size="13" class="spin" />
                             Dodaj
                         </button>
                         <button class="btn-cancel" @click="showAddEngine = false; resetNewEngine()">Anuluj</button>
                     </div>
                 </div>
 
-                <div v-if="enginesLoading" class="loading-state"><v-icon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
+                <div v-if="enginesLoading" class="loading-state"><CzIcon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
                 <div v-else-if="engines.length" class="feat-table">
                     <table>
                         <thead>
@@ -279,14 +279,14 @@
                                 <td class="td-dim">{{ e.displacement ? `${e.displacement} cm³` : '—' }}</td>
                                 <td>
                                     <button class="btn-action btn-delete" @click="deleteEngine(e.id, e.engineName)">
-                                        <v-icon icon="mdi-delete-outline" size="13" />Usuń
+                                        <CzIcon icon="mdi-delete-outline" size="13" />Usuń
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="empty-state"><v-icon icon="mdi-car-off" size="36" class="empty-icon" />Brak silników.</div>
+                <div v-else class="empty-state"><CzIcon icon="mdi-car-off" size="36" class="empty-icon" />Brak silników.</div>
             </div>
         </main>
     </div>

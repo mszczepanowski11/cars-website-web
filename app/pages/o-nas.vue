@@ -18,7 +18,7 @@
           <p>{{ $t('about.story2') }}</p>
           <p>{{ $t('about.story3') }}</p>
           <NuxtLink to="/kontakt" class="onas-cta">
-            <v-icon icon="mdi-email-outline" size="16" />
+            <CzIcon icon="mdi-email-outline" size="16" />
             {{ $t('about.ctaWrite') }}
           </NuxtLink>
         </div>
@@ -53,22 +53,22 @@
         </div>
         <div class="onas-values">
           <div class="onas-value">
-            <div class="onas-value-icon"><v-icon icon="mdi-shield-check-outline" size="26" /></div>
+            <div class="onas-value-icon"><CzIcon icon="mdi-shield-check-outline" size="26" /></div>
             <div class="onas-value-title">{{ $t('about.valueSecurityTitle') }}</div>
             <div class="onas-value-desc">{{ $t('about.valueSecurityDesc') }}</div>
           </div>
           <div class="onas-value">
-            <div class="onas-value-icon"><v-icon icon="mdi-lightbulb-outline" size="26" /></div>
+            <div class="onas-value-icon"><CzIcon icon="mdi-lightbulb-outline" size="26" /></div>
             <div class="onas-value-title">{{ $t('about.valueTechnologyTitle') }}</div>
             <div class="onas-value-desc">{{ $t('about.valueTechnologyDesc') }}</div>
           </div>
           <div class="onas-value">
-            <div class="onas-value-icon"><v-icon icon="mdi-handshake-outline" size="26" /></div>
+            <div class="onas-value-icon"><CzIcon icon="mdi-handshake-outline" size="26" /></div>
             <div class="onas-value-title">{{ $t('about.valueTransparencyTitle') }}</div>
             <div class="onas-value-desc">{{ $t('about.valueTransparencyDesc') }}</div>
           </div>
           <div class="onas-value">
-            <div class="onas-value-icon"><v-icon icon="mdi-car-heart" size="26" /></div>
+            <div class="onas-value-icon"><CzIcon icon="mdi-car-sports" size="26" /></div>
             <div class="onas-value-title">{{ $t('about.valuePassionTitle') }}</div>
             <div class="onas-value-desc">{{ $t('about.valuePassionDesc') }}</div>
           </div>
@@ -83,12 +83,12 @@
         <p>{{ $t('about.bottomDesc') }}</p>
         <div class="onas-bottom-btns">
           <NuxtLink to="/kontakt" class="onas-btn-primary">
-            <v-icon icon="mdi-email-outline" size="16" />
+            <CzIcon icon="mdi-email-outline" size="16" />
             {{ $t('about.bottomContact') }}
           </NuxtLink>
           <NuxtLink to="/adverts" class="onas-btn-secondary">
             {{ $t('about.bottomBrowse') }}
-            <v-icon icon="mdi-arrow-right" size="16" />
+            <CzIcon icon="mdi-arrow-right" size="16" />
           </NuxtLink>
         </div>
       </div>

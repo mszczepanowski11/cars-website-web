@@ -4,19 +4,19 @@
             <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" loading="lazy" decoding="async" /></NuxtLink>
 
             <div v-if="loading" class="status-state">
-                <v-icon icon="mdi-loading" size="28" class="spin" />
+                <CzIcon icon="mdi-loading" size="28" class="spin" />
                 <p>{{ $t('dataDeletion.loading') }}</p>
             </div>
 
             <div v-else-if="status?.completed" class="status-state status-state--ok">
-                <v-icon icon="mdi-check-circle-outline" size="36" />
+                <CzIcon icon="mdi-check-circle-outline" size="36" />
                 <h2>{{ $t('dataDeletion.okTitle') }}</h2>
                 <p>{{ $t('dataDeletion.okDesc') }}</p>
                 <p class="status-code">{{ $t('dataDeletion.confirmCode') }} <code>{{ status.confirmationCode }}</code></p>
             </div>
 
             <div v-else class="status-state status-state--error">
-                <v-icon icon="mdi-alert-circle-outline" size="36" />
+                <CzIcon icon="mdi-alert-circle-outline" size="36" />
                 <h2>{{ $t('dataDeletion.errorTitle') }}</h2>
                 <p>{{ $t('dataDeletion.errorDesc') }}</p>
             </div>

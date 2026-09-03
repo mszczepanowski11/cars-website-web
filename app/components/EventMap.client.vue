@@ -1,11 +1,11 @@
 <template>
     <div class="event-map-wrap">
         <div v-if="loading" class="map-loading">
-            <v-icon icon="mdi-loading" size="22" class="spin" />
+            <CzIcon icon="mdi-loading" size="22" class="spin" />
             Ładowanie mapy...
         </div>
         <div v-else-if="error" class="map-error">
-            <v-icon icon="mdi-map-marker-off-outline" size="20" />
+            <CzIcon icon="mdi-map-marker-off-outline" size="20" />
             Nie można wczytać mapy
         </div>
         <div v-else ref="mapContainer" class="map-container" />

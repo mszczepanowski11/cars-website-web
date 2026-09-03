@@ -5,7 +5,7 @@
             <div class="sidebar-head">
                 <h1 class="sidebar-title">{{ $t('messages.title') }}</h1>
                 <div class="search-wrap">
-                    <v-icon icon="mdi-magnify" size="18" class="search-icon" />
+                    <CzIcon icon="mdi-magnify" size="18" class="search-icon" />
                     <input
                         v-model="search"
                         class="search-input"
@@ -13,7 +13,7 @@
                         type="text"
                     />
                     <button v-if="search" class="search-clear" :aria-label="$t('messages.clearSearch')" @click="search = ''">
-                        <v-icon icon="mdi-close" size="14" />
+                        <CzIcon icon="mdi-close" size="14" />
                     </button>
                 </div>
                 <div class="filter-tabs">
@@ -42,7 +42,7 @@
                 </div>
 
                 <div v-else-if="loadError" class="list-empty">
-                    <v-icon icon="mdi-wifi-off" size="40" class="empty-icon" />
+                    <CzIcon icon="mdi-wifi-off" size="40" class="empty-icon" />
                     <p>{{ $t('messages.connectionError') }}</p>
                     <button class="retry-link" @click="load">{{ $t('messages.retry') }}</button>
                 </div>
@@ -51,7 +51,7 @@
                     <!-- Pinned -->
                     <template v-if="pinnedList.length && activeTab !== 'archived'">
                         <div class="section-label">
-                            <v-icon icon="mdi-pin" size="12" />
+                            <CzIcon icon="mdi-pin" size="12" />
                             {{ $t('messages.pinned') }}
                         </div>
                         <ConversationItem
@@ -84,7 +84,7 @@
                     </template>
 
                     <div v-else-if="!pinnedList.length" class="list-empty">
-                        <v-icon icon="mdi-message-outline" size="40" class="empty-icon" />
+                        <CzIcon icon="mdi-message-outline" size="40" class="empty-icon" />
                         <p v-if="search">Brak wyników dla „{{ search }}"</p>
                         <p v-else-if="activeTab === 'unread'">Brak nieprzeczytanych</p>
                         <p v-else-if="activeTab === 'archived'">Brak zarchiwizowanych</p>
@@ -101,7 +101,7 @@
         <main class="msg-main">
             <NuxtPage @conversation-updated="handleConvUpdate" />
             <div v-if="!activeConvId" class="no-chat-placeholder">
-                <v-icon icon="mdi-message-text-outline" size="64" class="placeholder-icon" />
+                <CzIcon icon="mdi-message-text-outline" size="64" class="placeholder-icon" />
                 <p class="placeholder-text">Wybierz konwersację</p>
             </div>
         </main>

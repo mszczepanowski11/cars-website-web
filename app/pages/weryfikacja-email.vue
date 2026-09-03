@@ -6,7 +6,7 @@
             <!-- Loading -->
             <template v-if="status === 'loading'">
                 <div class="icon-wrap icon-loading">
-                    <v-icon icon="mdi-loading" size="48" class="spin" />
+                    <CzIcon icon="mdi-loading" size="48" class="spin" />
                 </div>
                 <h1 class="verify-title">{{ $t('verifyEmail.loadingTitle') }}</h1>
                 <p class="verify-desc">{{ $t('verifyEmail.loadingDesc') }}</p>
@@ -15,7 +15,7 @@
             <!-- Success -->
             <template v-else-if="status === 'success'">
                 <div class="icon-wrap icon-success">
-                    <v-icon icon="mdi-check-circle" size="52" />
+                    <CzIcon icon="mdi-check-circle" size="52" />
                 </div>
                 <h1 class="verify-title">{{ $t('verifyEmail.successTitle') }}</h1>
                 <p class="verify-desc">
@@ -24,7 +24,7 @@
                 </p>
                 <div class="verify-actions">
                     <NuxtLink to="/login" class="btn-red">
-                        <v-icon icon="mdi-login" size="17" />
+                        <CzIcon icon="mdi-login" size="17" />
                         {{ $t('verifyEmail.login') }}
                     </NuxtLink>
                     <NuxtLink to="/" class="btn-ghost">
@@ -36,7 +36,7 @@
             <!-- Error -->
             <template v-else>
                 <div class="icon-wrap icon-error">
-                    <v-icon icon="mdi-close-circle" size="52" />
+                    <CzIcon icon="mdi-close-circle" size="52" />
                 </div>
                 <h1 class="verify-title">{{ $t('verifyEmail.errorTitle') }}</h1>
                 <p class="verify-desc">
@@ -46,8 +46,8 @@
                 <div class="verify-resend">
                     <input v-model="resendEmail" class="resend-input" type="email" :placeholder="$t('verifyEmail.resendPlaceholder')" />
                     <button class="btn-red" :disabled="resending" @click="resend">
-                        <v-icon v-if="resending" icon="mdi-loading" size="15" class="spin" />
-                        <v-icon v-else icon="mdi-email-outline" size="15" />
+                        <CzIcon v-if="resending" icon="mdi-loading" size="15" class="spin" />
+                        <CzIcon v-else icon="mdi-email-outline" size="15" />
                         {{ $t('verifyEmail.resendBtn') }}
                     </button>
                     <p v-if="resendMessage" class="resend-msg">{{ resendMessage }}</p>

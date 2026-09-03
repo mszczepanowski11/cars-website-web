@@ -13,21 +13,21 @@
       <div class="kontakt-grid">
 
         <a href="mailto:kontakt@carizo.eu" class="kontakt-card kontakt-card--main">
-          <div class="kc-icon"><v-icon icon="mdi-email-outline" size="26" /></div>
+          <div class="kc-icon"><CzIcon icon="mdi-email-outline" size="26" /></div>
           <div class="kc-title">{{ $t('contact.emailLabel') }}</div>
           <div class="kc-value">kontakt@carizo.eu</div>
-          <div class="kc-hint">{{ $t('contact.emailHint') }} <v-icon icon="mdi-arrow-right" size="14" /></div>
+          <div class="kc-hint">{{ $t('contact.emailHint') }} <CzIcon icon="mdi-arrow-right" size="14" /></div>
         </a>
 
         <NuxtLink to="/pomoc" class="kontakt-card">
-          <div class="kc-icon"><v-icon icon="mdi-help-circle-outline" size="26" /></div>
+          <div class="kc-icon"><CzIcon icon="mdi-help-circle-outline" size="26" /></div>
           <div class="kc-title">{{ $t('contact.helpTitle') }}</div>
           <div class="kc-value">{{ $t('contact.helpValue') }}</div>
-          <div class="kc-hint">{{ $t('contact.helpHint') }} <v-icon icon="mdi-arrow-right" size="14" /></div>
+          <div class="kc-hint">{{ $t('contact.helpHint') }} <CzIcon icon="mdi-arrow-right" size="14" /></div>
         </NuxtLink>
 
         <div class="kontakt-card kontakt-card--static">
-          <div class="kc-icon"><v-icon icon="mdi-map-marker-outline" size="26" /></div>
+          <div class="kc-icon"><CzIcon icon="mdi-map-marker-outline" size="26" /></div>
           <div class="kc-title">{{ $t('contact.addressTitle') }}</div>
           <div class="kc-value">CARIZO Wiktor Niezgoda<br>ul. Henryka Pachońskiego 7/60<br>31-223 Kraków</div>
         </div>
@@ -37,10 +37,10 @@
       <div v-if="social.facebook || social.instagram" class="kontakt-social">
         <span class="ks-label">{{ $t('contact.socialLabel') }}</span>
         <a v-if="social.facebook" :href="social.facebook" target="_blank" rel="noopener noreferrer" class="ks-link">
-          <v-icon icon="mdi-facebook" size="18" />Facebook
+          <CzIcon icon="mdi-facebook" size="18" />Facebook
         </a>
         <a v-if="social.instagram" :href="social.instagram" target="_blank" rel="noopener noreferrer" class="ks-link">
-          <v-icon icon="mdi-instagram" size="18" />Instagram
+          <CzIcon icon="mdi-instagram" size="18" />Instagram
         </a>
       </div>
 

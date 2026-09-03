@@ -11,7 +11,7 @@
                 </div>
                 <div v-if="total > 0" class="page-header-right">
                     <div class="sort-wrap">
-                        <v-icon icon="mdi-sort" size="15" class="sort-icon" />
+                        <CzIcon icon="mdi-sort" size="15" class="sort-icon" />
                         <select v-model="sortBy" class="sort-select" @change="load(1)">
                             <option value="">{{ $t('favorites.sortNewest') }}</option>
                             <option value="price_asc">{{ $t('favorites.sortPriceAsc') }}</option>
@@ -35,12 +35,12 @@
 
                 <div v-else class="empty-state">
                     <div class="empty-icon-wrap">
-                        <v-icon icon="mdi-heart-outline" size="40" />
+                        <CzIcon icon="mdi-heart-outline" size="40" />
                     </div>
                     <h2 class="empty-title">{{ $t('favorites.emptyTitle') }}</h2>
                     <p class="empty-sub">{{ $t('favorites.emptySub') }}</p>
                     <NuxtLink to="/adverts" class="btn-browse">
-                        <v-icon icon="mdi-car-multiple" size="16" />
+                        <CzIcon icon="mdi-car-multiple" size="16" />
                         {{ $t('favorites.browse') }}
                     </NuxtLink>
                 </div>
@@ -48,7 +48,7 @@
                 <!-- Pagination -->
                 <div v-if="totalPages > 1" class="pagination">
                     <button class="page-btn" :disabled="page === 1" :aria-label="$t('favorites.prevPage')" @click="load(page - 1)">
-                        <v-icon icon="mdi-chevron-left" size="18" />
+                        <CzIcon icon="mdi-chevron-left" size="18" />
                     </button>
                     <button
                         v-for="p in paginationPages"
@@ -59,7 +59,7 @@
                         @click="p !== '...' && load(Number(p))"
                     >{{ p }}</button>
                     <button class="page-btn" :disabled="page >= totalPages" :aria-label="$t('favorites.nextPage')" @click="load(page + 1)">
-                        <v-icon icon="mdi-chevron-right" size="18" />
+                        <CzIcon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
             </template>

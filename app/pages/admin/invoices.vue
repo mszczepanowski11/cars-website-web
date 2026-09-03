@@ -2,25 +2,25 @@
     <div class="admin-page">
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <v-icon icon="mdi-shield-crown" size="20" class="brand-icon" />
+                <CzIcon icon="mdi-shield-crown" size="20" class="brand-icon" />
                 Panel Administratora
             </div>
             <nav class="sidebar-nav">
-                <NuxtLink to="/admin" class="nav-item"><v-icon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
-                <NuxtLink to="/admin/reports" class="nav-item"><v-icon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
-                <NuxtLink to="/admin/users" class="nav-item"><v-icon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
-                <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
-                <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
-                <NuxtLink to="/admin/taxonomy" class="nav-item"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
-                <NuxtLink to="/admin/vehicle-data" class="nav-item"><v-icon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
-                <NuxtLink to="/admin/attributes" class="nav-item"><v-icon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
-                <NuxtLink to="/admin/partners" class="nav-item"><v-icon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
-                <NuxtLink to="/admin/directory" class="nav-item"><v-icon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
-                <NuxtLink to="/admin/quality-report" class="nav-item"><v-icon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
+                <NuxtLink to="/admin" class="nav-item"><CzIcon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
+                <NuxtLink to="/admin/reports" class="nav-item"><CzIcon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
+                <NuxtLink to="/admin/users" class="nav-item"><CzIcon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
+                <NuxtLink to="/admin/adverts" class="nav-item"><CzIcon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
+                <NuxtLink to="/admin/events" class="nav-item"><CzIcon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item"><CzIcon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
+                <NuxtLink to="/admin/vehicle-data" class="nav-item"><CzIcon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
+                <NuxtLink to="/admin/attributes" class="nav-item"><CzIcon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
+                <NuxtLink to="/admin/partners" class="nav-item"><CzIcon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
+                <NuxtLink to="/admin/directory" class="nav-item"><CzIcon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item"><CzIcon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
                 <div class="nav-divider" />
-                <NuxtLink to="/admin/invoices" class="nav-item active"><v-icon icon="mdi-receipt-text-outline" size="17" />Faktury</NuxtLink>
+                <NuxtLink to="/admin/invoices" class="nav-item active"><CzIcon icon="mdi-receipt-text-outline" size="17" />Faktury</NuxtLink>
                 <div class="nav-divider" />
-                <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
+                <NuxtLink to="/dashboard" class="nav-item"><CzIcon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
         </aside>
 
@@ -34,8 +34,8 @@
                         </select>
                         <input v-model.number="genYear" type="number" class="gen-input" min="2024" :max="currentYear" />
                         <button class="gen-btn" :disabled="generating" @click="generate">
-                            <v-icon v-if="generating" icon="mdi-loading" size="15" class="spin" />
-                            <v-icon v-else icon="mdi-cog-outline" size="15" />
+                            <CzIcon v-if="generating" icon="mdi-loading" size="15" class="spin" />
+                            <CzIcon v-else icon="mdi-cog-outline" size="15" />
                             Generuj faktury
                         </button>
                     </div>
@@ -43,13 +43,13 @@
             </div>
 
             <div v-if="genSuccess" class="alert-ok">
-                <v-icon icon="mdi-check-circle-outline" size="16" />{{ genSuccess }}
+                <CzIcon icon="mdi-check-circle-outline" size="16" />{{ genSuccess }}
             </div>
             <div v-if="genError" class="alert-err">
-                <v-icon icon="mdi-alert-circle-outline" size="16" />{{ genError }}
+                <CzIcon icon="mdi-alert-circle-outline" size="16" />{{ genError }}
             </div>
             <div v-if="actionMsg" class="alert-ok">
-                <v-icon icon="mdi-check-circle-outline" size="16" />{{ actionMsg }}
+                <CzIcon icon="mdi-check-circle-outline" size="16" />{{ actionMsg }}
             </div>
 
             <div v-if="!invoicesLoading" class="stats-row">
@@ -65,11 +65,11 @@
 
             <div class="tabs">
                 <button class="tab" :class="{ active: tab === 'invoices' }" @click="tab = 'invoices'">
-                    <v-icon icon="mdi-file-document-outline" size="15" />
+                    <CzIcon icon="mdi-file-document-outline" size="15" />
                     Faktury
                 </button>
                 <button class="tab" :class="{ active: tab === 'payments' }" @click="tab = 'payments'">
-                    <v-icon icon="mdi-credit-card-outline" size="15" />
+                    <CzIcon icon="mdi-credit-card-outline" size="15" />
                     Płatności
                 </button>
             </div>
@@ -77,7 +77,7 @@
             <!-- Invoices tab -->
             <template v-if="tab === 'invoices'">
                 <div v-if="invoicesLoading" class="loading-state">
-                    <v-icon icon="mdi-loading" size="28" class="spin" />
+                    <CzIcon icon="mdi-loading" size="28" class="spin" />
                     Ładowanie faktur...
                 </div>
                 <template v-else>
@@ -104,7 +104,7 @@
                                             <div class="user-name">{{ inv.userName }}</div>
                                             <div class="user-email">{{ inv.userEmail }}</div>
                                             <div v-if="inv.companyName" class="user-company">
-                                                <v-icon icon="mdi-domain" size="11" />{{ inv.companyName }}
+                                                <CzIcon icon="mdi-domain" size="11" />{{ inv.companyName }}
                                                 <span v-if="inv.nip"> · NIP {{ inv.nip }}</span>
                                             </div>
                                         </div>
@@ -116,21 +116,21 @@
                                     <td><span class="status-badge" :class="invoiceStatusClass(inv.status)">{{ invoiceStatusLabel(inv.status) }}</span></td>
                                     <td>
                                         <span v-if="inv.isKSeFSent" class="ksef-badge ksef-badge--sent" :title="inv.kSeFReferenceNumber ?? ''">
-                                            <v-icon icon="mdi-check-circle-outline" size="13" />Wysłano
+                                            <CzIcon icon="mdi-check-circle-outline" size="13" />Wysłano
                                         </span>
                                         <span v-else class="ksef-badge ksef-badge--not-sent" title="Brak numeru NIP nabywcy lub KSEF_TOKEN nie jest skonfigurowany na serwerze">
-                                            <v-icon icon="mdi-close-circle-outline" size="13" />Nie wysłano
+                                            <CzIcon icon="mdi-close-circle-outline" size="13" />Nie wysłano
                                         </span>
                                     </td>
                                     <td>
                                         <div class="actions">
                                             <button class="act-btn" title="Pobierz PDF" :disabled="pdfLoadingId === inv.id" @click="downloadPdfAdmin(inv)">
-                                                <v-icon v-if="pdfLoadingId === inv.id" icon="mdi-loading" size="14" class="spin" />
-                                                <v-icon v-else icon="mdi-file-pdf-box" size="14" style="color:#e53935" />
+                                                <CzIcon v-if="pdfLoadingId === inv.id" icon="mdi-loading" size="14" class="spin" />
+                                                <CzIcon v-else icon="mdi-file-pdf-box" size="14" style="color:#e53935" />
                                             </button>
                                             <button class="act-btn" title="Wyślij ponownie e-mailem" :disabled="sending === inv.id" @click="resend(inv.id)">
-                                                <v-icon v-if="sending === inv.id" icon="mdi-loading" size="14" class="spin" />
-                                                <v-icon v-else icon="mdi-email-send-outline" size="14" />
+                                                <CzIcon v-if="sending === inv.id" icon="mdi-loading" size="14" class="spin" />
+                                                <CzIcon v-else icon="mdi-email-arrow-right-outline" size="14" />
                                             </button>
                                         </div>
                                     </td>
@@ -139,17 +139,17 @@
                         </table>
                     </div>
                     <div v-else class="empty-state">
-                        <v-icon icon="mdi-file-document-outline" size="36" class="empty-icon" />
+                        <CzIcon icon="mdi-file-document-outline" size="36" class="empty-icon" />
                         <p>Brak faktur w systemie.</p>
                     </div>
 
                     <div v-if="invoicesTotalCount > invoicesPageSize" class="pagination">
                         <button class="page-btn" :disabled="invoicesPage === 1" aria-label="Poprzednia strona" @click="loadInvoices(invoicesPage - 1)">
-                            <v-icon icon="mdi-chevron-left" size="18" />
+                            <CzIcon icon="mdi-chevron-left" size="18" />
                         </button>
                         <span class="page-info">{{ invoicesPage }} / {{ Math.ceil(invoicesTotalCount / invoicesPageSize) }}</span>
                         <button class="page-btn" :disabled="invoicesPage >= Math.ceil(invoicesTotalCount / invoicesPageSize)" aria-label="Następna strona" @click="loadInvoices(invoicesPage + 1)">
-                            <v-icon icon="mdi-chevron-right" size="18" />
+                            <CzIcon icon="mdi-chevron-right" size="18" />
                         </button>
                     </div>
                 </template>
@@ -158,7 +158,7 @@
             <!-- Payments tab -->
             <template v-else>
                 <div v-if="paymentsLoading" class="loading-state">
-                    <v-icon icon="mdi-loading" size="28" class="spin" />
+                    <CzIcon icon="mdi-loading" size="28" class="spin" />
                     Ładowanie płatności...
                 </div>
                 <template v-else>
@@ -204,7 +204,7 @@
                                                 <option value="Cancelled">Anulowana</option>
                                                 <option value="Refunded">Zwrócona</option>
                                             </select>
-                                            <v-icon v-if="statusUpdating === p.id" icon="mdi-loading" size="13" class="spin status-updating-icon" />
+                                            <CzIcon v-if="statusUpdating === p.id" icon="mdi-loading" size="13" class="spin status-updating-icon" />
                                         </div>
                                     </td>
                                 </tr>
@@ -212,17 +212,17 @@
                         </table>
                     </div>
                     <div v-else class="empty-state">
-                        <v-icon icon="mdi-credit-card-outline" size="36" class="empty-icon" />
+                        <CzIcon icon="mdi-credit-card-outline" size="36" class="empty-icon" />
                         <p>Brak płatności w systemie.</p>
                     </div>
 
                     <div v-if="paymentsTotalCount > paymentsPageSize" class="pagination">
                         <button class="page-btn" :disabled="paymentsPage === 1" aria-label="Poprzednia strona" @click="loadPayments(paymentsPage - 1)">
-                            <v-icon icon="mdi-chevron-left" size="18" />
+                            <CzIcon icon="mdi-chevron-left" size="18" />
                         </button>
                         <span class="page-info">{{ paymentsPage }} / {{ Math.ceil(paymentsTotalCount / paymentsPageSize) }}</span>
                         <button class="page-btn" :disabled="paymentsPage >= Math.ceil(paymentsTotalCount / paymentsPageSize)" aria-label="Następna strona" @click="loadPayments(paymentsPage + 1)">
-                            <v-icon icon="mdi-chevron-right" size="18" />
+                            <CzIcon icon="mdi-chevron-right" size="18" />
                         </button>
                     </div>
                 </template>

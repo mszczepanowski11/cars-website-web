@@ -5,7 +5,7 @@
                 <div class="hero-eyebrow">{{ $t('help.heroEyebrow') }}</div>
                 <h1>{{ $t('help.heroTitleBefore') }} <span>{{ $t('help.heroTitleHighlight') }}</span></h1>
                 <div class="hero-search">
-                    <v-icon icon="mdi-magnify" size="20" class="hs-icon" />
+                    <CzIcon icon="mdi-magnify" size="20" class="hs-icon" />
                     <input v-model="query" class="hs-input" :placeholder="$t('help.searchPlaceholder')" />
                 </div>
             </div>
@@ -21,19 +21,19 @@
                     :class="{ active: activeCategory === cat.key }"
                     @click="activeCategory = activeCategory === cat.key ? null : cat.key"
                 >
-                    <v-icon :icon="cat.icon" size="16" />
+                    <CzIcon :icon="cat.icon" size="16" />
                     {{ cat.label }}
                 </button>
             </div>
 
             <div v-if="filteredGroups.length === 0" class="no-results">
-                <v-icon icon="mdi-help-circle-outline" size="40" />
+                <CzIcon icon="mdi-help-circle-outline" size="40" />
                 <p>{{ $t('help.noResults', { query }) }}</p>
             </div>
 
             <div v-for="group in filteredGroups" :key="group.key" class="faq-group">
                 <div class="group-header">
-                    <v-icon :icon="group.icon" size="20" class="group-icon" />
+                    <CzIcon :icon="group.icon" size="20" class="group-icon" />
                     <h2>{{ group.label }}</h2>
                 </div>
                 <div class="faq-list">
@@ -44,7 +44,7 @@
                             @click="toggle(`${group.key}-${i}`)"
                         >
                             {{ faq.q }}
-                            <v-icon :icon="openKey === `${group.key}-${i}` ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="18" />
+                            <CzIcon :icon="openKey === `${group.key}-${i}` ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="18" />
                         </button>
                         <transition name="accordion">
                             <div v-if="openKey === `${group.key}-${i}`" class="faq-a" v-html="faq.a" />
@@ -54,7 +54,7 @@
             </div>
 
             <div class="contact-cta">
-                <div class="cc-icon"><v-icon icon="mdi-headset" size="32" /></div>
+                <div class="cc-icon"><CzIcon icon="mdi-headset" size="32" /></div>
                 <div>
                     <div class="cc-title">{{ $t('help.contactCtaTitle') }}</div>
                     <div class="cc-sub">{{ $t('help.contactCtaSub') }}</div>
@@ -208,7 +208,7 @@ const filteredGroups = computed(() => {
     text-align: center;
     padding: 80px 0;
     color: $text-dim;
-    .v-icon { color: $text-dim; margin-bottom: 16px; display: block; margin-inline: auto; }
+    .cz-icon { color: $text-dim; margin-bottom: 16px; display: block; margin-inline: auto; }
     p { font-size: 15px; }
 }
 
@@ -254,7 +254,7 @@ const filteredGroups = computed(() => {
     &:hover { background: rgba(255,255,255,0.03); }
     &.open { background: rgba($red, 0.05); }
 
-    .v-icon { flex-shrink: 0; color: $text-dim; }
+    .cz-icon { flex-shrink: 0; color: $text-dim; }
 }
 
 .faq-a {

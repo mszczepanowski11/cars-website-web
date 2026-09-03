@@ -4,7 +4,7 @@
             <img src="/carizo-logo.svg" alt="CARIZO" class="error-logo" loading="lazy" decoding="async" />
 
             <div class="error-icon-wrap" :class="isNotFound ? 'wrap-404' : 'wrap-500'">
-                <v-icon :icon="isNotFound ? 'mdi-map-search-outline' : 'mdi-alert-circle-outline'" size="52" />
+                <CzIcon :icon="isNotFound ? 'mdi-map-search-outline' : 'mdi-alert-circle-outline'" size="52" />
             </div>
 
             <div class="error-code">{{ error.statusCode }}</div>
@@ -13,11 +13,11 @@
 
             <div class="error-actions">
                 <button class="btn-home" @click="handleError">
-                    <v-icon icon="mdi-home-outline" size="17" />
+                    <CzIcon icon="mdi-home-outline" size="17" />
                     Strona główna
                 </button>
                 <button class="btn-back" @click="goBack">
-                    <v-icon icon="mdi-arrow-left" size="17" />
+                    <CzIcon icon="mdi-arrow-left" size="17" />
                     Wróć
                 </button>
             </div>

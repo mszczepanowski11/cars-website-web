@@ -43,7 +43,7 @@ a { text-decoration: none; color: inherit; }
   color: $text !important;
 }
 
-v-main { background: $bg; }
+
 
 .v-field--variant-outlined {
   .v-field__outline__start,
@@ -82,8 +82,8 @@ v-main { background: $bg; }
 
 
 .v-checkbox {
-  .v-selection-control--dirty .v-icon { color: $red !important; }
-  .v-selection-control__input:hover .v-icon { color: rgba($red, 0.7); }
+  .v-selection-control--dirty .cz-icon { color: $red !important; }
+  .v-selection-control__input:hover .cz-icon { color: rgba($red, 0.7); }
 }
 
 .v-progress-circular__overlay { stroke: $red !important; }
@@ -96,6 +96,16 @@ v-main { background: $bg; }
 .auth-logo img,
 .verify-logo img,
 .return-logo img,
+/**
+ * Zabezpieczenie systemowe: żaden obraz nie może być szerszy od swojego kontenera.
+ *
+ * Pojedynczy obraz szerszy od ekranu rozpycha cały dokument i strona zaczyna się
+ * przewijać na boki - a przyczynę widać dopiero po zmierzeniu, bo objawia się to
+ * rozjechanym nagłówkiem i stopką, nie samym obrazem. Ta jedna reguła zamyka całą
+ * klasę tego błędu dla wszystkich 58 obrazów w serwisie.
+ */
+img { max-width: 100%; }
+
 img.footer-logo,
 img.error-logo,
 img.reg-success-logo,

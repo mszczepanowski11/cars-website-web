@@ -2,22 +2,22 @@
     <div class="admin-page">
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <v-icon icon="mdi-shield-crown" size="20" class="brand-icon" />
+                <CzIcon icon="mdi-shield-crown" size="20" class="brand-icon" />
                 Panel Administratora
             </div>
             <nav class="sidebar-nav">
-                <NuxtLink to="/admin" class="nav-item"><v-icon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
-                <NuxtLink to="/admin/reports" class="nav-item"><v-icon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
-                <NuxtLink to="/admin/users" class="nav-item"><v-icon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
-                <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
-                <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
-                <NuxtLink to="/admin/taxonomy" class="nav-item"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
-                <NuxtLink to="/admin/vehicle-data" class="nav-item"><v-icon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
-                <NuxtLink to="/admin/attributes" class="nav-item"><v-icon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
-                <NuxtLink to="/admin/partners" class="nav-item"><v-icon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
-                <NuxtLink to="/admin/directory" class="nav-item"><v-icon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
-                <NuxtLink to="/admin/quality-report" class="nav-item active"><v-icon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
-                <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
+                <NuxtLink to="/admin" class="nav-item"><CzIcon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
+                <NuxtLink to="/admin/reports" class="nav-item"><CzIcon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
+                <NuxtLink to="/admin/users" class="nav-item"><CzIcon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
+                <NuxtLink to="/admin/adverts" class="nav-item"><CzIcon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
+                <NuxtLink to="/admin/events" class="nav-item"><CzIcon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item"><CzIcon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
+                <NuxtLink to="/admin/vehicle-data" class="nav-item"><CzIcon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
+                <NuxtLink to="/admin/attributes" class="nav-item"><CzIcon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
+                <NuxtLink to="/admin/partners" class="nav-item"><CzIcon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
+                <NuxtLink to="/admin/directory" class="nav-item"><CzIcon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item active"><CzIcon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
+                <NuxtLink to="/dashboard" class="nav-item"><CzIcon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
         </aside>
 
@@ -25,24 +25,24 @@
             <div class="admin-topbar">
                 <h1 class="page-title">Jakość danych</h1>
                 <button class="btn-run" :disabled="loading" @click="runReport">
-                    <v-icon :icon="loading ? 'mdi-loading' : 'mdi-refresh'" size="16" :class="{ spin: loading }" />
+                    <CzIcon :icon="loading ? 'mdi-loading' : 'mdi-refresh'" size="16" :class="{ spin: loading }" />
                     {{ loading ? 'Analizowanie...' : 'Uruchom analizę' }}
                 </button>
             </div>
 
             <div v-if="error && !loading" class="error-banner">
-                <v-icon icon="mdi-alert-circle-outline" size="16" />
+                <CzIcon icon="mdi-alert-circle-outline" size="16" />
                 {{ error }}
             </div>
 
             <div v-if="!report && !loading && !error" class="empty-state">
-                <v-icon icon="mdi-database-search-outline" size="56" class="es-icon" />
+                <CzIcon icon="mdi-database-search-outline" size="56" class="es-icon" />
                 <div class="es-title">Analiza jakości danych</div>
                 <div class="es-sub">Kliknij "Uruchom analizę" aby sprawdzić spójność bazy danych.</div>
             </div>
 
             <div v-if="loading" class="loading-state">
-                <v-icon icon="mdi-loading" size="32" class="spin" />
+                <CzIcon icon="mdi-loading" size="32" class="spin" />
                 Analizowanie bazy danych...
             </div>
 
@@ -52,7 +52,7 @@
                     <div v-for="item in summaryItems" :key="item.key" class="summary-card" :class="item.count > 0 ? 'has-issues' : 'ok'">
                         <div class="sc-count">{{ item.count }}</div>
                         <div class="sc-label">{{ item.label }}</div>
-                        <v-icon :icon="item.count > 0 ? 'mdi-alert-outline' : 'mdi-check-circle-outline'" size="18" class="sc-icon" />
+                        <CzIcon :icon="item.count > 0 ? 'mdi-alert-outline' : 'mdi-check-circle-outline'" size="18" class="sc-icon" />
                     </div>
                 </div>
 
@@ -115,12 +115,12 @@
                 <!-- Section: Engines attached to the wrong generation -->
                 <div class="report-section">
                     <div class="rs-header">
-                        <v-icon icon="mdi-engine-off-outline" size="16" class="rs-icon" />
+                        <CzIcon icon="mdi-engine-off-outline" size="16" class="rs-icon" />
                         <span class="rs-title">Silniki niedopasowane do generacji/modelu</span>
                         <span class="rs-count" :class="mismatchedEngines.length > 0 ? 'has-issues' : 'ok'">{{ mismatchedEngines.length }}</span>
                     </div>
                     <div v-if="mismatchedEngines.length === 0" class="rs-empty">
-                        <v-icon icon="mdi-check" size="14" /> Brak problemów
+                        <CzIcon icon="mdi-check" size="14" /> Brak problemów
                     </div>
                     <ul v-else class="rs-string-list">
                         <li v-for="(item, i) in mismatchedEngines" :key="i">{{ item }}</li>
@@ -175,7 +175,7 @@
                 <!-- Section: Categories without subtypes -->
                 <ReportSection
                     title="Kategorie pojazdów bez podtypów"
-                    icon="mdi-shape-off-outline"
+                    icon="mdi-shape-outline"
                     :items="report.categoriesWithoutSubtypes"
                     :columns="[{ key: 'id', label: 'ID' }, { key: 'name', label: 'Kategoria' }, { key: 'slug', label: 'Slug' }]"
                 />
@@ -272,12 +272,12 @@ const ReportSection = defineComponent({
     template: `
         <div class="report-section">
             <div class="rs-header">
-                <v-icon :icon="icon" size="16" class="rs-icon" />
+                <CzIcon :icon="icon" size="16" class="rs-icon" />
                 <span class="rs-title">{{ title }}</span>
                 <span class="rs-count" :class="items.length > 0 ? 'has-issues' : 'ok'">{{ items.length }}</span>
             </div>
             <div v-if="items.length === 0" class="rs-empty">
-                <v-icon icon="mdi-check" size="14" /> Brak problemów
+                <CzIcon icon="mdi-check" size="14" /> Brak problemów
             </div>
             <div v-else class="rs-table-wrap">
                 <table class="rs-table">

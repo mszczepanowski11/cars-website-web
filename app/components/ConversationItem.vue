@@ -36,7 +36,7 @@
         <!-- Right meta -->
         <div class="conv-meta">
             <span v-if="conv.unreadCount > 0" class="unread-badge">{{ conv.unreadCount > 99 ? '99+' : conv.unreadCount }}</span>
-            <v-icon v-if="conv.isPinned" icon="mdi-pin" size="14" class="pin-icon" />
+            <CzIcon v-if="conv.isPinned" icon="mdi-pin" size="14" class="pin-icon" />
         </div>
 
         <!-- Context menu -->
@@ -44,15 +44,15 @@
             <div v-if="showMenu" class="ctx-backdrop" @click="showMenu = false" @contextmenu.prevent="showMenu = false" />
             <div v-if="showMenu" class="ctx-menu" :style="menuStyle" @click.stop>
                 <button class="ctx-item" @click="emit('pin'); showMenu = false">
-                    <v-icon :icon="conv.isPinned ? 'mdi-pin-off' : 'mdi-pin'" size="16" />
+                    <CzIcon :icon="conv.isPinned ? 'mdi-pin-off' : 'mdi-pin'" size="16" />
                     {{ conv.isPinned ? $t('cConversation.unpin') : $t('cConversation.pin') }}
                 </button>
                 <button class="ctx-item" @click="emit('mark-unread'); showMenu = false">
-                    <v-icon icon="mdi-email-mark-as-unread" size="16" />
+                    <CzIcon icon="mdi-email-mark-as-unread" size="16" />
                     {{ $t('cConversation.markUnread') }}
                 </button>
                 <button class="ctx-item" @click="emit('archive'); showMenu = false">
-                    <v-icon :icon="conv.isArchived ? 'mdi-archive-arrow-up' : 'mdi-archive-arrow-down'" size="16" />
+                    <CzIcon :icon="conv.isArchived ? 'mdi-archive-arrow-up' : 'mdi-archive-arrow-down'" size="16" />
                     {{ conv.isArchived ? $t('cConversation.unarchive') : $t('cConversation.archive') }}
                 </button>
             </div>

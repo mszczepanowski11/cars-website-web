@@ -2,23 +2,23 @@
     <div class="admin-page">
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <v-icon icon="mdi-shield-crown" size="20" class="brand-icon" />
+                <CzIcon icon="mdi-shield-crown" size="20" class="brand-icon" />
                 Panel Administratora
             </div>
             <nav class="sidebar-nav">
-                <NuxtLink to="/admin" class="nav-item"><v-icon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
-                <NuxtLink to="/admin/reports" class="nav-item"><v-icon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
-                <NuxtLink to="/admin/users" class="nav-item active"><v-icon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
-                <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
-                <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
-                <NuxtLink to="/admin/taxonomy" class="nav-item"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
-                <NuxtLink to="/admin/vehicle-data" class="nav-item"><v-icon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
-                <NuxtLink to="/admin/attributes" class="nav-item"><v-icon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
-                <NuxtLink to="/admin/partners" class="nav-item"><v-icon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
-                <NuxtLink to="/admin/directory" class="nav-item"><v-icon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
-                <NuxtLink to="/admin/quality-report" class="nav-item"><v-icon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
+                <NuxtLink to="/admin" class="nav-item"><CzIcon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
+                <NuxtLink to="/admin/reports" class="nav-item"><CzIcon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
+                <NuxtLink to="/admin/users" class="nav-item active"><CzIcon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
+                <NuxtLink to="/admin/adverts" class="nav-item"><CzIcon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
+                <NuxtLink to="/admin/events" class="nav-item"><CzIcon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item"><CzIcon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
+                <NuxtLink to="/admin/vehicle-data" class="nav-item"><CzIcon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
+                <NuxtLink to="/admin/attributes" class="nav-item"><CzIcon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
+                <NuxtLink to="/admin/partners" class="nav-item"><CzIcon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
+                <NuxtLink to="/admin/directory" class="nav-item"><CzIcon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item"><CzIcon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
                 <div class="nav-divider" />
-                <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
+                <NuxtLink to="/dashboard" class="nav-item"><CzIcon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
         </aside>
 
@@ -28,7 +28,7 @@
                 <span class="topbar-count">{{ totalCount.toLocaleString('pl') }} kont</span>
                 <div class="topbar-actions">
                     <button class="btn-add-client" @click="openClientModal">
-                        <v-icon icon="mdi-plus" size="16" />
+                        <CzIcon icon="mdi-plus" size="16" />
                         Dodaj ogłoszenie dla klienta
                     </button>
                 </div>
@@ -37,7 +37,7 @@
             <!-- Search + filter -->
             <div class="toolbar">
                 <div class="search-bar">
-                    <v-icon icon="mdi-magnify" size="18" class="sb-icon" />
+                    <CzIcon icon="mdi-magnify" size="18" class="sb-icon" />
                     <input v-model="search" class="sb-input" placeholder="Szukaj użytkownika..." @input="debouncedFetch" />
                 </div>
                 <div class="filter-tabs">
@@ -48,7 +48,7 @@
             </div>
 
             <div v-if="loading" class="loading-state">
-                <v-icon icon="mdi-loading" size="32" class="spin" />
+                <CzIcon icon="mdi-loading" size="32" class="spin" />
                 Ładowanie użytkowników...
             </div>
 
@@ -97,26 +97,26 @@
                                         <button v-if="!u.isAdmin" class="btn-action" :class="u.isBlocked ? 'btn-unblock' : 'btn-block'"
                                             :disabled="actionLoading === u.id"
                                             @click="toggleBlock(u)">
-                                            <v-icon v-if="actionLoading === u.id" icon="mdi-loading" size="13" class="spin" />
-                                            <v-icon v-else :icon="u.isBlocked ? 'mdi-lock-open-outline' : 'mdi-lock-outline'" size="13" />
+                                            <CzIcon v-if="actionLoading === u.id" icon="mdi-loading" size="13" class="spin" />
+                                            <CzIcon v-else :icon="u.isBlocked ? 'mdi-lock-open-outline' : 'mdi-lock-outline'" size="13" />
                                             {{ u.isBlocked ? 'Odblokuj' : 'Zablokuj' }}
                                         </button>
                                         <button v-if="!u.isAdmin && !u.emailVerified && u.isAdminCreated" class="btn-action btn-resend"
                                             :disabled="actionLoading === u.id"
                                             @click="resendActivation(u)">
-                                            <v-icon icon="mdi-email-sync-outline" size="13" />
+                                            <CzIcon icon="mdi-email-sync-outline" size="13" />
                                             Wyślij ponownie
                                         </button>
                                         <button v-if="!u.isAdmin && !u.emailVerified" class="btn-action btn-activate"
                                             :disabled="actionLoading === u.id"
                                             @click="activateManually(u)">
-                                            <v-icon icon="mdi-check-circle-outline" size="13" />
+                                            <CzIcon icon="mdi-check-circle-outline" size="13" />
                                             Aktywuj ręcznie
                                         </button>
                                         <button v-if="!u.isAdmin" class="btn-action btn-delete"
                                             :disabled="actionLoading === u.id"
                                             @click="deleteUser(u)">
-                                            <v-icon icon="mdi-delete-outline" size="13" />
+                                            <CzIcon icon="mdi-delete-outline" size="13" />
                                             Usuń
                                         </button>
                                     </div>
@@ -126,14 +126,14 @@
                     </table>
                 </div>
                 <div v-else class="empty-state">
-                    <v-icon icon="mdi-account-off-outline" size="40" class="empty-icon" />
+                    <CzIcon icon="mdi-account-off-outline" size="40" class="empty-icon" />
                     <p>Brak użytkowników spełniających kryteria.</p>
                 </div>
 
                 <div v-if="totalCount > pageSize" class="pagination">
-                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)"><v-icon icon="mdi-chevron-left" size="18" /></button>
+                    <button class="page-btn" :disabled="page === 1" aria-label="Poprzednia strona" @click="goPage(page - 1)"><CzIcon icon="mdi-chevron-left" size="18" /></button>
                     <span class="page-info">{{ page }} / {{ totalPages }}</span>
-                    <button class="page-btn" :disabled="page === totalPages" aria-label="Następna strona" @click="goPage(page + 1)"><v-icon icon="mdi-chevron-right" size="18" /></button>
+                    <button class="page-btn" :disabled="page === totalPages" aria-label="Następna strona" @click="goPage(page + 1)"><CzIcon icon="mdi-chevron-right" size="18" /></button>
                 </div>
             </template>
         </main>
@@ -162,7 +162,7 @@
                             <button class="btn-cancel" @click="closeClientModal">Anuluj</button>
                             <button class="btn-continue" @click="continueToAdvertForm">
                                 Dalej: dane ogłoszenia
-                                <v-icon icon="mdi-arrow-right" size="15" />
+                                <CzIcon icon="mdi-arrow-right" size="15" />
                             </button>
                         </div>
                     </div>

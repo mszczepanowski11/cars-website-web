@@ -21,7 +21,7 @@ function dismiss() {
     <div v-if="!dismissed && (isPremiereActive || isPremiereUpcoming)" class="ann-bar" :class="{ 'ann-bar--upcoming': isPremiereUpcoming }">
         <div class="ann-inner">
             <span class="ann-badge">
-                <v-icon icon="mdi-rocket-launch-outline" size="14" />
+                <CzIcon icon="mdi-rocket-launch-outline" size="14" />
                 {{ isPremiereUpcoming ? $t('cAnnounce.badgeUpcoming') : $t('cAnnounce.badgePremiere') }}
             </span>
             <span class="ann-text">
@@ -38,10 +38,10 @@ function dismiss() {
             </span>
             <NuxtLink to="/promote" class="ann-link">
                 {{ $t('cAnnounce.learnMore') }}
-                <v-icon icon="mdi-chevron-right" size="14" />
+                <CzIcon icon="mdi-chevron-right" size="14" />
             </NuxtLink>
             <button class="ann-dismiss" @click="dismiss" :title="$t('cAnnounce.close')">
-                <v-icon icon="mdi-close" size="16" />
+                <CzIcon icon="mdi-close" size="16" />
             </button>
         </div>
     </div>

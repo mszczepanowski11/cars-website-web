@@ -10,11 +10,11 @@
 
             <div class="inv-tabs">
                 <button class="inv-tab" :class="{ active: tab === 'invoices' }" @click="tab = 'invoices'">
-                    <v-icon icon="mdi-receipt-outline" size="16" />
+                    <CzIcon icon="mdi-receipt-outline" size="16" />
                     {{ $t('invoices.tabInvoices') }} ({{ invoicesTotal }})
                 </button>
                 <button class="inv-tab" :class="{ active: tab === 'payments' }" @click="tab = 'payments'">
-                    <v-icon icon="mdi-credit-card-outline" size="16" />
+                    <CzIcon icon="mdi-credit-card-outline" size="16" />
                     {{ $t('invoices.tabPayments') }} ({{ paymentsTotal }})
                 </button>
             </div>
@@ -22,16 +22,16 @@
             <!-- INVOICES TAB -->
             <div v-if="tab === 'invoices'">
                 <div v-if="invoicesLoading" class="loading-state">
-                    <v-icon icon="mdi-loading" size="32" class="spin" />
+                    <CzIcon icon="mdi-loading" size="32" class="spin" />
                     {{ $t('invoices.loadingInvoices') }}
                 </div>
 
                 <div v-else-if="invoices.length === 0" class="empty-state">
-                    <v-icon icon="mdi-receipt-text-outline" size="48" />
+                    <CzIcon icon="mdi-receipt-text-outline" size="48" />
                     <div class="empty-title">{{ $t('invoices.noInvoicesTitle') }}</div>
                     <p class="empty-sub">{{ $t('invoices.noInvoicesSub') }}</p>
                     <NuxtLink to="/my-adverts" class="btn-red">
-                        <v-icon icon="mdi-car-outline" size="16" />
+                        <CzIcon icon="mdi-car-outline" size="16" />
                         {{ $t('invoices.myAdverts') }}
                     </NuxtLink>
                 </div>
@@ -40,12 +40,12 @@
                     <div v-for="inv in invoices" :key="inv.id" class="invoice-card">
                         <div class="inv-card-header">
                             <div class="inv-number">
-                                <v-icon icon="mdi-receipt-outline" size="16" class="inv-icon" />
+                                <CzIcon icon="mdi-receipt-outline" size="16" class="inv-icon" />
                                 {{ inv.invoiceNumber }}
                             </div>
                             <div class="inv-period">{{ monthName(inv.month) }} {{ inv.year }}</div>
                             <div class="inv-status" :class="`status-${inv.status.toLowerCase()}`">
-                                <v-icon :icon="statusIcon(inv.status)" size="13" />
+                                <CzIcon :icon="statusIcon(inv.status)" size="13" />
                                 {{ statusLabel(inv.status) }}
                             </div>
                         </div>
@@ -96,12 +96,12 @@
 
                         <div class="inv-card-actions">
                             <button class="inv-action-btn" @click="expandedInv = expandedInv === inv.id ? null : inv.id">
-                                <v-icon :icon="expandedInv === inv.id ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="15" />
+                                <CzIcon :icon="expandedInv === inv.id ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="15" />
                                 {{ expandedInv === inv.id ? $t('invoices.collapse') : $t('invoices.details') }}
                             </button>
                             <button class="inv-action-btn" :disabled="pdfLoadingId === inv.id" @click="downloadPdf(inv)">
-                                <v-icon v-if="pdfLoadingId === inv.id" icon="mdi-loading" size="15" class="spin" />
-                                <v-icon v-else icon="mdi-file-pdf-box" size="15" style="color:#e53935" />
+                                <CzIcon v-if="pdfLoadingId === inv.id" icon="mdi-loading" size="15" class="spin" />
+                                <CzIcon v-else icon="mdi-file-pdf-box" size="15" style="color:#e53935" />
                                 {{ $t('invoices.downloadPdf') }}
                             </button>
                         </div>
@@ -110,11 +110,11 @@
 
                 <div v-if="invoicesTotalPages > 1" class="pagination">
                     <button class="page-btn" :disabled="invoicesPage === 1" :aria-label="$t('invoices.prevPage')" @click="invoicesPage--; loadInvoices()">
-                        <v-icon icon="mdi-chevron-left" size="18" />
+                        <CzIcon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ invoicesPage }} / {{ invoicesTotalPages }}</span>
                     <button class="page-btn" :disabled="invoicesPage === invoicesTotalPages" :aria-label="$t('invoices.nextPage')" @click="invoicesPage++; loadInvoices()">
-                        <v-icon icon="mdi-chevron-right" size="18" />
+                        <CzIcon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
             </div>
@@ -122,12 +122,12 @@
             <!-- PAYMENTS TAB -->
             <div v-else-if="tab === 'payments'">
                 <div v-if="paymentsLoading" class="loading-state">
-                    <v-icon icon="mdi-loading" size="32" class="spin" />
+                    <CzIcon icon="mdi-loading" size="32" class="spin" />
                     {{ $t('invoices.loadingPayments') }}
                 </div>
 
                 <div v-else-if="payments.length === 0" class="empty-state">
-                    <v-icon icon="mdi-credit-card-off-outline" size="48" />
+                    <CzIcon icon="mdi-credit-card-off-outline" size="48" />
                     <div class="empty-title">{{ $t('invoices.noPaymentsTitle') }}</div>
                     <p class="empty-sub">{{ $t('invoices.noPaymentsSub') }}</p>
                 </div>
@@ -147,7 +147,7 @@
                         <span class="pt-dur">{{ p.durationDays ? $t('invoices.durationDays', { days: p.durationDays }) : '—' }}</span>
                         <span class="pt-amount">{{ fmtAmt(p.amount) }} zł</span>
                         <span class="pt-status" :class="`pstatus-${p.status.toLowerCase()}`">
-                            <v-icon :icon="paymentStatusIcon(p.status)" size="13" />
+                            <CzIcon :icon="paymentStatusIcon(p.status)" size="13" />
                             {{ paymentStatusLabel(p.status) }}
                         </span>
                         <span class="pt-txid">{{ p.imojeTransactionId ?? '—' }}</span>
@@ -156,11 +156,11 @@
 
                 <div v-if="paymentsTotalPages > 1" class="pagination">
                     <button class="page-btn" :disabled="paymentsPage === 1" :aria-label="$t('invoices.prevPage')" @click="paymentsPage--; loadPayments()">
-                        <v-icon icon="mdi-chevron-left" size="18" />
+                        <CzIcon icon="mdi-chevron-left" size="18" />
                     </button>
                     <span class="page-info">{{ paymentsPage }} / {{ paymentsTotalPages }}</span>
                     <button class="page-btn" :disabled="paymentsPage === paymentsTotalPages" :aria-label="$t('invoices.nextPage')" @click="paymentsPage++; loadPayments()">
-                        <v-icon icon="mdi-chevron-right" size="18" />
+                        <CzIcon icon="mdi-chevron-right" size="18" />
                     </button>
                 </div>
             </div>
@@ -544,7 +544,7 @@ function serviceLabel(t: string) {
     text-align: center;
     padding: 60px 20px;
     gap: 14px;
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
 .empty-title { font-size: 18px; font-weight: 700; color: $text-muted; }

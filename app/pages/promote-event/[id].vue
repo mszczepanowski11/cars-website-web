@@ -4,29 +4,29 @@
         <div class="promo-topbar">
             <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" loading="lazy" decoding="async" />
             <div class="promo-steps">
-                <span class="ps done"><v-icon icon="mdi-check" size="14" />{{ $t('promoteEvent.stepEvent') }}</span>
+                <span class="ps done"><CzIcon icon="mdi-check" size="14" />{{ $t('promoteEvent.stepEvent') }}</span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ done: step > 1, active: step === 1 }">
-                    <v-icon :icon="step > 1 ? 'mdi-check' : 'mdi-star-outline'" size="14" />{{ $t('promoteEvent.stepPromo') }}
+                    <CzIcon :icon="step > 1 ? 'mdi-check' : 'mdi-star-outline'" size="14" />{{ $t('promoteEvent.stepPromo') }}
                 </span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ done: step > 2, active: step === 2 }">
-                    <v-icon :icon="step > 2 ? 'mdi-check' : 'mdi-receipt-outline'" size="14" />{{ $t('promoteEvent.stepInvoice') }}
+                    <CzIcon :icon="step > 2 ? 'mdi-check' : 'mdi-receipt-outline'" size="14" />{{ $t('promoteEvent.stepInvoice') }}
                 </span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ active: step === 3 }">
-                    <v-icon icon="mdi-check-circle-outline" size="14" />{{ $t('promoteEvent.stepPayment') }}
+                    <CzIcon icon="mdi-check-circle-outline" size="14" />{{ $t('promoteEvent.stepPayment') }}
                 </span>
             </div>
             <NuxtLink :to="`/wydarzenie/${eventId}`" class="skip-link">
                 {{ $t('promoteEvent.skipFeature') }}
-                <v-icon icon="mdi-arrow-right" size="15" />
+                <CzIcon icon="mdi-arrow-right" size="15" />
             </NuxtLink>
         </div>
 
         <div class="promo-body">
             <div class="promo-hero">
-                <div class="hero-badge"><v-icon icon="mdi-calendar-star" size="18" />{{ $t('promoteEvent.heroBadge') }}</div>
+                <div class="hero-badge"><CzIcon icon="mdi-calendar-star" size="18" />{{ $t('promoteEvent.heroBadge') }}</div>
                 <h1>{{ $t('promoteEvent.heroTitle') }}</h1>
                 <p>{{ $t('promoteEvent.heroDesc') }}</p>
             </div>
@@ -35,15 +35,15 @@
                 <div class="ep-info">
                     <div class="ep-name">{{ event.name }}</div>
                     <div class="ep-meta">
-                        <v-icon icon="mdi-calendar" size="14" />
+                        <CzIcon icon="mdi-calendar" size="14" />
                         {{ formatDate(event.startDate) }}
                         <span class="ep-sep">·</span>
-                        <v-icon icon="mdi-map-marker" size="14" />
+                        <CzIcon icon="mdi-map-marker" size="14" />
                         {{ event.city }}
                     </div>
                 </div>
                 <div class="ep-badge" :class="{ active: event.isFeatured }">
-                    <v-icon :icon="event.isFeatured ? 'mdi-star' : 'mdi-star-outline'" size="14" />
+                    <CzIcon :icon="event.isFeatured ? 'mdi-star' : 'mdi-star-outline'" size="14" />
                     {{ event.isFeatured ? $t('promoteEvent.featured') : $t('promoteEvent.regular') }}
                 </div>
             </div>
@@ -56,7 +56,7 @@
                     @click="selectedDays = plan.days">
                     <div v-if="plan.popular" class="popular-badge">{{ $t('promoteEvent.mostPopular') }}</div>
                     <div class="plan-header">
-                        <div class="plan-icon"><v-icon :icon="plan.icon" size="26" /></div>
+                        <div class="plan-icon"><CzIcon :icon="plan.icon" size="26" /></div>
                         <div class="plan-name">{{ $t('promoteEvent.daysLabel', { days: plan.days }) }}</div>
                     </div>
                     <div class="plan-price">
@@ -64,7 +64,7 @@
                     </div>
                     <div class="plan-desc">{{ plan.desc }}</div>
                     <ul class="plan-features">
-                        <li v-for="f in plan.feats" :key="f"><v-icon icon="mdi-check" size="14" />{{ f }}</li>
+                        <li v-for="f in plan.feats" :key="f"><CzIcon icon="mdi-check" size="14" />{{ f }}</li>
                     </ul>
                     <div class="plan-sel-indicator" />
                 </div>
@@ -79,7 +79,7 @@
                         <span>{{ finalPrice.toFixed(2) }} zł</span>
                     </div>
                     <div v-if="couponResult?.isValid" class="coupon-applied">
-                        <v-icon icon="mdi-tag-outline" size="14" />
+                        <CzIcon icon="mdi-tag-outline" size="14" />
                         {{ $t('promoteEvent.discountApplied') }}
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                     <div class="coupon-input-wrap">
                         <input v-model="couponCode" class="coupon-input" :placeholder="$t('promoteEvent.couponPlaceholder')" :disabled="couponLoading" @keyup.enter="applyCoupon" />
                         <button class="coupon-btn" :disabled="!couponCode || couponLoading" @click="applyCoupon">
-                            <v-icon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
+                            <CzIcon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
                             <span v-else>{{ $t('promoteEvent.apply') }}</span>
                         </button>
                     </div>
@@ -95,21 +95,21 @@
                 </div>
                 <div class="footer-actions">
                     <NuxtLink :to="`/wydarzenie/${eventId}`" class="btn-skip">
-                        <v-icon icon="mdi-arrow-left" size="15" />{{ $t('promoteEvent.back') }}
+                        <CzIcon icon="mdi-arrow-left" size="15" />{{ $t('promoteEvent.back') }}
                     </NuxtLink>
                     <button class="btn-pay" @click="goToBilling">
-                        <v-icon icon="mdi-receipt-outline" size="16" />
+                        <CzIcon icon="mdi-receipt-outline" size="16" />
                         {{ $t('promoteEvent.invoiceData') }}
-                        <v-icon icon="mdi-arrow-right" size="15" />
+                        <CzIcon icon="mdi-arrow-right" size="15" />
                     </button>
                 </div>
-                <div v-if="actionError" class="action-error"><v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
+                <div v-if="actionError" class="action-error"><CzIcon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
             </div>
 
             <!-- STEP 2: Billing data -->
             <div v-else-if="step === 2" class="billing-step">
                 <h2 class="billing-step-title">
-                    <v-icon icon="mdi-receipt-outline" size="20" />
+                    <CzIcon icon="mdi-receipt-outline" size="20" />
                     {{ $t('promoteEvent.invoiceData') }}
                 </h2>
                 <p class="billing-step-sub">{{ $t('promoteEvent.invoiceStepSub') }}</p>
@@ -145,14 +145,14 @@
                 </div>
 
                 <div class="footer-actions">
-                    <button class="btn-skip" @click="step = 1"><v-icon icon="mdi-arrow-left" size="15" />{{ $t('promoteEvent.back') }}</button>
+                    <button class="btn-skip" @click="step = 1"><CzIcon icon="mdi-arrow-left" size="15" />{{ $t('promoteEvent.back') }}</button>
                     <button class="btn-pay" :disabled="paying" @click="initiatePayment">
-                        <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
-                        <v-icon v-else icon="mdi-credit-card-outline" size="16" />
+                        <CzIcon v-if="paying" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-else icon="mdi-credit-card-outline" size="16" />
                         {{ $t('promoteEvent.payViaIng', { price: finalPrice.toFixed(2) }) }}
                     </button>
                 </div>
-                <div v-if="actionError" class="action-error"><v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
+                <div v-if="actionError" class="action-error"><CzIcon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
             </div>
         </div>
     </div>
@@ -423,7 +423,7 @@ async function initiatePayment() {
 
 .plan-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; flex: 1;
     li { display: flex; align-items: center; gap: 7px; font-size: 12px; color: $text-muted;
-        .v-icon { color: $success; }
+        .cz-icon { color: $success; }
     }
 }
 
@@ -489,7 +489,7 @@ async function initiatePayment() {
 
 .billing-step-title {
     display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 800; color: $text; margin: 0;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .billing-step-sub { font-size: 13px; color: $text-dim; line-height: 1.5; margin: 0; }

@@ -10,7 +10,7 @@
                     <div class="field-group">
                         <label class="field-label">{{ $t('forgotPassword.emailLabel') }}</label>
                         <div class="field-input-wrap">
-                            <v-icon icon="mdi-email-outline" size="16" class="field-icon" />
+                            <CzIcon icon="mdi-email-outline" size="16" class="field-icon" />
                             <input
                                 v-model="email"
                                 type="email"
@@ -23,7 +23,7 @@
                     </div>
 
                     <div v-if="error" class="error-msg">
-                        <v-icon icon="mdi-alert-circle-outline" size="14" />
+                        <CzIcon icon="mdi-alert-circle-outline" size="14" />
                         {{ error }}
                     </div>
 
@@ -35,8 +35,8 @@
                     />
 
                     <button type="submit" class="btn-submit" :disabled="loading">
-                        <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-                        <v-icon v-else icon="mdi-email-arrow-right-outline" size="16" />
+                        <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-else icon="mdi-email-arrow-right-outline" size="16" />
                         {{ loading ? $t('forgotPassword.sending') : $t('forgotPassword.submit') }}
                     </button>
                 </form>
@@ -45,7 +45,7 @@
             <template v-else>
                 <div class="success-state">
                     <div class="success-icon">
-                        <v-icon icon="mdi-email-check-outline" size="52" />
+                        <CzIcon icon="mdi-email-check-outline" size="52" />
                     </div>
                     <p class="success-text">
                         {{ $t('forgotPassword.successTextBefore') }}<strong>{{ email }}</strong>{{ $t('forgotPassword.successTextAfter') }}
@@ -55,7 +55,7 @@
 
             <p class="auth-link">
                 <NuxtLink to="/login">
-                    <v-icon icon="mdi-arrow-left" size="14" />
+                    <CzIcon icon="mdi-arrow-left" size="14" />
                     {{ $t('forgotPassword.backToLogin') }}
                 </NuxtLink>
             </p>
@@ -205,7 +205,7 @@ h2 {
     padding: 10px 14px;
     font-size: 13px;
     color: $danger;
-    .v-icon { flex-shrink: 0; }
+    .cz-icon { flex-shrink: 0; }
 }
 
 .btn-submit {

@@ -37,7 +37,7 @@
                         <div class="fp-field">
                             <label class="fp-label">{{ $t('adverts.category') }}</label>
                             <div class="fp-select-wrap">
-                                <v-icon icon="mdi-tag-multiple-outline" size="14" class="fp-field-icon" />
+                                <CzIcon icon="mdi-tag-multiple-outline" size="14" class="fp-field-icon" />
                                 <select v-model="f.categoryId" class="fp-select" @change="onCategoryChange">
                                     <option :value="null">Wszystkie</option>
                                     <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
@@ -51,7 +51,7 @@
                         <div class="fp-field">
                             <label class="fp-label">{{ $t('adverts.brand') }}</label>
                             <div class="fp-select-wrap">
-                                <v-icon icon="mdi-car-outline" size="14" class="fp-field-icon" />
+                                <CzIcon icon="mdi-car-outline" size="14" class="fp-field-icon" />
                                 <select v-model="f.brandId" class="fp-select" @change="onBrandChange">
                                     <option :value="null">Wszystkie marki</option>
                                     <option v-for="b in brands.filter(b => b.name && !/^\d+$/.test(b.name))" :key="b.id" :value="b.id">{{ b.name }}</option>
@@ -65,7 +65,7 @@
                         <div class="fp-field">
                             <label class="fp-label">{{ $t('adverts.model') }}</label>
                             <div class="fp-select-wrap">
-                                <v-icon icon="mdi-car-settings" size="14" class="fp-field-icon" />
+                                <CzIcon icon="mdi-car-settings" size="14" class="fp-field-icon" />
                                 <select v-model="f.modelId" class="fp-select" :disabled="!f.brandId" @change="onModelChange">
                                     <option :value="null">{{ $t('adverts.allModels') }}</option>
                                     <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
@@ -91,14 +91,14 @@
                         <div class="fp-field">
                             <label class="fp-label">{{ $t('adverts.location') }}</label>
                             <div class="fp-input-wrap">
-                                <v-icon icon="mdi-map-marker-outline" size="14" class="fp-field-icon" />
+                                <CzIcon icon="mdi-map-marker-outline" size="14" class="fp-field-icon" />
                                 <input v-model="f.locationCity" type="text" class="fp-text-input" :placeholder="$t('adverts.locationPlaceholder')" />
                             </div>
                         </div>
 
                         <!-- Search button -->
                         <button class="fp-search-btn" @click="load(1)">
-                            <v-icon icon="mdi-magnify" size="17" />
+                            <CzIcon icon="mdi-magnify" size="17" />
                             {{ $t('adverts.searchBtn') }}
                             <span v-if="total > 0" class="fp-btn-count">{{ total.toLocaleString('pl') }}</span>
                         </button>
@@ -107,7 +107,7 @@
                     <!-- SECONDARY ROW: keyword + more filters -->
                     <div class="fp-secondary">
                         <div class="fp-keyword-wrap" style="position:relative">
-                            <v-icon icon="mdi-text-search" size="15" class="fp-kw-icon" />
+                            <CzIcon icon="mdi-text-search" size="15" class="fp-kw-icon" />
                             <input
                                 v-model="f.textSearch"
                                 class="fp-keyword-input"
@@ -123,7 +123,7 @@
                                 @input="showSuggestions = true"
                             />
                             <button v-if="f.textSearch" class="fp-kw-clear" aria-label="Wyczyść wyszukiwanie" @click="f.textSearch = ''; showSuggestions = false">
-                                <v-icon icon="mdi-close" size="13" />
+                                <CzIcon icon="mdi-close" size="13" />
                             </button>
                             <!-- Autocomplete dropdown -->
                             <div v-if="showSuggestions && autocompleteItems.length" class="ac-dropdown" role="listbox" aria-label="Podpowiedzi wyszukiwania">
@@ -135,7 +135,7 @@
                                     role="option"
                                     @mousedown.prevent="applyAutocomplete(item)"
                                 >
-                                    <v-icon
+                                    <CzIcon
                                         :icon="item.type === 'brand' ? 'mdi-car-outline' : item.type === 'feature' ? 'mdi-star-check-outline' : 'mdi-car-settings'"
                                         size="13" class="ac-icon"
                                     />
@@ -151,7 +151,7 @@
                                 :class="{ 'fp-more-btn--active': showMoreFilters }"
                                 @click="showMoreFilters = !showMoreFilters"
                             >
-                                <v-icon :icon="showMoreFilters ? 'mdi-chevron-up' : 'mdi-tune-variant'" size="15" />
+                                <CzIcon :icon="showMoreFilters ? 'mdi-chevron-up' : 'mdi-tune-variant'" size="15" />
                                 {{ showMoreFilters ? $t('adverts.lessFilters') : $t('adverts.moreFilters') }}
                                 <span v-if="advancedFiltersCount > 0" class="fp-more-count">{{ advancedFiltersCount }}</span>
                             </button>
@@ -161,81 +161,81 @@
                     <!-- ACTIVE CHIPS -->
                     <div v-if="hasActiveFilters" class="sc-chips">
                         <div v-if="activeCategory" class="sc-chip" @click="f.categoryId = null; load(1)">
-                            <v-icon icon="mdi-tag-outline" size="12" />
+                            <CzIcon icon="mdi-tag-outline" size="12" />
                             {{ activeCategory.name }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="activeBrand" class="sc-chip" @click="f.brandId = null; f.modelId = null; models = []; load(1)">
-                            <v-icon icon="mdi-car-outline" size="12" />
+                            <CzIcon icon="mdi-car-outline" size="12" />
                             {{ activeBrand.name }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.modelId && activeModel" class="sc-chip" @click="f.modelId = null; load(1)">
                             {{ activeModel.name }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.locationCity" class="sc-chip" @click="f.locationCity = ''; load(1)">
-                            <v-icon icon="mdi-map-marker-outline" size="12" />
+                            <CzIcon icon="mdi-map-marker-outline" size="12" />
                             {{ f.locationCity }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.fuelTypeId" class="sc-chip" @click="f.fuelTypeId = null; load(1)">
-                            <v-icon icon="mdi-gas-station-outline" size="12" />
+                            <CzIcon icon="mdi-gas-station-outline" size="12" />
                             {{ fuelTypes.find(ft => ft.id === f.fuelTypeId)?.name }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.bodyTypeId" class="sc-chip" @click="f.bodyTypeId = null; load(1)">
                             {{ bodyTypes.find(bt => bt.id === f.bodyTypeId)?.name }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.priceFrom || f.priceTo" class="sc-chip" @click="f.priceFrom = null; f.priceTo = null; load(1)">
                             Cena: {{ f.priceFrom ? f.priceFrom.toLocaleString('pl') : '0' }} – {{ f.priceTo ? f.priceTo.toLocaleString('pl') : '∞' }} zł
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.yearFrom || f.yearTo" class="sc-chip" @click="f.yearFrom = null; f.yearTo = null; load(1)">
                             Rok: {{ f.yearFrom ?? '?' }} – {{ f.yearTo ?? '?' }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.mileageFrom || f.mileageTo" class="sc-chip" @click="f.mileageFrom = null; f.mileageTo = null; load(1)">
                             Przebieg: {{ f.mileageFrom ? f.mileageFrom.toLocaleString('pl') : '0' }} – {{ f.mileageTo ? f.mileageTo.toLocaleString('pl') : '∞' }} km
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.gearboxId" class="sc-chip" @click="f.gearboxId = null; load(1)">
                             {{ gearboxes.find(g => g.id === f.gearboxId)?.name }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.driveTypeId" class="sc-chip" @click="f.driveTypeId = null; load(1)">
                             {{ driveTypes.find(d => d.id === f.driveTypeId)?.name }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.colorId" class="sc-chip" @click="f.colorId = null; load(1)">
-                            <v-icon icon="mdi-palette-outline" size="12" />
+                            <CzIcon icon="mdi-palette-outline" size="12" />
                             {{ colors.find(c => c.id === f.colorId)?.name }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.condition" class="sc-chip" @click="f.condition = ''; load(1)">
                             {{ f.condition === 'new' ? 'Nowy' : 'Używany' }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.euroNorm" class="sc-chip" @click="f.euroNorm = ''; load(1)">
                             {{ f.euroNorm }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.vin" class="sc-chip" @click="f.vin = ''; load(1)">
                             VIN: {{ f.vin }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-if="f.hasFinancing === true" class="sc-chip" @click="f.hasFinancing = null; load(1)">
                             Z finansowaniem
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <div v-for="fid in f.featureIds" :key="fid" class="sc-chip" @click="f.featureIds = f.featureIds.filter(x => x !== fid); load(1)">
-                            <v-icon icon="mdi-star-check-outline" size="12" />
+                            <CzIcon icon="mdi-star-check-outline" size="12" />
                             {{ allFeatures.find(feat => feat.id === fid)?.name }}
-                            <v-icon icon="mdi-close" size="11" />
+                            <CzIcon icon="mdi-close" size="11" />
                         </div>
                         <button class="sc-chip sc-chip--clear" @click="clearFilters">
-                            <v-icon icon="mdi-close-circle" size="12" />
+                            <CzIcon icon="mdi-close-circle" size="12" />
                             Wyczyść wszystko
                         </button>
                     </div>
@@ -247,7 +247,7 @@
 
                                 <!-- Fuel type -->
                                 <div v-if="filterConfig.showFuelType" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-gas-station-outline" size="13" />Rodzaj paliwa</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-gas-station-outline" size="13" />Rodzaj paliwa</div>
                                     <div class="filter-options">
                                         <button v-for="ft in fuelTypes" :key="ft.id" class="fopt-btn" :class="{ active: f.fuelTypeId === ft.id }" @click="f.fuelTypeId = f.fuelTypeId === ft.id ? null : ft.id">{{ ft.name }}</button>
                                     </div>
@@ -255,7 +255,7 @@
 
                                 <!-- Gearbox -->
                                 <div v-if="filterConfig.showGearbox" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-car-shift-pattern" size="13" />Skrzynia biegów</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-car-shift-pattern" size="13" />Skrzynia biegów</div>
                                     <div class="filter-options">
                                         <button v-for="gb in gearboxes" :key="gb.id" class="fopt-btn" :class="{ active: f.gearboxId === gb.id }" @click="f.gearboxId = f.gearboxId === gb.id ? null : gb.id">{{ gb.name }}</button>
                                     </div>
@@ -263,7 +263,7 @@
 
                                 <!-- Drive type -->
                                 <div v-if="filterConfig.showDriveType && driveTypes.length" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-car-traction-control" size="13" />Napęd</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-car-traction-control" size="13" />Napęd</div>
                                     <div class="filter-options">
                                         <button v-for="dt in driveTypes" :key="dt.id" class="fopt-btn" :class="{ active: f.driveTypeId === dt.id }" @click="f.driveTypeId = f.driveTypeId === dt.id ? null : dt.id">{{ dt.name }}</button>
                                     </div>
@@ -271,7 +271,7 @@
 
                                 <!-- Power -->
                                 <div v-if="filterConfig.showPower" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-engine-outline" size="13" />Moc (KM)</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-engine-outline" size="13" />Moc (KM)</div>
                                     <div class="fp-range">
                                         <input v-model.number="f.powerFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
@@ -281,7 +281,7 @@
 
                                 <!-- Mileage -->
                                 <div v-if="filterConfig.showMileage" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-speedometer" size="13" />{{ filterConfig.mileageLabel }}</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-speedometer" size="13" />{{ filterConfig.mileageLabel }}</div>
                                     <div class="fp-range">
                                         <input v-model.number="f.mileageFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
@@ -291,7 +291,7 @@
 
                                 <!-- Year -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-calendar-outline" size="13" />Rok produkcji</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-calendar-outline" size="13" />Rok produkcji</div>
                                     <div class="fp-range">
                                         <input v-model.number="f.yearFrom" type="number" class="fp-range-input" placeholder="Od" min="1900" max="2099" />
                                         <span class="fp-range-sep">–</span>
@@ -301,7 +301,7 @@
 
                                 <!-- Condition -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-car-wrench" size="13" />Stan pojazdu</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-car-wrench" size="13" />Stan pojazdu</div>
                                     <div class="filter-options">
                                         <button class="fopt-btn" :class="{ active: f.condition === 'new' }" @click="f.condition = f.condition === 'new' ? '' : 'new'">Nowy</button>
                                         <button class="fopt-btn" :class="{ active: f.condition === 'used' }" @click="f.condition = f.condition === 'used' ? '' : 'used'">Używany</button>
@@ -311,12 +311,12 @@
                                 <!-- Color -->
                                 <div v-if="filterConfig.showColor && colors.length" class="fp-group">
                                     <div class="fp-group-label">
-                                        <v-icon icon="mdi-palette-outline" size="13" />Kolor
+                                        <CzIcon icon="mdi-palette-outline" size="13" />Kolor
                                         <span v-if="f.colorId" class="color-sel-name">{{ colors.find(c => c.id === f.colorId)?.name }}</span>
                                     </div>
                                     <div class="color-swatches">
                                         <button class="color-swatch color-swatch--all" :class="{ active: !f.colorId }" title="Wszystkie" @click="f.colorId = null">
-                                            <v-icon icon="mdi-close" size="10" />
+                                            <CzIcon icon="mdi-close" size="10" />
                                         </button>
                                         <button
                                             v-for="col in colors"
@@ -332,7 +332,7 @@
 
                                 <!-- Doors -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-car-door" size="13" />Liczba drzwi</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-car-door" size="13" />Liczba drzwi</div>
                                     <div class="filter-options">
                                         <button
                                             v-for="d in [2, 3, 4, 5]" :key="d"
@@ -345,7 +345,7 @@
 
                                 <!-- Seats -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-seat-passenger" size="13" />Liczba miejsc</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-seat-passenger" size="13" />Liczba miejsc</div>
                                     <div class="fp-range">
                                         <input v-model.number="f.seatsFrom" type="number" class="fp-range-input" placeholder="Od" min="1" max="50" />
                                         <span class="fp-range-sep">–</span>
@@ -355,7 +355,7 @@
 
                                 <!-- Emission CO2 -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-molecule-co2" size="13" />Emisja CO₂ (g/km)</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-molecule-co2" size="13" />Emisja CO₂ (g/km)</div>
                                     <div class="fp-range">
                                         <input v-model.number="f.emissionFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
@@ -365,7 +365,7 @@
 
                                 <!-- Euro norm -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-leaf" size="13" />Norma Euro</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-leaf" size="13" />Norma Euro</div>
                                     <div class="filter-options">
                                         <button
                                             v-for="norm in ['Euro 1','Euro 2','Euro 3','Euro 4','Euro 5','Euro 6','Euro 6d']"
@@ -379,7 +379,7 @@
 
                                 <!-- VIN -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-barcode-scan" size="13" />Numer VIN</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-barcode-scan" size="13" />Numer VIN</div>
                                     <div class="fp-input-wrap">
                                         <input v-model="f.vin" type="text" class="fp-text-input" placeholder="Wyszukaj po VIN" maxlength="17" style="text-transform:uppercase" />
                                     </div>
@@ -387,10 +387,10 @@
 
                                 <!-- Financing -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-credit-card-outline" size="13" />Finansowanie</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-credit-card-outline" size="13" />Finansowanie</div>
                                     <div class="filter-options">
                                         <button class="fopt-btn" :class="{ active: f.hasFinancing === true }" @click="f.hasFinancing = f.hasFinancing === true ? null : true">
-                                            <v-icon icon="mdi-check" size="12" class="btn-check-icon" v-if="f.hasFinancing === true" />
+                                            <CzIcon icon="mdi-check" size="12" class="btn-check-icon" v-if="f.hasFinancing === true" />
                                             Z finansowaniem
                                         </button>
                                     </div>
@@ -398,7 +398,7 @@
 
                                 <!-- Seller type -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-account-outline" size="13" />Sprzedawca</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-account-outline" size="13" />Sprzedawca</div>
                                     <div class="filter-options">
                                         <button class="fopt-btn" :class="{ active: f.sellerType === 'private' }" @click="f.sellerType = f.sellerType === 'private' ? '' : 'private'">Prywatny</button>
                                         <button class="fopt-btn" :class="{ active: f.sellerType === 'dealer' }" @click="f.sellerType = f.sellerType === 'dealer' ? '' : 'dealer'">Dealer</button>
@@ -407,7 +407,7 @@
 
                                 <!-- Additional flags -->
                                 <div class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-information-outline" size="13" />Dodatkowe</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-information-outline" size="13" />Dodatkowe</div>
                                     <div class="filter-checks">
                                         <label class="fcheck"><input type="checkbox" :checked="f.hasDamage === false" @change="f.hasDamage = f.hasDamage === false ? null : false" />Bezwypadkowy</label>
                                         <label class="fcheck"><input type="checkbox" :checked="f.hasWarranty === true" @change="f.hasWarranty = f.hasWarranty === true ? null : true" />Gwarancja</label>
@@ -418,7 +418,7 @@
 
                                 <!-- Vehicle subtype (dynamic, scoped to selected category) -->
                                 <div v-if="vehicleSubtypes.length" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-shape-outline" size="13" />Rodzaj pojazdu</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-shape-outline" size="13" />Rodzaj pojazdu</div>
                                     <select v-model="f.vehicleSubtypeId" class="fp-select" @change="onSubtypeChange">
                                         <option :value="null">Wszystkie rodzaje</option>
                                         <option v-for="st in vehicleSubtypes" :key="st.id" :value="st.id">{{ st.namePl ?? st.name }}</option>
@@ -427,7 +427,7 @@
 
                                 <!-- Equipment / features -->
                                 <div v-if="allFeatures.length" class="fp-group fp-group--wide">
-                                    <div class="fp-group-label"><v-icon icon="mdi-star-check-outline" size="13" />Wyposażenie</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-star-check-outline" size="13" />Wyposażenie</div>
                                     <div class="filter-options">
                                         <button
                                             v-for="feat in allFeatures"
@@ -441,7 +441,7 @@
 
                                 <!-- Body type (if applicable) -->
                                 <div v-if="filterConfig.showBodyType" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-car-estate" size="13" />Typ nadwozia</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-car-estate" size="13" />Typ nadwozia</div>
                                     <div class="fp-select-wrap">
                                         <select v-model="f.bodyTypeId" class="fp-select">
                                             <option :value="null">Wszystkie</option>
@@ -454,7 +454,7 @@
                                      one-click SUV/Crossover/Pickup/Van shortcuts for the BodyType
                                      dropdown above — Auta osobowe only. -->
                                 <div v-if="categorySlug === 'auta-osobowe'" class="fp-group fp-group--wide">
-                                    <div class="fp-group-label"><v-icon icon="mdi-tag-multiple-outline" size="13" />Szybkie filtry</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-tag-multiple-outline" size="13" />Szybkie filtry</div>
                                     <div class="filter-options">
                                         <button class="fopt-btn" :class="{ active: f.originCountry === 'USA' }" @click="toggleOriginCountry('USA')">Amerykańskie</button>
                                         <button class="fopt-btn" :class="{ active: f.originCountry === 'Japonia' }" @click="toggleOriginCountry('Japonia')">Japońskie</button>
@@ -472,7 +472,7 @@
 
                                 <!-- Engine size (motorcycles) -->
                                 <div v-if="filterConfig.showEngineSize" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-engine-outline" size="13" />Pojemność (cm³)</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-engine-outline" size="13" />Pojemność (cm³)</div>
                                     <div class="fp-range">
                                         <input v-model.number="f.engineSizeFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
@@ -482,7 +482,7 @@
 
                                 <!-- Payload (trucks) -->
                                 <div v-if="filterConfig.showPayload" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-weight" size="13" />Ładowność (kg)</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-weight" size="13" />Ładowność (kg)</div>
                                     <div class="fp-range">
                                         <input v-model.number="f.payloadFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
@@ -492,7 +492,7 @@
 
                                 <!-- Catalog number (parts) -->
                                 <div v-if="filterConfig.showCatalogNumber" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-barcode-scan" size="13" />Nr katalogowy / OEM</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-barcode-scan" size="13" />Nr katalogowy / OEM</div>
                                     <div class="fp-input-wrap">
                                         <input v-model="f.catalogNumber" type="text" class="fp-text-input" placeholder="np. 1K0615301L" />
                                     </div>
@@ -500,7 +500,7 @@
 
                                 <!-- Part category -->
                                 <div v-if="filterConfig.showPartCategory" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-cog" size="13" />Kategoria części</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-cog" size="13" />Kategoria części</div>
                                     <select v-model="f.partCategoryId" class="fp-select">
                                         <option :value="null">Wszystkie kategorie</option>
                                         <option v-for="pc in partCategories" :key="pc.id" :value="pc.id">{{ pc.name }}</option>
@@ -509,7 +509,7 @@
 
                                 <!-- Side -->
                                 <div v-if="filterConfig.showSide" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-swap-horizontal" size="13" />Strona montażu</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-swap-horizontal" size="13" />Strona montażu</div>
                                     <select v-model="f.side" class="fp-select">
                                         <option value="">Dowolna</option>
                                         <option value="Lewa">Lewa</option>
@@ -522,7 +522,7 @@
 
                                 <!-- OEM number (parts) -->
                                 <div v-if="filterConfig.showCatalogNumber" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-identifier" size="13" />Numer OEM</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-identifier" size="13" />Numer OEM</div>
                                     <div class="fp-input-wrap">
                                         <input v-model="f.oemNumber" type="text" class="fp-text-input" placeholder="np. 3C0853630A" />
                                     </div>
@@ -530,7 +530,7 @@
 
                                 <!-- Manufacturer part number (parts) -->
                                 <div v-if="filterConfig.showCatalogNumber" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-factory" size="13" />Numer katalogowy producenta</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-factory" size="13" />Numer katalogowy producenta</div>
                                     <div class="fp-input-wrap">
                                         <input v-model="f.manufacturerPartNumber" type="text" class="fp-text-input" placeholder="np. 0986490304" />
                                     </div>
@@ -538,7 +538,7 @@
 
                                 <!-- Minimum available quantity (parts) -->
                                 <div v-if="filterConfig.showCatalogNumber" class="fp-group">
-                                    <div class="fp-group-label"><v-icon icon="mdi-numeric" size="13" />Min. dostępna ilość</div>
+                                    <div class="fp-group-label"><CzIcon icon="mdi-numeric" size="13" />Min. dostępna ilość</div>
                                     <div class="fp-input-wrap">
                                         <input v-model.number="f.quantityFrom" type="number" min="1" class="fp-text-input" placeholder="np. 1" />
                                     </div>
@@ -558,11 +558,11 @@
                             <!-- Expanded footer -->
                             <div class="fp-expanded-footer">
                                 <button v-if="hasActiveFilters" class="fp-clear-btn" @click="clearFilters">
-                                    <v-icon icon="mdi-close-circle-outline" size="14" />
+                                    <CzIcon icon="mdi-close-circle-outline" size="14" />
                                     Wyczyść wszystko
                                 </button>
                                 <button class="fp-apply-btn" @click="load(1); showMoreFilters = false">
-                                    <v-icon icon="mdi-magnify" size="15" />
+                                    <CzIcon icon="mdi-magnify" size="15" />
                                     Pokaż {{ total.toLocaleString('pl') }} ogłoszeń
                                 </button>
                             </div>
@@ -585,7 +585,7 @@
                     </p>
                     <p v-else class="result-count result-count--empty">{{ $t('adverts.noResults') }}</p>
                     <div class="sort-wrap">
-                        <v-icon icon="mdi-sort" size="16" class="sort-icon" />
+                        <CzIcon icon="mdi-sort" size="16" class="sort-icon" />
                         <select v-model="f.sortBy" class="sort-select" @change="load(1)">
                             <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                         </select>
@@ -607,24 +607,24 @@
                         />
                     </div>
                     <div v-if="!adverts.length" class="no-results">
-                        <v-icon icon="mdi-car-off" size="64" class="no-results-icon" />
+                        <CzIcon icon="mdi-car-off" size="64" class="no-results-icon" />
                         <p>{{ $t('adverts.noResults') }}</p>
                         <span>{{ $t('adverts.noResultsHint') }}</span>
                         <button v-if="hasActiveFilters" class="clear-filters-btn" @click="clearFilters">
-                            <v-icon icon="mdi-filter-remove-outline" size="15" />
+                            <CzIcon icon="mdi-filter-remove-outline" size="15" />
                             {{ $t('adverts.clearFilters') }}
                         </button>
                     </div>
                     <div v-if="page < totalPages" class="load-more-wrap">
                         <button class="load-more-btn" :disabled="loadingMore" @click="loadMore">
-                            <v-icon v-if="loadingMore" icon="mdi-loading" size="17" class="spin" />
-                            <v-icon v-else icon="mdi-chevron-down" size="17" />
+                            <CzIcon v-if="loadingMore" icon="mdi-loading" size="17" class="spin" />
+                            <CzIcon v-else icon="mdi-chevron-down" size="17" />
                             {{ loadingMore ? $t('adverts.loading') : `${$t('adverts.loadMore')} (${total - adverts.length})` }}
                         </button>
                     </div>
                     <div v-if="totalPages > 1" class="pagination" role="navigation" aria-label="Paginacja wyników">
                         <button class="page-btn" aria-label="Poprzednia strona" :disabled="page === 1" @click="goToPage(page - 1)">
-                            <v-icon icon="mdi-chevron-left" size="18" />
+                            <CzIcon icon="mdi-chevron-left" size="18" />
                         </button>
                         <button
                             v-for="p in paginationPages"
@@ -637,7 +637,7 @@
                             @click="p !== '...' && goToPage(Number(p))"
                         >{{ p }}</button>
                         <button class="page-btn" aria-label="Następna strona" :disabled="page >= totalPages" @click="goToPage(page + 1)">
-                            <v-icon icon="mdi-chevron-right" size="18" />
+                            <CzIcon icon="mdi-chevron-right" size="18" />
                         </button>
                     </div>
                 </template>
@@ -1742,7 +1742,7 @@ onMounted(async () => {
     letter-spacing: 0.5px;
     margin-bottom: 8px;
 
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .fp-expanded-footer {

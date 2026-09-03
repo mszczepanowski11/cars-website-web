@@ -6,7 +6,7 @@
             <div v-if="registrationSuccess" class="reg-success">
                 <img src="/carizo-logo.svg" alt="CARIZO" class="reg-success-logo" loading="lazy" decoding="async" />
                 <div class="reg-success-icon email-icon">
-                    <v-icon icon="mdi-email-check-outline" size="44" />
+                    <CzIcon icon="mdi-email-check-outline" size="44" />
                 </div>
                 <h2 class="reg-success-title">{{ $t('register.successTitle') }}</h2>
                 <p class="reg-success-desc">
@@ -14,7 +14,7 @@
                     {{ $t('register.successDescLine2') }}
                 </p>
                 <div class="reg-success-tip">
-                    <v-icon icon="mdi-information-outline" size="15" />
+                    <CzIcon icon="mdi-information-outline" size="15" />
                     {{ $t('register.successTipPre') }}
                     <button type="button" class="resend-link" :disabled="resending" @click="resendVerification">
                         <span v-if="resending">{{ $t('register.resending') }}</span>
@@ -23,7 +23,7 @@
                 </div>
                 <div class="reg-success-actions">
                     <NuxtLink to="/login" class="rsact-btn rsact-btn--primary">
-                        <v-icon icon="mdi-login" size="17" />
+                        <CzIcon icon="mdi-login" size="17" />
                         {{ $t('register.goToLogin') }}
                     </NuxtLink>
                 </div>
@@ -43,7 +43,7 @@
                     :class="{ 'type-active': accountType === 'Personal' }"
                     @click="accountType = 'Personal'; businessSubType = null"
                 >
-                    <v-icon icon="mdi-account-outline" size="18" />
+                    <CzIcon icon="mdi-account-outline" size="18" />
                     {{ $t('register.typePersonal') }}
                 </button>
                 <button
@@ -52,7 +52,7 @@
                     :class="{ 'type-active': accountType === 'Business' }"
                     @click="accountType = 'Business'"
                 >
-                    <v-icon icon="mdi-domain" size="18" />
+                    <CzIcon icon="mdi-domain" size="18" />
                     {{ $t('register.typeBusiness') }}
                 </button>
             </div>
@@ -71,13 +71,13 @@
                             @click="businessSubType = bt.key"
                         >
                             <div class="btype-icon">
-                                <v-icon :icon="bt.icon" size="22" />
+                                <CzIcon :icon="bt.icon" size="22" />
                             </div>
                             <div class="btype-text">
                                 <strong class="btype-name">{{ bt.name }}</strong>
                                 <span class="btype-desc">{{ bt.desc }}</span>
                             </div>
-                            <v-icon
+                            <CzIcon
                                 v-if="businessSubType === bt.key"
                                 icon="mdi-check-circle"
                                 size="18"
@@ -94,14 +94,14 @@
                     <div class="auth-field">
                         <label for="reg-company" class="auth-label">{{ $t('register.companyLabel') }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <v-icon icon="mdi-domain" size="17" class="auth-field-icon" />
+                            <CzIcon icon="mdi-domain" size="17" class="auth-field-icon" />
                             <input id="reg-company" v-model="companyName" class="auth-input" :placeholder="$t('register.companyPlaceholder')" required />
                         </div>
                     </div>
                     <div class="auth-field">
                         <label for="reg-nip" class="auth-label">{{ $t('register.nipLabel') }} <span class="req">*</span></label>
                         <div class="auth-input-wrap">
-                            <v-icon icon="mdi-card-account-details-outline" size="17" class="auth-field-icon" />
+                            <CzIcon icon="mdi-card-account-details-outline" size="17" class="auth-field-icon" />
                             <input id="reg-nip" v-model="nip" class="auth-input" inputmode="numeric" pattern="[0-9\-]*" placeholder="123-456-78-90" maxlength="13" required />
                         </div>
                         <div v-if="nip && nip.replace(/\D/g,'').length !== 10" class="auth-hint">
@@ -129,7 +129,7 @@
                 <div class="auth-field">
                     <label for="reg-email" class="auth-label">{{ $t('register.emailLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap">
-                        <v-icon icon="mdi-email-outline" size="17" class="auth-field-icon" />
+                        <CzIcon icon="mdi-email-outline" size="17" class="auth-field-icon" />
                         <input id="reg-email" v-model="email" type="email" class="auth-input" :placeholder="$t('register.emailPlaceholder')" required autocomplete="email" />
                     </div>
                 </div>
@@ -137,7 +137,7 @@
                 <div class="auth-field">
                     <label for="reg-phone" class="auth-label">{{ $t('register.phoneLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap">
-                        <v-icon icon="mdi-phone-outline" size="17" class="auth-field-icon" />
+                        <CzIcon icon="mdi-phone-outline" size="17" class="auth-field-icon" />
                         <input id="reg-phone" v-model="phoneNumber" type="tel" inputmode="tel" pattern="[+0-9\s\-()]*" maxlength="20" class="auth-input" :placeholder="$t('register.phonePlaceholder')" required autocomplete="tel" />
                     </div>
                 </div>
@@ -145,7 +145,7 @@
                 <div class="auth-field">
                     <label for="reg-password" class="auth-label">{{ $t('register.passwordLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap">
-                        <v-icon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
+                        <CzIcon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
                         <input
                             id="reg-password"
                             v-model="password"
@@ -156,7 +156,7 @@
                             autocomplete="new-password"
                         />
                         <button type="button" class="auth-eye" :aria-label="showPassword ? $t('register.hidePassword') : $t('register.showPassword')" @click="showPassword = !showPassword">
-                            <v-icon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
+                            <CzIcon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
                         </button>
                     </div>
                     <!-- Password strength -->
@@ -171,7 +171,7 @@
                 <div class="auth-field">
                     <label for="reg-password-confirm" class="auth-label">{{ $t('register.passwordConfirmLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap" :class="{ 'auth-input-wrap--error': passwordConfirm && password !== passwordConfirm }">
-                        <v-icon icon="mdi-lock-check-outline" size="17" class="auth-field-icon" />
+                        <CzIcon icon="mdi-lock-check-outline" size="17" class="auth-field-icon" />
                         <input
                             id="reg-password-confirm"
                             v-model="passwordConfirm"
@@ -190,7 +190,7 @@
                 <div class="auth-field">
                     <label for="reg-dob" class="auth-label">{{ $t('register.dobLabel') }} <span class="req">*</span></label>
                     <div class="auth-input-wrap">
-                        <v-icon icon="mdi-calendar-outline" size="17" class="auth-field-icon" />
+                        <CzIcon icon="mdi-calendar-outline" size="17" class="auth-field-icon" />
                         <input id="reg-dob" v-model="dateOfBirth" type="date" class="auth-input" :max="maxDob" required />
                     </div>
                     <div v-if="dateOfBirth && !isAdult" class="auth-hint auth-hint--error">
@@ -201,7 +201,7 @@
                 <label class="age-check">
                     <input v-model="termsConfirmed" type="checkbox" class="age-check-input" />
                     <span class="age-check-box" :class="{ 'age-check-box--checked': termsConfirmed }">
-                        <v-icon v-if="termsConfirmed" icon="mdi-check" size="13" />
+                        <CzIcon v-if="termsConfirmed" icon="mdi-check" size="13" />
                     </span>
                     <span class="age-check-label">{{ $t('register.termsAccept') }}<NuxtLink to="/regulamin" class="cookie-link">{{ $t('register.termsTerms') }}</NuxtLink>{{ $t('register.termsAnd') }}<NuxtLink to="/polityka-prywatnosci" class="cookie-link">{{ $t('register.termsPrivacy') }}</NuxtLink> <span class="req">*</span></span>
                 </label>
@@ -209,7 +209,7 @@
                 <label class="age-check">
                     <input v-model="gdprConfirmed" type="checkbox" class="age-check-input" />
                     <span class="age-check-box" :class="{ 'age-check-box--checked': gdprConfirmed }">
-                        <v-icon v-if="gdprConfirmed" icon="mdi-check" size="13" />
+                        <CzIcon v-if="gdprConfirmed" icon="mdi-check" size="13" />
                     </span>
                     <span class="age-check-label">{{ $t('register.gdprPre') }}<NuxtLink to="/polityka-prywatnosci" class="cookie-link">{{ $t('register.gdprPrivacy') }}</NuxtLink> <span class="req">*</span></span>
                 </label>
@@ -217,13 +217,13 @@
                 <label class="age-check">
                     <input v-model="marketingConsent" type="checkbox" class="age-check-input" />
                     <span class="age-check-box" :class="{ 'age-check-box--checked': marketingConsent }">
-                        <v-icon v-if="marketingConsent" icon="mdi-check" size="13" />
+                        <CzIcon v-if="marketingConsent" icon="mdi-check" size="13" />
                     </span>
                     <span class="age-check-label age-check-label--optional">{{ $t('register.marketing') }} <span class="opt-label">{{ $t('register.optional') }}</span></span>
                 </label>
 
                 <div v-if="validationError || error" role="alert" class="auth-error">
-                    <v-icon icon="mdi-alert-circle-outline" size="15" />
+                    <CzIcon icon="mdi-alert-circle-outline" size="15" />
                     {{ validationError || error }}
                 </div>
 
@@ -235,7 +235,7 @@
                 />
 
                 <button type="submit" class="auth-btn" :disabled="loading">
-                    <v-icon v-if="loading" icon="mdi-loading" size="18" class="spin" />
+                    <CzIcon v-if="loading" icon="mdi-loading" size="18" class="spin" />
                     <span>{{ loading ? $t('register.registering') : $t('register.submit') }}</span>
                 </button>
             </form>

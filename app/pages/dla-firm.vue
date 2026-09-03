@@ -6,7 +6,7 @@
         <div class="df-eyebrow">{{ $t('forBusiness.eyebrow') }}</div>
         <h1>{{ $t('forBusiness.heroTitleLine1') }}<br><span class="accent">{{ $t('forBusiness.heroTitleLine2') }}</span></h1>
         <p class="df-hero-desc">{{ $t('forBusiness.heroDesc') }}</p>
-        <div class="df-badge"><v-icon icon="mdi-sync" size="13" />XML • CSV • API</div>
+        <div class="df-badge"><CzIcon icon="mdi-sync" size="13" />XML • CSV • API</div>
       </div>
     </div>
 
@@ -43,32 +43,32 @@
           <div v-if="formError" class="df-alert df-alert--error">{{ formError }}</div>
 
           <button class="df-btn-primary" :disabled="!canSubmit || loading" @click="startIntegration">
-            <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+            <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
             {{ $t('forBusiness.btnStart') }}
           </button>
         </template>
 
         <template v-else-if="step === 'preview-error'">
-          <div class="df-result-icon df-result-icon--error"><v-icon icon="mdi-alert-circle-outline" size="32" /></div>
+          <div class="df-result-icon df-result-icon--error"><CzIcon icon="mdi-alert-circle-outline" size="32" /></div>
           <h2 class="df-form-title">{{ $t('forBusiness.previewErrorTitle') }}</h2>
           <p class="df-form-sub">{{ previewError }}</p>
           <div class="df-result-actions">
             <button class="df-btn-secondary" @click="step = 'form'">{{ $t('forBusiness.btnFixLink') }}</button>
             <button class="df-btn-primary" :disabled="loading" @click="submitWithoutFeed">
-              <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+              <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
               {{ $t('forBusiness.btnSubmitWithoutFeed') }}
             </button>
           </div>
         </template>
 
         <template v-else-if="step === 'preview-ok'">
-          <div class="df-result-icon df-result-icon--ok"><v-icon icon="mdi-check-circle-outline" size="32" /></div>
+          <div class="df-result-icon df-result-icon--ok"><CzIcon icon="mdi-check-circle-outline" size="32" /></div>
           <h2 class="df-form-title">{{ $t('forBusiness.previewOkTitle', { count: previewCount, noun: pluralOgloszen(previewCount) }) }}</h2>
           <p class="df-form-sub">{{ $t('forBusiness.previewOkSub') }}</p>
           <div class="df-result-actions">
             <button class="df-btn-secondary" @click="step = 'form'">{{ $t('forBusiness.btnBack') }}</button>
             <button class="df-btn-primary" :disabled="loading" @click="submit">
-              <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+              <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
               {{ $t('forBusiness.btnImport') }}
             </button>
           </div>
@@ -80,14 +80,14 @@
           <div class="df-result-actions">
             <button class="df-btn-secondary" @click="step = 'form'">{{ $t('forBusiness.btnBack') }}</button>
             <button class="df-btn-primary" :disabled="loading" @click="submit">
-              <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+              <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
               {{ $t('forBusiness.btnSubmitApplication') }}
             </button>
           </div>
         </template>
 
         <template v-else-if="step === 'done'">
-          <div class="df-result-icon df-result-icon--ok"><v-icon icon="mdi-check-circle-outline" size="32" /></div>
+          <div class="df-result-icon df-result-icon--ok"><CzIcon icon="mdi-check-circle-outline" size="32" /></div>
           <h2 class="df-form-title">{{ $t('forBusiness.doneTitle') }}</h2>
           <p class="df-form-sub">{{ $t('forBusiness.doneSubBefore') }}<strong>{{ form.email }}</strong>{{ $t('forBusiness.doneSubAfter') }}</p>
           <NuxtLink to="/" class="df-btn-secondary df-btn-secondary--link">{{ $t('forBusiness.btnBackHome') }}</NuxtLink>
@@ -97,17 +97,17 @@
 
       <div class="df-info-grid">
         <div class="df-info-card">
-          <v-icon icon="mdi-file-code-outline" size="22" />
+          <CzIcon icon="mdi-file-code-outline" size="22" />
           <div class="df-info-title">{{ $t('forBusiness.infoXmlTitle') }}</div>
           <div class="df-info-desc">{{ $t('forBusiness.infoXmlDesc') }}</div>
         </div>
         <div class="df-info-card">
-          <v-icon icon="mdi-shape-outline" size="22" />
+          <CzIcon icon="mdi-shape-outline" size="22" />
           <div class="df-info-title">{{ $t('forBusiness.infoCategoriesTitle') }}</div>
           <div class="df-info-desc">{{ $t('forBusiness.infoCategoriesDesc') }}</div>
         </div>
         <div class="df-info-card">
-          <v-icon icon="mdi-sync" size="22" />
+          <CzIcon icon="mdi-sync" size="22" />
           <div class="df-info-title">{{ $t('forBusiness.infoSyncTitle') }}</div>
           <div class="df-info-desc">{{ $t('forBusiness.infoSyncDesc') }}</div>
         </div>

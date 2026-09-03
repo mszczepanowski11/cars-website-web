@@ -2,72 +2,72 @@
     <div class="admin-page">
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <v-icon icon="mdi-shield-crown" size="20" class="brand-icon" />
+                <CzIcon icon="mdi-shield-crown" size="20" class="brand-icon" />
                 Panel Administratora
             </div>
             <nav class="sidebar-nav">
                 <NuxtLink to="/admin" class="nav-item" :class="{ active: route.path === '/admin' }">
-                    <v-icon icon="mdi-view-dashboard-outline" size="17" />
+                    <CzIcon icon="mdi-view-dashboard-outline" size="17" />
                     Podsumowanie
                 </NuxtLink>
                 <NuxtLink to="/admin/reports" class="nav-item" :class="{ active: route.path === '/admin/reports' }">
-                    <v-icon icon="mdi-flag-outline" size="17" />
+                    <CzIcon icon="mdi-flag-outline" size="17" />
                     Zgłoszenia
                     <span v-if="stats?.pendingReports" class="nav-badge">{{ stats.pendingReports }}</span>
                 </NuxtLink>
                 <NuxtLink to="/admin/users" class="nav-item" :class="{ active: route.path === '/admin/users' }">
-                    <v-icon icon="mdi-account-group-outline" size="17" />
+                    <CzIcon icon="mdi-account-group-outline" size="17" />
                     Użytkownicy
                 </NuxtLink>
                 <NuxtLink to="/admin/adverts" class="nav-item" :class="{ active: route.path === '/admin/adverts' }">
-                    <v-icon icon="mdi-car-outline" size="17" />
+                    <CzIcon icon="mdi-car-outline" size="17" />
                     Ogłoszenia
                 </NuxtLink>
                 <NuxtLink to="/admin/events" class="nav-item" :class="{ active: route.path === '/admin/events' }">
-                    <v-icon icon="mdi-calendar-star" size="17" />
+                    <CzIcon icon="mdi-calendar-star" size="17" />
                     Wydarzenia
                 </NuxtLink>
                 <div class="nav-divider" />
                 <NuxtLink to="/admin/invoices" class="nav-item" :class="{ active: route.path === '/admin/invoices' }">
-                    <v-icon icon="mdi-receipt-text-outline" size="17" />
+                    <CzIcon icon="mdi-receipt-text-outline" size="17" />
                     Faktury
                 </NuxtLink>
                 <NuxtLink to="/admin/taxonomy" class="nav-item" :class="{ active: route.path === '/admin/taxonomy' }">
-                    <v-icon icon="mdi-tag-multiple-outline" size="17" />
+                    <CzIcon icon="mdi-tag-multiple-outline" size="17" />
                     Wyposażenie
                 </NuxtLink>
                 <NuxtLink to="/admin/vehicle-data" class="nav-item" :class="{ active: route.path === '/admin/vehicle-data' }">
-                    <v-icon icon="mdi-car-cog" size="17" />
+                    <CzIcon icon="mdi-car-cog" size="17" />
                     Marki i modele
                 </NuxtLink>
                 <NuxtLink to="/admin/attributes" class="nav-item" :class="{ active: route.path === '/admin/attributes' }">
-                    <v-icon icon="mdi-form-select" size="17" />
+                    <CzIcon icon="mdi-form-select" size="17" />
                     Pola kategorii
                 </NuxtLink>
                 <NuxtLink to="/admin/partners" class="nav-item" :class="{ active: route.path === '/admin/partners' }">
-                    <v-icon icon="mdi-handshake-outline" size="17" />
+                    <CzIcon icon="mdi-handshake-outline" size="17" />
                     Partnerzy API
                 </NuxtLink>
                 <NuxtLink to="/admin/directory" class="nav-item" :class="{ active: route.path === '/admin/directory' }">
-                    <v-icon icon="mdi-domain" size="17" />
+                    <CzIcon icon="mdi-domain" size="17" />
                     Katalog firm
                 </NuxtLink>
                 <NuxtLink to="/admin/quality-report" class="nav-item" :class="{ active: route.path === '/admin/quality-report' }">
-                    <v-icon icon="mdi-database-check-outline" size="17" />
+                    <CzIcon icon="mdi-database-check-outline" size="17" />
                     Jakość danych
                 </NuxtLink>
                 <button type="button" class="nav-item" :class="{ active: adminSection === 'categories' }" @click="adminSection = 'categories'">
-                    <v-icon icon="mdi-shape-plus-outline" size="17" />
+                    <CzIcon icon="mdi-shape-plus-outline" size="17" />
                     Kat. niestandardowe
                     <span v-if="pendingCategoriesCount > 0" class="nav-badge">{{ pendingCategoriesCount }}</span>
                 </button>
                 <button type="button" class="nav-item" :class="{ active: adminSection === 'cleanup' }" @click="adminSection = 'cleanup'">
-                    <v-icon icon="mdi-broom" size="17" />
+                    <CzIcon icon="mdi-broom" size="17" />
                     Czyszczenie danych
                 </button>
                 <div class="nav-divider" />
                 <NuxtLink to="/dashboard" class="nav-item">
-                    <v-icon icon="mdi-arrow-left" size="17" />
+                    <CzIcon icon="mdi-arrow-left" size="17" />
                     Wróć do panelu
                 </NuxtLink>
             </nav>
@@ -81,7 +81,7 @@
                 </div>
 
                 <div v-if="loading" class="loading-state">
-                    <v-icon icon="mdi-loading" size="32" class="spin" />
+                    <CzIcon icon="mdi-loading" size="32" class="spin" />
                     Ładowanie danych...
                 </div>
 
@@ -90,7 +90,7 @@
                         <div class="stat-card">
                             <div class="stat-top">
                                 <div class="stat-icon-wrap green">
-                                    <v-icon icon="mdi-car-outline" size="20" />
+                                    <CzIcon icon="mdi-car-outline" size="20" />
                                 </div>
                                 <span class="stat-label">Aktywne ogłoszenia</span>
                             </div>
@@ -100,7 +100,7 @@
                         <div class="stat-card">
                             <div class="stat-top">
                                 <div class="stat-icon-wrap blue">
-                                    <v-icon icon="mdi-account-group-outline" size="20" />
+                                    <CzIcon icon="mdi-account-group-outline" size="20" />
                                 </div>
                                 <span class="stat-label">Użytkownicy</span>
                             </div>
@@ -110,7 +110,7 @@
                         <div class="stat-card alert">
                             <div class="stat-top">
                                 <div class="stat-icon-wrap red">
-                                    <v-icon icon="mdi-flag-outline" size="20" />
+                                    <CzIcon icon="mdi-flag-outline" size="20" />
                                 </div>
                                 <span class="stat-label">Zgłoszenia</span>
                             </div>
@@ -120,7 +120,7 @@
                         <div class="stat-card">
                             <div class="stat-top">
                                 <div class="stat-icon-wrap orange">
-                                    <v-icon icon="mdi-account-plus-outline" size="20" />
+                                    <CzIcon icon="mdi-account-plus-outline" size="20" />
                                 </div>
                                 <span class="stat-label">Nowe rejestracje</span>
                             </div>
@@ -164,7 +164,7 @@
                             </tbody>
                         </table>
                         <div v-else class="empty-state">
-                            <v-icon icon="mdi-history" size="32" class="empty-icon" />
+                            <CzIcon icon="mdi-history" size="32" class="empty-icon" />
                             <p>Brak historii działań.</p>
                         </div>
                     </div>
@@ -176,7 +176,7 @@
                 <div class="admin-topbar">
                     <h1 class="page-title">Kategorie niestandardowe</h1>
                     <button type="button" class="nav-item" style="border:none;cursor:pointer" @click="loadCustomCategories">
-                        <v-icon icon="mdi-refresh" size="17" />
+                        <CzIcon icon="mdi-refresh" size="17" />
                         Odśwież
                     </button>
                 </div>
@@ -193,12 +193,12 @@
                 </div>
 
                 <div v-if="loadingCategories" class="loading-state">
-                    <v-icon icon="mdi-loading" size="32" class="spin" />
+                    <CzIcon icon="mdi-loading" size="32" class="spin" />
                     Ładowanie...
                 </div>
 
                 <div v-else-if="customCategories.length === 0" class="empty-state" style="padding:50px 20px">
-                    <v-icon icon="mdi-shape-plus-outline" size="32" class="empty-icon" />
+                    <CzIcon icon="mdi-shape-plus-outline" size="32" class="empty-icon" />
                     <p>Brak wniosków</p>
                 </div>
 
@@ -231,7 +231,7 @@
                                 class="btn-approve"
                                 @click="startCuration(req)"
                             >
-                                <v-icon icon="mdi-check" size="14" />
+                                <CzIcon icon="mdi-check" size="14" />
                                 Zatwierdź
                             </button>
                             <button
@@ -240,8 +240,8 @@
                                 :disabled="categoryActionLoading === `${req.id}_reject`"
                                 @click="rejectCategory(req.id)"
                             >
-                                <v-icon v-if="categoryActionLoading === `${req.id}_reject`" icon="mdi-loading" size="14" class="spin" />
-                                <v-icon v-else icon="mdi-close" size="14" />
+                                <CzIcon v-if="categoryActionLoading === `${req.id}_reject`" icon="mdi-loading" size="14" class="spin" />
+                                <CzIcon v-else icon="mdi-close" size="14" />
                                 Odrzuć
                             </button>
                         </div>
@@ -274,7 +274,7 @@
                                     :disabled="!curationForm.name || (curationForm.resultType === 'subtype' && !curationForm.vehicleCategoryId) || categoryActionLoading === `${req.id}_approve`"
                                     @click="confirmApproveCategory(req.id)"
                                 >
-                                    <v-icon v-if="categoryActionLoading === `${req.id}_approve`" icon="mdi-loading" size="13" class="spin" />
+                                    <CzIcon v-if="categoryActionLoading === `${req.id}_approve`" icon="mdi-loading" size="13" class="spin" />
                                     Potwierdź zatwierdzenie
                                 </button>
                                 <button type="button" class="btn-cancel" @click="cancelCuration">Anuluj</button>
@@ -297,8 +297,8 @@
                             Rekordy z tytułami zawierającymi słowa testowe (test, asdf, lorem itp.)
                         </p>
                         <button type="button" class="btn-approve" @click="loadSuspiciousRecords" :disabled="loadingCleanup">
-                            <v-icon v-if="loadingCleanup" icon="mdi-loading" size="14" class="spin" />
-                            <v-icon v-else icon="mdi-magnify" size="14" />
+                            <CzIcon v-if="loadingCleanup" icon="mdi-loading" size="14" class="spin" />
+                            <CzIcon v-else icon="mdi-magnify" size="14" />
                             {{ loadingCleanup ? 'Ładowanie...' : 'Załaduj podejrzane rekordy' }}
                         </button>
                     </div>
@@ -319,7 +319,7 @@
                                 <td class="log-date">{{ new Date(rec.createdAt).toLocaleDateString('pl-PL') }}</td>
                                 <td>
                                     <button type="button" class="btn-reject" style="padding:4px 10px;font-size:11px" @click="deleteSuspiciousRecord(rec.id)">
-                                        <v-icon icon="mdi-delete-outline" size="13" />
+                                        <CzIcon icon="mdi-delete-outline" size="13" />
                                         Usuń
                                     </button>
                                 </td>
@@ -328,7 +328,7 @@
                     </table>
 
                     <div v-else-if="suspiciousRecordsLoaded" class="empty-state">
-                        <v-icon icon="mdi-check-circle-outline" size="32" class="empty-icon" style="color:#4caf50" />
+                        <CzIcon icon="mdi-check-circle-outline" size="32" class="empty-icon" style="color:#4caf50" />
                         <p>Brak podejrzanych rekordów.</p>
                     </div>
                 </div>

@@ -16,11 +16,11 @@ useHead(() => ({
 </script>
 
 <template>
-  <v-app>
+  <div class="app-shell">
     <a href="#main-content" class="skip-to-main">Przejdź do treści</a>
     <AppAnnouncementBar />
     <NavBar />
-    <v-main id="main-content">
+    <main id="main-content" class="app-main">
       <NuxtErrorBoundary>
         <NuxtPage :transition="{ name: 'page-fade' }" />
         <template #error="{ error, clearError }">
@@ -41,10 +41,33 @@ useHead(() => ({
           </div>
         </template>
       </NuxtErrorBoundary>
-    </v-main>
+    </main>
     <AppFooter />
     <ComparePanel />
     <CookieConsent />
     <AppToast />
-  </v-app>
+  </div>
 </template>
+
+<style lang="scss">
+/**
+ * Powłoka aplikacji.
+ *
+ * Zastępuje `<v-app>` i `<v-main>` z Vuetify. Tamte komponenty poza układem
+ * wnosiły cały motyw i warstwy stylów frameworka - tutaj potrzebne jest tylko
+ * to, co realnie robiły: pełna wysokość okna, tło i główny obszar treści,
+ * który rozpycha stopkę na dół nawet przy krótkiej stronie.
+ */
+.app-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: $bg;
+    color: $text;
+}
+
+.app-main {
+    flex: 1 0 auto;
+    display: block;
+}
+</style>

@@ -16,7 +16,7 @@
             <div class="steps-grid">
                 <div v-for="(s, i) in sellSteps" :key="i" class="step-card">
                     <div class="step-num">{{ i + 1 }}</div>
-                    <div class="step-icon"><v-icon :icon="s.icon" size="28" /></div>
+                    <div class="step-icon"><CzIcon :icon="s.icon" size="28" /></div>
                     <div class="step-title">{{ s.title }}</div>
                     <div class="step-desc">{{ s.desc }}</div>
                 </div>
@@ -28,7 +28,7 @@
             <div class="steps-grid">
                 <div v-for="(s, i) in buySteps" :key="i" class="step-card">
                     <div class="step-num">{{ i + 1 }}</div>
-                    <div class="step-icon"><v-icon :icon="s.icon" size="28" /></div>
+                    <div class="step-icon"><CzIcon :icon="s.icon" size="28" /></div>
                     <div class="step-title">{{ s.title }}</div>
                     <div class="step-desc">{{ s.desc }}</div>
                 </div>
@@ -40,7 +40,7 @@
                     <div v-for="(faq, i) in faqs" :key="i" class="faq-item">
                         <button class="faq-q" :class="{ open: openFaq === i }" @click="openFaq = openFaq === i ? null : i">
                             {{ faq.q }}
-                            <v-icon :icon="openFaq === i ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="18" />
+                            <CzIcon :icon="openFaq === i ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="18" />
                         </button>
                         <transition name="accordion">
                             <div v-if="openFaq === i" class="faq-a">{{ faq.a }}</div>
@@ -190,7 +190,7 @@ const faqs = computed(() => (tm('howItWorks.faqs') as any[]).map(f => ({ q: rt(f
     &:hover { background: rgba(255,255,255,0.03); }
     &.open { background: rgba($red, 0.05); color: $text; }
 
-    .v-icon { flex-shrink: 0; color: $text-dim; }
+    .cz-icon { flex-shrink: 0; color: $text-dim; }
 }
 
 .faq-a {

@@ -9,14 +9,14 @@
             </div>
 
             <div v-if="loading" class="loading-state">
-                <v-icon icon="mdi-loading" size="32" class="spin" />
+                <CzIcon icon="mdi-loading" size="32" class="spin" />
                 {{ $t('team.loading') }}
             </div>
 
             <!-- MEMBER VIEW: acting on behalf of someone else's company -->
             <div v-else-if="context?.isMember" class="member-view">
                 <div class="member-card">
-                    <v-icon icon="mdi-domain" size="28" class="member-icon" />
+                    <CzIcon icon="mdi-domain" size="28" class="member-icon" />
                     <div class="member-text">
                         <div class="member-title">{{ $t('team.memberOfTitle') }}</div>
                         <div class="member-company">{{ context.ownerCompanyName }}</div>
@@ -24,15 +24,15 @@
                     </div>
                 </div>
                 <button class="btn-outline-danger" :disabled="leaving" @click="onLeave">
-                    <v-icon v-if="leaving" icon="mdi-loading" size="15" class="spin" />
-                    <v-icon v-else icon="mdi-exit-run" size="15" />
+                    <CzIcon v-if="leaving" icon="mdi-loading" size="15" class="spin" />
+                    <CzIcon v-else icon="mdi-exit-run" size="15" />
                     {{ $t('team.leaveTeam') }}
                 </button>
             </div>
 
             <!-- NOT A BUSINESS ACCOUNT -->
             <div v-else-if="profile?.accountType !== 'Business'" class="empty-state">
-                <v-icon icon="mdi-account-group-outline" size="48" />
+                <CzIcon icon="mdi-account-group-outline" size="48" />
                 <div class="empty-title">{{ $t('team.businessOnlyTitle') }}</div>
                 <p class="empty-sub">{{ $t('team.businessOnlySub') }}</p>
             </div>
@@ -42,19 +42,19 @@
                 <form class="invite-form" @submit.prevent="onInvite">
                     <input v-model="inviteEmail" type="email" required :placeholder="$t('team.invitePlaceholder')" class="invite-input" />
                     <button type="submit" class="btn-red" :disabled="inviting">
-                        <v-icon v-if="inviting" icon="mdi-loading" size="16" class="spin" />
-                        <v-icon v-else icon="mdi-account-plus-outline" size="16" />
+                        <CzIcon v-if="inviting" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-else icon="mdi-account-plus-outline" size="16" />
                         {{ $t('team.inviteButton') }}
                     </button>
                 </form>
 
                 <div v-if="membersLoading" class="loading-state">
-                    <v-icon icon="mdi-loading" size="32" class="spin" />
+                    <CzIcon icon="mdi-loading" size="32" class="spin" />
                     {{ $t('team.loadingMembers') }}
                 </div>
 
                 <div v-else-if="members.length === 0" class="empty-state">
-                    <v-icon icon="mdi-account-group-outline" size="48" />
+                    <CzIcon icon="mdi-account-group-outline" size="48" />
                     <div class="empty-title">{{ $t('team.noMembersTitle') }}</div>
                     <p class="empty-sub">{{ $t('team.noMembersSub') }}</p>
                 </div>
@@ -66,12 +66,12 @@
                             <div class="mr-email">{{ m.email }}</div>
                         </div>
                         <div class="mr-status" :class="`status-${m.status.toLowerCase()}`">
-                            <v-icon :icon="m.status === 'Active' ? 'mdi-check-circle-outline' : 'mdi-clock-outline'" size="13" />
+                            <CzIcon :icon="m.status === 'Active' ? 'mdi-check-circle-outline' : 'mdi-clock-outline'" size="13" />
                             {{ m.status === 'Active' ? $t('team.statusActive') : $t('team.statusPending') }}
                         </div>
                         <button class="mr-remove" :disabled="removingId === m.membershipId" @click="onRemove(m)">
-                            <v-icon v-if="removingId === m.membershipId" icon="mdi-loading" size="15" class="spin" />
-                            <v-icon v-else icon="mdi-close" size="15" />
+                            <CzIcon v-if="removingId === m.membershipId" icon="mdi-loading" size="15" class="spin" />
+                            <CzIcon v-else icon="mdi-close" size="15" />
                         </button>
                     </div>
                 </div>
@@ -202,7 +202,7 @@ async function onLeave() {
     text-align: center;
     padding: 60px 20px;
     gap: 14px;
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
 .empty-title { font-size: 18px; font-weight: 700; color: $text-muted; }

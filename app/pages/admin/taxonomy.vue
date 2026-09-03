@@ -2,23 +2,23 @@
     <div class="admin-page">
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <v-icon icon="mdi-shield-crown" size="20" class="brand-icon" />
+                <CzIcon icon="mdi-shield-crown" size="20" class="brand-icon" />
                 Panel Administratora
             </div>
             <nav class="sidebar-nav">
-                <NuxtLink to="/admin" class="nav-item"><v-icon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
-                <NuxtLink to="/admin/reports" class="nav-item"><v-icon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
-                <NuxtLink to="/admin/users" class="nav-item"><v-icon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
-                <NuxtLink to="/admin/adverts" class="nav-item"><v-icon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
-                <NuxtLink to="/admin/events" class="nav-item"><v-icon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
-                <NuxtLink to="/admin/taxonomy" class="nav-item active"><v-icon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
-                <NuxtLink to="/admin/vehicle-data" class="nav-item"><v-icon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
-                <NuxtLink to="/admin/attributes" class="nav-item"><v-icon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
-                <NuxtLink to="/admin/partners" class="nav-item"><v-icon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
-                <NuxtLink to="/admin/directory" class="nav-item"><v-icon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
-                <NuxtLink to="/admin/quality-report" class="nav-item"><v-icon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
+                <NuxtLink to="/admin" class="nav-item"><CzIcon icon="mdi-view-dashboard-outline" size="17" />Podsumowanie</NuxtLink>
+                <NuxtLink to="/admin/reports" class="nav-item"><CzIcon icon="mdi-flag-outline" size="17" />Zgłoszenia</NuxtLink>
+                <NuxtLink to="/admin/users" class="nav-item"><CzIcon icon="mdi-account-group-outline" size="17" />Użytkownicy</NuxtLink>
+                <NuxtLink to="/admin/adverts" class="nav-item"><CzIcon icon="mdi-car-outline" size="17" />Ogłoszenia</NuxtLink>
+                <NuxtLink to="/admin/events" class="nav-item"><CzIcon icon="mdi-calendar-star" size="17" />Wydarzenia</NuxtLink>
+                <NuxtLink to="/admin/taxonomy" class="nav-item active"><CzIcon icon="mdi-tag-multiple-outline" size="17" />Wyposażenie</NuxtLink>
+                <NuxtLink to="/admin/vehicle-data" class="nav-item"><CzIcon icon="mdi-car-cog" size="17" />Marki i modele</NuxtLink>
+                <NuxtLink to="/admin/attributes" class="nav-item"><CzIcon icon="mdi-form-select" size="17" />Pola kategorii</NuxtLink>
+                <NuxtLink to="/admin/partners" class="nav-item"><CzIcon icon="mdi-handshake-outline" size="17" />Partnerzy API</NuxtLink>
+                <NuxtLink to="/admin/directory" class="nav-item"><CzIcon icon="mdi-domain" size="17" />Katalog firm</NuxtLink>
+                <NuxtLink to="/admin/quality-report" class="nav-item"><CzIcon icon="mdi-database-check-outline" size="17" />Jakość danych</NuxtLink>
                 <div class="nav-divider" />
-                <NuxtLink to="/dashboard" class="nav-item"><v-icon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
+                <NuxtLink to="/dashboard" class="nav-item"><CzIcon icon="mdi-arrow-left" size="17" />Wróć do panelu</NuxtLink>
             </nav>
         </aside>
 
@@ -35,7 +35,7 @@
             <div v-if="view === 'features'">
                 <div class="toolbar">
                     <div class="search-bar">
-                        <v-icon icon="mdi-magnify" size="18" class="sb-icon" />
+                        <CzIcon icon="mdi-magnify" size="18" class="sb-icon" />
                         <input v-model="featureSearch" class="sb-input" placeholder="Szukaj cechy..." @input="debouncedLoad" />
                     </div>
                     <select v-model="featureCatFilter" class="cat-select" @change="loadFeatures">
@@ -43,7 +43,7 @@
                         <option v-for="c in featureCategories" :key="c.id" :value="c.id">{{ c.name }}</option>
                     </select>
                     <button class="btn-add" @click="showAddFeature = true">
-                        <v-icon icon="mdi-plus" size="15" /> Dodaj cechę
+                        <CzIcon icon="mdi-plus" size="15" /> Dodaj cechę
                     </button>
                 </div>
 
@@ -57,14 +57,14 @@
                             <option v-for="c in featureCategories" :key="c.id" :value="c.id">{{ c.name }}</option>
                         </select>
                         <button class="btn-confirm" :disabled="!newFeatureName || !newFeatureCatId || addingFeature" @click="addFeature">
-                            <v-icon v-if="addingFeature" icon="mdi-loading" size="13" class="spin" />
+                            <CzIcon v-if="addingFeature" icon="mdi-loading" size="13" class="spin" />
                             Dodaj
                         </button>
                         <button class="btn-cancel" @click="showAddFeature = false; newFeatureName = ''; newFeatureCatId = ''">Anuluj</button>
                     </div>
                 </div>
 
-                <div v-if="featuresLoading" class="loading-state"><v-icon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
+                <div v-if="featuresLoading" class="loading-state"><CzIcon icon="mdi-loading" size="28" class="spin" />Ładowanie...</div>
                 <div v-else-if="features.length" class="feat-table">
                     <table>
                         <thead>
@@ -78,14 +78,14 @@
                                 <td class="td-dim">{{ f.category?.vehicleCategoryId ? (vehicleCategories.find((vc: any) => vc.id === f.category.vehicleCategoryId)?.name ?? `ID ${f.category.vehicleCategoryId}`) : 'Wszystkie' }}</td>
                                 <td>
                                     <button class="btn-action btn-delete" @click="deleteFeature(f.id, f.name)">
-                                        <v-icon icon="mdi-delete-outline" size="13" />Usuń
+                                        <CzIcon icon="mdi-delete-outline" size="13" />Usuń
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="empty-state"><v-icon icon="mdi-tag-off-outline" size="36" class="empty-icon" />Brak wyposażenia.</div>
+                <div v-else class="empty-state"><CzIcon icon="mdi-tag-off-outline" size="36" class="empty-icon" />Brak wyposażenia.</div>
             </div>
 
             <!-- CATEGORIES VIEW -->
@@ -93,7 +93,7 @@
                 <div class="toolbar">
                     <span class="total-badge">{{ featureCategories.length }} kategorii</span>
                     <button class="btn-add" @click="showAddCat = true">
-                        <v-icon icon="mdi-plus" size="15" /> Dodaj kategorię
+                        <CzIcon icon="mdi-plus" size="15" /> Dodaj kategorię
                     </button>
                 </div>
 
@@ -114,7 +114,7 @@
                             <option v-for="m in newCatModels" :key="m.id" :value="m.id">{{ m.name }}</option>
                         </select>
                         <button class="btn-confirm" :disabled="!newCatName || !newCatVehicleId || addingCat" @click="addCategory">
-                            <v-icon v-if="addingCat" icon="mdi-loading" size="13" class="spin" />
+                            <CzIcon v-if="addingCat" icon="mdi-loading" size="13" class="spin" />
                             Dodaj
                         </button>
                         <button class="btn-cancel" @click="showAddCat = false; newCatName = ''; newCatVehicleId = ''; newCatBrandId = ''; newCatModelId = ''">Anuluj</button>
@@ -135,7 +135,7 @@
                                 <td class="td-dim">{{ c.modelName ?? '—' }}</td>
                                 <td>
                                     <button class="btn-action btn-delete" @click="deleteCategory(c.id, c.name)">
-                                        <v-icon icon="mdi-delete-outline" size="13" />Usuń
+                                        <CzIcon icon="mdi-delete-outline" size="13" />Usuń
                                     </button>
                                 </td>
                             </tr>

@@ -8,7 +8,7 @@
                 </div>
                 <img src="/carizo-logo.svg" alt="CARIZO" class="success-logo" loading="lazy" decoding="async" />
                 <div class="success-icon-wrap">
-                    <v-icon icon="mdi-check-circle" size="52" class="success-icon" />
+                    <CzIcon icon="mdi-check-circle" size="52" class="success-icon" />
                 </div>
                 <h1 class="success-title">{{ $t('addAdvert.success.title') }}</h1>
                 <p class="success-desc">
@@ -17,20 +17,20 @@
                 </p>
                 <div class="success-actions">
                     <NuxtLink v-if="publishedAdvertId" :to="`/ogloszenia/${publishedAdvertId}`" class="sact-btn sact-btn--primary">
-                        <v-icon icon="mdi-arrow-right-circle-outline" size="18" />
+                        <CzIcon icon="mdi-arrow-right-circle-outline" size="18" />
                         {{ $t('addAdvert.success.viewAdvert') }}
                     </NuxtLink>
                     <NuxtLink to="/add-advert" class="sact-btn sact-btn--secondary" @click="showSuccess = false">
-                        <v-icon icon="mdi-plus-circle-outline" size="17" />
+                        <CzIcon icon="mdi-plus-circle-outline" size="17" />
                         {{ $t('addAdvert.success.addAnother') }}
                     </NuxtLink>
                     <NuxtLink to="/" class="sact-btn sact-btn--ghost">
-                        <v-icon icon="mdi-home-outline" size="17" />
+                        <CzIcon icon="mdi-home-outline" size="17" />
                         {{ $t('addAdvert.breadcrumbHome') }}
                     </NuxtLink>
                 </div>
                 <div class="success-tip">
-                    <v-icon icon="mdi-lightbulb-outline" size="15" class="tip-icon" />
+                    <CzIcon icon="mdi-lightbulb-outline" size="15" class="tip-icon" />
                     <span>{{ $t('addAdvert.promoCta.lead') }} <NuxtLink v-if="publishedAdvertId" :to="`/promote-advert/${publishedAdvertId}`" class="tip-link">{{ $t('addAdvert.promoCta.action') }}</NuxtLink> {{ $t('addAdvert.promoCta.tail') }}</span>
                 </div>
             </div>
@@ -44,25 +44,25 @@
             <div class="top-left">
                 <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" loading="lazy" decoding="async" />
                 <button class="back-btn" @click="navigateTo('/dashboard')">
-                    <v-icon icon="mdi-arrow-left" size="16" />
+                    <CzIcon icon="mdi-arrow-left" size="16" />
                     {{ $t('addAdvert.success.backToPanel') }}
                 </button>
             </div>
             <div class="top-center">{{ isEdit ? 'Edytuj ogłoszenie' : 'Dodaj ogłoszenie' }}</div>
             <div class="top-right">
                 <button class="btn-draft" :class="{ 'btn-draft--saved': draftSaved }" @click="saveDraft">
-                    <v-icon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="16" />
+                    <CzIcon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="16" />
                     {{ draftSaved ? 'Zapisano!' : 'Zapisz szkic' }}
                 </button>
                 <button class="btn-close" :aria-label="$t('addAdvert.success.close')" @click="navigateTo('/my-adverts')">
-                    <v-icon icon="mdi-close" size="18" />
+                    <CzIcon icon="mdi-close" size="18" />
                 </button>
             </div>
         </div>
 
         <!-- Admin "add advert for client" mode banner -->
         <div v-if="isAdminClientMode" class="admin-client-banner">
-            <v-icon icon="mdi-account-tie-outline" size="18" />
+            <CzIcon icon="mdi-account-tie-outline" size="18" />
             <span>
                 {{ $t('addAdvert.onBehalf') }}
                 <strong>{{ adminClientDraft.fullName }}</strong> · {{ adminClientDraft.email }} · {{ adminClientDraft.phoneNumber }}
@@ -76,7 +76,7 @@
                 <span class="mobile-step-pct">{{ stepProgressPct }}%</span>
                 <button type="button" class="mobile-step-draft" :class="{ 'is-saved': draftSaved }"
                     :aria-label="draftSaved ? 'Zapisano szkic' : 'Zapisz szkic'" @click="saveDraft">
-                    <v-icon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="15" />
+                    <CzIcon :icon="draftSaved ? 'mdi-check' : 'mdi-content-save-outline'" size="15" />
                 </button>
             </div>
             <div class="mobile-step-track"
@@ -98,7 +98,7 @@
                         :class="{ 'step-active': currentStep === i, 'step-done': currentStep > i }"
                         @click="currentStep > i && (currentStep = i)">
                         <div class="step-num">
-                            <v-icon v-if="currentStep > i" icon="mdi-check" size="13" />
+                            <CzIcon v-if="currentStep > i" icon="mdi-check" size="13" />
                             <span v-else>{{ i + 1 }}</span>
                         </div>
                         <div class="step-info">
@@ -108,7 +108,7 @@
                     </div>
                 </nav>
                 <div class="sidebar-help">
-                    <v-icon icon="mdi-help-circle-outline" size="20" class="help-icon" />
+                    <CzIcon icon="mdi-help-circle-outline" size="20" class="help-icon" />
                     <div>
                         <div class="help-title">{{ $t('addAdvert.help.title') }}</div>
                         <p class="help-sub">{{ $t('addAdvert.help.text') }}</p>
@@ -135,7 +135,7 @@
                         class="progress-node"
                         :class="{ 'pn-active': currentStep === i, 'pn-done': currentStep > i }">
                         <div class="pn-icon">
-                            <v-icon :icon="ps.icon" size="16" />
+                            <CzIcon :icon="ps.icon" size="16" />
                         </div>
                         <span class="pn-label">{{ ps.label }}</span>
                         <div v-if="i < progressSteps.length - 1" class="pn-line" />
@@ -163,9 +163,9 @@
                         tokenie i ręcznej weryfikacji odpowiedzi na żywym VIN.
                     <div class="cepik-panel">
                         <button type="button" class="cepik-toggle-btn" @click="cepikOpen = !cepikOpen">
-                            <v-icon icon="mdi-database-search-outline" size="18" />
+                            <CzIcon icon="mdi-database-search-outline" size="18" />
                             <span>{{ $t('addAdvert.vin.prompt') }}</span>
-                            <v-icon :icon="cepikOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="cepik-toggle-chevron" />
+                            <CzIcon :icon="cepikOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" size="16" class="cepik-toggle-chevron" />
                         </button>
                         <transition name="fade-err">
                             <div v-if="cepikOpen" class="cepik-form">
@@ -182,15 +182,15 @@
                                 <button type="button" class="btn-cepik-search"
                                     :disabled="!cepikWojewodztwo || cepikVin.trim().length !== 17 || cepikLoading"
                                     @click="lookupCepik">
-                                    <v-icon v-if="cepikLoading" icon="mdi-loading" size="16" class="spin" />
-                                    <v-icon v-else icon="mdi-magnify" size="16" />
+                                    <CzIcon v-if="cepikLoading" icon="mdi-loading" size="16" class="spin" />
+                                    <CzIcon v-else icon="mdi-magnify" size="16" />
                                     {{ cepikLoading ? 'Szukam...' : 'Pobierz dane z CEPiK' }}
                                 </button>
                                 <div v-if="cepikError" class="cepik-error">
-                                    <v-icon icon="mdi-alert-circle-outline" size="14" />{{ cepikError }}
+                                    <CzIcon icon="mdi-alert-circle-outline" size="14" />{{ cepikError }}
                                 </div>
                                 <p class="field-hint">
-                                    <v-icon icon="mdi-information-outline" size="12" />
+                                    <CzIcon icon="mdi-information-outline" size="12" />
                                     {{ $t('addAdvert.vin.explain') }}
                                 </p>
                             </div>
@@ -207,15 +207,15 @@
                     -->
                     <transition name="fade-err">
                         <div v-if="selectedCategory" class="cat-context-bar">
-                            <span class="ccb-badge"><v-icon :icon="selectedCategory.iconName" size="15" /></span>
+                            <span class="ccb-badge"><CzIcon :icon="selectedCategory.iconName" size="15" /></span>
                             <span class="ccb-text"><strong>{{ selectedCategory.name }}</strong> {{ $t('addAdvert.category.suffix') }}</span>
-                            <v-icon icon="mdi-check-circle" size="16" class="ccb-tick" />
+                            <CzIcon icon="mdi-check-circle" size="16" class="ccb-tick" />
                         </div>
                     </transition>
 
                     <transition name="fade-err">
                         <div v-if="categoryConfig.categoryNote" class="cat-note-bar">
-                            <v-icon icon="mdi-lightbulb-outline" size="15" class="cnb-icon" />
+                            <CzIcon icon="mdi-lightbulb-outline" size="15" class="cnb-icon" />
                             <span>{{ categoryConfig.categoryNote }}</span>
                         </div>
                     </transition>
@@ -229,7 +229,7 @@
                     -->
                     <div class="field full-width">
                         <div v-if="showCatSearch" class="cat-search">
-                            <v-icon icon="mdi-magnify" size="17" class="cs-icon" />
+                            <CzIcon icon="mdi-magnify" size="17" class="cs-icon" />
                             <input
                                 v-model="catSearch"
                                 type="search"
@@ -238,7 +238,7 @@
                                 :aria-label="$t('addAdvert.category.searchPlaceholder')"
                             />
                             <button v-if="catSearch" type="button" class="cs-clear" :aria-label="$t('addAdvert.category.searchClear')" @click="catSearch = ''">
-                                <v-icon icon="mdi-close" size="15" />
+                                <CzIcon icon="mdi-close" size="15" />
                             </button>
                         </div>
 
@@ -253,16 +253,16 @@
                                 @click="onCategory(cat.id)"
                             >
                                 <span v-if="cat.advertCount" class="ccb-count">{{ cat.advertCount.toLocaleString('pl') }}</span>
-                                <span class="ccb-tickmark"><v-icon icon="mdi-check" size="13" /></span>
+                                <span class="ccb-tickmark"><CzIcon icon="mdi-check" size="13" /></span>
                                 <div class="ccb-icon-wrap">
-                                    <v-icon :icon="cat.iconName" size="24" />
+                                    <CzIcon :icon="cat.iconName" size="24" />
                                 </div>
                                 <span class="ccb-name">{{ cat.name }}</span>
                             </button>
                         </div>
 
                         <p v-if="showCatSearch && filteredCategories.length === 0" class="cat-empty">
-                            <v-icon icon="mdi-magnify-close" size="16" />
+                            <CzIcon icon="mdi-magnify-close" size="16" />
                             {{ $t('addAdvert.category.searchEmpty', { query: catSearch }) }}
                         </p>
                     </div>
@@ -318,7 +318,7 @@
                                 />
                             </template>
                             <div class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />
+                                <CzIcon icon="mdi-information-outline" size="12" />
                                 {{ categoryConfig.brandHint ?? (categoryConfig.brandFieldType === 'text' ? 'Ta kategoria nie ma jeszcze pełnej bazy marek — wpisz markę ręcznie' : `${brands.length} dostępnych marek`) }}
                             </div>
                         </div>
@@ -337,7 +337,7 @@
                                     :placeholder="`Wpisz ${(categoryConfig.modelLabel ?? 'model').toLowerCase()} (opcjonalnie)`"
                                 />
                                 <div v-if="noModelsForBrand" class="field-hint">
-                                    <v-icon icon="mdi-information-outline" size="12" />
+                                    <CzIcon icon="mdi-information-outline" size="12" />
                                     Nie mamy jeszcze listy modeli dla tej marki — możesz wpisać model ręcznie lub zostawić puste.
                                 </div>
                             </template>
@@ -352,18 +352,18 @@
                                 />
                                 <div class="field-hint">
                                     <template v-if="!form.brandId">
-                                        <v-icon icon="mdi-arrow-up-left" size="12" />
+                                        <CzIcon icon="mdi-arrow-up-left" size="12" />
                                         Najpierw wybierz {{ categoryConfig.brandLabel ?? 'markę' }}
                                     </template>
                                     <template v-else-if="models.length">
-                                        <v-icon icon="mdi-information-outline" size="12" />
+                                        <CzIcon icon="mdi-information-outline" size="12" />
                                         {{ categoryConfig.modelHint ?? `${models.length} modeli dla ${brandName}` }}
                                     </template>
                                 </div>
                                 <!-- AI hint: popular models for selected brand -->
                                 <div v-if="form.brandId && !form.modelId && models.length > 1" class="ai-hints">
                                     <span class="ai-hints-label">
-                                        <v-icon icon="mdi-lightning-bolt" size="12" />
+                                        <CzIcon icon="mdi-lightning-bolt" size="12" />
                                         Popularne:
                                     </span>
                                     <button
@@ -391,7 +391,7 @@
                                 @change="onGen"
                             />
                             <div class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ generations.length }} generacji dostępnych
+                                <CzIcon icon="mdi-information-outline" size="12" />{{ generations.length }} generacji dostępnych
                             </div>
                         </div>
 
@@ -408,7 +408,7 @@
                                 @change="onTrimChange(form.trimId)"
                             />
                             <div class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ trims.length }} wersji dostępnych
+                                <CzIcon icon="mdi-information-outline" size="12" />{{ trims.length }} wersji dostępnych
                             </div>
                         </div>
 
@@ -424,12 +424,12 @@
                                 @change="onEngineVersionChange(form.engineVersionId)"
                             />
                             <div class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ engines.length }} wersji silnika dostępnych
+                                <CzIcon icon="mdi-information-outline" size="12" />{{ engines.length }} wersji silnika dostępnych
                             </div>
                             <!-- AI hint: popular engine versions -->
                             <div v-if="!form.engineVersionId && engines.length > 1" class="ai-hints">
                                 <span class="ai-hints-label">
-                                    <v-icon icon="mdi-lightning-bolt" size="12" />
+                                    <CzIcon icon="mdi-lightning-bolt" size="12" />
                                     Popularne:
                                 </span>
                                 <button
@@ -448,7 +448,7 @@
                         <div v-if="engineSpecs" class="field full-width">
                             <div class="engine-specs-preview">
                                 <div class="esp-title">
-                                    <v-icon icon="mdi-information-outline" size="13" />
+                                    <CzIcon icon="mdi-information-outline" size="13" />
                                     Dane techniczne pobrane automatycznie
                                 </div>
                                 <div class="esp-chips">
@@ -470,16 +470,16 @@
                                 {{ categoryConfig.yearLabel ?? 'Rok produkcji' }} <span class="req">*</span>
                             </label>
                             <div class="input-icon-wrap">
-                                <v-icon icon="mdi-calendar-outline" class="input-prefix" size="16" />
+                                <CzIcon icon="mdi-calendar-outline" class="input-prefix" size="16" />
                                 <input v-model.number="form.year" type="number"
                                     :class="['finput has-prefix', fieldErrors.year ? 'finput--error' : '']"
                                     placeholder="np. 2020" min="1900" :max="new Date().getFullYear() + 1" />
                             </div>
                             <div v-if="fieldErrors.year" class="field-error">
-                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.year }}
+                                <CzIcon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.year }}
                             </div>
                             <div v-else-if="categoryConfig.yearHint" class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.yearHint }}
+                                <CzIcon icon="mdi-information-outline" size="12" />{{ categoryConfig.yearHint }}
                             </div>
                         </div>
 
@@ -488,7 +488,7 @@
                             <label class="flabel">
                                 Rodzaj paliwa <span v-if="isFieldRequired('fuelType')" class="req">*</span>
                                 <button v-if="engineLocked.fuelType" type="button" class="field-locked-badge" @click="unlockEngineField('fuelType')">
-                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                    <CzIcon icon="mdi-lock-outline" size="11" />z silnika · edytuj
                                 </button>
                             </label>
                             <SmartSelect
@@ -505,7 +505,7 @@
                             <label class="flabel">
                                 {{ categoryConfig.engineLabel ?? 'Pojemność silnika (cm³)' }}
                                 <button v-if="engineLocked.capacity" type="button" class="field-locked-badge" @click="unlockEngineField('capacity')">
-                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                    <CzIcon icon="mdi-lock-outline" size="11" />z silnika · edytuj
                                 </button>
                             </label>
                             <input v-model.number="form.engineCapacity" type="number" class="finput"
@@ -515,7 +515,7 @@
                             <!-- Podpowiedz tylko wtedy, gdy mowi cos wiecej niz placeholder -
                                  wczesniej ta sama tresc pojawiala sie dwa razy pod rzad. -->
                             <div v-if="categoryConfig.engineNote" class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.engineNote }}
+                                <CzIcon icon="mdi-information-outline" size="12" />{{ categoryConfig.engineNote }}
                             </div>
                         </div>
 
@@ -524,7 +524,7 @@
                             <label class="flabel">
                                 {{ categoryConfig.powerLabel ?? 'Moc (KM)' }}
                                 <button v-if="engineLocked.power" type="button" class="field-locked-badge" @click="unlockEngineField('power')">
-                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                    <CzIcon icon="mdi-lock-outline" size="11" />z silnika · edytuj
                                 </button>
                             </label>
                             <input v-model.number="form.power" type="number"
@@ -532,7 +532,7 @@
                                 placeholder="np. 150"
                                 :readonly="engineLocked.power" />
                             <div v-if="fieldErrors.power" class="field-error">
-                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.power }}
+                                <CzIcon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.power }}
                             </div>
                         </div>
 
@@ -541,7 +541,7 @@
                             <label class="flabel">
                                 Skrzynia biegów
                                 <button v-if="engineLocked.gearboxType" type="button" class="field-locked-badge" @click="unlockEngineField('gearboxType')">
-                                    <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                    <CzIcon icon="mdi-lock-outline" size="11" />z silnika · edytuj
                                 </button>
                             </label>
                             <SmartSelect
@@ -584,7 +584,7 @@
                                 <span v-if="isFieldRequired('mileage')" class="req">*</span>
                             </label>
                             <div class="input-icon-wrap">
-                                <v-icon
+                                <CzIcon
                                     :icon="categoryConfig.mileageLabel?.includes('mth') ? 'mdi-timer-outline' : 'mdi-speedometer'"
                                     class="input-prefix" size="16" />
                                 <input v-model.number="form.mileage" type="number" min="0" max="2000000"
@@ -592,10 +592,10 @@
                                     :placeholder="categoryConfig.mileageLabel?.includes('mth') ? 'np. 5 000' : 'np. 100 000'" />
                             </div>
                             <div v-if="fieldErrors.mileage" class="field-error">
-                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.mileage }}
+                                <CzIcon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.mileage }}
                             </div>
                             <div v-else-if="categoryConfig.mileageHint" class="field-hint">
-                                <v-icon icon="mdi-information-outline" size="12" />{{ categoryConfig.mileageHint }}
+                                <CzIcon icon="mdi-information-outline" size="12" />{{ categoryConfig.mileageHint }}
                             </div>
                         </div>
 
@@ -626,7 +626,7 @@
                                         <label class="flabel">
                                             {{ ef.label }} <span v-if="ef.required" class="req">*</span>
                                             <button v-if="efIsLocked(ef.key)" type="button" class="field-locked-badge" @click="unlockEfField(ef.key)">
-                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                                <CzIcon icon="mdi-lock-outline" size="11" />z silnika · edytuj
                                             </button>
                                         </label>
                                         <SmartSelect
@@ -636,7 +636,7 @@
                                             :placeholder="'Wybierz…'"
                                             :disabled="efIsLocked(ef.key)"
                                         />
-                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                        <div v-if="ef.hint" class="field-hint"><CzIcon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
 
                                     <!-- Number -->
@@ -644,7 +644,7 @@
                                         <label class="flabel">
                                             {{ ef.label }} <span v-if="ef.required" class="req">*</span>
                                             <button v-if="efIsLocked(ef.key)" type="button" class="field-locked-badge" @click="unlockEfField(ef.key)">
-                                                <v-icon icon="mdi-lock-outline" size="11" />z silnika · edytuj
+                                                <CzIcon icon="mdi-lock-outline" size="11" />z silnika · edytuj
                                             </button>
                                         </label>
                                         <div class="input-unit-wrap">
@@ -654,7 +654,7 @@
                                                 :readonly="efIsLocked(ef.key)" />
                                             <span v-if="ef.unit" class="input-unit-badge">{{ ef.unit }}</span>
                                         </div>
-                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                        <div v-if="ef.hint" class="field-hint"><CzIcon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
 
                                     <!-- Text -->
@@ -662,7 +662,7 @@
                                         <label class="flabel">{{ ef.label }} <span v-if="ef.required" class="req">*</span></label>
                                         <input v-model="extras[ef.key]" type="text" class="finput"
                                             :placeholder="ef.placeholder ?? ''" />
-                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                        <div v-if="ef.hint" class="field-hint"><CzIcon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
 
                                     <!-- Color picker -->
@@ -675,7 +675,7 @@
                                                 type="button"
                                                 @click="extras[ef.key] = null"
                                             >
-                                                <span class="ef-color-dot ef-color-dot--clear"><v-icon icon="mdi-close" size="13" /></span>
+                                                <span class="ef-color-dot ef-color-dot--clear"><CzIcon icon="mdi-close" size="13" /></span>
                                                 <span class="ef-color-card-label">Dowolny</span>
                                             </button>
                                             <button
@@ -687,7 +687,7 @@
                                                 @click="extras[ef.key] = extras[ef.key] === col.id ? null : col.id"
                                             >
                                                 <span class="ef-color-dot" :style="{ background: col.hexCode || '#888', color: isLightHex(col.hexCode) ? '#111' : '#fff' }">
-                                                    <v-icon v-if="extras[ef.key] === col.id" icon="mdi-check" size="14" />
+                                                    <CzIcon v-if="extras[ef.key] === col.id" icon="mdi-check" size="14" />
                                                 </span>
                                                 <span class="ef-color-card-label">{{ col.name }}</span>
                                             </button>
@@ -707,7 +707,7 @@
                                                 @click="extras[ef.key] = extras[ef.key] === opt.value ? null : opt.value"
                                             >
                                                 <span class="ef-finish-swatch" :style="{ background: FINISH_SWATCHES[opt.value] }">
-                                                    <v-icon v-if="extras[ef.key] === opt.value" icon="mdi-check" size="16" />
+                                                    <CzIcon v-if="extras[ef.key] === opt.value" icon="mdi-check" size="16" />
                                                 </span>
                                                 <span class="ef-finish-card-label">{{ opt.label }}</span>
                                             </button>
@@ -719,7 +719,7 @@
                                         <label class="bool-check" :class="{ active: extras[ef.key] }">
                                             <input type="checkbox" v-model="extras[ef.key]" hidden />
                                             <span class="bool-box">
-                                                <v-icon v-if="extras[ef.key]" icon="mdi-check" size="12" />
+                                                <CzIcon v-if="extras[ef.key]" icon="mdi-check" size="12" />
                                             </span>
                                             {{ ef.label }}
                                         </label>
@@ -773,7 +773,7 @@
                                 <div class="field">
                                     <label class="flabel">Numer OEM</label>
                                     <input v-model="form.oemNumber" type="text" class="finput" placeholder="np. 3C0853630A" />
-                                    <div class="field-hint"><v-icon icon="mdi-information-outline" size="12" />Numer oryginalny części od producenta pojazdu</div>
+                                    <div class="field-hint"><CzIcon icon="mdi-information-outline" size="12" />Numer oryginalny części od producenta pojazdu</div>
                                 </div>
                                 <div class="field">
                                     <label class="flabel">Numer katalogowy producenta części</label>
@@ -813,13 +813,13 @@
                                         clearable
                                     />
                                     <button type="button" class="btn-compat-add" :disabled="!compatBrandId" @click="addCompatibility">
-                                        <v-icon icon="mdi-plus" size="15" />Dodaj
+                                        <CzIcon icon="mdi-plus" size="15" />Dodaj
                                     </button>
                                 </div>
                                 <div v-if="form.compatibilities.length" class="compat-list">
                                     <span v-for="(c, idx) in form.compatibilities" :key="idx" class="compat-chip">
                                         {{ [c.brandName, c.modelName, c.generationName].filter(Boolean).join(' ') }}
-                                        <button type="button" @click="removeCompatibility(idx)"><v-icon icon="mdi-close" size="12" /></button>
+                                        <button type="button" @click="removeCompatibility(idx)"><CzIcon icon="mdi-close" size="12" /></button>
                                     </span>
                                 </div>
                             </div>
@@ -857,7 +857,7 @@
                                             :options="(ef.options ?? []).map(o => ({ value: o.value, label: o.label }))"
                                             :placeholder="'Wybierz…'"
                                         />
-                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                        <div v-if="ef.hint" class="field-hint"><CzIcon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
 
                                     <!-- Number -->
@@ -869,7 +869,7 @@
                                                 :placeholder="ef.placeholder ?? ''" />
                                             <span v-if="ef.unit" class="input-unit-badge">{{ ef.unit }}</span>
                                         </div>
-                                        <div v-if="ef.hint" class="field-hint"><v-icon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
+                                        <div v-if="ef.hint" class="field-hint"><CzIcon icon="mdi-information-outline" size="12" />{{ ef.hint }}</div>
                                     </div>
 
                                 </template>
@@ -905,7 +905,7 @@
 
                     <!-- ── VIN & Identification ── -->
                     <div v-if="categoryConfig.showVinSection !== false" class="hist-section">
-                        <div class="hist-section-title"><v-icon icon="mdi-barcode-scan" size="16" />Identyfikacja pojazdu</div>
+                        <div class="hist-section-title"><CzIcon icon="mdi-barcode-scan" size="16" />Identyfikacja pojazdu</div>
                         <div class="fields-grid">
                             <div class="field full-width">
                                 <label class="flabel">Numer VIN <span class="req req--optional">zalecany</span></label>
@@ -915,22 +915,22 @@
                                     <button type="button" class="btn-vin-lookup"
                                         :disabled="form.vin.length !== 17 || vinLoading"
                                         @click="lookupVin">
-                                        <v-icon v-if="vinLoading" icon="mdi-loading" size="16" class="spin" />
-                                        <v-icon v-else icon="mdi-magnify" size="16" />
+                                        <CzIcon v-if="vinLoading" icon="mdi-loading" size="16" class="spin" />
+                                        <CzIcon v-else icon="mdi-magnify" size="16" />
                                         {{ vinLoading ? 'Sprawdzam...' : 'Sprawdź VIN' }}
                                     </button>
                                 </div>
                                 <transition name="fade-err">
                                     <span v-if="fieldErrors.vin || vinError" class="vin-error">
-                                        <v-icon icon="mdi-alert-circle-outline" size="14" />{{ fieldErrors.vin || vinError }}
+                                        <CzIcon icon="mdi-alert-circle-outline" size="14" />{{ fieldErrors.vin || vinError }}
                                     </span>
                                 </transition>
-                                <p class="field-hint"><v-icon icon="mdi-information-outline" size="12" />VIN pozwala automatycznie uzupełnić dane i buduje zaufanie kupujących. Ogłoszenie bez VIN nadal można opublikować, ale nie dostanie plakietki "VIN zweryfikowany".</p>
+                                <p class="field-hint"><CzIcon icon="mdi-information-outline" size="12" />VIN pozwala automatycznie uzupełnić dane i buduje zaufanie kupujących. Ogłoszenie bez VIN nadal można opublikować, ale nie dostanie plakietki "VIN zweryfikowany".</p>
                             </div>
                             <div class="field">
                                 <label class="flabel">Pierwsza data rejestracji</label>
                                 <input v-model="history.firstRegDate" type="date" class="finput" />
-                                <div class="field-hint"><v-icon icon="mdi-information-outline" size="12" />Data pierwszej rejestracji pojazdu</div>
+                                <div class="field-hint"><CzIcon icon="mdi-information-outline" size="12" />Data pierwszej rejestracji pojazdu</div>
                             </div>
                             <div class="field">
                                 <label class="flabel">Kraj rejestracji</label>
@@ -953,7 +953,7 @@
                                         <option value="JP">Japonia</option>
                                         <option value="other">Inny</option>
                                     </select>
-                                    <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                                    <CzIcon icon="mdi-chevron-down" class="sel-arrow" size="16" />
                                 </div>
                             </div>
                         </div>
@@ -962,7 +962,7 @@
                     <!-- ── Ownership & History ── -->
                     <template v-if="categoryConfig.showHistorySection !== false">
                     <div class="hist-section">
-                        <div class="hist-section-title"><v-icon icon="mdi-account-multiple-outline" size="16" />Właściciele i import</div>
+                        <div class="hist-section-title"><CzIcon icon="mdi-account-multiple-outline" size="16" />Właściciele i import</div>
                         <div class="fields-grid">
                             <div class="field">
                                 <label class="flabel">Liczba właścicieli</label>
@@ -975,7 +975,7 @@
                                         <option :value="4">4 właściciele</option>
                                         <option :value="5">5+ właścicieli</option>
                                     </select>
-                                    <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                                    <CzIcon icon="mdi-chevron-down" class="sel-arrow" size="16" />
                                 </div>
                             </div>
                             <div class="field">
@@ -1002,24 +1002,24 @@
 
                     <!-- ── Service ── -->
                     <div class="hist-section">
-                        <div class="hist-section-title"><v-icon icon="mdi-wrench-outline" size="16" />Serwis i przeglądy</div>
+                        <div class="hist-section-title"><CzIcon icon="mdi-wrench-outline" size="16" />Serwis i przeglądy</div>
                         <div class="fields-grid">
                             <div class="field">
                                 <label class="flabel">Następny przegląd techniczny</label>
                                 <input v-model="history.nextInspection" type="month" class="finput" />
-                                <div class="field-hint"><v-icon icon="mdi-information-outline" size="12" />Miesiąc i rok kolejnego badania</div>
+                                <div class="field-hint"><CzIcon icon="mdi-information-outline" size="12" />Miesiąc i rok kolejnego badania</div>
                             </div>
                             <div class="field">
                                 <label class="flabel">Dokumentacja serwisowa</label>
                                 <div class="bool-stack">
                                     <label class="bool-check" :class="{ active: history.hasServiceBook }">
                                         <input type="checkbox" v-model="history.hasServiceBook" hidden />
-                                        <span class="bool-box"><v-icon v-if="history.hasServiceBook" icon="mdi-check" size="12" /></span>
+                                        <span class="bool-box"><CzIcon v-if="history.hasServiceBook" icon="mdi-check" size="12" /></span>
                                         Książka serwisowa
                                     </label>
                                     <label class="bool-check" :class="{ active: history.hasFullServiceHistory }">
                                         <input type="checkbox" v-model="history.hasFullServiceHistory" hidden />
-                                        <span class="bool-box"><v-icon v-if="history.hasFullServiceHistory" icon="mdi-check" size="12" /></span>
+                                        <span class="bool-box"><CzIcon v-if="history.hasFullServiceHistory" icon="mdi-check" size="12" /></span>
                                         Pełna historia ASO
                                     </label>
                                 </div>
@@ -1029,18 +1029,18 @@
 
                     <!-- ── Damage & Warranty ── -->
                     <div class="hist-section">
-                        <div class="hist-section-title"><v-icon icon="mdi-shield-check-outline" size="16" />Szkody i gwarancja</div>
+                        <div class="hist-section-title"><CzIcon icon="mdi-shield-check-outline" size="16" />Szkody i gwarancja</div>
                         <div class="fields-grid">
                             <div class="field">
                                 <label class="flabel">Czy pojazd był po wypadku lub szkodzie?</label>
                                 <div class="radio-group">
                                     <label class="radio-opt" :class="{ active: !history.hasDamage }">
                                         <input type="radio" :value="false" v-model="history.hasDamage" hidden />
-                                        <v-icon icon="mdi-check-circle-outline" size="13" style="margin-right:4px;color:#4ade80" />Bezwypadkowy
+                                        <CzIcon icon="mdi-check-circle-outline" size="13" style="margin-right:4px;color:#4ade80" />Bezwypadkowy
                                     </label>
                                     <label class="radio-opt" :class="{ active: history.hasDamage }">
                                         <input type="radio" :value="true" v-model="history.hasDamage" hidden />
-                                        <v-icon icon="mdi-alert-outline" size="13" style="margin-right:4px;color:#fb923c" />Po szkodzie
+                                        <CzIcon icon="mdi-alert-outline" size="13" style="margin-right:4px;color:#fb923c" />Po szkodzie
                                     </label>
                                 </div>
                             </div>
@@ -1056,7 +1056,7 @@
                                 <div class="bool-stack">
                                     <label class="bool-check" :class="{ active: history.hasWarranty }">
                                         <input type="checkbox" v-model="history.hasWarranty" hidden />
-                                        <span class="bool-box"><v-icon v-if="history.hasWarranty" icon="mdi-check" size="12" /></span>
+                                        <span class="bool-box"><CzIcon v-if="history.hasWarranty" icon="mdi-check" size="12" /></span>
                                         Gwarancja aktywna
                                     </label>
                                 </div>
@@ -1071,12 +1071,12 @@
                     </div>
 
                     <div class="hist-section">
-                        <div class="hist-section-title"><v-icon icon="mdi-certificate" size="16" />Homologacja</div>
+                        <div class="hist-section-title"><CzIcon icon="mdi-certificate" size="16" />Homologacja</div>
                         <div class="fields-grid">
                             <div class="field">
                                 <label class="bool-check" :class="{ active: form.hasHomologation }">
                                     <input type="checkbox" v-model="form.hasHomologation" hidden />
-                                    <span class="bool-box"><v-icon v-if="form.hasHomologation" icon="mdi-check" size="12" /></span>
+                                    <span class="bool-box"><CzIcon v-if="form.hasHomologation" icon="mdi-check" size="12" /></span>
                                     Pojazd posiada homologację
                                 </label>
                             </div>
@@ -1090,7 +1090,7 @@
                     </div>
 
                     <div class="hist-quality-tip">
-                        <v-icon icon="mdi-trophy-outline" size="16" class="hq-icon" />
+                        <CzIcon icon="mdi-trophy-outline" size="16" class="hq-icon" />
                         <div>
                             <div class="hq-title">Kompletna historia = szybsza sprzedaż</div>
                             <div class="hq-sub">Ogłoszenia z VIN i historią serwisową sprzedają się nawet 40% szybciej.</div>
@@ -1100,11 +1100,11 @@
 
                     <!-- ── "Inne" (Other) Category Custom Form ── -->
                     <template v-if="isOtherCategorySelected">
-                        <v-divider class="my-4" />
+                        <hr class="form-rule" />
                         <div class="hist-section">
-                            <div class="hist-section-title"><v-icon icon="mdi-shape-plus-outline" size="16" />Kategoria niestandardowa</div>
+                            <div class="hist-section-title"><CzIcon icon="mdi-shape-plus-outline" size="16" />Kategoria niestandardowa</div>
                             <p class="field-hint" style="margin-bottom:12px">
-                                <v-icon icon="mdi-information-outline" size="12" />
+                                <CzIcon icon="mdi-information-outline" size="12" />
                                 Opisz rodzaj pojazdu/maszyny. Nasz admin zweryfikuje i zatwierdzi kategorię.
                             </p>
 
@@ -1147,11 +1147,11 @@
                                             placeholder="np. 500cc"
                                         />
                                         <button type="button" class="other-param-remove" @click="removeOtherParameter(idx)">
-                                            <v-icon icon="mdi-delete-outline" size="16" />
+                                            <CzIcon icon="mdi-delete-outline" size="16" />
                                         </button>
                                     </div>
                                     <button type="button" class="other-param-add" @click="addOtherParameter">
-                                        <v-icon icon="mdi-plus" size="14" />
+                                        <CzIcon icon="mdi-plus" size="14" />
                                         Dodaj parametr
                                     </button>
                                 </div>
@@ -1163,14 +1163,14 @@
                                     :disabled="otherCategorySubmitting || !otherCategoryForm.categoryName.trim()"
                                     @click="submitOtherCategory"
                                 >
-                                    <v-icon v-if="otherCategorySubmitting" icon="mdi-loading" size="15" class="spin" />
-                                    <v-icon v-else icon="mdi-send-outline" size="15" />
+                                    <CzIcon v-if="otherCategorySubmitting" icon="mdi-loading" size="15" class="spin" />
+                                    <CzIcon v-else icon="mdi-send-outline" size="15" />
                                     {{ otherCategorySubmitting ? 'Wysyłanie...' : 'Wyślij do weryfikacji' }}
                                 </button>
                             </template>
 
                             <div v-else class="other-cat-success">
-                                <v-icon icon="mdi-check-circle-outline" size="20" />
+                                <CzIcon icon="mdi-check-circle-outline" size="20" />
                                 <div>
                                     <div class="hq-title">Wniosek wysłany!</div>
                                     <div class="hq-sub">Nasz admin sprawdzi i zatwierdzi Twoją kategorię. Otrzymasz powiadomienie.</div>
@@ -1200,8 +1200,8 @@
                             <button type="button" class="img-remove"
                                 :disabled="deletingImageId === img.id"
                                 @click="deleteExistingImage(img.id)">
-                                <v-icon v-if="deletingImageId === img.id" icon="mdi-loading" size="14" class="spin" />
-                                <v-icon v-else icon="mdi-close" size="14" />
+                                <CzIcon v-if="deletingImageId === img.id" icon="mdi-loading" size="14" class="spin" />
+                                <CzIcon v-else icon="mdi-close" size="14" />
                             </button>
                             <span v-if="img.isMain" class="img-main-badge">Główne</span>
                         </div>
@@ -1220,20 +1220,20 @@
                         >
                             <img :src="preview" :alt="`Zdjęcie ${i + 1}`" loading="lazy" decoding="async" />
                             <button type="button" class="img-remove" :aria-label="`Usuń zdjęcie ${i + 1}`" @click="removeImage(i)">
-                                <v-icon icon="mdi-close" size="14" />
+                                <CzIcon icon="mdi-close" size="14" />
                             </button>
                             <span v-if="!existingImages.length && i === 0" class="img-main-badge">Główne</span>
-                            <span class="img-drag-hint"><v-icon icon="mdi-drag" size="13" /></span>
+                            <span class="img-drag-hint"><CzIcon icon="mdi-drag" size="13" /></span>
                         </div>
                         <label v-if="(existingImages.length + selectedFiles.length) < 50" class="img-add" :class="{ 'img-add--loading': photoUploading }">
                             <input type="file" multiple accept="image/jpeg,image/png,image/webp" @change="onFilesSelected" :disabled="photoUploading" hidden />
-                            <v-icon v-if="photoUploading" icon="mdi-loading" size="28" class="spin" />
-                            <v-icon v-else icon="mdi-plus" size="28" />
+                            <CzIcon v-if="photoUploading" icon="mdi-loading" size="28" class="spin" />
+                            <CzIcon v-else icon="mdi-plus" size="28" />
                             <span>{{ photoUploading ? 'Przetwarzanie...' : 'Dodaj zdjęcia' }}</span>
                         </label>
                         <!-- Drop zone hint when no files yet -->
                         <div v-if="!previews.length && !existingImages.length" class="img-drop-hint">
-                            <v-icon icon="mdi-cloud-upload-outline" size="32" />
+                            <CzIcon icon="mdi-cloud-upload-outline" size="32" />
                             <span>Przeciągnij zdjęcia tutaj lub kliknij „Dodaj zdjęcia"</span>
                         </div>
                     </div>
@@ -1241,7 +1241,7 @@
                     <!-- AI Photo Quality Analysis -->
                     <div v-if="previews.length > 0" class="photo-ai-section">
                         <div class="photo-ai-title">
-                            <v-icon icon="mdi-image-search-outline" size="14" />
+                            <CzIcon icon="mdi-image-search-outline" size="14" />
                             Analiza jakości zdjęć
                         </div>
                         <div v-for="(preview, index) in previews" :key="`ai-${index}`" class="photo-ai-item">
@@ -1252,7 +1252,7 @@
                             <div class="photo-ai-content">
                                 <div v-if="photoAnalysisResults[index]">
                                     <div v-if="photoAnalysisResults[index].loading" class="photo-ai-loading">
-                                        <v-progress-circular indeterminate size="20" color="primary" />
+                                        <CzSpinner :size="20" :color="'#8B0D1D'" />
                                         <span>Analizuję...</span>
                                     </div>
                                     <template v-else>
@@ -1282,7 +1282,7 @@
                                     @click="analyzePhoto(index, selectedFiles[index])"
                                     class="photo-ai-btn"
                                 >
-                                    <v-icon icon="mdi-magnify" size="14" class="mr-1" />
+                                    <CzIcon icon="mdi-magnify" size="14" class="mr-1" />
                                     Analizuj jakość
                                 </v-btn>
                             </div>
@@ -1292,15 +1292,15 @@
                     <!-- Photo quality feedback -->
                     <div class="photo-hints">
                         <div class="photo-hint" :class="photoFeedback.mainOk ? 'ph-ok' : 'ph-warn'">
-                            <v-icon :icon="photoFeedback.mainOk ? 'mdi-check-circle' : 'mdi-alert-circle-outline'" size="14" />
+                            <CzIcon :icon="photoFeedback.mainOk ? 'mdi-check-circle' : 'mdi-alert-circle-outline'" size="14" />
                             {{ photoFeedback.mainOk ? 'Zdjęcie główne ustawione' : 'Brak zdjęcia głównego — pierwsze zdjęcie będzie głównym' }}
                         </div>
                         <div class="photo-hint" :class="photoFeedback.countClass">
-                            <v-icon :icon="photoFeedback.countIcon" size="14" />
+                            <CzIcon :icon="photoFeedback.countIcon" size="14" />
                             {{ photoFeedback.countMsg }}
                         </div>
                         <div v-if="photoFeedback.lowQuality.length" class="photo-hint ph-warn">
-                            <v-icon icon="mdi-image-size-select-large" size="14" />
+                            <CzIcon icon="mdi-image-size-select-large" size="14" />
                             {{ photoFeedback.lowQuality.length }} zdjęcie(-a) mają niską rozdzielczość (poniżej 800px)
                         </div>
                     </div>
@@ -1308,45 +1308,45 @@
                     <!-- PDF Brochure Upload -->
                     <div class="pdf-section">
                         <div class="pdf-section-title">
-                            <v-icon icon="mdi-file-pdf-box" size="16" style="color:#e53e3e" />
+                            <CzIcon icon="mdi-file-pdf-box" size="16" style="color:#e53e3e" />
                             Broszura PDF
                             <span class="flabel-opt">(opcjonalnie)</span>
                         </div>
                         <div class="pdf-section-desc">Dodaj PDF z pełną specyfikacją, historią serwisową lub ofertą finansową.</div>
 
                         <div v-if="form.pdfBrochureUrl && form.pdfBrochureUrl !== '__pending__'" class="pdf-uploaded">
-                            <v-icon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <CzIcon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
                             <div class="pdf-info">
                                 <div class="pdf-name">{{ pdfFileName || 'Broszura.pdf' }}</div>
                                 <a :href="form.pdfBrochureUrl" target="_blank" rel="noopener noreferrer" class="pdf-view-link">
-                                    <v-icon icon="mdi-open-in-new" size="12" />Podgląd
+                                    <CzIcon icon="mdi-open-in-new" size="12" />Podgląd
                                 </a>
                             </div>
                             <button type="button" class="pdf-remove-btn" @click="removePdf">
-                                <v-icon icon="mdi-close" size="15" />
+                                <CzIcon icon="mdi-close" size="15" />
                             </button>
                         </div>
 
                         <div v-else-if="form.pdfBrochureUrl === '__pending__'" class="pdf-uploaded pdf-pending">
-                            <v-icon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <CzIcon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
                             <div class="pdf-info">
                                 <div class="pdf-name">{{ pdfFileName }}</div>
                                 <div class="pdf-pending-label">Zostanie przesłany po publikacji</div>
                             </div>
                             <button type="button" class="pdf-remove-btn" @click="removePdf">
-                                <v-icon icon="mdi-close" size="15" />
+                                <CzIcon icon="mdi-close" size="15" />
                             </button>
                         </div>
 
                         <label v-else class="pdf-upload-btn" :class="{ 'pdf-upload-btn--loading': pdfUploading }">
                             <input type="file" accept="application/pdf" @change="onPdfSelected" :disabled="pdfUploading" hidden />
-                            <v-icon :icon="pdfUploading ? 'mdi-loading' : 'mdi-upload'" size="16" :class="{ spin: pdfUploading }" />
+                            <CzIcon :icon="pdfUploading ? 'mdi-loading' : 'mdi-upload'" size="16" :class="{ spin: pdfUploading }" />
                             {{ pdfUploading ? 'Wysyłanie...' : 'Wybierz plik PDF (maks. 25 MB)' }}
                         </label>
 
                         <transition name="fade-err">
                             <div v-if="pdfUploadError" class="pdf-error">
-                                <v-icon icon="mdi-alert-circle-outline" size="13" />{{ pdfUploadError }}
+                                <CzIcon icon="mdi-alert-circle-outline" size="13" />{{ pdfUploadError }}
                             </div>
                         </transition>
                     </div>
@@ -1368,34 +1368,34 @@
                         />
                     </div>
                     <div v-if="!featuresLoaded" class="feat-empty">
-                        <v-icon icon="mdi-loading" size="40" class="spin" />
+                        <CzIcon icon="mdi-loading" size="40" class="spin" />
                         <p>Ładowanie wyposażenia...</p>
                     </div>
                     <div v-else-if="featuresLoadFailed" class="feat-empty">
-                        <v-icon icon="mdi-alert-circle-outline" size="36" style="color: #f87171" />
+                        <CzIcon icon="mdi-alert-circle-outline" size="36" style="color: #f87171" />
                         <p>Nie udało się wczytać listy wyposażenia. Spróbuj ponownie.</p>
                         <button type="button" class="btn-next" style="margin-top:16px" @click="loadContextFeatures">
-                            <v-icon icon="mdi-refresh" size="15" /> Spróbuj ponownie
+                            <CzIcon icon="mdi-refresh" size="15" /> Spróbuj ponownie
                         </button>
                     </div>
                     <div v-else-if="!allFeatures.length" class="feat-empty">
-                        <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
+                        <CzIcon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
                         <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>{{ $t('addAdvert.details.heading') }}</strong>.</p>
                         <button type="button" class="btn-next" style="margin-top:16px" @click="currentStep++">
-                            Przejdź dalej <v-icon icon="mdi-arrow-right" size="15" />
+                            Przejdź dalej <CzIcon icon="mdi-arrow-right" size="15" />
                         </button>
                     </div>
                     <div v-else-if="allFeatures.length && !Object.keys(featureGroups).length" class="feat-empty">
-                        <v-icon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
+                        <CzIcon icon="mdi-check-circle-outline" size="36" style="color: #4ade80" />
                         <p>Ta kategoria nie wymaga listy wyposażenia.<br>Szczegóły techniczne podajesz w sekcji <strong>{{ $t('addAdvert.details.heading') }}</strong>.</p>
                         <button type="button" class="btn-next" style="margin-top:16px" @click="currentStep++">
-                            Przejdź dalej <v-icon icon="mdi-arrow-right" size="15" />
+                            Przejdź dalej <CzIcon icon="mdi-arrow-right" size="15" />
                         </button>
                     </div>
                     <template v-else>
                         <!-- Equipment search bar -->
                         <div class="feat-search-wrap">
-                            <v-icon icon="mdi-magnify" size="16" class="feat-search-icon" />
+                            <CzIcon icon="mdi-magnify" size="16" class="feat-search-icon" />
                             <input
                                 v-model="featSearch"
                                 class="feat-search-input"
@@ -1404,21 +1404,21 @@
                                 @keydown.escape="featSearch = ''"
                             />
                             <button v-if="featSearch" type="button" class="feat-search-clear" @click="featSearch = ''">
-                                <v-icon icon="mdi-close" size="14" />
+                                <CzIcon icon="mdi-close" size="14" />
                             </button>
                         </div>
                         <!-- expand/collapse controls -->
                         <div class="equip-controls">
                             <button type="button" class="equip-ctrl-btn" @click="expandAllEquip">
-                                <v-icon icon="mdi-unfold-more-horizontal" size="13" />Rozwiń wszystkie
+                                <CzIcon icon="mdi-unfold-more-horizontal" size="13" />Rozwiń wszystkie
                             </button>
                             <button type="button" class="equip-ctrl-btn" @click="collapseAllEquip">
-                                <v-icon icon="mdi-unfold-less-horizontal" size="13" />Zwiń wszystkie
+                                <CzIcon icon="mdi-unfold-less-horizontal" size="13" />Zwiń wszystkie
                             </button>
                         </div>
 
                         <div v-if="featSearch && !Object.keys(filteredFeatureGroups).length" class="feat-empty" style="padding:24px 0">
-                            <v-icon icon="mdi-magnify-close" size="32" />
+                            <CzIcon icon="mdi-magnify-close" size="32" />
                             <p>Brak wyposażenia pasującego do „{{ featSearch }}"</p>
                         </div>
                         <div v-for="(group, cat) in filteredFeatureGroups" :key="cat" class="feat-group">
@@ -1426,14 +1426,14 @@
                                 :class="{ 'fgh-open': openFeatGroups.has(String(cat)) || !!featSearch }"
                                 @click="toggleFeatGroup(String(cat))">
                                 <div class="fgh-left">
-                                    <v-icon :icon="featureGroupIcon(String(cat))" size="15" />
+                                    <CzIcon :icon="featureGroupIcon(String(cat))" size="15" />
                                     <span class="fgh-name">{{ cat }}</span>
                                     <span class="feat-group-count"
                                         :class="{ 'fgc-has': group.filter(f => form.featureIds.includes(f.id)).length > 0 }">
                                         {{ group.filter(f => form.featureIds.includes(f.id)).length }}/{{ group.length }}
                                     </span>
                                 </div>
-                                <v-icon class="fgh-arrow" icon="mdi-chevron-down" size="16" />
+                                <CzIcon class="fgh-arrow" icon="mdi-chevron-down" size="16" />
                             </button>
                             <Transition name="equip-collapse">
                                 <div v-if="openFeatGroups.has(String(cat)) || !!featSearch" class="feat-badges">
@@ -1445,7 +1445,7 @@
                                         :class="{ 'feat-badge--on': form.featureIds.includes(feat.id) }"
                                         @click="toggleFeature(feat.id)"
                                     >
-                                        <v-icon v-if="form.featureIds.includes(feat.id)" icon="mdi-check" size="12" class="feat-badge-icon" />
+                                        <CzIcon v-if="form.featureIds.includes(feat.id)" icon="mdi-check" size="12" class="feat-badge-icon" />
                                         <span v-html="highlightSearch(feat.name)" />
                                     </button>
                                 </div>
@@ -1453,10 +1453,10 @@
                         </div>
                     </template>
                     <div v-if="form.featureIds.length" class="feat-summary-bar">
-                        <v-icon icon="mdi-check-circle-outline" size="16" />
+                        <CzIcon icon="mdi-check-circle-outline" size="16" />
                         Zaznaczono {{ form.featureIds.length }} pozycji wyposażenia
                         <button type="button" class="feat-clear-btn" @click="form.featureIds = []">
-                            <v-icon icon="mdi-close" size="12" /> Wyczyść
+                            <CzIcon icon="mdi-close" size="12" /> Wyczyść
                         </button>
                     </div>
                 </div>
@@ -1472,7 +1472,7 @@
                         <div class="verified-item" :class="{ 'verified-item--filled': form.vin }">
                             <div class="vi-header">
                                 <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': form.vin }">
-                                    <v-icon :icon="form.vin ? 'mdi-check' : 'mdi-barcode'" size="18" />
+                                    <CzIcon :icon="form.vin ? 'mdi-check' : 'mdi-barcode'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">{{ $t('addAdvert.vin.label') }}</div>
@@ -1487,7 +1487,7 @@
                         <div class="verified-item" :class="{ 'verified-item--filled': history.isFirstOwner }">
                             <div class="vi-header">
                                 <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.isFirstOwner }">
-                                    <v-icon :icon="history.isFirstOwner ? 'mdi-check' : 'mdi-account-key-outline'" size="18" />
+                                    <CzIcon :icon="history.isFirstOwner ? 'mdi-check' : 'mdi-account-key-outline'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">Pierwszy właściciel</div>
@@ -1509,7 +1509,7 @@
                         <div class="verified-item" :class="{ 'verified-item--filled': !history.hasDamage }">
                             <div class="vi-header">
                                 <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': !history.hasDamage }">
-                                    <v-icon :icon="!history.hasDamage ? 'mdi-check' : 'mdi-shield-car'" size="18" />
+                                    <CzIcon :icon="!history.hasDamage ? 'mdi-check' : 'mdi-shield-car'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">Bezwypadkowy</div>
@@ -1529,7 +1529,7 @@
                         <div class="verified-item" :class="{ 'verified-item--filled': history.hasServiceBook }">
                             <div class="vi-header">
                                 <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.hasServiceBook }">
-                                    <v-icon :icon="history.hasServiceBook ? 'mdi-check' : 'mdi-book-open-outline'" size="18" />
+                                    <CzIcon :icon="history.hasServiceBook ? 'mdi-check' : 'mdi-book-open-outline'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">Książka serwisowa</div>
@@ -1549,7 +1549,7 @@
                         <div class="verified-item" :class="{ 'verified-item--filled': history.servicedAtASO }">
                             <div class="vi-header">
                                 <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.servicedAtASO }">
-                                    <v-icon :icon="history.servicedAtASO ? 'mdi-check' : 'mdi-wrench-outline'" size="18" />
+                                    <CzIcon :icon="history.servicedAtASO ? 'mdi-check' : 'mdi-wrench-outline'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">Serwisowany w ASO</div>
@@ -1569,7 +1569,7 @@
                         <div class="verified-item" :class="{ 'verified-item--filled': history.ownersCount !== null }">
                             <div class="vi-header">
                                 <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.ownersCount !== null }">
-                                    <v-icon :icon="history.ownersCount !== null ? 'mdi-check' : 'mdi-account-group-outline'" size="18" />
+                                    <CzIcon :icon="history.ownersCount !== null ? 'mdi-check' : 'mdi-account-group-outline'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">Liczba właścicieli</div>
@@ -1591,7 +1591,7 @@
                         <div class="verified-item" :class="{ 'verified-item--filled': history.isGaraged }">
                             <div class="vi-header">
                                 <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.isGaraged }">
-                                    <v-icon :icon="history.isGaraged ? 'mdi-check' : 'mdi-garage-outline'" size="18" />
+                                    <CzIcon :icon="history.isGaraged ? 'mdi-check' : 'mdi-garage'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">Garażowany</div>
@@ -1611,7 +1611,7 @@
                         <div class="verified-item" :class="{ 'verified-item--filled': history.keyCount !== null }">
                             <div class="vi-header">
                                 <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.keyCount !== null }">
-                                    <v-icon :icon="history.keyCount !== null ? 'mdi-check' : 'mdi-key-outline'" size="18" />
+                                    <CzIcon :icon="history.keyCount !== null ? 'mdi-check' : 'mdi-key-outline'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">Liczba kluczyków</div>
@@ -1632,7 +1632,7 @@
                         <div class="verified-item" :class="{ 'verified-item--filled': history.insuranceUntil }">
                             <div class="vi-header">
                                 <div class="vi-icon-wrap" :class="{ 'vi-icon-wrap--done': history.insuranceUntil }">
-                                    <v-icon :icon="history.insuranceUntil ? 'mdi-check' : 'mdi-shield-car'" size="18" />
+                                    <CzIcon :icon="history.insuranceUntil ? 'mdi-check' : 'mdi-shield-car'" size="18" />
                                 </div>
                                 <div class="vi-texts">
                                     <div class="vi-title">OC ważne do</div>
@@ -1646,7 +1646,7 @@
                     <!-- Carizo verified summary -->
                     <div class="cverified-summary">
                         <div class="cvs-icon">
-                            <v-icon icon="mdi-shield-star-outline" size="24" />
+                            <CzIcon icon="mdi-shield-star-outline" size="24" />
                         </div>
                         <div>
                             <div class="cvs-title">CARIZO VERIFIED</div>
@@ -1671,12 +1671,12 @@
                         <div class="radio-group">
                             <label class="radio-opt" :class="{ active: form.sellerType === 'private' }">
                                 <input type="radio" name="sellerType" value="private" v-model="form.sellerType" hidden />
-                                <v-icon icon="mdi-account-outline" size="14" style="margin-right:5px" />
+                                <CzIcon icon="mdi-account-outline" size="14" style="margin-right:5px" />
                                 Osoba prywatna
                             </label>
                             <label class="radio-opt" :class="{ active: form.sellerType === 'dealer' }">
                                 <input type="radio" name="sellerType" value="dealer" v-model="form.sellerType" hidden />
-                                <v-icon icon="mdi-store-outline" size="14" style="margin-right:5px" />
+                                <CzIcon icon="mdi-store-outline" size="14" style="margin-right:5px" />
                                 Dealer / Firma
                             </label>
                         </div>
@@ -1689,13 +1689,13 @@
                             <span class="flabel-opt">(opcjonalnie)</span>
                         </label>
                         <div class="input-icon-wrap">
-                            <v-icon icon="mdi-card-account-details-outline" class="input-prefix" size="16" />
+                            <CzIcon icon="mdi-card-account-details-outline" class="input-prefix" size="16" />
                             <input v-model="form.registrationPlate" type="text" class="finput has-prefix"
                                 placeholder="np. WA 12345" maxlength="10" style="text-transform:uppercase"
                                 @input="(form.registrationPlate as string) = (form.registrationPlate as string).toUpperCase()" />
                         </div>
                         <div class="field-hint">
-                            <v-icon icon="mdi-information-outline" size="12" />Widoczny dla poważnych kupujących — pomaga w weryfikacji historii
+                            <CzIcon icon="mdi-information-outline" size="12" />Widoczny dla poważnych kupujących — pomaga w weryfikacji historii
                         </div>
                     </div>
 
@@ -1705,26 +1705,26 @@
                         <div class="bool-checks-row">
                             <label class="bool-check" :class="{ active: form.hasVatInvoice }">
                                 <input type="checkbox" v-model="form.hasVatInvoice" hidden />
-                                <span class="bool-box"><v-icon v-if="form.hasVatInvoice" icon="mdi-check" size="12" /></span>
-                                <v-icon icon="mdi-receipt-text-outline" size="14" style="margin-right:4px" />
+                                <span class="bool-box"><CzIcon v-if="form.hasVatInvoice" icon="mdi-check" size="12" /></span>
+                                <CzIcon icon="mdi-receipt-text-outline" size="14" style="margin-right:4px" />
                                 Faktura VAT
                             </label>
                             <label class="bool-check" :class="{ active: form.isLeasingPossible }">
                                 <input type="checkbox" v-model="form.isLeasingPossible" hidden />
-                                <span class="bool-box"><v-icon v-if="form.isLeasingPossible" icon="mdi-check" size="12" /></span>
-                                <v-icon icon="mdi-handshake-outline" size="14" style="margin-right:4px" />
+                                <span class="bool-box"><CzIcon v-if="form.isLeasingPossible" icon="mdi-check" size="12" /></span>
+                                <CzIcon icon="mdi-handshake-outline" size="14" style="margin-right:4px" />
                                 Możliwość leasingu
                             </label>
                             <label class="bool-check" :class="{ active: form.isCreditPossible }">
                                 <input type="checkbox" v-model="form.isCreditPossible" hidden />
-                                <span class="bool-box"><v-icon v-if="form.isCreditPossible" icon="mdi-check" size="12" /></span>
-                                <v-icon icon="mdi-credit-card-outline" size="14" style="margin-right:4px" />
+                                <span class="bool-box"><CzIcon v-if="form.isCreditPossible" icon="mdi-check" size="12" /></span>
+                                <CzIcon icon="mdi-credit-card-outline" size="14" style="margin-right:4px" />
                                 Kredyt
                             </label>
                             <label class="bool-check" :class="{ active: form.isExchangePossible }">
                                 <input type="checkbox" v-model="form.isExchangePossible" hidden />
-                                <span class="bool-box"><v-icon v-if="form.isExchangePossible" icon="mdi-check" size="12" /></span>
-                                <v-icon icon="mdi-swap-horizontal" size="14" style="margin-right:4px" />
+                                <span class="bool-box"><CzIcon v-if="form.isExchangePossible" icon="mdi-check" size="12" /></span>
+                                <CzIcon icon="mdi-swap-horizontal" size="14" style="margin-right:4px" />
                                 Zamiana
                             </label>
                         </div>
@@ -1736,14 +1736,14 @@
                             <label class="flabel">{{ categoryConfig.priceLabel ?? 'Cena (zł)' }} <span class="req">*</span></label>
                             <input v-model.number="form.price" type="number" min="0" max="10000000" class="finput finput-price" :class="{ 'finput--error': fieldErrors.price }" placeholder="np. 50 000" />
                             <div v-if="fieldErrors.price" class="field-error">
-                                <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.price }}
+                                <CzIcon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.price }}
                             </div>
                             <div v-if="categoryConfig.priceHint" class="field-hint">
-                                <v-icon icon="mdi-trending-up" size="12" />{{ categoryConfig.priceHint }}
+                                <CzIcon icon="mdi-trending-up" size="12" />{{ categoryConfig.priceHint }}
                             </div>
                             <label class="nego-toggle" :class="{ active: form.isNegotiable }">
                                 <input type="checkbox" v-model="form.isNegotiable" hidden />
-                                <span class="nego-box"><v-icon v-if="form.isNegotiable" icon="mdi-check" size="11" /></span>
+                                <span class="nego-box"><CzIcon v-if="form.isNegotiable" icon="mdi-check" size="11" /></span>
                                 Cena do negocjacji
                             </label>
                         </div>
@@ -1753,14 +1753,14 @@
                     <transition name="fade-err">
                         <div v-if="suggestedTitle" class="title-suggest-card">
                             <div class="tsc-left">
-                                <v-icon icon="mdi-auto-fix" size="15" class="tsc-icon" />
+                                <CzIcon icon="mdi-auto-fix" size="15" class="tsc-icon" />
                                 <div>
                                     <div class="tsc-label">Sugerowany tytuł ogłoszenia</div>
                                     <div class="tsc-title">{{ suggestedTitle }}</div>
                                 </div>
                             </div>
                             <button v-if="form.title !== suggestedTitle" class="tsc-use-btn" @click="form.title = suggestedTitle">Użyj</button>
-                            <span v-else class="tsc-used"><v-icon icon="mdi-check" size="13" />Aktywny</span>
+                            <span v-else class="tsc-used"><CzIcon icon="mdi-check" size="13" />Aktywny</span>
                         </div>
                     </transition>
                     <div class="field full-width" style="margin-top:12px">
@@ -1780,7 +1780,7 @@
                         <div class="desc-label-row">
                             <label class="flabel">Opis ogłoszenia <span class="req">*</span></label>
                             <button type="button" class="btn-ai-desc" :disabled="aiDescLoading" @click="generateAiDescription">
-                                <v-icon :icon="aiDescLoading ? 'mdi-loading' : 'mdi-auto-fix'" size="15"
+                                <CzIcon :icon="aiDescLoading ? 'mdi-loading' : 'mdi-auto-fix'" size="15"
                                     :class="{ 'spin': aiDescLoading }" />
                                 {{ aiDescLoading ? 'Generuję...' : '✨ Wygeneruj opis' }}
                             </button>
@@ -1794,9 +1794,9 @@
                                 maxlength="5000" />
                             <div class="desc-bar">
                                 <div class="desc-tips">
-                                    <span class="desc-tip"><v-icon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Historia serwisowa</span>
-                                    <span class="desc-tip"><v-icon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Stan techniczny</span>
-                                    <span class="desc-tip"><v-icon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Powód sprzedaży</span>
+                                    <span class="desc-tip"><CzIcon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Historia serwisowa</span>
+                                    <span class="desc-tip"><CzIcon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Stan techniczny</span>
+                                    <span class="desc-tip"><CzIcon icon="mdi-check-circle-outline" size="11" class="tip-icon" />Powód sprzedaży</span>
                                 </div>
                                 <div class="desc-counter" :class="descQuality">
                                     {{ descCharCount }}<span class="desc-max">/5000</span>
@@ -1809,21 +1809,21 @@
                     </div>
                     <transition name="fade-err">
                         <div v-if="fieldErrors.description" class="field-error" style="margin-bottom:8px">
-                            <v-icon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.description }}
+                            <CzIcon icon="mdi-alert-circle-outline" size="12" />{{ fieldErrors.description }}
                         </div>
                     </transition>
                     <transition name="fade-err">
                         <div v-if="descPhoneWarning" class="desc-phone-warn">
-                            <v-icon icon="mdi-phone-alert-outline" size="14" />{{ descPhoneWarning }}
+                            <CzIcon icon="mdi-phone-alert-outline" size="14" />{{ descPhoneWarning }}
                         </div>
                     </transition>
                     <div class="writing-tips">
-                        <div class="wt-title"><v-icon icon="mdi-lightbulb-outline" size="14" />Wskazówki dla dobrego opisu</div>
+                        <div class="wt-title"><CzIcon icon="mdi-lightbulb-outline" size="14" />Wskazówki dla dobrego opisu</div>
                         <div class="wt-grid">
-                            <div class="wt-item"><v-icon icon="mdi-history" size="13" />Historia serwisowa i naprawy</div>
-                            <div class="wt-item"><v-icon icon="mdi-wrench-outline" size="13" />Co zostało wymienione</div>
-                            <div class="wt-item"><v-icon icon="mdi-car-multiple" size="13" />Powód sprzedaży</div>
-                            <div class="wt-item"><v-icon icon="mdi-package-variant-closed" size="13" />Dodatkowe akcesoria</div>
+                            <div class="wt-item"><CzIcon icon="mdi-history" size="13" />Historia serwisowa i naprawy</div>
+                            <div class="wt-item"><CzIcon icon="mdi-wrench-outline" size="13" />Co zostało wymienione</div>
+                            <div class="wt-item"><CzIcon icon="mdi-car-multiple" size="13" />Powód sprzedaży</div>
+                            <div class="wt-item"><CzIcon icon="mdi-package-variant-closed" size="13" />Dodatkowe akcesoria</div>
                         </div>
                     </div>
 
@@ -1834,15 +1834,15 @@
                             <span class="flabel-opt">(opcjonalnie)</span>
                         </label>
                         <div class="input-icon-wrap">
-                            <v-icon icon="mdi-youtube" class="input-prefix" size="16" style="color:#ff0000" />
+                            <CzIcon icon="mdi-youtube" class="input-prefix" size="16" style="color:#ff0000" />
                             <input v-model="form.youtubeUrl" type="url" class="finput has-prefix"
                                 placeholder="https://youtube.com/watch?v=..." maxlength="500" />
                         </div>
                         <div v-if="youtubeEmbedId" class="field-hint" style="color:#4ade80">
-                            <v-icon icon="mdi-check-circle-outline" size="12" style="color:#4ade80" />Film będzie wyświetlany bezpośrednio w ogłoszeniu
+                            <CzIcon icon="mdi-check-circle-outline" size="12" style="color:#4ade80" />Film będzie wyświetlany bezpośrednio w ogłoszeniu
                         </div>
                         <div v-else class="field-hint">
-                            <v-icon icon="mdi-information-outline" size="12" />Ogłoszenia z filmem sprzedają się szybciej — nagraj krótką prezentację pojazdu
+                            <CzIcon icon="mdi-information-outline" size="12" />Ogłoszenia z filmem sprzedają się szybciej — nagraj krótką prezentację pojazdu
                         </div>
                         <div v-if="youtubeEmbedId" class="yt-preview">
                             <iframe
@@ -1872,14 +1872,14 @@
                             <input v-model="doc.url" type="url" class="finput" placeholder="https://..." />
                             <input v-model="doc.label" type="text" class="finput doc-label-input" placeholder="Opis (opcjonalnie)" />
                             <button type="button" class="btn-doc-remove" @click="documents.splice(idx, 1)">
-                                <v-icon icon="mdi-close" size="16" />
+                                <CzIcon icon="mdi-close" size="16" />
                             </button>
                         </div>
                         <button type="button" class="btn-doc-add" @click="documents.push({ url: '', type: 'Video', label: '' })">
-                            <v-icon icon="mdi-plus" size="15" />Dodaj dokument / film
+                            <CzIcon icon="mdi-plus" size="15" />Dodaj dokument / film
                         </button>
                         <div class="field-hint">
-                            <v-icon icon="mdi-information-outline" size="12" />Dodatkowe filmy (np. z jazdy próbnej), instrukcje, książki serwisowe itp.
+                            <CzIcon icon="mdi-information-outline" size="12" />Dodatkowe filmy (np. z jazdy próbnej), instrukcje, książki serwisowe itp.
                         </div>
                     </div>
 
@@ -1893,7 +1893,7 @@
                                     <option value="" disabled>Wybierz kraj</option>
                                     <option v-for="c in geoCountries" :key="c.iso2" :value="c.iso2">{{ c.nativeName || c.name }}</option>
                                 </select>
-                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                                <CzIcon icon="mdi-chevron-down" class="sel-arrow" size="16" />
                             </div>
                         </div>
                         <div class="field" v-if="geoHasRegions">
@@ -1903,13 +1903,13 @@
                                     <option :value="null" disabled>Wybierz region</option>
                                     <option v-for="r in geoRegions" :key="r.id" :value="r.id">{{ r.name }}</option>
                                 </select>
-                                <v-icon icon="mdi-chevron-down" class="sel-arrow" size="16" />
+                                <CzIcon icon="mdi-chevron-down" class="sel-arrow" size="16" />
                             </div>
                         </div>
                         <div class="field geo-city-field">
                             <label class="flabel">Miasto <span class="req">*</span></label>
                             <div class="input-icon-wrap">
-                                <v-icon icon="mdi-map-marker-outline" class="input-prefix" size="16" />
+                                <CzIcon icon="mdi-map-marker-outline" class="input-prefix" size="16" />
                                 <input
                                     v-model="citySearch" type="text" class="finput has-prefix"
                                     placeholder="Zacznij pisać nazwę miasta…" autocomplete="off"
@@ -1918,7 +1918,7 @@
                             </div>
                             <ul v-if="citySuggestOpen && citySuggestions.length" class="geo-suggest">
                                 <li v-for="c in citySuggestions" :key="c.id" @mousedown.prevent="pickCity(c)">
-                                    <v-icon icon="mdi-map-marker-outline" size="13" />{{ c.name }}
+                                    <CzIcon icon="mdi-map-marker-outline" size="13" />{{ c.name }}
                                 </li>
                             </ul>
                             <p v-if="geoCountry && citySearch.length >= 2 && !cityLoading && !citySuggestions.length" class="fhint">
@@ -1936,7 +1936,7 @@
                         <p v-else>Przejrzyj ogłoszenie, wybierz promocję i opublikuj.</p>
                     </div>
                     <div v-if="error" class="submit-error">
-                        <v-icon icon="mdi-alert-circle-outline" size="15" />
+                        <CzIcon icon="mdi-alert-circle-outline" size="15" />
                         {{ error }}
                     </div>
 
@@ -1945,22 +1945,22 @@
                         <div class="psc-title">Podsumowanie ogłoszenia</div>
                         <div class="psc-grid">
                             <div class="psc-row">
-                                <v-icon icon="mdi-car-outline" size="14" class="psc-icon" />
+                                <CzIcon icon="mdi-car-outline" size="14" class="psc-icon" />
                                 <span class="psc-label">Pojazd</span>
                                 <span class="psc-val">{{ previewTitle || '—' }}</span>
                             </div>
                             <div class="psc-row">
-                                <v-icon icon="mdi-calendar-outline" size="14" class="psc-icon" />
+                                <CzIcon icon="mdi-calendar-outline" size="14" class="psc-icon" />
                                 <span class="psc-label">Rok</span>
                                 <span class="psc-val">{{ form.year ?? '—' }}</span>
                             </div>
                             <div class="psc-row">
-                                <v-icon icon="mdi-speedometer" size="14" class="psc-icon" />
+                                <CzIcon icon="mdi-speedometer" size="14" class="psc-icon" />
                                 <span class="psc-label">Przebieg</span>
                                 <span class="psc-val">{{ form.mileage ? Number(form.mileage).toLocaleString('pl') + ' km' : '—' }}</span>
                             </div>
                             <div class="psc-row">
-                                <v-icon icon="mdi-tag-outline" size="14" class="psc-icon" />
+                                <CzIcon icon="mdi-tag-outline" size="14" class="psc-icon" />
                                 <span class="psc-label">Cena</span>
                                 <span class="psc-val psc-price">
                                     {{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '—' }}
@@ -1968,17 +1968,17 @@
                                 </span>
                             </div>
                             <div class="psc-row">
-                                <v-icon icon="mdi-image-outline" size="14" class="psc-icon" />
+                                <CzIcon icon="mdi-image-outline" size="14" class="psc-icon" />
                                 <span class="psc-label">Zdjęcia</span>
                                 <span class="psc-val">{{ selectedFiles.length + existingImages.length }} szt.</span>
                             </div>
                             <div class="psc-row">
-                                <v-icon icon="mdi-map-marker-outline" size="14" class="psc-icon" />
+                                <CzIcon icon="mdi-map-marker-outline" size="14" class="psc-icon" />
                                 <span class="psc-label">Lokalizacja</span>
                                 <span class="psc-val">{{ [form.city, form.region].filter(Boolean).join(', ') || '—' }}</span>
                             </div>
                             <div v-if="form.vin" class="psc-row">
-                                <v-icon icon="mdi-barcode-scan" size="14" class="psc-icon" />
+                                <CzIcon icon="mdi-barcode-scan" size="14" class="psc-icon" />
                                 <span class="psc-label">VIN</span>
                                 <span class="psc-val psc-vin">{{ form.vin }}</span>
                             </div>
@@ -2001,21 +2001,21 @@
                     <!-- Edit mode summary -->
                     <div v-if="isEdit" class="edit-summary">
                         <div class="edit-summary-row">
-                            <v-icon icon="mdi-car-outline" size="18" class="es-icon" />
+                            <CzIcon icon="mdi-car-outline" size="18" class="es-icon" />
                             <div>
                                 <div class="es-label">Ogłoszenie</div>
                                 <div class="es-val">{{ previewTitle }}</div>
                             </div>
                         </div>
                         <div class="edit-summary-row">
-                            <v-icon icon="mdi-currency-usd" size="18" class="es-icon" />
+                            <CzIcon icon="mdi-currency-usd" size="18" class="es-icon" />
                             <div>
                                 <div class="es-label">Cena</div>
                                 <div class="es-val">{{ form.price ? Number(form.price).toLocaleString('pl') + ' zł' : '—' }}</div>
                             </div>
                         </div>
                         <div class="edit-summary-row">
-                            <v-icon icon="mdi-image-outline" size="18" class="es-icon" />
+                            <CzIcon icon="mdi-image-outline" size="18" class="es-icon" />
                             <div>
                                 <div class="es-label">Zdjęcia</div>
                                 <div class="es-val">{{ existingImages.length }} istniejących<span v-if="selectedFiles.length"> + {{ selectedFiles.length }} nowych</span></div>
@@ -2024,7 +2024,7 @@
                     </div>
 
                     <div v-if="!isEdit && promoActive" class="promo-banner">
-                        <v-icon icon="mdi-gift-outline" size="17" />
+                        <CzIcon icon="mdi-gift-outline" size="17" />
                         Promocja startowa: wszystkie wyróżnienia są teraz całkowicie darmowe!
                     </div>
 
@@ -2033,16 +2033,16 @@
                         <!-- Free -->
                         <div class="pp-card pp-free" :class="{ 'pp-selected': promoSelected === 'free' }" @click="promoSelected = 'free'">
                             <div class="pp-header">
-                                <div class="pp-icon"><v-icon icon="mdi-car-outline" size="24" /></div>
+                                <div class="pp-icon"><CzIcon icon="mdi-car-outline" size="24" /></div>
                                 <div class="pp-name">Podstawowe</div>
                                 <span class="pp-badge-free">DARMOWE</span>
                             </div>
                             <div class="pp-price">0 zł</div>
                             <div class="pp-desc">Standardowe ogłoszenie w wynikach wyszukiwania.</div>
                             <ul class="pp-feats">
-                                <li><v-icon icon="mdi-check" size="13" />Widoczne w wynikach</li>
-                                <li><v-icon icon="mdi-check" size="13" />35 dni aktywności</li>
-                                <li class="pp-feat-no"><v-icon icon="mdi-close" size="13" />Brak wyróżnienia</li>
+                                <li><CzIcon icon="mdi-check" size="13" />Widoczne w wynikach</li>
+                                <li><CzIcon icon="mdi-check" size="13" />35 dni aktywności</li>
+                                <li class="pp-feat-no"><CzIcon icon="mdi-close" size="13" />Brak wyróżnienia</li>
                             </ul>
                             <div class="pp-sel-bar" />
                         </div>
@@ -2054,7 +2054,7 @@
                             @click="promoSelected = plan.key; promoDays = plan.defaultDays">
                             <div v-if="plan.popular" class="pp-popular-badge">NAJPOPULARNIEJSZY</div>
                             <div class="pp-header">
-                                <div class="pp-icon"><v-icon :icon="plan.icon" size="24" /></div>
+                                <div class="pp-icon"><CzIcon :icon="plan.icon" size="24" /></div>
                                 <div class="pp-name">{{ plan.name }}</div>
                                 <span v-if="promoActive" class="pp-badge-free">ZA DARMO</span>
                             </div>
@@ -2067,7 +2067,7 @@
                             </div>
                             <div class="pp-desc">{{ plan.desc }}</div>
                             <ul class="pp-feats">
-                                <li v-for="f in plan.feats" :key="f"><v-icon icon="mdi-check" size="13" />{{ f }}</li>
+                                <li v-for="f in plan.feats" :key="f"><CzIcon icon="mdi-check" size="13" />{{ f }}</li>
                             </ul>
                             <div v-if="promoSelected === plan.key" class="pp-days">
                                 <button v-for="d in plan.days" :key="d"
@@ -2083,7 +2083,7 @@
                     <!-- Summary + coupon (create mode only) -->
                     <div v-if="!isEdit" class="promo-summary">
                         <div v-if="promoSelected === 'free'" class="ps-free-info">
-                            <v-icon icon="mdi-check-circle-outline" size="18" />
+                            <CzIcon icon="mdi-check-circle-outline" size="18" />
                             Opublikujesz ogłoszenie bez promocji (darmowe)
                         </div>
                         <div v-else class="ps-paid-info">
@@ -2093,10 +2093,10 @@
                                 {{ promoActive ? 'ZA DARMO' : `${finalPromoPrice.toFixed(2)} zł` }}
                             </div>
                             <div v-if="promoActive" class="ps-coupon-ok">
-                                <v-icon icon="mdi-gift-outline" size="13" />Promocja startowa – aktywacja bez opłat
+                                <CzIcon icon="mdi-gift-outline" size="13" />Promocja startowa – aktywacja bez opłat
                             </div>
                             <div v-else-if="couponResult?.isValid" class="ps-coupon-ok">
-                                <v-icon icon="mdi-tag-outline" size="13" />Rabat zastosowany
+                                <CzIcon icon="mdi-tag-outline" size="13" />Rabat zastosowany
                             </div>
                         </div>
                         <div v-if="promoSelected !== 'free' && !promoActive" class="ps-coupon-row">
@@ -2106,7 +2106,7 @@
                                     :disabled="couponLoading"
                                     @keyup.enter="applyCoupon" />
                                 <button class="ps-coupon-btn" :disabled="!couponCode || couponLoading" @click="applyCoupon">
-                                    <v-icon v-if="couponLoading" icon="mdi-loading" size="13" class="spin" />
+                                    <CzIcon v-if="couponLoading" icon="mdi-loading" size="13" class="spin" />
                                     <span v-else>Zastosuj</span>
                                 </button>
                             </div>
@@ -2125,7 +2125,7 @@
                         <div class="prev-img-wrap">
                             <img v-if="previews.length" :src="previews[0]" class="prev-main-img" alt="Zdjęcie główne" loading="lazy" decoding="async" />
                             <div v-else class="prev-img-placeholder">
-                                <v-icon icon="mdi-image-outline" size="48" />
+                                <CzIcon icon="mdi-image-outline" size="48" />
                                 <span>Brak zdjęć</span>
                             </div>
                             <div v-if="previews.length > 1" class="prev-img-count">+{{ previews.length - 1 }} zdjęć</div>
@@ -2139,10 +2139,10 @@
                             <div class="prev-price">{{ form.price ? form.price.toLocaleString('pl') + ' zł' : 'Cena do ustalenia' }}</div>
                             <div v-if="form.isNegotiable" class="prev-nego">do negocjacji</div>
                             <div class="prev-specs">
-                                <span v-if="form.year"><v-icon icon="mdi-calendar" size="13" />{{ form.year }}</span>
-                                <span v-if="form.mileage"><v-icon icon="mdi-speedometer" size="13" />{{ form.mileage.toLocaleString('pl') }} km</span>
-                                <span v-if="fuelTypeName"><v-icon icon="mdi-fuel" size="13" />{{ fuelTypeName }}</span>
-                                <span v-if="form.city"><v-icon icon="mdi-map-marker-outline" size="13" />{{ form.city }}</span>
+                                <span v-if="form.year"><CzIcon icon="mdi-calendar" size="13" />{{ form.year }}</span>
+                                <span v-if="form.mileage"><CzIcon icon="mdi-speedometer" size="13" />{{ form.mileage.toLocaleString('pl') }} km</span>
+                                <span v-if="fuelTypeName"><CzIcon icon="mdi-fuel" size="13" />{{ fuelTypeName }}</span>
+                                <span v-if="form.city"><CzIcon icon="mdi-map-marker-outline" size="13" />{{ form.city }}</span>
                             </div>
                             <div v-if="form.description" class="prev-desc">{{ form.description.slice(0, 200) }}{{ form.description.length > 200 ? '...' : '' }}</div>
                             <div class="prev-features">
@@ -2156,11 +2156,11 @@
                     <!-- Completeness checklist -->
                     <div class="summary-checklist">
                         <div class="summary-checklist-title">
-                            <v-icon icon="mdi-clipboard-check-outline" size="15" />
+                            <CzIcon icon="mdi-clipboard-check-outline" size="15" />
                             Kompletność ogłoszenia
                         </div>
                         <div v-for="factor in scoreFactors" :key="factor.label" class="summary-factor">
-                            <v-icon
+                            <CzIcon
                                 :icon="factor.done ? 'mdi-check-circle' : 'mdi-circle-outline'"
                                 size="16"
                                 :style="{ color: factor.done ? '#4ade80' : '#6b7280' }"
@@ -2172,11 +2172,11 @@
                     <!-- Tips -->
                     <div v-if="scoreTips.length" class="summary-tips">
                         <div class="summary-tips-title">
-                            <v-icon icon="mdi-lightbulb-on-outline" size="14" />
+                            <CzIcon icon="mdi-lightbulb-on-outline" size="14" />
                             Wskazówki jak poprawić skuteczność
                         </div>
                         <div v-for="tip in scoreTips" :key="tip" class="summary-tip-item">
-                            <v-icon icon="mdi-arrow-right-thin" size="14" />{{ tip }}
+                            <CzIcon icon="mdi-arrow-right-thin" size="14" />{{ tip }}
                         </div>
                     </div>
 
@@ -2204,17 +2204,17 @@
                         </button>
                         <transition name="fade-err">
                             <span v-if="stepError" class="step-error">
-                                <v-icon icon="mdi-alert-circle-outline" size="14" />{{ stepError }}
+                                <CzIcon icon="mdi-alert-circle-outline" size="14" />{{ stepError }}
                             </span>
                         </transition>
                     </div>
                     <button v-if="currentStep < steps.length - 1" class="btn-next" @click="goNext">
                         Dalej: {{ steps[currentStep + 1]?.name }}
-                        <v-icon icon="mdi-arrow-right" size="16" />
+                        <CzIcon icon="mdi-arrow-right" size="16" />
                     </button>
                     <template v-else>
                         <div v-if="limitError" class="limit-error-banner">
-                            <v-icon icon="mdi-store-outline" size="18" />
+                            <CzIcon icon="mdi-store-outline" size="18" />
                             <div class="limit-error-text">
                                 <strong>{{ limitError === 'private_limit_yearly' ? 'Osiągnąłeś roczny limit 3 ogłoszeń' : 'Masz już aktywne ogłoszenie' }}</strong>
                                 <span>Konto prywatne pozwala na max. 1 aktywne i 3 roczne ogłoszenia. Przejdź na konto biznesowe, by publikować bez ograniczeń.</span>
@@ -2222,27 +2222,27 @@
                             <NuxtLink to="/pakiety" class="limit-error-cta">Konto biznesowe</NuxtLink>
                         </div>
                         <div v-else-if="error" class="submit-error-inline">
-                            <v-icon icon="mdi-alert-circle-outline" size="15" />{{ error }}
+                            <CzIcon icon="mdi-alert-circle-outline" size="15" />{{ error }}
                         </div>
                     </template>
                     <template v-if="currentStep === steps.length - 1">
                         <template v-if="isEdit">
                             <button class="btn-publish-free" :disabled="loading" @click="submit">
-                                <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-                                <v-icon v-else icon="mdi-content-save-outline" size="16" />
+                                <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+                                <CzIcon v-else icon="mdi-content-save-outline" size="16" />
                                 {{ loading ? 'Zapisywanie...' : 'Zapisz zmiany' }}
                             </button>
                         </template>
                         <template v-else>
                             <button v-if="promoSelected === 'free'" class="btn-publish-free" :disabled="loading" @click="submit">
-                                <v-icon v-if="loading" icon="mdi-loading" size="16" class="spin" />
-                                <v-icon v-else icon="mdi-check" size="16" />
+                                <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
+                                <CzIcon v-else icon="mdi-check" size="16" />
                                 {{ loading ? 'Publikowanie...' : 'Opublikuj za darmo' }}
                             </button>
                             <button v-else class="btn-pay" :disabled="loading || paying" @click="submit">
-                                <v-icon v-if="loading || paying" icon="mdi-loading" size="16" class="spin" />
-                                <v-icon v-else-if="promoActive" icon="mdi-gift-outline" size="16" />
-                                <v-icon v-else icon="mdi-credit-card-outline" size="16" />
+                                <CzIcon v-if="loading || paying" icon="mdi-loading" size="16" class="spin" />
+                                <CzIcon v-else-if="promoActive" icon="mdi-gift-outline" size="16" />
+                                <CzIcon v-else icon="mdi-credit-card-outline" size="16" />
                                 <template v-if="loading">Tworzę ogłoszenie...</template>
                                 <template v-else-if="paying">Przekierowuję...</template>
                                 <template v-else-if="promoActive">Aktywuj za darmo</template>
@@ -2255,7 +2255,7 @@
                 <!-- Bottom strip -->
                 <div class="bottom-strip">
                     <div v-for="f in stripFeats" :key="f.title" class="strip-feat">
-                        <v-icon :icon="f.icon" size="20" class="strip-icon" />
+                        <CzIcon :icon="f.icon" size="20" class="strip-icon" />
                         <div>
                             <div class="strip-title">{{ f.title }}</div>
                             <div class="strip-desc">{{ f.desc }}</div>
@@ -2278,47 +2278,47 @@
                     </div>
                     <div class="sp-label">Jakość ogłoszenia</div>
                     <div class="sp-tier" :class="adScore >= 90 ? 'sp-tier--gold' : adScore >= 70 ? 'sp-tier--silver' : 'sp-tier--bronze'">
-                        <v-icon :icon="adScore >= 90 ? 'mdi-crown' : adScore >= 70 ? 'mdi-star' : 'mdi-star-outline'" size="13" />
+                        <CzIcon :icon="adScore >= 90 ? 'mdi-crown' : adScore >= 70 ? 'mdi-star' : 'mdi-star-outline'" size="13" />
                         {{ adScore >= 90 ? 'PREMIUM VERIFIED' : adScore >= 70 ? 'DOBRA JAKOŚĆ' : 'DO UZUPEŁNIENIA' }}
                     </div>
                     <div class="sp-tips">
                         <div v-if="!form.brandId && !brandTextInput" class="sp-tip">
-                            <v-icon icon="mdi-circle-small" size="16" />Dodaj markę
+                            <CzIcon icon="mdi-circle-small" size="16" />Dodaj markę
                         </div>
                         <div v-if="selectedFiles.length + existingImages.length < 5" class="sp-tip">
-                            <v-icon icon="mdi-circle-small" size="16" />Dodaj min. 5 zdjęć
+                            <CzIcon icon="mdi-circle-small" size="16" />Dodaj min. 5 zdjęć
                         </div>
                         <div v-if="!form.vin" class="sp-tip">
-                            <v-icon icon="mdi-circle-small" size="16" />Podaj numer VIN
+                            <CzIcon icon="mdi-circle-small" size="16" />Podaj numer VIN
                         </div>
                         <div v-if="(form.description?.length ?? 0) < 200" class="sp-tip">
-                            <v-icon icon="mdi-circle-small" size="16" />Opis min. 200 znaków
+                            <CzIcon icon="mdi-circle-small" size="16" />Opis min. 200 znaków
                         </div>
                         <div v-if="form.featureIds.length < 5" class="sp-tip">
-                            <v-icon icon="mdi-circle-small" size="16" />Zaznacz wyposażenie
+                            <CzIcon icon="mdi-circle-small" size="16" />Zaznacz wyposażenie
                         </div>
                     </div>
                     <!-- Missing data suggestions -->
                     <div v-if="adScore < 90" class="sp-missing">
                         <div class="sp-missing-title">Uzupełnij aby zwiększyć skuteczność:</div>
                         <div v-if="!form.vin" class="sp-missing-item">
-                            <v-icon icon="mdi-identifier" size="13" />VIN
+                            <CzIcon icon="mdi-identifier" size="13" />VIN
                         </div>
                         <div v-if="selectedFiles.length + existingImages.length < 5" class="sp-missing-item">
-                            <v-icon icon="mdi-image-multiple-outline" size="13" />Minimum 5 zdjęć
+                            <CzIcon icon="mdi-image-multiple-outline" size="13" />Minimum 5 zdjęć
                         </div>
                         <div v-if="!history.hasServiceBook" class="sp-missing-item">
-                            <v-icon icon="mdi-book-open-outline" size="13" />Historia serwisowa
+                            <CzIcon icon="mdi-book-open-outline" size="13" />Historia serwisowa
                         </div>
                         <div v-if="(form.description?.length ?? 0) < 500" class="sp-missing-item">
-                            <v-icon icon="mdi-text-long" size="13" />Opis powyżej 500 znaków
+                            <CzIcon icon="mdi-text-long" size="13" />Opis powyżej 500 znaków
                         </div>
                         <div v-if="form.featureIds.length < 5" class="sp-missing-item">
-                            <v-icon icon="mdi-format-list-checkbox" size="13" />Wyposażenie (min. 5 opcji)
+                            <CzIcon icon="mdi-format-list-checkbox" size="13" />Wyposażenie (min. 5 opcji)
                         </div>
                     </div>
                     <div v-else class="sp-premium-verified">
-                        <v-icon icon="mdi-crown" size="14" />CARIZO PREMIUM VERIFIED
+                        <CzIcon icon="mdi-crown" size="14" />CARIZO PREMIUM VERIFIED
                     </div>
                 </div>
 
@@ -2342,7 +2342,7 @@
                         </div>
                     </div>
                     <button class="preview-full-btn" @click="previewOpen = true">
-                        <v-icon icon="mdi-eye-outline" size="15" />
+                        <CzIcon icon="mdi-eye-outline" size="15" />
                         Zobacz pełny podgląd
                     </button>
                 </div>
@@ -2360,7 +2360,7 @@
                     <div class="pm-header">
                         <span class="pm-title">Podgląd ogłoszenia</span>
                         <button class="pm-close" @click="previewOpen = false">
-                            <v-icon icon="mdi-close" size="20" />
+                            <CzIcon icon="mdi-close" size="20" />
                         </button>
                     </div>
                     <div class="pm-body">
@@ -5302,6 +5302,13 @@ onBeforeUnmount(() => {
     to { opacity: 1; transform: translateY(0); }
 }
 
+// Zastępuje `<v-divider>`.
+.form-rule {
+    border: none;
+    border-top: 1px solid $border;
+    margin: $s-4 0;
+}
+
 .form-section-head {
     margin-bottom: $s-7;
 
@@ -5427,7 +5434,7 @@ onBeforeUnmount(() => {
     cursor: pointer;
     text-align: left;
 
-    .v-icon:first-child { color: $red; }
+    .cz-icon:first-child { color: $red; }
     span { flex: 1; }
     .cepik-toggle-chevron { color: $text-dim; }
     &:hover { background: rgba(255,255,255,0.03); }
@@ -5641,7 +5648,7 @@ onBeforeUnmount(() => {
     cursor: pointer;
 }
 .geo-suggest li:hover { background: rgba(255, 255, 255, 0.06); color: $text; }
-.geo-suggest .v-icon { color: $text-dim; }
+.geo-suggest .cz-icon { color: $text-dim; }
 
 .input-prefix {
     position: absolute;
@@ -6281,7 +6288,7 @@ onBeforeUnmount(() => {
     margin-top: $s-3;
     font-size: $fs-sm;
     color: $text-dim;
-    .v-icon { color: $text-dark; }
+    .cz-icon { color: $text-dark; }
 }
 
 .category-grid {
@@ -6456,7 +6463,7 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 8px;
 
-    .v-icon { color: $text-dim; }
+    .cz-icon { color: $text-dim; }
 }
 
 .fgh-name {
@@ -6650,7 +6657,7 @@ onBeforeUnmount(() => {
     font-size: 13px;
     color: $danger;
     margin-bottom: 16px;
-    .v-icon { flex-shrink: 0; }
+    .cz-icon { flex-shrink: 0; }
 }
 
 .submit-error-inline {
@@ -6660,7 +6667,7 @@ onBeforeUnmount(() => {
     font-size: 12px;
     color: $danger;
     max-width: 300px;
-    .v-icon { flex-shrink: 0; }
+    .cz-icon { flex-shrink: 0; }
 }
 
 .limit-error-banner {
@@ -6673,7 +6680,7 @@ onBeforeUnmount(() => {
     padding: 12px 16px;
     flex: 1;
     margin-right: 12px;
-    .v-icon { color: #f59e0b; flex-shrink: 0; }
+    .cz-icon { color: #f59e0b; flex-shrink: 0; }
 }
 
 .limit-error-text {
@@ -6751,9 +6758,9 @@ onBeforeUnmount(() => {
 .pp-feats {
     list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; flex: 1;
     li { display: flex; align-items: center; gap: 6px; font-size: 11px; color: $text-muted;
-        .v-icon { color: $success; flex-shrink: 0; }
+        .cz-icon { color: $success; flex-shrink: 0; }
     }
-    .pp-feat-no { color: $text-dark; .v-icon { color: $text-dark; } }
+    .pp-feat-no { color: $text-dark; .cz-icon { color: $text-dark; } }
 }
 .pp-days { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
 .pp-day-btn {
@@ -6864,7 +6871,7 @@ onBeforeUnmount(() => {
     font-size: 11px;
     color: $text-dark;
     margin-top: 5px;
-    .v-icon { color: $text-dark; flex-shrink: 0; }
+    .cz-icon { color: $text-dark; flex-shrink: 0; }
 }
 
 // ── Engine specs preview ───────────────────────────────────────────────────────
@@ -6883,7 +6890,7 @@ onBeforeUnmount(() => {
     font-size: 11px;
     color: $text-dark;
     margin-bottom: 8px;
-    .v-icon { flex-shrink: 0; }
+    .cz-icon { flex-shrink: 0; }
 }
 
 .esp-chips {
@@ -6933,7 +6940,7 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 3px;
     white-space: nowrap;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 .ai-hint-chip {
     font-size: 11px;
@@ -7010,7 +7017,7 @@ onBeforeUnmount(() => {
     font-size: 12px;
     color: $success;
     white-space: nowrap;
-    .v-icon { color: $success; }
+    .cz-icon { color: $success; }
 }
 
 // ── Edit mode ─────────────────────────────────────────────────────────────────
@@ -7298,7 +7305,7 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: center;
     transition: all 0.15s;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 
     .bool-check.active & { border-color: $red; background: rgba($red, 0.1); }
 }
@@ -7363,7 +7370,7 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: center;
     transition: all 0.15s;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 
     .nego-toggle.active & { border-color: $red; background: rgba($red, 0.1); }
 }
@@ -7453,7 +7460,7 @@ onBeforeUnmount(() => {
     font-weight: 700;
     color: $text-muted;
     margin-bottom: 10px;
-    .v-icon { color: $premium; }
+    .cz-icon { color: $premium; }
 }
 
 .wt-grid {
@@ -7468,7 +7475,7 @@ onBeforeUnmount(() => {
     gap: 7px;
     font-size: 12px;
     color: $text-dark;
-    .v-icon { color: rgba($red, 0.5); flex-shrink: 0; }
+    .cz-icon { color: rgba($red, 0.5); flex-shrink: 0; }
 }
 
 // ── History step ──────────────────────────────────────────────────────────────
@@ -7490,7 +7497,7 @@ onBeforeUnmount(() => {
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .hist-quality-tip {
@@ -8018,7 +8025,7 @@ onBeforeUnmount(() => {
     font-size: 11px;
     color: $text-dim;
 
-    .v-icon { color: rgba($red, 0.7); }
+    .cz-icon { color: rgba($red, 0.7); }
 }
 
 .sp-missing {
@@ -8166,7 +8173,7 @@ onBeforeUnmount(() => {
         gap: 5px;
         font-size: 13px;
         color: $text-dim;
-        .v-icon { color: $red; }
+        .cz-icon { color: $red; }
     }
 }
 

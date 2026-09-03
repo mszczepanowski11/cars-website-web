@@ -4,24 +4,24 @@
         <div class="promo-topbar">
             <img src="/carizo-logo.svg" alt="CARIZO" class="tl-logo" loading="lazy" decoding="async" />
             <div class="promo-steps">
-                <span class="ps done"><v-icon icon="mdi-check" size="14" />{{ $t('promoteAdvert.stepAdvert') }}</span>
+                <span class="ps done"><CzIcon icon="mdi-check" size="14" />{{ $t('promoteAdvert.stepAdvert') }}</span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ done: step > 1, active: step === 1 }">
-                    <v-icon :icon="step > 1 ? 'mdi-check' : 'mdi-star-outline'" size="14" />{{ $t('promoteAdvert.stepPromo') }}
+                    <CzIcon :icon="step > 1 ? 'mdi-check' : 'mdi-star-outline'" size="14" />{{ $t('promoteAdvert.stepPromo') }}
                 </span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ done: step > 2, active: step === 2 }">
-                    <v-icon :icon="step > 2 ? 'mdi-check' : 'mdi-receipt-outline'" size="14" />{{ $t('promoteAdvert.stepInvoice') }}
+                    <CzIcon :icon="step > 2 ? 'mdi-check' : 'mdi-receipt-outline'" size="14" />{{ $t('promoteAdvert.stepInvoice') }}
                 </span>
                 <span class="ps-sep" />
                 <span class="ps" :class="{ active: step === 3 }">
-                    <v-icon icon="mdi-check-circle-outline" size="14" />{{ $t('promoteAdvert.stepPayment') }}
+                    <CzIcon icon="mdi-check-circle-outline" size="14" />{{ $t('promoteAdvert.stepPayment') }}
                 </span>
             </div>
             <button class="skip-link" :disabled="publishing" @click="publishFree">
-                <v-icon v-if="publishing" icon="mdi-loading" size="14" class="spin" />
+                <CzIcon v-if="publishing" icon="mdi-loading" size="14" class="spin" />
                 {{ $t('promoteAdvert.skipPublish') }}
-                <v-icon v-if="!publishing" icon="mdi-arrow-right" size="15" />
+                <CzIcon v-if="!publishing" icon="mdi-arrow-right" size="15" />
             </button>
         </div>
 
@@ -32,7 +32,7 @@
             </div>
 
             <div v-if="promoActive" class="promo-banner">
-                <v-icon icon="mdi-gift-outline" size="17" />
+                <CzIcon icon="mdi-gift-outline" size="17" />
                 {{ $t('promoteAdvert.promoBanner') }}
             </div>
 
@@ -40,16 +40,16 @@
                 <!-- Free option -->
                 <div class="plan-card plan-free" :class="{ selected: selected === 'free' }" @click="selected = 'free'">
                     <div class="plan-header">
-                        <div class="plan-icon"><v-icon icon="mdi-car-outline" size="26" /></div>
+                        <div class="plan-icon"><CzIcon icon="mdi-car-outline" size="26" /></div>
                         <div class="plan-name">{{ $t('promoteAdvert.freePlanName') }}</div>
                         <div class="plan-badge plan-badge-free">{{ $t('promoteAdvert.freeBadge') }}</div>
                     </div>
                     <div class="plan-price">0 zł</div>
                     <div class="plan-desc">{{ $t('promoteAdvert.freeDesc') }}</div>
                     <ul class="plan-features">
-                        <li><v-icon icon="mdi-check" size="14" />{{ $t('promoteAdvert.freeFeat1') }}</li>
-                        <li><v-icon icon="mdi-check" size="14" />{{ $t('promoteAdvert.freeFeat2') }}</li>
-                        <li class="disabled"><v-icon icon="mdi-close" size="14" />{{ $t('promoteAdvert.freeFeat3') }}</li>
+                        <li><CzIcon icon="mdi-check" size="14" />{{ $t('promoteAdvert.freeFeat1') }}</li>
+                        <li><CzIcon icon="mdi-check" size="14" />{{ $t('promoteAdvert.freeFeat2') }}</li>
+                        <li class="disabled"><CzIcon icon="mdi-close" size="14" />{{ $t('promoteAdvert.freeFeat3') }}</li>
                     </ul>
                     <div class="plan-sel-indicator" />
                 </div>
@@ -61,7 +61,7 @@
                     @click="selected = plan.key; selectedDays = plan.defaultDays">
                     <div v-if="plan.popular" class="popular-badge">{{ $t('promoteAdvert.mostPopular') }}</div>
                     <div class="plan-header">
-                        <div class="plan-icon"><v-icon :icon="plan.icon" size="26" /></div>
+                        <div class="plan-icon"><CzIcon :icon="plan.icon" size="26" /></div>
                         <div class="plan-name">{{ plan.name }}</div>
                         <div v-if="promoActive" class="plan-badge plan-badge-free">{{ $t('promoteAdvert.forFreeUpper') }}</div>
                     </div>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="plan-desc">{{ plan.desc }}</div>
                     <ul class="plan-features">
-                        <li v-for="f in plan.feats" :key="f"><v-icon icon="mdi-check" size="14" />{{ f }}</li>
+                        <li v-for="f in plan.feats" :key="f"><CzIcon icon="mdi-check" size="14" />{{ f }}</li>
                     </ul>
                     <div v-if="selected === plan.key" class="days-select">
                         <button v-for="d in plan.days" :key="d"
@@ -92,7 +92,7 @@
             <!-- STEP 1: Selected summary + CTA -->
             <div v-if="step === 1" class="promo-footer">
                 <div v-if="selected === 'free'" class="summary-free">
-                    <v-icon icon="mdi-check-circle-outline" size="20" class="sf-icon" />
+                    <CzIcon icon="mdi-check-circle-outline" size="20" class="sf-icon" />
                     {{ $t('promoteAdvert.summaryFreePublish') }}
                 </div>
                 <div v-else class="summary-paid">
@@ -102,11 +102,11 @@
                         <span>{{ promoActive ? $t('promoteAdvert.forFreeUpper') : `${finalPrice.toFixed(2)} zł` }}</span>
                     </div>
                     <div v-if="promoActive" class="coupon-applied">
-                        <v-icon icon="mdi-gift-outline" size="14" />
+                        <CzIcon icon="mdi-gift-outline" size="14" />
                         {{ $t('promoteAdvert.promoStartActivation') }}
                     </div>
                     <div v-else-if="couponResult?.isValid" class="coupon-applied">
-                        <v-icon icon="mdi-tag-outline" size="14" />
+                        <CzIcon icon="mdi-tag-outline" size="14" />
                         {{ $t('promoteAdvert.discountApplied') }}
                     </div>
                 </div>
@@ -114,32 +114,32 @@
                     <div class="coupon-input-wrap">
                         <input v-model="couponCode" class="coupon-input" :placeholder="$t('promoteAdvert.couponPlaceholder')" :disabled="couponLoading" @keyup.enter="applyCoupon" />
                         <button class="coupon-btn" :disabled="!couponCode || couponLoading" @click="applyCoupon">
-                            <v-icon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
+                            <CzIcon v-if="couponLoading" icon="mdi-loading" size="14" class="spin" />
                             <span v-else>{{ $t('promoteAdvert.apply') }}</span>
                         </button>
                     </div>
                     <div v-if="couponError" class="coupon-error">{{ couponError }}</div>
                 </div>
                 <div class="footer-actions">
-                    <button class="btn-skip" @click="skipPromotion"><v-icon icon="mdi-arrow-left" size="15" />{{ $t('promoteAdvert.back') }}</button>
+                    <button class="btn-skip" @click="skipPromotion"><CzIcon icon="mdi-arrow-left" size="15" />{{ $t('promoteAdvert.back') }}</button>
                     <button v-if="selected === 'free'" class="btn-publish" :disabled="publishing" @click="publishFree">
-                        <v-icon v-if="publishing" icon="mdi-loading" size="16" class="spin" />
-                        <v-icon v-else icon="mdi-check" size="16" />
+                        <CzIcon v-if="publishing" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-else icon="mdi-check" size="16" />
                         {{ $t('promoteAdvert.publishAdvert') }}
                     </button>
                     <button v-else class="btn-pay" @click="goToBilling">
-                        <v-icon icon="mdi-receipt-outline" size="16" />
+                        <CzIcon icon="mdi-receipt-outline" size="16" />
                         {{ $t('promoteAdvert.invoiceData') }}
-                        <v-icon icon="mdi-arrow-right" size="15" />
+                        <CzIcon icon="mdi-arrow-right" size="15" />
                     </button>
                 </div>
-                <div v-if="actionError" class="action-error"><v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
+                <div v-if="actionError" class="action-error"><CzIcon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
             </div>
 
             <!-- STEP 2: Billing data -->
             <div v-else-if="step === 2" class="billing-step">
                 <h2 class="billing-step-title">
-                    <v-icon icon="mdi-receipt-outline" size="20" />
+                    <CzIcon icon="mdi-receipt-outline" size="20" />
                     {{ $t('promoteAdvert.invoiceData') }}
                 </h2>
                 <p class="billing-step-sub">{{ $t('promoteAdvert.invoiceStepSub') }}</p>
@@ -179,22 +179,22 @@
                 </div>
 
                 <div class="footer-actions">
-                    <button class="btn-skip" @click="step = 1"><v-icon icon="mdi-arrow-left" size="15" />{{ $t('promoteAdvert.back') }}</button>
+                    <button class="btn-skip" @click="step = 1"><CzIcon icon="mdi-arrow-left" size="15" />{{ $t('promoteAdvert.back') }}</button>
                     <button v-if="quotaAvailable" class="btn-pay btn-quota" :disabled="paying" @click="initiatePayment(true)">
-                        <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
-                        <v-icon v-else icon="mdi-ticket-percent-outline" size="16" />
+                        <CzIcon v-if="paying" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-else icon="mdi-ticket-percent-outline" size="16" />
                         {{ $t('promoteAdvert.activateFromQuota', { count: subscriptionStatus?.featuredQuotaRemaining }) }}
                     </button>
                     <button class="btn-pay" :disabled="paying" @click="initiatePayment(false)">
-                        <v-icon v-if="paying" icon="mdi-loading" size="16" class="spin" />
-                        <v-icon v-else-if="promoActive" icon="mdi-gift-outline" size="16" />
-                        <v-icon v-else icon="mdi-credit-card-outline" size="16" />
+                        <CzIcon v-if="paying" icon="mdi-loading" size="16" class="spin" />
+                        <CzIcon v-else-if="promoActive" icon="mdi-gift-outline" size="16" />
+                        <CzIcon v-else icon="mdi-credit-card-outline" size="16" />
                         <template v-if="promoActive">{{ $t('promoteAdvert.activateForFree') }}</template>
                         <template v-else-if="quotaAvailable">{{ $t('promoteAdvert.payAnywayIng', { price: finalPrice.toFixed(2) }) }}</template>
                         <template v-else>{{ $t('promoteAdvert.payViaIng', { price: finalPrice.toFixed(2) }) }}</template>
                     </button>
                 </div>
-                <div v-if="actionError" class="action-error"><v-icon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
+                <div v-if="actionError" class="action-error"><CzIcon icon="mdi-alert-circle-outline" size="15" />{{ actionError }}</div>
             </div>
         </div>
     </div>
@@ -526,8 +526,8 @@ async function initiatePayment(useQuota = false) {
 
 .plan-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; flex: 1;
     li { display: flex; align-items: center; gap: 7px; font-size: 12px; color: $text-muted;
-        .v-icon { color: $success; }
-        &.disabled { color: $text-dark; .v-icon { color: $text-dark; } }
+        .cz-icon { color: $success; }
+        &.disabled { color: $text-dark; .cz-icon { color: $text-dark; } }
     }
 }
 
@@ -659,7 +659,7 @@ async function initiatePayment(useQuota = false) {
     font-weight: 800;
     color: $text;
     margin: 0;
-    .v-icon { color: $red; }
+    .cz-icon { color: $red; }
 }
 
 .billing-step-sub {
