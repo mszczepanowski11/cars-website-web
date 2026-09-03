@@ -1,10 +1,11 @@
 /**
  * Mapa nazwa ikony -> sciezka SVG.
  *
- * Wygenerowana ze skanu OBU repozytoriow (frontend + backend, bo nazwy ikon kategorii
- * przychodza z bazy). Importy sa WYPISANE JAWNIE, nie przez `import * as` - dzieki temu
- * bundler dolacza wylacznie te 317 sciezek, a nie caly zestaw 7447.
- * To jest cala roznica miedzy ~8 kB a ~400 kB w paczce wyslanej do przegladarki.
+ * Wygenerowana ze skanu repozytoriow (frontend, a gdy lezy obok - takze backend,
+ * bo nazwy ikon kategorii przychodza z bazy). Importy sa WYPISANE JAWNIE, nie przez
+ * `import * as` - dzieki temu bundler dolacza wylacznie te 317 sciezek,
+ * a nie caly zestaw 7447. To jest cala roznica miedzy ~8 kB
+ * a ~400 kB w paczce wyslanej do przegladarki.
  *
  * NIE EDYTOWAC RECZNIE - plik odtwarza `npm run icons`.
  */
