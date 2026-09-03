@@ -37,14 +37,31 @@ const mk=(i)=>{const[b,m]=BR[i%BR.length];return{
 }}
 const items=(n)=>Array.from({length:n},(_,i)=>mk(i))
 
-http.createServer((req,res)=>{
+/** Odczytuje pageSize z ciala zadania - atrapa musi oddawac tyle, ile kod prosi. */
+function odczytajCialo(req) {
+  return new Promise(res => {
+    let buf = ''
+    req.on('data', c => { buf += c })
+    req.on('end', () => { try { res(JSON.parse(buf || '{}')) } catch { res({}) } })
+  })
+}
+
+http.createServer(async (req,res)=>{
   res.setHeader('content-type','application/json; charset=utf-8')
   const u=req.url||''
   const send=(o)=>res.end(JSON.stringify(o))
   // Proxy aplikacji przepisuje `api/listings/*` na `api/Advert/*` (zeby reguly blokad
   // reklam nie ucinaly zapytan po slowie "advert" w adresie), wiec atrapa musi
   // rozpoznawac OBIE postacie - inaczej test sprawdza pusta liste zamiast kart ogloszen.
-  if (/\/(listings|Advert)\/search/.test(u)) return send({items:items(12),totalCount:1847,total:1847,page:1,pageSize:12})
+  if (/\/(listings|Advert)\/search/.test(u)) {
+    // Wczesniej atrapa zwracala zawsze 12 pozycji, ignorujac `pageSize`. Strona glowna
+    // prosi o 4 na kategorie, wiec strona testowa byla trzy razy wieksza od prawdziwej
+    // (49 000 px, 216 kart) i generowala skoki ukladu, ktorych w rzeczywistosci nie ma.
+    // Test ma odwzorowywac produkcje, inaczej mierzy sam siebie.
+    const body = await odczytajCialo(req)
+    const n = Math.min(Math.max(Number(body.pageSize) || 12, 1), 48)
+    return send({items:items(n),totalCount:1847,total:1847,page:Number(body.page)||1,pageSize:n})
+  }
   if (/\/(listings|Advert)\/(most-viewed|premium-collection|featured)/.test(u)) return send(items(8))
   if (/\/(listings|Advert)\/\d+/.test(u)) return send(mk(3))
   if (/\/Advert\?/.test(u)) return send({items:items(12),totalCount:1847})

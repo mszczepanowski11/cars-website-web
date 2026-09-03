@@ -346,12 +346,27 @@ watch(mobileOpen, (open) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: $s-4;
+    // Bez tego rząd nie może zmniejszyć się poniżej sumy swoich dzieci.
+    min-width: 0;
+
+    // Przy 360 px zawartość paska (logo 199 + przełącznik języka 81 + menu 44
+    // plus odstępy) zostawiała około czterech pikseli zapasu. Wystarczyła inna
+    // czcionka zastępcza - a taką widzi każdy, u kogo webfont jeszcze się nie
+    // wczytał albo w ogóle nie doszedł - żeby pasek przestał się mieścić i cała
+    // strona zaczynała przewijać się na boki. Wykryło to dopiero CI, bo lokalnie
+    // przeglądarka miała inny zestaw czcionek zastępczych.
+    @media (max-width: $bp-phone) {
+        gap: $s-2;
+    }
 }
 
 .logo {
     text-decoration: none;
-    flex-shrink: 0;
+    // Logo ustępuje jako ostatnie, ale MUSI móc ustąpić - inaczej to ono wypycha
+    // pasek poza ekran, gdy metryki czcionki okażą się inne, niż zakładano.
+    flex-shrink: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
 }
@@ -359,7 +374,10 @@ watch(mobileOpen, (open) => {
 .logo-img {
     height: 36px;
     width: auto;
+    max-width: 100%;
     display: block;
+
+    @media (max-width: $bp-phone) { height: 30px; }
 }
 
 .nav-links {
@@ -452,7 +470,7 @@ watch(mobileOpen, (open) => {
     &.active { color: $red-text; font-weight: 700; }
 }
 
-.nav-btns { display: flex; gap: 8px; align-items: center; }
+.nav-btns { display: flex; gap: $s-2; align-items: center; flex-shrink: 0; }
 
 .nav-badge-wrap {
     position: relative;
