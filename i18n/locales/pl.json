@@ -121,7 +121,9 @@
     "sortPriceDesc": "Cena: malejąco",
     "sortYearDesc": "Rok: najnowszy",
     "sortMileageAsc": "Przebieg: mniej",
-    "sortPowerDesc": "Moc: malejąco"
+    "sortPowerDesc": "Moc: malejąco",
+    "filters": "Filtry",
+    "sortBy": "Sortowanie"
   },
   "firmy": {
     "eyebrow": "Baza firm motoryzacyjnych",
