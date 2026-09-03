@@ -362,7 +362,7 @@ onMounted(async () => {
 
 .btn-add {
     display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: $r-sm;
-    background: rgba($red, 0.12); border: 1px solid rgba($red, 0.25); color: $red;
+    background: rgba($red, 0.12); border: 1px solid rgba($red, 0.25); color: $red-text;
     font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
     &:hover { background: rgba($red, 0.2); }
 }

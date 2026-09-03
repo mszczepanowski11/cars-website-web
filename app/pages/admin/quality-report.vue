@@ -339,7 +339,7 @@ const ReportSection = defineComponent({
     background: rgba($red, 0.1);
     border: 1px solid rgba($red, 0.3);
     border-radius: $r-md;
-    color: $red;
+    color: $red-text;
     font-size: 13px;
     padding: 12px 16px;
     margin-bottom: 24px;
@@ -388,7 +388,7 @@ const ReportSection = defineComponent({
     position: absolute;
     top: 12px;
     right: 12px;
-    .has-issues & { color: $red; }
+    .has-issues & { color: $red-text; }
     .ok & { color: rgb(34, 197, 94); }
 }
 
@@ -435,7 +435,7 @@ const ReportSection = defineComponent({
     padding: 2px 8px;
     border-radius: 50px;
 
-    &.has-issues { background: rgba($red, 0.15); color: $red; }
+    &.has-issues { background: rgba($red, 0.15); color: $red-text; }
     &.ok { background: rgba(34, 197, 94, 0.12); color: rgb(34, 197, 94); }
 }
 

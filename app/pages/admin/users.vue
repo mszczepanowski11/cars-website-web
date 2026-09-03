@@ -353,7 +353,7 @@ onMounted(fetchUsers)
 
 .user-avatar {
     width: 32px; height: 32px; border-radius: 50%; background: rgba($red, 0.12);
-    border: 1px solid rgba($red, 0.25); color: $red; font-weight: 700; font-size: 13px;
+    border: 1px solid rgba($red, 0.25); color: $red-text; font-weight: 700; font-size: 13px;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 
@@ -362,7 +362,7 @@ onMounted(fetchUsers)
 
 .type-badge {
     font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 5px;
-    &.type-dealer { background: rgba($red, 0.12); color: $red; border: 1px solid rgba($red, 0.25); }
+    &.type-dealer { background: rgba($red, 0.12); color: $red-text; border: 1px solid rgba($red, 0.25); }
     &.type-personal { background: rgba(255,255,255,0.06); color: $text-dim; border: 1px solid $border; }
 }
 
@@ -390,7 +390,7 @@ onMounted(fetchUsers)
 
 .btn-add-client {
     display: flex; align-items: center; gap: 6px; background: rgba($red, 0.12);
-    color: $red; border: 1px solid rgba($red, 0.3); border-radius: $r-sm;
+    color: $red-text; border: 1px solid rgba($red, 0.3); border-radius: $r-sm;
     font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif;
     padding: 9px 16px; cursor: pointer; transition: background 0.2s;
     &:hover { background: rgba($red, 0.22); }

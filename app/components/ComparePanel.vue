@@ -87,7 +87,7 @@ const { compared, toggle, clear, MAX_COMPARE } = useCompare()
     display: flex;
     padding: 0;
     transition: color 0.15s;
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 
 .cp-actions {
@@ -124,7 +124,7 @@ const { compared, toggle, clear, MAX_COMPARE } = useCompare()
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: all 0.2s;
-    &:hover { border-color: $red; color: $red; }
+    &:hover { border-color: $red; color: $red-text; }
 }
 
 .cp-slide-enter-active, .cp-slide-leave-active { transition: transform 0.25s ease, opacity 0.25s ease; }

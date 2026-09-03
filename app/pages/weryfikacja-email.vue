@@ -144,7 +144,7 @@ async function resend() {
     color: $text;
     text-decoration: none;
     margin-bottom: 4px;
-    span { color: $red; }
+    span { color: $red-text; }
 }
 
 .icon-wrap {
@@ -262,7 +262,7 @@ async function resend() {
     width: 100%;
 }
 
-.footer-link { color: $red; &:hover { text-decoration: underline; } }
+.footer-link { color: $red-text; &:hover { text-decoration: underline; } }
 
 .spin { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

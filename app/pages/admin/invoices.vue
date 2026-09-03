@@ -379,7 +379,7 @@ onMounted(() => { loadInvoices(); loadPayments() })
 .admin-page { display: flex; min-height: 100vh; background: $bg; padding-top: $nav-height; }
 .admin-sidebar { width: 220px; min-width: 220px; background: $bg; border-right: 1px solid $border; position: sticky; top: $nav-height; height: calc(100vh - #{$nav-height}); overflow-y: auto; display: flex; flex-direction: column; }
 .sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 18px 18px 12px; font-size: 13px; font-weight: 800; color: $text; border-bottom: 1px solid $border; }
-.brand-icon { color: $red; }
+.brand-icon { color: $red-text; }
 .sidebar-nav { flex: 1; padding: 12px 0; }
 .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; color: $text-muted; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: background 0.15s, color 0.15s; &:hover { background: rgba(255,255,255,0.04); color: $text; } &.active { background: rgba($red, 0.1); color: $text; border-left: 2px solid $red; padding-left: 16px; } }
 .nav-divider { height: 1px; background: $border; margin: 8px 0; }
@@ -404,7 +404,7 @@ onMounted(() => { loadInvoices(); loadPayments() })
 
 .alert-ok, .alert-err { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: $r-sm; font-size: 13px; margin-bottom: 16px; }
 .alert-ok { background: rgba(76,175,80,0.1); color: $success; border: 1px solid rgba(76,175,80,0.2); }
-.alert-err { background: rgba($red, 0.1); color: $red; border: 1px solid rgba($red, 0.2); }
+.alert-err { background: rgba($red, 0.1); color: $red-text; border: 1px solid rgba($red, 0.2); }
 
 .stats-row { display: flex; gap: 12px; margin-bottom: 20px; }
 .mini-stat { background: $card-alt; border: 1px solid $border; border-radius: $r-md; padding: 14px 20px; min-width: 160px; }
@@ -433,7 +433,7 @@ onMounted(() => { loadInvoices(); loadPayments() })
 .user-email { color: $text-dim; font-size: 11px; }
 .user-company { color: $text-dark; font-size: 11px; display: flex; align-items: center; gap: 3px; }
 
-.status-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.status-ok { background: rgba(76,175,80,0.12); color: $success; } &.status-pending { background: rgba(255,152,0,0.12); color: $warning; } &.status-generated { background: rgba(33,150,243,0.12); color: $info; } &.status-refunded { background: rgba(41,128,185,0.12); color: #5dade2; } &.status-fail { background: rgba($red, 0.12); color: $red; } }
+.status-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.status-ok { background: rgba(76,175,80,0.12); color: $success; } &.status-pending { background: rgba(255,152,0,0.12); color: $warning; } &.status-generated { background: rgba(33,150,243,0.12); color: $info; } &.status-refunded { background: rgba(41,128,185,0.12); color: #5dade2; } &.status-fail { background: rgba($red, 0.12); color: $red-text; } }
 
 .ksef-badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; &.ksef-badge--sent { background: rgba(76,175,80,0.12); color: $success; } &.ksef-badge--not-sent { background: rgba(255,152,0,0.12); color: $warning; } }
 

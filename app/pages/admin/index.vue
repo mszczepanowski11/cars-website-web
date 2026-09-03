@@ -561,7 +561,7 @@ function actionClass(type: string) {
 }
 
 .brand-icon {
-    color: $red;
+    color: $red-text;
 }
 
 .sidebar-nav {
@@ -699,7 +699,7 @@ function actionClass(type: string) {
 
     &.red {
         background: rgba($red, 0.12);
-        color: $red;
+        color: $red-text;
     }
 
     &.orange {
@@ -726,7 +726,7 @@ function actionClass(type: string) {
     color: $text-dark;
 
     &.red {
-        color: $red;
+        color: $red-text;
     }
 }
 
@@ -805,7 +805,7 @@ function actionClass(type: string) {
 }
 
 .target-link {
-    color: $red;
+    color: $red-text;
     text-decoration: none;
 
     &:hover {
@@ -1040,7 +1040,7 @@ function actionClass(type: string) {
 
     &.active {
         background: rgba($red, 0.12);
-        color: $red;
+        color: $red-text;
         border-color: rgba($red, 0.3);
     }
     &:hover:not(.active) {

@@ -203,7 +203,7 @@ defineExpose({ validateAll, isValid })
     &.active {
         background: rgba($red, 0.1);
         color: $text;
-        .cz-icon { color: $red; }
+        .cz-icon { color: $red-text; }
     }
     &:not(.active):hover { color: $text; }
 }
@@ -232,7 +232,7 @@ defineExpose({ validateAll, isValid })
     font-size: 12px;
     font-weight: 600;
     color: $text-dim;
-    .req { color: $red; }
+    .req { color: $red-text; }
 }
 
 .bf-input {

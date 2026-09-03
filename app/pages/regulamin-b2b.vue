@@ -221,13 +221,13 @@ useHead({ link: [{ rel: 'canonical', href: `${b2bConfig.public.siteUrl}/regulami
 }
 
 .hero-eyebrow {
-    font-size: 11px; font-weight: 700; color: $red;
+    font-size: 11px; font-weight: 700; color: $red-text;
     text-transform: uppercase; letter-spacing: 3px; margin-bottom: 14px;
 }
 
 .page-hero h1 {
     font-size: 48px; font-weight: 900; color: $text; margin-bottom: 10px;
-    span { color: $red; }
+    span { color: $red-text; }
     @include respond-to(sm) { font-size: 34px; }
 }
 

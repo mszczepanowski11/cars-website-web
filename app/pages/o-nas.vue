@@ -130,7 +130,7 @@ useHead({
   gap: 14px;
   font-size: 10px;
   font-weight: 700;
-  color: $red;
+  color: $red-text;
   letter-spacing: 4px;
   text-transform: uppercase;
   margin-bottom: 24px;
@@ -153,7 +153,7 @@ h1 {
   line-height: 1.15;
   margin: 0 0 20px;
   letter-spacing: -0.02em;
-  .accent { color: $red; }
+  .accent { color: $red-text; }
 }
 
 .onas-hero-desc {
@@ -226,7 +226,7 @@ h1 {
 .onas-stat-val {
   font-size: 30px;
   font-weight: 800;
-  color: $red;
+  color: $red-text;
   line-height: 1;
   margin-bottom: 8px;
   letter-spacing: -0.03em;
@@ -290,7 +290,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $red;
+  color: $red-text;
   flex-shrink: 0;
 }
 
@@ -322,7 +322,7 @@ h1 {
     font-weight: 800;
     color: $text;
     margin: 0 0 16px;
-    span { color: $red; }
+    span { color: $red-text; }
   }
 
   p {

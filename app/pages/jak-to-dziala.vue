@@ -100,13 +100,13 @@ const faqs = computed(() => (tm('howItWorks.faqs') as any[]).map(f => ({ q: rt(f
 }
 
 .hero-eyebrow {
-    font-size: 11px; font-weight: 700; color: $red;
+    font-size: 11px; font-weight: 700; color: $red-text;
     text-transform: uppercase; letter-spacing: 3px; margin-bottom: 14px;
 }
 
 .page-hero h1 {
     font-size: 48px; font-weight: 900; color: $text; margin-bottom: 10px;
-    span { color: $red; }
+    span { color: $red-text; }
     @include respond-to(sm) { font-size: 34px; }
 }
 
@@ -118,7 +118,7 @@ const faqs = computed(() => (tm('howItWorks.faqs') as any[]).map(f => ({ q: rt(f
 
 .section-h2 {
     font-size: 30px; font-weight: 900; color: $text;
-    span { color: $red; }
+    span { color: $red-text; }
 }
 
 .steps-grid {
@@ -149,7 +149,7 @@ const faqs = computed(() => (tm('howItWorks.faqs') as any[]).map(f => ({ q: rt(f
     line-height: 1;
 }
 
-.step-icon { color: $red; margin-bottom: 16px; }
+.step-icon { color: $red-text; margin-bottom: 16px; }
 
 .step-title {
     font-size: 15px; font-weight: 800; color: $text; margin-bottom: 10px;

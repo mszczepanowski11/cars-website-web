@@ -1311,8 +1311,8 @@ onMounted(async () => {
     .cz-icon { color: $text-dark; transition: color 0.2s; }
 
     &.active, &:hover {
-        color: $red;
-        .cz-icon { color: $red; }
+        color: $red-text;
+        .cz-icon { color: $red-text; }
     }
 
     &--danger { color: $danger; .cz-icon { color: $danger; } }
@@ -1404,7 +1404,7 @@ onMounted(async () => {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: $red;
+    color: $red-text;
 }
 
 .sub-tier { font-size: 13px; font-weight: 700; color: $text; }
@@ -1550,7 +1550,7 @@ onMounted(async () => {
 }
 
 .verified-badge {
-    color: $red;
+    color: $red-text;
 }
 
 .profile-role {
@@ -1650,7 +1650,7 @@ onMounted(async () => {
 }
 
 .stat-icon {
-    color: $red;
+    color: $red-text;
     margin-bottom: 6px;
 }
 
@@ -1703,7 +1703,7 @@ onMounted(async () => {
     margin-bottom: 12px;
 }
 
-.recent-hd-icon { color: $red; }
+.recent-hd-icon { color: $red-text; }
 
 .recent-strip {
     display: flex;
@@ -1760,7 +1760,7 @@ onMounted(async () => {
 .recent-mini-price {
     font-size: 13px;
     font-weight: 900;
-    color: $red;
+    color: $red-text;
 }
 
 .recent-mini-meta {
@@ -1981,7 +1981,7 @@ onMounted(async () => {
     text-decoration: none;
     flex: 1;
 
-    &:hover .adcard-title { color: $red; }
+    &:hover .adcard-title { color: $red-text; }
 }
 
 .adcard-actions {
@@ -2007,7 +2007,7 @@ onMounted(async () => {
     &:last-child { border-right: none; }
     &:hover { background: rgba(255,255,255,0.03); color: $text; }
 
-    &--promo { color: rgba($red, 0.7); &:hover { color: $red; background: rgba($red, 0.06); } }
+    &--promo { color: rgba($red, 0.7); &:hover { color: $red-text; background: rgba($red, 0.06); } }
 }
 
 .adcard-title {
@@ -2030,7 +2030,7 @@ onMounted(async () => {
 .adcard-price {
     font-size: 17px;
     font-weight: 900;
-    color: $red;
+    color: $red-text;
     margin-bottom: 8px;
 }
 
@@ -2104,7 +2104,7 @@ onMounted(async () => {
     border-radius: 50%;
     background: rgba($red, 0.15);
     border: 1px solid rgba($red, 0.3);
-    color: $red;
+    color: $red-text;
     font-weight: 700;
     font-size: 16px;
     display: flex;
@@ -2179,7 +2179,7 @@ onMounted(async () => {
     border-radius: 50%;
     background: rgba($red, 0.12);
     border: 1px solid rgba($red, 0.25);
-    color: $red;
+    color: $red-text;
     font-weight: 700;
     font-size: 20px;
     display: flex;
@@ -2256,7 +2256,7 @@ onMounted(async () => {
 .follow-advert-price {
     font-size: 16px;
     font-weight: 800;
-    color: $red;
+    color: $red-text;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -2278,7 +2278,7 @@ onMounted(async () => {
     height: 36px;
     border-radius: 50%;
     background: rgba($red, 0.1);
-    color: $red;
+    color: $red-text;
     transition: background 0.2s;
 
     &:hover {
@@ -2344,7 +2344,7 @@ onMounted(async () => {
 
     &.notif-red {
         background: rgba($red, 0.12);
-        color: $red;
+        color: $red-text;
     }
 
     &.notif-blue {
@@ -2552,7 +2552,7 @@ onMounted(async () => {
 .new-results-badge {
     background: rgba($red, 0.12);
     border: 1px solid rgba($red, 0.25);
-    color: $red;
+    color: $red-text;
     font-size: 11px;
     font-weight: 700;
     padding: 3px 9px;
@@ -2577,7 +2577,7 @@ onMounted(async () => {
 
     &:hover {
         border-color: rgba($red, 0.4);
-        color: $red;
+        color: $red-text;
     }
 }
 
@@ -3145,7 +3145,7 @@ onMounted(async () => {
     gap: 5px;
     background: transparent;
     border: none;
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
@@ -3166,7 +3166,7 @@ onMounted(async () => {
 }
 
 .loc-icon {
-    color: $red;
+    color: $red-text;
 }
 
 .rs-verif-list {

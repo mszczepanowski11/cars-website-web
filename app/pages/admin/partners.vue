@@ -610,14 +610,14 @@ onMounted(() => {
     display: flex; align-items: center; gap: 6px; font-size: 12px; color: $text-muted;
     margin: 2px 0; word-break: break-all;
 }
-.signup-count-inline { color: $red; font-weight: 600; white-space: nowrap; }
+.signup-count-inline { color: $red-text; font-weight: 600; white-space: nowrap; }
 .signup-card-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
 .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
 
 .btn-add {
     display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: $r-sm;
-    background: rgba($red, 0.12); border: 1px solid rgba($red, 0.25); color: $red;
+    background: rgba($red, 0.12); border: 1px solid rgba($red, 0.25); color: $red-text;
     font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
     &:hover { background: rgba($red, 0.2); }
 }
@@ -686,7 +686,7 @@ onMounted(() => {
 }
 .health-badge {
     display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600;
-    color: $red; margin-top: 3px; cursor: help;
+    color: $red-text; margin-top: 3px; cursor: help;
 }
 
 .mapping-panel { padding: 4px 0; }

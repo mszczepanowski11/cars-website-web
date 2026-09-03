@@ -409,7 +409,7 @@ onUnmounted(() => {
 }
 
 .hdr-avatar-img { width: 100%; height: 100%; object-fit: cover; }
-.hdr-avatar-initials { font-size: 14px; font-weight: 700; color: $red; }
+.hdr-avatar-initials { font-size: 14px; font-weight: 700; color: $red-text; }
 
 .header-info { min-width: 0; flex: 1; }
 .hdr-name {
@@ -430,7 +430,7 @@ onUnmounted(() => {
 }
 .hdr-advert {
     font-size: 11px;
-    color: $red;
+    color: $red-text;
     display: flex;
     align-items: center;
     gap: 3px;
@@ -641,7 +641,7 @@ onUnmounted(() => {
     overflow: hidden;
 }
 .bubble-avatar-img { width: 100%; height: 100%; object-fit: cover; }
-.bubble-avatar-initials { font-size: 11px; font-weight: 700; color: $red; }
+.bubble-avatar-initials { font-size: 11px; font-weight: 700; color: $red-text; }
 .msg-avatar-spacer { width: 32px; }
 
 // Bubble
@@ -726,7 +726,7 @@ onUnmounted(() => {
 .retry-btn {
     background: none;
     border: none;
-    color: $red;
+    color: $red-text;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -744,7 +744,7 @@ onUnmounted(() => {
 
 .send-error {
     font-size: 12px;
-    color: $red;
+    color: $red-text;
     margin-bottom: 6px;
 }
 

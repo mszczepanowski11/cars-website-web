@@ -225,7 +225,7 @@ async function subscribeNewsletter() {
   gap: 12px;
 }
 
-.fn-icon { color: $red; flex-shrink: 0; }
+.fn-icon { color: $red-text; flex-shrink: 0; }
 
 .fn-title {
   font-size: 15px;

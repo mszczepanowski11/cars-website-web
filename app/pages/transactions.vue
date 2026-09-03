@@ -217,13 +217,13 @@ onMounted(() => load(1))
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 
 .tx-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .tx-type-label { font-size: 12px; color: $text-muted; font-weight: 500; }
 .tx-sep { color: $text-dark; font-size: 11px; }
-.tx-price { font-size: 13px; font-weight: 700; color: $red; }
+.tx-price { font-size: 13px; font-weight: 700; color: $red-text; }
 .tx-date { font-size: 12px; color: $text-dim; }
 .tx-notes { font-size: 12px; color: $text-dim; font-style: italic; }
 .tx-phone { display: flex; align-items: center; gap: 4px; font-size: 12px; color: $text-dim; }
@@ -266,7 +266,7 @@ onMounted(() => load(1))
     display: flex;
     justify-content: center;
     padding: 80px 0;
-    color: $red;
+    color: $red-text;
 }
 
 .pagination {

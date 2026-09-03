@@ -249,13 +249,13 @@ onUnmounted(() => document.removeEventListener('click', _outsideClickHandler))
     transition: background 0.15s;
 
     &:hover, &--highlighted { background: $border; color: $text; }
-    &--selected { color: $red; }
+    &--selected { color: $red-text; }
 }
 
 .ss-opt-icon { color: $text-dark; flex-shrink: 0; }
 .ss-opt-label { flex: 1; }
 .ss-opt-meta { font-size: 11px; color: $text-dark; }
-.ss-opt-check { color: $red; margin-left: auto; }
+.ss-opt-check { color: $red-text; margin-left: auto; }
 
 // Dropdown transition
 .ss-drop-enter-active, .ss-drop-leave-active { transition: opacity 0.15s ease, transform 0.15s ease; }

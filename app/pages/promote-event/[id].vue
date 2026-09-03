@@ -348,7 +348,7 @@ async function initiatePayment() {
     padding: 0 32px; border-bottom: 1px solid $border; background: $bg; position: sticky; top: 0; z-index: 10;
 }
 
-.tl-logo { font-size: 20px; font-weight: 900; color: $text; letter-spacing: 4px; span { color: $red; } }
+.tl-logo { font-size: 20px; font-weight: 900; color: $text; letter-spacing: 4px; span { color: $red-text; } }
 
 .promo-steps { display: flex; align-items: center; gap: 10px; font-size: 13px; }
 
@@ -372,7 +372,7 @@ async function initiatePayment() {
     .hero-badge {
         display: inline-flex; align-items: center; gap: 6px;
         background: rgba($red, 0.1); border: 1px solid rgba($red, 0.25);
-        color: $red; font-size: 13px; font-weight: 700; padding: 5px 14px;
+        color: $red-text; font-size: 13px; font-weight: 700; padding: 5px 14px;
         border-radius: 20px; margin-bottom: 14px;
     }
     h1 { font-size: 28px; font-weight: 900; margin-bottom: 8px; }
@@ -393,7 +393,7 @@ async function initiatePayment() {
     display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700;
     padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;
     background: rgba(255,255,255,0.05); border: 1px solid $border; color: $text-dark;
-    &.active { background: rgba($red,0.1); border-color: rgba($red,0.3); color: $red; }
+    &.active { background: rgba($red,0.1); border-color: rgba($red,0.3); color: $red-text; }
 }
 
 .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px;
@@ -416,9 +416,9 @@ async function initiatePayment() {
 }
 
 .plan-header { display: flex; align-items: center; gap: 10px; }
-.plan-icon { color: $red; }
+.plan-icon { color: $red-text; }
 .plan-name { font-size: 18px; font-weight: 800; color: $text; }
-.plan-price { font-size: 26px; font-weight: 900; color: $red; strong { font-size: 30px; } }
+.plan-price { font-size: 26px; font-weight: 900; color: $red-text; strong { font-size: 30px; } }
 .plan-desc { font-size: 12px; color: $text-dim; line-height: 1.5; }
 
 .plan-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; flex: 1;
@@ -439,7 +439,7 @@ async function initiatePayment() {
 
 .summary-paid { display: flex; flex-direction: column; gap: 2px; }
 .summary-name { font-size: 14px; font-weight: 700; color: $text; }
-.summary-price { font-size: 22px; font-weight: 900; color: $red; }
+.summary-price { font-size: 22px; font-weight: 900; color: $red-text; }
 
 .footer-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 
@@ -489,7 +489,7 @@ async function initiatePayment() {
 
 .billing-step-title {
     display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 800; color: $text; margin: 0;
-    .cz-icon { color: $red; }
+    .cz-icon { color: $red-text; }
 }
 
 .billing-step-sub { font-size: 13px; color: $text-dim; line-height: 1.5; margin: 0; }
@@ -504,7 +504,7 @@ async function initiatePayment() {
 
 .bos-discount { color: $success; }
 .bos-net, .bos-vat { color: $text-dim; font-size: 12px; }
-.bos-total { background: rgba($red, 0.06); color: $text; font-weight: 700; strong { font-size: 18px; color: $red; } }
+.bos-total { background: rgba($red, 0.06); color: $text; font-weight: 700; strong { font-size: 18px; color: $red-text; } }
 
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

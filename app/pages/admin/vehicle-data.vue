@@ -596,7 +596,7 @@ watch(tab, (t) => {
     font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: $r-sm; cursor: pointer;
     background: transparent; border: 1px solid $border; color: $text-dim; font-family: 'Inter', sans-serif;
     transition: all 0.15s;
-    &.active { background: rgba($red, 0.12); color: $red; border-color: rgba($red, 0.3); }
+    &.active { background: rgba($red, 0.12); color: $red-text; border-color: rgba($red, 0.3); }
     &:hover:not(.active) { border-color: rgba(255,255,255,0.15); color: $text-muted; }
 }
 
@@ -609,7 +609,7 @@ watch(tab, (t) => {
 
 .btn-add {
     display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: $r-sm;
-    background: rgba($red, 0.12); border: 1px solid rgba($red, 0.25); color: $red;
+    background: rgba($red, 0.12); border: 1px solid rgba($red, 0.25); color: $red-text;
     font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
     &:hover { background: rgba($red, 0.2); }
 }

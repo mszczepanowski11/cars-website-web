@@ -153,7 +153,7 @@ async function submit() {
     color: $text;
 }
 
-.modal-icon { color: $red; }
+.modal-icon { color: $red-text; }
 
 .modal-close {
     background: transparent;
@@ -207,7 +207,7 @@ async function submit() {
         border-color: $red;
         background: rgba($red, 0.08);
         color: $text;
-        .r-icon { color: $red; }
+        .r-icon { color: $red-text; }
     }
 }
 

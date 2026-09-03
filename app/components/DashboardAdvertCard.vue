@@ -76,6 +76,6 @@ const statusColor = computed(() => {
     text-overflow: ellipsis;
 }
 
-.dash-card-price { color: $red; font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+.dash-card-price { color: $red-text; font-size: 18px; font-weight: 800; margin-bottom: 4px; }
 .dash-card-meta { color: $text-dim; font-size: 12px; }
 </style>

@@ -88,7 +88,7 @@ useHead({
   gap: 14px;
   font-size: 10px;
   font-weight: 700;
-  color: $red;
+  color: $red-text;
   letter-spacing: 4px;
   text-transform: uppercase;
   margin-bottom: 24px;
@@ -111,7 +111,7 @@ h1 {
   line-height: 1.15;
   margin: 0 0 18px;
   letter-spacing: -0.02em;
-  .accent { color: $red; }
+  .accent { color: $red-text; }
 }
 
 .kontakt-hero-desc {
@@ -156,7 +156,7 @@ a.kontakt-card:hover { border-color: rgba($red, 0.5); background: rgba(255,255,2
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $red;
+  color: $red-text;
   margin-bottom: 8px;
 }
 

@@ -100,7 +100,7 @@ onMounted(async () => {
 
 .back-link {
     display: inline-block;
-    color: $red;
+    color: $red-text;
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;

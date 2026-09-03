@@ -248,7 +248,7 @@ async function submit() {
     @include card($r-xl);
     padding: 48px 40px 40px;
     width: 100%;
-    max-width: 460px;
+    max-width: $container-narrow;   // wspólna szerokość kolumny formularza
     position: relative;
     z-index: 1;
 
@@ -306,7 +306,7 @@ h2 {
     font-size: 12px;
     color: $text-dark;
     text-decoration: none;
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 
 .auth-input-wrap {
@@ -460,7 +460,7 @@ h2 {
     font-size: 14px;
 
     a {
-        color: $red;
+        color: $red-text;
         font-weight: 600;
         &:hover { text-decoration: underline; }
     }

@@ -425,7 +425,7 @@ onMounted(load)
 .dr-i18n { border: 1px solid $border; border-radius: $r-sm; padding: 12px; margin-top: 8px; }
 .dr-i18n-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; label { color: $text-dim; font-size: 12px; } }
 .dr-i18n-row { display: grid; grid-template-columns: 34px 1fr 1fr 30px; gap: 6px; align-items: center; margin-bottom: 6px; }
-.dr-i18n-lang { font-family: monospace; font-size: 11px; font-weight: 700; color: $red; }
+.dr-i18n-lang { font-family: monospace; font-size: 11px; font-weight: 700; color: $red-text; }
 .dr-i18n-add { display: flex; gap: 6px; margin-top: 8px; }
 
 .dr-filters { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }

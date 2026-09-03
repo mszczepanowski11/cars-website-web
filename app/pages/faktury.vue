@@ -346,7 +346,7 @@ function serviceLabel(t: string) {
     min-width: 0;
 }
 
-.inv-icon { color: $red; flex-shrink: 0; }
+.inv-icon { color: $red-text; flex-shrink: 0; }
 .inv-period { font-size: 13px; color: $text-dim; white-space: nowrap; }
 
 .inv-status {
@@ -389,7 +389,7 @@ function serviceLabel(t: string) {
 
 .ia-label { font-size: 11px; color: $text-dark; }
 .ia-val { font-size: 14px; font-weight: 600; color: $text; }
-.ia-val-total { font-size: 18px; font-weight: 900; color: $red; }
+.ia-val-total { font-size: 18px; font-weight: 900; color: $red-text; }
 
 .inv-items {
     padding: 14px 20px;

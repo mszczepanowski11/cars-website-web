@@ -72,7 +72,7 @@ a { text-decoration: none; color: inherit; }
   border: 1px solid $border;
 
   .v-list-item:hover { background: rgba($red, 0.1) !important; }
-  .v-list-item--active { color: $red !important; }
+  .v-list-item--active { color: $red-text !important; }
 }
 
 .v-pagination__item--is-active .v-btn {
@@ -82,7 +82,7 @@ a { text-decoration: none; color: inherit; }
 
 
 .v-checkbox {
-  .v-selection-control--dirty .cz-icon { color: $red !important; }
+  .v-selection-control--dirty .cz-icon { color: $red-text !important; }
   .v-selection-control__input:hover .cz-icon { color: rgba($red, 0.7); }
 }
 

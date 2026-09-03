@@ -140,13 +140,13 @@ const filteredGroups = computed(() => {
 }
 
 .hero-eyebrow {
-    font-size: 11px; font-weight: 700; color: $red;
+    font-size: 11px; font-weight: 700; color: $red-text;
     text-transform: uppercase; letter-spacing: 3px; margin-bottom: 14px;
 }
 
 .page-hero h1 {
     font-size: 48px; font-weight: 900; color: $text; margin-bottom: 28px;
-    span { color: $red; }
+    span { color: $red-text; }
     @include respond-to(sm) { font-size: 34px; }
 }
 
@@ -223,7 +223,7 @@ const filteredGroups = computed(() => {
     h2 { font-size: 20px; font-weight: 800; color: $text; }
 }
 
-.group-icon { color: $red; }
+.group-icon { color: $red-text; }
 
 .faq-list { max-width: 800px; display: flex; flex-direction: column; gap: 6px; }
 
@@ -287,7 +287,7 @@ const filteredGroups = computed(() => {
     background: rgba($red, 0.1);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    color: $red;
+    color: $red-text;
     flex-shrink: 0;
 }
 

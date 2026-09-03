@@ -728,7 +728,7 @@ onMounted(async () => {
     text-overflow: ellipsis;
     display: block;
 
-    &:hover { color: $red; }
+    &:hover { color: $red-text; }
 }
 
 .row-meta {
@@ -741,7 +741,7 @@ onMounted(async () => {
 .row-price {
     font-size: 15px;
     font-weight: 800;
-    color: $red;
+    color: $red-text;
 }
 
 .row-sep { color: $text-dark; font-size: 12px; }
@@ -845,7 +845,7 @@ onMounted(async () => {
 }
 
 .act-promote {
-    &:hover { border-color: rgba($red, 0.5); color: $red; }
+    &:hover { border-color: rgba($red, 0.5); color: $red-text; }
 }
 
 .act-reactivate {
@@ -899,7 +899,7 @@ onMounted(async () => {
     color: $text;
 }
 
-.sold-opt-icon { color: $red; }
+.sold-opt-icon { color: $red-text; }
 
 .sold-option-desc {
     font-size: 12px;
@@ -934,7 +934,7 @@ onMounted(async () => {
     &.active {
         background: rgba($red, 0.1);
         border-color: rgba($red, 0.4);
-        color: $red;
+        color: $red-text;
     }
 }
 

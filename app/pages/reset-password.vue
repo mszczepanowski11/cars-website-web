@@ -159,7 +159,7 @@ async function submit() {
     @include card($r-xl);
     padding: 50px 40px;
     width: 100%;
-    max-width: 460px;
+    max-width: $container-narrow;   // wspólna szerokość kolumny formularza
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -361,7 +361,7 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
         color: $text-dim;
         text-decoration: none;
         transition: color 0.2s;
-        &:hover { color: $red; }
+        &:hover { color: $red-text; }
     }
 }
 

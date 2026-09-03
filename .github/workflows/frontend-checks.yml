@@ -1,0 +1,62 @@
+name: Frontend
+
+# Do tej pory repozytorium frontendu nie miało ŻADNEJ automatycznej kontroli, mimo
+# że backend ma swoją. Skutek: awarie, których budowanie nie wykrywa — nierozwiązany
+# auto-import, strona szersza od ekranu telefonu — trafiały prosto na produkcję.
+#
+# Ten przebieg robi dwie rzeczy, w tej kolejności:
+#   1. buduje projekt (łapie błędy składni, typów w szablonach, brakujące importy modułów),
+#   2. uruchamia zbudowany serwer i otwiera strony prawdziwą przeglądarką (łapie błędy,
+#      które istnieją dopiero w czasie renderowania).
+#
+# Krok drugi jest tym, którego brakowało — i jedynym, który wyłapałby obie dotychczasowe awarie.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Nowy push na tę samą gałąź anuluje poprzedni przebieg — nie ma sensu czekać na wynik
+# dla kodu, który już został zastąpiony.
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalacja zależności
+        run: npm ci
+
+      - name: Mapa ikon jest aktualna
+        # `app/utils/mdiPaths.ts` jest generowana ze skanu kodu. Gdyby ktoś dodał ikonę
+        # i nie odświeżył mapy, na stronie pojawiłaby się dziura zamiast ikony — a build
+        # by tego nie zauważył. Tu wychodzi to od razu.
+        run: |
+          npm run icons
+          if ! git diff --quiet -- app/utils/mdiPaths.ts; then
+            echo "::error::Mapa ikon jest nieaktualna. Uruchom 'npm run icons' i dołącz zmianę."
+            git diff --stat -- app/utils/mdiPaths.ts
+            exit 1
+          fi
+
+      - name: Budowanie
+        run: npm run build
+        env:
+          NUXT_PUBLIC_API_BASE: http://127.0.0.1:4999/
+
+      - name: Przeglądarka do testu dymnego
+        run: npx playwright install --with-deps chromium
+
+      - name: Test dymny
+        run: npm run test:smoke

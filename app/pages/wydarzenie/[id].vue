@@ -386,7 +386,7 @@ onMounted(async () => {
         align-items: center;
         gap: 6px;
 
-        .cz-icon { color: $red; }
+        .cz-icon { color: $red-text; }
     }
 }
 
@@ -456,8 +456,8 @@ onMounted(async () => {
     font-family: 'Inter', sans-serif;
     transition: all 0.2s;
 
-    &:hover { border-color: rgba($red, 0.4); color: $red; }
-    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.4); color: $red; .cz-icon { color: $red; } }
+    &:hover { border-color: rgba($red, 0.4); color: $red-text; }
+    &.active { background: rgba($red, 0.1); border-color: rgba($red, 0.4); color: $red-text; .cz-icon { color: $red-text; } }
 }
 
 .btn-ticket {
@@ -543,7 +543,7 @@ onMounted(async () => {
 .share-wa  { &:hover { border-color: #25d366; color: #25d366; } }
 .share-ms  { &:hover { border-color: #006aff; color: #006aff; } }
 .share-ig  { &:hover { border-color: #e1306c; color: #e1306c; } }
-.share-copy { &.copied, &:hover { border-color: rgba($red, 0.4); color: $red; } }
+.share-copy { &.copied, &:hover { border-color: rgba($red, 0.4); color: $red-text; } }
 
 // Sidebar
 .content-sidebar {
@@ -579,7 +579,7 @@ onMounted(async () => {
     align-items: flex-start;
 }
 
-.di-icon { color: $red; flex-shrink: 0; margin-top: 2px; }
+.di-icon { color: $red-text; flex-shrink: 0; margin-top: 2px; }
 .di-label { font-size: 11px; color: $text-dim; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px; }
 .di-val { font-size: 14px; color: $text-muted; font-weight: 500; }
 .di-sub { font-size: 12px; color: $text-dim; margin-top: 2px; }
@@ -592,7 +592,7 @@ onMounted(async () => {
     color: $text-muted;
 }
 
-.stat-icon { color: $red; flex-shrink: 0; }
+.stat-icon { color: $red-text; flex-shrink: 0; }
 
 // Not found
 .not-found {
@@ -608,7 +608,7 @@ onMounted(async () => {
 .nf-icon { color: $text-dark; }
 
 .back-link {
-    color: $red;
+    color: $red-text;
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;

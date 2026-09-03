@@ -272,8 +272,8 @@ const monthlyRate = computed(() => {
     transition: all 0.2s;
     .cz-icon { color: $text-muted; transition: color 0.2s; }
 
-    &:hover { background: rgba($red,0.2); border-color: rgba($red,0.5); .cz-icon { color: $red; } }
-    &.active { background: rgba($red,0.25); border-color: $red; .cz-icon { color: $red; } }
+    &:hover { background: rgba($red,0.2); border-color: rgba($red,0.5); .cz-icon { color: $red-text; } }
+    &.active { background: rgba($red,0.25); border-color: $red; .cz-icon { color: $red-text; } }
 }
 
 .fav-btn {
@@ -294,7 +294,7 @@ const monthlyRate = computed(() => {
     transition: color 0.2s, background 0.2s;
 
     &:hover { background: rgba(0, 0, 0, 0.85); color: $text; }
-    &.active { color: $red; }
+    &.active { color: $red-text; }
 }
 
 .car-body { padding: 16px; }
@@ -337,7 +337,7 @@ const monthlyRate = computed(() => {
 }
 
 .car-price {
-    color: $red;
+    color: $red-text;
     font-size: 22px;
     font-weight: 800;
     margin-bottom: 4px;
@@ -404,10 +404,10 @@ const monthlyRate = computed(() => {
     display: flex;
     align-items: center;
     gap: 3px;
-    color: $text-faint;
+    color: $text-dark;
     font-size: 11px;
     margin-left: auto;
-    .cz-icon { color: $text-faint; }
+    .cz-icon { color: $text-dark; }
 }
 
 // ── Badges ────────────────────────────────────────────────────────────────────
