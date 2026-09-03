@@ -501,6 +501,17 @@ const faq = computed(() => [
     border-radius: $r-lg;
     padding: 20px 22px;
 
+    // Ikona (44 px) i cena nie kurczą się wcale, więc CAŁY zapas musi znaleźć blok
+    // tekstu w środku - a ten bez `min-width: 0` nie zejdzie poniżej swojego
+    // najdłuższego słowa. Przy 320 px i szerszej czcionce zastępczej brakowało
+    // czterech pikseli i karta wypychała stronę poza ekran.
+    > div { min-width: 0; }
+
+    @media (max-width: $bp-phone) {
+        gap: 12px;
+        padding: 16px;
+    }
+
     &--free { border-color: rgba(76, 175, 80, 0.25); }
 }
 
@@ -528,11 +539,15 @@ const faq = computed(() => [
     font-weight: 700;
     color: $text;
     margin-bottom: 3px;
+    // `anywhere` (a nie `break-word`) - tylko ta wartość zmniejsza także rozmiar
+    // min-content, czyli realnie pozwala blokowi się zwęzić.
+    overflow-wrap: anywhere;
 }
 
 .info-card-desc {
     font-size: 12px;
     color: $text-dim;
+    overflow-wrap: anywhere;
 }
 
 .info-card-price {
