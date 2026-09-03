@@ -1,52 +1,32 @@
 <template>
     <div class="home">
 
-        <!-- ─── Hero ─────────────────────────────────────────────────── -->
+        <!-- ─── Pierwszy ekran: komunikat + wyszukiwarka ──────────────── -->
+        <!--
+            Hierarchia z briefu: nagłówek → jedno zdanie → WYSZUKIWARKA.
+            Wcześniej hero zajmowało 82% wysokości okna, a wyszukiwarka zaczynała się
+            dopiero ok. 690 px niżej - na telefonie trzeba było przewinąć cały ekran,
+            zanim dało się cokolwiek wyszukać. Teraz jedno i drugie jest w tej samej
+            sekcji, a lista atutów zeszła POD wyszukiwarkę, gdzie działa jak sygnał
+            zaufania, zamiast odsuwać najważniejszą akcję.
+        -->
         <section class="hero-fs">
-            <!-- Full-bleed background image -->
-            <img src="/hero-car.jpg" alt="CARIZO – motoryzacja online" class="hfs-img" fetchpriority="high" />
-            <!-- Gradient overlay: dark from left, bottom vignette -->
+            <img src="/hero-car.jpg" alt="" class="hfs-img" fetchpriority="high" aria-hidden="true" />
             <div class="hfs-fade" />
 
-            <!-- Text content -->
-            <div class="hfs-left">
-                <div class="hfs-left-inner">
+            <div class="hfs-inner">
+                <div class="hfs-head">
                     <div class="hfs-eyebrow">
                         <span class="eyebrow-dot" />
                         {{ $t('hero.eyebrow') }}
                     </div>
                     <h1 class="hfs-title">
-{{ $t('hero.titleLine1') }}<br>
+                        {{ $t('hero.titleLine1') }}
                         <span class="title-accent">{{ $t('hero.titleLine2') }}</span>
                     </h1>
-                    <ul class="hfs-features">
-                        <li><CzIcon icon="mdi-shield-check-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat1') }}</li>
-                        <li><CzIcon icon="mdi-file-document-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat2') }}</li>
-                        <li><CzIcon icon="mdi-cpu-64-bit" size="16" class="hfs-feat-icon" />{{ $t('hero.feat3') }}</li>
-                        <li><CzIcon icon="mdi-account-tie-outline" size="16" class="hfs-feat-icon" />{{ $t('hero.feat4') }}</li>
-                    </ul>
-                    <div class="hfs-links">
-                        <NuxtLink to="/adverts" class="hfs-link hfs-link--primary">
-                            <CzIcon icon="mdi-magnify" size="16" />
-                            Znajdź samochód
-                        </NuxtLink>
-                        <NuxtLink to="/add-advert" class="hfs-link hfs-link--secondary">
-                            <CzIcon icon="mdi-plus-circle-outline" size="16" />
-                            Dodaj ogłoszenie
-                        </NuxtLink>
-                    </div>
                 </div>
-            </div>
 
-            <!-- scroll indicator -->
-            <div class="hfs-scroll">
-                <CzIcon icon="mdi-chevron-down" size="26" />
-            </div>
-        </section>
-
-        <!-- Search section -->
-        <section class="search-section">
-            <div class="container">
+                <div class="hfs-search">
 
                 <!-- Category tabs -->
                 <div class="cat-tabs">
@@ -229,8 +209,17 @@
                 </Transition>
 
                 </div><!-- /hs-panel -->
+                </div>
+
+                <ul class="hfs-features">
+                    <li><CzIcon icon="mdi-shield-check-outline" size="15" class="hfs-feat-icon" />{{ $t('hero.feat1') }}</li>
+                    <li><CzIcon icon="mdi-file-document-outline" size="15" class="hfs-feat-icon" />{{ $t('hero.feat2') }}</li>
+                    <li><CzIcon icon="mdi-cpu-64-bit" size="15" class="hfs-feat-icon" />{{ $t('hero.feat3') }}</li>
+                    <li><CzIcon icon="mdi-account-tie-outline" size="15" class="hfs-feat-icon" />{{ $t('hero.feat4') }}</li>
+                </ul>
             </div>
         </section>
+
 
         <!-- ─── Stats strip ──────────────────────────────────────────── -->
         <div v-if="showStatsStrip" class="stats-strip">
@@ -1148,17 +1137,58 @@ onMounted(async () => {
 
 // ─── Hero split layout ────────────────────────────────────────────────────────
 
+// Wysokość wynika z treści, nie z okna. Wcześniej `height: 82vh` gwarantowało,
+// że wyszukiwarka NIGDY nie zmieści się na pierwszym ekranie telefonu.
 .hero-fs {
     position: relative;
-    display: flex;
-    align-items: center;
-    min-height: 660px;
-    height: 82vh;
-    max-height: 920px;
     overflow: hidden;
     background: $bg;
-    padding-top: $nav-height;
+    padding: calc(#{$nav-height} + #{$s-8}) 0 $s-10;
+
+    @media (max-width: $bp-mobile) {
+        padding: calc(#{$nav-height} + #{$s-5}) 0 $s-6;
+    }
 }
+
+.hfs-inner {
+    @include container;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: $s-6;
+
+    @media (max-width: $bp-mobile) { gap: $s-4; }
+}
+
+.hfs-head { max-width: 46ch; }
+
+// Atuty pod wyszukiwarką: jeden wiersz na szerokim ekranie, zawijany na wąskim.
+// Jako sygnał zaufania działają tu tak samo dobrze jak nad wyszukiwarką,
+// a nie odsuwają jej poza ekran.
+.hfs-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $s-25 $s-6;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: $s-2;
+        font-size: $fs-sm;
+        color: rgba(255,255,255,0.75);
+        text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+    }
+
+    @media (max-width: $bp-mobile) {
+        gap: $s-2 $s-4;
+        li { font-size: 12.5px; }
+    }
+}
+
 
 .hfs-img {
     position: absolute;
@@ -1190,37 +1220,6 @@ onMounted(async () => {
         ),
         linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 30%, transparent 60%, rgba(0,0,0,0.6) 100%);
 }
-
-.hfs-left {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    width: 54%;
-    padding-left: #{max(4vw, calc((100vw - 1450px) / 2))};
-    padding-right: 48px;
-    padding-top: 48px;
-    padding-bottom: 48px;
-
-    @include respond-to(md) {
-        width: 65%;
-        padding-left: 32px;
-        padding-right: 32px;
-    }
-    @include respond-to(sm) {
-        width: 100%;
-        padding: 40px 24px;
-    }
-    @include respond-to(xs) {
-        padding: 32px 18px 28px;
-    }
-}
-
-.hfs-left-inner {
-    max-width: 540px;
-    width: 100%;
-}
-
 // Eyebrow
 .hfs-eyebrow {
     display: inline-flex;
@@ -1249,17 +1248,25 @@ onMounted(async () => {
 
 // Title
 .hfs-title {
-    font-size: 72px;
-    line-height: 1.06;
-    font-weight: 900;
+    font-size: 52px;
+    line-height: 1.05;
+    font-weight: $fw-black;
     color: $text;
-    letter-spacing: -2.5px;
-    margin-bottom: 24px;
+    letter-spacing: -1.8px;
+    margin-bottom: 0;
     text-shadow: 0 2px 20px rgba(0,0,0,0.6);
 
-    @include respond-to(md) { font-size: 52px; letter-spacing: -1.5px; }
-    @include respond-to(sm) { font-size: 36px; letter-spacing: -1px; }
-    @include respond-to(xs) { font-size: 28px; letter-spacing: -1px; line-height: 1.1; }
+    // Dwie linie hasła to zamierzony podział, nie przypadek zawijania. Jako element
+    // blokowy trzyma się on każdej szerokości ekranu - wcześniej stał tu twardy <br>,
+    // który na wąskim ekranie łamał tekst w trzecim, przypadkowym miejscu.
+    .title-accent {
+        display: block;
+        color: $red-text;
+    }
+
+    @media (max-width: $bp-laptop) { font-size: 42px; letter-spacing: -1.2px; }
+    @media (max-width: $bp-mobile)  { font-size: 30px; letter-spacing: -0.8px; line-height: 1.1; }
+    @media (max-width: $bp-phone)   { font-size: 26px; }
 }
 
 .title-accent {
@@ -1487,19 +1494,6 @@ onMounted(async () => {
 
     .cz-icon { color: $red-text; flex-shrink: 0; }
 }
-
-.hfs-links {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: center;
-
-    @include respond-to(xs) {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-
 .hfs-link {
     display: inline-flex;
     align-items: center;
@@ -1546,17 +1540,6 @@ onMounted(async () => {
         }
     }
 }
-
-.hfs-scroll {
-    position: absolute;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    color: rgba(255,255,255,0.3);
-    animation: bounce 2.4s ease infinite;
-}
-
 @keyframes bounce {
     0%, 100% { transform: translateX(-50%) translateY(0); }
     50% { transform: translateX(-50%) translateY(10px); }
@@ -1667,22 +1650,21 @@ onMounted(async () => {
 }
 
 // ─── Search section ───────────────────────────────────────────────────────────
-
-.search-section {
-    padding: 40px 0 56px;
-    border-bottom: 1px solid $border;
-}
-
 // Glass card wrapping the entire form
+// Panel leży teraz NA zdjęciu, a nie pod nim. Półprzezroczyste tło, które
+// wystarczało na jednolitym tle sekcji, przepuszczało tu reflektory i krawędzie
+// auta - etykiety i pola robiły się nieczytelne. Stąd nieprzezroczyste tło
+// z rozmyciem: zdjęcie nadal buduje nastrój wokół, ale nie konkuruje z treścią.
 .hs-panel {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 8px 48px rgba(0,0,0,0.28), 0 1px 0 rgba(255,255,255,0.06) inset;
+    background: rgba(11, 11, 11, 0.88);
+    backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: $r-md;
+    padding: $s-6;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.06) inset;
 
-    @include respond-to(sm) { padding: 18px 16px; border-radius: 16px; }
-    @include respond-to(xs) { padding: 16px 14px; }
+    @media (max-width: $bp-mobile) { padding: $s-45 $s-4; }
+    @media (max-width: $bp-phone)  { padding: $s-4 $s-35; }
 }
 
 // ─── Shared field token (used by both hsp and hse) ───────────────────────────
@@ -2039,11 +2021,15 @@ onMounted(async () => {
 .ss-item-icon { color: $text-dim; flex-shrink: 0; }
 
 // Category tabs
+// Siedemnaście kategorii. Na wąskim ekranie ustawione w dwie kolumny zajmowały
+// 416 px - czyli połowę ekranu telefonu - i spychały samą wyszukiwarkę poniżej
+// zgięcia. Jeden przewijany poziomo rząd zajmuje 48 px i jest wzorcem, który
+// użytkownicy znają z każdej innej aplikacji na telefonie.
 .cat-tabs {
     display: flex;
-    gap: 6px;
+    gap: $s-15;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin-bottom: $s-5;
     overflow-x: auto;
     padding-bottom: 2px;
 
@@ -2051,10 +2037,14 @@ onMounted(async () => {
     -ms-overflow-style: none;
     scrollbar-width: none;
 
-    @include respond-to(xs) {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        overflow-x: unset;
+    @media (max-width: $bp-mobile) {
+        flex-wrap: nowrap;
+        margin-bottom: $s-3;
+        // Zakładka zatrzymuje się na krawędzi, zamiast kończyć w połowie -
+        // dzięki temu widać, że rząd da się przewijać dalej.
+        scroll-snap-type: x proximity;
+        // Margines po bokach, żeby pierwsza i ostatnia zakładka nie kleiły się do krawędzi.
+        padding-inline: 1px;
     }
 }
 
@@ -2074,10 +2064,12 @@ onMounted(async () => {
     font-family: 'Inter', sans-serif;
     transition: all 0.18s;
 
-    @include respond-to(xs) {
-        justify-content: center;
-        white-space: normal;
-        text-align: center;
+    @media (max-width: $bp-mobile) {
+        flex-shrink: 0;
+        scroll-snap-align: start;
+        // Pełna wysokość dotykowa - zakładka to główny przełącznik na tym ekranie.
+        min-height: 38px;
+        padding: $s-2 $s-35;
     }
 
     &:hover { border-color: rgba($red, 0.4); color: $text; }
