@@ -1241,7 +1241,7 @@ onMounted(async () => {
     display: flex;
     min-height: 100vh;
     background: $bg;
-    padding-top: $nav-height;
+    padding-top: var(--nav-h);
 
     @include respond-to(md) {
         flex-direction: column;
@@ -1257,8 +1257,8 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     position: sticky;
-    top: $nav-height;
-    height: calc(100vh - #{$nav-height});
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
     overflow-y: auto;
 
     @include respond-to(md) {
@@ -1275,7 +1275,7 @@ onMounted(async () => {
 .dash-mobile-nav {
     display: none;
     position: sticky;
-    top: $nav-height;
+    top: var(--nav-h);
     z-index: 90;
     background: $bg;
     border-bottom: 1px solid $border;
@@ -3110,8 +3110,8 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     position: sticky;
-    top: $nav-height;
-    height: calc(100vh - #{$nav-height});
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
     overflow-y: auto;
 
     @include respond-to(md) {

@@ -175,7 +175,7 @@ async function onLeave() {
 .team-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: $nav-height;
+    padding-top: var(--nav-h);
     padding-bottom: 60px;
 }
 

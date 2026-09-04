@@ -1733,7 +1733,7 @@ onUnmounted(() => {
 .advert-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: $nav-height;
+    padding-top: var(--nav-h);
 
     @include respond-to(md) {
         padding-bottom: $mobile-cta-height;
@@ -1746,7 +1746,7 @@ onUnmounted(() => {
     backdrop-filter: blur(10px);
     border-bottom: 1px solid $border;
     position: sticky;
-    top: $nav-height;
+    top: var(--nav-h);
     z-index: 50;
 }
 
@@ -2742,7 +2742,7 @@ onUnmounted(() => {
 
 .main-right {
     position: sticky;
-    top: calc(#{$nav-height} + 50px + 16px);
+    top: calc(var(--nav-h) + 50px + 16px);
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -4665,7 +4665,7 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     padding: 40px 20px;
-    padding-top: calc(#{$nav-height} + 40px);
+    padding-top: calc(var(--nav-h) + 40px);
 }
 
 .anf-inner {

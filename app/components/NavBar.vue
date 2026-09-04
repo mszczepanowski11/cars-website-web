@@ -226,6 +226,18 @@ watch(mobileOpen, (open) => {
                     Dodaj ogłoszenie
                 </NuxtLink>
 
+                <!--
+                    Wersja telefonowa tego samego przycisku. Do tej pory „Dodaj ogloszenie"
+                    bylo `desktop-only`, czyli na telefonie NIE ISTNIALO w pasku - zeby
+                    wystawic pojazd, trzeba bylo najpierw otworzyc menu. Serwis ogloszeniowy
+                    nie moze chowac tej jednej akcji, na ktorej zarabia.
+                    Sam znak plus bylby zagadka, wiec zostaje krotki napis.
+                -->
+                <NuxtLink to="/add-advert" class="btn-add-mobile mobile-only" aria-label="Dodaj ogłoszenie">
+                    <CzIcon icon="mdi-plus" size="18" />
+                    <span>Dodaj</span>
+                </NuxtLink>
+
                 <button class="hamburger" :class="{ open: mobileOpen }"
                     :aria-label="mobileOpen ? 'Zamknij menu' : 'Otwórz menu'" :aria-expanded="mobileOpen"
                     @click="mobileOpen = !mobileOpen">
@@ -354,7 +366,7 @@ watch(mobileOpen, (open) => {
 
 .nav-inner {
     @include container;
-    height: $nav-height;
+    height: var(--nav-h);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -389,7 +401,7 @@ watch(mobileOpen, (open) => {
     max-width: 100%;
     display: block;
 
-    @media (max-width: $bp-phone) { height: 30px; }
+    @media (max-width: $bp-phone) { height: 26px; }
 }
 
 .nav-links {
@@ -526,6 +538,31 @@ watch(mobileOpen, (open) => {
 .nav-icon-label { @include respond-to(md) { display: none; } }
 
 .desktop-only { @include respond-to(sm) { display: none !important; } }
+
+// Widoczne WYLACZNIE tam, gdzie znika wersja desktopowa - te dwa progi musza byc
+// takie same, inaczej albo oba przyciski widac naraz, albo zaden.
+.mobile-only {
+    display: none;
+    @include respond-to(sm) { display: inline-flex !important; }
+}
+
+.btn-add-mobile {
+    align-items: center;
+    gap: $s-1;
+    height: 40px;
+    padding: 0 $s-3;
+    border-radius: $r-sm;
+    background: $red;
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: $fw-bold;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:active { opacity: 0.85; }
+    &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+}
 
 .btn-login {
     @include btn(transparent, $text-muted);

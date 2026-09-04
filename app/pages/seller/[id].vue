@@ -351,7 +351,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.seller-page { background: $bg; min-height: 100vh; padding-top: $nav-height; }
+.seller-page { background: $bg; min-height: 100vh; padding-top: var(--nav-h); }
 .container { @include container; }
 
 .page-loading, .not-found {

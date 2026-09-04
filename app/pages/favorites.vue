@@ -115,7 +115,7 @@ onMounted(() => load(1))
 .fav-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: calc(#{$nav-height} + 48px);
+    padding-top: calc(var(--nav-h) + 48px);
     padding-bottom: 80px;
 }
 

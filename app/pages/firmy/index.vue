@@ -234,7 +234,7 @@ useHead({
 </script>
 
 <style lang="scss" scoped>
-.dir-page { background: $bg; min-height: 100vh; padding-top: $nav-height; }
+.dir-page { background: $bg; min-height: 100vh; padding-top: var(--nav-h); }
 
 .dir-hero {
   padding: 56px 0 40px; text-align: center; border-bottom: 1px solid $border;
@@ -268,7 +268,7 @@ useHead({
 .dir-grid { display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start; }
 
 .dir-filters {
-  position: sticky; top: calc(#{$nav-height} + 16px);
+  position: sticky; top: calc(var(--nav-h) + 16px);
   background: $card; border: 1px solid $border; border-radius: 12px; padding: 18px;
 }
 .dir-filter-h {

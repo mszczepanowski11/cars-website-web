@@ -1127,10 +1127,10 @@ onMounted(async () => {
     position: relative;
     overflow: hidden;
     background: $bg;
-    padding: calc(#{$nav-height} + #{$s-8}) 0 $s-10;
+    padding: calc(var(--nav-h) + #{$s-8}) 0 $s-10;
 
     @media (max-width: $bp-mobile) {
-        padding: calc(#{$nav-height} + #{$s-5}) 0 $s-6;
+        padding: calc(var(--nav-h) + #{$s-5}) 0 $s-6;
     }
 }
 

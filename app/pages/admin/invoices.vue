@@ -376,8 +376,8 @@ onMounted(() => { loadInvoices(); loadPayments() })
 </script>
 
 <style lang="scss" scoped>
-.admin-page { display: flex; min-height: 100vh; background: $bg; padding-top: $nav-height; }
-.admin-sidebar { width: 220px; min-width: 220px; background: $bg; border-right: 1px solid $border; position: sticky; top: $nav-height; height: calc(100vh - #{$nav-height}); overflow-y: auto; display: flex; flex-direction: column; }
+.admin-page { display: flex; min-height: 100vh; background: $bg; padding-top: var(--nav-h); }
+.admin-sidebar { width: 220px; min-width: 220px; background: $bg; border-right: 1px solid $border; position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; display: flex; flex-direction: column; }
 .sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 18px 18px 12px; font-size: 13px; font-weight: 800; color: $text; border-bottom: 1px solid $border; }
 .brand-icon { color: $red-text; }
 .sidebar-nav { flex: 1; padding: 12px 0; }

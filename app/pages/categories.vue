@@ -195,7 +195,7 @@ onMounted(async () => {
 .cats-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: $nav-height;
+    padding-top: var(--nav-h);
 }
 
 .container { @include container; }
@@ -285,7 +285,7 @@ onMounted(async () => {
     border-bottom: 1px solid $border;
     padding: 18px 0;
     position: sticky;
-    top: $nav-height;
+    top: var(--nav-h);
     z-index: 40;
 }
 

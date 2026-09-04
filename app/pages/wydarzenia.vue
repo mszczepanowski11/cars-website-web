@@ -309,7 +309,7 @@ onMounted(fetchEvents)
 .events-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: $nav-height;
+    padding-top: var(--nav-h);
 }
 
 .container { @include container; }

@@ -533,7 +533,7 @@ function actionClass(type: string) {
     display: flex;
     min-height: 100vh;
     background: $bg;
-    padding-top: $nav-height;
+    padding-top: var(--nav-h);
 }
 
 .admin-sidebar {
@@ -542,8 +542,8 @@ function actionClass(type: string) {
     background: $bg;
     border-right: 1px solid $border;
     position: sticky;
-    top: $nav-height;
-    height: calc(100vh - #{$nav-height});
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
     overflow-y: auto;
     display: flex;
     flex-direction: column;

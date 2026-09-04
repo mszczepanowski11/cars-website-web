@@ -1417,7 +1417,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.page-bg { background: $bg; min-height: 100vh; padding-top: $nav-height; }
+.page-bg { background: $bg; min-height: 100vh; padding-top: var(--nav-h); }
 .container { @include container; }
 
 // ── Category hero ──────────────────────────────────────────────────────────────────────────────

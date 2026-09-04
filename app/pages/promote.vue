@@ -538,7 +538,7 @@ onMounted(async () => {
 .promote-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: $nav-height;
+    padding-top: var(--nav-h);
     padding-bottom: 80px;
 }
 

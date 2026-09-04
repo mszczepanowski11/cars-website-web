@@ -56,12 +56,33 @@ async function subscribeNewsletter() {
           </div>
         </div>
 
+        <!--
+          Cztery nazwane grupy zamiast trzech, i podzial wedlug TEGO, PO CO KTOS
+          tu przyszedl: poznac serwis / kupic / sprzedac / sprawdzic zasady.
+          Wczesniej „Bezpieczenstwo" mieszalo regulamin z polityka prywatnosci
+          i zgloszeniem naruszenia, a dla kupujacego nie bylo grupy w ogole -
+          ogloszenia, kategorie i firmy dalo sie znalezc tylko w gornym menu.
+
+          KAZDY LINK PROWADZI DO ISTNIEJACEJ STRONY. Kilku pozycji z listy zyczen
+          (Reklama, Wycena pojazdu, Finansowanie, Ubezpieczenie, Partnerzy) tu nie
+          ma, bo nie maja jeszcze stron - martwy link w stopce to 404 dla
+          uzytkownika i dla wyszukiwarki.
+        -->
         <div class="footer-col">
           <h4>{{ $t('footer.company') }}</h4>
           <NuxtLink :to="localePath('/o-nas')">{{ $t('footer.about') }}</NuxtLink>
-          <NuxtLink :to="localePath('/kontakt')">{{ $t('footer.contact') }}</NuxtLink>
           <NuxtLink :to="localePath('/jak-to-dziala')">{{ $t('footer.howItWorks') }}</NuxtLink>
           <NuxtLink :to="localePath('/pomoc')">{{ $t('footer.help') }}</NuxtLink>
+          <NuxtLink :to="localePath('/kontakt')">{{ $t('footer.contact') }}</NuxtLink>
+        </div>
+
+        <div class="footer-col">
+          <h4>{{ $t('footer.forBuyers') }}</h4>
+          <NuxtLink :to="localePath('/adverts')">{{ $t('nav.listings') }}</NuxtLink>
+          <NuxtLink :to="localePath('/categories')">{{ $t('nav.categories') }}</NuxtLink>
+          <NuxtLink :to="localePath('/firmy')">{{ $t('nav.companies') }}</NuxtLink>
+          <NuxtLink :to="localePath('/compare')">{{ $t('footer.compare') }}</NuxtLink>
+          <NuxtLink :to="localePath('/wydarzenia')">{{ $t('nav.events') }}</NuxtLink>
         </div>
 
         <div class="footer-col">
@@ -70,12 +91,13 @@ async function subscribeNewsletter() {
           <NuxtLink :to="localePath('/cennik')">{{ $t('footer.pricing') }}</NuxtLink>
           <NuxtLink :to="localePath('/promote')">{{ $t('footer.premium') }}</NuxtLink>
           <NuxtLink :to="localePath('/pakiety')">{{ $t('footer.forDealers') }}</NuxtLink>
-          <NuxtLink :to="localePath('/regulamin-b2b')">{{ $t('footer.b2bTerms') }}</NuxtLink>
+          <NuxtLink :to="localePath('/dla-firm')">{{ $t('nav.forDealers') }}</NuxtLink>
         </div>
 
         <div class="footer-col">
-          <h4>{{ $t('footer.safety') }}</h4>
+          <h4>{{ $t('footer.legal') }}</h4>
           <NuxtLink :to="localePath('/regulamin')">{{ $t('footer.terms') }}</NuxtLink>
+          <NuxtLink :to="localePath('/regulamin-b2b')">{{ $t('footer.b2bTerms') }}</NuxtLink>
           <NuxtLink :to="localePath('/polityka-prywatnosci')">{{ $t('footer.privacy') }}</NuxtLink>
           <button class="footer-cookie-btn" @click="openCookieSettings">{{ $t('footer.cookies') }}</button>
           <a href="mailto:kontakt@carizo.eu?subject=Zg%C5%82oszenie%20naruszenia">{{ $t('footer.report') }}</a>
@@ -145,12 +167,15 @@ async function subscribeNewsletter() {
 .footer-grid {
   @include container;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 40px;
+  // Piata kolumna doszla razem z grupa „Dla kupujacych". `minmax(0, ...)` na
+  // kazdej sciezce - kolumna z linkami nie moze rozepchnac stopki poza ekran
+  // przez jedno dluzsze haslo.
+  grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr));
+  gap: $s-10 $s-8;
 
-  @include respond-to(md) { grid-template-columns: 1fr 1fr 1fr; }
-  @include respond-to(sm) { grid-template-columns: 1fr 1fr; }
-  @include respond-to(xs) { grid-template-columns: 1fr; }
+  @include respond-to(md) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @include respond-to(sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: $s-7 $s-5; }
+  @include respond-to(xs) { grid-template-columns: minmax(0, 1fr); }
 }
 
 .footer-brand {

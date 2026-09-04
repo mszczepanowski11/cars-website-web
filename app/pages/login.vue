@@ -228,7 +228,7 @@ async function submit() {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    padding-top: calc(#{$nav-height} + 40px);
+    padding-top: calc(var(--nav-h) + 40px);
     padding-bottom: 60px;
     position: relative;
 

@@ -222,7 +222,7 @@ onUnmounted(() => {
     display: flex;
     height: 100vh;
     background: $bg;
-    padding-top: $nav-height;
+    padding-top: var(--nav-h);
     box-sizing: border-box;
     overflow: hidden;
 }
