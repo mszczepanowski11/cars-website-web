@@ -1,52 +1,51 @@
 <template>
     <div class="auth-bg">
         <div class="auth-card">
-            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" loading="lazy" decoding="async" /></NuxtLink>
+            <NuxtLink to="/" class="auth-logo"><img src="/carizo-logo.svg" alt="CARIZO" width="310" height="56" fetchpriority="high" decoding="async" /></NuxtLink>
             <h2>{{ $t('login.heading') }}</h2>
             <p class="auth-sub">{{ $t('login.subtitle') }}</p>
 
             <form class="auth-form" @submit.prevent="submit">
-                <div class="auth-field">
-                    <label for="login-email" class="auth-label">{{ $t('login.emailLabel') }}</label>
-                    <div class="auth-input-wrap" :class="{ 'auth-input-wrap--focus': emailFocused }">
+                <CzField v-slot="{ id, describedBy }" :label="$t('login.emailLabel')" required>
+                    <div class="auth-input-wrap">
                         <CzIcon icon="mdi-email-outline" size="17" class="auth-field-icon" />
                         <input
-                            id="login-email"
+                            :id="id"
                             v-model="email"
                             type="email"
                             class="auth-input"
                             :placeholder="$t('login.emailPlaceholder')"
+                            :aria-describedby="describedBy"
                             required
                             autocomplete="email"
-                            @focus="emailFocused = true"
-                            @blur="emailFocused = false"
                         />
                     </div>
-                </div>
+                </CzField>
 
-                <div class="auth-field">
-                    <div class="auth-label-row">
-                        <label for="login-password" class="auth-label">{{ $t('login.passwordLabel') }}</label>
+                <CzField :label="$t('login.passwordLabel')" required>
+                    <template #labelAside>
                         <NuxtLink to="/forgot-password" class="auth-forgot">{{ $t('login.forgot') }}</NuxtLink>
-                    </div>
-                    <div class="auth-input-wrap" :class="{ 'auth-input-wrap--focus': passwordFocused }">
+                    </template>
+                    <!-- Slot domyslny musi byc jawny, gdy w komponencie jest tez slot nazwany. -->
+                    <template #default="{ id, describedBy }">
+                    <div class="auth-input-wrap">
                         <CzIcon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
                         <input
-                            id="login-password"
+                            :id="id"
                             v-model="password"
                             :type="showPassword ? 'text' : 'password'"
                             class="auth-input"
                             placeholder="••••••••"
+                            :aria-describedby="describedBy"
                             required
                             autocomplete="current-password"
-                            @focus="passwordFocused = true"
-                            @blur="passwordFocused = false"
                         />
                         <button type="button" class="auth-eye" :aria-label="showPassword ? $t('login.hidePassword') : $t('login.showPassword')" @click="showPassword = !showPassword">
                             <CzIcon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
                         </button>
                     </div>
-                </div>
+                    </template>
+                </CzField>
 
                 <div v-if="error" role="alert" class="auth-error">
                     <CzIcon icon="mdi-alert-circle-outline" size="15" />
@@ -104,8 +103,6 @@ const { login, loginWithGoogle, loginWithFacebook, loading, error, pendingFacebo
 const runtimeConfig = useRuntimeConfig()
 const email    = ref('')
 const password = ref('')
-const emailFocused    = ref(false)
-const passwordFocused = ref(false)
 const showPassword    = ref(false)
 const unverifiedEmail = ref(false)
 const turnstileToken  = ref('')
@@ -255,14 +252,13 @@ async function submit() {
     @include respond-to(sm) { padding: 36px 24px 28px; }
 }
 
-.auth-logo { height: 32px; width: auto; // overrides below
-    display: inline-block;
+// Regula zostala po wcześniejszej edycji w stanie, w ktorym `display` byl
+// zadeklarowany dwa razy, a po nim wisialy cztery puste wiersze.
+.auth-logo {
     display: block;
-    
-    
-    
-    
     margin-bottom: 28px;
+
+    img { height: 32px; width: auto; }
 }
 
 h2 {
@@ -284,23 +280,10 @@ h2 {
     gap: 18px;
 }
 
-.auth-field {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-
-.auth-label-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.auth-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: $text-muted;
-}
+// `.auth-field`, `.auth-label-row` i `.auth-label` zniknely - etykiete, jej wiersz
+// i miejsce na komunikat daje teraz `CzField`. To ten sam kod, ktory obsluguje
+// pozostale formularze w serwisie, wiec etykiety przestaly byc w kazdym z nich
+// troche inne.
 
 .auth-forgot {
     font-size: 12px;
@@ -319,7 +302,11 @@ h2 {
     padding: 0 14px;
     transition: border-color 0.2s;
 
-    &--focus { border-color: rgba($red, 0.5); }
+    // Wczesniej podswietlenie ramki chodzilo na dwoch refach i czterech
+    // procedurach obslugi zdarzen na pole. `:focus-within` robi to samo bez
+    // ani jednej linii JavaScriptu - i dziala takze wtedy, gdy focus trafi
+    // na przycisk podgladu hasla, ktory lezy w tej samej ramce.
+    &:focus-within { border-color: rgba($red, 0.5); }
 }
 
 .auth-field-icon { color: $text-dark; flex-shrink: 0; }

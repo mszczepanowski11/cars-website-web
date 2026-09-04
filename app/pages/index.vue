@@ -299,7 +299,7 @@
         </section>
 
         <!-- ─── Browse by category (listings from EVERY category) ──────── -->
-        <section v-if="catShowcaseLoading || categoryShowcase.length" class="section cat-showcase-section">
+        <section v-if="categoryShowcase.length" class="section cat-showcase-section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
@@ -309,16 +309,7 @@
                     <NuxtLink to="/adverts" class="see-all">{{ $t('home.everyCategory.seeAll') }} <CzIcon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
 
-                <template v-if="catShowcaseLoading">
-                    <div v-for="n in 3" :key="n" class="cat-row">
-                        <div class="cat-row-head"><div class="cat-row-title-sk" /></div>
-                        <div class="cars-grid cars-grid--small">
-                            <AdvertCardSkeleton v-for="m in 4" :key="m" />
-                        </div>
-                    </div>
-                </template>
-
-                <div v-for="group in categoryShowcase" v-else :key="group.category.id" class="cat-row">
+                <div v-for="group in categoryShowcase" :key="group.category.id" class="cat-row">
                     <div class="cat-row-head">
                         <NuxtLink :to="`/adverts?categoryId=${group.category.id}`" class="cat-row-title">
                             <span class="cat-row-icon"><CzIcon :icon="group.category.iconName || 'mdi-tag'" size="18" /></span>
@@ -604,8 +595,11 @@ const premiumCollection = ref<CarAdvert[]>([])
 interface CategoryShowcaseGroup { category: CategoryWithCount; items: CarAdvert[]; total: number }
 /** Kształt odpowiedzi server/api/home/collections.get.ts. */
 interface HomeCollections { mostViewed: CarAdvert[]; premium: CarAdvert[] }
+// Paski kategorii przychodza z serwera razem z reszta strony, wiec po stronie
+// przegladarki nie ma juz momentu „ladowania" - byl tu stan `catShowcaseLoading`,
+// ktory od tamtej zmiany zawsze rownal sie `false`. Warunek i galaz ze szkieletami
+// wygladaly wiec jak obsluga stanu, ktory nie moze wystapic.
 const categoryShowcase = ref<CategoryShowcaseGroup[]>([])
-const catShowcaseLoading = ref(false)
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
@@ -1094,7 +1088,6 @@ if (homeData.value) {
     filterBrands.value  = homeData.value.brands ?? []
     if (homeData.value.categories?.length) homeCategories.value = homeData.value.categories
     categoryShowcase.value = homeData.value.showcase ?? []
-    catShowcaseLoading.value = false
     mostViewed.value        = homeData.value.collections?.mostViewed ?? []
     premiumCollection.value = homeData.value.collections?.premium ?? []
     if (homeData.value.stats) Object.assign(homeStats.value, homeData.value.stats)
@@ -2159,13 +2152,6 @@ onMounted(async () => {
     color: $text-muted; font-size: 13px; font-weight: 600;
     &:hover { color: $red-text; }
 }
-.cat-row-title-sk {
-    width: 200px; height: 24px; border-radius: 6px;
-    background: linear-gradient(90deg, $card 25%, lighten($card, 4%) 50%, $card 75%);
-    background-size: 200% 100%; animation: shimmer 1.4s infinite;
-}
-@keyframes shimmer { to { background-position: -200% 0; } }
-
 // ─── Premium label ────────────────────────────────────────────────────────────
 
 .premium-label {

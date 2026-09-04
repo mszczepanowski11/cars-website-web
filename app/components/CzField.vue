@@ -53,11 +53,20 @@ const describedBy = computed(() => {
 
 <template>
     <div class="cz-field" :class="{ 'cz-field--wide': wide, 'cz-field--invalid': invalid }">
-        <label v-if="label" :for="id" class="cz-field-label">
-            <CzIcon v-if="icon" :icon="icon" :size="14" />
-            <span>{{ label }}</span>
-            <span v-if="required" class="cz-field-req" aria-hidden="true">*</span>
-        </label>
+        <!--
+            Wiersz etykiety bywa dwuczłonowy: etykieta po lewej, akcja po prawej
+            („Zapomniałeś hasła?", „wyczyść", licznik znaków). Bez tego slotu każdy
+            formularz budował sobie na to własny wiersz obok pola - i etykieta
+            przestawała być jedynym miejscem, w ktorym opisuje sie kontrolke.
+        -->
+        <div v-if="label || $slots.labelAside" class="cz-field-labelrow">
+            <label v-if="label" :for="id" class="cz-field-label">
+                <CzIcon v-if="icon" :icon="icon" :size="14" />
+                <span>{{ label }}</span>
+                <span v-if="required" class="cz-field-req" aria-hidden="true">*</span>
+            </label>
+            <slot name="labelAside" />
+        </div>
 
         <slot
             :id="id"
@@ -92,6 +101,14 @@ const describedBy = computed(() => {
     min-width: 0;
 
     &--wide { grid-column: 1 / -1; }
+}
+
+.cz-field-labelrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $s-3;
+    min-width: 0;
 }
 
 .cz-field-label {
