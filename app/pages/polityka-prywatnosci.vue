@@ -256,7 +256,7 @@ useHead({ link: [{ rel: 'canonical', href: `${ppConfig.public.siteUrl}/polityka-
 </script>
 
 <style lang="scss" scoped>
-.static-page { background: $bg; min-height: 100vh; padding-top: var(--nav-h); }
+.static-page { background: $bg; min-height: 100vh; padding-top: $page-top; }
 .container { @include container; }
 
 .page-hero {

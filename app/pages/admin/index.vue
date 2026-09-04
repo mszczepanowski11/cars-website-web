@@ -533,7 +533,7 @@ function actionClass(type: string) {
     display: flex;
     min-height: 100vh;
     background: $bg;
-    padding-top: var(--nav-h);
+    padding-top: $page-top;
 }
 
 .admin-sidebar {

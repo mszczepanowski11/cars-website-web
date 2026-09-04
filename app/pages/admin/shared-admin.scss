@@ -1,6 +1,6 @@
 // Shared styles for admin sub-pages
 .admin-page {
-    display: flex; min-height: 100vh; background: $bg; padding-top: var(--nav-h);
+    display: flex; min-height: 100vh; background: $bg; padding-top: $page-top;
 }
 
 .admin-sidebar {

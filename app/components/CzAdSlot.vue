@@ -54,10 +54,10 @@ const maReklame = computed(() => !!slots.default)
     @include container;
     // Ten sam odstep, co miedzy sekcjami tresci - baner ma byc czescia ukladu,
     // a nie czyms doklejonym miedzy nie.
-    margin-top: 90px;
+    margin-top: $section-gap;
     margin-bottom: 0;
 
-    @media (max-width: $bp-mobile) { margin-top: 56px; }
+    @media (max-width: $bp-mobile) { margin-top: $section-gap-mobile; }
 }
 
 .cz-ad-tag {

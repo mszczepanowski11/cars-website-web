@@ -271,7 +271,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
 </script>
 
 <style lang="scss" scoped>
-.packages-page { background: $bg; min-height: 100vh; padding-top: var(--nav-h); }
+.packages-page { background: $bg; min-height: 100vh; padding-top: $page-top; }
 
 // ── Hero ──────────────────────────────────────────────────────────────
 .hero {

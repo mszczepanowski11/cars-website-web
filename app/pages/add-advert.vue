@@ -4863,8 +4863,8 @@ onBeforeUnmount(() => {
     // Naglowek serwisu jest `position: fixed`, wiec bez tego odstepu przykrywal
     // gorne 85 px kreatora - a tam siedzi wlasny pasek z tytulem i "Zapisz szkic".
     // Efekt: przy pierwszym wejsciu ten pasek byl po prostu niewidoczny, a razem z nim
-    // ginal licznik krokow. Pozostale strony serwisu robia to tak samo (padding-top: var(--nav-h)).
-    padding-top: var(--nav-h);
+    // ginal licznik krokow. Pozostale strony serwisu robia to tak samo (padding-top: $page-top).
+    padding-top: $page-top;
     height: calc(100vh - var(--nav-h));
     background: $bg;
     color: $text;

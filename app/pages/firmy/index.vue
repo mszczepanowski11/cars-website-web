@@ -234,7 +234,7 @@ useHead({
 </script>
 
 <style lang="scss" scoped>
-.dir-page { background: $bg; min-height: 100vh; padding-top: var(--nav-h); }
+.dir-page { background: $bg; min-height: 100vh; padding-top: $page-top; }
 
 .dir-hero {
   padding: 56px 0 40px; text-align: center; border-bottom: 1px solid $border;

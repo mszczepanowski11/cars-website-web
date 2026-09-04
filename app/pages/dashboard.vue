@@ -1241,7 +1241,7 @@ onMounted(async () => {
     display: flex;
     min-height: 100vh;
     background: $bg;
-    padding-top: var(--nav-h);
+    padding-top: $page-top;
 
     @include respond-to(md) {
         flex-direction: column;

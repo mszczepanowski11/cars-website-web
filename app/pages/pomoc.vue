@@ -130,7 +130,7 @@ const filteredGroups = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-.help-page { background: $bg; min-height: 100vh; padding-top: var(--nav-h); }
+.help-page { background: $bg; min-height: 100vh; padding-top: $page-top; }
 .container { @include container; }
 
 .page-hero {

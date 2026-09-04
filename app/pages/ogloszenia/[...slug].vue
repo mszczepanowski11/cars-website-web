@@ -1733,7 +1733,7 @@ onUnmounted(() => {
 .advert-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: var(--nav-h);
+    padding-top: $page-top;
 
     @include respond-to(md) {
         padding-bottom: $mobile-cta-height;
@@ -4665,7 +4665,7 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     padding: 40px 20px;
-    padding-top: calc(var(--nav-h) + 40px);
+    padding-top: $page-top;
 }
 
 .anf-inner {

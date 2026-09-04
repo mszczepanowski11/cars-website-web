@@ -70,7 +70,7 @@ useHead({
 .kontakt-page {
   background: $bg;
   min-height: 100vh;
-  padding-top: var(--nav-h);
+  padding-top: $page-top;
 }
 
 .kontakt-hero {

@@ -105,12 +105,12 @@ const widoczne = (tytul: string, linki: Link[]) =>
 
 <style lang="scss" scoped>
 .seo {
-    margin-top: 90px;
+    margin-top: $section-gap;
     padding: $s-10 0;
     border-top: 1px solid $border;
     background: rgba(255, 255, 255, 0.012);
 
-    @media (max-width: $bp-mobile) { margin-top: 56px; padding: $s-7 0; }
+    @media (max-width: $bp-mobile) { margin-top: $section-gap-mobile; padding: $s-7 0; }
 }
 
 .seo-inner { @include container; }

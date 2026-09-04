@@ -2128,7 +2128,12 @@ onMounted(async () => {
     }
 }
 
-.section { margin-top: 90px; }
+// Odstep miedzy sekcjami z jednego tokenu - ta sama wartosc trzymaja miejsca
+// reklamowe i sekcja linkow, wiec caly rytm pionowy strony jest jeden.
+.section {
+    margin-top: $section-gap;
+    @media (max-width: $bp-mobile) { margin-top: $section-gap-mobile; }
+}
 
 // ─── Zachęta do wystawienia pojazdu ───────────────────────────────────────────
 // Strona główna nie miała ANI JEDNEGO miejsca, które mówi wprost „wystaw pojazd" -

@@ -247,7 +247,7 @@ useHead(() => ({
 <style lang="scss" scoped>
 .kat-page {
     min-height: 100vh;
-    padding-top: calc(var(--nav-h) + #{$s-6});
+    padding-top: $page-top;
     padding-bottom: $s-16;
     background: $bg;
 }

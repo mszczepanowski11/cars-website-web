@@ -147,7 +147,7 @@ onMounted(fetchAdverts)
 .compare-page {
     min-height: 100vh;
     background: $bg;
-    padding-top: calc(var(--nav-h) + 40px);
+    padding-top: $page-top;
     padding-bottom: 60px;
 }
 

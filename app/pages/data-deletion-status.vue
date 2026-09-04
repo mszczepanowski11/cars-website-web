@@ -54,7 +54,7 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    padding-top: calc(var(--nav-h) + 40px);
+    padding-top: $page-top;
     padding-bottom: 60px;
 }
 

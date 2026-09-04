@@ -265,7 +265,7 @@ useHead(() => ({
 </script>
 
 <style lang="scss" scoped>
-.cp-page { background: $bg; min-height: 100vh; padding-top: var(--nav-h); }
+.cp-page { background: $bg; min-height: 100vh; padding-top: $page-top; }
 .cp-loading, .cp-notfound { text-align: center; padding: 90px 20px; color: $text-muted; }
 .cp-notfound h1 { color: $text; margin: 16px 0 8px; font-size: 24px; }
 .cp-back-btn, .cp-claim-btn { display: inline-block; margin-top: 16px; background: $red; color: #fff;
