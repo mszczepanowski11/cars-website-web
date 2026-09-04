@@ -147,7 +147,7 @@ onMounted(fetchAdverts)
 .compare-page {
     min-height: 100vh;
     background: $bg;
-    padding-top: calc(#{$nav-height} + 40px);
+    padding-top: $page-top;
     padding-bottom: 60px;
 }
 
@@ -227,7 +227,7 @@ onMounted(fetchAdverts)
 }
 
 .cmp-advert-header {
-    background: $card-alt;
+    background: $card;
     border-right: 1px solid $border;
     border-bottom: 1px solid $border;
     padding: 16px;

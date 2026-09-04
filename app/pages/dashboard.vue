@@ -1241,7 +1241,7 @@ onMounted(async () => {
     display: flex;
     min-height: 100vh;
     background: $bg;
-    padding-top: $nav-height;
+    padding-top: $page-top;
 
     @include respond-to(md) {
         flex-direction: column;
@@ -1257,8 +1257,8 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     position: sticky;
-    top: $nav-height;
-    height: calc(100vh - #{$nav-height});
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
     overflow-y: auto;
 
     @include respond-to(md) {
@@ -1275,7 +1275,7 @@ onMounted(async () => {
 .dash-mobile-nav {
     display: none;
     position: sticky;
-    top: $nav-height;
+    top: var(--nav-h);
     z-index: 90;
     background: $bg;
     border-bottom: 1px solid $border;
@@ -1885,7 +1885,7 @@ onMounted(async () => {
 }
 
 .advert-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;
@@ -2083,7 +2083,7 @@ onMounted(async () => {
 }
 
 .review-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 18px;
@@ -2163,7 +2163,7 @@ onMounted(async () => {
 }
 
 .follower-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px;
@@ -2210,7 +2210,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 12px;
@@ -2316,7 +2316,7 @@ onMounted(async () => {
     align-items: flex-start;
     gap: 14px;
     padding: 14px 16px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     cursor: pointer;
@@ -2413,7 +2413,7 @@ onMounted(async () => {
 // Saved searches
 .new-search-form {
     margin: 0 24px 20px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid rgba($red, 0.2);
     border-radius: $r-md;
     padding: 18px 20px;
@@ -2508,7 +2508,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 16px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 14px 18px;
@@ -3110,8 +3110,8 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     position: sticky;
-    top: $nav-height;
-    height: calc(100vh - #{$nav-height});
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
     overflow-y: auto;
 
     @include respond-to(md) {

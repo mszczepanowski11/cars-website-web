@@ -4863,9 +4863,9 @@ onBeforeUnmount(() => {
     // Naglowek serwisu jest `position: fixed`, wiec bez tego odstepu przykrywal
     // gorne 85 px kreatora - a tam siedzi wlasny pasek z tytulem i "Zapisz szkic".
     // Efekt: przy pierwszym wejsciu ten pasek byl po prostu niewidoczny, a razem z nim
-    // ginal licznik krokow. Pozostale strony serwisu robia to tak samo (padding-top: $nav-height).
-    padding-top: $nav-height;
-    height: calc(100vh - #{$nav-height});
+    // ginal licznik krokow. Pozostale strony serwisu robia to tak samo (padding-top: $page-top).
+    padding-top: $page-top;
+    height: calc(100vh - var(--nav-h));
     background: $bg;
     color: $text;
     font-family: 'Inter', sans-serif;
@@ -4873,7 +4873,7 @@ onBeforeUnmount(() => {
 
     @media (max-width: $bp-mobile) {
         height: auto;
-        min-height: calc(100vh - #{$nav-height});
+        min-height: calc(100vh - var(--nav-h));
         overflow: visible;
     }
 }
@@ -4999,7 +4999,7 @@ onBeforeUnmount(() => {
     @media (max-width: $bp-mobile) {
         display: flex;
         position: sticky;
-        top: $nav-height;
+        top: var(--nav-h);
         z-index: 5;
     }
 }
@@ -6718,7 +6718,7 @@ onBeforeUnmount(() => {
 }
 
 .pp-card {
-    background: $card-alt;
+    background: $card;
     border: 1.5px solid $border;
     border-radius: 12px;
     padding: 18px 16px;
@@ -6776,7 +6776,7 @@ onBeforeUnmount(() => {
 }
 
 .promo-summary {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: 12px;
     padding: 16px 20px;
@@ -6963,7 +6963,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid rgba($red, 0.2);
     border-radius: $r-md;
     padding: 14px 18px;
@@ -7024,7 +7024,7 @@ onBeforeUnmount(() => {
 .img-thumb--existing { opacity: 1; }
 
 .edit-summary {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: 12px;
     padding: 20px;
@@ -7275,7 +7275,7 @@ onBeforeUnmount(() => {
     font-weight: 600;
     color: $text-dark;
     pointer-events: none;
-    background: $card-alt;
+    background: $card;
     padding-left: 4px;
 }
 
@@ -7300,7 +7300,7 @@ onBeforeUnmount(() => {
     min-width: 18px;
     border-radius: 4px;
     border: 1.5px solid $border;
-    background: $card-alt;
+    background: $card;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7329,7 +7329,7 @@ onBeforeUnmount(() => {
     font-size: 11px;
     color: $text-dark;
     pointer-events: none;
-    background: $card-alt;
+    background: $card;
     padding-left: 4px;
 
     &.warn { color: $premium; }
@@ -7365,7 +7365,7 @@ onBeforeUnmount(() => {
     min-width: 16px;
     border-radius: 3px;
     border: 1.5px solid $border;
-    background: $card-alt;
+    background: $card;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7385,7 +7385,7 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: space-between;
     padding: 8px 12px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-top: none;
     border-radius: 0 0 $r-sm $r-sm;

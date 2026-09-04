@@ -44,6 +44,18 @@ html, body {
 // przewijanie CAŁEJ strony - na każdym podstronie serwisu.
 body { margin: 0; }
 
+// Wysokosc paska nawigacji jako zmienna CSS, a nie stala SCSS.
+// DLACZEGO: 85 px na telefonie to duzo - przy ekranie 780 px wysokosci pasek
+// zabieral 11% widoku, zanim uzytkownik zobaczyl cokolwiek. Sama zmiana wysokosci
+// paska nic by nie dala: szescdziesiat kilka miejsc w serwisie odsuwa tresc
+// wlasnie o `$nav-height` i zostalaby pod paskiem albo z dziura nad soba.
+// Zmienna CSS zmienia sie w jednym miejscu i WSZYSTKIE te miejsca ida za nia.
+:root {
+  --nav-h: #{$nav-height};
+
+  @media (max-width: $bp-mobile) { --nav-h: 64px; }
+}
+
 // Pola formularza maja WBUDOWANA szerokosc domyslna (`<input>` to okolo 20 znakow)
 // i jako elementy kontenera flex nie moga zejsc ponizej niej - automatyczny rozmiar
 // minimalny elementu flex to jego rozmiar min-content. Dopoki nie dostana `min-width: 0`,

@@ -66,7 +66,10 @@
     "subscribe": "Zapisz się",
     "newsOk": "Sprawdź skrzynkę email i potwierdź zapis — link ważny 24h.",
     "rights": "Wszelkie prawa zastrzeżone.",
-    "credit": "Stworzone z pasją do motoryzacji."
+    "credit": "Stworzone z pasją do motoryzacji.",
+    "forBuyers": "Dla kupujących",
+    "legal": "Informacje prawne",
+    "compare": "Porównywarka"
   },
   "hero": {
     "eyebrow": "Platforma motoryzacyjna premium",
@@ -93,7 +96,9 @@
     "bodyType": "Nadwozie",
     "engineSize": "Pojemność (cm³)",
     "fuel": "Paliwo",
-    "gearbox": "Skrzynia biegów"
+    "gearbox": "Skrzynia biegów",
+    "showAdverts": "Pokaż ogłoszenia",
+    "chooseCategory": "Wybierz kategorię"
   },
   "adverts": {
     "title": "Wszystkie ogłoszenia",

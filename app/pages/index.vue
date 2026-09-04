@@ -28,18 +28,29 @@
 
                 <div class="hfs-search">
 
-                <!-- Category tabs -->
-                <div class="cat-tabs">
-                    <button
-                        v-for="cat in SEARCH_CATEGORIES"
-                        :key="cat.slug"
-                        class="cat-tab"
-                        :class="{ 'cat-tab--active': searchCat === cat.slug }"
-                        @click="selectSearchCat(cat.slug)"
-                    >
-                        <CzIcon :icon="cat.icon" size="14" />
-                        {{ cat.label }}
-                    </button>
+                <!--
+                    Wybor kategorii. Byl rzedem malych pigulek z ikona 14 px w kolorze
+                    $text-dim - czyli dokladnie tym, na co narzekal wlasciciel: ikony
+                    byly ledwie widocznym dodatkiem, a nie trescia. Teraz kazda kategoria
+                    to KAFELEK: ikona 26 px w pelnym kontrascie nad nazwa. Rzad przewija
+                    sie poziomo na kazdej szerokosci - kategorii jest pietnascie i
+                    upychanie ich w trzy rzedy robilo z nich sciane tekstu.
+                -->
+                <div class="cat-tabs-wrap">
+                    <div class="cat-tabs" role="tablist" :aria-label="$t('search.chooseCategory')">
+                        <button
+                            v-for="cat in SEARCH_CATEGORIES"
+                            :key="cat.slug"
+                            class="cat-tab"
+                            :class="{ 'cat-tab--active': searchCat === cat.slug }"
+                            role="tab"
+                            :aria-selected="searchCat === cat.slug"
+                            @click="selectSearchCat(cat.slug)"
+                        >
+                            <span class="cat-tab-ico"><CzIcon :icon="cat.icon" size="26" /></span>
+                            <span class="cat-tab-name">{{ cat.label }}</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Form panel -->
@@ -48,14 +59,14 @@
                 <!-- Level 1: Primary row -->
                 <div class="hs-primary">
                     <div v-if="currentSearchConfig.hasBrand" class="hsp-field">
-                        <label class="hsp-label" for="hs-brand">{{ currentSearchConfig.brandLabel ?? $t('search.brand') }}</label>
+                        <label class="hsp-label" for="hs-brand"><CzIcon icon="mdi-car-side" size="14" />{{ currentSearchConfig.brandLabel ?? $t('search.brand') }}</label>
                         <select id="hs-brand" v-model="searchBrandId" class="hsp-select" @change="onBrandChange">
                             <option :value="null">{{ $t('search.allBrands') }}</option>
                             <option v-for="b in filterBrands.filter(b => b.name && !/^\d+$/.test(b.name))" :key="b.id" :value="b.id">{{ b.name }}</option>
                         </select>
                     </div>
                     <div v-if="currentSearchConfig.hasBrand && currentSearchConfig.hasModel" class="hsp-field">
-                        <label class="hsp-label" for="hs-model">{{ $t('search.model') }}</label>
+                        <label class="hsp-label" for="hs-model"><CzIcon icon="mdi-car-shift-pattern" size="14" />{{ $t('search.model') }}</label>
                         <select id="hs-model" v-model="searchModelId" class="hsp-select" :disabled="!searchBrandId" @change="onModelChange">
                             <option :value="null">{{ searchBrandId ? 'Wszystkie modele' : 'Wybierz markę' }}</option>
                             <option v-for="m in searchModels" :key="m.id" :value="m.id">{{ m.name }}</option>
@@ -76,7 +87,7 @@
                         </select>
                     </div>
                     <div class="hsp-field hsp-range">
-                        <label class="hsp-label">{{ $t('search.price') }}</label>
+                        <label class="hsp-label"><CzIcon icon="mdi-cash" size="14" />{{ $t('search.price') }}</label>
                         <div class="hsp-range-row">
                             <!-- Dwa pola pod wspólną etykietą „Cena" - każde musi powiedzieć
                                  czytnikowi ekranu, którym końcem zakresu jest. -->
@@ -86,8 +97,8 @@
                         </div>
                     </div>
                     <button class="hsp-search-btn" @click="doSearch">
-                        <CzIcon icon="mdi-magnify" size="18" />
-                        {{ $t('search.searchBtn') }}
+                        <CzIcon icon="mdi-magnify" size="20" />
+                        {{ $t('search.showAdverts') }}
                     </button>
                 </div>
 
@@ -222,45 +233,6 @@
             </div>
         </section>
 
-
-        <!-- ─── Stats strip ──────────────────────────────────────────── -->
-        <div v-if="showStatsStrip" class="stats-strip">
-            <div class="container">
-                <div class="sstrip-inner">
-                    <template v-for="(stat, i) in visibleStats" :key="stat.key">
-                        <div v-if="i > 0" class="sstrip-sep" />
-                        <div class="sstrip-item">
-                            <div class="sstrip-icon-badge">
-                                <CzIcon :icon="stat.icon" size="22" />
-                            </div>
-                            <div class="sstrip-text">
-                                <div v-if="statsLoading" class="sstrip-skeleton" />
-                                <strong v-else :ref="el => { if (el) countUpRefs[stat.key] = el as Element }" class="sstrip-num">{{ formatStat(stat.value) }}</strong>
-                                <span class="sstrip-label">{{ stat.label }}</span>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
-
-        <!-- ─── Premium Collection ───────────────────────────────────────── -->
-        <section v-if="premiumCollection.length" class="section">
-            <div class="container">
-                <div class="sec-top">
-                    <div class="sec-top-left">
-                        <div class="sec-eyebrow">{{ $t('home.premiumEyebrow') }}</div>
-                        <h2>{{ $t('home.premiumTitle') }}</h2>
-                    </div>
-                    <NuxtLink to="/adverts" class="see-all">Wszystkie <CzIcon icon="mdi-arrow-right" size="16" /></NuxtLink>
-                </div>
-                <div class="cars-grid">
-                    <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
-                </div>
-            </div>
-        </section>
-
-        <!-- ─── Top adverts ──────────────────────────────────────────── -->
         <section v-if="topAdverts.length" class="section">
             <div class="container">
                 <div class="sec-top">
@@ -282,7 +254,45 @@
             </div>
         </section>
 
-        <!-- ─── Most viewed ─────────────────────────────────────────────── -->
+        <section v-if="premiumCollection.length" class="section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">{{ $t('home.premiumEyebrow') }}</div>
+                        <h2>{{ $t('home.premiumTitle') }}</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">Wszystkie <CzIcon icon="mdi-arrow-right" size="16" /></NuxtLink>
+                </div>
+                <div class="cars-grid">
+                    <AdvertCard v-for="a in premiumCollection" :key="a.id" :advert="a" />
+                </div>
+            </div>
+        </section>
+        <!-- Reklama 1: tuz pod wyszukiwarka i wyroznionymi ofertami. -->
+        <CzAdSlot format="billboard" />
+        <section v-if="recentlyAdded.length || featured.length" class="section recently-added-section">
+            <div class="container">
+                <div class="sec-top">
+                    <div class="sec-top-left">
+                        <div class="sec-eyebrow">{{ $t('home.recentEyebrow') }}</div>
+                        <h2>{{ $t('home.recentTitle') }}</h2>
+                    </div>
+                    <NuxtLink to="/adverts" class="see-all">
+                        Wszystkie ogłoszenia
+                        <CzIcon icon="mdi-arrow-right" size="16" />
+                    </NuxtLink>
+                </div>
+                <div class="cars-grid cars-grid--small">
+                    <AdvertCard
+                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured).slice(0, 4)"
+                        :key="a.id"
+                        :advert="a"
+                    />
+                </div>
+            </div>
+        </section>
+        <!-- Reklama 2: miedzy sekcjami ogloszen. -->
+        <CzAdSlot format="inline" />
         <section v-if="mostViewed.length" class="section">
             <div class="container">
                 <div class="sec-top">
@@ -298,8 +308,7 @@
             </div>
         </section>
 
-        <!-- ─── Browse by category (listings from EVERY category) ──────── -->
-        <section v-if="catShowcaseLoading || categoryShowcase.length" class="section cat-showcase-section">
+        <section v-if="categoryShowcase.length" class="section cat-showcase-section">
             <div class="container">
                 <div class="sec-top">
                     <div class="sec-top-left">
@@ -309,16 +318,7 @@
                     <NuxtLink to="/adverts" class="see-all">{{ $t('home.everyCategory.seeAll') }} <CzIcon icon="mdi-arrow-right" size="16" /></NuxtLink>
                 </div>
 
-                <template v-if="catShowcaseLoading">
-                    <div v-for="n in 3" :key="n" class="cat-row">
-                        <div class="cat-row-head"><div class="cat-row-title-sk" /></div>
-                        <div class="cars-grid cars-grid--small">
-                            <AdvertCardSkeleton v-for="m in 4" :key="m" />
-                        </div>
-                    </div>
-                </template>
-
-                <div v-for="group in categoryShowcase" v-else :key="group.category.id" class="cat-row">
+                <div v-for="group in categoryShowcase" :key="group.category.id" class="cat-row">
                     <div class="cat-row-head">
                         <NuxtLink :to="`/adverts?categoryId=${group.category.id}`" class="cat-row-title">
                             <span class="cat-row-icon"><CzIcon :icon="group.category.iconName || 'mdi-tag'" size="18" /></span>
@@ -335,28 +335,26 @@
                 </div>
             </div>
         </section>
-
-        <!-- ─── Why CARIZO ───────────────────────────────────────────── -->
-        <section class="section why-section">
+        <!--
+            Zacheta do dodania ogloszenia. Serwis nie mial ANI JEDNEGO miejsca na
+            stronie glownej, ktore mowi wprost „wystaw pojazd" - sekcja B2B nizej
+            zaprasza firmy, nie osobe prywatna z jednym samochodem do sprzedania.
+        -->
+        <section class="section sell-cta" aria-labelledby="sell-cta-h">
             <div class="container">
-                <div class="why-header">
-                    <div class="why-eyebrow">{{ $t('home.whyEyebrow') }}</div>
-                    <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" loading="lazy" decoding="async" />
-                    <p class="why-sub">{{ $t('home.whySub') }}</p>
-                </div>
-                <div class="why-grid">
-                    <div v-for="f in feats" :key="f.title" class="why-card">
-                        <div class="why-card-icon">
-                            <CzIcon :icon="f.icon" size="32" />
-                        </div>
-                        <h3 class="why-card-title">{{ f.title }}</h3>
-                        <p class="why-card-desc">{{ f.desc }}</p>
+                <div class="sell-cta-box">
+                    <div class="sell-cta-text">
+                        <div class="sec-eyebrow">SPRZEDAJ SZYBCIEJ</div>
+                        <h2 id="sell-cta-h">Masz pojazd na sprzedaż?</h2>
+                        <p>Wystawienie ogłoszenia zajmuje kilka minut, a podstawowa emisja jest bezpłatna.</p>
                     </div>
+                    <NuxtLink :to="localePath('/add-advert')" class="sell-cta-btn">
+                        <CzIcon icon="mdi-plus-circle-outline" size="20" />
+                        Dodaj ogloszenie
+                    </NuxtLink>
                 </div>
             </div>
         </section>
-
-        <!-- ─── Events ───────────────────────────────────────────────── -->
         <section v-if="events.length" class="section events-section">
             <div class="container">
                 <div class="sec-top">
@@ -436,30 +434,25 @@
             </div>
         </section>
 
-        <!-- ─── Recently added ───────────────────────────────────────── -->
-        <section v-if="recentlyAdded.length || featured.length" class="section recently-added-section">
+        <section class="section why-section">
             <div class="container">
-                <div class="sec-top">
-                    <div class="sec-top-left">
-                        <div class="sec-eyebrow">{{ $t('home.recentEyebrow') }}</div>
-                        <h2>{{ $t('home.recentTitle') }}</h2>
-                    </div>
-                    <NuxtLink to="/adverts" class="see-all">
-                        Wszystkie ogłoszenia
-                        <CzIcon icon="mdi-arrow-right" size="16" />
-                    </NuxtLink>
+                <div class="why-header">
+                    <div class="why-eyebrow">{{ $t('home.whyEyebrow') }}</div>
+                    <img src="/carizo-logo.svg" alt="CARIZO" class="why-logo" loading="lazy" decoding="async" />
+                    <p class="why-sub">{{ $t('home.whySub') }}</p>
                 </div>
-                <div class="cars-grid cars-grid--small">
-                    <AdvertCard
-                        v-for="a in (recentlyAdded.length ? recentlyAdded : featured).slice(0, 4)"
-                        :key="a.id"
-                        :advert="a"
-                    />
+                <div class="why-grid">
+                    <div v-for="f in feats" :key="f.title" class="why-card">
+                        <div class="why-card-icon">
+                            <CzIcon :icon="f.icon" size="32" />
+                        </div>
+                        <h3 class="why-card-title">{{ f.title }}</h3>
+                        <p class="why-card-desc">{{ f.desc }}</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- ─── Dla firm ─────────────────────────────────────────────── -->
         <section class="section b2b-section">
             <div class="container">
                 <div class="b2b-card">
@@ -477,8 +470,11 @@
                 </div>
             </div>
         </section>
+        <!-- Reklama 3: nizej, tuz przed sekcja linkow. -->
+        <CzAdSlot format="compact" />
 
-        <!-- ─── Newsletter ───────────────────────────────────────────── -->
+        <!-- Linki wewnetrzne: kategorie, marki, miasta. Szczegoly w CzSeoLinks.vue. -->
+        <CzSeoLinks :categories="homeCategories" :brands="filterBrands" />
         <section id="contact" class="section">
             <div class="container">
                 <div class="newsletter">
@@ -521,6 +517,8 @@ import type { CarAdvert, CarEvent, PagedResult, TaxonomyItem, PartCategory, Cate
 
 const config = useRuntimeConfig()
 const siteUrl = config.public.siteUrl as string
+// Adresy swiadome jezyka - bez tego link z polskiej strony na /en gubi prefiks.
+const localePath = useLocalePath()
 useHead({
     title: 'CARIZO — Kupuj pewniej. Sprzedawaj szybciej.',
     meta: [
@@ -604,8 +602,11 @@ const premiumCollection = ref<CarAdvert[]>([])
 interface CategoryShowcaseGroup { category: CategoryWithCount; items: CarAdvert[]; total: number }
 /** Kształt odpowiedzi server/api/home/collections.get.ts. */
 interface HomeCollections { mostViewed: CarAdvert[]; premium: CarAdvert[] }
+// Paski kategorii przychodza z serwera razem z reszta strony, wiec po stronie
+// przegladarki nie ma juz momentu „ladowania" - byl tu stan `catShowcaseLoading`,
+// ktory od tamtej zmiany zawsze rownal sie `false`. Warunek i galaz ze szkieletami
+// wygladaly wiec jak obsluga stanu, ktory nie moze wystapic.
 const categoryShowcase = ref<CategoryShowcaseGroup[]>([])
-const catShowcaseLoading = ref(false)
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
@@ -1094,7 +1095,6 @@ if (homeData.value) {
     filterBrands.value  = homeData.value.brands ?? []
     if (homeData.value.categories?.length) homeCategories.value = homeData.value.categories
     categoryShowcase.value = homeData.value.showcase ?? []
-    catShowcaseLoading.value = false
     mostViewed.value        = homeData.value.collections?.mostViewed ?? []
     premiumCollection.value = homeData.value.collections?.premium ?? []
     if (homeData.value.stats) Object.assign(homeStats.value, homeData.value.stats)
@@ -1127,10 +1127,10 @@ onMounted(async () => {
     position: relative;
     overflow: hidden;
     background: $bg;
-    padding: calc(#{$nav-height} + #{$s-8}) 0 $s-10;
+    padding: calc(var(--nav-h) + #{$s-8}) 0 $s-10;
 
     @media (max-width: $bp-mobile) {
-        padding: calc(#{$nav-height} + #{$s-5}) 0 $s-6;
+        padding: calc(var(--nav-h) + #{$s-5}) 0 $s-6;
     }
 }
 
@@ -1677,13 +1677,21 @@ onMounted(async () => {
 }
 
 .hsp-label {
-    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: $s-15;
+    font-size: 12px;
     font-weight: 700;
-    color: rgba(255,255,255,0.4);
+    // Bylo `rgba(255,255,255,0.4)`, czyli po zlozeniu z tlem okolo 4,0:1 - ponizej
+    // progu WCAG dla malego tekstu. Etykieta pola formularza to nie ozdoba;
+    // $text-muted daje 9,7:1 i przy okazji widac ja katem oka.
+    color: $text-muted;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     padding-left: 2px;
     white-space: nowrap;
+
+    .cz-icon { color: $red-text; flex-shrink: 0; }
 }
 
 .hsp-select {
@@ -1691,10 +1699,10 @@ onMounted(async () => {
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
     color: $text;
-    font-size: 14px;
+    font-size: 15px;
     font-family: 'Inter', sans-serif;
     padding: 12px 14px;
-    min-height: 48px;
+    min-height: 52px;
     outline: none;
     width: 100%;
     cursor: pointer;
@@ -1713,7 +1721,7 @@ onMounted(async () => {
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
-    min-height: 48px;
+    min-height: 52px;
     overflow: hidden;
     transition: border-color 0.18s, background 0.18s;
     &:focus-within { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
@@ -1755,30 +1763,41 @@ onMounted(async () => {
     }
 }
 
+// Glowne wezwanie do dzialania calej strony. Napis zmienil sie z „Szukaj"
+// na „Pokaz ogloszenia" - mowi, CO SIE STANIE, a nie czego uzytkownik ma dokonac.
 .hsp-search-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: $s-2;
     background: $red;
-    color: white;
+    color: #fff;
     border: none;
-    padding: 0 32px;
-    height: 48px;
+    padding: 0 $s-7;
+    height: 52px;
     border-radius: 12px;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 15.5px;
+    font-weight: $fw-bold;
     font-family: 'Inter', sans-serif;
+    letter-spacing: 0.2px;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
     box-shadow: 0 4px 18px rgba($red, 0.38);
     transition: opacity 0.18s, box-shadow 0.18s;
 
-    &:hover  { opacity: 0.88; box-shadow: 0 6px 22px rgba($red, 0.5); }
-    &:active { opacity: 0.75; }
+    &:hover  { opacity: 0.9; box-shadow: 0 6px 24px rgba($red, 0.55); }
+    &:active { opacity: 0.78; }
+    &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
-    @include respond-to(sm) { width: 100%; height: 50px; font-size: 15px; }
+    // Na telefonie pelna szerokosc i wlasny wiersz - to ma byc najwiekszy,
+    // najtrudniejszy do przeoczenia element ekranu startowego.
+    @include respond-to(sm) {
+        width: 100%;
+        height: 56px;
+        font-size: 16px;
+        margin-top: $s-1;
+    }
 }
 
 // ─── Więcej filtrów ───────────────────────────────────────────────────────────
@@ -1867,10 +1886,10 @@ onMounted(async () => {
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
     color: $text;
-    font-size: 14px;
+    font-size: 15px;
     font-family: 'Inter', sans-serif;
     padding: 12px 14px;
-    min-height: 48px;
+    min-height: 52px;
     outline: none;
     width: 100%;
     cursor: pointer;
@@ -1887,7 +1906,7 @@ onMounted(async () => {
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
-    min-height: 48px;
+    min-height: 52px;
     overflow: hidden;
     transition: border-color 0.18s, background 0.18s;
     &:focus-within { border-color: rgba($red, 0.55); background: rgba(255,255,255,0.1); }
@@ -2009,67 +2028,182 @@ onMounted(async () => {
 // 416 px - czyli połowę ekranu telefonu - i spychały samą wyszukiwarkę poniżej
 // zgięcia. Jeden przewijany poziomo rząd zajmuje 48 px i jest wzorcem, który
 // użytkownicy znają z każdej innej aplikacji na telefonie.
+// Rzad kategorii przewija sie poziomo na KAZDEJ szerokosci. Wczesniej zawijal sie
+// na desktopie w trzy rzedy pigulek - pietnascie kategorii upchanych obok siebie
+// przestaje byc wyborem, a staje sie sciana tekstu.
+.cat-tabs-wrap {
+    position: relative;
+    margin-bottom: $s-4;
+
+    // Delikatne przycienienie przy prawej krawedzi mowi, ze rzad idzie dalej.
+    // Bez tego na szerokim ekranie nie widac, ze jest co przewijac.
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: $s-2;
+        width: 40px;
+        pointer-events: none;
+        background: linear-gradient(90deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.85) 100%);
+        border-radius: 0 $r-sm $r-sm 0;
+    }
+}
+
 .cat-tabs {
     display: flex;
-    gap: $s-15;
-    flex-wrap: wrap;
-    margin-bottom: $s-5;
+    gap: $s-2;
     overflow-x: auto;
-    padding-bottom: 2px;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    // Odstep u gory i dolu, zeby obramowanie aktywnego kafelka nie bylo przyciete.
+    padding: 2px 2px $s-2;
 
     &::-webkit-scrollbar { display: none; }
     -ms-overflow-style: none;
     scrollbar-width: none;
-
-    @media (max-width: $bp-mobile) {
-        flex-wrap: nowrap;
-        margin-bottom: $s-3;
-        // Zakładka zatrzymuje się na krawędzi, zamiast kończyć w połowie -
-        // dzięki temu widać, że rząd da się przewijać dalej.
-        scroll-snap-type: x proximity;
-        // Margines po bokach, żeby pierwsza i ostatnia zakładka nie kleiły się do krawędzi.
-        padding-inline: 1px;
-    }
 }
 
 .cat-tab {
-    display: inline-flex;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 6px;
-    padding: 9px 16px;
+    justify-content: center;
+    gap: $s-15;
+    // Cala plytka jest celem kliknięcia - nie sama nazwa, nie sama ikona.
+    min-width: 96px;
+    min-height: 84px;
+    padding: $s-25 $s-2;
     border: 1px solid $border;
-    border-radius: 50px;
-    background: transparent;
-    color: $text-dim;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
+    border-radius: $r-sm;
+    background: rgba(255, 255, 255, 0.035);
+    color: $text-muted;
     font-family: 'Inter', sans-serif;
-    transition: all 0.18s;
+    font-size: 12.5px;
+    font-weight: $fw-semibold;
+    line-height: 1.25;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s, color 0.18s;
 
-    @media (max-width: $bp-mobile) {
-        flex-shrink: 0;
-        scroll-snap-align: start;
-        // Pełna wysokość dotykowa - zakładka to główny przełącznik na tym ekranie.
-        min-height: 38px;
-        padding: $s-2 $s-35;
+    // Ikona w PELNYM kontrascie. To ona ma powiedziec „tu wybierasz rodzaj pojazdu"
+    // zanim ktokolwiek przeczyta nazwe.
+    .cat-tab-ico {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $text;
+        transition: color 0.18s;
     }
 
-    &:hover { border-color: rgba($red, 0.4); color: $text; }
+    .cat-tab-name {
+        display: block;
+        max-width: 100%;
+    }
 
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.06);
+        color: $text;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $red-hot;
+        outline-offset: 2px;
+    }
+
+    // Wybrana kategoria musi byc widoczna z drugiego konca pokoju: obramowanie
+    // w kolorze marki, wypelnienie, biala nazwa i czerwona ikona. Jednoczesnie
+    // POZOSTALE nadal sa czytelne ($text-muted to 9,7:1) - wybor jednej nie moze
+    // gasic reszty, bo uzytkownik musi widziec, ze ma w co kliknac dalej.
     &--active {
-        background: $red;
-        border-color: $red;
-        color: white;
-        box-shadow: 0 2px 14px rgba($red, 0.3);
+        border-color: $red-text;
+        background: rgba($red, 0.18);
+        color: $text;
+        box-shadow: 0 0 0 1px rgba($red-text, 0.35);
+
+        .cat-tab-ico { color: $red-text; }
     }
 }
 
+// Odstep miedzy sekcjami z jednego tokenu - ta sama wartosc trzymaja miejsca
+// reklamowe i sekcja linkow, wiec caly rytm pionowy strony jest jeden.
+.section {
+    margin-top: $section-gap;
+    @media (max-width: $bp-mobile) { margin-top: $section-gap-mobile; }
+}
 
-// ─── Section commons ──────────────────────────────────────────────────────────
+// ─── Zachęta do wystawienia pojazdu ───────────────────────────────────────────
+// Strona główna nie miała ANI JEDNEGO miejsca, które mówi wprost „wystaw pojazd" -
+// sekcja B2B niżej zaprasza firmy, nie osobę prywatną z jednym samochodem.
 
-.section { margin-top: 90px; }
+.sell-cta-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $s-6;
+    padding: $s-8;
+    border: 1px solid rgba($red, 0.28);
+    border-radius: $r-md;
+    background:
+        radial-gradient(120% 140% at 0% 0%, rgba($red, 0.16) 0%, rgba($red, 0) 60%),
+        rgba(255, 255, 255, 0.02);
+
+    @media (max-width: $bp-mobile) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: $s-5;
+        padding: $s-6 $s-5;
+        text-align: center;
+    }
+}
+
+.sell-cta-text {
+    min-width: 0;
+
+    h2 {
+        margin: $s-1 0 $s-2;
+        font-size: 26px;
+        font-weight: $fw-bold;
+        color: $text;
+
+        @media (max-width: $bp-mobile) { font-size: 21px; }
+    }
+
+    p {
+        margin: 0;
+        max-width: 52ch;
+        font-size: 15px;
+        line-height: 1.55;
+        color: $text-muted;
+    }
+}
+
+.sell-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $s-2;
+    flex-shrink: 0;
+    padding: 0 $s-7;
+    height: 54px;
+    border-radius: 12px;
+    background: $red;
+    color: #fff;
+    font-size: 15.5px;
+    font-weight: $fw-bold;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 18px rgba($red, 0.38);
+    transition: opacity 0.18s, box-shadow 0.18s;
+
+    &:hover { opacity: 0.9; box-shadow: 0 6px 24px rgba($red, 0.55); }
+    &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+    @media (max-width: $bp-mobile) { width: 100%; }
+}
 
 .sec-top {
     @include section-top;
@@ -2159,13 +2293,6 @@ onMounted(async () => {
     color: $text-muted; font-size: 13px; font-weight: 600;
     &:hover { color: $red-text; }
 }
-.cat-row-title-sk {
-    width: 200px; height: 24px; border-radius: 6px;
-    background: linear-gradient(90deg, $card 25%, lighten($card, 4%) 50%, $card 75%);
-    background-size: 200% 100%; animation: shimmer 1.4s infinite;
-}
-@keyframes shimmer { to { background-position: -200% 0; } }
-
 // ─── Premium label ────────────────────────────────────────────────────────────
 
 .premium-label {

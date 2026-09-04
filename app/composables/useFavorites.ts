@@ -5,6 +5,9 @@ export const useFavorites = () => {
     const initialized = useState('favorites-initialized', () => false)
     const authStatus = useCookie('auth_status')
     const isLoggedIn = computed(() => !!authStatus.value)
+    // Pobierana w ciele composable (czyli w setupie), zeby przy klikniecu miec
+    // aktualna sciezke bez siegania po kontekst Nuxta z wnetrza obslugi zdarzenia.
+    const route = useRoute()
 
     async function fetchFavoriteIds() {
         if (!isLoggedIn.value) { favoriteIds.value = []; initialized.value = false; return }
@@ -29,7 +32,12 @@ export const useFavorites = () => {
     }
 
     async function toggleFavorite(id: number) {
-        if (!isLoggedIn.value) return
+        if (!isLoggedIn.value) {
+            // Wczesniej: ciche `return`. Serce na karcie bylo wtedy MARTWYM PRZYCISKIEM -
+            // uzytkownik klikal i nie dostawal zadnej odpowiedzi, wiec klikal jeszcze raz.
+            // Teraz prowadzi do logowania z powrotem na te sama strone.
+            return navigateTo(`/login?redirect=${encodeURIComponent(route.fullPath)}`)
+        }
         const idx = favoriteIds.value.indexOf(id)
         try {
             if (idx !== -1) {

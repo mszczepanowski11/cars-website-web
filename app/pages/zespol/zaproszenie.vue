@@ -57,7 +57,7 @@ onMounted(async () => {
 .invite-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: $nav-height;
+    padding-top: $page-top;
     display: flex;
     align-items: center;
 }

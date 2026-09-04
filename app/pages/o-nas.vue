@@ -109,7 +109,7 @@ useHead({
 .onas-page {
   background: $bg;
   min-height: 100vh;
-  padding-top: $nav-height;
+  padding-top: $page-top;
 }
 
 // ── Hero ──────────────────────────────────────────────────────────────
@@ -243,7 +243,7 @@ h1 {
 .onas-values-section {
   padding: 80px 0;
   border-bottom: 1px solid $border;
-  background: $card-alt;
+  background: $card;
 }
 
 .onas-values-inner { @include container; }

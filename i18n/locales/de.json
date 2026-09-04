@@ -66,7 +66,10 @@
     "subscribe": "Abonnieren",
     "newsOk": "Prüfen Sie Ihr Postfach und bestätigen Sie — der Link ist 24 Std. gültig.",
     "rights": "Alle Rechte vorbehalten.",
-    "credit": "Mit Leidenschaft für Autos erstellt."
+    "credit": "Mit Leidenschaft für Autos erstellt.",
+    "forBuyers": "Für Käufer",
+    "legal": "Rechtliches",
+    "compare": "Vergleich"
   },
   "hero": {
     "eyebrow": "Premium-Automotive-Plattform",
@@ -93,7 +96,9 @@
     "bodyType": "Karosserie",
     "engineSize": "Hubraum (cm³)",
     "fuel": "Kraftstoff",
-    "gearbox": "Getriebe"
+    "gearbox": "Getriebe",
+    "showAdverts": "Anzeigen zeigen",
+    "chooseCategory": "Kategorie wählen"
   },
   "adverts": {
     "title": "Alle Anzeigen",

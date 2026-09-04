@@ -169,6 +169,10 @@ export default defineNuxtConfig({
     imojeWebhookSecret: process.env.NUXT_IMOJE_WEBHOOK_SECRET ?? '',
     internalServiceSecret: process.env.NUXT_INTERNAL_SERVICE_SECRET ?? '',
     turnstileSecretKey: process.env.NUXT_TURNSTILE_SECRET_KEY ?? '',
+    // Kanal powiadomien o awariach (webhook Slacka/Discorda). Pusty = awarie ida
+    // wylacznie do logow serwera, ktore i tak zbiera Railway. Zmienna jest
+    // serwerowa, wiec adres nie trafia do paczki wysylanej do przegladarki.
+    errorWebhookUrl: process.env.ERROR_WEBHOOK_URL ?? '',
     // Maintenance mode — set NUXT_SITE_PASSWORD to a non-empty value to enable
     sitePassword: process.env.NUXT_SITE_PASSWORD ?? '',
     // Same Cloudinary account/env var names as cars-website-api (Program.cs) — used to persist

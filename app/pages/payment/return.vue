@@ -184,7 +184,7 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     padding: 40px 16px;
-    padding-top: calc(#{$nav-height} + 40px);
+    padding-top: $page-top;
     position: relative;
 
     &::before {

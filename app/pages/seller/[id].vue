@@ -121,7 +121,7 @@
                         <p>{{ $t('seller.emptyReviews') }}</p>
                     </div>
                     <div v-else class="reviews-list">
-                        <div v-for="rev in reviews" :key="rev.id" class="review-card">
+                        <CzCard v-for="rev in reviews" :key="rev.id" as="article" padding="sm" class="review-card">
                             <div class="rev-header">
                                 <div class="rev-author">
                                     <CzIcon icon="mdi-account-circle" size="32" class="rev-avatar" />
@@ -144,7 +144,7 @@
                             <div v-if="rev.isVerifiedPurchase" class="rev-verified">
                                 <CzIcon icon="mdi-check-circle-outline" size="13" /> {{ $t('seller.verifiedPurchase') }}
                             </div>
-                        </div>
+                        </CzCard>
                     </div>
                     <div v-if="reviewsTotalCount > reviews.length" class="load-more-row">
                         <button class="btn-load-more" :disabled="reviewsLoading" @click="loadMoreReviews">
@@ -351,7 +351,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.seller-page { background: $bg; min-height: 100vh; padding-top: $nav-height; }
+.seller-page { background: $bg; min-height: 100vh; padding-top: $page-top; }
 .container { @include container; }
 
 .page-loading, .not-found {
@@ -523,12 +523,8 @@ onMounted(async () => {
 
 .reviews-list { display: flex; flex-direction: column; gap: 12px; max-width: 760px; }
 
-.review-card {
-    background: $card-alt;
-    border: 1px solid $border;
-    border-radius: $r-md;
-    padding: 18px 20px;
-}
+// Powierzchnia, obramowanie, promien i odstep pochodza teraz z `CzCard`.
+.review-card { /* miejsce na ewentualne roznice wlasne tej karty */ }
 
 .rev-header {
     display: flex; align-items: flex-start; justify-content: space-between;

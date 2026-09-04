@@ -521,7 +521,7 @@ onUnmounted(() => {
     background: $bg;
     transition: background 0.15s;
     text-decoration: none;
-    &:hover { background: $card-alt; }
+    &:hover { background: $card; }
 }
 
 .strip-thumb {
@@ -610,7 +610,7 @@ onUnmounted(() => {
     span {
         font-size: 11px;
         color: $text-dark;
-        background: $card-alt;
+        background: $card;
         padding: 3px 10px;
         border-radius: 20px;
         border: 1px solid $border;
@@ -808,11 +808,11 @@ onUnmounted(() => {
         // panel's bottom slip under the toolbar. 100svh is the smallest possible viewport
         // (chrome always fully expanded) — guarantees the input bar stays above it, at the
         // cost of a little unused space on the rare occasion the chrome auto-hides.
-        height: calc(100vh - $nav-height);
-        height: calc(100dvh - $nav-height);
-        height: calc(100svh - $nav-height);
+        height: calc(100vh - var(--nav-h));
+        height: calc(100dvh - var(--nav-h));
+        height: calc(100svh - var(--nav-h));
         position: fixed;
-        inset: $nav-height 0 0 0;
+        inset: var(--nav-h) 0 0 0;
         z-index: 10;
     }
     .back-btn { display: flex !important; }

@@ -42,6 +42,10 @@ const PAGES = [
     { path: '/o-nas' },
     // Strony pośrednie kategoria → marka → model. To one zbierają ruch z wyszukiwarki,
     // więc muszą realnie renderować listę, a nie sam szkielet.
+    // Profil firmy i profil sprzedawcy - obie strony korzystaja ze wspolnej karty
+    // `CzCard`, wiec musza byc realnie otwierane, a nie tylko zbudowane.
+    { path: '/firmy/auto-serwis-kowalski', expect: '.cz-card' },
+    { path: '/seller/5', expect: '.seller-hero' },
     { path: '/kategorie/osobowe', expect: '.car-card' },
     { path: '/kategorie/osobowe/audi', expect: '.kat-chips' },
     { path: '/kategorie/osobowe/audi/q5', expect: '.car-card' },

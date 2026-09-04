@@ -91,63 +91,53 @@
             <form class="auth-form" @submit.prevent="submit">
                 <!-- Business fields -->
                 <template v-if="accountType === 'Business'">
-                    <div class="auth-field">
-                        <label for="reg-company" class="auth-label">{{ $t('register.companyLabel') }} <span class="req">*</span></label>
+                    <CzField v-slot="{ id, describedBy }" :label="$t('register.companyLabel')" required>
                         <div class="auth-input-wrap">
                             <CzIcon icon="mdi-domain" size="17" class="auth-field-icon" />
-                            <input id="reg-company" v-model="companyName" class="auth-input" :placeholder="$t('register.companyPlaceholder')" required />
+                            <input :id="id" v-model="companyName" class="auth-input" :placeholder="$t('register.companyPlaceholder')" :aria-describedby="describedBy" required />
                         </div>
-                    </div>
-                    <div class="auth-field">
-                        <label for="reg-nip" class="auth-label">{{ $t('register.nipLabel') }} <span class="req">*</span></label>
-                        <div class="auth-input-wrap">
+                    </CzField>
+                    <CzField v-slot="{ id, describedBy, invalid }" :label="$t('register.nipLabel')" required :error="nipError">
+                        <div class="auth-input-wrap" :class="{ 'auth-input-wrap--error': nipError }">
                             <CzIcon icon="mdi-card-account-details-outline" size="17" class="auth-field-icon" />
-                            <input id="reg-nip" v-model="nip" class="auth-input" inputmode="numeric" pattern="[0-9\-]*" placeholder="123-456-78-90" maxlength="13" required />
+                            <input :id="id" v-model="nip" class="auth-input" inputmode="numeric" pattern="[0-9\-]*" placeholder="123-456-78-90" maxlength="13" :aria-describedby="describedBy" :aria-invalid="invalid" required />
                         </div>
-                        <div v-if="nip && nip.replace(/\D/g,'').length !== 10" class="auth-hint">
-                            {{ $t('register.nipDigitsHint') }}
-                        </div>
-                    </div>
+                    </CzField>
                 </template>
 
                 <!-- Name row -->
                 <div class="auth-row">
-                    <div class="auth-field">
-                        <label for="reg-name" class="auth-label">{{ accountType === 'Business' ? $t('register.nameLabelBusiness') : $t('register.nameLabel') }} <span class="req">*</span></label>
+                    <CzField v-slot="{ id }" :label="accountType === 'Business' ? $t('register.nameLabelBusiness') : $t('register.nameLabel')" required>
                         <div class="auth-input-wrap">
-                            <input id="reg-name" v-model="name" class="auth-input auth-input--solo" :placeholder="$t('register.namePlaceholder')" required autocomplete="given-name" />
+                            <input :id="id" v-model="name" class="auth-input auth-input--solo" :placeholder="$t('register.namePlaceholder')" required autocomplete="given-name" />
                         </div>
-                    </div>
-                    <div class="auth-field">
-                        <label for="reg-surname" class="auth-label">{{ accountType === 'Business' ? $t('register.surnameLabelBusiness') : $t('register.surnameLabel') }} <span class="req">*</span></label>
+                    </CzField>
+                    <CzField v-slot="{ id }" :label="accountType === 'Business' ? $t('register.surnameLabelBusiness') : $t('register.surnameLabel')" required>
                         <div class="auth-input-wrap">
-                            <input id="reg-surname" v-model="surname" class="auth-input auth-input--solo" :placeholder="$t('register.surnamePlaceholder')" required autocomplete="family-name" />
+                            <input :id="id" v-model="surname" class="auth-input auth-input--solo" :placeholder="$t('register.surnamePlaceholder')" required autocomplete="family-name" />
                         </div>
-                    </div>
+                    </CzField>
                 </div>
 
-                <div class="auth-field">
-                    <label for="reg-email" class="auth-label">{{ $t('register.emailLabel') }} <span class="req">*</span></label>
+                <CzField v-slot="{ id }" :label="$t('register.emailLabel')" required>
                     <div class="auth-input-wrap">
                         <CzIcon icon="mdi-email-outline" size="17" class="auth-field-icon" />
-                        <input id="reg-email" v-model="email" type="email" class="auth-input" :placeholder="$t('register.emailPlaceholder')" required autocomplete="email" />
+                        <input :id="id" v-model="email" type="email" class="auth-input" :placeholder="$t('register.emailPlaceholder')" required autocomplete="email" />
                     </div>
-                </div>
+                </CzField>
 
-                <div class="auth-field">
-                    <label for="reg-phone" class="auth-label">{{ $t('register.phoneLabel') }} <span class="req">*</span></label>
+                <CzField v-slot="{ id }" :label="$t('register.phoneLabel')" required>
                     <div class="auth-input-wrap">
                         <CzIcon icon="mdi-phone-outline" size="17" class="auth-field-icon" />
-                        <input id="reg-phone" v-model="phoneNumber" type="tel" inputmode="tel" pattern="[+0-9\s\-()]*" maxlength="20" class="auth-input" :placeholder="$t('register.phonePlaceholder')" required autocomplete="tel" />
+                        <input :id="id" v-model="phoneNumber" type="tel" inputmode="tel" pattern="[+0-9\s\-()]*" maxlength="20" class="auth-input" :placeholder="$t('register.phonePlaceholder')" required autocomplete="tel" />
                     </div>
-                </div>
+                </CzField>
 
-                <div class="auth-field">
-                    <label for="reg-password" class="auth-label">{{ $t('register.passwordLabel') }} <span class="req">*</span></label>
+                <CzField v-slot="{ id }" :label="$t('register.passwordLabel')" required>
                     <div class="auth-input-wrap">
                         <CzIcon icon="mdi-lock-outline" size="17" class="auth-field-icon" />
                         <input
-                            id="reg-password"
+                            :id="id"
                             v-model="password"
                             :type="showPassword ? 'text' : 'password'"
                             class="auth-input"
@@ -159,44 +149,42 @@
                             <CzIcon :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" size="17" />
                         </button>
                     </div>
-                    <!-- Password strength -->
+                    <!--
+                        Pasek sily hasla siedzi w slocie POD kontrolka, a nad wierszem
+                        komunikatu - dzieki temu pojawienie sie paska nie przesuwa
+                        komunikatu ani pol pod spodem.
+                    -->
                     <div v-if="password" class="strength-wrap">
                         <div class="strength-track">
                             <div class="strength-fill" :class="`strength-${strengthLevel}`" :style="{ width: strengthWidth }" />
                         </div>
                         <span class="strength-label" :class="`strength-label-${strengthLevel}`">{{ strengthLabel }}</span>
                     </div>
-                </div>
+                </CzField>
 
-                <div class="auth-field">
-                    <label for="reg-password-confirm" class="auth-label">{{ $t('register.passwordConfirmLabel') }} <span class="req">*</span></label>
-                    <div class="auth-input-wrap" :class="{ 'auth-input-wrap--error': passwordConfirm && password !== passwordConfirm }">
+                <CzField v-slot="{ id, describedBy, invalid }" :label="$t('register.passwordConfirmLabel')" required :error="passwordConfirmError">
+                    <div class="auth-input-wrap" :class="{ 'auth-input-wrap--error': passwordConfirmError }">
                         <CzIcon icon="mdi-lock-check-outline" size="17" class="auth-field-icon" />
                         <input
-                            id="reg-password-confirm"
+                            :id="id"
                             v-model="passwordConfirm"
                             type="password"
                             class="auth-input"
                             placeholder="••••••••"
+                            :aria-describedby="describedBy"
+                            :aria-invalid="invalid"
                             required
                             autocomplete="new-password"
                         />
                     </div>
-                    <div v-if="passwordConfirm && password !== passwordConfirm" class="auth-hint auth-hint--error">
-                        {{ $t('register.passwordMismatch') }}
-                    </div>
-                </div>
+                </CzField>
 
-                <div class="auth-field">
-                    <label for="reg-dob" class="auth-label">{{ $t('register.dobLabel') }} <span class="req">*</span></label>
-                    <div class="auth-input-wrap">
+                <CzField v-slot="{ id, describedBy, invalid }" :label="$t('register.dobLabel')" required :error="dobError">
+                    <div class="auth-input-wrap" :class="{ 'auth-input-wrap--error': dobError }">
                         <CzIcon icon="mdi-calendar-outline" size="17" class="auth-field-icon" />
-                        <input id="reg-dob" v-model="dateOfBirth" type="date" class="auth-input" :max="maxDob" required />
+                        <input :id="id" v-model="dateOfBirth" type="date" class="auth-input" :max="maxDob" :aria-describedby="describedBy" :aria-invalid="invalid" required />
                     </div>
-                    <div v-if="dateOfBirth && !isAdult" class="auth-hint auth-hint--error">
-                        {{ $t('register.ageHint') }}
-                    </div>
-                </div>
+                </CzField>
 
                 <label class="age-check">
                     <input v-model="termsConfirmed" type="checkbox" class="age-check-input" />
@@ -290,6 +278,22 @@ const isAdult = computed(() => {
     if (!dateOfBirth.value) return false
     return new Date(dateOfBirth.value) <= new Date(maxDob)
 })
+
+// Komunikaty walidacji sa teraz WLASNOSCIA POLA, a nie osobnym blokiem w szablonie.
+// Wczesniej kazdy z nich byl `<div v-if>` doklejanym pod kontrolka: pojawienie sie
+// podpowiedzi przesuwalo wszystko ponizej. `CzField` trzyma na komunikat staly
+// wiersz, wiec formularz stoi nieruchomo, a tresc trafia dodatkowo do `aria-describedby`
+// i `role="alert"` - czytnik ekranu uslyszy ja w chwili, gdy sie pojawi.
+const nipError = computed(() =>
+    nip.value && nip.value.replace(/\D/g, '').length !== 10 ? t('register.nipDigitsHint') : ''
+)
+const passwordConfirmError = computed(() =>
+    passwordConfirm.value && password.value !== passwordConfirm.value ? t('register.passwordMismatch') : ''
+)
+const dobError = computed(() =>
+    dateOfBirth.value && !isAdult.value ? t('register.ageHint') : ''
+)
+
 const termsConfirmed   = ref(false)
 const gdprConfirmed    = ref(false)
 const marketingConsent = ref(false)
@@ -458,7 +462,7 @@ async function resendVerification() {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    padding-top: calc(#{$nav-height} + 32px);
+    padding-top: $page-top;
     padding-bottom: 60px;
     position: relative;
 
@@ -694,12 +698,6 @@ h2 {
     align-items: center;
     transition: color 0.15s;
     &:hover { color: $text-muted; }
-}
-
-.auth-hint {
-    font-size: 11px;
-    color: $text-dark;
-    &--error { color: $danger; }
 }
 
 .strength-wrap {

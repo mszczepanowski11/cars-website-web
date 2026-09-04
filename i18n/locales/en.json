@@ -66,7 +66,10 @@
     "subscribe": "Subscribe",
     "newsOk": "Check your inbox and confirm — the link is valid for 24h.",
     "rights": "All rights reserved.",
-    "credit": "Made with passion for cars."
+    "credit": "Made with passion for cars.",
+    "forBuyers": "For buyers",
+    "legal": "Legal",
+    "compare": "Compare"
   },
   "hero": {
     "eyebrow": "Premium automotive platform",
@@ -93,7 +96,9 @@
     "bodyType": "Body type",
     "engineSize": "Engine size (cc)",
     "fuel": "Fuel",
-    "gearbox": "Gearbox"
+    "gearbox": "Gearbox",
+    "showAdverts": "Show listings",
+    "chooseCategory": "Choose a category"
   },
   "adverts": {
     "title": "All listings",

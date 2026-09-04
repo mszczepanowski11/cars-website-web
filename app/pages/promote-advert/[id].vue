@@ -503,7 +503,7 @@ async function initiatePayment(useQuota = false) {
 .plans-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 32px; @media (max-width: 900px) { grid-template-columns: 1fr 1fr; } @media (max-width: 600px) { grid-template-columns: 1fr; } }
 
 .plan-card {
-    background: $card-alt; border: 1.5px solid $border; border-radius: 12px; padding: 22px 18px;
+    background: $card; border: 1.5px solid $border; border-radius: 12px; padding: 22px 18px;
     cursor: pointer; position: relative; transition: border-color 0.2s, transform 0.2s;
     display: flex; flex-direction: column; gap: 10px;
     &:hover { border-color: rgba($red, 0.3); transform: translateY(-3px); }
@@ -547,7 +547,7 @@ async function initiatePayment(useQuota = false) {
 }
 
 .promo-footer {
-    background: $card-alt; border: 1px solid $border; border-radius: 12px; padding: 20px 24px;
+    background: $card; border: 1px solid $border; border-radius: 12px; padding: 20px 24px;
     display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
 }
 
@@ -642,7 +642,7 @@ async function initiatePayment(useQuota = false) {
 .billing-step {
     max-width: 680px;
     margin: 0 auto;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: 12px;
     padding: 28px;

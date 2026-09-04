@@ -156,7 +156,7 @@ async function submit() {
 
 .cs-input {
     flex: 1;
-    background: $card-alt;
+    background: $card;
     border: none;
     outline: none;
     color: #fff;

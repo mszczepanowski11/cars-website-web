@@ -271,7 +271,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
 </script>
 
 <style lang="scss" scoped>
-.packages-page { background: $bg; min-height: 100vh; padding-top: $nav-height; }
+.packages-page { background: $bg; min-height: 100vh; padding-top: $page-top; }
 
 // ── Hero ──────────────────────────────────────────────────────────────
 .hero {
@@ -558,7 +558,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
 .faq-section {
     border-top: 1px solid $border;
     padding: 64px 0 80px;
-    background: $card-alt;
+    background: $card;
 }
 
 .faq-inner { @include container; max-width: 760px; }

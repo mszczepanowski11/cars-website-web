@@ -191,7 +191,7 @@ async function submit() {
     align-items: center;
     gap: 8px;
     padding: 10px 12px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text-muted;
@@ -214,7 +214,7 @@ async function submit() {
 .r-icon { color: $text-dim; flex-shrink: 0; }
 
 .field-textarea {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     color: $text;

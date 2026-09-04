@@ -1,9 +1,14 @@
 
 $bg:         #050505;
+// Jedna powierzchnia karty i jedno obramowanie - CELOWO.
+// Wczesniej istnialy tez `$card-alt: #0c0c0c` (uzywany 64 razy) i `$border-alt: #1b1b1b`
+// (uzywany raz). Roznica miedzy nimi a wartosciami ponizej to JEDEN krok na kanal;
+// policzony kontrast to 1,0065:1 i 1,0104:1, gdzie 1,00 oznacza barwy nierozroznialne.
+// Nie dalo sie ich odroznic na zadnym ekranie, ale za kazdym razem trzeba bylo wybrac,
+// ktorej uzyc - i sasiadujace elementy dostawaly rozne. To byl wybor bez tresci,
+// a jego jedynym skutkiem bylo rozjezdzanie sie kodu.
 $card:       #0d0d0d;
-$card-alt:   #0c0c0c;
 $border:     #1a1a1a;
-$border-alt: #1b1b1b;
 // Powierzchnia karty pod kursorem. Wczesniej kazda karta liczyla sobie ten stan
 // sama (najczesciej rgba(255,255,255,0.03) albo rgba($red,0.04)), stad rozne
 // reakcje na najechanie w sasiadujacych ze soba miejscach.
@@ -42,6 +47,7 @@ $bp-xs:  600px;
 
 $ann-height:    38px;
 $nav-height:    85px;
+
 $header-total:  123px;
 
 $mobile-cta-height:     68px;   // advert detail bottom action bar (phone + message)
@@ -109,6 +115,21 @@ $s-10: 40px;
 $s-12: 48px;
 $s-16: 64px;
 $s-20: 80px;
+
+// ── Rytm pionowy strony ──────────────────────────────────────────────────────
+// Dwie wartosci, ktore wczesniej kazda strona ustalala sobie sama.
+//
+// $page-top: odsuniecie tresci od PRZYKLEJONEGO paska nawigacji. 31 stron mialo
+// `padding-top: var(--nav-h)`, czyli tresc zaczynala sie DOKLADNIE pod paskiem,
+// bez ani jednego piksela oddechu; osiem innych doklejalo 32, 40 albo 48 px.
+// To byla najbardziej widoczna „przypadkowa roznica miedzy sekcjami" w serwisie:
+// wystarczylo przejsc miedzy dwiema podstronami, zeby tresc podskoczyla.
+//
+// $section-gap: odstep miedzy sekcjami. 90 px wyglada dobrze na desktopie,
+// ale na telefonie o szerokosci 360 px to jedna czwarta ekranu pustki.
+$page-top:    calc(var(--nav-h) + #{$s-8});
+$section-gap: 90px;
+$section-gap-mobile: 56px;
 
 // ── Skala typografii ─────────────────────────────────────────────────────────
 // Audyt: 48 unikalnych rozmiarów, a dominują 13px (350×), 12px (302×) i 11px

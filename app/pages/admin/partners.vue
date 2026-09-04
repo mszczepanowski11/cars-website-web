@@ -701,7 +701,7 @@ onMounted(() => {
 .mapping-row--value .afc-input { flex: 1; min-width: 140px; }
 .mapping-row--value select.afc-select { flex: 0 0 130px; min-width: 130px; }
 
-.logs-cell { background: $card-alt; white-space: normal; }
+.logs-cell { background: $card; white-space: normal; }
 .logs-table {
     width: 100%; border-collapse: collapse;
     th { font-size: 10px; padding: 6px 10px; color: $text-dim; text-transform: uppercase; }

@@ -3,7 +3,7 @@
  *
  * Wygenerowana ze skanu repozytoriow (frontend, a gdy lezy obok - takze backend,
  * bo nazwy ikon kategorii przychodza z bazy). Importy sa WYPISANE JAWNIE, nie przez
- * `import * as` - dzieki temu bundler dolacza wylacznie te 317 sciezek,
+ * `import * as` - dzieki temu bundler dolacza wylacznie te 318 sciezek,
  * a nie caly zestaw 7447. To jest cala roznica miedzy ~8 kB
  * a ~400 kB w paczce wyslanej do przegladarki.
  *
@@ -92,6 +92,7 @@ import {
     mdiCaravan,
     mdiCardAccountDetailsOutline,
     mdiCardTextOutline,
+    mdiCash,
     mdiCashMultiple,
     mdiCashRefund,
     mdiCertificate,
@@ -412,6 +413,7 @@ export const MDI_PATHS: Record<string, string> = {
     'mdi-caravan': mdiCaravan,
     'mdi-card-account-details-outline': mdiCardAccountDetailsOutline,
     'mdi-card-text-outline': mdiCardTextOutline,
+    'mdi-cash': mdiCash,
     'mdi-cash-multiple': mdiCashMultiple,
     'mdi-cash-refund': mdiCashRefund,
     'mdi-certificate': mdiCertificate,

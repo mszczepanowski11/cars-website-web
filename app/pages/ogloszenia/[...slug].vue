@@ -1733,7 +1733,7 @@ onUnmounted(() => {
 .advert-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: $nav-height;
+    padding-top: $page-top;
 
     @include respond-to(md) {
         padding-bottom: $mobile-cta-height;
@@ -1746,7 +1746,7 @@ onUnmounted(() => {
     backdrop-filter: blur(10px);
     border-bottom: 1px solid $border;
     position: sticky;
-    top: $nav-height;
+    top: var(--nav-h);
     z-index: 50;
 }
 
@@ -1919,7 +1919,7 @@ onUnmounted(() => {
     width: 100%;
     border-radius: $r-lg;
     overflow: hidden;
-    background: $card-alt;
+    background: $card;
     cursor: pointer;
     aspect-ratio: 16/10;
 
@@ -2580,7 +2580,7 @@ onUnmounted(() => {
 
 // Date picker card
 .date-picker-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 14px;
@@ -2742,7 +2742,7 @@ onUnmounted(() => {
 
 .main-right {
     position: sticky;
-    top: calc(#{$nav-height} + 50px + 16px);
+    top: calc(var(--nav-h) + 50px + 16px);
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -2823,7 +2823,7 @@ onUnmounted(() => {
 // ── Premium vertical scroll sections ─────────────────────────────────────────
 .pg-section {
     margin-bottom: 28px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     overflow: hidden;
@@ -3643,7 +3643,7 @@ onUnmounted(() => {
     border-radius: $r-md;
     overflow: hidden;
     cursor: pointer;
-    background: $card-alt;
+    background: $card;
 
     img { width: 100%; height: 280px; object-fit: cover; display: block; transition: transform 0.3s; }
     &:hover img { transform: scale(1.03); }
@@ -3676,7 +3676,7 @@ onUnmounted(() => {
     border-radius: $r-md;
     overflow: hidden;
     cursor: pointer;
-    background: $card-alt;
+    background: $card;
     flex: 1;
 
     img { width: 100%; height: 88px; object-fit: cover; display: block; transition: transform 0.3s; }
@@ -3727,7 +3727,7 @@ onUnmounted(() => {
 
 .sim-img-wrap {
     position: relative;
-    background: $card-alt;
+    background: $card;
     img { width: 100%; height: 140px; object-fit: cover; display: block; }
 }
 
@@ -3935,7 +3935,7 @@ onUnmounted(() => {
 .map-wrap {
     border-radius: $r-md;
     overflow: hidden;
-    background: $card-alt;
+    background: $card;
 }
 
 .map-iframe {
@@ -4665,7 +4665,7 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     padding: 40px 20px;
-    padding-top: calc(#{$nav-height} + 40px);
+    padding-top: $page-top;
 }
 
 .anf-inner {

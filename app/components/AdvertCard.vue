@@ -106,7 +106,7 @@ const monthlyRate = computed(() => {
                 :alt="advert.title"
                 loading="lazy"
                 width="420"
-                height="200"
+                height="263"
                 format="auto"
                 quality="75"
                 @error="imgFailed = true"
@@ -124,8 +124,13 @@ const monthlyRate = computed(() => {
                     <CzIcon icon="mdi-compare" size="16" />
                 </button>
             </div>
-            <button v-if="isLoggedIn" class="fav-btn" :class="{ active: isFavorite(advert.id) }" :aria-label="isFavorite(advert.id) ? $t('cAdvertCard.removeFromFavorites') : $t('cAdvertCard.addToFavorites')" @click="toggleFav">
-                <CzIcon :icon="isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
+            <!--
+                Serce jest widoczne ZAWSZE, takze przed zalogowaniem - to jedna
+                z pierwszych rzeczy, ktorych ludzie szukaja na karcie. Klikniecie
+                bez konta prowadzi do logowania z powrotem tutaj (useFavorites).
+            -->
+            <button class="fav-btn" :class="{ active: isLoggedIn && isFavorite(advert.id) }" :aria-label="isLoggedIn && isFavorite(advert.id) ? $t('cAdvertCard.removeFromFavorites') : $t('cAdvertCard.addToFavorites')" @click="toggleFav">
+                <CzIcon :icon="isLoggedIn && isFavorite(advert.id) ? 'mdi-heart' : 'mdi-heart-outline'" size="20" />
             </button>
         </div>
         <div class="car-body">
@@ -230,9 +235,15 @@ const monthlyRate = computed(() => {
 
     img {
         width: 100%;
-        height: 200px;
+        // STALE PROPORCJE, a nie stala wysokosc. Przy `height: 200px` zdjecie
+        // w waskiej karcie na telefonie bylo mocno przyciete, a w szerokiej
+        // na desktopie plaskie jak pasek - te same ogloszenia wygladaly inaczej
+        // w zaleznosci od tego, w ktorej siatce akurat sie znalazly.
+        aspect-ratio: 16 / 10;
+        height: auto;
         object-fit: cover;
         display: block;
+        background: rgba(255, 255, 255, 0.03);
         transition: transform 0.4s ease;
     }
 
@@ -304,17 +315,32 @@ const monthlyRate = computed(() => {
     font-weight: 700;
     margin-bottom: 10px;
     line-height: 1.3;
+    // Dwa wiersze, zawsze. Tytuly ogloszen bywaja jedno- i czterowierszowe,
+    // przez co karty w jednym rzedzie mialy rozna wysokosc, a ceny i przyciski
+    // nie ukladaly sie w linii. Zarezerwowana wysokosc rownieź oznacza, ze nic
+    // nie przeskoczy, gdy tytul dojedzie pozniej niz reszta.
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: calc(2 * 1.3em);
+
+    @media (max-width: $bp-mobile) { font-size: 17px; }
 }
 
 .car-meta {
     display: flex;
-    gap: 10px;
+    gap: $s-25;
     flex-wrap: wrap;
-    color: $text-dim;
-    font-size: 12px;
+    // Bylo $text-dim (5,9:1) w rozmiarze 12 px. Rocznik, przebieg i paliwo to
+    // dane, po ktorych ludzie realnie porownuja oferty - nie drobny druk.
+    color: $text-muted;
+    font-size: 13px;
     margin-bottom: 12px;
 
     span { display: flex; align-items: center; }
+
+    @media (max-width: $bp-mobile) { font-size: 13.5px; gap: $s-3; }
 }
 
 .meta-catalog {
@@ -338,9 +364,14 @@ const monthlyRate = computed(() => {
 
 .car-price {
     color: $red-text;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 800;
+    line-height: 1.15;
     margin-bottom: 4px;
+    // Cena nie moze sie lamac w polowie liczby.
+    white-space: nowrap;
+
+    @media (max-width: $bp-mobile) { font-size: 25px; }
 }
 
 .car-price-eur {
@@ -381,8 +412,14 @@ const monthlyRate = computed(() => {
 .car-city {
     display: flex;
     align-items: center;
-    color: $text-dim;
-    font-size: 12px;
+    // Lokalizacja to jeden z trzech powodow, dla ktorych ktos w ogole otwiera
+    // ogloszenie (obok ceny i przebiegu) - nie ma prawa byc najdrobniejszym
+    // tekstem na karcie.
+    color: $text-muted;
+    font-size: 13px;
+    min-width: 0;
+
+    span, & { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 
 .car-verified {

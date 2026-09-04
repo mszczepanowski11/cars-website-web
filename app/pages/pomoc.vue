@@ -130,7 +130,7 @@ const filteredGroups = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-.help-page { background: $bg; min-height: 100vh; padding-top: $nav-height; }
+.help-page { background: $bg; min-height: 100vh; padding-top: $page-top; }
 .container { @include container; }
 
 .page-hero {
@@ -155,7 +155,7 @@ const filteredGroups = computed(() => {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 12px 16px;
@@ -189,7 +189,7 @@ const filteredGroups = computed(() => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: 999px;
     color: $text-muted;
@@ -228,7 +228,7 @@ const filteredGroups = computed(() => {
 .faq-list { max-width: 800px; display: flex; flex-direction: column; gap: 6px; }
 
 .faq-item {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;
@@ -272,7 +272,7 @@ const filteredGroups = computed(() => {
     display: flex;
     align-items: center;
     gap: 20px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 28px 32px;

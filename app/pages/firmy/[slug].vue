@@ -37,12 +37,12 @@
       <section class="cp-body">
         <div class="cp-grid">
           <div class="cp-main">
-            <div v-if="company.description" class="cp-card">
+            <CzCard v-if="company.description" as="section" class="cp-card">
               <h2 class="cp-card-h">O firmie</h2>
               <p class="cp-desc">{{ company.description }}</p>
-            </div>
+            </CzCard>
 
-            <div class="cp-card">
+            <CzCard as="section" class="cp-card">
               <h2 class="cp-card-h">Dane kontaktowe</h2>
               <dl class="cp-dl">
                 <template v-if="fullAddress">
@@ -65,9 +65,9 @@
                   <dd class="cp-nocontact">Brak danych kontaktowych w katalogu.</dd>
                 </template>
               </dl>
-            </div>
+            </CzCard>
 
-            <div v-if="company.branches?.length" class="cp-card">
+            <CzCard v-if="company.branches?.length" as="section" class="cp-card">
               <h2 class="cp-card-h">Oddziały <span class="cp-count">{{ company.branches.length }}</span></h2>
               <div class="cp-branches">
                 <div v-for="b in company.branches" :key="b.id" class="cp-branch">
@@ -91,9 +91,9 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </CzCard>
 
-            <div v-if="listings.length" class="cp-card">
+            <CzCard v-if="listings.length" as="section" class="cp-card">
               <h2 class="cp-card-h">Ogłoszenia tej firmy <span class="cp-count">{{ listingsTotal }}</span></h2>
               <ul class="cp-listings">
                 <li v-for="ad in listings" :key="ad.id">
@@ -116,7 +116,7 @@
               <p v-if="listingsTotal > listings.length" class="cp-listings-more">
                 …oraz {{ listingsTotal - listings.length }} więcej ogłoszeń tej firmy.
               </p>
-            </div>
+            </CzCard>
 
             <div v-if="isOwnerClaimable" class="cp-claim">
               <CzIcon icon="mdi-shield-account-outline" size="20" />
@@ -129,13 +129,13 @@
           </div>
 
           <aside class="cp-side">
-            <div class="cp-card">
+            <CzCard as="section" class="cp-card">
               <h2 class="cp-card-h">Identyfikator</h2>
               <div class="cp-id">{{ company.publicId }}</div>
               <p class="cp-id-note">Globalny Carizo ID — stały identyfikator tej firmy w bazie.</p>
               <div class="cp-meta-row"><span>Dodano</span><span>{{ fmtDate(company.createdAt) }}</span></div>
               <div class="cp-meta-row"><span>Aktualizacja</span><span>{{ fmtDate(company.updatedAt) }}</span></div>
-            </div>
+            </CzCard>
           </aside>
         </div>
       </section>
@@ -265,7 +265,7 @@ useHead(() => ({
 </script>
 
 <style lang="scss" scoped>
-.cp-page { background: $bg; min-height: 100vh; padding-top: $nav-height; }
+.cp-page { background: $bg; min-height: 100vh; padding-top: $page-top; }
 .cp-loading, .cp-notfound { text-align: center; padding: 90px 20px; color: $text-muted; }
 .cp-notfound h1 { color: $text; margin: 16px 0 8px; font-size: 24px; }
 .cp-back-btn, .cp-claim-btn { display: inline-block; margin-top: 16px; background: $red; color: #fff;
@@ -289,15 +289,34 @@ useHead(() => ({
   &--ok { color: $success; background: rgba($success, .14); } }
 
 .cp-body { @include container; padding-top: 28px; padding-bottom: 80px; }
-.cp-grid { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
-.cp-card { background: $card; border: 1px solid $border; border-radius: 12px; padding: 22px; margin-bottom: 16px; }
+// `minmax(0, 1fr)`, a nie `1fr` - i to nie jest kosmetyka. Sciezka `1fr` znaczy
+// `minmax(auto, 1fr)`, wiec kolumna NIE MOZE zwezic sie ponizej rozmiaru min-content
+// swojej zawartosci. Tutaj tym rozmiarem byl kafelek ogloszenia: tytul ma
+// `white-space: nowrap`, a rozmiar wewnetrzny liczy sie z pominieciem `overflow: hidden`,
+// wiec kafelek zglaszal 680 px. Cala strona profilu firmy rozpychala sie do 730 px
+// i na telefonie przewijala sie na boki o ponad 370 px. Nikt tego nie widzial,
+// bo test dymny nie otwieral tej strony.
+.cp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start; }
+.cp-main, .cp-side { min-width: 0; }
+// Powierzchnia, obramowanie, promien i odstep pochodza z `CzCard`. Zostaje tylko
+// odstep miedzy kolejnymi kartami. Promien zmienia sie przy okazji z 12 na 20 px -
+// karty na profilu firmy byly jedynym miejscem w serwisie z tym pierwszym.
+.cp-card { margin-bottom: 16px; }
 .cp-card-h { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: $text-muted; margin: 0 0 16px; font-weight: 700; }
 
 .cp-count { font-size: 12px; color: $text-muted; font-weight: 600; background: rgba($red,.12); padding: 2px 9px; border-radius: 20px; margin-left: 6px; }
 .cp-desc { color: $text-muted; font-size: 14.5px; line-height: 1.6; margin: 0; white-space: pre-line; }
 
-.cp-listings { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.cp-listing { display: flex; align-items: center; gap: 12px; text-decoration: none; padding: 8px; border-radius: 10px; transition: background .15s;
+// `min-width: 0` na KAZDYM ogniwie lancucha - i to jest sedno tej wady.
+// Tytul ogloszenia ma `white-space: nowrap`, wiec jego rozmiar min-content to cala
+// dlugosc tytulu (`overflow: hidden` przycina obraz, ale nie zmienia rozmiaru
+// wewnetrznego). `.cp-listing-body` mial juz `min-width: 0`, tylko ze `.cp-listing`
+// jest elementem SIATKI, a element siatki ma domyslnie `min-width: auto` - czyli
+// nie zwezi sie ponizej min-content. Wystarczylo jedno brakujace ogniwo, zeby
+// cala strona rozpychala sie do 700 px i przewijala na boki na kazdym telefonie.
+.cp-listings { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0;
+  li { min-width: 0; } }
+.cp-listing { display: flex; align-items: center; gap: 12px; text-decoration: none; padding: 8px; border-radius: 10px; transition: background .15s; min-width: 0;
   &:hover { background: rgba($red,.06); } }
 .cp-listing-img { position: relative; width: 80px; height: 60px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: $card;
   img { width: 100%; height: 100%; object-fit: cover; } }
@@ -308,9 +327,14 @@ useHead(() => ({
 .cp-listing-price { color: $red-text; font-weight: 700; font-size: 14.5px; white-space: nowrap; }
 .cp-listings-more { color: $text-muted; font-size: 13px; margin: 10px 0 0; }
 
-.cp-dl { display: grid; grid-template-columns: 130px 1fr; gap: 12px 16px; margin: 0; }
+// Kolumna etykiet ma stale 130 px, wiec na wartosc zostaje reszta. Adres e-mail
+// i adres strony to ciagi bez spacji - przy 320 px suma nie miescila sie o 9 px.
+// Ponizej 480 px etykieta i wartosc ida jedna pod druga.
+.cp-dl { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 12px 16px; margin: 0;
+  @media (max-width: $bp-phone) { grid-template-columns: minmax(0, 1fr); gap: 2px 0; } }
 .cp-dl dt { color: $text-muted; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
-.cp-dl dd { margin: 0; color: $text; font-size: 15px; a { color: $red-text; text-decoration: none; &:hover { text-decoration: underline; } } }
+.cp-dl dd { margin: 0; color: $text; font-size: 15px; min-width: 0; overflow-wrap: anywhere;
+  @media (max-width: $bp-phone) { margin-bottom: 8px; } a { color: $red-text; text-decoration: none; &:hover { text-decoration: underline; } } }
 .cp-nocontact { grid-column: 1 / -1; color: $text-muted; font-style: italic; }
 
 .cp-branches { display: flex; flex-direction: column; gap: 16px; }
@@ -333,5 +357,5 @@ useHead(() => ({
 .cp-meta-row { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-top: 1px solid $border;
   span:first-child { color: $text-muted; } span:last-child { color: $text; font-variant-numeric: tabular-nums; } }
 
-@media (max-width: 820px) { .cp-grid { grid-template-columns: 1fr; } }
+@media (max-width: 820px) { .cp-grid { grid-template-columns: minmax(0, 1fr); } }
 </style>

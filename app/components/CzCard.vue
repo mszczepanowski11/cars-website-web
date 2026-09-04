@@ -43,8 +43,10 @@ withDefaults(defineProps<{
     color: $text;
     min-width: 0;
 
+    // Wariant „wyrozniony" odroznia sie CIENIEM, a nie tlem. Wczesniej mial tez
+    // `background: $card-alt`, czyli barwe o jeden krok na kanal ciemniejsza od
+    // zwyklej karty - nierozroznialna golym okiem, wiec cala roznica i tak niosl cien.
     &--raised {
-        background: $card-alt;
         box-shadow: $shadow-lg;
     }
 

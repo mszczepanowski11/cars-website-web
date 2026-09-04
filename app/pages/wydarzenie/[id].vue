@@ -296,7 +296,7 @@ onMounted(async () => {
 .event-detail-page {
     background: $bg;
     min-height: 100vh;
-    padding-top: $nav-height;
+    padding-top: $page-top;
 }
 
 .container { @include container; }
@@ -551,7 +551,7 @@ onMounted(async () => {
     flex-direction: column;
     gap: 20px;
     position: sticky;
-    top: calc(#{$nav-height} + 24px);
+    top: calc(var(--nav-h) + 24px);
 }
 
 .sidebar-card {

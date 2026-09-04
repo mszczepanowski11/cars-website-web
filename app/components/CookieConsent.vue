@@ -193,7 +193,7 @@ onMounted(() => {
     left: 0;
     right: 0;
     z-index: 9999;
-    background: $card-alt;
+    background: $card;
     border-top: 1px solid $border;
     padding: 14px 0;
     box-shadow: 0 -4px 24px rgba(0,0,0,0.5);

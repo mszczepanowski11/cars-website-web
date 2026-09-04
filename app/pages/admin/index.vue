@@ -533,7 +533,7 @@ function actionClass(type: string) {
     display: flex;
     min-height: 100vh;
     background: $bg;
-    padding-top: $nav-height;
+    padding-top: $page-top;
 }
 
 .admin-sidebar {
@@ -542,8 +542,8 @@ function actionClass(type: string) {
     background: $bg;
     border-right: 1px solid $border;
     position: sticky;
-    top: $nav-height;
-    height: calc(100vh - #{$nav-height});
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -653,7 +653,7 @@ function actionClass(type: string) {
 }
 
 .stat-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 18px 20px;
@@ -741,7 +741,7 @@ function actionClass(type: string) {
 }
 
 .logs-table-wrap {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;
@@ -898,7 +898,7 @@ function actionClass(type: string) {
 }
 
 .cat-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px 18px;
