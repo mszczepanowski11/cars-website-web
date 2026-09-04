@@ -655,7 +655,7 @@ h2 {
     color: $text-muted;
 }
 
-.req { color: $red-text; }
+.req { color: $red-text-sm; }
 
 .auth-input-wrap {
     display: flex;
@@ -668,7 +668,7 @@ h2 {
     transition: border-color 0.2s;
 
     &:focus-within { border-color: rgba($red, 0.5); }
-    &--error { border-color: rgba(220,50,50,0.5); }
+    &--error { border-color: rgba($danger, 0.5); }
 }
 
 .auth-field-icon { color: $text-dark; flex-shrink: 0; }
@@ -720,7 +720,7 @@ h2 {
     border-radius: 2px;
     transition: width 0.3s ease, background 0.3s ease;
 
-    &.strength-1 { background: #e53935; }
+    &.strength-1 { background: $danger; }
     &.strength-2 { background: $warning; }
     &.strength-3 { background: #fdd835; }
     &.strength-4 { background: $success; }
@@ -731,7 +731,7 @@ h2 {
     font-weight: 600;
     white-space: nowrap;
 
-    &.strength-label-1 { color: #e53935; }
+    &.strength-label-1 { color: $danger; }
     &.strength-label-2 { color: $warning; }
     &.strength-label-3 { color: #fdd835; }
     &.strength-label-4 { color: $success; }
@@ -741,8 +741,8 @@ h2 {
     display: flex;
     align-items: center;
     gap: 7px;
-    background: rgba(220,50,50,0.08);
-    border: 1px solid rgba(220,50,50,0.25);
+    background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.25);
     border-radius: $r-sm;
     color: $danger;
     font-size: 13px;
@@ -778,7 +778,7 @@ h2 {
     font-size: 14px;
 
     a {
-        color: $red-text;
+        color: $red-text-sm;
         font-weight: 600;
         &:hover { text-decoration: underline; }
     }
@@ -858,7 +858,7 @@ h2 {
 .resend-link {
     background: none;
     border: none;
-    color: $red-text;
+    color: $red-text-sm;
     font-size: 12px;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
@@ -945,7 +945,7 @@ h2 {
     color: $text-muted;
     line-height: 1.5;
 
-    a { color: $red-text; font-weight: 500; &:hover { text-decoration: underline; } }
+    a { color: $red-text-sm; font-weight: 500; &:hover { text-decoration: underline; } }
 
     &--optional { opacity: 0.8; }
 }
@@ -966,7 +966,7 @@ h2 {
 }
 
 .cookie-link {
-    color: $red-text;
+    color: $red-text-sm;
     text-decoration: none;
     font-weight: 500;
     &:hover { text-decoration: underline; }

@@ -229,7 +229,7 @@ onMounted(async () => {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 4px;
-    color: $red-text;
+    color: $red-text-sm;
     margin-bottom: 18px;
 }
 

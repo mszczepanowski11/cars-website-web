@@ -126,7 +126,7 @@
                                         <div class="actions">
                                             <button class="act-btn" title="Pobierz PDF" :disabled="pdfLoadingId === inv.id" @click="downloadPdfAdmin(inv)">
                                                 <CzIcon v-if="pdfLoadingId === inv.id" icon="mdi-loading" size="14" class="spin" />
-                                                <CzIcon v-else icon="mdi-file-pdf-box" size="14" style="color:#e53935" />
+                                                <CzIcon v-else icon="mdi-file-pdf-box" size="14" style="color:var(--c-danger)" />
                                             </button>
                                             <button class="act-btn" title="Wyślij ponownie e-mailem" :disabled="sending === inv.id" @click="resend(inv.id)">
                                                 <CzIcon v-if="sending === inv.id" icon="mdi-loading" size="14" class="spin" />

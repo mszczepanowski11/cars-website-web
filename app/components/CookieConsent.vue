@@ -231,7 +231,7 @@ onMounted(() => {
 
 .cookie-icon { color: $text-dim; flex-shrink: 0; margin-top: 1px; }
 
-.cookie-link { color: $red-text; text-decoration: none; font-weight: 500; &:hover { text-decoration: underline; } }
+.cookie-link { color: $red-text-sm; text-decoration: none; font-weight: 500; &:hover { text-decoration: underline; } }
 
 .cookie-actions {
     display: flex;

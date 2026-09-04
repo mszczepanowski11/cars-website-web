@@ -280,7 +280,7 @@ onMounted(fetchEvents)
     font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
     &.status-pending { background: rgba(255,152,0,0.1); color: $warning; border: 1px solid rgba(255,152,0,0.2); }
     &.status-published { background: rgba(76,175,80,0.1); color: $success; border: 1px solid rgba(76,175,80,0.2); }
-    &.status-rejected { background: rgba(220,50,50,0.1); color: $danger; border: 1px solid rgba(220,50,50,0.2); }
+    &.status-rejected { background: rgba($danger, 0.1); color: $danger; border: 1px solid rgba($danger, 0.2); }
     &.status-archived { background: rgba(255,255,255,0.06); color: $text-dim; border: 1px solid $border; }
 }
 
@@ -294,9 +294,9 @@ onMounted(fetchEvents)
 }
 
 .btn-approve   { background: rgba(76,175,80,0.1); color: $success; border-color: rgba(76,175,80,0.2); &:hover:not(:disabled) { background: rgba(76,175,80,0.18); } }
-.btn-reject    { background: rgba(220,50,50,0.09); color: $danger; border-color: rgba(220,50,50,0.2); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); } }
+.btn-reject    { background: rgba($danger, 0.09); color: $danger; border-color: rgba($danger, 0.2); &:hover:not(:disabled) { background: rgba($danger, 0.18); } }
 .btn-archive   { background: rgba(255,255,255,0.05); color: $text-muted; border-color: $border; &:hover:not(:disabled) { background: rgba(255,255,255,0.09); } }
-.btn-delete    { background: rgba(220,50,50,0.09); color: $danger; border-color: rgba(220,50,50,0.2); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); } }
+.btn-delete    { background: rgba($danger, 0.09); color: $danger; border-color: rgba($danger, 0.2); &:hover:not(:disabled) { background: rgba($danger, 0.18); } }
 .btn-feature   { background: rgba(255,215,0,0.08); color: $premium; border-color: rgba(255,215,0,0.25); &:hover:not(:disabled) { background: rgba(255,215,0,0.15); } }
 .btn-unfeature { background: rgba(255,255,255,0.04); color: $text-dim; border-color: $border; &:hover:not(:disabled) { background: rgba(255,255,255,0.08); } }
 
@@ -307,7 +307,7 @@ onMounted(fetchEvents)
 .confirm-modal p { font-size: 13px; color: $text-dim; margin: 0; }
 .confirm-actions { display: flex; gap: 10px; width: 100%; margin-top: 4px; }
 .btn-cancel { flex: 1; background: transparent; border: 1px solid $border; border-radius: $r-sm; color: $text-muted; font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; padding: 10px; cursor: pointer; &:hover { border-color: $text-dim; color: $text; } }
-.btn-delete-confirm { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; background: rgba(220,50,50,0.15); border: 1px solid rgba($danger,0.35); border-radius: $r-sm; color: $danger; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; padding: 10px; cursor: pointer; &:hover:not(:disabled) { background: rgba(220,50,50,0.25); } &:disabled { opacity: 0.45; cursor: not-allowed; } }
+.btn-delete-confirm { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; background: rgba($danger, 0.15); border: 1px solid rgba($danger,0.35); border-radius: $r-sm; color: $danger; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; padding: 10px; cursor: pointer; &:hover:not(:disabled) { background: rgba($danger, 0.25); } &:disabled { opacity: 0.45; cursor: not-allowed; } }
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

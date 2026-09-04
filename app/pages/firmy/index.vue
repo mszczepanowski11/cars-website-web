@@ -242,7 +242,7 @@ useHead({
 }
 .dir-hero-inner { @include container; max-width: 720px; }
 .dir-eyebrow {
-  font-size: 10px; font-weight: 700; color: $red-text; letter-spacing: 4px; text-transform: uppercase;
+  font-size: 10px; font-weight: 700; color: $red-text-sm; letter-spacing: 4px; text-transform: uppercase;
   display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px;
   &::before, &::after { content: ''; display: block; width: 32px; height: 1px; background: $red; opacity: .6; }
 }
@@ -280,15 +280,15 @@ useHead({
   background: transparent; border: none; color: $text; padding: 8px 10px; border-radius: 8px;
   cursor: pointer; font-size: 14px; text-align: left;
   &:hover { background: rgba($red, 0.08); }
-  &.active { background: rgba($red, 0.14); color: $red-text; font-weight: 600; }
+  &.active { background: rgba($red, 0.14); color: $red-text-sm; font-weight: 600; }
   &-count { font-size: 12px; color: $text-muted; font-variant-numeric: tabular-nums; }
-  &.active &-count { color: $red-text; }
+  &.active &-count { color: $red-text-sm; }
 }
 
 .dir-results-head { color: $text-muted; font-size: 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; strong { color: $text; } }
 .dir-viewtoggle { display: flex; gap: 2px; background: $card; border: 1px solid $border; border-radius: 8px; padding: 2px;
   button { display: inline-flex; align-items: center; gap: 5px; background: transparent; border: none; color: $text-muted; font-size: 13px; padding: 6px 12px; border-radius: 6px; cursor: pointer;
-    &.active { background: rgba($red, .16); color: $red-text; } &:hover:not(.active) { color: $text; } } }
+    &.active { background: rgba($red, .16); color: $red-text-sm; } &:hover:not(.active) { color: $text; } } }
 .dir-loading, .dir-empty { text-align: center; padding: 60px 20px; color: $text-muted; }
 .dir-empty p { margin: 12px 0; }
 .dir-reset { background: $red; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; cursor: pointer; font-weight: 600; }

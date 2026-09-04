@@ -232,7 +232,7 @@ async function onLeave() {
     align-items: center;
     gap: 7px;
     background: transparent;
-    border: 1px solid rgba(231,76,60,0.4);
+    border: 1px solid rgba($danger, 0.4);
     border-radius: $r-sm;
     color: $danger;
     font-size: 13px;
@@ -241,7 +241,7 @@ async function onLeave() {
     padding: 10px 18px;
     cursor: pointer;
     transition: background 0.2s;
-    &:hover:not(:disabled) { background: rgba(231,76,60,0.1); }
+    &:hover:not(:disabled) { background: rgba($danger, 0.1); }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
@@ -328,7 +328,7 @@ async function onLeave() {
     cursor: pointer;
     flex-shrink: 0;
     transition: background 0.2s, color 0.2s;
-    &:hover:not(:disabled) { background: rgba(231,76,60,0.12); color: $danger; }
+    &:hover:not(:disabled) { background: rgba($danger, 0.12); color: $danger; }
     &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 

@@ -31,7 +31,7 @@ useHead(() => ({
               {{ (error as any)?.statusCode === 404 ? 'Strona, której szukasz, nie istnieje lub została przeniesiona.' : 'Coś poszło nie tak. Spróbuj odświeżyć stronę.' }}
             </p>
             <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-              <button style="background: #8B0D1D; color: white; border: none; border-radius: 8px; padding: 10px 22px; cursor: pointer; font-size: 14px;" @click="clearError({ redirect: '/' })">
+              <button style="background: var(--c-red); color: white; border: none; border-radius: 8px; padding: 10px 22px; cursor: pointer; font-size: 14px;" @click="clearError({ redirect: '/' })">
                 Strona główna
               </button>
               <button v-if="(error as any)?.statusCode !== 404" style="background: transparent; color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px 22px; cursor: pointer; font-size: 14px;" @click="clearError()">

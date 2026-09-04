@@ -289,7 +289,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     gap: 6px;
     background: rgba(139,13,29,0.12);
     border: 1px solid rgba(139,13,29,0.3);
-    color: $red-text;
+    color: $red-text-sm;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -371,7 +371,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: $red-text;
+    color: $red-text-sm;
     margin-bottom: 6px;
 }
 .sp-title { font-size: 18px; font-weight: 700; color: $text; margin-bottom: 4px; }
@@ -611,7 +611,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     font-weight: 500;
     box-shadow: 0 4px 20px rgba(0,0,0,0.6);
     &--success { background: #0f2e0f; border: 1px solid #2a6b2a; color: #6fcf6f; }
-    &--error   { background: #1a0a0a; border: 1px solid #5a1a1a; color: #e07070; }
+    &--error   { background: #1a0a0a; border: 1px solid rgba($danger, 0.35); color: $danger; }
 }
 
 // ── Spin animation ────────────────────────────────────────────────────

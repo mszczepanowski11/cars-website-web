@@ -1308,14 +1308,14 @@
                     <!-- PDF Brochure Upload -->
                     <div class="pdf-section">
                         <div class="pdf-section-title">
-                            <CzIcon icon="mdi-file-pdf-box" size="16" style="color:#e53e3e" />
+                            <CzIcon icon="mdi-file-pdf-box" size="16" style="color:var(--c-danger)" />
                             Broszura PDF
                             <span class="flabel-opt">(opcjonalnie)</span>
                         </div>
                         <div class="pdf-section-desc">Dodaj PDF z pełną specyfikacją, historią serwisową lub ofertą finansową.</div>
 
                         <div v-if="form.pdfBrochureUrl && form.pdfBrochureUrl !== '__pending__'" class="pdf-uploaded">
-                            <CzIcon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <CzIcon icon="mdi-file-pdf-box" size="20" style="color:var(--c-danger)" />
                             <div class="pdf-info">
                                 <div class="pdf-name">{{ pdfFileName || 'Broszura.pdf' }}</div>
                                 <a :href="form.pdfBrochureUrl" target="_blank" rel="noopener noreferrer" class="pdf-view-link">
@@ -1328,7 +1328,7 @@
                         </div>
 
                         <div v-else-if="form.pdfBrochureUrl === '__pending__'" class="pdf-uploaded pdf-pending">
-                            <CzIcon icon="mdi-file-pdf-box" size="20" style="color:#e53e3e" />
+                            <CzIcon icon="mdi-file-pdf-box" size="20" style="color:var(--c-danger)" />
                             <div class="pdf-info">
                                 <div class="pdf-name">{{ pdfFileName }}</div>
                                 <div class="pdf-pending-label">Zostanie przesłany po publikacji</div>
@@ -1372,7 +1372,7 @@
                         <p>Ładowanie wyposażenia...</p>
                     </div>
                     <div v-else-if="featuresLoadFailed" class="feat-empty">
-                        <CzIcon icon="mdi-alert-circle-outline" size="36" style="color: #f87171" />
+                        <CzIcon icon="mdi-alert-circle-outline" size="36" style="color: var(--c-danger)" />
                         <p>Nie udało się wczytać listy wyposażenia. Spróbuj ponownie.</p>
                         <button type="button" class="btn-next" style="margin-top:16px" @click="loadContextFeatures">
                             <CzIcon icon="mdi-refresh" size="15" /> Spróbuj ponownie
@@ -5572,7 +5572,7 @@ onBeforeUnmount(() => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, $red, #b01424);
+    background: linear-gradient(135deg, $red, $red-bright);
     color: white;
     border: none;
     border-radius: 8px;
@@ -5591,7 +5591,7 @@ onBeforeUnmount(() => {
     background: rgba(139, 13, 29, 0.12);
     border: 1px solid rgba(139, 13, 29, 0.3);
     border-radius: 6px;
-    color: #e07070;
+    color: $danger;
     font-size: 12px;
     padding: 8px 12px;
     margin-bottom: 8px;
@@ -5725,7 +5725,7 @@ onBeforeUnmount(() => {
 }
 
 .vin-error {
-    font-size: 12px; color: #f87171; margin-top: 8px; padding: 0 20px;
+    font-size: 12px; color: $danger; margin-top: 8px; padding: 0 20px;
 }
 
 .btn-draft--saved { color: $success; border-color: rgba(74, 222, 128, 0.4); }
@@ -6650,8 +6650,8 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(220,50,50,0.08);
-    border: 1px solid rgba(220,50,50,0.22);
+    background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.22);
     border-radius: $r-sm;
     padding: 12px 16px;
     font-size: 13px;
@@ -8412,7 +8412,7 @@ onBeforeUnmount(() => {
 
 .photo-ai-issues {
     font-size: 11px;
-    color: #f87171;
+    color: $danger;
     padding-left: 14px;
     margin: 0 0 4px;
 
@@ -8439,7 +8439,7 @@ onBeforeUnmount(() => {
     background: none;
     border: none;
     cursor: pointer;
-    color: #f87171;
+    color: $danger;
     padding: 4px;
     border-radius: 4px;
     display: flex;
@@ -8560,8 +8560,8 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
-    background: rgba(229,62,62,0.06);
-    border: 1px solid rgba(229,62,62,0.2);
+    background: rgba($danger, 0.06);
+    border: 1px solid rgba($danger, 0.2);
     border-radius: 8px;
 }
 
@@ -8629,6 +8629,6 @@ onBeforeUnmount(() => {
     gap: 6px;
     margin-top: 8px;
     font-size: 12px;
-    color: #f87171;
+    color: $danger;
 }
 </style>

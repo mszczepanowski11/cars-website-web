@@ -369,7 +369,7 @@ onMounted(fetchUsers)
 .status-badge {
     font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
     &.status-active { background: rgba(76,175,80,0.1); color: $success; border: 1px solid rgba(76,175,80,0.2); }
-    &.status-blocked { background: rgba(220,50,50,0.1); color: $danger; border: 1px solid rgba(220,50,50,0.2); }
+    &.status-blocked { background: rgba($danger, 0.1); color: $danger; border: 1px solid rgba($danger, 0.2); }
     &.status-pending { background: rgba(255,180,50,0.1); color: #e5a83c; border: 1px solid rgba(255,180,50,0.25); }
 }
 
@@ -382,9 +382,9 @@ onMounted(fetchUsers)
     &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-.btn-block { background: rgba(220,50,50,0.1); color: $danger; border-color: rgba(220,50,50,0.25); &:hover:not(:disabled) { background: rgba(220,50,50,0.2); } }
+.btn-block { background: rgba($danger, 0.1); color: $danger; border-color: rgba($danger, 0.25); &:hover:not(:disabled) { background: rgba($danger, 0.2); } }
 .btn-unblock { background: rgba(76,175,80,0.1); color: $success; border-color: rgba(76,175,80,0.2); &:hover:not(:disabled) { background: rgba(76,175,80,0.18); } }
-.btn-delete { background: rgba(220,50,50,0.06); color: rgba(229,85,85,0.7); border-color: rgba(220,50,50,0.15); &:hover:not(:disabled) { background: rgba(220,50,50,0.18); color: $danger; border-color: rgba(220,50,50,0.35); } }
+.btn-delete { background: rgba($danger, 0.06); color: rgba($danger, 0.7); border-color: rgba($danger, 0.15); &:hover:not(:disabled) { background: rgba($danger, 0.18); color: $danger; border-color: rgba($danger, 0.35); } }
 .btn-resend { background: rgba(80,150,255,0.08); color: #6ba3ff; border-color: rgba(80,150,255,0.22); &:hover:not(:disabled) { background: rgba(80,150,255,0.18); } }
 .btn-activate { background: rgba(255,180,50,0.08); color: #e5a83c; border-color: rgba(255,180,50,0.25); &:hover:not(:disabled) { background: rgba(255,180,50,0.18); } }
 

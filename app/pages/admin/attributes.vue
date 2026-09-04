@@ -440,7 +440,7 @@ onMounted(async () => {
     &:hover { border-color: rgba(255,255,255,0.2); color: $text-muted; }
 }
 .btn-delete {
-    background: rgba(220,50,50,0.06); color: rgba(229,85,85,0.7); border-color: rgba(220,50,50,0.15);
-    &:hover { background: rgba(220,50,50,0.18); color: $danger; border-color: rgba(220,50,50,0.35); }
+    background: rgba($danger, 0.06); color: rgba($danger, 0.7); border-color: rgba($danger, 0.15);
+    &:hover { background: rgba($danger, 0.18); color: $danger; border-color: rgba($danger, 0.35); }
 }
 </style>

@@ -350,7 +350,7 @@ onMounted(fetchAdverts)
 
     &.cmp-badge--top     { background: rgba($premium, 0.18); color: $premium; border: 1px solid rgba($premium, 0.4); }
     &.cmp-badge--premium { background: $red; color: white; }
-    &.cmp-badge--featured { background: rgba($red, 0.18); color: #ff6b6b; border: 1px solid rgba($red, 0.4); }
+    &.cmp-badge--featured { background: rgba($red, 0.18); color: $red-text; border: 1px solid rgba($red, 0.4); }
 }
 
 .cmp-color-dot {

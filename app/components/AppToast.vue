@@ -94,8 +94,8 @@ function iconFor(type: ToastType): string {
         .toast-progress { background: $success; }
     }
     &--error {
-        border-color: rgba(220,60,60,0.35);
-        .toast-icon-wrap { background: rgba(220,60,60,0.12); color: $danger; }
+        border-color: rgba($danger, 0.35);
+        .toast-icon-wrap { background: rgba($danger, 0.12); color: $danger; }
         .toast-progress { background: $danger; }
     }
     &--info {

@@ -567,8 +567,8 @@ onMounted(async () => {
 
 .bulk-btn-danger {
     color: $danger;
-    border-color: rgba(220,50,50,0.3);
-    &:hover:not(:disabled) { background: rgba(220,50,50,0.12); color: $danger; }
+    border-color: rgba($danger, 0.3);
+    &:hover:not(:disabled) { background: rgba($danger, 0.12); color: $danger; }
 }
 
 .bulk-btn-clear {
@@ -818,7 +818,7 @@ onMounted(async () => {
 
 .expiry-ok { background: rgba(255,255,255,0.05); color: $text-dim; }
 .expiry-warn { background: rgba(255,152,0,0.1); color: $warning; }
-.expiry-urgent { background: rgba(220,50,50,0.1); color: $danger; }
+.expiry-urgent { background: rgba($danger, 0.1); color: $danger; }
 .expiry-expired { background: rgba(255,255,255,0.04); color: $text-dark; }
 
 .row-actions {
@@ -940,10 +940,10 @@ onMounted(async () => {
 
 .btn-delete-confirm {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-    background: rgba(220,50,50,0.12); border: 1px solid rgba(220,50,50,0.3);
+    background: rgba($danger, 0.12); border: 1px solid rgba($danger, 0.3);
     border-radius: $r-sm; color: $danger; font-size: 13px; font-weight: 700;
     font-family: 'Inter', sans-serif; padding: 10px; cursor: pointer;
-    &:hover:not(:disabled) { background: rgba(220,50,50,0.22); }
+    &:hover:not(:disabled) { background: rgba($danger, 0.22); }
     &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 

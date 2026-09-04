@@ -51,6 +51,14 @@ body { margin: 0; }
 // wlasnie o `$nav-height` i zostalaby pod paskiem albo z dziura nad soba.
 // Zmienna CSS zmienia sie w jednym miejscu i WSZYSTKIE te miejsca ida za nia.
 :root {
+  // Kolory marki wystawione takze jako zmienne CSS. Zmienna SCSS znika w czasie
+  // budowania, wiec NIE DZIALA w atrybucie `style` w szablonie - tam kolor trzeba
+  // podac inaczej. Bez tego jedynym wyjsciem byloby wpisanie hexa na sztywno,
+  // czyli dokladnie to, przez co serwis mial dwadziescia roznych czerwieni.
+  --c-red: #{$red};
+  --c-red-text: #{$red-text};
+  --c-danger: #{$danger};
+
   --nav-h: #{$nav-height};
 
   @media (max-width: $bp-mobile) { --nav-h: 64px; }
@@ -212,10 +220,10 @@ img.reg-success-logo { height: 30px; }
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(220, 50, 50, 0.08);
-  border: 1px solid rgba(220, 50, 50, 0.25);
+  background: rgba($danger, 0.08);
+  border: 1px solid rgba($danger, 0.25);
   border-radius: 8px;
-  color: #e55;
+  color: $danger;
   font-size: 13px;
   padding: 10px 14px;
 }

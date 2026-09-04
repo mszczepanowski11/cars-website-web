@@ -480,7 +480,7 @@ const monthlyRate = computed(() => {
 
     &--featured {
         background: rgba($red, 0.18);
-        color: #ff6b6b;
+        color: $red-text;
         border: 1px solid rgba($red, 0.45);
         backdrop-filter: blur(4px);
     }

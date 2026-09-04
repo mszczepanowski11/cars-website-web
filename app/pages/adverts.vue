@@ -2250,7 +2250,7 @@ onMounted(async () => {
     color: $text-muted;
     font-size: 14px;
 
-    strong { color: $red-text; }
+    strong { color: $red-text-sm; }
 }
 
 .sort-wrap {

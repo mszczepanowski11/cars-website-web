@@ -289,8 +289,8 @@ onMounted(async () => {
 }
 
 .icon-cancel {
-    background: rgba(220,60,60,0.1);
-    border: 2px solid rgba(220,60,60,0.25);
+    background: rgba($danger, 0.1);
+    border: 2px solid rgba($danger, 0.25);
     color: $danger;
 }
 

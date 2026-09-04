@@ -207,7 +207,7 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     transition: border-color 0.2s;
 
     &:focus-within { border-color: rgba($red, 0.5); }
-    &--error { border-color: rgba(220,60,60,0.45) !important; }
+    &--error { border-color: rgba($danger, 0.45) !important; }
 }
 
 .field-icon { color: $text-dark; flex-shrink: 0; }
@@ -255,7 +255,7 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     height: 100%;
     border-radius: 2px;
     transition: width 0.3s ease, background 0.3s ease;
-    &.strength-1 { background: #e53935; }
+    &.strength-1 { background: $danger; }
     &.strength-2 { background: $warning; }
     &.strength-3 { background: #fdd835; }
     &.strength-4 { background: $success; }
@@ -265,7 +265,7 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     font-size: 11px;
     font-weight: 600;
     white-space: nowrap;
-    &.sl-1 { color: #e53935; }
+    &.sl-1 { color: $danger; }
     &.sl-2 { color: $warning; }
     &.sl-3 { color: #fdd835; }
     &.sl-4 { color: $success; }
@@ -283,8 +283,8 @@ h2 { font-size: 26px; font-weight: 800; color: $text; margin-bottom: 8px; }
     display: flex;
     align-items: flex-start;
     gap: 7px;
-    background: rgba(220,50,50,0.08);
-    border: 1px solid rgba(220,50,50,0.2);
+    background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.2);
     border-radius: $r-sm;
     padding: 12px 14px;
     font-size: 13px;

@@ -453,7 +453,7 @@ onMounted(load)
   background: transparent; border: 1px solid $border; color: $text-muted;
   &:hover { border-color: rgba($red,.4); color: $text; }
   &--ok:hover { border-color: $success; color: $success; }
-  &--danger:hover { border-color: #c23a34; color: #c23a34; }
+  &--danger:hover { border-color: $danger; color: $danger; }
 }
 
 .dr-import { background: $card; border: 1px solid $border; border-radius: $r-md; padding: 18px; margin-bottom: 20px; }
