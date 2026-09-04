@@ -12,8 +12,9 @@
     "icons": "node scripts/generate-mdi-paths.mjs",
     "test:smoke": "node test/smoke.mjs",
     "test:unit": "node --experimental-strip-types --test test/*.test.mjs",
-    "test": "npm run test:unit && npm run test:smoke && npm run test:kontrast",
-    "test:kontrast": "node test/kontrast.mjs"
+    "test": "npm run test:unit && npm run test:smoke && npm run test:kontrast && npm run test:linki",
+    "test:kontrast": "node test/kontrast.mjs",
+    "test:linki": "node test/linki.mjs"
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",
