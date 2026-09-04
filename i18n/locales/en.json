@@ -52,8 +52,8 @@
     "forSellers": "For sellers",
     "addAdvert": "Post a listing",
     "pricing": "Pricing",
-    "premium": "Premium packages",
-    "forDealers": "For dealers",
+    "premium": "Listing promotion",
+    "forDealers": "Dealer subscriptions",
     "b2bTerms": "B2B Terms",
     "safety": "Safety",
     "terms": "Terms",
@@ -69,7 +69,8 @@
     "credit": "Made with passion for cars.",
     "forBuyers": "For buyers",
     "legal": "Legal",
-    "compare": "Compare"
+    "compare": "Compare",
+    "integration": "XML/API integration"
   },
   "hero": {
     "eyebrow": "Premium automotive platform",

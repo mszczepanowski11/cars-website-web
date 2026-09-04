@@ -52,8 +52,8 @@
     "forSellers": "Für Verkäufer",
     "addAdvert": "Anzeige aufgeben",
     "pricing": "Preise",
-    "premium": "Premium-Pakete",
-    "forDealers": "Für Händler",
+    "premium": "Anzeigen hervorheben",
+    "forDealers": "Abos für Autohäuser",
     "b2bTerms": "B2B-AGB",
     "safety": "Sicherheit",
     "terms": "AGB",
@@ -69,7 +69,8 @@
     "credit": "Mit Leidenschaft für Autos erstellt.",
     "forBuyers": "Für Käufer",
     "legal": "Rechtliches",
-    "compare": "Vergleich"
+    "compare": "Vergleich",
+    "integration": "XML/API-Integration"
   },
   "hero": {
     "eyebrow": "Premium-Automotive-Plattform",

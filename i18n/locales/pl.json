@@ -52,8 +52,8 @@
     "forSellers": "Dla sprzedających",
     "addAdvert": "Dodaj ogłoszenie",
     "pricing": "Cennik",
-    "premium": "Pakiety Premium",
-    "forDealers": "Dla dealerów",
+    "premium": "Wyróżnianie ogłoszeń",
+    "forDealers": "Abonamenty dla salonów",
     "b2bTerms": "Regulamin B2B",
     "safety": "Bezpieczeństwo",
     "terms": "Regulamin",
@@ -69,7 +69,8 @@
     "credit": "Stworzone z pasją do motoryzacji.",
     "forBuyers": "Dla kupujących",
     "legal": "Informacje prawne",
-    "compare": "Porównywarka"
+    "compare": "Porównywarka",
+    "integration": "Integracja XML/API"
   },
   "hero": {
     "eyebrow": "Platforma motoryzacyjna premium",
