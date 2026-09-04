@@ -91,7 +91,7 @@ async function subscribeNewsletter() {
           <NuxtLink :to="localePath('/cennik')">{{ $t('footer.pricing') }}</NuxtLink>
           <NuxtLink :to="localePath('/promote')">{{ $t('footer.premium') }}</NuxtLink>
           <NuxtLink :to="localePath('/pakiety')">{{ $t('footer.forDealers') }}</NuxtLink>
-          <NuxtLink :to="localePath('/dla-firm')">{{ $t('nav.forDealers') }}</NuxtLink>
+          <NuxtLink :to="localePath('/dla-firm')">{{ $t('footer.integration') }}</NuxtLink>
         </div>
 
         <div class="footer-col">
@@ -229,11 +229,34 @@ async function subscribeNewsletter() {
     margin-bottom: 4px;
   }
 
-  a {
+  // Link i przycisk MUSZA byc opisane razem. „Polityka cookies" jest przyciskiem,
+  // bo otwiera ustawienia zgod zamiast prowadzic na strone - i przez to lapala
+  // globalna regule celu dotykowego (min-height 44px na telefonie), podczas gdy
+  // sasiednie linki mialy 16px. Zmierzone: 44 vs 16, czyli 28px roznicy, ktore
+  // widac jako dziure w liscie nad i pod ta jedna pozycja.
+  a,
+  .footer-cookie-btn {
     color: $text-muted;
     font-size: 14px;
+    line-height: 1.4;
     transition: color 0.2s;
     &:hover { color: $text; }
+  }
+}
+
+// Na telefonie wyrownanie idzie W GORE, nie w dol: 16px to cel dotykowy grubo
+// ponizej minimum (WCAG 2.5.8 mowi o 24px, Apple i Google o 44px). Zamiast
+// scinac przycisk do wysokosci linkow, wszystkie pozycje dostaja ten sam wiersz.
+@media (max-width: $bp-mobile) {
+  .footer-col {
+    gap: 0;
+
+    a,
+    .footer-cookie-btn {
+      display: flex;
+      align-items: center;
+      min-height: $touch-min;
+    }
   }
 }
 
