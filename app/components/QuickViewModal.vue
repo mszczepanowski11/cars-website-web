@@ -190,7 +190,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
     &--premium { background: $red; color: #fff; }
     &--new    { background: #14532d; color: $success; border: 1px solid rgba($success,0.3); top: auto; bottom: 12px; }
     &--dealer { background: rgba(#3b82f6,0.15); color: $info; border: 1px solid rgba($info,0.3); }
-    &--featured { background: rgba($red,0.18); color: #ff6b6b; border: 1px solid rgba($red,0.45); }
+    &--featured { background: rgba($red,0.18); color: $red-text; border: 1px solid rgba($red,0.45); }
 }
 
 .qv-body {

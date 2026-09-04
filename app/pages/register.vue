@@ -668,7 +668,7 @@ h2 {
     transition: border-color 0.2s;
 
     &:focus-within { border-color: rgba($red, 0.5); }
-    &--error { border-color: rgba(220,50,50,0.5); }
+    &--error { border-color: rgba($danger, 0.5); }
 }
 
 .auth-field-icon { color: $text-dark; flex-shrink: 0; }
@@ -720,7 +720,7 @@ h2 {
     border-radius: 2px;
     transition: width 0.3s ease, background 0.3s ease;
 
-    &.strength-1 { background: #e53935; }
+    &.strength-1 { background: $danger; }
     &.strength-2 { background: $warning; }
     &.strength-3 { background: #fdd835; }
     &.strength-4 { background: $success; }
@@ -731,7 +731,7 @@ h2 {
     font-weight: 600;
     white-space: nowrap;
 
-    &.strength-label-1 { color: #e53935; }
+    &.strength-label-1 { color: $danger; }
     &.strength-label-2 { color: $warning; }
     &.strength-label-3 { color: #fdd835; }
     &.strength-label-4 { color: $success; }
@@ -741,8 +741,8 @@ h2 {
     display: flex;
     align-items: center;
     gap: 7px;
-    background: rgba(220,50,50,0.08);
-    border: 1px solid rgba(220,50,50,0.25);
+    background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.25);
     border-radius: $r-sm;
     color: $danger;
     font-size: 13px;

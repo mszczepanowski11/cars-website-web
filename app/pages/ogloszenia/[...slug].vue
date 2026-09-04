@@ -1172,7 +1172,9 @@ const sellerInitials = computed(() => {
 })
 
 const sellerAvatarColor = computed(() => {
-    const colors = ['#8B0D1D', '#c0392b', '#922b21', '#7b241c', '#641e16']
+    // Pieć odcieni JEDNEGO burgundu (352,4°) zamiast mieszanki 352°+5°+6° -
+    // awatary maja sie roznic jasnoscia, a nie kolorem.
+    const colors = ['#8c0d1d', '#711420', '#8f2431', '#5b151e', '#943844']
     const name = sellerDisplayName.value
     let h = 0
     for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffffffff
@@ -1972,7 +1974,7 @@ onUnmounted(() => {
     padding: 3px 8px;
     border-radius: 5px;
     letter-spacing: 0.5px;
-    &--premium { background: linear-gradient(135deg, $red, #c0392b); color: #fff; }
+    &--premium { background: linear-gradient(135deg, $red, $red-bright); color: #fff; }
     &--top { background: #e67e22; color: #fff; }
     &--featured { background: #2980b9; color: #fff; }
     &--dealer { background: #555; color: #fff; }
@@ -2296,9 +2298,9 @@ onUnmounted(() => {
         color: $warning;
     }
     &.pa-high {
-        background: rgba(244, 67, 54, 0.1);
-        border: 1px solid rgba(244, 67, 54, 0.25);
-        color: #ef5350;
+        background: rgba($danger, 0.1);
+        border: 1px solid rgba($danger, 0.25);
+        color: $danger;
     }
 }
 
@@ -4195,8 +4197,8 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 7px;
-    background: rgba(231,76,60,0.08);
-    border: 1px solid rgba(231,76,60,0.25);
+    background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.25);
     border-radius: $r-sm;
     padding: 10px 14px;
     font-size: 13px;

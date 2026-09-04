@@ -340,8 +340,8 @@ h2 {
     display: flex;
     align-items: center;
     gap: 7px;
-    background: rgba(220,50,50,0.08);
-    border: 1px solid rgba(220,50,50,0.25);
+    background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.25);
     border-radius: $r-sm;
     color: $danger;
     font-size: 13px;

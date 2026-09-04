@@ -395,7 +395,7 @@ onMounted(fetchEvents)
 
     &.status-pending    { background: rgba(255,152,0,0.1); color: $warning; border: 1px solid rgba(255,152,0,0.2); }
     &.status-published  { background: rgba(76,175,80,0.1); color: $success; border: 1px solid rgba(76,175,80,0.2); }
-    &.status-rejected   { background: rgba(220,50,50,0.09); color: $danger; border: 1px solid rgba(220,50,50,0.2); }
+    &.status-rejected   { background: rgba($danger, 0.09); color: $danger; border: 1px solid rgba($danger, 0.2); }
     &.status-archived   { background: rgba(255,255,255,0.05); color: $text-dim; border: 1px solid $border; }
 }
 
@@ -430,13 +430,13 @@ onMounted(fetchEvents)
     height: 32px;
     border-radius: $r-sm;
     background: transparent;
-    border: 1px solid rgba(220,50,50,0.2);
+    border: 1px solid rgba($danger, 0.2);
     color: $danger;
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: all 0.2s;
 
-    &:hover { background: rgba(220,50,50,0.1); }
+    &:hover { background: rgba($danger, 0.1); }
 }
 
 // Pagination
@@ -532,7 +532,7 @@ onMounted(fetchEvents)
     align-items: center;
     justify-content: center;
     gap: 6px;
-    background: rgba(220,50,50,0.15);
+    background: rgba($danger, 0.15);
     border: 1px solid rgba($danger, 0.35);
     border-radius: $r-sm;
     color: $danger;
@@ -542,7 +542,7 @@ onMounted(fetchEvents)
     padding: 10px;
     cursor: pointer;
 
-    &:hover:not(:disabled) { background: rgba(220,50,50,0.25); }
+    &:hover:not(:disabled) { background: rgba($danger, 0.25); }
     &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 

@@ -2831,7 +2831,7 @@ onMounted(async () => {
     border-radius: $r-sm;
 }
 .subscribe-ok  { background: rgba(45,122,58,0.1); border: 1px solid rgba(45,122,58,0.3); color: $success; }
-.subscribe-err { background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.25); color: $danger; }
+.subscribe-err { background: rgba($danger, 0.08); border: 1px solid rgba($danger, 0.25); color: $danger; }
 
 .news-consent {
     display: flex;

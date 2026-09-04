@@ -827,7 +827,7 @@ function actionClass(type: string) {
     white-space: nowrap;
 
     &.chip-danger {
-        background: rgba(220, 50, 50, 0.12);
+        background: rgba($danger, 0.12);
         color: $danger;
     }
 
@@ -985,8 +985,8 @@ function actionClass(type: string) {
     align-items: center;
     gap: 5px;
     padding: 7px 14px;
-    background: rgba(220, 50, 50, 0.1);
-    border: 1px solid rgba(220, 50, 50, 0.25);
+    background: rgba($danger, 0.1);
+    border: 1px solid rgba($danger, 0.25);
     border-radius: 8px;
     color: $danger;
     font-size: 12px;
@@ -995,7 +995,7 @@ function actionClass(type: string) {
     transition: background 0.15s;
 
     &:hover:not(:disabled) {
-        background: rgba(220, 50, 50, 0.18);
+        background: rgba($danger, 0.18);
     }
 
     &:disabled {

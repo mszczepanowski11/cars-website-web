@@ -40,7 +40,7 @@
 
             <!-- Error -->
             <div v-else-if="fetchError" class="empty-state">
-                <CzIcon icon="mdi-alert-circle-outline" size="52" class="empty-icon" color="#c0392b" />
+                <CzIcon icon="mdi-alert-circle-outline" size="52" class="empty-icon" color="var(--c-red-text)" />
                 <div class="empty-title">{{ $t('events.error.title') }}</div>
                 <div class="empty-sub">{{ $t('events.error.desc') }}</div>
                 <button class="btn-retry" @click="fetchEvents">

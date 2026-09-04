@@ -266,7 +266,7 @@ h1 {
 
 .df-alert {
   font-size: 13px; padding: 10px 14px; border-radius: $r-sm; margin-bottom: 16px;
-  &--error { background: rgba(220,50,50,0.08); color: #e88; border: 1px solid rgba(220,50,50,0.25); }
+  &--error { background: rgba($danger, 0.08); color: $danger; border: 1px solid rgba($danger, 0.25); }
 }
 
 .df-btn-primary {
@@ -290,7 +290,7 @@ h1 {
   width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   margin-bottom: 16px;
   &--ok { background: rgba(60, 180, 100, 0.12); color: #5c5; }
-  &--error { background: rgba(220,50,50,0.1); color: $danger; }
+  &--error { background: rgba($danger, 0.1); color: $danger; }
 }
 .df-result-actions { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
 .df-result-actions .df-btn-primary { width: auto; flex: 1; min-width: 160px; }

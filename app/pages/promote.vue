@@ -822,7 +822,7 @@ onMounted(async () => {
 
     &.preview--highlight {
         background: rgba($red, 0.15);
-        color: #ff6b6b;
+        color: $red-text;
         border: 1px solid rgba($red, 0.4);
     }
 
@@ -991,7 +991,7 @@ onMounted(async () => {
     background: rgba($red, 0.12);
     border: 1px solid rgba($red, 0.35);
     border-radius: $r-sm;
-    color: #ff8080;
+    color: $red-text;
     font-size: 14px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;
@@ -1106,7 +1106,7 @@ onMounted(async () => {
     transition: border-color 0.2s;
     &:focus-within { border-color: rgba($red, 0.4); }
     &.coupon-valid { border-color: rgba(76,175,80,0.5); }
-    &.coupon-invalid { border-color: rgba(220,50,50,0.4); }
+    &.coupon-invalid { border-color: rgba($danger, 0.4); }
 }
 
 .coupon-icon { color: $text-dim; flex-shrink: 0; }
@@ -1151,8 +1151,8 @@ onMounted(async () => {
 
 .purchase-err {
     display: flex; align-items: center; gap: 8px; margin-top: 14px;
-    font-size: 13px; color: $danger; background: rgba(220,50,50,0.08);
-    border: 1px solid rgba(220,50,50,0.2); border-radius: $r-sm; padding: 10px 14px;
+    font-size: 13px; color: $danger; background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.2); border-radius: $r-sm; padding: 10px 14px;
 }
 
 .spin { animation: spin 1s linear infinite; }

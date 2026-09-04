@@ -1936,7 +1936,7 @@ onMounted(async () => {
 }
 
 .badge-hidden {
-    background: rgba(150, 50, 50, 0.3);
+    background: rgba($danger, 0.16);
     color: $danger;
     border: 1px solid rgba($danger, 0.3);
 }
@@ -1959,7 +1959,7 @@ onMounted(async () => {
     transition: background 0.2s, color 0.2s, border-color 0.2s;
 
     &:hover:not(:disabled) {
-        background: rgba(220, 50, 50, 0.28);
+        background: rgba($danger, 0.28);
         color: $danger;
         border-color: rgba($danger, 0.55);
     }
@@ -2592,7 +2592,7 @@ onMounted(async () => {
 
     &:hover {
         color: $danger;
-        background: rgba(220, 50, 50, 0.1);
+        background: rgba($danger, 0.1);
     }
 }
 
@@ -2796,7 +2796,7 @@ onMounted(async () => {
 .danger-zone {
     margin-top: 8px;
     padding: 20px;
-    background: rgba(220, 50, 50, 0.05);
+    background: rgba($danger, 0.05);
     border: 1px solid rgba($danger, 0.2);
     border-radius: $r-md;
     display: flex;
@@ -2831,7 +2831,7 @@ onMounted(async () => {
     align-self: flex-start;
 
     &:hover {
-        background: rgba(220, 50, 50, 0.12);
+        background: rgba($danger, 0.12);
     }
 }
 
@@ -2953,8 +2953,8 @@ onMounted(async () => {
     gap: 8px;
     font-size: 13px;
     color: $danger;
-    background: rgba(220, 50, 50, 0.08);
-    border: 1px solid rgba(220, 50, 50, 0.2);
+    background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.2);
     border-radius: $r-sm;
     padding: 10px 14px;
 }
@@ -3060,7 +3060,7 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     gap: 7px;
-    background: rgba(220, 50, 50, 0.15);
+    background: rgba($danger, 0.15);
     border: 1px solid rgba($danger, 0.35);
     border-radius: $r-sm;
     color: $danger;
@@ -3072,7 +3072,7 @@ onMounted(async () => {
     transition: background 0.2s, border-color 0.2s;
 
     &:hover:not(:disabled) {
-        background: rgba(220, 50, 50, 0.25);
+        background: rgba($danger, 0.25);
     }
 
     &:disabled {

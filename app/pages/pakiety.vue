@@ -611,7 +611,7 @@ useHead({ title: t('packages.metaTitle'), meta: [{ name: 'description', content:
     font-weight: 500;
     box-shadow: 0 4px 20px rgba(0,0,0,0.6);
     &--success { background: #0f2e0f; border: 1px solid #2a6b2a; color: #6fcf6f; }
-    &--error   { background: #1a0a0a; border: 1px solid #5a1a1a; color: #e07070; }
+    &--error   { background: #1a0a0a; border: 1px solid rgba($danger, 0.35); color: $danger; }
 }
 
 // ── Spin animation ────────────────────────────────────────────────────

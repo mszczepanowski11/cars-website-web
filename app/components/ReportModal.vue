@@ -236,8 +236,8 @@ async function submit() {
     gap: 7px;
     font-size: 13px;
     color: $danger;
-    background: rgba(220, 50, 50, 0.08);
-    border: 1px solid rgba(220, 50, 50, 0.2);
+    background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.2);
     border-radius: $r-sm;
     padding: 10px 12px;
 }

@@ -13,6 +13,16 @@ $border:     #1a1a1a;
 // sama (najczesciej rgba(255,255,255,0.03) albo rgba($red,0.04)), stad rozne
 // reakcje na najechanie w sasiadujacych ze soba miejscach.
 $card-hover: #121212;
+// ── Czerwień marki: JEDEN ODCIEŃ, cztery stopnie jasności ────────────────────
+// Wszystkie cztery mają odcień 352,4° i nasycenie 82,9% — dokładnie te, które ma
+// litera Z w logo. Różni je WYŁĄCZNIE jasność, bo na tle #050505 burgund z logo
+// daje 2,01:1 i nie nadaje się na tekst (próg dla małego tekstu to 4,5:1).
+// To nie jest „inny czerwony" — to ten sam kolor rozjaśniony tyle, ile trzeba,
+// żeby dało się go przeczytać.
+//
+// Wcześniej `$red-hot` miał odcień 0° (czysta czerwień), a `$red-bright` 354,9°.
+// Do tego w kodzie siedziało ponad dwadzieścia czerwieni wpisanych na sztywno,
+// od 0° do 355°. Stąd wrażenie, że serwis używa kilku różnych czerwieni naraz.
 $red:        #8B0D1D;
 $red-glow:   rgba(139, 13, 29, 0.35);
 $red-fade:   rgba(139, 13, 29, 0.4);
@@ -65,8 +75,8 @@ $compare-panel-height:  62px;   // compare panel bottom bar
 // Audyt: czerwień marki $red (#8B0D1D) występuje 13×, podczas gdy spoza systemu
 // #e55 użyto 83×, a #cc1020 16×. Poniższe aliasy nazywają te warianty, żeby dało
 // się je świadomie ujednolicić zamiast mnożyć kolejne odcienie.
-$red-bright:  #cc1020;   // jaśniejszy akcent na ciemnym tle (był #cc1020)
-$red-hot:     #ee5555;   // stan hover / sygnał (był #e55)
+$red-bright:  #c9132a;   // akcent na ciemnym tle (był #cc1020 — odcień 354,9°, poza marką)
+$red-hot:     #ef5467;   // stan hover (był #ee5555 — CZYSTA CZERWIEŃ 0°, nie odcień marki)
 
 // Czerwien do TEKSTU i ikon na ciemnym tle.
 //
@@ -77,7 +87,7 @@ $red-hot:     #ee5555;   // stan hover / sygnał (był #e55)
 // nasycenie), a osiaga 4,73:1, czyli spelnia WCAG AA.
 //
 // Zasada: $red do teł i obramowan, $red-text do liter.
-$red-text:    #eb334b;   // 4,73:1 na karcie #0d0d0d
+$red-text:    #ec324a;   // 4,74:1 na karcie #0d0d0d
 
 // ── Kolory semantyczne ───────────────────────────────────────────────────────
 // Jedno źródło prawdy dla komunikatów. Wartości wzięte z faktycznie dominujących

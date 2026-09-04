@@ -101,7 +101,7 @@
                             </button>
                             <button class="inv-action-btn" :disabled="pdfLoadingId === inv.id" @click="downloadPdf(inv)">
                                 <CzIcon v-if="pdfLoadingId === inv.id" icon="mdi-loading" size="15" class="spin" />
-                                <CzIcon v-else icon="mdi-file-pdf-box" size="15" style="color:#e53935" />
+                                <CzIcon v-else icon="mdi-file-pdf-box" size="15" style="color:var(--c-danger)" />
                                 {{ $t('invoices.downloadPdf') }}
                             </button>
                         </div>
@@ -519,7 +519,7 @@ function serviceLabel(t: string) {
 
     &.pstatus-completed { background: rgba(45,122,58,0.12); color: $success; }
     &.pstatus-pending { background: rgba(255,152,0,0.12); color: $warning; }
-    &.pstatus-failed { background: rgba(231,76,60,0.12); color: $danger; }
+    &.pstatus-failed { background: rgba($danger, 0.12); color: $danger; }
     &.pstatus-cancelled { background: rgba(100,100,100,0.12); color: $text-dim; }
     &.pstatus-refunded { background: rgba(41,128,185,0.12); color: #5dade2; }
 }
