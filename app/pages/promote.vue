@@ -1041,7 +1041,7 @@ onMounted(async () => {
 }
 
 .picker-card {
-    display: flex; align-items: center; gap: 12px; background: $card-alt;
+    display: flex; align-items: center; gap: 12px; background: $card;
     border: 1px solid $border; border-radius: $r-md; padding: 12px; cursor: pointer;
     transition: border-color 0.2s, background 0.2s; position: relative;
     &:hover { border-color: rgba($red, 0.35); background: rgba($red, 0.03); }
@@ -1082,7 +1082,7 @@ onMounted(async () => {
 
 // ── Order panel ───────────────────────────────────────────────────────────────
 .order-panel {
-    margin-top: 36px; background: $card-alt; border: 1px solid $border;
+    margin-top: 36px; background: $card; border: 1px solid $border;
     border-radius: $r-lg; padding: 28px; max-width: 520px;
 }
 

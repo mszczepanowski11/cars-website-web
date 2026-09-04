@@ -409,7 +409,7 @@ const faq = computed(() => [
 .tab-switch {
     display: flex;
     gap: 8px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 6px;
@@ -496,7 +496,7 @@ const faq = computed(() => [
     display: flex;
     align-items: center;
     gap: 16px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 20px 22px;

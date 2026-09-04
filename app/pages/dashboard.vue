@@ -1885,7 +1885,7 @@ onMounted(async () => {
 }
 
 .advert-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;
@@ -2083,7 +2083,7 @@ onMounted(async () => {
 }
 
 .review-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 18px;
@@ -2163,7 +2163,7 @@ onMounted(async () => {
 }
 
 .follower-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px;
@@ -2210,7 +2210,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 12px;
@@ -2316,7 +2316,7 @@ onMounted(async () => {
     align-items: flex-start;
     gap: 14px;
     padding: 14px 16px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     cursor: pointer;
@@ -2413,7 +2413,7 @@ onMounted(async () => {
 // Saved searches
 .new-search-form {
     margin: 0 24px 20px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid rgba($red, 0.2);
     border-radius: $r-md;
     padding: 18px 20px;
@@ -2508,7 +2508,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 16px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 14px 18px;

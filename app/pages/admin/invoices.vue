@@ -407,11 +407,11 @@ onMounted(() => { loadInvoices(); loadPayments() })
 .alert-err { background: rgba($red, 0.1); color: $red-text; border: 1px solid rgba($red, 0.2); }
 
 .stats-row { display: flex; gap: 12px; margin-bottom: 20px; }
-.mini-stat { background: $card-alt; border: 1px solid $border; border-radius: $r-md; padding: 14px 20px; min-width: 160px; }
+.mini-stat { background: $card; border: 1px solid $border; border-radius: $r-md; padding: 14px 20px; min-width: 160px; }
 .ms-label { font-size: 11px; color: $text-dim; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
 .ms-val { font-size: 24px; font-weight: 900; color: $text; }
 
-.table-wrap { background: $card-alt; border: 1px solid $border; border-radius: $r-md; overflow: auto; }
+.table-wrap { background: $card; border: 1px solid $border; border-radius: $r-md; overflow: auto; }
 .data-table {
     width: 100%; border-collapse: collapse; min-width: 800px;
     th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: $text-dim; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255,255,255,0.02); border-bottom: 1px solid $border; white-space: nowrap; }

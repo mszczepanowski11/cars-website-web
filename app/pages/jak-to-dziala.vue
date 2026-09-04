@@ -130,7 +130,7 @@ const faqs = computed(() => (tm('howItWorks.faqs') as any[]).map(f => ({ q: rt(f
 }
 
 .step-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 24px 20px;
@@ -164,7 +164,7 @@ const faqs = computed(() => (tm('howItWorks.faqs') as any[]).map(f => ({ q: rt(f
 .faq-list { margin-top: 28px; max-width: 760px; display: flex; flex-direction: column; gap: 8px; }
 
 .faq-item {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;

@@ -257,7 +257,7 @@ h1 {
 .df-field label { display: block; font-size: 12px; font-weight: 600; color: $text-dim; margin-bottom: 6px; }
 .df-optional { font-weight: 400; color: $text-dark; }
 .df-field input {
-  width: 100%; background: $card-alt; border: 1px solid $border; border-radius: $r-sm;
+  width: 100%; background: $card; border: 1px solid $border; border-radius: $r-sm;
   color: $text; font-size: 14px; padding: 11px 14px; outline: none; font-family: 'Inter', sans-serif;
   transition: border-color 0.2s;
   &:focus { border-color: rgba($red, 0.4); }

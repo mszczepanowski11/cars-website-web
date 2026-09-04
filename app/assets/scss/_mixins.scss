@@ -19,7 +19,13 @@
   padding-right: $s-4;
 }
 
-@mixin card($radius: $r-lg) {
+// Domyslny promien rowny temu, ktorego uzywa `CzCard`. Wczesniej byly DWIE
+// oficjalne definicje karty i kazda mowila co innego: mixin dawal 24 px,
+// komponent 20 px. Wsrod 80 powierzchni kartowych w serwisie 40 ma 20 px,
+// a 14 ma 24 px - wiec to mixin odstawal od wiekszosci, nie komponent.
+// Zmiana dotyczy trzech miejsc, ktore korzystaly z wartosci domyslnej:
+// karty ogloszenia, jej szkieletu i karty wydarzenia.
+@mixin card($radius: $r-md) {
   background: $card;
   border: 1px solid $border;
   border-radius: $radius;

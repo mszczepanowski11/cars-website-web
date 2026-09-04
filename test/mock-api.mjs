@@ -80,7 +80,33 @@ http.createServer(async (req,res)=>{
   if (/\/stats\/home/.test(u)) return send({activeAdverts:1847,totalUsers:920,soldVehicles:310,events:12})
   if (/\/geo\/countries/.test(u)) return send([{id:1,name:'Polska',code:'PL'}])
   if (/\/geo\/regions/.test(u)) return send(['mazowieckie','małopolskie','pomorskie'].map((name,i)=>({id:i+1,name})))
-  if (/\/Company|\/companies/.test(u)) return send({items:[],totalCount:0})
+  // Profil firmy i profil sprzedawcy. Wczesniej atrapa oddawala na katalog firm pusta
+  // liste, wiec `/firmy/{slug}` i `/seller/{id}` w ogole nie renderowaly tresci - a to
+  // wlasnie te dwie strony przechodza teraz na wspolna karte. Test, ktory ich nie
+  // otwiera, nie potwierdzi niczego o tej zmianie.
+  if (/\/directory\/[^/]+\/listings/.test(u)) return send({items:items(6),total:6,linked:true})
+  if (/\/directory\/[^/]+/.test(u)) return send({
+    id:1, slug:'auto-serwis-kowalski', name:'Auto Serwis Kowalski', city:'Warszawa',
+    description:'Autoryzowany serwis i komis samochodowy dzialajacy od 1998 roku.',
+    phone:'+48 500 100 200', email:'kontakt@example.com', website:'https://example.com',
+    address:'ul. Przykladowa 12', postalCode:'00-001', nip:'1234567890',
+    isVerified:true, isPremium:true, logoUrl:null, categories:['Komis','Serwis'],
+    branches:[{id:1,name:'Oddzial Mokotow',city:'Warszawa',address:'ul. Pulawska 100'}],
+    openingHours:null, listingsCount:6,
+  })
+  if (/\/User\/\d+\/public/.test(u)) return send({
+    id:5, firstName:'Jan', lastName:'Kowalski', accountType:'Business', companyName:'Auto Serwis Kowalski',
+    city:'Warszawa', isVerified:true, isDealer:true, createdAt:'2021-04-02T10:00:00Z',
+    about:'Sprzedaje samochody sprawdzone i serwisowane.', avatarUrl:null,
+  })
+  if (/\/User\/\d+\/stats/.test(u)) return send({
+    activeAdverts:6, soldAdverts:41, averageRating:4.8, reviewsCount:23, followersCount:88,
+  })
+  if (/\/reviews/.test(u)) return send({items:[
+    {id:1,buyerName:'Anna N.',rating:5,content:'Wszystko zgodne z opisem, polecam.',createdAt:'2026-08-01T12:00:00Z',isVerifiedPurchase:true},
+    {id:2,buyerName:'Piotr W.',rating:4,content:'Sprawny kontakt.',createdAt:'2026-07-14T09:30:00Z',isVerifiedPurchase:false},
+  ],totalCount:2})
+  if (/\/Company|\/companies|\/directory/.test(u)) return send({items:[],totalCount:0})
   if (/unread-count/.test(u)) return send({count:0})
   send([])
 }).listen(4999)

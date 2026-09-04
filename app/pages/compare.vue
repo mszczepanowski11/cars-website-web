@@ -227,7 +227,7 @@ onMounted(fetchAdverts)
 }
 
 .cmp-advert-header {
-    background: $card-alt;
+    background: $card;
     border-right: 1px solid $border;
     border-bottom: 1px solid $border;
     padding: 16px;

@@ -183,7 +183,7 @@ onMounted(() => load(1))
     display: flex;
     align-items: flex-start;
     gap: 14px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 16px;

@@ -1919,7 +1919,7 @@ onUnmounted(() => {
     width: 100%;
     border-radius: $r-lg;
     overflow: hidden;
-    background: $card-alt;
+    background: $card;
     cursor: pointer;
     aspect-ratio: 16/10;
 
@@ -2580,7 +2580,7 @@ onUnmounted(() => {
 
 // Date picker card
 .date-picker-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 14px;
@@ -2823,7 +2823,7 @@ onUnmounted(() => {
 // ── Premium vertical scroll sections ─────────────────────────────────────────
 .pg-section {
     margin-bottom: 28px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     overflow: hidden;
@@ -3643,7 +3643,7 @@ onUnmounted(() => {
     border-radius: $r-md;
     overflow: hidden;
     cursor: pointer;
-    background: $card-alt;
+    background: $card;
 
     img { width: 100%; height: 280px; object-fit: cover; display: block; transition: transform 0.3s; }
     &:hover img { transform: scale(1.03); }
@@ -3676,7 +3676,7 @@ onUnmounted(() => {
     border-radius: $r-md;
     overflow: hidden;
     cursor: pointer;
-    background: $card-alt;
+    background: $card;
     flex: 1;
 
     img { width: 100%; height: 88px; object-fit: cover; display: block; transition: transform 0.3s; }
@@ -3727,7 +3727,7 @@ onUnmounted(() => {
 
 .sim-img-wrap {
     position: relative;
-    background: $card-alt;
+    background: $card;
     img { width: 100%; height: 140px; object-fit: cover; display: block; }
 }
 
@@ -3935,7 +3935,7 @@ onUnmounted(() => {
 .map-wrap {
     border-radius: $r-md;
     overflow: hidden;
-    background: $card-alt;
+    background: $card;
 }
 
 .map-iframe {

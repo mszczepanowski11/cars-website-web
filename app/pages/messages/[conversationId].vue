@@ -521,7 +521,7 @@ onUnmounted(() => {
     background: $bg;
     transition: background 0.15s;
     text-decoration: none;
-    &:hover { background: $card-alt; }
+    &:hover { background: $card; }
 }
 
 .strip-thumb {
@@ -610,7 +610,7 @@ onUnmounted(() => {
     span {
         font-size: 11px;
         color: $text-dark;
-        background: $card-alt;
+        background: $card;
         padding: 3px 10px;
         border-radius: 20px;
         border: 1px solid $border;

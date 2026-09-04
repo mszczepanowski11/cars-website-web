@@ -518,7 +518,7 @@ onMounted(async () => {
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 12px 16px;
@@ -656,7 +656,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 16px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-lg;
     padding: 14px;

@@ -653,7 +653,7 @@ function actionClass(type: string) {
 }
 
 .stat-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 18px 20px;
@@ -741,7 +741,7 @@ function actionClass(type: string) {
 }
 
 .logs-table-wrap {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     overflow: hidden;
@@ -898,7 +898,7 @@ function actionClass(type: string) {
 }
 
 .cat-card {
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-md;
     padding: 16px 18px;

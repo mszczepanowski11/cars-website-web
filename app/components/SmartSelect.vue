@@ -153,7 +153,7 @@ onUnmounted(() => document.removeEventListener('click', _outsideClickHandler))
     display: flex;
     align-items: center;
     gap: 8px;
-    background: $card-alt;
+    background: $card;
     border: 1px solid $border;
     border-radius: $r-sm;
     padding: 0 12px;
