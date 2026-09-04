@@ -2212,7 +2212,7 @@ onMounted(async () => {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: $red-text;
+        color: $red-text-sm;
         font-size: 14px;
         font-weight: 600;
         text-decoration: none;
@@ -2234,7 +2234,7 @@ onMounted(async () => {
 .sec-eyebrow {
     font-size: 10px;
     font-weight: 700;
-    color: $red-text;
+    color: $red-text-sm;
     letter-spacing: 2.5px;
     text-transform: uppercase;
 }
@@ -2339,7 +2339,7 @@ onMounted(async () => {
     gap: 14px;
     font-size: 10px;
     font-weight: 700;
-    color: $red-text;
+    color: $red-text-sm;
     letter-spacing: 4px;
     text-transform: uppercase;
 
@@ -2718,7 +2718,7 @@ onMounted(async () => {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    color: $red-text;
+    color: $red-text-sm;
     background: rgba($red, 0.12);
     border: 1px solid rgba($red, 0.3);
     border-radius: $r-sm;

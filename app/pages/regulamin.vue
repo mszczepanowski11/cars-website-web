@@ -234,7 +234,7 @@ useHead({ link: [{ rel: 'canonical', href: `${regulaminConfig.public.siteUrl}/re
 }
 
 .hero-eyebrow {
-    font-size: 11px; font-weight: 700; color: $red-text;
+    font-size: 11px; font-weight: 700; color: $red-text-sm;
     text-transform: uppercase; letter-spacing: 3px; margin-bottom: 14px;
 }
 

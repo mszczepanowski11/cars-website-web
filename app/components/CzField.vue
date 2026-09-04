@@ -126,7 +126,7 @@ const describedBy = computed(() => {
 }
 
 .cz-field-req {
-    color: $red-text;
+    color: $red-text-sm;
     font-weight: $fw-bold;
     line-height: 1;
 }

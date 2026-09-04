@@ -447,7 +447,7 @@ h2 {
     font-size: 14px;
 
     a {
-        color: $red-text;
+        color: $red-text-sm;
         font-weight: 600;
         &:hover { text-decoration: underline; }
     }

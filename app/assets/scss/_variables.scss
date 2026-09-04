@@ -78,16 +78,29 @@ $compare-panel-height:  62px;   // compare panel bottom bar
 $red-bright:  #c9132a;   // akcent na ciemnym tle (był #cc1020 — odcień 354,9°, poza marką)
 $red-hot:     #ef5467;   // stan hover (był #ee5555 — CZYSTA CZERWIEŃ 0°, nie odcień marki)
 
-// Czerwien do TEKSTU i ikon na ciemnym tle.
+// Czerwien do TEKSTU i ikon na ciemnym tle - DWA STOPNIE, jeden odcien.
 //
-// $red (#8B0D1D) swietnie sprawdza sie jako WYPELNIENIE - bialy napis na nim ma
-// kontrast 9,66:1. Ale jako kolor tekstu na karcie daje 2,01:1, czyli napis jest
-// praktycznie nieczytelny - a tak byl uzywany w 420 miejscach (ceny, linki, stany
-// aktywne). Ten odcien zachowuje ton marki (ten sam odcien 352 stopni, wysokie
-// nasycenie), a osiaga 4,73:1, czyli spelnia WCAG AA.
+// $red (#8B0D1D) swietnie sprawdza sie jako WYPELNIENIE: bialy napis na nim ma
+// kontrast 9,66:1. Ale jako kolor liter na karcie #0d0d0d daje 2,01:1, czyli
+// jest nieczytelny. Burgund jest z definicji ciemny, a kontrast na czarnym tle
+// bierze sie prawie wylacznie z jasnosci - im blizej logo, tym mniej czytelnie.
+// Tego nie da sie obejsc, mozna tylko zejsc tak nisko, jak pozwala prog.
 //
-// Zasada: $red do teł i obramowan, $red-text do liter.
-$red-text:    #ec324a;   // 4,74:1 na karcie #0d0d0d
+// A progi sa dwa, nie jeden:
+//   3:1    ikony i grafika (WCAG 1.4.11) oraz duzy tekst - od 24px, albo od
+//          18,66px przy grubosci 700+
+//   4,5:1  zwykly tekst mniejszy od powyzszych (WCAG 1.4.3)
+//
+// Pomiar na 13 stronach: 182 ikony + 150 duzych napisow podlega progowi 3:1,
+// a tylko 60 malych napisow progowi 4,5:1. Czyli 85% czerwieni w serwisie moze
+// byc wyraznie ciemniejsza, niz gdyby wszystko rownac do 4,5:1.
+//
+// Stad dwa stopnie tego samego odcienia 352,4 st.:
+$red-text:    #cd132b;   // L 44% - ikony i duzy tekst; 3,45:1 na karcie (prog 3:1)
+$red-text-sm: #ec324a;   // L 56% - tekst ponizej 18,66px; 4,74:1 na karcie (prog 4,5:1)
+//
+// Zasada: $red do teł i obramowan, $red-text do liter i ikon, $red-text-sm tam,
+// gdzie litery sa male. Pilnuje tego automat: `npm run test:kontrast`.
 
 // ── Kolory semantyczne ───────────────────────────────────────────────────────
 // Jedno źródło prawdy dla komunikatów. Wartości wzięte z faktycznie dominujących

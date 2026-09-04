@@ -324,7 +324,7 @@ useHead(() => ({
 .cp-listing-body { flex: 1; min-width: 0; }
 .cp-listing-title { color: $text; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cp-listing-meta { display: flex; gap: 10px; color: $text-muted; font-size: 12.5px; margin-top: 3px; }
-.cp-listing-price { color: $red-text; font-weight: 700; font-size: 14.5px; white-space: nowrap; }
+.cp-listing-price { color: $red-text-sm; font-weight: 700; font-size: 14.5px; white-space: nowrap; }
 .cp-listings-more { color: $text-muted; font-size: 13px; margin: 10px 0 0; }
 
 // Kolumna etykiet ma stale 130 px, wiec na wartosc zostaje reszta. Adres e-mail
@@ -334,14 +334,14 @@ useHead(() => ({
   @media (max-width: $bp-phone) { grid-template-columns: minmax(0, 1fr); gap: 2px 0; } }
 .cp-dl dt { color: $text-muted; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
 .cp-dl dd { margin: 0; color: $text; font-size: 15px; min-width: 0; overflow-wrap: anywhere;
-  @media (max-width: $bp-phone) { margin-bottom: 8px; } a { color: $red-text; text-decoration: none; &:hover { text-decoration: underline; } } }
+  @media (max-width: $bp-phone) { margin-bottom: 8px; } a { color: $red-text-sm; text-decoration: none; &:hover { text-decoration: underline; } } }
 .cp-nocontact { grid-column: 1 / -1; color: $text-muted; font-style: italic; }
 
 .cp-branches { display: flex; flex-direction: column; gap: 16px; }
 .cp-branch { border: 1px solid $border; border-radius: 10px; padding: 14px 16px; }
 .cp-branch-name { display: flex; align-items: center; gap: 6px; font-weight: 700; color: $text; margin-bottom: 8px; }
 .cp-branch-row { display: flex; align-items: center; gap: 6px; color: $text-muted; font-size: 14px; margin-top: 4px;
-  a { color: $red-text; text-decoration: none; &:hover { text-decoration: underline; } } }
+  a { color: $red-text-sm; text-decoration: none; &:hover { text-decoration: underline; } } }
 .cp-branch-phone-label { color: $text-muted; font-size: 12.5px; }
 .cp-branch-hours { margin-top: 8px; padding-top: 8px; border-top: 1px dashed $border; }
 .cp-branch-hours-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: $text-muted; padding: 2px 0; }

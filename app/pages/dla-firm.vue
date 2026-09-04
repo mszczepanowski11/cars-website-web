@@ -219,7 +219,7 @@ async function submitWithoutFeed() {
 .df-hero-inner { @include container; max-width: 680px; }
 .df-eyebrow {
   display: inline-flex; align-items: center; gap: 14px;
-  font-size: 10px; font-weight: 700; color: $red-text; letter-spacing: 4px; text-transform: uppercase;
+  font-size: 10px; font-weight: 700; color: $red-text-sm; letter-spacing: 4px; text-transform: uppercase;
   margin-bottom: 24px;
   &::before, &::after { content: ''; display: block; width: 36px; height: 1px; background: $red; opacity: 0.6; }
 }
@@ -231,7 +231,7 @@ h1 {
 .df-hero-desc { font-size: 16px; color: $text-muted; line-height: 1.6; margin: 0 auto 20px; }
 .df-badge {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: $red-text;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: $red-text-sm;
   background: rgba($red, 0.12); border: 1px solid rgba($red, 0.3); border-radius: $r-sm;
   padding: 5px 12px;
 }

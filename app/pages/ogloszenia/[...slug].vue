@@ -2405,7 +2405,7 @@ onUnmounted(() => {
 .sma-link {
     font-size: 12px;
     font-weight: 600;
-    color: $red-text;
+    color: $red-text-sm;
     flex-shrink: 0;
     &:hover { opacity: 0.8; }
 }
@@ -2683,7 +2683,7 @@ onUnmounted(() => {
 }
 
 .secure-icon-sm { color: $success; }
-.red-text { color: $red-text; }
+.red-text { color: $red-text-sm; }
 .nowrap-brand { white-space: nowrap; }
 
 // ── Specs bar ─────────────────────────────────────────────────────────────────
@@ -3618,7 +3618,7 @@ onUnmounted(() => {
 .see-all-link {
     background: transparent;
     border: none;
-    color: $red-text;
+    color: $red-text-sm;
     font-size: 13px;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
@@ -3629,7 +3629,7 @@ onUnmounted(() => {
 .see-all-link-nuxt {
     font-size: 13px;
     font-weight: 600;
-    color: $red-text;
+    color: $red-text-sm;
     &:hover { opacity: 0.8; }
 }
 
@@ -3766,7 +3766,7 @@ onUnmounted(() => {
 .sim-body { padding: 12px 14px; }
 .sim-title { font-size: 13px; font-weight: 700; color: $text; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
 .sim-meta { font-size: 11px; color: $text-dim; margin-bottom: 6px; }
-.sim-price { font-size: 16px; font-weight: 800; color: $red-text; }
+.sim-price { font-size: 16px; font-weight: 800; color: $red-text-sm; }
 
 // ── Right sidebar ─────────────────────────────────────────────────────────────
 .sidebar-card {

@@ -655,7 +655,7 @@ h2 {
     color: $text-muted;
 }
 
-.req { color: $red-text; }
+.req { color: $red-text-sm; }
 
 .auth-input-wrap {
     display: flex;
@@ -778,7 +778,7 @@ h2 {
     font-size: 14px;
 
     a {
-        color: $red-text;
+        color: $red-text-sm;
         font-weight: 600;
         &:hover { text-decoration: underline; }
     }
@@ -858,7 +858,7 @@ h2 {
 .resend-link {
     background: none;
     border: none;
-    color: $red-text;
+    color: $red-text-sm;
     font-size: 12px;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
@@ -945,7 +945,7 @@ h2 {
     color: $text-muted;
     line-height: 1.5;
 
-    a { color: $red-text; font-weight: 500; &:hover { text-decoration: underline; } }
+    a { color: $red-text-sm; font-weight: 500; &:hover { text-decoration: underline; } }
 
     &--optional { opacity: 0.8; }
 }
@@ -966,7 +966,7 @@ h2 {
 }
 
 .cookie-link {
-    color: $red-text;
+    color: $red-text-sm;
     text-decoration: none;
     font-weight: 500;
     &:hover { text-decoration: underline; }
