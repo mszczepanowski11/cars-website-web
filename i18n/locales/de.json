@@ -93,7 +93,9 @@
     "bodyType": "Karosserie",
     "engineSize": "Hubraum (cm³)",
     "fuel": "Kraftstoff",
-    "gearbox": "Getriebe"
+    "gearbox": "Getriebe",
+    "showAdverts": "Anzeigen zeigen",
+    "chooseCategory": "Kategorie wählen"
   },
   "adverts": {
     "title": "Alle Anzeigen",

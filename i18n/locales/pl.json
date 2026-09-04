@@ -93,7 +93,9 @@
     "bodyType": "Nadwozie",
     "engineSize": "Pojemność (cm³)",
     "fuel": "Paliwo",
-    "gearbox": "Skrzynia biegów"
+    "gearbox": "Skrzynia biegów",
+    "showAdverts": "Pokaż ogłoszenia",
+    "chooseCategory": "Wybierz kategorię"
   },
   "adverts": {
     "title": "Wszystkie ogłoszenia",

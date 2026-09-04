@@ -93,7 +93,9 @@
     "bodyType": "Body type",
     "engineSize": "Engine size (cc)",
     "fuel": "Fuel",
-    "gearbox": "Gearbox"
+    "gearbox": "Gearbox",
+    "showAdverts": "Show listings",
+    "chooseCategory": "Choose a category"
   },
   "adverts": {
     "title": "All listings",
