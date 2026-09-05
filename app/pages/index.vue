@@ -37,7 +37,16 @@
                     upychanie ich w trzy rzedy robilo z nich sciane tekstu.
                 -->
                 <div class="cat-tabs-wrap">
-                    <div class="cat-tabs" role="tablist" :aria-label="$t('search.chooseCategory')">
+                    <button
+                        v-show="katMoznaWLewo"
+                        type="button"
+                        class="cat-nav cat-nav--prev"
+                        aria-label="Poprzednie kategorie"
+                        @click="przewinKategorie(-1)"
+                    >
+                        <CzIcon icon="mdi-chevron-left" size="22" />
+                    </button>
+                    <div ref="katPasek" class="cat-tabs" role="tablist" :aria-label="$t('search.chooseCategory')" @scroll.passive="odswiezKatStrzalki">
                         <button
                             v-for="cat in SEARCH_CATEGORIES"
                             :key="cat.slug"
@@ -51,6 +60,15 @@
                             <span class="cat-tab-name">{{ cat.label }}</span>
                         </button>
                     </div>
+                    <button
+                        v-show="katMoznaWPrawo"
+                        type="button"
+                        class="cat-nav cat-nav--next"
+                        aria-label="Kolejne kategorie"
+                        @click="przewinKategorie(1)"
+                    >
+                        <CzIcon icon="mdi-chevron-right" size="22" />
+                    </button>
                 </div>
 
                 <!-- Form panel -->
@@ -889,6 +907,47 @@ const homeAdvancedCount = computed(() => {
     if (searchCondition.value) n++
     return n
 })
+
+// ── Przewijanie paska kategorii ──────────────────────────────────────────────
+// Kategorii jest 16 i rzad POTRZEBUJE 1697 px, a kontener nigdy nie daje wiecej
+// niz 1450 px. Zmierzone: przy 1280 px widac 11 kafelkow z 16, przy 1920 px -
+// trzynascie. Reszta zawsze wisi poza ekranem.
+//
+// Sam pasek przewijal sie od poczatku, ale NIC O TYM NIE MOWILO: pasek przewijania
+// jest ukryty, a jedyna wskazowka byl gradient przy prawej krawedzi - widoczny
+// takze wtedy, gdy nie bylo juz czego przewijac. Na myszy nie ma tez gestu
+// przewijania w bok, wiec na desktopie te kafelki byly po prostu nieosiagalne.
+//
+// Strzalki pokazuja sie tylko z tej strony, w ktora naprawde mozna przewinac.
+const katPasek = ref<HTMLElement | null>(null)
+const katMoznaWLewo = ref(false)
+const katMoznaWPrawo = ref(false)
+
+function odswiezKatStrzalki() {
+    const el = katPasek.value
+    if (!el) return
+    // Luz liczony z paddingu, nie zgadywany. `scroll-snap` parkuje pasek na pozycji
+    // rownej lewemu paddingowi, wiec zaraz po zaladowaniu scrollLeft wynosi 2, a nie 0.
+    // Przy progu "> 1" lewa strzalka zapalala sie od razu, mimo ze nie bylo czego cofac.
+    // Dochodzi jeszcze piksel na ulamkowy scrollLeft przy skalowaniu ekranu.
+    const luz = parseFloat(getComputedStyle(el).paddingLeft) + 1
+    katMoznaWLewo.value = el.scrollLeft > luz
+    katMoznaWPrawo.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 1
+}
+
+function przewinKategorie(kierunek: 1 | -1) {
+    const el = katPasek.value
+    if (!el) return
+    // 80% widocznej szerokosci, zeby po przewinieciu zostal kontekst - skok o cala
+    // szerokosc gubi orientacje, gdzie sie jest.
+    el.scrollBy({ left: kierunek * el.clientWidth * 0.8, behavior: 'smooth' })
+}
+
+onMounted(() => {
+    odswiezKatStrzalki()
+    window.addEventListener('resize', odswiezKatStrzalki, { passive: true })
+})
+onBeforeUnmount(() => window.removeEventListener('resize', odswiezKatStrzalki))
 
 function selectSearchCat(slug: string) {
     searchCat.value = slug
@@ -2067,19 +2126,62 @@ onMounted(async () => {
     position: relative;
     margin-bottom: $s-4;
 
-    // Delikatne przycienienie przy prawej krawedzi mowi, ze rzad idzie dalej.
-    // Bez tego na szerokim ekranie nie widac, ze jest co przewijac.
+    // Przycienienie krawedzi mowi, ze rzad idzie dalej. Pokazuje sie TYLKO z tej
+    // strony, w ktora naprawde mozna przewinac - wczesniej gradient po prawej wisial
+    // zawsze, takze na koncu listy, wiec obiecywal tresc, ktorej juz nie bylo.
+    &::before,
     &::after {
         content: '';
         position: absolute;
         top: 0;
-        right: 0;
         bottom: $s-2;
-        width: 40px;
+        width: 48px;
         pointer-events: none;
-        background: linear-gradient(90deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.85) 100%);
+        opacity: 0;
+        transition: opacity 0.18s;
+    }
+    &::before {
+        left: 0;
+        background: linear-gradient(270deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.9) 100%);
+        border-radius: $r-sm 0 0 $r-sm;
+    }
+    &::after {
+        right: 0;
+        background: linear-gradient(90deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.9) 100%);
         border-radius: 0 $r-sm $r-sm 0;
     }
+    &:has(.cat-nav--prev)::before { opacity: 1; }
+    &:has(.cat-nav--next)::after  { opacity: 1; }
+}
+
+// Strzalki. Na telefonie ich nie ma - tam przewija sie palcem i to jest oczywiste.
+// Na myszy nie ma gestu przewijania w bok, wiec bez nich czesc kategorii byla
+// nieosiagalna.
+.cat-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-top: calc(-#{$s-2} / 2);
+    transform: translateY(-50%);
+    border: 1px solid $border;
+    border-radius: 50%;
+    background: $card;
+    color: $text;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s;
+
+    &:hover { background: $card-hover; border-color: $red; }
+    &:focus-visible { outline: 2px solid $red-hot; outline-offset: 2px; }
+
+    &--prev { left: -6px; }
+    &--next { right: -6px; }
+
+    @media (max-width: $bp-mobile) { display: none; }
 }
 
 .cat-tabs {
