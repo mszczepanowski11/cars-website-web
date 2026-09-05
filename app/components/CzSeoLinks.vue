@@ -27,6 +27,19 @@ import { slugifyPart } from '~/composables/advertUrl'
 const props = defineProps<{
     categories: { id: number; name: string; slug?: string | null }[]
     brands: { id: number; name: string }[]
+    /**
+     * Slug kategorii, Z KTOREJ pochodzi lista `brands`. Adres marki musi go uzywac,
+     * bo strona /kategorie/{kategoria}/{marka} sprawdza marke WYLACZNIE w taksonomii
+     * tej kategorii i na kazda inna odpowiada 404.
+     *
+     * Wczesniej prefiks byl wpisany na sztywno jako `osobowe`, a lista przychodzila
+     * z globalnego `fetchBrands()` - czyli marki z calej bazy, razem z motocyklowymi
+     * i budowlanymi, wisialy pod adresem aut osobowych. Kazda taka pozycja dawala 404.
+     *
+     * Brak wartosci = nie wiemy, do ktorej kategorii nalezy lista, wiec grupy marek
+     * NIE POKAZUJEMY. Lepiej o jedna grupe mniej niz kilkadziesiat martwych linkow.
+     */
+    brandCategorySlug?: string | null
 }>()
 
 const localePath = useLocalePath()
@@ -53,9 +66,11 @@ const grupy = computed<{ tytul: string; ikona: string; linki: Link[] }[]>(() => 
     {
         tytul: 'Popularne marki',
         ikona: 'mdi-car-side',
-        linki: props.brands
-            .filter(b => b.name && !/^\d+$/.test(b.name))
-            .map(b => ({ label: b.name, to: `/kategorie/osobowe/${slugifyPart(b.name)}` })),
+        linki: props.brandCategorySlug
+            ? props.brands
+                .filter(b => b.name && !/^\d+$/.test(b.name))
+                .map(b => ({ label: b.name, to: `/kategorie/${props.brandCategorySlug}/${slugifyPart(b.name)}` }))
+            : [],
     },
     {
         tytul: 'Pojazdy w miastach',

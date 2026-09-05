@@ -22,6 +22,17 @@ const cats = [
 ].map(([name,slug,iconName,advertCount],i)=>({id:i+1,name,slug,iconName,advertCount}))
 
 const BR=[['Audi','Q5'],['BMW','X3'],['Mercedes-Benz','GLC'],['Volkswagen','Passat'],['Toyota','RAV4'],['Ford','Kuga']]
+
+// Marki SPOZA taksonomii aut osobowych. Istnieja w globalnej liscie `/Taxonomy/brands`,
+// ale `/Taxonomy/brands/category/1` ich nie zwraca - dokladnie jak prawdziwe API.
+//
+// Bez tego rozroznienia atrapa oddawala te same marki na kazde zapytanie, wiec test
+// nie mogl wykryc bledu, przez ktory strona glowna brala marki z CALEJ bazy i wieszala
+// je pod adresem /kategorie/osobowe/... Kazda taka pozycja dawala 404 na produkcji,
+// a u nas wszystko swiecilo na zielono.
+const BR_INNE=[['Harley-Davidson'],['Yamaha'],['Komatsu'],['Claas']]
+const wszystkieMarki=[...BR.map(([b])=>b), ...BR_INNE.map(([b])=>b)]
+const jakoMarki=(nazwy)=>nazwy.map((name,i)=>({id:i+1,name,slug:name.toLowerCase()}))
 const mk=(i)=>{const[b,m]=BR[i%BR.length];return{
  id:1000+i,userId:5,title:`${b} ${m} 2.0 TDI quattro S-Line Salon Polska pierwszy właściciel`,
  description:'Bardzo zadbany egzemplarz, serwisowany w ASO.',
@@ -70,7 +81,11 @@ http.createServer(async (req,res)=>{
   // `/Taxonomy/brands`, wiec modele musza byc sprawdzane PIERWSZE - inaczej lista modeli
   // zwracalaby marki i strony /kategorie/marka/model dawalyby 404.
   if (/\/Taxonomy\/brands\/\d+\/models/.test(u)) return send(BR.map(([,m],i)=>({id:i+1,name:m,slug:m.toLowerCase()})))
-  if (/\/Taxonomy\/brands/.test(u)) return send(BR.map(([b],i)=>({id:i+1,name:b,slug:b.toLowerCase()})))
+  // `/brands/category/{id}` zwraca WYLACZNIE marki tej kategorii, a samo `/brands`
+  // cala baze. Ta roznica jest istota testu linkow w sekcji SEO.
+  if (/\/Taxonomy\/brands\/category\/1(\?|$)/.test(u)) return send(jakoMarki(BR.map(([b])=>b)))
+  if (/\/Taxonomy\/brands\/category\/\d+/.test(u)) return send(jakoMarki(BR_INNE.map(([b])=>b)))
+  if (/\/Taxonomy\/brands/.test(u)) return send(jakoMarki(wszystkieMarki))
   if (/\/Taxonomy\/models/.test(u)) return send(BR.map(([,m],i)=>({id:i+1,name:m,slug:m.toLowerCase()})))
   if (/\/Taxonomy\/fuel/.test(u)) return send(['Benzyna','Diesel','LPG','Hybryda','Elektryczny'].map((name,i)=>({id:i+1,name})))
   if (/\/Taxonomy\/gearboxes/.test(u)) return send(['Manualna','Automatyczna'].map((name,i)=>({id:i+1,name})))

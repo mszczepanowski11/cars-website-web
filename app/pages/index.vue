@@ -474,7 +474,7 @@
         <CzAdSlot format="compact" />
 
         <!-- Linki wewnetrzne: kategorie, marki, miasta. Szczegoly w CzSeoLinks.vue. -->
-        <CzSeoLinks :categories="homeCategories" :brands="filterBrands" />
+        <CzSeoLinks :categories="homeCategories" :brands="seoBrands" :brand-category-slug="seoBrandsCategory" />
         <section id="contact" class="section">
             <div class="container">
                 <div class="newsletter">
@@ -609,6 +609,13 @@ interface HomeCollections { mostViewed: CarAdvert[]; premium: CarAdvert[] }
 const categoryShowcase = ref<CategoryShowcaseGroup[]>([])
 const events = ref<CarEvent[]>([])
 const filterBrands = ref<TaxonomyItem[]>([])
+
+// Sekcja linkow na dole strony ma WLASNE zrodlo marek i wlasny slug kategorii.
+// `filterBrands` jest podmieniane przy kazdym kliknieciu kafelka kategorii, wiec
+// gdyby sekcja linkow z niego korzystala, jej adresy zmienialyby sie pod palcem -
+// po wybraniu „Motocykle" marki motocyklowe wisialyby pod adresem aut osobowych.
+const seoBrands = ref<TaxonomyItem[]>([])
+const seoBrandsCategory = ref<string | null>(null)
 const homeStats = ref({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, events: 0 })
 const statsLoading = ref(true)
 
@@ -777,6 +784,24 @@ const SEARCH_CATEGORIES = [
     { slug: 'wozki-widlowe',   label: 'Wózki widłowe',   icon: 'mdi-forklift' },
 ] as const
 
+// Wyszukiwarka i API mowia o kategoriach DWOMA ROZNYMI SLOWNIKAMI. Tu kategoria
+// samochodow osobowych ma slug `auta-osobowe` (bo tak jest kluczowany
+// SEARCH_CONFIGS i statyczna lista w useCategories), a API zwraca dla niej
+// `osobowe`. Kazde `find(c => c.slug === searchCat)` cicho zwracalo undefined -
+// bez bledu, bez sladu w konsoli, po prostu pusty wynik.
+//
+// Kosztowalo to trzy rzeczy naraz:
+//   - lista marek w wyszukiwarce pokazywala WSZYSTKIE marki zamiast osobowych
+//   - „Pokaz ogloszenia" nie przekazywalo categoryId, wiec kategoria byla ignorowana
+//   - sekcja linkow na dole linkowala marki z calej bazy pod /kategorie/osobowe/...,
+//     co dawalo 404 na kazdej marce spoza taksonomii aut osobowych
+const ALIASY_KATEGORII: Record<string, string> = { 'auta-osobowe': 'osobowe' }
+
+function znajdzKategorie<T extends { slug?: string | null }>(lista: T[], slug: string): T | undefined {
+    return lista.find(c => c.slug === slug)
+        ?? lista.find(c => c.slug === ALIASY_KATEGORII[slug])
+}
+
 interface SearchConfig {
     hasBrand: boolean; hasModel: boolean; hasFuel: boolean; hasBodyType: boolean
     hasMileage: boolean; hasHours: boolean; hasPartCategory?: boolean
@@ -885,7 +910,7 @@ function selectSearchCat(slug: string) {
     searchLocation.value = ''
     searchModels.value = []
     searchGenerations.value = []
-    const cat = homeCategories.value.find((c: any) => c.slug === slug)
+    const cat = znajdzKategorie(homeCategories.value as any[], slug)
     if (cat?.id) {
         fetchBrandsByCategory(cat.id).then((b: any) => { filterBrands.value = b }).catch(() => {})
     } else {
@@ -969,7 +994,7 @@ function doSearch() {
     if (searchCondition.value) query.condition = searchCondition.value
     if (searchDriveType.value) query.driveTypeId = String(searchDriveType.value)
     if (searchEquipment.value.trim()) query.equipment = searchEquipment.value.trim()
-    const cat = homeCategories.value.find(c => c.slug === searchCat.value)
+    const cat = znajdzKategorie(homeCategories.value, searchCat.value)
     if (cat) query.categoryId = String(cat.id)
     navigateTo({ path: '/adverts', query })
 }
@@ -1044,7 +1069,8 @@ const { data: homeData } = await useAsyncData('home-data', async () => {
     // defaultCategoryId below needs a real id for the currently selected search-category slug.
     const realCategories = await fetchCategories().catch(() => STATIC_CATEGORIES)
     const categories = (realCategories ?? STATIC_CATEGORIES).filter((c: any) => c.slug !== 'inne')
-    const defaultCategoryId = categories.find((c: any) => c.slug === searchCat.value)?.id
+    const defaultCategory = znajdzKategorie(categories as any[], searchCat.value)
+    const defaultCategoryId = defaultCategory?.id
 
     // Paski „najnowsze w kategorii". To JEDNO zapytanie do własnego endpointu, który
     // buforuje wynik na pięć minut dla wszystkich odwiedzających (server/api/home/showcase).
@@ -1080,6 +1106,10 @@ const { data: homeData } = await useAsyncData('home-data', async () => {
         events:        evts.status           === 'fulfilled' ? (evts.value ?? [])          : [],
         stats:         stats.status          === 'fulfilled' ? stats.value                 : null,
         brands:        brands.status         === 'fulfilled' ? brands.value                : [],
+        // Slug kategorii, Z KTOREJ te marki pochodza. Sekcja linkow buduje z niego
+        // adres, wiec lista i prefiks nie moga sie rozjechac - wczesniej prefiks byl
+        // wpisany na sztywno jako `osobowe`, niezaleznie od tego, co przyszlo.
+        brandsCategorySlug: defaultCategory?.slug ?? null,
         categories,
         showcase:      await showcasePromise,
         collections:   await collectionsPromise,
@@ -1093,6 +1123,8 @@ if (homeData.value) {
     recentlyAdded.value = homeData.value.recentItems ?? []
     events.value        = homeData.value.events ?? []
     filterBrands.value  = homeData.value.brands ?? []
+    seoBrands.value          = homeData.value.brands ?? []
+    seoBrandsCategory.value  = homeData.value.brandsCategorySlug ?? null
     if (homeData.value.categories?.length) homeCategories.value = homeData.value.categories
     categoryShowcase.value = homeData.value.showcase ?? []
     mostViewed.value        = homeData.value.collections?.mostViewed ?? []

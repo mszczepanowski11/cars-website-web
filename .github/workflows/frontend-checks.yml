@@ -69,3 +69,6 @@ jobs:
 
       - name: Kontrast czerwieni marki
         run: npm run test:kontrast
+
+      - name: Linki wewnętrzne prowadzą dokądś
+        run: npm run test:linki
