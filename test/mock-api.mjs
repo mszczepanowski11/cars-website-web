@@ -45,6 +45,13 @@ const mk=(i)=>{const[b,m]=BR[i%BR.length];return{
  createdAt:new Date(Date.now()-i*86400000).toISOString(),
  powerHP:190, engineSize:1968, condition:'used', sellerType:i%3?'private':'dealer',
  isVerified:i%2===0, viewCount:40+i*13, favoriteCount:i, priceEur:Math.round((89000+i*7300)/4.3),
+ // Odznaki promocji. Atrapa ich wczesniej nie zwracala wcale, wiec sekcje platnych
+ // wyroznien na stronie glownej byly w testach ZAWSZE puste - a `v-if` na pustej
+ // liscie nie renderuje niczego, wiec nie bylo czego sprawdzic ani czego zepsuc.
+ // Kolejnosc jak w API: TOP, PREMIUM, FEATURED, reszta bez odznaki.
+ badge:[null,'TOP',null,'PREMIUM',null,'FEATURED'][i%6],
+ badgeExpiresAt:[null,'TOP',null,'PREMIUM',null,'FEATURED'][i%6]
+   ? new Date(Date.now()+30*86400000).toISOString() : null,
 }}
 const items=(n)=>Array.from({length:n},(_,i)=>mk(i))
 

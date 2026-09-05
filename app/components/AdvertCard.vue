@@ -478,9 +478,13 @@ const monthlyRate = computed(() => {
         border: 1px solid rgba(96, 165, 250, 0.3);
     }
 
+    // Napis ma 10px przy grubosci 800, wiec obowiazuje go prog 4,5:1, a nie 3:1.
+    // $red-text (jasnosc 44%) daje na tym tle 3,27:1 - za malo. Do tego samo tlo
+    // odznaki podnosi jasnosc podloza i zjada zapas, wiec razem z jasniejszym
+    // wariantem tekstu zeszlo tez krycie: 4,50:1 (bez zapasu) -> 4,60:1.
     &--featured {
-        background: rgba($red, 0.18);
-        color: $red-text;
+        background: rgba($red, 0.12);
+        color: $red-text-sm;
         border: 1px solid rgba($red, 0.45);
         backdrop-filter: blur(4px);
     }
