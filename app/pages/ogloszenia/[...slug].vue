@@ -184,6 +184,20 @@
                             {{ advert?.price ? Number(advert.price).toLocaleString('pl') + ' ' + (advert.currency ?? 'zł') : '—' }}
                             <span v-if="advert?.priceEur != null && advert.currency !== 'EUR'" class="price-eur">≈ {{ Math.round(advert.priceEur).toLocaleString('pl') }} €</span>
                         </div>
+                        <!--
+                          Ten sam komunikat co na karcie ogloszenia i z tego samego zrodla
+                          (readPriceChange), zeby lista i strona ogloszenia nie mogly sie
+                          rozjechac - inaczej „obnizka" widoczna na liscie znikalaby po
+                          wejsciu w ogloszenie.
+                        -->
+                        <div v-if="priceChange" class="price-change" :class="`price-change--${priceChange.direction}`">
+                            <span class="pch-old">{{ priceChange.previous.toLocaleString('pl') }} {{ advert?.currency ?? 'zł' }}</span>
+                            <span v-if="priceChange.direction === 'drop'" class="pch-tag">
+                                <CzIcon icon="mdi-arrow-down" size="14" />
+                                {{ $t('cAdvertCard.priceDrop', { amount: priceChange.diff.toLocaleString('pl') }) }}
+                            </span>
+                            <span v-else class="pch-tag pch-tag--rise">{{ $t('cAdvertCard.priceChanged') }}</span>
+                        </div>
                         <div v-if="advert?.price && Number(advert.price) > 5000" class="price-monthly-estimate">
                             <div class="pme-row">
                                 <div class="pme-item">
@@ -958,6 +972,7 @@ const messageSuggestions = [
 const followError = ref('')
 const advertFetchError = ref<number | null>(null)
 const advert = ref<CarAdvert | null>(null)
+const priceChange = computed(() => (advert.value ? readPriceChange(advert.value) : null))
 
 // Faza 8 of the category/attribute restructure: multi-document/video display helpers.
 function youtubeEmbedIdFor(url: string): string {
@@ -2213,6 +2228,39 @@ onUnmounted(() => {
     margin-bottom: 0;
 
     @include respond-to(sm) { font-size: 28px; }
+}
+
+.price-change {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    font-size: 14px;
+}
+
+.pch-old {
+    color: $text-muted;
+    text-decoration: line-through;
+}
+
+.pch-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: $r-xs;
+    font-weight: 700;
+    // Zielen, nie czerwien marki - czerwien w tym serwisie znaczy „wyroznione"
+    // i mieszalaby sie z odznakami platnych promocji.
+    background: rgba(74, 222, 128, 0.12);
+    color: $success;
+
+    &--rise {
+        background: rgba(255, 255, 255, 0.06);
+        color: $text-muted;
+        font-weight: 600;
+    }
 }
 
 .price-eur {

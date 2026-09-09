@@ -3,7 +3,7 @@
  *
  * Wygenerowana ze skanu repozytoriow (frontend, a gdy lezy obok - takze backend,
  * bo nazwy ikon kategorii przychodza z bazy). Importy sa WYPISANE JAWNIE, nie przez
- * `import * as` - dzieki temu bundler dolacza wylacznie te 318 sciezek,
+ * `import * as` - dzieki temu bundler dolacza wylacznie te 319 sciezek,
  * a nie caly zestaw 7447. To jest cala roznica miedzy ~8 kB
  * a ~400 kB w paczce wyslanej do przegladarki.
  *
@@ -30,6 +30,7 @@ import {
     mdiArchiveArrowDown,
     mdiArchiveArrowUp,
     mdiArchiveOutline,
+    mdiArrowDown,
     mdiArrowLeft,
     mdiArrowRight,
     mdiArrowRightCircleOutline,
@@ -351,6 +352,7 @@ export const MDI_PATHS: Record<string, string> = {
     'mdi-archive-arrow-down': mdiArchiveArrowDown,
     'mdi-archive-arrow-up': mdiArchiveArrowUp,
     'mdi-archive-outline': mdiArchiveOutline,
+    'mdi-arrow-down': mdiArrowDown,
     'mdi-arrow-left': mdiArrowLeft,
     'mdi-arrow-right': mdiArrowRight,
     'mdi-arrow-right-circle-outline': mdiArrowRightCircleOutline,

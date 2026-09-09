@@ -61,6 +61,8 @@ const gearboxShort = computed(() => {
     return n.length > 10 ? n.slice(0, 9) + '…' : n
 })
 
+const priceChange = computed(() => readPriceChange(props.advert))
+
 const resolvedBadge = computed(() => {
     if (props.advert.badge) return props.advert.badge
     if (props.advert.sellerType === 'dealer') return 'DEALER'
@@ -158,6 +160,18 @@ const monthlyRate = computed(() => {
             <div class="car-price">
                 {{ advert.price?.toLocaleString('pl-PL') ?? $t('cAdvertCard.priceNegotiable') }} {{ advert.price != null ? (advert.currency ?? 'zł') : '' }}
                 <span v-if="advert.priceEur != null && advert.currency !== 'EUR'" class="car-price-eur">≈ {{ Math.round(advert.priceEur).toLocaleString('pl-PL') }} €</span>
+            </div>
+            <!--
+              Zmiana ceny. Stara cena jest przekreslona zawsze, gdy cena sie ruszyla; kwota
+              roznicy tylko przy obnizce - to ona jest informacja dla kupujacego.
+            -->
+            <div v-if="priceChange" class="car-price-change" :class="`car-price-change--${priceChange.direction}`">
+                <span class="cpc-old">{{ priceChange.previous.toLocaleString('pl-PL') }} {{ advert.currency ?? 'zł' }}</span>
+                <span v-if="priceChange.direction === 'drop'" class="cpc-tag">
+                    <CzIcon icon="mdi-arrow-down" size="12" />
+                    {{ $t('cAdvertCard.priceDrop', { amount: priceChange.diff.toLocaleString('pl-PL') }) }}
+                </span>
+                <span v-else class="cpc-tag cpc-tag--rise">{{ $t('cAdvertCard.priceChanged') }}</span>
             </div>
             <div v-if="monthlyRate" class="car-monthly">
                 <CzIcon icon="mdi-bank-outline" size="12" class="car-monthly-icon" />
@@ -372,6 +386,38 @@ const monthlyRate = computed(() => {
     white-space: nowrap;
 
     @media (max-width: $bp-mobile) { font-size: 25px; }
+}
+
+.car-price-change {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+    font-size: 12px;
+}
+
+.cpc-old {
+    color: $text-muted;
+    text-decoration: line-through;
+}
+
+.cpc-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: $r-xs;
+    font-weight: $fw-semibold;
+    // Obnizka to dobra wiadomosc dla kupujacego, wiec zielen - a nie czerwien marki,
+    // ktora w tym serwisie znaczy „wyroznione" i mieszalaby sie z odznakami promocji.
+    background: rgba(74, 222, 128, 0.12);
+    color: $success;
+
+    &--rise {
+        background: rgba(255, 255, 255, 0.06);
+        color: $text-muted;
+    }
 }
 
 .car-price-eur {

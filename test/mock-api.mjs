@@ -49,6 +49,12 @@ const mk=(i)=>{const[b,m]=BR[i%BR.length];return{
  // wyroznien na stronie glownej byly w testach ZAWSZE puste - a `v-if` na pustej
  // liscie nie renderuje niczego, wiec nie bylo czego sprawdzic ani czego zepsuc.
  // Kolejnosc jak w API: TOP, PREMIUM, FEATURED, reszta bez odznaki.
+ // Zmiana ceny: co czwarte ogloszenie po obnizce, co osme po podwyzce, reszta bez zmian.
+ // Jedno z nich ma date sprzed pol roku - komunikat MA sie na nim nie pokazac, bo po
+ // trzydziestu dniach przestaje byc informacja.
+ previousPrice: i%4===0 ? 89000+i*7300+6000 : (i%8===3 ? 89000+i*7300-4000 : null),
+ priceChangedAt: (i%4===0 || i%8===3)
+   ? new Date(Date.now()-(i===8 ? 180 : (i%5)+1)*86400000).toISOString() : null,
  badge:[null,'TOP',null,'PREMIUM',null,'FEATURED'][i%6],
  badgeExpiresAt:[null,'TOP',null,'PREMIUM',null,'FEATURED'][i%6]
    ? new Date(Date.now()+30*86400000).toISOString() : null,

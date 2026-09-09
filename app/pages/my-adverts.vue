@@ -103,6 +103,14 @@
                                 <NuxtLink :to="`/add-advert?edit=${a.id}`" class="act-btn" :aria-label="`Edytuj: ${a.title}`">
                                     <CzIcon icon="mdi-pencil-outline" size="15" /><span class="act-label">Edytuj</span>
                                 </NuxtLink>
+                                <!--
+                                  Zmiana ceny to najczestsza poprawka w ogloszeniu, a prowadzila
+                                  przez caly kreator. `krok=details` otwiera go od razu na ekranie
+                                  z cena; reszta danych jest juz wczytana i zapisac mozna stamtad.
+                                -->
+                                <NuxtLink :to="`/add-advert?edit=${a.id}&krok=details`" class="act-btn" :aria-label="`Zmień cenę: ${a.title}`">
+                                    <CzIcon icon="mdi-tag-outline" size="15" /><span class="act-label">Zmień cenę</span>
+                                </NuxtLink>
                                 <NuxtLink
                                     v-if="!a.soldAt && a.isActive"
                                     :to="`/promote-advert/${a.id}`"
