@@ -23,22 +23,23 @@
           </NuxtLink>
         </div>
 
-        <div class="onas-stats">
-          <div class="onas-stat">
-            <div class="onas-stat-val">10k+</div>
-            <div class="onas-stat-label">{{ $t('about.statAdverts') }}</div>
-          </div>
-          <div class="onas-stat">
-            <div class="onas-stat-val">500+</div>
-            <div class="onas-stat-label">{{ $t('about.statDealers') }}</div>
-          </div>
-          <div class="onas-stat">
-            <div class="onas-stat-val">98%</div>
-            <div class="onas-stat-label">{{ $t('about.statSatisfied') }}</div>
-          </div>
-          <div class="onas-stat">
-            <div class="onas-stat-val">24/7</div>
-            <div class="onas-stat-label">{{ $t('about.statSupport') }}</div>
+        <!--
+          Liczby BIORA SIE Z BAZY, nie z nadziei. Wczesniej bylo tu „10k+ ogloszen",
+          „500+ dealerow", „98% zadowolonych" i „24/7 wsparcie" - wpisane na sztywno.
+          Zadna z tych liczb nie byla prawdziwa, a „98%" nie mialo nawet zrodla, bo
+          serwis nie prowadzi zadnego badania zadowolenia. „24/7" bylo sprzeczne z
+          wlasna strona kontaktu, ktora mowi „odpowiadamy w ciagu 24 godzin roboczych".
+          Poza tym, ze to nieuczciwe wobec uzytkownika, wymyslone dane w reklamie sa
+          w Polsce nieuczciwa praktyka rynkowa.
+
+          Kafelek z zerem sie nie pokazuje - nie dlatego, zeby cos ukryc, tylko dlatego,
+          ze „0 sprzedanych pojazdow" nie jest informacja, ktora warto komus podac.
+          Gdy nie ma zadnej liczby, znika cala sekcja.
+        -->
+        <div v-if="visibleStats.length" class="onas-stats">
+          <div v-for="s in visibleStats" :key="s.key" class="onas-stat">
+            <div class="onas-stat-val">{{ s.value.toLocaleString('pl') }}</div>
+            <div class="onas-stat-label">{{ $t(`about.${s.key}`) }}</div>
           </div>
         </div>
       </div>
@@ -99,6 +100,21 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+
+// Pobierane po stronie SERWERA, zeby liczby byly w gotowym HTML-u. Dociaganie ich po
+// uwodnieniu daloby skok ukladu dokladnie w tym miejscu, w ktorym siedzi pierwszy ekran.
+const { data: stats } = await useAsyncData('about-stats', () =>
+    $fetch<{ activeAdverts: number; totalUsers: number; soldVehicles: number; companies: number }>('/api/stats/home'),
+    { default: () => ({ activeAdverts: 0, totalUsers: 0, soldVehicles: 0, companies: 0 }) },
+)
+
+const visibleStats = computed(() => ([
+    { key: 'statAdverts',   value: stats.value?.activeAdverts ?? 0 },
+    { key: 'statCompanies', value: stats.value?.companies     ?? 0 },
+    { key: 'statUsers',     value: stats.value?.totalUsers    ?? 0 },
+    { key: 'statSold',      value: stats.value?.soldVehicles  ?? 0 },
+] as const).filter(s => s.value > 0))
+
 useHead({
   title: t('about.metaTitle'),
   meta: [{ name: 'description', content: t('about.metaDescription') }],

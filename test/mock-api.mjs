@@ -105,7 +105,8 @@ http.createServer(async (req,res)=>{
   if (/\/Taxonomy\/bodytypes/.test(u)) return send(['Sedan','Kombi','SUV','Hatchback'].map((name,i)=>({id:i+1,name})))
   if (/\/Taxonomy\/drive-types/.test(u)) return send(['Na przednie koła','4x4'].map((name,i)=>({id:i+1,name})))
   if (/\/Taxonomy\/colors/.test(u)) return send(['Czarny','Biały','Srebrny'].map((name,i)=>({id:i+1,name,hex:'#222'})))
-  if (/\/stats\/home/.test(u)) return send({activeAdverts:1847,totalUsers:920,soldVehicles:310,events:12})
+  // `companies` doszlo, gdy strona O nas przestala miec wpisane na sztywno 500+ dealerow.
+  if (/\/[Ss]tats\/home/.test(u)) return send({activeAdverts:1847,totalUsers:920,soldVehicles:310,events:12,companies:64})
   if (/\/geo\/countries/.test(u)) return send([{id:1,name:'Polska',code:'PL'}])
   if (/\/geo\/regions/.test(u)) return send(['mazowieckie','małopolskie','pomorskie'].map((name,i)=>({id:i+1,name})))
   // Profil firmy i profil sprzedawcy. Wczesniej atrapa oddawala na katalog firm pusta

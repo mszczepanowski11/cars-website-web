@@ -280,7 +280,7 @@
     },
     "seo": {
       "fallbackTitle": "Sprzedawca — CARIZO",
-      "description": "Sprawdź ogłoszenia sprzedawcy {name} na CARIZO — największej platformie motoryzacyjnej w Polsce."
+      "description": "Sprawdź ogłoszenia sprzedawcy {name} na CARIZO — platformie motoryzacyjnej z ofertami od osób prywatnych i zweryfikowanych firm."
     },
     "errors": {
       "loadAdverts": "Nie udało się załadować ogłoszeń sprzedawcy.",
