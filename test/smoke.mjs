@@ -30,7 +30,10 @@ const PAGES = [
     // przechodzil dla strony wynikow pokazujacej "Nie znaleziono ogloszen" - czyli
     // sprawdzal szkielet, a nie to, po co ta strona istnieje.
     { path: '/', expect: '.cat-row-head' },
-    { path: '/adverts', expect: '.car-card' },
+    // `rozwin` klika kolejno, wiec na telefonie najpierw otwiera sie panel filtrow
+    // (`.fp-trigger`, bo tam filtry siedza w wysuwanym arkuszu), a dopiero potem
+    // „Wiecej filtrow". Na szerokim ekranie pierwszego przycisku nie ma i jest pomijany.
+    { path: '/adverts', expect: '.car-card', rozwin: ['.fp-trigger', '.fp-more-btn'] },
     { path: '/categories' },
     { path: '/firmy' },
     { path: '/login', expect: 'input[type=password]' },
@@ -155,7 +158,7 @@ async function main() {
         const CONCURRENCY = 4
         await Promise.all(Array.from({ length: CONCURRENCY }, async () => {
           while (queue.length) {
-            const { path, expect, clickable, noConsent, onlyMobile } = queue.shift()
+            const { path, expect, clickable, noConsent, onlyMobile, rozwin } = queue.shift()
             if (onlyMobile && !vp.mobile) continue
             const page = await ctx.newPage()
 
@@ -225,6 +228,19 @@ async function main() {
                 }
                 // Chwila na uwodnienie i dociągnięcie danych po stronie klienta.
                 await page.waitForTimeout(1500)
+
+                // Sekcje ukryte za `v-if` - rozwijany panel filtrów, kolejne kroki kreatora.
+                // Bez tego test sprawdza tylko to, co widać po wejściu, a reszta formularza
+                // jest poza jego zasięgiem: siedemnaście pól filtrów bez nazwy dla czytnika
+                // ekranu przeszło tak przez wszystkie dotychczasowe uruchomienia, bo panel
+                // „Więcej filtrów" był zwinięty.
+                for (const sel of (rozwin ?? [])) {
+                    const el = page.locator(sel).first()
+                    if (await el.count()) {
+                        await el.click({ timeout: 3000 }).catch(() => { /* nie da się kliknąć - trudno */ })
+                        await page.waitForTimeout(400)
+                    }
+                }
             } catch (e) {
                 failures.push(`${label} — nie udało się otworzyć: ${String(e).split('\n')[0]}`)
                 await page.close(); continue

@@ -287,9 +287,9 @@
                                 <div v-if="filterConfig.showPower" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-engine-outline" size="13" />Moc (KM)</div>
                                     <div class="fp-range">
-                                        <input v-model.number="f.powerFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <input v-model.number="f.powerFrom" type="number" class="fp-range-input" aria-label="Moc (KM) od" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
-                                        <input v-model.number="f.powerTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                        <input v-model.number="f.powerTo" type="number" class="fp-range-input" aria-label="Moc (KM) do" placeholder="Do" min="0" />
                                     </div>
                                 </div>
 
@@ -297,9 +297,9 @@
                                 <div v-if="filterConfig.showMileage" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-speedometer" size="13" />{{ filterConfig.mileageLabel }}</div>
                                     <div class="fp-range">
-                                        <input v-model.number="f.mileageFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <input v-model.number="f.mileageFrom" type="number" class="fp-range-input" :aria-label="`${filterConfig.mileageLabel} od`" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
-                                        <input v-model.number="f.mileageTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                        <input v-model.number="f.mileageTo" type="number" class="fp-range-input" :aria-label="`${filterConfig.mileageLabel} do`" placeholder="Do" min="0" />
                                     </div>
                                 </div>
 
@@ -307,9 +307,9 @@
                                 <div class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-calendar-outline" size="13" />Rok produkcji</div>
                                     <div class="fp-range">
-                                        <input v-model.number="f.yearFrom" type="number" class="fp-range-input" placeholder="Od" min="1900" max="2099" />
+                                        <input v-model.number="f.yearFrom" type="number" class="fp-range-input" aria-label="Rok produkcji od" placeholder="Od" min="1900" max="2099" />
                                         <span class="fp-range-sep">–</span>
-                                        <input v-model.number="f.yearTo" type="number" class="fp-range-input" placeholder="Do" min="1900" max="2099" />
+                                        <input v-model.number="f.yearTo" type="number" class="fp-range-input" aria-label="Rok produkcji do" placeholder="Do" min="1900" max="2099" />
                                     </div>
                                 </div>
 
@@ -361,9 +361,9 @@
                                 <div class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-seat-passenger" size="13" />Liczba miejsc</div>
                                     <div class="fp-range">
-                                        <input v-model.number="f.seatsFrom" type="number" class="fp-range-input" placeholder="Od" min="1" max="50" />
+                                        <input v-model.number="f.seatsFrom" type="number" class="fp-range-input" aria-label="Liczba miejsc od" placeholder="Od" min="1" max="50" />
                                         <span class="fp-range-sep">–</span>
-                                        <input v-model.number="f.seatsTo" type="number" class="fp-range-input" placeholder="Do" min="1" max="50" />
+                                        <input v-model.number="f.seatsTo" type="number" class="fp-range-input" aria-label="Liczba miejsc do" placeholder="Do" min="1" max="50" />
                                     </div>
                                 </div>
 
@@ -371,9 +371,9 @@
                                 <div class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-molecule-co2" size="13" />Emisja CO₂ (g/km)</div>
                                     <div class="fp-range">
-                                        <input v-model.number="f.emissionFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <input v-model.number="f.emissionFrom" type="number" class="fp-range-input" aria-label="Emisja CO2 (g/km) od" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
-                                        <input v-model.number="f.emissionTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                        <input v-model.number="f.emissionTo" type="number" class="fp-range-input" aria-label="Emisja CO2 (g/km) do" placeholder="Do" min="0" />
                                     </div>
                                 </div>
 
@@ -395,7 +395,7 @@
                                 <div class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-barcode-scan" size="13" />Numer VIN</div>
                                     <div class="fp-input-wrap">
-                                        <input v-model="f.vin" type="text" class="fp-text-input" placeholder="Wyszukaj po VIN" maxlength="17" style="text-transform:uppercase" />
+                                        <input v-model="f.vin" type="text" class="fp-text-input" aria-label="Numer VIN" placeholder="Wyszukaj po VIN" maxlength="17" style="text-transform:uppercase" />
                                     </div>
                                 </div>
 
@@ -433,7 +433,7 @@
                                 <!-- Vehicle subtype (dynamic, scoped to selected category) -->
                                 <div v-if="vehicleSubtypes.length" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-shape-outline" size="13" />Rodzaj pojazdu</div>
-                                    <select v-model="f.vehicleSubtypeId" class="fp-select" @change="onSubtypeChange">
+                                    <select v-model="f.vehicleSubtypeId" class="fp-select" aria-label="Rodzaj pojazdu" @change="onSubtypeChange">
                                         <option :value="null">Wszystkie rodzaje</option>
                                         <option v-for="st in vehicleSubtypes" :key="st.id" :value="st.id">{{ st.namePl ?? st.name }}</option>
                                     </select>
@@ -457,7 +457,7 @@
                                 <div v-if="filterConfig.showBodyType" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-car-estate" size="13" />Typ nadwozia</div>
                                     <div class="fp-select-wrap">
-                                        <select v-model="f.bodyTypeId" class="fp-select">
+                                        <select v-model="f.bodyTypeId" class="fp-select" aria-label="Typ nadwozia">
                                             <option :value="null">Wszystkie</option>
                                             <option v-for="bt in bodyTypes" :key="bt.id" :value="bt.id">{{ bt.name }}</option>
                                         </select>
@@ -488,9 +488,9 @@
                                 <div v-if="filterConfig.showEngineSize" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-engine-outline" size="13" />Pojemność (cm³)</div>
                                     <div class="fp-range">
-                                        <input v-model.number="f.engineSizeFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <input v-model.number="f.engineSizeFrom" type="number" class="fp-range-input" aria-label="Pojemność (cm3) od" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
-                                        <input v-model.number="f.engineSizeTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                        <input v-model.number="f.engineSizeTo" type="number" class="fp-range-input" aria-label="Pojemność (cm3) do" placeholder="Do" min="0" />
                                     </div>
                                 </div>
 
@@ -498,9 +498,9 @@
                                 <div v-if="filterConfig.showPayload" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-weight" size="13" />Ładowność (kg)</div>
                                     <div class="fp-range">
-                                        <input v-model.number="f.payloadFrom" type="number" class="fp-range-input" placeholder="Od" min="0" />
+                                        <input v-model.number="f.payloadFrom" type="number" class="fp-range-input" aria-label="Ładowność (kg) od" placeholder="Od" min="0" />
                                         <span class="fp-range-sep">–</span>
-                                        <input v-model.number="f.payloadTo" type="number" class="fp-range-input" placeholder="Do" min="0" />
+                                        <input v-model.number="f.payloadTo" type="number" class="fp-range-input" aria-label="Ładowność (kg) do" placeholder="Do" min="0" />
                                     </div>
                                 </div>
 
@@ -508,14 +508,14 @@
                                 <div v-if="filterConfig.showCatalogNumber" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-barcode-scan" size="13" />Nr katalogowy / OEM</div>
                                     <div class="fp-input-wrap">
-                                        <input v-model="f.catalogNumber" type="text" class="fp-text-input" placeholder="np. 1K0615301L" />
+                                        <input v-model="f.catalogNumber" type="text" class="fp-text-input" aria-label="Nr katalogowy / OEM" placeholder="np. 1K0615301L" />
                                     </div>
                                 </div>
 
                                 <!-- Part category -->
                                 <div v-if="filterConfig.showPartCategory" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-cog" size="13" />Kategoria części</div>
-                                    <select v-model="f.partCategoryId" class="fp-select">
+                                    <select v-model="f.partCategoryId" class="fp-select" aria-label="Kategoria części">
                                         <option :value="null">Wszystkie kategorie</option>
                                         <option v-for="pc in partCategories" :key="pc.id" :value="pc.id">{{ pc.name }}</option>
                                     </select>
@@ -524,7 +524,7 @@
                                 <!-- Side -->
                                 <div v-if="filterConfig.showSide" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-swap-horizontal" size="13" />Strona montażu</div>
-                                    <select v-model="f.side" class="fp-select">
+                                    <select v-model="f.side" class="fp-select" aria-label="Strona montażu">
                                         <option value="">Dowolna</option>
                                         <option value="Lewa">Lewa</option>
                                         <option value="Prawa">Prawa</option>
@@ -538,7 +538,7 @@
                                 <div v-if="filterConfig.showCatalogNumber" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-identifier" size="13" />Numer OEM</div>
                                     <div class="fp-input-wrap">
-                                        <input v-model="f.oemNumber" type="text" class="fp-text-input" placeholder="np. 3C0853630A" />
+                                        <input v-model="f.oemNumber" type="text" class="fp-text-input" aria-label="Numer OEM" placeholder="np. 3C0853630A" />
                                     </div>
                                 </div>
 
@@ -546,7 +546,7 @@
                                 <div v-if="filterConfig.showCatalogNumber" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-factory" size="13" />Numer katalogowy producenta</div>
                                     <div class="fp-input-wrap">
-                                        <input v-model="f.manufacturerPartNumber" type="text" class="fp-text-input" placeholder="np. 0986490304" />
+                                        <input v-model="f.manufacturerPartNumber" type="text" class="fp-text-input" aria-label="Numer katalogowy producenta" placeholder="np. 0986490304" />
                                     </div>
                                 </div>
 
@@ -554,7 +554,7 @@
                                 <div v-if="filterConfig.showCatalogNumber" class="fp-group">
                                     <div class="fp-group-label"><CzIcon icon="mdi-numeric" size="13" />Min. dostępna ilość</div>
                                     <div class="fp-input-wrap">
-                                        <input v-model.number="f.quantityFrom" type="number" min="1" class="fp-text-input" placeholder="np. 1" />
+                                        <input v-model.number="f.quantityFrom" type="number" min="1" class="fp-text-input" aria-label="Min. dostępna ilość" placeholder="np. 1" />
                                     </div>
                                 </div>
 
