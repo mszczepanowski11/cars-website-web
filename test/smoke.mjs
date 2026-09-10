@@ -40,6 +40,21 @@ const PAGES = [
     { path: '/jak-to-dziala' },
     { path: '/kontakt' },
     { path: '/o-nas' },
+    // Strony, ktore do tej pory nie byly mierzone WCALE. Blad na profilu firmy istnial
+    // dokladnie dlatego, ze ta strona nie byla na liscie - dopisanie kolejnych kosztuje
+    // kilkanascie sekund testu, a wykrywa te same rzeczy: rozpychanie w poziomie na
+    // telefonie, skok ukladu, rozjazd miedzy serwerem a przegladarka.
+    { path: '/compare' },
+    { path: '/dla-firm' },
+    { path: '/wydarzenia' },
+    { path: '/pomoc' },
+    { path: '/regulamin' },
+    { path: '/regulamin-b2b' },
+    { path: '/polityka-prywatnosci' },
+    { path: '/polityka-cookies' },
+    { path: '/forgot-password' },
+    // Formularz dodawania ogloszenia to najwazniejszy i najdluzszy widok w serwisie.
+    { path: '/add-advert' },
     // Strony pośrednie kategoria → marka → model. To one zbierają ruch z wyszukiwarki,
     // więc muszą realnie renderować listę, a nie sam szkielet.
     // Profil firmy i profil sprzedawcy - obie strony korzystaja ze wspolnej karty

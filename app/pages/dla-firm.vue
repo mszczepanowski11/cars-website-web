@@ -18,26 +18,26 @@
           <p class="df-form-sub">{{ $t('forBusiness.formSub') }}</p>
 
           <div class="df-field">
-            <label>{{ $t('forBusiness.labelCompanyName') }}</label>
-            <input v-model="form.companyName" type="text" :placeholder="$t('forBusiness.placeholderCompanyName')" />
+            <label :for="`${uid}-df-companyname`">{{ $t('forBusiness.labelCompanyName') }}</label>
+            <input :id="`${uid}-df-companyname`" v-model="form.companyName" type="text" :placeholder="$t('forBusiness.placeholderCompanyName')" />
           </div>
           <div class="df-field-row">
             <div class="df-field">
-              <label>{{ $t('forBusiness.labelEmail') }}</label>
-              <input v-model="form.email" type="email" placeholder="kontakt@twojafirma.pl" />
+              <label :for="`${uid}-df-email`">{{ $t('forBusiness.labelEmail') }}</label>
+              <input :id="`${uid}-df-email`" v-model="form.email" type="email" placeholder="kontakt@twojafirma.pl" />
             </div>
             <div class="df-field">
-              <label>{{ $t('forBusiness.labelPhone') }}</label>
-              <input v-model="form.phone" type="tel" placeholder="+48 600 000 000" />
+              <label :for="`${uid}-df-phone`">{{ $t('forBusiness.labelPhone') }}</label>
+              <input :id="`${uid}-df-phone`" v-model="form.phone" type="tel" placeholder="+48 600 000 000" />
             </div>
           </div>
           <div class="df-field">
-            <label>{{ $t('forBusiness.labelWebsite') }}</label>
-            <input v-model="form.websiteUrl" type="text" placeholder="https://twojafirma.pl" />
+            <label :for="`${uid}-df-website`">{{ $t('forBusiness.labelWebsite') }}</label>
+            <input :id="`${uid}-df-website`" v-model="form.websiteUrl" type="text" placeholder="https://twojafirma.pl" />
           </div>
           <div class="df-field">
-            <label>{{ $t('forBusiness.labelFeed') }} <span class="df-optional">{{ $t('forBusiness.labelFeedOptional') }}</span></label>
-            <input v-model="form.feedUrl" type="text" placeholder="https://twojafirma.pl/export/oferty.xml" />
+            <label :for="`${uid}-df-feed`">{{ $t('forBusiness.labelFeed') }} <span class="df-optional">{{ $t('forBusiness.labelFeedOptional') }}</span></label>
+            <input :id="`${uid}-df-feed`" v-model="form.feedUrl" type="text" placeholder="https://twojafirma.pl/export/oferty.xml" />
           </div>
 
           <div v-if="formError" class="df-alert df-alert--error">{{ formError }}</div>
@@ -118,6 +118,11 @@
 </template>
 
 <script setup lang="ts">
+// Etykiety byly SASIADAMI pol, a nie ich nazwami: `<label>` nazywa pole tylko wtedy,
+// gdy je obejmuje albo ma `for` wskazujace na jego `id`. Bez tego czytnik ekranu czyta
+// „pole edycji" i nic wiecej, a klikniecie w etykiete nie ustawia w nim kursora.
+// `useId()` daje identyfikator zgodny miedzy serwerem a przegladarka.
+const uid = useId()
 const { t } = useI18n()
 useHead({
   title: t('forBusiness.metaTitle'),

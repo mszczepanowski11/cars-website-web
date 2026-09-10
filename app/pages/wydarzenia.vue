@@ -25,7 +25,7 @@
             <div class="search-row">
                 <div class="search-box">
                     <CzIcon icon="mdi-magnify" size="20" class="s-icon" />
-                    <input v-model="search" class="s-input" :placeholder="$t('events.searchPlaceholder')" @input="onSearch" />
+                    <input v-model="search" class="s-input" :aria-label="$t('events.searchPlaceholder')" :placeholder="$t('events.searchPlaceholder')" @input="onSearch" />
                 </div>
                 <NuxtLink to="/dodaj-wydarzenie" class="btn-add-event">
                     <CzIcon icon="mdi-plus" size="18" />

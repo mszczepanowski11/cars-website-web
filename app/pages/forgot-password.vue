@@ -8,10 +8,11 @@
             <template v-if="!sent">
                 <form @submit.prevent="submit" class="auth-form">
                     <div class="field-group">
-                        <label class="field-label">{{ $t('forgotPassword.emailLabel') }}</label>
+                        <label class="field-label" :for="uid">{{ $t('forgotPassword.emailLabel') }}</label>
                         <div class="field-input-wrap">
                             <CzIcon icon="mdi-email-outline" size="16" class="field-icon" />
                             <input
+                                :id="uid"
                                 v-model="email"
                                 type="email"
                                 class="field-input"
@@ -64,6 +65,8 @@
 </template>
 
 <script setup lang="ts">
+// Etykieta byla SASIADEM pola, wiec go nie nazywala - patrz ten sam komentarz w dla-firm.vue.
+const uid = useId()
 const { t } = useI18n()
 useHead({ title: () => t('forgotPassword.metaTitle') })
 useSeoMeta({ robots: 'noindex, nofollow' })

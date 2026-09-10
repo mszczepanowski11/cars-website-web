@@ -6,7 +6,7 @@
                 <h1>{{ $t('help.heroTitleBefore') }} <span>{{ $t('help.heroTitleHighlight') }}</span></h1>
                 <div class="hero-search">
                     <CzIcon icon="mdi-magnify" size="20" class="hs-icon" />
-                    <input v-model="query" class="hs-input" :placeholder="$t('help.searchPlaceholder')" />
+                    <input v-model="query" class="hs-input" :aria-label="$t('help.searchPlaceholder')" :placeholder="$t('help.searchPlaceholder')" />
                 </div>
             </div>
         </div>
