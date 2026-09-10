@@ -754,7 +754,7 @@ function doHeroSearch() {
 const feats = [
     { title: 'Bezpieczeństwo',          desc: 'Zweryfikowane ogłoszenia i sprzedawcy. Kupuj i sprzedawaj z pełnym zaufaniem.',             icon: 'mdi-shield-check-outline'   },
     { title: 'Zweryfikowane pojazdy',   desc: 'Pełna historia pojazdu. Więcej pewności przy każdym zakupie.',                              icon: 'mdi-car-info'               },
-    { title: 'Inteligentne narzędzia',  desc: 'Nowoczesne wyszukiwanie, wycena AI i inteligentne filtry. Znajdź idealne auto szybciej.',   icon: 'mdi-cpu-64-bit'             },
+    { title: 'Inteligentne narzędzia',  desc: 'Nowoczesne wyszukiwanie, filtry i porównanie ceny z podobnymi ofertami. Znajdź auto szybciej.',   icon: 'mdi-cpu-64-bit'             },
     { title: 'Społeczność motoryzacyjna', desc: 'Dla ludzi kochających motoryzację. Wydarzenia, recenzje i aktywna społeczność.',          icon: 'mdi-account-group-outline'  },
 ]
 
@@ -764,9 +764,13 @@ const countUpRefs = ref<Record<string, Element>>({})
 const { observe: countUpObserve } = useCountUp()
 
 const allStats = computed(() => [
-    { key: 'activeAdverts', icon: 'mdi-shield-check-outline',  label: 'Zweryfikowanych ogłoszeń', value: homeStats.value.activeAdverts },
-    { key: 'soldVehicles',  icon: 'mdi-car-outline',           label: 'Sprzedanych pojazdów',     value: homeStats.value.soldVehicles  },
-    { key: 'totalUsers',    icon: 'mdi-account-group-outline', label: 'Użytkowników w Polsce',    value: homeStats.value.totalUsers    },
+    // Etykiety musza mowic to, co liczy licznik. `activeAdverts` to ogloszenia AKTYWNE,
+    // a nie zweryfikowane - weryfikacja jest osobna cecha i ma wlasna odznake na karcie.
+    // `totalUsers` to wszyscy zarejestrowani, nie „uzytkownicy w Polsce" - serwis nie
+    // liczy nikogo po kraju.
+    { key: 'activeAdverts', icon: 'mdi-car-multiple',          label: 'Aktywnych ogłoszeń',         value: homeStats.value.activeAdverts },
+    { key: 'soldVehicles',  icon: 'mdi-car-outline',           label: 'Sprzedanych pojazdów',       value: homeStats.value.soldVehicles  },
+    { key: 'totalUsers',    icon: 'mdi-account-group-outline', label: 'Zarejestrowanych użytkowników', value: homeStats.value.totalUsers },
     { key: 'events',        icon: 'mdi-calendar-star',         label: 'Wydarzeń motoryzacyjnych',  value: homeStats.value.events        },
 ])
 

@@ -280,7 +280,7 @@
     },
     "seo": {
       "fallbackTitle": "Verkäufer — CARIZO",
-      "description": "Sieh dir die Inserate des Verkäufers {name} auf CARIZO an — dem größten Automarktplatz in Polen."
+      "description": "Sieh dir die Inserate des Verkäufers {name} auf CARIZO an — einem Fahrzeugmarktplatz mit Angeboten von Privatpersonen und verifizierten Firmen."
     },
     "errors": {
       "loadAdverts": "Die Inserate des Verkäufers konnten nicht geladen werden.",

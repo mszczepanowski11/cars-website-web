@@ -1317,21 +1317,32 @@ const completenessColor = computed(() => {
     return '#8B0D1D'
 })
 
+// Ile podobnych ogloszen musi byc, zeby srednia cokolwiek znaczyla.
+//
+// Bylo 2. Srednia z dwoch ogloszen to nie jest rynek - to dwa ogloszenia, i wystarczylo,
+// zeby jedno z nich bylo wystawione absurdalnie, a kupujacy dostawal komunikat „18%
+// ponizej ceny rynkowej" z dokladnoscia do procenta. Etykieta mowila „cena rynkowa",
+// czego te dane nie uprawnialy powiedziec.
+const MIN_SIMILAR_FOR_PRICE_HINT = 5
+
 const priceAnalysis = computed(() => {
-    if (!advert.value?.price || similar.value.length < 2) return null
+    if (!advert.value?.price) return null
     const myPrice = Number(advert.value.price)
     if (!myPrice) return null
     const simPrices = similar.value
         .filter(a => a.id !== id && a.price)
         .map(a => Number(a.price))
         .filter(p => p > 0 && p < myPrice * 6 && p > myPrice * 0.15)
-    if (simPrices.length < 2) return null
+    if (simPrices.length < MIN_SIMILAR_FOR_PRICE_HINT) return null
     const avg = simPrices.reduce((a, b) => a + b, 0) / simPrices.length
     const diff = (myPrice - avg) / avg
-    if (diff < -0.15) return { label: 'Świetna cena', cls: 'pa-great', icon: 'mdi-trending-down', sub: `${Math.abs(Math.round(diff * 100))}% poniżej ceny rynkowej` }
-    if (diff < -0.05) return { label: 'Dobra cena', cls: 'pa-good', icon: 'mdi-check-circle-outline', sub: `${Math.abs(Math.round(diff * 100))}% poniżej średniej` }
-    if (diff <= 0.05) return { label: 'Cena rynkowa', cls: 'pa-avg', icon: 'mdi-minus-circle-outline', sub: 'Zgodna z rynkiem' }
-    return { label: 'Powyżej średniej', cls: 'pa-high', icon: 'mdi-trending-up', sub: `${Math.round(diff * 100)}% powyżej średniej` }
+    // Podpis mowi WPROST, z czego liczona jest roznica. „Ponizej ceny rynkowej" sugerowaloby
+    // wycene calego rynku; to jest srednia z podobnych ogloszen w tym serwisie i tyle.
+    const zrodlo = `${simPrices.length} podobnych ogłoszeń`
+    if (diff < -0.15) return { label: 'Niska cena', cls: 'pa-great', icon: 'mdi-trending-down', sub: `${Math.abs(Math.round(diff * 100))}% poniżej średniej z ${zrodlo}` }
+    if (diff < -0.05) return { label: 'Dobra cena', cls: 'pa-good', icon: 'mdi-check-circle-outline', sub: `${Math.abs(Math.round(diff * 100))}% poniżej średniej z ${zrodlo}` }
+    if (diff <= 0.05) return { label: 'Cena typowa', cls: 'pa-avg', icon: 'mdi-minus-circle-outline', sub: `Zbliżona do średniej z ${zrodlo}` }
+    return { label: 'Powyżej średniej', cls: 'pa-high', icon: 'mdi-trending-up', sub: `${Math.round(diff * 100)}% powyżej średniej z ${zrodlo}` }
 })
 
 function toggleFav() {
@@ -2321,7 +2332,12 @@ onUnmounted(() => {
     font-weight: 700;
     padding: 3px 9px;
     border-radius: 20px;
-    white-space: nowrap;
+    // BEZ `white-space: nowrap`. Z nim szerokosc minimalna odznaki rowna sie dlugosci
+    // calego napisu, wiec przy 320 px rozpychala strone w poziomie - podpis mowi teraz,
+    // z ilu ogloszen liczona jest srednia, i jest przez to dluzszy niz wczesniej.
+    // `max-width` domyka sprawe: odznaka nigdy nie jest szersza od swojego rodzica.
+    flex-wrap: wrap;
+    max-width: 100%;
 
     .pab-sub {
         font-weight: 400;

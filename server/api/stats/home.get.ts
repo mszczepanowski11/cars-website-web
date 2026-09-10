@@ -20,6 +20,9 @@ export default defineEventHandler(async (event) => {
     const soldVehicles  = adminData?.soldVehicles ?? 0
     const totalUsers    = adminData?.totalUsers ?? 0
     const events        = adminData?.events ?? eventsData?.totalCount ?? 0
+    // `companies` API zwracalo od dawna, ale ten serwer go nie przepuszczal - przez co
+    // strona „O nas" nie miala skad wziac prawdziwej liczby firm i miala wpisane „500+".
+    const companies     = adminData?.companies ?? 0
 
-    return { activeAdverts, events, soldVehicles, totalUsers }
+    return { activeAdverts, events, soldVehicles, totalUsers, companies }
 })

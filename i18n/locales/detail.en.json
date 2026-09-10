@@ -280,7 +280,7 @@
     },
     "seo": {
       "fallbackTitle": "Seller — CARIZO",
-      "description": "Check out listings from seller {name} on CARIZO — the largest automotive marketplace in Poland."
+      "description": "Check out listings from seller {name} on CARIZO — a vehicle marketplace with offers from private sellers and verified companies."
     },
     "errors": {
       "loadAdverts": "Failed to load the seller's listings.",
