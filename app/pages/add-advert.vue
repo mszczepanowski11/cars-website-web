@@ -93,10 +93,17 @@
             <!-- Left sidebar -->
             <aside class="left-sidebar">
                 <nav class="steps-nav">
+                    <!--
+                      W trybie EDYCJI kazdy krok jest klikalny w obie strony. Przy dodawaniu
+                      ogloszenia cofac sie mozna tylko do krokow juz wypelnionych, bo dalsze
+                      jeszcze nie istnieja - ale przy edycji WSZYSTKIE dane sa juz wpisane
+                      i sprawdzone, wiec blokowanie skoku do przodu kazalo klikac „Dalej"
+                      przez dziewiec ekranow tylko po to, zeby poprawic cene.
+                    -->
                     <div v-for="(step, i) in steps" :key="i"
                         class="step-item"
-                        :class="{ 'step-active': currentStep === i, 'step-done': currentStep > i }"
-                        @click="currentStep > i && (currentStep = i)">
+                        :class="{ 'step-active': currentStep === i, 'step-done': currentStep > i, 'step-clickable': isEdit || currentStep > i }"
+                        @click="(isEdit || currentStep > i) && (currentStep = i)">
                         <div class="step-num">
                             <CzIcon v-if="currentStep > i" icon="mdi-check" size="13" />
                             <span v-else>{{ i + 1 }}</span>
@@ -2212,7 +2219,12 @@
                         Dalej: {{ steps[currentStep + 1]?.name }}
                         <CzIcon icon="mdi-arrow-right" size="16" />
                     </button>
-                    <template v-else>
+                    <!--
+                      Komunikat bledu musi byc widoczny takze wtedy, gdy zapis leci ze SRODKA
+                      kreatora (tryb edycji) - inaczej klikniecie „Zapisz zmiany" na kroku 2
+                      konczyloby sie cisza, bo blad renderowal sie tylko na ostatnim kroku.
+                    -->
+                    <template v-if="isEdit || currentStep === steps.length - 1">
                         <div v-if="limitError" class="limit-error-banner">
                             <CzIcon icon="mdi-store-outline" size="18" />
                             <div class="limit-error-text">
@@ -2225,7 +2237,13 @@
                             <CzIcon icon="mdi-alert-circle-outline" size="15" />{{ error }}
                         </div>
                     </template>
-                    <template v-if="currentStep === steps.length - 1">
+                    <!--
+                      Przy edycji „Zapisz zmiany" jest na KAZDYM kroku, nie tylko na ostatnim.
+                      submit() i tak sprawdza wszystkie kroki, a nie tylko biezacy (patrz
+                      komentarz przy jego definicji), wiec zapis z srodka kreatora nie moze
+                      przepuscic niepelnego ogloszenia.
+                    -->
+                    <template v-if="isEdit || currentStep === steps.length - 1">
                         <template v-if="isEdit">
                             <button class="btn-publish-free" :disabled="loading" @click="submit">
                                 <CzIcon v-if="loading" icon="mdi-loading" size="16" class="spin" />
@@ -2427,6 +2445,11 @@ const { analyzePhoto: analyzePhotoLocal } = usePhotoAnalysis()
 const route = useRoute()
 const editId = computed(() => route.query.edit ? Number(route.query.edit) : null)
 const isEdit = computed(() => !!editId.value)
+
+// Krok wskazany w adresie: /add-advert?edit=123&krok=details otwiera kreator od razu
+// na danych pojazdu, gdzie jest cena. Bez tego „poprawie cene" znaczy przeklikanie
+// sie przez caly kreator, mimo ze wszystkie pozostale dane sa juz wpisane.
+const zadanyKrok = computed(() => (route.query.krok ? String(route.query.krok) : null))
 
 // Admin "add advert for client" flow: the admin panel stashes the client's contact details in
 // sessionStorage (see admin/users.vue) before navigating here with ?adminClientMode=1. On submit
@@ -4803,6 +4826,14 @@ onMounted(async () => {
                 const savedValues = await $fetch<AttrValue[]>(`/api/proxy/api/Attributes/values/${editId.value}`)
                 for (const v of savedValues) attributeValues[v.attributeDefinitionId] = v
             } catch { /* no saved attribute values yet, ignore */ }
+
+            // Skok na krok wskazany w adresie - DOPIERO TERAZ, bo lista krokow zalezy od
+            // kategorii, a ta jest znana od kilku linii wyzej. Wczesniejszy skok trafialby
+            // w indeks z domyslnej listy krokow, czyli czesto w zupelnie inny ekran.
+            if (zadanyKrok.value) {
+                const i = steps.value.findIndex(s => s.key === zadanyKrok.value)
+                if (i >= 0) currentStep.value = i
+            }
         } catch {
             error.value = 'Nie udało się załadować danych ogłoszenia.'
         }

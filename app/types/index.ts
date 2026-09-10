@@ -29,6 +29,10 @@ export interface CarAdvert {
     postalCode?: string | null; addressLine?: string | null
     latitude?: number | null; longitude?: number | null
     currencyId?: number | null; priceEur?: number | null; priceEurAsOf?: string | null
+    // Poprzednia cena i moment zmiany - zrodlo komunikatu „obnizka z X zl" na karcie
+    // i na stronie ogloszenia. Ustawiane przez API tylko wtedy, gdy cena naprawde sie
+    // zmienila; zwykly zapis ogloszenia ich nie rusza.
+    previousPrice?: number | null; priceChangedAt?: string | null
     brand: TaxonomyItem | null; model: TaxonomyItem | null
     generation: Generation | null; engineVersion: EngineVersion | null
     fuelType: TaxonomyItem | null; gearbox: TaxonomyItem | null; bodyType: TaxonomyItem | null
